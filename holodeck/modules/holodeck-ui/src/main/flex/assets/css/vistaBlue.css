@@ -1,0 +1,839 @@
+/*
+///////////////////////////////////////////////////////////////////////////////
+//
+//  Vista Theme by Bhavin Padhiyar.
+//
+///////////////////////////////////////////////////////////////////////////////
+*/
+
+
+global
+{
+	backgroundSize: "auto";
+	themeColor: #7AA4B9;	
+	rollOverColor: #AADEFF;
+	selectionColor: #7FCDFE;
+	
+}
+
+AccordionHeader
+{
+	disabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/disable2.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	downSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/over.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	overSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/over.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	selectedDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/selectedDisabled.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	selectedDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/over.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	selectedOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/over.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	selectedUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/up.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+	upSkin: Embed("http://try.scalenine.com/vistaBlue/style/accordion/disable.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=1, 
+	    scaleGridRight=2
+	);
+
+}
+
+Application
+{
+	backgroundColors: #000000,#3f3f3f;
+	backgroundImage: Embed(source="http://try.scalenine.com/vistaBlue/style/background.jpg");
+	backgroundSize: "100%";
+}
+
+
+Button
+{
+	upSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/up.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	overSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/over.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	downSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/up.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	disabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/disable.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	selectedDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/over.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);	
+	
+	selectedDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/over.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	selectedOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/over.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	selectedUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttons/over.png",
+		scaleGridTop=5, 				
+	    scaleGridBottom=10, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);	
+	
+	color: #000000;
+	textRollOverColor: #000000;
+	textSelectedColor:#000000;
+}
+
+
+ButtonBar 
+{ 
+        buttonStyleName: "buttonBarButton"; 
+        firstButtonStyleName: "firstButtonBarButton"; 
+        lastButtonStyleName: "lastButtonBarButton";
+}
+
+ToggleButtonBar 
+{ 
+        buttonStyleName: "buttonBarButton"; 
+        firstButtonStyleName: "firstButtonBarButton"; 
+        lastButtonStyleName: "lastButtonBarButton";
+}
+
+.roundedButtonBar 
+{ 
+        buttonStyleName: "roundedButtonBarButton"; 
+        firstButtonStyleName: "roundedFirstButtonBarButton"; 
+        lastButtonStyleName: "roundedLastButtonBarButton";
+}
+
+.firstButtonBarButton 
+{ 
+        disabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/disableLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13
+		); 
+        downSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13
+		); 
+        overSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13	
+		); 
+        
+        selectedDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/disableLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13
+		); 
+        selectedDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13
+		); 
+        selectedOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13
+        );
+        selectedUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		   scaleGridRight=13
+		);
+        upSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/upLeft.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=11, 
+		    scaleGridRight=13
+        );
+        
+        color: #000000;
+		textRollOverColor: #000000;
+		textSelectedColor:#000000;
+}
+.buttonBarButton 
+{ 
+        disabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/disableCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+		); 
+        downSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+		); 
+        overSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3	
+		); 
+        
+        selectedDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/disableCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+		); 
+        selectedDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+		); 
+        selectedOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+        );
+        selectedUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+		);
+        upSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/upCenter.png",
+	        scaleGridTop=2, 				
+		    scaleGridBottom=4, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=3
+        );
+        color: #000000;
+		textRollOverColor: #000000;
+		textSelectedColor:#000000; 
+}
+
+.lastButtonBarButton 
+{ 
+       disabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/disableRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+		); 
+        downSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+		); 
+        overSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2	
+		); 
+        
+        selectedDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/disableRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+		); 
+        selectedDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+		); 
+        selectedOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+        );
+        selectedUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/overRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+		);
+        upSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/buttonBar/upRight.png",
+	        scaleGridTop=11, 				
+		    scaleGridBottom=22, 
+		    scaleGridLeft=1, 
+		    scaleGridRight=2
+        );
+                
+        color: #000000;
+		textRollOverColor: #000000;
+		textSelectedColor:#000000; 
+}
+
+
+CheckBox
+{
+	disabledIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/unSelectedDisable.png");
+	downIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/selected.png");
+	overIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/unSelected.png");
+	selectedDisabledIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/selectedDisable.png");
+	selectedDownIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/selected.png");
+	selectedOverIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/selected.png");
+	selectedUpIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/selected.png");
+	upIcon: Embed("http://try.scalenine.com/vistaBlue/style/checkBox/unSelected.png");
+	
+	
+	color: #000000;
+	textSelectedColor: #000000;
+	textRollOverColor: #000000;
+}		
+
+
+ColorPicker
+{
+	disabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/colorPicker/up.png");
+	downSkin: Embed("http://try.scalenine.com/vistaBlue/style/colorPicker/up.png");
+	overSkin: Embed("http://try.scalenine.com/vistaBlue/style/colorPicker/over.png");
+	upSkin: Embed("http://try.scalenine.com/vistaBlue/style/colorPicker/up.png");
+}		
+
+ComboBox
+{
+
+	
+	downSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/combobox/up.png",
+		scaleGridLeft=1,		
+		scaleGridTop=2,
+		scaleGridBottom=4,
+		scaleGridRight=19
+	);
+	
+	overSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/combobox/up.png",
+		scaleGridLeft=1,		
+		scaleGridTop=2,
+		scaleGridBottom=4,
+		scaleGridRight=19
+	);
+	
+	upSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/combobox/up.png",
+		scaleGridLeft=1,		
+		scaleGridTop=2,
+		scaleGridBottom=4,
+		scaleGridRight=19
+	);
+	
+
+	
+	color: #000000;
+	textRollOverColor: #000000;
+	textSelectedColor:#ffffff;
+	dropDownStyleName: "dropDown";
+	highlightAlphas: .5, .8;
+	fontWeight:normal;
+}
+
+
+.dropDown {
+	backgroundColor: #ffffff;
+	backgroundAlpha: .9;
+	borderStyle: solid;
+	borderThickness: 0;
+	borderColor: #ffffff;
+	roundedCorners:5;
+	color: #000000;
+	textRollOverColor: #000000;
+	textSelectedColor:#000000;
+	rollOverColor: #EEF2FB;
+}
+
+
+CursorManager
+{
+	busyCursor: Embed(source="http://try.scalenine.com/vistaBlue/style/other/busy.png");
+	busyCursorBackground: Embed(source="http://try.scalenine.com/vistaBlue/style/other/empty.png");
+	cursor: Embed(source="http://try.scalenine.com/vistaBlue/style/other/busy.png");
+}
+
+
+DataGrid
+{
+	headerStyleName: "dataGridHeader";
+	headerColors: #f0f0f0, #ffffff;
+	rollOverColor: #EEF2FB;
+	selectionColor: #EEF2FB;
+	disabledColor: #999999;
+	selectiondDisabledColor: #999999;
+	alternatingItemColors: #ffffff, #eeeeee;
+}
+
+.dataGridHeader
+{
+	color: #000000;
+}
+
+
+DateChooser
+{
+	headerColors: #e5e5e5, #edebeb;
+	
+	nextMonthDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateNext.png");
+	nextMonthDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateNext.png");
+	nextMonthOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateNext.png");
+	nextMonthUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateNext.png");
+	
+	prevMonthDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateBack.png");
+	prevMonthDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateBack.png");
+	prevMonthOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateBack.png");
+	prevMonthUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/dateBack.png");
+	
+	
+	nextYearDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearNext.png");
+	nextYearDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearNext.png");
+	nextYearOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearNext.png");
+	nextYearUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearNext.png");
+	
+	prevYearDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearBack.png");
+	prevYearDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearBack.png");
+	prevYearOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearBack.png");
+	prevYearUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/yearBack.png");
+
+
+
+	todayIndicatorSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/selected.png");	
+	todayStyleName: "today";
+	
+	rollOverIndicatorSkin: Embed('http://try.scalenine.com/vistaBlue/style/date/today.png');
+	selectionIndicatorSkin: Embed('http://try.scalenine.com/vistaBlue/style/date/today.png');
+	
+}
+
+.today {
+	color: #000000;
+	textRollOverColor: #cc3300;
+	textSelectedOverColor: #cc3300;
+}
+
+
+DateField
+{
+	disabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/icon.png"); 
+	downSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/icon.png"); 
+	overSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/icon.png"); 
+	upSkin: Embed("http://try.scalenine.com/vistaBlue/style/date/icon.png"); 
+}
+
+Loader
+{
+	brokenImageSkin: Embed("http://try.scalenine.com/vistaBlue/style/other/brokenImage.png");
+}
+Image
+{
+	brokenImageSkin: Embed("http://try.scalenine.com/vistaBlue/style/other/brokenImage.png");
+}
+
+
+Menu
+{
+	
+	backgroundColor: #ffffff;
+	backgroundAlpha: .9;
+	borderStyle: solid;
+	borderThickness: 0;
+	borderColor: #cccccc;
+	roundedCorners:5;
+	color: #000000;
+	textRollOverColor: #ffffff;
+	textSelectedColor:#000000;
+	rollOverColor: #1874CD;
+}
+
+
+MenuBar
+{
+	fillColor: #e3e2e2, #ffffff;
+	backgroundColor:#ffffff;
+	backgroundAlpha: 1;
+	alpha: 1;
+	textSelectedColor:#ffffff;
+}
+
+
+NumericStepper
+{
+
+	downArrowDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/downDisable.png");
+	downArrowDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/downDown.png");
+	downArrowOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/down.png");
+	downArrowUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/down.png");
+	
+	upArrowDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/upDisable.png");
+	upArrowDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/upDown.png");
+	upArrowOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/up.png");
+	upArrowUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/numSteper/up.png");
+		
+	
+	cornerRadius:0;
+	backgroundColor:#eef2fb;
+	borderColor:#ffffff;
+
+}
+
+
+Panel
+{
+
+	closeButtonDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/up.png");
+	closeButtonDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/up.png");
+	closeButtonOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/over.png");
+	closeButtonUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/up.png");
+	
+	borderSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/panel/windowSkin.png",
+		scaleGridTop=50, 				
+	    scaleGridLeft=11, 
+	    scaleGridBottom=60, 
+	    scaleGridRight=20
+	);	
+                
+	borderThicknessLeft: 6;
+	borderThicknessRight: 6;
+	borderThicknessTop: 0;
+	borderThicknessBottom: 6;
+	headerHeight: 30;
+	titleStyleName: "title";
+	backgroundColor: #ffffff;
+	backgroundAlpa:.5;				
+}
+
+.title {
+	fontSize: 11;
+	color: #ffffff;		
+	fontWeight: bold;
+}
+
+/*
+ControlBar
+{
+	borderSkin: Embed(source="wmp11.swf", symbol="Panel_controlBarBackgroundSkin");
+	themeColor:#000000;
+}
+
+ApplicationControlBar
+{
+	borderSkin: Embed(source="wmp11.swf", symbol="app_controlBarBackgroundSkin");
+	verticalAlign: middle;
+}
+*/
+
+ProgressBar
+{
+
+	barSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/progressBar/trackOver.png",
+		scaleGridTop=1, 				
+	    scaleGridLeft=1, 
+	    scaleGridBottom=2, 
+	    scaleGridRight=3
+	);
+/*	indeterminateSkin: Embed(source="wmp11.swf", symbol="ProgressIndeterminateSkin");*/
+	trackSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/progressBar/track.png",
+		scaleGridTop=3, 				
+	    scaleGridLeft=3, 
+	    scaleGridBottom=6, 
+	    scaleGridRight=6
+	);
+}
+
+
+
+
+RadioButton
+{
+	disabledIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/unSelectedDisable.png");
+	downIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/selected.png");
+	overIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/unSelected.png");
+	selectedDisabledIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/selectedDisable.png");
+	selectedDownIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/selected.png");
+	selectedOverIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/selected.png");
+	selectedUpIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/selected.png");
+	upIcon: Embed("http://try.scalenine.com/vistaBlue/style/radio/unSelected.png");	
+	
+	color: #000000;
+	textRollOverColor: #000000;
+	textSelectedColor:#000000;
+}
+
+
+ScrollBar
+{
+	
+	thumbDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/scrollBar/thumb.gif",
+		scaleGridTop=2, 				
+	    scaleGridLeft=2, 
+	    scaleGridBottom=4, 
+	    scaleGridRight=4
+	);
+	thumbOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/scrollBar/thumb.gif",
+		scaleGridTop=2, 				
+	    scaleGridLeft=2, 
+	    scaleGridBottom=4, 
+	    scaleGridRight=4
+	);
+	thumbUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/scrollBar/thumb.gif",
+		scaleGridTop=2, 				
+	    scaleGridLeft=2, 
+	    scaleGridBottom=4, 
+	    scaleGridRight=4
+	);
+	thumbIcon: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/thumbIcon.gif");	
+	trackSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/trackBack.jpg");	
+	
+	
+	downArrowDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnDown.jpg");
+	downArrowDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnDown.jpg");
+	downArrowOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnDownOver.jpg");
+	downArrowUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnDown.jpg");
+	
+	
+	
+	upArrowDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnUp.jpg");
+	upArrowDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnUp.jpg");
+	upArrowOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnUpOver.jpg");
+	upArrowUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/scrollBar/btnUp.jpg");	
+}
+
+
+
+HSlider
+{
+	thumbDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/disable.png");
+	thumbDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/up.png");
+	thumbOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/over.png");
+	thumbUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/up.png");
+	
+	trackHighlightSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/trackUp.png",
+		scaleGridTop=1, 				
+	    scaleGridLeft=1, 
+	    scaleGridBottom=2, 
+	    scaleGridRight=2
+	);
+	trackSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/trackUp.png",
+		scaleGridTop=1, 				
+	    scaleGridLeft=1, 
+	    scaleGridBottom=2, 
+	    scaleGridRight=2
+	);	
+}
+
+MenuBar { 
+   backgroundAlpha: .9;
+   backgroundColor: #ffffff;
+   borderColor: #ffffff;
+   rollOverColor: #3370ce;
+   selectionColor: #3370ce;
+   color: #000000;
+   textRollOverColor: #ffffff;
+   textSelectedColor: #ffffff;
+   disabledColor: #8e8e8e;
+   borderThickness: 0;
+   borderStyle: none;
+   dropShadow: true;
+}
+
+
+
+VSlider
+{
+	thumbDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/disable.png");
+	thumbDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/up.png");
+	thumbOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/over.png");
+	thumbUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/up.png");
+	
+	trackHighlightSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/trackUp.png",
+		scaleGridTop=1, 				
+	    scaleGridLeft=1, 
+	    scaleGridBottom=2, 
+	    scaleGridRight=2
+	);
+	trackSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/slider/trackUp.png",
+		scaleGridTop=1, 				
+	    scaleGridLeft=1, 
+	    scaleGridBottom=2, 
+	    scaleGridRight=2
+	);	
+}
+
+
+
+TabBar
+{
+	firstButtonStyleName: "tabStyle";
+	tabStyleName: "tabStyle";
+	lastButtonStyleName: "tabStyle";
+	selectedTabTextStyleName: "selectedTabText";
+	color:#000000;
+	textRollOverColor:#000000;
+	textSelectedColor:#000000;
+}
+
+.tabStyle {
+	
+	disabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/disabled.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	downSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/selected.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	overSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/selected.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	selectedDisabledSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/selectedDisabled.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	selectedDownSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/selected.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	
+	selectedOverSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/selected.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	selectedUpSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/selected.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	upSkin: Embed(source="http://try.scalenine.com/vistaBlue/style/tab/up.png",
+		scaleGridTop=6, 				
+	    scaleGridBottom=12, 
+	    scaleGridLeft=5, 
+	    scaleGridRight=10
+	);
+	
+	
+	color:#000000;
+	textRollOverColor:#000000;
+	textSelectedColor:#000000;
+}
+
+.selectedTabText {
+	color:#000000;
+	textRollOverColor:#000000;
+	textSelectedColor:#000000;
+}
+
+
+TextInput
+{
+	backgroundImage: Embed(source="http://try.scalenine.com/vistaBlue/style/textInput/up.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=2, 
+	    scaleGridRight=4
+	);
+	backgroundSize:"100%";
+	cornerRadius:0;
+	border-style:none;
+}
+
+TextArea
+{
+	backgroundImage: Embed(source="http://try.scalenine.com/vistaBlue/style/textInput/up.png",
+		scaleGridTop=1, 				
+	    scaleGridBottom=2, 
+	    scaleGridLeft=2, 
+	    scaleGridRight=4
+	);
+	backgroundSize:"100%";
+	cornerRadius:0;
+	border-style:none;
+	
+}		
+
+TitleWindow
+{
+	closeButtonDisabledSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/up.png");
+	closeButtonDownSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/up.png");
+	closeButtonOverSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/over.png");
+	closeButtonUpSkin: Embed("http://try.scalenine.com/vistaBlue/style/panel/up.png");	
+	
+}

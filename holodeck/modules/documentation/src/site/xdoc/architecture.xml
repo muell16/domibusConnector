@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Holodeck Architecture</title>
+    <author>Hamid Ben Malek</author>
+  </properties>
+  <body>
+    <div class="section"><h3>Application Structure</h3>
+     <p>
+      The following picture shows the relationship between Holodeck, Axis2 and Tomcat:
+      <center><img src="images/picture1-a.png"/></center>
+      As you can see in the above picture, Holodeck is an application deployed within Axis2 stack,
+      which in turn is a web application deployed inside the Servlet Container of Tomcat.
+      Any Servlet Container should also work (Jetty, JBoss, WebLogic, WebSphere, ...), but
+      the distribution of Holodeck comes readily deployed on Tomcat for practical purposes
+      so that it runs out-of-the-box.
+     </p>
+
+     <p>
+       The following picture shows the external structure of Holodeck:
+       <center><img src="images/picture2-a.png"/></center>
+       Holodeck is configurable through a set of configuration files which are loaded
+       at startup. The "Database" is used store messages (outgoing messages
+       which could either be pushed or pulled). An external folder called "Submit Folder" is just
+       a folder on the hard drive in which payloads could be dropped and Holodeck will pick them
+       up and then store them in the database so that they will be either pushed or pulled.
+     </p>
+
+     <p>
+       The following picture shows what happens at startup of Holodeck:
+       <center><img src="images/picture3-a.png"/></center>
+       The above picture shows that when Holodeck starts up, it first read all the configuration files,
+       and then it creates a set of workers. A worker is a background thread or task that runs
+       in its own tread in the background and does repetitive tasks at some specific period of time.
+       For example, the picture shows a worker called "Submit Worker" which basically scans
+       the "Sbumit Folder" regularly at a specific period of time and when it finds new payloads,
+       it loads them, put them in a new message that is then stored in the database (so that Holodeck
+       will either push it or make it ready to be pulled). Another worker called "Sender Worker"
+       will scan the database at regular times, and when it finds a new message that is supposed to be pushed
+       and has not been pushed yet, then it will push it out (that is send it to its intended receiver).
+       Another worker called "PModes Watcher" regularly scans the "pmodes" folder where all pmode documents reside
+       and when it finds that a new PMode document has been created there, it will read it and make its contents
+       known to Holodeck.
+       If you want any background task to run periodically (in its own thread) when Holodeck starts up,
+       all you have to do is write such task and declare it in the configuration file "<b>holodeck/config/workers.xml</b>".
+       If you open the file <b>holodeck/config/workers.xml</b> you will see there some workers declared, and
+       you can add your own workers there if you want. To disable a given worker, all you have to do is to set
+       its attribute "activate" to false. Let's examine the structure of the configuration file
+       <b>holodeck/config/workers.xml</b>, which is shown below:
+       <div class="source"><pre>
+ &lt;Workers>
+
+   &lt;Worker name="pull1" interval="20000" total="1" activate="false"
+          workerClass="org.holodeck.ebms3.workers.impl.PullWorker">
+
+     &lt;parameter name="pmode">ImagePulling&lt;/parameter>
+     &lt;parameter name="mpc">mpc://imageStore&lt;/parameter>
+     &lt;parameter name="callbackClass">org.holodeck.ebms3.submit.SaveReceivedMsg&lt;/parameter>
+
+   &lt;/Worker>
+
+   &lt;Worker name="pmodesWatcher" interval="20000" activate="true"
+          workerClass="org.holodeck.ebms3.workers.impl.PModesWatcher">
+     &lt;parameter name="pmodesDir">../../../../config/pmodes&lt;/parameter>
+   &lt;/Worker>
+
+   &lt;Worker name="submitWorker" interval="20000" activate="true"
+          workerClass="org.holodeck.ebms3.workers.impl.SubmitWorker" />
+
+   &lt;Worker name="senderWorker" interval="20000" activate="true"
+          workerClass="org.holodeck.ebms3.workers.impl.SenderWorker" />
+
+   &lt;Worker name="receiptSenderWorker" interval="60000" activate="false"
+          workerClass="org.holodeck.ebms3.workers.impl.ReceiptSender" />
+
+ &lt;/Workers>    
+       </pre></div>
+    <ul>
+    <li>The value of the attribute "<b>name</b>" can be anything (it's just a name for your worker, but
+    it has to be different from other workers' names. The name of the worker is used for example
+    in the API if you want to tell Holodeck to stop a specific worker or to re-start it for
+    example.
+    </li>
+    <li>
+      The "<b>interval</b>" attribute is the time period after which the task should run again.
+      It is expressed in milliseconds.
+    </li>
+    <li>
+      The "<b>activate</b>" attribute controls whether the worker is active or not (should be started
+      by Holodeck or not. If it is set to false, Holodeck will not start it. If it was already running and
+      its "activate" attribute is set to false, then Holodeck will stop that worker).
+    </li>
+    <li>
+      The attribute "<b>workerClass</b>" specifies the implementation class of the worker. If
+      you are running your own worker, your implementation class should implement the interface
+      <b>java.lang.Runnable</b> if you don't need to set any initial parameters for your task.
+      But if you want to pass some parameters to your task at startup, then make your implementation class
+      implement the interface <b>org.holodeck.ebms3.workers.Task</b>.
+    </li>
+    <li>
+      "<b>parameter</b>" elements are a way to pass initial values to the task before it starts
+      running. For example, the task called "<b>pull1</b>" is a task whose job is to periodically pull messages from
+      some specific remote MSH on a some specific given MPC. So, in order for this task to do its
+      job, it first needs to know which remote MSH it should call and what MPC to use when issuing
+      a PullRequest message. If your class needs some values to be given to it prior to running,
+      then your task should implement the interface <b>org.holodeck.ebms3.workers.Task</b>.
+      In the case of our worker called "<b>pull1</b>", there is a parameter specifying the pmode name (which is enough
+      to know the URL of the remote MSH), and also there is a parameter called "callbackClass" which
+      specifies the class that should handle the pulled message. In this case the class is
+      "<b>org.holodeck.ebms3.submit.SaveReceivedMsg</b>" which will simply save the received pulled message into the
+      folder "<b>holodeck/store/receive/</b>".
+    </li>
+    </ul>
+     </p>
+    </div>
+
+    <div class="section"><h3>Internal Structure of Holodeck</h3>
+      <p>
+        In this section, it is assumed the reader is very familiar with Axis2 architecture, the concept of
+        pluggable Axis2 modules, what a "MessageReciver" is and how Axis2 services are deployed.
+        For more information about Axis2 stack, the reader should go to axis2 website or read from the articles in this
+        <a href="http://ws.apache.org/axis2/articles.html">page</a>
+       </p>
+       <br/>
+       <p>
+        Holodeck consists of a set of three axis2 modules, a MessageReceiver, and two services.
+        The three modules are respectively: "Security Module", "Reliability Module", and "ebMS Module".
+        These modules are plugged inside the pipeline of Axis2 stack. The two services are called
+        "Gateway" and "WSRM Service". The "WSRM Service" is not shown in the picture below.
+        The "MessageReceiver" (not shown in the picture below) is responsible for routing inbound (received) messages
+        to the "Gateway" service. The picture below shows the tree modules and the "Gateway" Service:
+        <center><img src="images/picture4-a.png"/></center>
+        Behind the "Gateway" Service, there could be many registered "<b>Consumer</b>" objects.
+        A "<b>Consumer</b>" object is any application interested in processing (consuming) a received ebMS message.
+        The "<b>Gateway</b>" Service will route the message to the right "Consumer" object based on
+        the registration criteria: when a "Consumer" object registers itself to the "Gateway", it tells exactly to the
+         Gateway what kind of message it is interested in consuming. For example, a Consumer may be interested
+         in all received messages that have a specific value in the ebMS SOAP header <b>&lt;eb:To></b> and/or
+         specific values in the ebMS SOAP header <b>&lt;eb:CollaborationInfo></b>.
+      </p>
+    </div>
+  </body>
+</document>

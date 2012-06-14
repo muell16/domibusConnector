@@ -1,0 +1,146 @@
+<module name="holodeck-reliability" class="org.holodeck.reliability.module.ReliabilityModule">
+  
+  <!--
+   The name of the folder in which attachments will be stored.
+   It could be an absolute path to some folder on the file system, or
+   just the name of a folder (in which case it will be automatically
+   created under WEB-INF\modules\holodeck-reliability directory).
+  -->
+  <parameter name="MessageStorageFolder">Storage_Folder</parameter>
+  <parameter name="RELIABILITY_CONFIG_FILE">../../../../config/reliability-config.xml</parameter>
+  <parameter name="PersistenceUnit">wsrm-mysql</parameter>
+  <parameter name="MessageLifetime" locked="false">P29D</parameter>
+  <parameter name="ResendFromDBAtStartup">false</parameter>
+  <!--parameter name="Quality">
+    <Reliability name="ORDER-ANON">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>true</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+    <Reliability name="ORDER-CALLBACK">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>true</InOrder>
+      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+    <Reliability name="ORDER-POLL">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>true</InOrder>
+      <AckReply>Poll</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+    <Reliability name="ANON">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+    <Reliability name="CALLBACK">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+    <Reliability name="POLL">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Poll</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="GD">
+      <AtMostOnce>false</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>1</MaximumRetransmissionCount>
+    </Reliability>
+  </parameter-->
+
+
+
+  <InFlow>
+    <!--
+    <handler name="ProfileHeaderExtractor" class="org.holodeck.reliability.module.ProfileHeaderExtractor">
+      <order phase="OperationInPhase" />
+    </handler>
+    <handler name="ValidationTask" class="org.holodeck.reliability.module.ValidationTask">
+      <order phase="OperationInPhase" />
+    </handler>
+    -->
+    <handler name="DuplicateRequestTask" class="org.holodeck.reliability.handlers.DuplicateRequest">
+      <order phase="holodeckReliabilityInPhase" phaseFirst="true"/>
+    </handler>
+    <handler name="ResponseProcessingTask" class="org.holodeck.reliability.handlers.ResponseProcessing">
+      <order phase="holodeckReliabilityInPhase" after="DuplicateRequestTask"/>
+    </handler>
+    <handler name="PollProcessingTask" class="org.holodeck.reliability.handlers.PollProcessing">
+      <order phase="holodeckReliabilityInPhase" after="ResponseProcessingTask"/>
+    </handler>
+    <handler name="GroupInitTask" class="org.holodeck.reliability.handlers.ReceiverGroupInit">
+      <order phase="holodeckReliabilityInPhase" after="PollProcessingTask"/>
+    </handler>
+    <handler name="ReliabilityTask" class="org.holodeck.reliability.handlers.ReliabilityProcessing">
+      <order phase="holodeckReliabilityInPhase" after="GroupInitTask"/>
+    </handler>
+    <handler name="CallbackTask" class="org.holodeck.reliability.handlers.CallbackProcessing">
+      <order phase="holodeckReliabilityInPhase" after="ReliabilityTask"/>
+    </handler>
+    <handler name="PreDeliveryTask" class="org.holodeck.reliability.handlers.PreDelivery">
+      <order phase="holodeckReliabilityInPhase" after="CallbackTask"/>
+    </handler>
+    <handler name="WsrHeaderDetacherTask" class="org.holodeck.reliability.handlers.WsrmHeadersDetacher">
+      <order phase="holodeckReliabilityInPhase" after="PreDeliveryTask"/>
+    </handler>
+  </InFlow>
+
+  <OutFlow>
+    <!--
+    <handler name="ValidationTask" class="org.holodeck.reliability.module.ValidationTask">
+      <order phase="OperationOutPhase" />
+    </handler>
+    -->
+    <handler name="Packager" class="org.holodeck.reliability.handlers.Packager">
+      <order phase="holodeckReliabilityOutPhase" phaseFirst="true"/>
+    </handler>
+    <handler name="PreSendTask" class="org.holodeck.reliability.handlers.PreSend">
+      <order phase="holodeckReliabilityOutPhase" after="Packager"/>
+    </handler>
+    <handler name="ResponseAckAppenderTask" class="org.holodeck.reliability.handlers.ResponseAckAppender">
+      <order phase="holodeckReliabilityOutPhase" after="PreSendTask"/>
+    </handler>
+    <handler name="PollProcessingTask" class="org.holodeck.reliability.handlers.PollProcessing">
+      <order phase="holodeckReliabilityOutPhase" after="ResponseAckAppenderTask"/>
+    </handler>
+    <handler name="CachedBusinessResponseTask" class="org.holodeck.reliability.handlers.CachedBusinessResponse">
+      <order phase="holodeckReliabilityOutPhase" after="PollProcessingTask"/>
+    </handler>
+  </OutFlow>
+
+  <INFaultFlow/>
+
+  <OutFaultFlow/>
+
+  
+</module>

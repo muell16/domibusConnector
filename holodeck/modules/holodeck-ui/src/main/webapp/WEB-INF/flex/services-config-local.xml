@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services-config>
+	<services>
+		<service-include file-path="remoting-config.xml" />
+		<!--<service-include file-path="messaging-config.xml" />
+		<service-include file-path="proxy-config.xml" />
+	--></services>
+
+	<channels>
+		<channel-definition id="my-amf"
+			class="mx.messaging.channels.AMFChannel">
+			<endpoint
+				uri="http://localhost:8080/{context.root}/messagebroker/amf"
+				class="flex.messaging.endpoints.AMFEndpoint" />
+		</channel-definition>
+	</channels>
+
+	<factories>
+		<factory id="spring" class="org.mdkt.flex.factory.SpringFactory" />
+	</factories>
+
+</services-config>

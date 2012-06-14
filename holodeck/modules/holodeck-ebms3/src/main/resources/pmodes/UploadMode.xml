@@ -1,0 +1,28 @@
+<PModes>
+
+  <PMode name="UploadMode">
+
+    <UserService name="ConsumerTest">
+      <ToPartyInfo>
+        <PartyId>ConsumerTest</PartyId>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>UploadService</Service>
+        <Action>upload</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <Binding name="uploadBinding">
+      <MEP name="One-Way/Push">
+        <Leg number="1" mpc="UploadMPC" userService="ConsumerTest"
+             soapAction="upload" reliability="CALLBACK" security="sign">
+          <Endpoint address="http://localhost:8080/holodeck/services/msh"
+                    soapVersion="1.1" />
+          <As4Receipt>Response</As4Receipt>
+        </Leg>
+      </MEP>
+    </Binding>
+
+  </PMode>
+
+</PModes>

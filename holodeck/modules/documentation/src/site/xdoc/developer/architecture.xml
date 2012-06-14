@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<document>
+  <properties>
+    <title>Holodeck Architecture</title>
+    <author email="hamidbm@ymail.com">Hamid Ben Malek</author>
+    <author email="jdurand@us.fujitsu.com">Jacques Durand</author>
+  </properties>
+  <body>
+    <div class="section"><h3>Application Structure</h3>
+      Holodeck is deployed within Axis2 stack as a set of modules (inside axis2 processing pipeline)
+      as illustrated in the picture below:
+      <center><img src="../images/picture4-a.png"/></center>
+      <p>
+      We will examine each module a little bit in details:
+      </p>
+      <section name="ebMS Module">
+       The "<b>ebMS Module</b>" is the folder called "holodeck-ebms3" located under the
+       directory "<b>holodeck/msh/WEB-INF/modules/</b>". Let's examine the configuration file
+       for this module which is "<b>holodeck/msh/WEB-INF/modules/holodeck-ebms3/META-INF/module.xml</b>".
+       This configuration file is shown below:
+       <div class="source"><pre>
+&lt;module name="holodeck-ebms3" class="org.holodeck.ebms3.module.Ebms3Module">
+  &lt;parameter name="PersistenceUnit">ebms3-derby&lt;/parameter>
+  &lt;parameter name="PModesDir" locked="false">../../../../config/pmodes&lt;/parameter>
+  &lt;parameter name="Modules">holodeck-ebms3, holodeck-reliability, holodeck-security, rampart&lt;/parameter>
+  &lt;parameter name="GATEWAY_CONFIG_FILE">../../../../config/gateway.xml&lt;/parameter>
+  &lt;parameter name="MSHAddress" locked="false">http://localhost:8080/holodeck/services/msh&lt;/parameter>
+
+  // ======================================================================================
+      The name of the folder in which submitted messages will be stored.
+      It could be an absolute path to some folder on the file system, or
+      just the name of a folder (in which case it will be automatically
+      created under WEB-INF directory).
+  // ======================================================================================
+  &lt;parameter name="SubmittedMessagesFolder">../../../../store/send&lt;/parameter>
+
+  // ======================================================================================
+      The value of this parameter is a comma-separated list of possible names
+      (or IP addresses this local machine, that is the machine running this MSH)
+      may have. It helps the MSH by looking at a given URL to determine if
+      it is the URL of this MSH or the URL of another remote MSH by just
+      comparing the machine name in the URL to the values of this parameter.
+  // ======================================================================================
+  &lt;parameter name="LocalMachine">localhost,127.0.0.1,holodeck,192.240.13.76&lt;/parameter>
+
+  // ======================================================================================
+      If true, the MSH, when writing a message to database, it will also
+      persist all the attachments the message may have to database. This
+      would work for small to medium attachments (may be up 1 Giga per
+      attachment). However, if an attachment is way bigger than 1 Giga, the
+      database columns may be limited in storage space, and in this case it would
+      be better if the MSH persist the attachment on the file system where
+      there is no limit on storage (except for the disk capacity of course).
+      Make this parameter false if you are planning on having attachment very
+      large that may exceed 1 GB (a giga bytes) or whatever limit your database is set to
+  // ======================================================================================
+  &lt;parameter name="StoreAttachmentsInDB">false&lt;/parameter>
+
+  // ======================================================================================
+      The name of the folder in which the attachments of the arriving messages
+      will be stored.
+      It could be an absolute path to some folder on the file system, or
+      just the name of a folder (in which case it will be automatically
+      created under WEB-INF\modules\holodeck-ebms3 directory).
+  // ======================================================================================
+  &lt;parameter name="ReceivedMessagesFolder">../../../../store/receive&lt;/parameter>
+
+  &lt;parameter name="Workers">../../../../config/workers.xml&lt;/parameter>
+
+  &lt;InFlow>
+    &lt;handler name="PModeFinder" class="org.holodeck.ebms3.handlers.PModeFinder">
+      &lt;order phase="ebms3InPhase" phaseFirst="true"/>
+    &lt;/handler>
+    &lt;handler name="ErrorLogger" class="org.holodeck.ebms3.handlers.ErrorLogger">
+      &lt;order phase="ebms3InPhase" after="PModeFinder"/>
+    &lt;/handler>
+    &lt;handler name="Validation" class="org.holodeck.ebms3.handlers.Validation">
+      &lt;order phase="ebms3InPhase" after="ErrorLogger"/>
+    &lt;/handler>
+    &lt;handler name="ReceiptProcessor" class="org.holodeck.ebms3.handlers.ReceiptProcessor">
+      <order phase="ebms3InPhase" after="Validation"/>
+    &lt;/handler>
+    &lt;handler name="ReceiptGen" class="org.holodeck.ebms3.handlers.ReceiptGen">
+      &lt;order phase="ebms3InPhase" after="ReceiptProcessor"/>
+    &lt;/handler>
+    &lt;handler name="PullProcessor" class="org.holodeck.ebms3.handlers.PullProcessor">
+      &lt;order phase="ebms3InPhase" after="ReceiptGen"/>
+    &lt;/handler>
+    &lt;handler name="RespPackager" class="org.holodeck.ebms3.handlers.ResponsePackager">
+      &lt;order phase="ebms3InPhase" after="PullProcessor"/>
+    &lt;/handler>
+    &lt;handler name="ReceivedUserMsg" class="org.holodeck.ebms3.handlers.ReceivedUserMsgHandler">
+      &lt;order phase="ebms3InPhase" after="RespPackager"/>
+    &lt;/handler>
+    &lt;handler name="InvokeCallback" class="org.holodeck.ebms3.handlers.InvokeCallback">
+      &lt;order phase="ebms3InPhase" after="ReceivedUserMsg"/>
+    &lt;/handler>
+    &lt;handler name="HeaderDetacher" class="org.holodeck.ebms3.handlers.HeaderDetacher">
+      &lt;order phase="ebms3InPhase" after="InvokeCallback"/>
+    &lt;/handler>
+  &lt;/InFlow>
+
+  &lt;OutFlow>
+    &lt;handler name="Packager" class="org.holodeck.ebms3.handlers.Packager">
+      &lt;order phase="ebms3OutPhase" phaseFirst="true"/>
+    &lt;/handler>
+    &lt;handler name="CallbackPersist"
+             class="org.holodeck.ebms3.handlers.CallbackPersist">
+      &lt;order phase="ebms3OutPhase" after="Packager"/>
+    &lt;/handler>
+    &lt;handler name="RespPackager" class="org.holodeck.ebms3.handlers.ResponsePackager">
+      &lt;order phase="ebms3OutPhase" after="CallbackPersist"/>
+    &lt;/handler>
+    &lt;handler name="PullProcessor" class="org.holodeck.ebms3.handlers.PullProcessor">
+      &lt;order phase="ebms3OutPhase" after="RespPackager"/>
+    &lt;/handler>
+    &lt;handler name="TrackReceipt" class="org.holodeck.ebms3.handlers.TrackReceipt">
+      &lt;order phase="ebms3OutPhase" after="PullProcessor"/>
+    &lt;/handler>
+    &lt;handler name="ReceiptAppender" class="org.holodeck.ebms3.handlers.ReceiptAppender">
+      &lt;order phase="ebms3OutPhase" after="TrackReceipt"/>
+    &lt;/handler>
+  &lt;/OutFlow>
+
+  &lt;INFaultFlow/>
+  &lt;OutFaultFlow/>
+&lt;/module>
+       </pre></div>
+ <p>
+   Let's examine the parameters of the above configuration one by one:
+   <ul>
+    <li>
+      <b>PersistenceUnit</b>: the name of the JPA persistence unit. Persistence units are defined in the
+       configuration file "<b>holodeck/msh/WEB-INF/classes/META-INF/persistence.xml</b>". The default
+       persistence unit for the ebMS module is to use derby as embedded. If you want to use another database,
+       you can change the persistence unit here (but you have to create the database and tables from ddl scripts
+       provided in the directory "<b>holodeck/store/derby/</b>").
+    </li>
+    <li>
+      <b>PModesDir</b>: this is the directory where holodeck stores the PMode documents ("<b>holodeck/config/pmodes</b>")
+    </li>
+    <li>
+      <b>Modules</b>: this is the list of the modules that an outgoing message should go through
+    </li>
+    <li>
+      <b>GATEWAY_CONFIG_FILE</b>: this is the configuration file of Holodeck Gateway (holodeck service that dispatches
+      messages to various consumers). The default location is "<b>holodeck/config/gateway.xml</b>".
+    </li>
+    <li>
+      <b>MSHAddress</b>: this is the address of this MSH. You should replace "localhost" in the URL
+      by the name (or domain name) of the machine on which holodeck is running. Why holodeck needs to know
+      its own address? Well, this is used to determine the sender from the receiver when
+      reading a PMode document. By knowing its own address, this helps holodeck which figuring out which role
+      (sender or receiver) it plays within a given PMode document.
+    </li>
+    <li>
+      <b>SubmittedMessagesFolder</b>: this is the folder where a user (person or application) drops payloads (data files)
+      in there so that holodeck picks them up and either push them out in a message or make them in a message
+      ready to be pulled when a PullRequest arrives for them. The default location is "<b>holodeck/store/send/</b>"
+    </li>
+    <li>
+      <b>LocalMachine</b>: the value of this parameter is a list of all the names for the
+      local machine on which holodeck is running (be it ip address, name, domain name, etc...).
+      This parameter helps holodeck determining which PMode is being used when it receives
+      a message (not all messages contain the "pmode" attribute in their SOAP header, and when such
+      information is missing, holodeck makes extra work to figure out what is the name of the PMode to
+      associate with the message being received. Knowing all the names of the local machine, helps
+      determining the pmode name.
+    </li>
+    <li>
+      <b>StoreAttachmentsInDB</b>: this parameter is not used anymore. It used to be an option to choose
+      whether storing attachment in database (when persisting a message to database). Holodeck does not store
+      attachments in database (it stores them as files on the hard disk), but only stores a reference
+      to the attachments. This is more practical because if the attachments are really huge, the database tables
+      cannot hold them, and that's why attachments are stored as files on the disk).
+    </li>
+    <li>
+      <b>ReceivedMessagesFolder</b>: this is the folder where holodeck stores received messages (actually when the consumer
+      called "<b>org.holodeck.ebms3.consumers.impl.SaveToFolder</b>" gets the message from holodeck gateway,
+      it stores the message there). If the message gets processed by a different consumer, it may not be stored
+      in that folder (for example a consumer may put the message in a JMS topic for example, instead of
+      saving it to the folder "<b>holodeck/store/receive/</b>").
+    </li>
+    <li>
+      <b>Workers</b>: this is the configuration file that contains the workers (background tasks executed
+       periodically). The default location of this file is "<b>holodeck/config/workers.xml</b>".
+    </li>
+   </ul>
+ </p>
+      </section>
+      <br/>
+
+      <section name="Reliability Module">
+       The "<b>Reliability Module</b>" is the folder called "holodeck-reliability" located under the
+       directory "<b>holodeck/msh/WEB-INF/modules/</b>". Let's examine the configuration file
+       for this module which is "<b>holodeck/msh/WEB-INF/modules/holodeck-reliability/META-INF/module.xml</b>".
+       This configuration file is shown below (showing only the parameters):
+       <div class="source"><pre>
+ &lt;module name="holodeck-reliability"
+            class="org.holodeck.reliability.module.ReliabilityModule">
+
+  // ----------------------------------------------------------------------------
+  // The name of the folder in which attachments will be stored.
+  // It could be an absolute path to some folder on the file system, or
+  // just the name of a folder (in which case it will be automatically
+  // created under WEB-INF\modules\holodeck-reliability directory).
+  // ----------------------------------------------------------------------------
+  &lt;parameter name="MessageStorageFolder">Storage_Folder&lt;/parameter>
+  &lt;parameter name="RELIABILITY_CONFIG_FILE">../../../../config/reliability-config.xml&lt;/parameter>
+  &lt;parameter name="PersistenceUnit">wsrm-derby&lt;/parameter>
+  &lt;parameter name="MessageLifetime" locked="false">P29D&lt;/parameter>
+  &lt;parameter name="ResendFromDBAtStartup">false&lt;/parameter>
+
+  ...
+
+  &lt;/module>
+
+       </pre></div>
+ <ul>
+  <li>
+     <b>MessageStorageFolder</b>: this is the folder where the reliability stores the
+        attachments of an outgoing message (reliable outgoing messages have to be stored
+        in the database prior to sending them, because in case no acknowledgment is received
+        for them, they would have to be resent by the reliability module). This details should not
+        concern the user (the user should not care where the reliability module stores the attachments).
+  </li>
+  <li>
+     <b>RELIABILITY_CONFIG_FILE</b>: this is the configuration file that contains quality of service definitions
+      for reliability. The default file is "<b>holodeck/config/reliability-config.xml</b>".
+  </li>
+  <li>
+     <b>PersistenceUnit</b>: this is the JPA persistence unit used by the reliability module
+     to persist outgoing messages (the default is embedded Derby).
+  </li>
+  <li>
+     <b>MessageLifetime</b>: the value of this parameter specifies the time interval after which a message
+     expires in the database.
+  </li>
+  <li>
+     <b>ResendFromDBAtStartup</b>: the value of this parameter controls whether the "re-sender"
+      background task (in the reliability module) should execute when starting up holodeck. When
+      starting holodeck (and therefore the reliability module as well), there could be some messages stored
+      in the database of the reliability module that have been sent already in the past but not acknowledged yet.
+      So this parameter controls whether these messages should be resent or not as holodeck starts up.
+  </li>
+ </ul>
+      </section>
+
+ <br/>
+
+      <section name="Security Module">
+       The "<b>Security Module</b>" is the folder called "holodeck-security" located under the
+       directory "<b>holodeck/msh/WEB-INF/modules/</b>". Let's examine the configuration file
+       for this module which is "<b>holodeck/msh/WEB-INF/modules/holodeck-security/META-INF/module.xml</b>".
+       This configuration file is shown below (showing only the parameters):
+       <div class="source"><pre>
+&lt;module name="holodeck-security" class="org.holodeck.security.module.SecurityModule">
+
+  &lt;parameter name="SecurityConfigFile">../../../../config/security-config.xml&lt;/parameter>
+  &lt;parameter name="PoliciesFolder">../../../../config/policies&lt;/parameter>
+  &lt;parameter name="KeysFolder">../../../../config/keys&lt;/parameter>
+
+  ...
+
+&lt;/module>
+       </pre></div>
+<ul>
+  <li>
+     <b>SecurityConfigFile</b>: this is the configuration file that tells the security module what keystore,
+      encryption user, callback class (for passwords), and the WSS policy to use.
+  </li>
+  <li>
+     <b>PoliciesFolder</b>: this is the folder where holodeck stores WSS policies.
+  </li>
+  <li>
+     <b>KeysFolder</b>: this is the folder where holodeck stores security keys and keystores.
+  </li>
+</ul>
+      </section>
+
+    </div>
+  </body>
+</document>

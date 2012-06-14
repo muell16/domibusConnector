@@ -1,0 +1,94 @@
+<Reliability-Config>
+    
+   <!-- 
+   ===================================================================================
+    This Reliability profile is called "RM-PROFILE-ACKS-TO-URL" and can be
+    referred as such by the PMode 
+   ===================================================================================
+   -->
+   <Reliability name="RM-PROFILE-ACKS-TO-URL">
+      
+      <!-- 
+        ==============================================================================
+        if "true", this RM Quality of Service is required. Here, this is
+	Duplicate elimination. (NOTE: Should always be "true" when AtLeastOnce 
+	   is "true", because of message resending generating duplicates.) 
+        ==============================================================================
+      -->
+      <AtMostOnce>true</AtMostOnce> 
+
+      <!-- 
+        ==============================================================================
+        if "true", this RM Quality of Service is required. Here, this is
+	Message acknowledgement (and resending if not acknowledged). 
+        ==============================================================================
+      -->
+      <AtLeastOnce>true</AtLeastOnce> 
+
+      <!-- 
+        ==============================================================================
+        if "true", this RM Quality of Service is required. Here, this is
+	message ordering (messages delivered in same order as submitted).
+	NOTE: due to performance and complex interaction with other QoS, 
+	use only when required by your application. 
+        ==============================================================================
+      -->
+      <InOrder>false</InOrder> 
+
+      <!-- 
+        ==============================================================================
+        In case AtLeastOnce is "true", specify the acknowledgement details.
+	The value is Callback or Response. If "Response", the acknowledgement
+	is sent back on the HTTP response of the message to acknowledge. (This only
+	makes sense if the message was on teh HTTP response, i.e. pushed, not pulled)
+	In case "Callback" is chosen, the "ackTo" attribute must be set to the URL
+	of the destination for these acks (normally, the URL of the sender MSH.)
+        ==============================================================================
+      -->
+      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
+
+      <!-- 
+        ==============================================================================
+        In case AtLeastOnce is "true". Interval between two resending of the
+	same emssage, if not acknowledged (in milliseconds : 40000 = 40sec).
+        ==============================================================================
+      -->
+      <RetransmissionInterval>40000</RetransmissionInterval>
+
+      <!-- 
+        ==============================================================================
+        Is exponential backoff technique used (yes if "true"), meaning
+	over time, the retransmission interval gets (exponentially) longer and longer.
+        ==============================================================================
+      -->
+      <ExponentialBackoff>false</ExponentialBackoff>
+
+      <!-- 
+        ==============================================================================
+        How many time does the MSH try to resend a non-acknowledged message.
+        ==============================================================================
+      -->
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+
+    </Reliability>
+
+
+
+    <!-- 
+    =================================================================================
+     This Reliability profile is called "RM-PROFILE-ACKS-AS-RESPONSE" and can be
+     referred as such by the PMode. The only difference with "RM-PROFILE-ACKS-TO-URL"
+     is that acknowledgements are sent back over the HTTP response of the message.
+    =================================================================================
+    -->
+    <Reliability name="RM-PROFILE-ACKS-AS-RESPONSE">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+</Reliability-Config>

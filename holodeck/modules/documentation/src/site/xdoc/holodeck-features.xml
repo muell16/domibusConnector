@@ -1,0 +1,60 @@
+<document>
+  <properties>
+    <title>Holodeck Features</title>
+    <author>Hamid Ben Malek</author>
+  </properties>
+  <body>
+
+    <section name="Feature Summary">
+
+ <p>
+
+ The following are the key features of Holodeck in a nutshell:
+<ul>
+  <li> Holodeck is implemented in Java on top of Axis2, using some of its API, and deployed within it as a set of
+   modules and services.
+  </li>
+
+  <li> Because Holodeck is implemented as a set of Axis2 modules, it is fully compatible with webservices and provides
+   a nice integration. Various consumer types (webservice, MSH PartyID, ESB, ...) can be registered to consume
+   messages, and Holodeck's gateway component provides dispatching functionality to these consumers based on what kind
+   of message each consumer is interested to consume.
+  </li> 
+
+  <li> The modules (ebMS3 Module, Reliability Module, Security Module, AS4 Module) inside Holodeck are independent
+   (they work as black-boxes). These quality of service modules can also be harnest for webservice use. In other words,
+   users who only deal with webservices can still use Holodeck to provide quality of service to their webservices.
+  </li> 
+
+  <li> Since Axis2 is a third-generation of webservices stack, it uses the concept of streaming. Holodeck benefits from
+   this concept, and as a result it can send out (and receive) huge attachments without a problem.
+   Previous implementations of B2B Messaging (before the concept of streaming) used to choke on messages nearing 50MB
+   of size.
+  </li> 
+
+  <li> Holodeck configuration can be achieved either manually through the modification of some configuration files, or
+   through a Web interface implemented in Adobe Flex (partially implemented). The Web interface allows administrators to drive and interact
+   with Holodeck accross the Internet.
+  </li> 
+
+  <li> Messages can be submitted to Holodeck, either to be sent out (i.e. pushed) or to be stored so that they can be pulled
+   by other B2B partners. This message submission can be done in three ways:
+   <ul>
+     <li>Using Holodeck API </li>
+     <li> Manually creating an empty folder and dropping payloads in it (Holodeck will then pick up these payloads to create
+     a message that will either be pushed (sent out) or stored to be pulled by others. </li>
+     <li> Using the Flex Web Interface, users can remotely accross the Internet, submit payloads from their machines (could
+     be huge files) to Holodeck which will then create a message from these payloads (a message that will be either
+     pushed or pulled). </li>
+   </ul>
+  </li>
+  <li> The Gateway component of Holodeck has only one configuration file called <i>gateway.xml</i>. This file registers
+   the set of various consumers together with their filters (each consumer has a filter that says what kind of message
+   it wants to consume).
+  </li> 
+</ul>
+
+</p>
+</section>
+</body>
+</document>

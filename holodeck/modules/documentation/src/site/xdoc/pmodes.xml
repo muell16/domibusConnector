@@ -1,0 +1,368 @@
+<document>
+  <properties>
+    <title>Processing Modes</title>
+    <author>Hamid Ben Malek</author>
+  </properties>
+  <body>
+
+    <section name="What is a PMode">
+   <p>
+  A PMode (short for <b>P</b>rocessing <b>M</b>ode) is a concept introduced in ebMS 3 core specifiction to deal with
+  agreements. In order for two partners to communicate in a B2B scenario using ebXML messaging, the partners
+  would need to agree on many things, including (but not limited to) what quality of service to use (reliability,
+  security, and if so what features to use like what to sign, encrypt, etc...), what MEP is being used, etc...
+  In ebMS version 2, this was achieved by exchanging a complex document called CPA. In ebMS version 3, only a
+  very smaller part of the CPA is really needed to exchange messages, and this minimum information is encapsulated
+  by a much smaller document called PMode.
+ </p>
+ <p>
+  For example, webservice consumers need to have the WSDL document in order to call a given service (the WSDL contains
+  important information such as the address of the service, its different ports and the payloads it expects, etc...).
+  Similarly, for B2B messaging between partners, a document called PMode would need be on both sides (on the service side as well as on the client side). This PMode
+  document contains information on how the messaging exchange would occur (what is the address to use, what is the MEP,
+  what kind of information should be present in the SOAP headers, etc...)
+ </p>
+</section>
+
+<section name="How to create a PMode and where do PModes reside?">
+ <p>
+  PModes are small XML documents that are placed in a folder called <b>pmodes</b> located under the directory
+  <b>holodeck-1.0/config/</b>. The location of this folder can be changed by modifying the
+  configuration file of the ebMS3 module (<b>holodeck-1.0/msh/WEB-INF/modules/holodeck-ebms3/META-INF/module.xml</b>).
+</p>
+<p>
+  Each PMode can be represented by one XML document, although many PModes could be defined in one single XML document
+  as well. Depending on your preference, you could create an XML document for each PMode, or one single XML document
+  in which you define all the PModes you may use. The PMode syntax is explained in the following section.
+</p>
+</section>
+
+<section name="PMode syntax">
+ <p>
+   A PMode document always contains the starting element:
+   <div class="source"><pre>
+     &lt;PModes>
+
+     &lt;/PModes>
+   </pre></div>
+ </p>
+ <p>
+    Within the elements <pre>&lt;PModes>&lt;/PModes></pre> you can declare many "Producer", "Userservice",
+    "Binding", and "PMode" elements. The following sample illustrates this:
+    <div class="source"><pre>
+    &lt;PModes>
+
+       // ---------------- Define many producers -------------------
+       &lt;Producer name="name-it-anything">
+
+       &lt;/Producer>
+       &lt;Producer name="second-producer">
+
+       &lt;/Producer>
+
+       etc...
+
+       // ---------------- Define many UserServices -----------------
+       // ------------ first User Service ------------
+       &lt;UserService name="name-it-something">
+
+       &lt;/UserService>
+       // ------------ second User Service -----------
+       &lt;UserService name="secondService">
+
+       &lt;/UserService>
+       // ------------ third User Service ------------
+       &lt;UserService name="thirdService">
+
+       &lt;/UserService>
+
+       etc...
+
+       // ---------------- Define many bindings ----------------------
+       // ------------ first binding -----------------
+       &lt;Binding name="firstBinding">
+
+       &lt;/Binding>
+       // ------------ second binding ----------------
+       &lt;Binding name="secondBinding">
+
+       &lt;/Binding>
+
+       etc...
+
+       // ---------------- Define many pmodes ------------------------
+       // ------------ first PMode -------------------
+       &lt;PMode name="firstPMode">
+
+       &lt;/PMode>
+       // ------------ second PMode ------------------
+       &lt;PMode name="secondPMode">
+
+       &lt;/PMode>
+    &lt;/PModes>
+    </pre></div>
+
+    The order of the above elements is
+    not important. For example, you can declare UserServices first (instead of declaring
+    Producers first), then anything else you want to declare (the order does not matter).
+    As long as elements with the same type
+    are declared together one after the other (UserServices should be grouped together, Producers should be grouped together, etc...),
+    that should be fine. This is to say, you cannot
+    for example declare a "Producer", then declare a "UserService" element, then
+    declare another "Producer" element.
+    <p>
+    What we call a PMode (Processing Mode) is actually the contents of the xml element <b>&lt;PMode></b>. So the above
+    sample defines two Processing Modes, one called "firstPMode" and the second
+    called "secondPMode" (look at the "name" attribute in the xml element <b>&lt;PMode></b>
+    </p>
+
+    <p>
+       A Processing Mode (the xml element <b>&lt;PMode></b>) always has one single "Binding".
+       To specify the "Binding" object of a given "PMode" object, we use the "binding" attribute.
+       For example, in the sample above, if the PMode object called "firstPMode" has a Binding object
+       which corresponds to the xml element <b>&lt;Binding></b> with the name "secondBinding",
+       then we should specify this correspondence in the "binding" attribute as follows:
+       <div class="source"><pre>
+       &lt;PModes>
+
+       ...
+       
+       &lt;PMode name="firstPMode" binding="secondBinding"/>
+
+       &lt;/PModes>
+       </pre></div>
+       An alternative way of associating a "Binding" object to a "PMode" object, is to
+       define the xml element <b>&lt;Binding></b> as a child within the xml element <b>&lt;PMode></b> as
+       in the following sample:
+       <div class="source"><pre>
+       &lt;PModes>
+
+         ...
+
+         &lt;PMode name="firstPMode">
+           &lt;Binding name="secondBinding">
+
+           &lt;/Binding>
+         &lt;/PMode>
+           
+       &lt;/PModes>
+       </pre></div>
+    </p>
+    <p>
+      The reason for defining many "Producer" and "UserService" elements within the root
+      element <b>&lt;PModes></b>, is because different PMode objects may share these
+      elements. For example, two different PMode objects may share the same "UserService"
+      element. Instead of defining the same xml element <b>&lt;UserService></b> within
+      both PMode objects, a single instance of this xml element would be defined and
+      the two PModes may just reference it. But this is not always the case. It could be
+      for example that you have two PMode object that do not share anything in common.
+      In this case, you can define the xml element <b>&lt;UserService></b> within the
+      PMode element itself, as illustrated in the following sample:
+      <div class="source"><pre>
+        &lt;PModes>
+          &lt;PMode name="firstPMode">
+            &lt;Producer name="XYZ">
+
+            &lt;/Producer>
+            &lt;UserService name="thirdService">
+
+            &lt;/UserService>
+
+            &lt;Binding name="secondBinding">
+
+            &lt;/Binding>
+          &lt;/PMode>
+        &lt;/PModes>
+      </pre></div>
+      In the sample above the xml elements "Producer", "UserService" and "Binding" are
+      defined as direct children of the xml element <b>&lt;PMode</b>.
+    </p>
+ </p>
+
+</section>
+
+<section name="Interpretation of the PMode syntax">
+<p>
+The xml element <b>&lt;Producer></b> represents an entity (person, application, corporation, etc...)
+that produces User Messages (a "User Message" is a SOAP message that contains payloads data. See <a href="terminology.html">"Terminology"</a>).
+In the ebXML specification, this is represented by the xml element <b>&lt;eb:From></b> within
+the SOAP header.
+</p>
+
+<p>
+The xml element <b>&lt;UserService></b> represents the destination where the User Message
+will go. In the ebXML specification, this is represented by the xml elements <b>&lt;eb:To></b>,
+<b>&lt;eb:CollaborationInfo></b>, <b>&lt;eb:PayloadInfo></b> and <b>&lt;eb:MessageProperties></b>.
+The name "UserService" was coined as an analogy to the name "Webservice". In a way, a "UserService"
+is very similar to a "WebService". The similarities are the following: both represent a service
+running on some server to which messages will be destined. Both have an xml document
+that describes how to send messages to the service: a Webservice has an xml document called "WSDL",
+whereas an ebMS Service ("UserService") has an xml document called PMode.
+</p>
+
+<p>
+  The xml element <b>&lt;Binding></b> contains information mostly related to transport, such as
+  the URL address of the destination, the soap version, the soap action, and the MEP (Message Exchange Pattern) to use.
+  The <b>&lt;Binding></b> element also contains detailed information of each leg of the MEP being used.
+  For example, <b>&lt;Binding></b> element can specify what kind of quality of service (such as reliability and security)
+  is being applied to each leg of the MEP.
+</p>
+
+</section>
+
+<section name="Sample PMode documents">
+  Now that we introduced the syntax and the interpretation of the xml elements, let us examine
+  some sample PMode documents and explain what they say. The following is the first sample PMode document:
+  <div class="source"><pre>
+  &lt;PModes>
+
+    &lt;PMode name="UploadMode">
+
+    &lt;UserService name="ConsumerTest">
+      &lt;ToPartyInfo>
+        &lt;PartyId>ConsumerTest &lt;/PartyId>
+      &lt;/ToPartyInfo>
+      &lt;CollaborationInfo>
+        &lt;Service>UploadService &lt;/Service>
+        &lt;Action>upload &lt;/Action>
+      &lt;/CollaborationInfo>
+    &lt;/UserService>
+
+    &lt;Binding name="uploadBinding">
+      &lt;MEP name="One-Way/Push">
+        &lt;Leg number="1" mpc="UploadMPC" userService="ConsumerTest"
+             soapAction="upload" reliability="CALLBACK" security="sign">
+          &lt;Endpoint address="http://localhost:8080/holodeck/services/msh"
+                    soapVersion="1.1" />
+          &lt;As4Receipt>Response &lt;/As4Receipt>
+        &lt;/Leg>
+      &lt;/MEP>
+    &lt;/Binding>
+
+  &lt;/PMode>
+
+  &lt;/PModes>
+  </pre></div>
+  In the above sample xml document, there is only one PMode defined and it is called "UploadMode".
+  The elements "UserService" and "Binding" are defined within the <b>&lt;PMode></b> element itself
+  as children, but they can equally be defined outside of the element <b>&lt;PMode></b>.
+  The "UserService" element contains information about the <b>&lt;eb:To></b> party and
+  the <b>&lt;eb:CollaborationInfo></b>. The "Binding" element says that the MEP should be a
+  "One-Way/Push". Because this MEP is one way, on the transport level, there would be only one leg, and that's why
+   the xml element <b>&lt;MEP></b> contains only one <b>&lt;Leg></b> element. The xml element <b>&lt;Leg></b> contains
+   some information such as the mpc to use, the soap action, the destination UserService (which is basically
+   the <b>&lt;eb:To></b> and <b>&lt;eb:CollaborationInfo></b>). The <b>Leg</b> also specifies whether to use
+   reliability and security quality of service. In the sample above, the Leg will use a reliability quality of service called
+   "CALLBACK". What is this quality of service? If you open the file <b>"holodeck/config/reliability-config.xml</b>, you will
+   find there a quality of service with the name "CALLBACK". It is defined as follows:
+   <div class="source"><pre>
+   &lt;Reliability name="CALLBACK">
+     &lt;AtMostOnce>true &lt;/AtMostOnce>
+     &lt;AtLeastOnce>true &lt;/AtLeastOnce>
+     &lt;InOrder>false &lt;/InOrder>
+     &lt;AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback &lt;/AckReply>
+     &lt;RetransmissionInterval>40000 &lt;/RetransmissionInterval>
+     &lt;ExponentialBackoff>false &lt;/ExponentialBackoff>
+     &lt;MaximumRetransmissionCount>5 &lt;/MaximumRetransmissionCount>
+   &lt;/Reliability>
+   </pre></div>
+   As you can see, this reliability quality of service is basically saying that
+   <ul>
+     <li>"At Most Once" should be enforced (that is
+   duplicate elimination is on),</li>
+     <li>"At Least Once" should be enforced (messages should not be lost, for this to work, messages should be
+   resent until an acknowledgment for them is received),</li>
+     <li>"In Order" is not important (ordering of messages not enforced)</li>
+     <li> Acknowledgment of messages should be sent separately as a callback to the
+          address http://localhost:8080/holodeck/services/wsrm (make sure you change the host name of this address
+          to match your domain name</li>
+     <li> Retransmission interval is 40 seconds (that is if an acknowledgment for a message is not yet received after 40 seconds have
+          elapsed since the message was sent, then the message would be resent again)</li>
+     <li>ExponentialBackoff is off (this means the retransmission interval will continue to be 40 seconds).
+         If the "ExponentialBackoff was true, that would be mean the retransmission interval will double each time
+         an ack is not received</li>
+     <li>Maximum retransmission count is 5 (meaning that the sender MSH will not attempt to resend a message more than
+         5 times if an ack is never received for that message</li>
+   </ul>
+   It should be noted (although it is obvious) that the name of the quality of service is arbitrary: meaning you can call
+   the qualify of service any name you want (in our example this is called "CALLBACK"), as long as the
+   name you give it in the file <b>"holodeck/config/reliability-config.xml</b> matches the value of the attribute
+   "reliability" in the xml element <b>&lt;Leg></b>.
+   <br/>
+   <p>
+    The "security" attribute of the element <b>&lt;Leg></b> contains the name of the security quality of service to use.
+    The value there is "sign" which is defined in the file <b>holodeck/config/security-config.xml</b>
+   </p>
+   <br/>
+   <p>
+    The xml element <b>&lt;Leg></b> contains a child xml element called <b>&lt;Endpoint></b> which basically contain
+    information about the URL address where the message should be sent, and the soap version to use. This "Endpoint" element
+    is not always present. In this case it is necessary because we need to know the address
+    where to send the message. But in the cse of the second leg of a PullRequest message for example,
+    we don't need such a element because the pulled message will travel on the back channel (the second leg)
+    and therefore no need for an address of the second leg.
+   </p>
+   <br/>
+   <p>
+    Also, you may have noticed that in the above sample PMode document, there was no "Producer" element
+    declared (that is information about the <b>&lt;eb:From></b> party). This was done on purpose. This kind
+    of PMode (not having a <b>&lt;Producer></b> element) is called an "open PMode". This means
+    that the PMode could be used by many types of senders. When a sender uses this PMode to
+    send out a message, the sender must therefore tell the MSH about its <b>&lt;eb:From></b> party.
+    This is a way to share the same PMode with multiple different senders. But if you want
+    the definition of your PMode to be used only by one single specific sender, then you would have
+    to declare a <b>&lt;Producer></b> element and add an attribute called "producer" to the
+    xml element <b>&lt;Leg></b> that would point to the "name" attribute of the <b>&lt;Producer></b> element.
+   </p>
+   <br/>
+
+   <p>
+     Now let's consider another sample PMode document:
+ <div class="source"><pre>
+  &lt;PModes>
+    &lt;PMode name="ImagePulling">
+
+      &lt;UserService name="PullerApp">
+        &lt;ToPartyInfo>
+          &lt;PartyId>pullerParty &lt;/PartyId>
+        &lt;/ToPartyInfo>
+        &lt;CollaborationInfo>
+          &lt;Service>imageService &lt;/Service>
+          &lt;Action>storeImage &lt;/Action>
+        &lt;/CollaborationInfo>
+      &lt;/UserService>
+
+      &lt;Binding name="imagePullBinding">
+        &lt;MEP name="One-Way/Pull">
+          &lt;Leg number="1" mpc="mpc//:imageStore" reliability="CALLBACK">
+            &lt;Endpoint address="http://localhost:8080/holodeck/services/msh"
+                         soapVersion="1.2" />
+          &lt;/Leg>
+          &lt;Leg number="2" mpc="mpc//:imageStore" userService="PullerApp" />
+        &lt;/MEP>
+      &lt;/Binding>
+
+    &lt;/PMode>
+  &lt;/PModes>
+</pre></div>
+     </p>
+    <p>
+     In the above sample PMode document, there is only one PMode being defined and it is
+     called "ImagePulling". The MEP in this PMode is a "One-Way/Pull", and therefore on
+     the transport level, there would be two legs. As you can see there are two legs
+     defined as children of the <b>&lt;MEP></b> element. The second leg does not have
+     and <b>&lt;Endpoint></b> child element because it is not needed since the pulled message
+     will travel only on the back channel. So the "Endpoint" element is only needed for the
+     first leg. There is no "userService" specified for the first leg because the first
+     leg is carrying a <b>PullRequest</b> message which obviously does not put an <b>&lt;eb:To></b> and
+     <b>&lt;eb:CollaborationInfo></b> elements in its SOAP header. On the other hand, since
+     the second leg contains a User Message (a message with payload data), a "UserService"
+     destination is needed for the second leg.
+
+    </p>
+
+</section>
+
+</body>
+</document>  
+

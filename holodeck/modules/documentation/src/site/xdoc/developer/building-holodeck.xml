@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<document>
+  <properties>
+    <title>Building Holodeck</title>
+    <author email="hamidbm@ymail.com">Hamid Ben Malek</author>
+    <author email="jdurand@us.fujitsu.com">Jacques Durand</author>
+  </properties>
+  <body>
+       In order to compile and build a binary version of Holodeck from its source code, you first need to have
+       JDK 1.6 (or later) and maven 2 installed on your machine. To build the binaries, from a DOS command
+       window, issue the following three commands:
+       <ul>
+         <li><b>mvn package</b>  (this command is issued from holodeck root folder "holodeck-b2b"</li>
+         <li><b>mvn site</b>  (this command is issued from holodeck root folder "holodeck-b2b"</li>
+         <li><b>mvn package</b>  (this command is issued from holodeck-ui folder "holodeck-b2b/modules/holodeck-ui"</li>
+       </ul>
+       The first command builds holodeck and assembles everything, except for the documentation. The second command
+          will generate the documentation (and also Javadocs) and will copy this documentation into the folder
+          "holodeck/msh/docs/". When starting holodeck (by running the batch file "holodeck/server/bin/startup.bat"),
+          the documentation can be accessed using the address: <b>http://localhost:8080/holodeck/docs</b><br/>
+
+      <p>
+      The build system bundles holodeck binaries inside axis2 and deploys the application to tomcat (which is
+      also included in the build). The default versions used for tomcat and axis2 are "6.0.26" for tomcat
+      and "1.5.1" for axis2. If you want to build binaries that would include different versions for tomcat and/or
+      axis2, then here are the instructions that should be done before building: <br/>
+      the following components installed on your machine:
+       <ul>
+         <li>
+            Tomcat: if you don't have Tomcat on your machine, download the latest one, and unzip it somewhere on
+             your hard disk (say for example D:\Servers\Tomcat). Also, download tomcat native library to make it
+             run faster. You can get the native library from 
+             <a href=" http://apache.sunsite.ualberta.ca/tomcat/tomcat-connectors/native/1.1.16/binaries/">
+              http://apache.sunsite.ualberta.ca/tomcat/tomcat-connectors/native/1.1.16/binaries/</a>. The dll file
+              needs to be copied to Tomcat/bin directory.
+         </li>
+         <li>
+             If you don't have Axis2 binaries on your hard disk, you need to download it. Download the war file 
+             (not the bin file). Holodeck has been tested with Axis2-1.4.0 and Axis2-1.4.1. The war file contains
+             the folders "WEB-INF/modules", "WEB-INF/lib", "WEB-INF/services", "WEB-INF/conf", etc...
+             You can get Axis2 war archive from 
+             <a href="http://ws.apache.org/axis2/download/1_4_1/download.cgi">
+                http://ws.apache.org/axis2/download/1_4_1/download.cgi
+             </a>
+         </li>
+         <li>If you don't have Apache Rampart binaries on your hard disk, you need to download it. You can get it
+              from <a href="http://ws.apache.org/rampart/download.html">http://ws.apache.org/rampart/download.html</a>.
+              Unpack the rampart zip file on your hard disk (say for example in D:/Servers/Rampart). Then copy all
+              the jar files in "Rampart/lib" to "D:/Servers/axis2.war-1.4.1/WEB-INF/lib". Here we are assuming that
+              you unpacked Axis2 war archive to "D:/Servers/axis2.war-1.4.1" directory.
+         </li>
+       </ul>
+       </p>
+       <p>
+         After you have downloaded the required components, you need to edit the file 
+         "holodeck/modules/holodeck-distribution/pom.xml" to the accomplish the following:
+         <ul>
+           <li>Update the value of the property "tomcat-home" to point to the root directory of where 
+               you have tomcat installed on your machine. 
+           </li>
+           <li>
+               Update the value of the property "axis2-home" to reflect the full path where you have unzipped 
+               axis2 war archive (for example D:/Servers/axis2.war-1.4.1)
+           </li>
+         </ul>
+       </p>
+       <br/>
+       <p> 
+           If you run into "OutOfMemory" Exception while maven is running, just increase the heap space for maven, 
+           and it will work. You can do this by editing the file "D:/Java/maven/bin/mvn.bat" and add the this line at
+           the beginning of the file: set MAVEN_OPTS="-Xmx512m"
+       </p>
+
+   </body>
+</document>

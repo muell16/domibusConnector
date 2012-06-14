@@ -1,0 +1,20 @@
+<Metadata>
+   <pmode>SC1</pmode>
+   <AgreementRef>AGR123</AgreementRef>
+   <ConversationId>123456</ConversationId>
+   <legNumber>1</legNumber>
+   <From>
+      <PartyId type="corp">fujitsu.com</PartyId>
+      <PartyId type="corp">fla.fujitsu.com</PartyId>
+      <Role>seller</Role>
+   </From>
+   <Properties>
+      <Property name="price">$40</Property>
+      <Property name="greeting">Hello there</Property>
+   </Properties>
+   <Payloads>
+      <BodyPayload>body.xml</BodyPayload>
+      <Payload cid="waterfall">waterfall.jpg</Payload>
+      <Payload cid="tiles">tiles.pdf</Payload>
+   </Payloads>
+</Metadata>

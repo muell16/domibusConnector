@@ -1,0 +1,26 @@
+<PModes>
+  <PMode name="SC1">
+
+    <UserService name="ConsumerTest">
+      <ToPartyInfo>
+        <PartyId type="jeita-original-type">ConsumerTest</PartyId>
+        <Role>http://www.jeita.jp/roles/Buyer</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>UploadService</Service>
+        <Action>PutMessage</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <Binding name="uploadBinding">
+      <MEP name="Two-Way/Sync">
+        <Leg number="1" mpc="box1s" userService="ConsumerTest" soapAction="PutMessage"
+             reliability="GD">
+          <Endpoint address="http://192.240.13.76:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+        <Leg number="2" mpc="box1s"/>
+      </MEP>
+    </Binding>
+
+  </PMode>
+</PModes>

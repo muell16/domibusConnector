@@ -1,0 +1,108 @@
+<module name="holodeck-ebms3" class="org.holodeck.ebms3.module.Ebms3Module">
+  <parameter name="PersistenceUnit">ebms3-mysql</parameter>
+  <parameter name="PModesDir" locked="false">../../../../config/pmodes</parameter>
+  <parameter name="Modules">holodeck-ebms3, holodeck-reliability, holodeck-security, rampart</parameter>
+  <parameter name="GATEWAY_CONFIG_FILE">../../../../config/gateway.xml</parameter>
+  <parameter name="MSHAddress" locked="false">http://localhost:8080/holodeck/services/msh</parameter>
+
+  <!-- ======================================================================================
+   The name of the folder in which submitted messages will be stored.
+   It could be an absolute path to some folder on the file system, or
+   just the name of a folder (in which case it will be automatically
+   created under WEB-INF directory).
+   ====================================================================================== -->
+  <parameter name="SubmittedMessagesFolder">../../../../store/send</parameter>
+
+  <!-- ======================================================================================
+  The value of this parameter is a comma-separated list of possible names
+  (or IP addresses this local machine, that is the machine running this MSH)
+  may have. It helps the MSH by looking at a given URL to determine if
+  it is the URL of this MSH or the URL of another remote MSH by just
+  comparing the machine name in the URL to the values of this parameter.
+  ======================================================================================  -->
+  <parameter name="LocalMachine">localhost,127.0.0.1,holodeck,192.240.13.76</parameter>
+
+  <!--
+  If true, the MSH, when writing a message to database, it will also
+  persist all the attachments the message may have to database. This
+  would work for small to medium attachments (may be up 1 Giga per
+  attachment). However, if an attachment is way bigger than 1 Giga, the
+  database columns may be limited in storage space, and in this case it would
+  be better if the MSH persist the attachment on the file system where
+  there is no limit on storage (except for the disk capacity of course).
+  Make this parameter false if you are planning on having attachment very
+  large that may exceed 1 GB (a giga bytes) or whatever limit your database is set to
+  -->
+  <parameter name="StoreAttachmentsInDB">false</parameter>
+
+  <!-- =====================================================================================
+   The name of the folder in which the attachments of the arriving messages
+   will be stored.
+   It could be an absolute path to some folder on the file system, or
+   just the name of a folder (in which case it will be automatically
+   created under WEB-INF\modules\holodeck-ebms3 directory).
+  ====================================================================================== -->
+  <parameter name="ReceivedMessagesFolder">../../../../store/receive</parameter>
+
+  <parameter name="Workers">../../../../config/workers.xml</parameter>  
+
+  
+
+  <InFlow>
+    <handler name="PModeFinder" class="org.holodeck.ebms3.handlers.PModeFinder">
+      <order phase="ebms3InPhase" phaseFirst="true"/>
+    </handler>
+    <handler name="ErrorLogger" class="org.holodeck.ebms3.handlers.ErrorLogger">
+      <order phase="ebms3InPhase" after="PModeFinder"/>
+    </handler>
+    <handler name="Validation" class="org.holodeck.ebms3.handlers.Validation">
+      <order phase="ebms3InPhase" after="ErrorLogger"/>
+    </handler>
+    <handler name="ReceiptProcessor" class="org.holodeck.ebms3.handlers.ReceiptProcessor">
+      <order phase="ebms3InPhase" after="Validation"/>
+    </handler>
+    <handler name="ReceiptGen" class="org.holodeck.ebms3.handlers.ReceiptGen">
+      <order phase="ebms3InPhase" after="ReceiptProcessor"/>
+    </handler>
+    <handler name="PullProcessor" class="org.holodeck.ebms3.handlers.PullProcessor">
+      <order phase="ebms3InPhase" after="ReceiptGen"/>
+    </handler>
+    <handler name="RespPackager" class="org.holodeck.ebms3.handlers.ResponsePackager">
+      <order phase="ebms3InPhase" after="PullProcessor"/>
+    </handler>
+    <handler name="ReceivedUserMsg" class="org.holodeck.ebms3.handlers.ReceivedUserMsgHandler">
+      <order phase="ebms3InPhase" after="RespPackager"/> 
+    </handler> 
+    <handler name="InvokeCallback" class="org.holodeck.ebms3.handlers.InvokeCallback">
+      <order phase="ebms3InPhase" after="ReceivedUserMsg"/>
+    </handler>
+    <handler name="HeaderDetacher" class="org.holodeck.ebms3.handlers.HeaderDetacher">
+      <order phase="ebms3InPhase" after="InvokeCallback"/>
+    </handler>
+  </InFlow>
+
+  <OutFlow>
+    <handler name="Packager" class="org.holodeck.ebms3.handlers.Packager">
+      <order phase="ebms3OutPhase" phaseFirst="true"/>
+    </handler>
+    <handler name="CallbackPersist"
+             class="org.holodeck.ebms3.handlers.CallbackPersist">
+      <order phase="ebms3OutPhase" after="Packager"/>
+    </handler>
+    <handler name="RespPackager" class="org.holodeck.ebms3.handlers.ResponsePackager">
+      <order phase="ebms3OutPhase" after="CallbackPersist"/>
+    </handler>
+    <handler name="PullProcessor" class="org.holodeck.ebms3.handlers.PullProcessor">
+      <order phase="ebms3OutPhase" after="RespPackager"/>
+    </handler>
+    <handler name="TrackReceipt" class="org.holodeck.ebms3.handlers.TrackReceipt">
+      <order phase="ebms3OutPhase" after="PullProcessor"/>
+    </handler>
+    <handler name="ReceiptAppender" class="org.holodeck.ebms3.handlers.ReceiptAppender">
+      <order phase="ebms3OutPhase" after="TrackReceipt"/>
+    </handler>
+  </OutFlow>
+
+  <INFaultFlow/>
+  <OutFaultFlow/>
+</module>

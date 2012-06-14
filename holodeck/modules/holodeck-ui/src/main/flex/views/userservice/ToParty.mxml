@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	       width="100%" height="100%">
+
+  
+  <mx:VBox width="100%" height="100%" borderStyle="solid">
+  	<mx:HBox width="100%">
+      <mx:Label text="To Party Id: "/>
+      <mx:TextInput id="_toPartyId" width="50%" />
+      <mx:Label text="Type: "/>
+      <mx:TextInput id="_type" width="35%" />
+      <mx:Button label="Add" click="addParty()" />
+  	</mx:HBox>
+  	<mx:HBox width="100%">
+  	  <mx:DataGrid width="97%" height="106" id="_toPartyGrid" 
+                 liveScrolling="true" draggableColumns="true" 
+  	             dragMoveEnabled="true" resizableColumns="true">
+        <mx:columns>
+          <mx:Array>
+            <mx:DataGridColumn dataField="partyId" headerText="To Party Id"/>
+            <mx:DataGridColumn dataField="type" headerText="Type"/>
+          </mx:Array>
+        </mx:columns>
+      </mx:DataGrid>
+      <mx:Button label="Delete" click="deleteParty()" />
+    </mx:HBox>  
+    <mx:HBox width="100%">
+      <mx:Label text="Role: " />
+      <mx:TextInput id="_role" />
+    </mx:HBox>
+  </mx:VBox>
+	
+  <mx:Script source="toPartyScript.as" />	
+</mx:Canvas>

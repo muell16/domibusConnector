@@ -1,0 +1,242 @@
+@charset "UTF-8";
+
+/* table style
+----------------------------------------*/
+table{
+	font-size:0.95em;
+}
+
+table,
+table th,
+table td{
+	border:0 none;
+}
+
+table th,
+table td{
+	padding:8px;
+}
+
+.tableStyle01,
+.tableStyle03{
+	width:100%;
+	border-top:1px solid #ccc;
+	border-left:1px solid #ccc;
+}
+
+.tableStyle01 th,
+.tableStyle01 td,
+.tableStyle03 th,
+.tableStyle03 td,{
+	border-right:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+.tableStyle01 th{
+	width:140px;
+	background:#bbb;
+}
+.tableStyle01 th img{
+	margin-left:10px;
+}
+.borderBDEL {
+	border-bottom: none !important;
+}
+table span {
+	font-size:0.85em;
+	margin-left:10px;
+}
+table th img{
+	padding-left:5px;
+}
+table tr.bgNone th,
+table tr.bgNone td{
+	background-image:none;
+}
+
+/* tableStyle04 
+----------------------------------------*/
+.tableStyle04 {
+	width: 732px;
+	margin: 0 8px 10px;
+	border: 1px solid #a9cff1;
+	background: #eff6fb;
+	text-align: left;
+}
+
+.tableStyle04 input {
+	vertical-align: bottom;
+}
+
+* html .tableStyle04 input {vertical-align: middle;}
+* + html .tableStyle04 input {vertical-align: middle;}
+
+.tableStyle04 th {
+	width: 180px;
+	background: #6aace8;
+	color: #fff;
+}
+
+.tableStyle04 th img {
+	margin-left: 5px;
+	vertical-align: bottom;
+}
+
+.tableStyle04 td {
+	width: 532px;
+	background: #eff6fb;
+}
+
+.tableStyle04 tr.borderB th {
+	border-bottom: 1px dashed #fff;
+}
+
+.tableStyle04 tr.borderB td {
+	border-bottom: 1px dashed #ccc;
+}
+
+* html .tableStyle04 tr.borderB th {border-bottom: 1px dashed #6aace8;}
+* + html .tableStyle04 tr.borderB th {border-bottom: 1px dashed #6aace8;}
+
+/* linkList05 */
+div.linkList05 {
+	margin-top: 20px;
+}
+
+div.linkList05 input {
+	width: 145px;
+	height: 28px;
+	text-align: center;
+	line-height: 28px;
+	cursor: pointer;
+}
+
+input.input-rollover4 {
+	width: 145px;
+	height: 28px;
+	border: none;
+	background:transparent url("../img/bg_btn_o.gif") no-repeat scroll 0pt;
+	color: #333;
+	line-height: 28px;
+}
+
+/* tableStyle05
+----------------------------------------*/
+.tableStyle05 {
+	border: 1px solid #a9cff1;
+	background: #eff6fb;
+	text-align: left;
+}
+
+.tableStyle05 input {
+	vertical-align: bottom;
+}
+
+* html .tableStyle05 input {vertical-align: middle;}
+* + html .tableStyle05 input {vertical-align: middle;}
+
+.tableStyle05 th {
+	background: #6aace8;
+	color:#fff;
+}
+
+.tableStyle05 td {
+	background: #eff6fb;
+}
+
+.tableStyle05 tr.borderR th {
+	border-right: 1px dashed #fff;
+}
+
+* html .tableStyle05 tr.borderR th {border-right: 1px dashed #6aace8;}
+* + html .tableStyle05 tr.borderR th {border-right: 1px dashed #6aace8;}
+
+
+.tableStyle05 tr.borderRB td {
+	border-right: 1px dashed #ccc;
+	border-bottom: 1px dashed #ccc;
+}
+
+.tableStyle05 tr.borderR td {
+	border-right: 1px dashed #ccc;
+}
+
+.tableStyle05 th.borderRDEL,
+.tableStyle05 td.borderRDEL {
+	border-right: none !important;
+}
+
+/* tableStyle06
+----------------------------------------*/
+.tableStyle06 {
+	border: 1px solid #a9cff1;
+	background: #eff6fb;
+	text-align: left;
+}
+
+.tableStyle06 input {
+	vertical-align: bottom;
+}
+
+* html .tableStyle06 input {vertical-align: middle;}
+* + html .tableStyle06 input {vertical-align: middle;}
+
+.tableStyle06 th {
+	background: #6aace8;
+	color:#fff;
+}
+
+.tableStyle06 td {
+	background: #eff6fb;
+}
+
+.tableStyle06 tr.borderB th {
+	border-bottom: 1px dashed #fff;
+}
+
+.tableStyle06 tr.borderB td {
+	border-bottom: 1px dashed #ccc;
+}
+
+* html .tableStyle06 tr.borderB th {border-bottom: 1px dashed #6aace8;}
+* + html .tableStyle06 tr.borderB th {border-bottom: 1px dashed #6aace8;}
+
+/* input
+----------------------------------------*/
+
+table .input-min input{
+	width:50px;
+}
+
+table .input-pass input{
+	width:150px;
+}
+
+table input.checkbox,
+.checkbox input{
+	width:auto;
+}
+
+input.input-rollover4 {
+	width: 145px;
+	height: 28px;
+	border: none;
+	background:transparent url("../img/bg_btn_o.gif") no-repeat scroll 0pt;
+	color: #333;
+	line-height: 28px;
+}
+
+/* adjustment
+----------------------------------------*/
+.tableStyle06 td span[class=nowrap] input[type=text] {
+	width: 320px;
+	margin-top: 5px;
+}
+
+html > /**/ body .tableStyle06 td[class=clearfix] label[class=labelStyle02] + input[type=text] {
+	width: 341px;
+}
+
+html > /**/ body .tableStyle06 tr td input[size="60"] {
+	width: 403px;
+}

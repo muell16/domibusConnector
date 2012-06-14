@@ -1,0 +1,94 @@
+/* CSS file */
+
+ApplicationControlBar {
+   			shadowDirection: right;
+			fillAlphas: 0.9, 0.92;
+   			fillColors: #efefef, #cccccc;
+   			backgroundColor: #000000;
+   			backgroundAlpha: 0.66;
+		 	borderColor: #cccccc;
+		}
+
+
+Panel { 
+	headerHeight: 17;
+	borderThickness: 0;
+	roundedBottomCorners: true;
+	borderAlpha: 1;
+	fillAlphas: .7, 1;
+	headerColors: #ffffff, #cccccc;
+	footerColors: #ffffff, #cccccc;
+	borderColor: #cccccc;
+	backgroundColor: #ffffff;
+	titleStyleName: "myTitleStyle";
+} 
+
+.myTitleStyle {
+	color: #000000;
+	fontFamily: Tahoma;
+   	fontSize: 11;
+   	fontWeight: normal;
+   		
+}
+		
+		Application {
+   			backgroundColor: #ffffff;
+   			themeColor: #333333;
+		}
+		
+		Accordion {
+   			headerStyleName: "myaccordionHeader";
+		}
+
+		.myaccordionHeader {
+   			fontFamily: Tahoma;
+   			fontWeight: bold;
+		}
+		
+		AdvancedDataGrid {
+   			fontFamily: Tahoma;
+   			fontSize: 10;
+   			headerStyleName: "mydataGridHeaderStyle";
+		}
+
+		.mydataGridHeaderStyle {
+   			fontFamily: Tahoma;
+   			fontWeight: bold;
+   			fontStyle: normal;
+   			textDecoration: none;
+		}
+		
+		
+		.datagridStyle
+		{
+		   alternatingItemColors: #ffffff, #ffffff;
+		   rollOverColor: #cccccc;
+		   textRollOverColor: #000000;
+		   selectionColor: #666666;
+		   color: #000000;
+		   textSelectedColor: #ffffff;
+		}
+		
+		.dataGridHeader
+		{
+			color: #000000;
+		}
+		
+		ToolTip {
+   			backgroundAlpha: 0.85;
+   			backgroundColor: #111111;
+   			color: #ffffff;
+   			fontFamily: Tahoma;
+   			
+}
+		.mySkin {
+			leftButtonStyleName: "leftButton2";
+			rightButtonStyleName: "rightButton2";
+			upButtonStyleName: "upButton2";
+			downButtonStyleName: "downButton2";
+			buttonWidth:20px;	
+		}
+	
+
+	
+	

@@ -1,0 +1,73 @@
+<config>
+
+  <security name="ut-over-transport">
+    <policy>policy-ut-over-transport.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>service</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign">
+    <policy>policy-sign-body.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>service</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sing-encrypt">
+    <policy>policy-sign-encrypt-body.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>service</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sec-conv">
+    <policy>policy-sec-conv.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>service</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign-only-anonymous">
+    <policy>policy-sign-only-anonymous.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>service</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>  
+
+</config>

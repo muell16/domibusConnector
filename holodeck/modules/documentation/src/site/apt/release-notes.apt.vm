@@ -1,0 +1,28 @@
+ ------
+Release Notes - Holodeck 1.0
+ ------
+Hamid Ben Malek
+Jacques Durand
+ ------
+March 2009
+ ------
+
+Holodeck 1.0
+
+  The Holodeck team would like to announce the release of Holodeck 1.0.
+
+  Holodeck 1.0 is {{{./download.html} available for download}}.
+
+  Holodeck is a B2B messaging implementation in Java based on the B2B stardards
+  developped at {{{http://www.oasis-open.org}Oasis}}: ebXML Messaging Version 3,
+  WS-Reliability 1.1, WS-Security 1.0/1.1 and the AS4 profile.
+
+  We hope you enjoy using Holodeck! If you have any questions, please consult:
+
+    * the web site: {{http://holodeck-b2b.sourceforge.net/docs/}}
+
+    * the holodeck-user mailing list: {{http://holodeck.benmalek.net/mail-lists.html}}
+
+* New Feature
+
+  Support for WSS-Security and AS4 has been added in this release.

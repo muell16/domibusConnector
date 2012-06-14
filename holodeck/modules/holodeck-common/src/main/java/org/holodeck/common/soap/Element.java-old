@@ -1,0 +1,267 @@
+package org.holodeck.common.soap;
+
+//import org.apache.axiom.*;
+//import org.apache.axiom.attachments.*;
+import org.apache.axiom.om.*;
+//import org.apache.axiom.soap.*;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.*;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.util.*;
+
+/**
+ * @author Hamid Ben Malek
+ */
+public class Element extends OMElementImpl
+             implements java.io.Serializable
+{
+   public static final long serialVersionUID = 7825985226389871436L; 
+
+   public Element() { super("LocalName", null, OMAbstractFactory.getOMFactory()); }
+   public Element(String name)
+   {
+     this();
+     setLocalName(name);
+   }
+   public Element(String localName, String uri, String prefix)
+   {
+     this();
+     OMNamespace ns = getOMFactory().createOMNamespace(uri, prefix);
+     setLocalName(localName);
+     setNamespace(ns);
+   }
+   public Element(OMElement omElement)
+   {
+     this();
+     fromOMElement(omElement);
+   }
+
+   public Element(File xmlFile)
+   {
+     this();
+     if ( xmlFile == null ) return;
+     try
+     {
+       XMLStreamReader parser =
+          XMLInputFactory.newInstance().createXMLStreamReader(
+                  new FileInputStream(xmlFile));
+       StAXOMBuilder builder = new StAXOMBuilder(parser);
+       OMElement documentElement =  builder.getDocumentElement();
+       fromOMElement(documentElement);
+     }
+     catch(Exception ex) { ex.printStackTrace(); }
+   }
+
+   private void fromOMElement(OMElement omElement)
+   {
+     if (omElement == null) return;
+     factory = omElement.getOMFactory();
+     setLocalName(omElement.getLocalName());
+     setNamespace(omElement.getNamespace());
+     if ( omElement.getText() != null &&
+         !omElement.getText().trim().equals("") )
+         setText(omElement.getText());
+     Iterator it = omElement.getAllAttributes();
+     OMAttribute att = null;
+     while (it != null && it.hasNext())
+     {
+       att = (OMAttribute)it.next();
+       if (att != null)
+       {
+         OMAttribute at =
+           getOMFactory().createOMAttribute(att.getLocalName(),
+                                  att.getNamespace(), att.getAttributeValue());
+         addAttribute(at);
+       }
+     }
+     OMElement ome = omElement.getFirstElement();
+     if ( ome != null )
+     {
+       addChild(ome.cloneOMElement());
+       for (OMElement om = (OMElement)ome.getNextOMSibling();
+            om != null; )
+       {
+         addChild(om.cloneOMElement());
+         om = (OMElement)om.getNextOMSibling();
+       }
+     }
+   }
+
+   public String getAttributeValue(String name, String uri, String prefix)
+   {
+     QName qname = new QName(uri, name, prefix);
+     return getAttributeValue(qname);
+   }
+
+   public void addAttribute(String name, String uri, String prefix, String value)
+   {
+     OMNamespace ns = null;
+     if ( (uri != null && !uri.trim().equals("")) ||
+          (prefix != null && !prefix.trim().equals("")) )
+         ns = getOMFactory().createOMNamespace(uri, prefix);
+     OMAttribute att = getOMFactory().createOMAttribute(name, ns, value);
+     addAttribute(att);
+   }
+
+   public void addAttribute(String name, String value)
+   {
+     OMAttribute att = getOMFactory().createOMAttribute(name, null, value);
+     addAttribute(att);
+   }
+
+   public void setAttribute(String attLocalName, String value)
+   {
+     if (attLocalName == null || attLocalName.trim().equals("")) return;
+     OMAttribute att = getAttribute(attLocalName);
+     if (att != null) att.setAttributeValue(value);
+     else addAttribute(attLocalName, value);
+   }
+
+   public void setAttribute(String attLocalName, String prefix, String value)
+   {
+     if (attLocalName == null || attLocalName.trim().equals("")) return;
+     if (prefix == null || prefix.trim().equals(""))
+         setAttribute(attLocalName, value);
+     else
+     {
+       OMNamespace ns = findNamespaceURI(prefix);
+       OMAttribute att = null;
+       if (ns != null)
+       {
+         att = getAttribute(ns.getNamespaceURI(), attLocalName, prefix);
+         if (att != null)
+         {
+           att.setAttributeValue(value);
+           return;
+         }
+         else
+         {
+           att = getOMFactory().createOMAttribute(attLocalName, ns, value);
+           addAttribute(att);
+           return;
+         }
+       }
+       else getOMFactory().createOMAttribute(attLocalName, ns, value);
+     }
+   }
+
+   public OMAttribute getAttribute(String attLocalName)
+   {
+     if ( attLocalName == null || attLocalName.trim().equals("") ) return null;
+     Iterator it = getAllAttributes();
+     OMAttribute att = null;
+     while (it != null && it.hasNext())
+     {
+       att = (OMAttribute)it.next();
+       if ( att != null && att.getLocalName().equals(attLocalName) ) return att;
+     }
+     return null;
+   }
+
+   public OMAttribute getAttribute(String uri, String name, String prefix)
+   {
+     OMAttribute att = null;
+     if (uri != null && prefix != null)
+     {
+       QName qname = new QName(uri, name, prefix);
+       att = getAttribute(qname);
+     }
+     if (att != null) return att;
+     else return getAttribute(name);
+   }
+
+   public String getAttributeValue(String attLocalName)
+   {
+      OMAttribute att = getAttribute(attLocalName);
+      if ( att != null ) return att.getAttributeValue();
+      else return null;
+   }
+
+   public Element addElement(String localName, String prefix)
+   {
+     if (localName == null || localName.trim().equals("")) return null;
+     OMNamespace ns = null;
+     if (prefix != null && !prefix.trim().equals(""))
+         ns = findNamespaceURI(prefix);
+     Element child = new Element();
+     child.setLocalName(localName);
+     child.setNamespace(ns);
+     addChild(child);
+     return child;
+   }
+
+   public OMElement getChild(String localName, String prefix)
+   {
+     if (localName == null || localName.trim().equals("")) return null;
+     Iterator it = getChildElements();
+     while (it != null && it.hasNext())
+     {
+       OMElement e = (OMElement)it.next();
+       if (e != null && e.getLocalName().equals(localName) &&
+           e.getNamespace() != null && e.getNamespace().getPrefix() != null &&
+           e.getNamespace().getPrefix().equals(prefix)) return e;
+     }
+     return null;
+   }
+
+   public OMElement getFirstGrandChildWithName(String _localName)
+   {
+     return getFirstGrandChildWithName(this, _localName);
+   }
+
+   public String getGrandChildValue(String _localName)
+   {
+     OMElement gc = getFirstGrandChildWithName(_localName);
+     if ( gc != null ) return gc.getText();
+     else return null;
+   }
+
+   private OMElement getFirstGrandChildWithName(OMElement root, String _localName)
+   {
+     if (_localName == null || _localName.trim().equals("") || root == null)
+         return null;
+     if (root.getLocalName().equals(_localName)) return root;
+
+     OMElement om = root.getFirstElement();
+     if (om != null)
+     {
+       if ( om.getLocalName().equals(_localName) ) return om;
+       OMElement temp = getFirstGrandChildWithName(om, _localName);
+       if (temp != null) return temp;
+
+       for (OMElement tmp = (OMElement)om.getNextOMSibling();
+            tmp != null; )
+       {
+         temp = getFirstGrandChildWithName(tmp, _localName);
+         if (temp != null) return temp;
+         tmp = (OMElement)tmp.getNextOMSibling();
+       }
+     }
+     return null;
+   }
+
+   public void writeTo(Writer writer)
+   {
+     try
+     {
+       XMLOutputFactory xof = XMLOutputFactory.newInstance();
+       XMLStreamWriter w = xof.createXMLStreamWriter(writer);
+       serialize(w);
+       writer.flush();
+     }
+     catch(Exception ex) { ex.printStackTrace(); }
+   }
+
+   public String toXML() 
+   {
+     StringWriter sw = new StringWriter();
+     writeTo(sw);
+     return sw.toString();
+   }
+}

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+    <display-name>Apache-Axis2</display-name>
+
+    <!-- ============================== Flex Stuff =============================== -->
+    <context-param>
+        <param-name>flex.class.path</param-name>
+        <param-value>/WEB-INF/flex/hotfixes,/WEB-INF/flex/jars</param-value>
+    </context-param>
+    <!-- Http Flex Session attribute and binding listener support -->
+    <listener>
+        <listener-class>flex.messaging.HttpFlexSession</listener-class>
+    </listener>
+    <!-- MessageBroker Servlet -->
+    <servlet>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <display-name>MessageBrokerServlet</display-name>
+        <servlet-class>flex.messaging.MessageBrokerServlet</servlet-class>
+        <init-param>
+            <param-name>services.configuration.file</param-name>
+            <param-value>/WEB-INF/flex/services-config.xml</param-value>
+       </init-param>
+        <init-param>
+            <param-name>flex.write.path</param-name>
+            <param-value>/WEB-INF/flex</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>FlexMxmlServlet</servlet-name>
+        <display-name>MXML Processor</display-name>
+        <description>Servlet wrapper for the Mxml Compiler</description>
+        <servlet-class>flex.bootstrap.BootstrapServlet</servlet-class>
+        <init-param>
+            <param-name>servlet.class</param-name>
+            <param-value>flex2.server.j2ee.MxmlServlet</param-value>
+        </init-param>
+        <init-param>
+            <param-name>webtier.configuration.file</param-name>
+            <param-value>/WEB-INF/flex/flex-webtier-config.xml</param-value>
+        </init-param>
+       <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>FlexSwfServlet</servlet-name>
+        <display-name>SWF Retriever</display-name>
+        <servlet-class>flex.bootstrap.BootstrapServlet</servlet-class>
+        <init-param>
+            <param-name>servlet.class</param-name>
+            <param-value>flex2.server.j2ee.SwfServlet</param-value>
+        </init-param>
+        <!-- SwfServlet must be initialized after MxmlServlet -->
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>FlexForbiddenServlet</servlet-name>
+        <display-name>Prevents access to *.as/*.swc files</display-name>
+        <servlet-class>flex.bootstrap.BootstrapServlet</servlet-class>
+        <init-param>
+            <param-name>servlet.class</param-name>
+            <param-value>flex.server.j2ee.ForbiddenServlet</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>FlexInternalServlet</servlet-name>
+        <servlet-class>flex.bootstrap.BootstrapServlet</servlet-class>
+        <init-param>
+            <param-name>servlet.class</param-name>
+            <param-value>flex.server.j2ee.filemanager.FileManagerServlet</param-value>
+        </init-param>
+        <load-on-startup>10</load-on-startup>
+    </servlet>
+    <!-- ===================================== End of Flex Stuff ============================= -->
+
+    <!-- ================================== Holodeck Stuff =================================== -->
+    <servlet>
+      <servlet-name>EbManager</servlet-name>
+      <display-name>EbManager Servlet</display-name>
+      <servlet-class>org.holodeck.ebms3.web.EbManager</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+      <servlet-name>Gateway</servlet-name>
+      <display-name>Gateway Servlet</display-name>
+      <servlet-class>org.holodeck.ebms3.consumers.Gateway</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- ================================ End of Holodeck Stuff ============================== -->
+
+    <!-- ===================================== Axis2 Stuff =================================== -->
+    <servlet>
+        <servlet-name>AxisServlet</servlet-name>
+        <display-name>Apache-Axis Servlet</display-name>
+        <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class> 
+        <!-- <servlet-class>org.holodeck.ebms3.module.HolodeckServlet</servlet-class> -->
+        <!--<init-param>-->
+        <!--<param-name>axis2.xml.path</param-name>-->
+        <!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
+        <!--<param-name>axis2.xml.url</param-name>-->
+        <!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
+        <!--<param-name>axis2.repository.path</param-name>-->
+        <!--<param-value>/WEB-INF</param-value>-->
+        <!--<param-name>axis2.repository.url</param-name>-->
+        <!--<param-value>http://localhot/myrepo</param-value>-->
+        <!--</init-param>-->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>AxisAdminServlet</servlet-name>
+        <display-name>Apache-Axis AxisAdmin Servlet (Web Admin)</display-name>
+        <servlet-class>
+            org.apache.axis2.transport.http.AxisAdminServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/servlet/AxisServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>*.jws</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisAdminServlet</servlet-name>
+        <url-pattern>/axis2-admin/*</url-pattern>
+    </servlet-mapping>
+    <!-- ================================== End of Axis2 Stuff =============================== -->
+
+    <!-- ==================================== Flex Stuff ===================================== -->
+    <servlet-mapping>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <url-pattern>/messagebroker/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FlexMxmlServlet</servlet-name>
+        <url-pattern>*.mxml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FlexSwfServlet</servlet-name>
+        <url-pattern>*.swf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FlexForbiddenServlet</servlet-name>
+        <url-pattern>*.as</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FlexForbiddenServlet</servlet-name>
+        <url-pattern>*.swc</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FlexInternalServlet</servlet-name>
+        <url-pattern>/flex-internal/*</url-pattern>
+    </servlet-mapping>
+    <!-- ================================== End of Flex Stuff ============================ -->
+
+
+   <welcome-file-list>
+      <welcome-file>index.jsp</welcome-file>
+      <welcome-file>index.html</welcome-file>
+      <welcome-file>/axis2-web/index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+      <error-code>404</error-code>
+      <location>/axis2-web/Error/error404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/axis2-web/Error/error500.jsp</location>
+    </error-page>
+</web-app>

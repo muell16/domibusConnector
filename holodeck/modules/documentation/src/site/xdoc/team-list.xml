@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Holodeck Team</title>
+    <author>Hamid Ben Malek</author>
+  </properties>
+  <body>
+    <section name="Holodeck Team">
+      <p>
+       The following persons contributed in a way or another to shaping holodeck:
+  <ul>
+    <li>Hamid Ben Malek (hamidbm@ymail.com) </li>
+    <li>Jacques Durand (jdurand@us.fujitsu.com) </li>
+    <li>Kasunori Iwasa (kiwasa@jp.fujitsu.com) </li>
+    <li>Pim van der Eijk (pim.vandereijk@oasis-open.org)</li>
+  </ul>
+      </p>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,19 @@
+<service name="wsrm">
+  <messageReceivers>
+    <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only" 
+                     class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+  </messageReceivers>
+
+  <parameter name="ServiceClass" locked="false">org.holodeck.reliability.module.EmptyService</parameter>
+
+  <operation name="execute">
+     <messageReceiver 
+         class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/> 
+  </operation>
+
+  <module ref="holodeck-security" />
+  <module ref="rampart" />
+  <module ref="holodeck-reliability" />
+  
+</service>
+   

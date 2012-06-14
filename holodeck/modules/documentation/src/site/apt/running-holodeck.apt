@@ -1,0 +1,17 @@
+ ------
+ Running Holodeck
+ ------
+ Hamid Ben Malek
+ Jacques Durand
+ ------
+ March 2009
+ ------
+
+Documentation
+
+* How to run Holodeck?
+
+  Holodeck is a Java web application that runs inside a J2EE Servlet Container. Therefore, to run Holodeck, you only
+  need to start the J2EE Container. If you are using Tomcat, then all you have to do is start tomcat by executing
+  the batch file <<<Tomcat\bin\startup.bat>>>. If you have tomcat installed as a windows service, then start tomcat
+  windows service.

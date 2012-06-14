@@ -1,0 +1,31 @@
+<PModes>
+  <PMode name="QuantityOnHandPulling">
+
+    <UserService name="Supplier">
+      <ToPartyInfo>
+        <PartyId type="supplier">Supplier</PartyId>
+        <Role>Role</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>QuantityOnHand</Service>
+        <Action>QuantityOnHand</Action>
+      </CollaborationInfo>
+      <PayloadInfo>
+        <Message label="quantityMsg" maxSize="3000">
+          <SoapBody />
+        </Message>
+      </PayloadInfo>
+    </UserService>
+
+
+    <Binding name="binding1">
+      <MEP name="One-Way/Pull">
+        <Leg number="1" mpc="quantity">
+          <Endpoint address="http://localhost:8080/holodeck/services/Ebms3Customer" soapVersion="1.1" />
+        </Leg>
+        <Leg number="2" userService="Supplier" messageLabel="quantityMsg" />
+      </MEP>
+    </Binding>
+
+  </PMode>
+</PModes>

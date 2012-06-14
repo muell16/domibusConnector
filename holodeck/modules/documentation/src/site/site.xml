@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Holodeck">
+  <publishDate position="left"/>
+  <version position="left" />
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-stylus-skin</artifactId>
+    <version>1.1</version>
+  </skin> 
+  <bannerLeft>
+    <name>Holodeck</name>
+    <src>images/Holodeck-small.png</src>
+    <href>http://holodeck.benmalek.net</href>
+  </bannerLeft>
+  <bannerRight>
+    <!-- <name>Holodeck</name> -->
+    <src>images/banner.jpg</src>
+  </bannerRight>
+  <body>
+    <links>
+      <item name="ebMS 3 Core"
+        href="http://www.oasis-open.org/committees/download.php/24618/ebms_core-3.0-spec-cs-02.pdf"/>
+      <item name="ebMS 3 Conformance Profiles"
+        href="http://www.oasis-open.org/committees/download.php/24829/ebms-3.0-confprof-cd-02.pdf"/>
+      <item name="AS4 Profile"
+        href="http://www.oasis-open.org/apps/group_public/download.php/30843/AS4-Deployment-Profile-Draft-97.doc/"/>
+    </links>
+
+    <breadcrumbs>
+      <item name="Holodeck" href="http://holodeck.benmalek.net/index.html"/>
+    </breadcrumbs>
+    
+    <!--menu ref="parent" /-->  
+
+    <menu name="Main">
+      <item name="Welcome" href="/index.html"/>
+    </menu> 
+
+    <menu name="Get Holodeck">
+      <item name="Download" href="/download.html"/>
+      <!--item name="Release Notes" href="/release-notes.html"/-->
+      <item name="License" href="/license.html"/>
+    </menu>
+
+    <menu name="About Holodeck">
+      <item name="What is Holodeck?" href="/what-is-holodeck.html"/>
+      <item name="Implemented Features" href="/holodeck-features.html"/>
+      <item name="Missing Features" href="/missing-features.html"/>
+      <item name="FAQ" href="/general.html"/>
+    </menu>
+
+    <menu name="Tutorials">
+      <item name="Tutorial 1" href="/tutorials/tutorial1.html" />
+      <item name="Tutorial 2" href="/tutorials/tutorial2.html" />
+      <item name="Tutorial 3" href="/tutorials/tutorial3.html" />
+      <item name="Tutorial 4" href="/tutorials/tutorial4.html" />
+    </menu>
+
+    <menu name="Documentation">
+      <item name="Terminology" href="/terminology.html" />
+      <item name="Messaging Model" href="/messaging-model.html" />
+      <item name="Architecture" href="/architecture.html" />
+      <item name="Holodeck PModes" href="/pmodes.html" />
+      <item name="Holodeck Gateway" href="/gateway.html" />
+      <item name="Reliability" href="/reliability/index.html"/>
+      <item name="Security" href="/security/index.html"/>
+      <item name="AS4 Compression" href="/as4-compression.html"/>
+      <item name="AS4 Receipt" href="/as4-receipt.html"/>
+      <item name="User's Guide" href="/guides/getting-started/holodeck-in-five-minutes.html" />
+    </menu>
+
+    <menu name="Community">
+      <item name="Getting Help" href="/users/getting-help.html" />
+      <item name="Issue Tracking" href="/issue-tracking.html" />
+      <item name="The Holodeck Team" href="/team-list.html" />
+    </menu>
+
+    <menu name="Developer Guide">
+      <item name="Detailed Architecture" href="/developer/architecture.html"/>
+      <item name="Holodeck Packages" href="/developer/components.html"/>
+      <item name="Building Holodeck" href="/developer/building-holodeck.html"/>
+      <item name="Holodeck Javadoc" href="/apidocs/index.html" />
+    </menu>
+
+    <menu ref="reports" />
+  </body>
+</project>

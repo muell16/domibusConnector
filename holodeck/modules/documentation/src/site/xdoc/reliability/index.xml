@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<document>
+<properties>
+    <title>Reliability</title>
+    <author>Hamid Ben Malek</author>
+  </properties>
+  <body>
+    <p>
+        Here we assume the reader is familiar with WS-Reliability specification.
+    If not, the user should first read the specification which can be found here
+    <a href="http://docs.oasis-open.org/wsrm/ws-reliability/v1.1/wsrm-ws_reliability-1.1-spec-os.pdf">
+    http://docs.oasis-open.org/wsrm/ws-reliability/v1.1/wsrm-ws_reliability-1.1-spec-os.pdf
+    </a>
+    </p>
+    <section name="Reliability Quality of Service">
+    <p>
+    Quality of Service for Reliability are configured in the file <b>holodeck/config/reliability-config.xml</b>.
+    The user may further customize this file if needed (like renaming the quality of service or just tuning some
+    parameters there... However, if the user changes the name of any given quality of service, the user
+    needs to make sure first that such quality of service is not used by some existing PMode document, otherwise, the
+    user would have to change the PMode document that has a reference to reliability quality of service so that the names
+    match.
+    </p>
+    </section>
+
+    <section name="Using Reliability Quality of Service in a PMode">
+    <p>
+    Reliability quality of service is specified in the xml element <b>&lt;Leg></b>
+    as an attribute called "reliability" (within a PMode document)
+    </p>
+    <p>
+     Let's say for example that you have a reliability quality of service called "XYZ"
+     and this quality of service is declared in the file "<b>holodeck/config/reliability-config.xml</b>" as
+     follows:
+     <div class="source"><pre>
+   &lt;Reliability name="XYZ">
+     &lt;AtMostOnce>true &lt;/AtMostOnce>
+     &lt;AtLeastOnce>true &lt;/AtLeastOnce>
+     &lt;InOrder>false &lt;/InOrder>
+     &lt;AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback &lt;/AckReply>
+     &lt;RetransmissionInterval>40000 &lt;/RetransmissionInterval>
+     &lt;ExponentialBackoff>false &lt;/ExponentialBackoff>
+     &lt;MaximumRetransmissionCount>5 &lt;/MaximumRetransmissionCount>
+   &lt;/Reliability>
+   </pre></div>
+    To use the quality of service called "XYZ" within a PMode definition, you choose on which transport leg
+    you want to use that quality of service. The following segment of a PMode definition shows a transport leg
+    using quality "XYZ":
+    <div class="source"><pre>
+
+    &lt;Binding name="uploadBinding">
+      &lt;MEP name="One-Way/Push">
+        &lt;Leg number="1" mpc="UploadMPC" userService="ConsumerTest"
+             soapAction="upload" reliability="XYZ">
+          &lt;Endpoint address="http://localhost:8080/holodeck/services/msh"
+                    soapVersion="1.1" />
+          &lt;As4Receipt>Response &lt;/As4Receipt>
+        &lt;/Leg>
+      &lt;/MEP>
+    &lt;/Binding>
+
+   </pre></div>
+    </p>
+    </section>
+  </body>
+</document>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+	            xmlns:userservice="views.userservice.*"
+	            backgroundColor="#FFFFFF" xmlns:submit="views.submit.*"
+	            xmlns:msg="views.messages.*">
+ 
+  <mx:Style source="/assets/css/fujitsu.css" />
+ 
+  <mx:VBox width="100%" height="100%" verticalGap="0">
+    <!--mx:LinkBar fontWeight="bold" dataProvider="{myViewStack}"
+    	        backgroundImage="{menuBackground}" color="#FFFFFF" 
+    	        height="40" verticalAlign="middle" 
+    	        backgroundSize="100%" width="100%"/-->
+    <mx:LinkBar dataProvider="{myViewStack}" width="100%"
+    	        color="#0000FF" fontWeight="bold"/>	        
+   
+    <mx:ViewStack id="myViewStack" borderStyle="solid" width="100%" 
+  	            height="96%" change="onViewChange(event)">
+  	            
+      <!--mx:Canvas id="_newPMode" label="New PMode" width="100%" height="100%">         
+    	<userservice:UserServiceWizard/>       
+      </mx:Canvas-->
+      
+      <mx:Canvas id="_submitMsg" label="Submit" toolTip="Submit Message" 
+      	         width="100%" height="100%" verticalCenter="0">      
+    	<submit:SubmitMessage/>        
+      </mx:Canvas>
+      
+      <mx:Canvas id="_outgoing" label="Outgoing Messages" 
+      	         width="100%" height="100%">         
+    	<msg:OutgoingMessages width="100%" height="100%" />         
+      </mx:Canvas>
+               
+      <mx:Canvas id="_receivedMsg" label="Received Messages" 
+      	         toolTip="View Received Messages"
+      	         width="100%" height="100%">
+        <msg:ReceivedMessages width="100%" height="100%" />	         
+      </mx:Canvas>
+      
+      <!--mx:Canvas id="_deployConsumer" label="Deploy Consumer" 
+      	         width="100%" height="100%">         
+    	         
+      </mx:Canvas-->
+    </mx:ViewStack>
+  </mx:VBox>	
+  
+  <mx:Script>
+  	<![CDATA[
+import mx.controls.Alert;
+import mx.events.IndexChangedEvent;  	
+  	
+[Embed(source="/assets/images/menuBackground.png")]
+public static var menuBackground:Class;
+
+[Embed(source="/assets/images/MessageIcon.png")]
+public static var messageIcon:Class;
+
+[Embed(source="/assets/images/Feed.png")]
+public static var feedIcon:Class;
+
+[Embed(source="/assets/images/feedIconSelected.png")]
+public static var feedIconSelected:Class;
+
+public function onViewChange(evt:IndexChangedEvent):void
+{
+  //if (evt.newIndex == 2) _submitMsg.icon = feedIconSelected;
+  //if (evt.newIndex == 0 || evt.newIndex == 4) 
+}
+  	]]>
+  </mx:Script>
+</mx:Application>

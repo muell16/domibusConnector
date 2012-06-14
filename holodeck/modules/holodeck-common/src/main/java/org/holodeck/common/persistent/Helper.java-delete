@@ -1,0 +1,373 @@
+package org.holodeck.common.persistent;
+
+import java.util.*;
+import java.lang.reflect.Constructor;
+import java.io.*;
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.addressing.EndpointReference;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+/**
+ * @author Hamid Ben Malek
+ */
+public class Helper
+{
+  private static final Log log = LogFactory.getLog(Helper.class.getName());
+
+  public static MessageContext populateFromBean(StoredMessageBean bean,
+                                                MessageContext messageContext,
+                                                ConfigurationContext configContext)
+                               throws Exception
+  {
+    if ( messageContext == null || bean == null ) return messageContext;
+    try
+    {
+      messageContext.setMessageID(bean.getMessageID());
+      AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
+      String transportOutStr = bean.getTransportOut();
+      if (transportOutStr!=null)
+      {
+        TransportOutDescription transportOut =
+                      axisConfiguration.getTransportOut(transportOutStr);
+        messageContext.setTransportOut(transportOut);
+      }
+      String serviceGroupName = bean.getAxisServiceGroup();
+      if (serviceGroupName!=null)
+      {
+        AxisServiceGroup serviceGroup =
+            axisConfiguration.getServiceGroup(serviceGroupName);
+        if (serviceGroup != null)
+            messageContext.setAxisServiceGroup(serviceGroup);
+      }
+      else
+      {
+        AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfiguration);
+        messageContext.setAxisServiceGroup(serviceGroup);
+      }
+      String serviceName = bean.getAxisService();
+      if (serviceName != null)
+      {
+        AxisService service = axisConfiguration.getService(serviceName);
+        if (service != null) messageContext.setAxisService(service);
+//        else
+//        {
+//          String message = "Cant recreate the message since AxisService '" +
+//                            serviceName + "' is not present";
+//          throw new Exception (message);
+//        }
+      }
+      String operationNameStr = bean.getAxisOperationLocalPart();
+      String operationPrefix = bean.getAxisOperationPrefix();
+      String operationURI = bean.getAxisOperationNamespaceURI();
+      String operationMEPStr = bean.getAxisOperationMEP();
+      if ((operationNameStr != null || operationMEPStr != null) &&
+           messageContext.getAxisService() != null)
+      {
+        AxisOperation operation = null;
+        if (operationNameStr!=null)
+        {
+          QName operationName =
+                new QName(operationURI, operationNameStr, operationPrefix);
+          operation = messageContext.getAxisService().getOperation(operationName);
+        }
+        AxisService service = messageContext.getAxisService();
+        if (operation == null && operationMEPStr != null && service != null)
+        {
+          //finding an operation using the MEP.
+          Iterator operations = service.getOperations();
+          while (operations.hasNext())
+          {
+            AxisOperation temp = (AxisOperation) operations.next();
+            if (temp.getMessageExchangePattern().equals(operationMEPStr))
+            {
+              operation = temp;
+              break;
+            }
+          }
+        }
+        if (operation != null)
+        {
+          messageContext.setAxisOperation(operation);
+        }
+        else
+        {
+          String message = "Cant find a suitable operation for the generated message";
+          throw new Exception (message);
+        }
+      }
+
+      if (messageContext.getAxisServiceGroup()!=null)
+      {
+        ServiceGroupContext serviceGroupCtx =
+             new ServiceGroupContext(configContext,
+                                     messageContext.getAxisServiceGroup());
+        messageContext.setServiceGroupContext(serviceGroupCtx);
+      }
+
+      ServiceContext serviceContext = null;
+      if (messageContext.getAxisService()!=null)
+      {
+        serviceContext =
+                new ServiceContext(messageContext.getAxisService(),
+                                   messageContext.getServiceGroupContext());
+        serviceContext.setParent(messageContext.getServiceGroupContext());
+        messageContext.setServiceContext(serviceContext);
+      }
+
+      if (messageContext.getAxisOperation()!=null)
+      {
+        OperationContext operationContext =
+           new OperationContext(messageContext.getAxisOperation(), serviceContext);
+        operationContext.setParent(messageContext.getServiceContext());
+        messageContext.setOperationContext(operationContext);
+        operationContext.addMessageContext(messageContext);
+        configContext.registerOperationContext(messageContext.getMessageID(),
+                      operationContext); //registering the operation context.
+      }
+      messageContext.setServerSide(bean.isServerSide());
+      messageContext.setFLOW(bean.getFlow());
+      messageContext.setProperty(Constants.Configuration.TRANSPORT_URL ,
+                                 bean.getTransportTo());
+      messageContext.setTo(new EndpointReference(bean.getToURL()));
+      messageContext.getOptions().setAction(bean.getAction());
+
+      if ( bean.getProperties() != null )
+      {
+        HashMap map = (HashMap)deserialize(bean.getProperties());
+        if ( map != null ) setProperties(map, messageContext);
+      }
+
+      //setting the callback. Needed only for the client side.
+      String callbackClassName = bean.getCallbackClassName();
+      if (callbackClassName!=null && !"".equals(callbackClassName.trim()))
+      {
+        callbackClassName = callbackClassName.trim();
+        Callback callbackInstance = null;
+        try
+        {
+          int dollarPos = callbackClassName.indexOf("$");
+          if (dollarPos<0)
+          {
+            //instantiate it as a normal class
+            Class callbackClass = Class.forName(callbackClassName);
+            callbackInstance = (Callback) callbackClass.newInstance();
+          }
+          else
+          {
+            //instantiate it as a normal class
+            String containerClassName = callbackClassName.substring(0,dollarPos);
+            Class containerClass = Class.forName(containerClassName);
+            Class innerClass = Class.forName(callbackClassName);
+            Object containerInstance = containerClass.newInstance();
+            Constructor innerConstructor =
+              innerClass.getDeclaredConstructor(new Class[] {containerClass});
+            callbackInstance =
+             (Callback)innerConstructor.newInstance(containerInstance);
+          }
+        }
+        catch (Exception e)
+        {
+          String message = "Cannot instantiate the given Callback class. Make sure that it has a default constructor";
+          log.error(message,e);
+        }
+        String messageID = bean.getMessageID();
+        AxisOperation operation = messageContext.getAxisOperation();
+        if (operation!=null)
+        {
+          CallbackReceiver receiver =
+                (CallbackReceiver)operation.getMessageReceiver();
+          if (receiver==null)
+          {
+            receiver = new CallbackReceiver ();
+            operation.setMessageReceiver(receiver);
+          }
+          receiver.addCallback(messageID,callbackInstance);
+        }
+      }
+    }
+    catch (Exception e) { e.printStackTrace(); return messageContext; }
+    return messageContext;
+  }
+
+  public static void initFromMsgContext(StoredMessageBean bean,
+                                        MessageContext msgContext)
+  {
+    if ( bean == null || msgContext == null ) return;
+    TransportOutDescription transportOutDescription =
+                                       msgContext.getTransportOut();
+    AxisServiceGroup serviceGroup = msgContext.getAxisServiceGroup();
+    AxisService service = msgContext.getAxisService();
+    AxisOperation operation = msgContext.getAxisOperation();
+
+    if (transportOutDescription!=null)
+    {
+      bean.setTransportOut( transportOutDescription.getName() );
+    }
+
+    if (serviceGroup!=null)
+        bean.setAxisServiceGroup(serviceGroup.getServiceGroupName());
+
+    if (service!=null) bean.setAxisService(service.getName());
+    if (operation!=null)
+    {
+      QName name = operation.getName();
+      if (name!=null)
+      {
+        bean.setAxisOperationLocalPart(name.getLocalPart());
+        bean.setAxisOperationNamespaceURI(name.getNamespaceURI());
+        bean.setAxisOperationPrefix(name.getPrefix());
+      }
+
+      bean.setAxisOperationMEP(operation.getMessageExchangePattern());
+    }
+    bean.setFlow(msgContext.getFLOW());
+    bean.setServerSide(msgContext.isServerSide());
+    bean.setMessageID(msgContext.getMessageID());
+    //if ( bean == null ) System.out.println("====== bean is null");
+    //else System.out.println("===== bean is not null");
+    //if ( msgContext == null ) System.out.println("===== msgContext is null");
+    //else System.out.println("====== msgContext is not null");
+    if ( msgContext.getTo() != null )
+         bean.setToURL(msgContext.getTo().getAddress());
+    bean.setTransportTo((String)msgContext.getProperty(Constants.Configuration.TRANSPORT_URL));
+    bean.setAction(msgContext.getOptions().getAction());
+
+    HashMap properties = getPropertiesMap(msgContext);
+    if ( properties != null ) bean.setProperties( serialize(properties) );
+
+    //setting the request message if this a response message.
+    //OperationContext operationContext = msgContext.getOperationContext();
+    try
+    {
+      /*
+      if (operationContext!=null)
+      {
+        if (operationContext.getMessageContexts().size()>1)
+        {
+          if (operationContext.getMessageContext(OperationContextFactory.MESSAGE_LABEL_OUT_VALUE)==msgContext)
+          {
+            MessageContext inMessageContext =
+                operationContext.getMessageContext(OperationContextFactory.MESSAGE_LABEL_IN_VALUE);
+            if (inMessageContext!=null)
+            {
+              //inMessageContext.setOperationContext(null);
+              String inMessageStoreKey = (String) msgContext.getProperty(PersistenceConstants.IN_MESSAGE_STORAGE_KEY);
+              boolean insert = false;
+              if (inMessageStoreKey==null)
+              {
+                inMessageStoreKey = SandeshaUtil.getUUID();
+                insert = true;
+              }
+              if (insert)
+                  storeMessageContext(inMessageStoreKey,inMessageContext);
+              else
+              updateMessageContext(inMessageStoreKey,inMessageContext);
+              setInMessageStoreKey(inMessageStoreKey);
+            }
+          }
+        }
+      }
+      */
+      //getting the callback class name (if present) as a string. Only done for the client side.
+      if (!msgContext.isServerSide())
+      {
+        String messageID = msgContext.getMessageID();
+        AxisOperation axisOperation = msgContext.getAxisOperation();
+        if (axisOperation!=null && messageID!=null)
+        {
+          MessageReceiver messageReceiver = axisOperation.getMessageReceiver();
+          if ((messageReceiver instanceof CallbackReceiver) &&
+               messageReceiver!=null)
+          {
+            CallbackReceiver callbackReceiver = (CallbackReceiver) messageReceiver;
+            Callback callback =
+                 (Callback)callbackReceiver.getCallbackStore().get(messageID);
+            if (callback!=null)
+            {
+              String callbackClassName = callback.getClass().getName();
+              bean.setCallbackClassName(callbackClassName);
+            }
+          }
+        }
+      }
+    }
+    catch(Exception e) { e.printStackTrace(); }
+  }
+
+  private static HashMap getPropertiesMap(MessageContext msgCtx)
+  {
+    if (msgCtx == null) return null;
+    HashMap<String, Object> map = null;
+    // fill the map...
+    if ( msgCtx.getOptions() != null &&
+         msgCtx.getOptions().getProperties() != null &&
+         msgCtx.getOptions().getProperties().keySet() != null )
+    {
+      for ( Object key : msgCtx.getOptions().getProperties().keySet() )
+      {
+        Object val = msgCtx.getProperty( (String)key );
+        if ( val != null && val instanceof Serializable )
+        {
+          if (map == null) map = new HashMap<String, Object>();
+          map.put( (String)key, val );
+        }
+      }
+    }
+
+    return map;
+  }
+
+  private static byte[] serialize(Object object)
+  {
+    if (object == null) return null;
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    try
+    {
+      ObjectOutputStream s = new ObjectOutputStream(stream);
+      s.writeObject(object);
+      s.close();
+      return stream.toByteArray();
+    }
+    catch(Exception ex) { ex.printStackTrace(); return null; }
+  }
+
+  private static Object deserialize(byte[] ser)
+  {
+    if (ser == null || ser.length == 0) return null;
+    ByteArrayInputStream stream = new ByteArrayInputStream(ser);
+    try
+    {
+      ObjectInputStream is = new ObjectInputStream(stream);
+      return is.readObject();
+    }
+    catch(Exception ex) { ex.printStackTrace(); return null; }
+  }
+
+  private static void setProperties(HashMap properties, MessageContext msgCtx)
+  {
+    if ( properties == null || msgCtx == null ) return;
+    if ( properties.keySet() != null )
+    {
+      Iterator it = properties.keySet().iterator();
+      while (it != null && it.hasNext())
+      {
+        String key = (String)it.next();
+        Object val = properties.get(key);
+        msgCtx.setProperty(key, val);
+      }
+    }
+  }
+}

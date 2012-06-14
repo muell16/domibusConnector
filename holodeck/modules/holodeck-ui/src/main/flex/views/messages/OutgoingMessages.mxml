@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+	      width="100%" height="500"
+	     xmlns:widget="views.widget.*" creationComplete="init()"
+	     paddingLeft="24" paddingRight="6" paddingBottom="6" paddingTop="12">
+
+  <mx:LinkButton label="Refresh" click="ebManager.getOutgoingMessages();" />
+  
+  <widget:CollapsiblePanel title="Outgoing Messages" collapseDuration="200"
+      	      styleName="collapsiblePanel" collapsed="false" width="722"
+              paddingTop="8" height="180">
+  <mx:DataGrid id="grid" dataProvider="{messages}" width="700" height="100%" 
+  	           click="{env.text=grid.selectedItem.envelope}">
+    <mx:columns>
+      <mx:DataGridColumn dataField="pmode" headerText="P-Mode"/>
+      <mx:DataGridColumn dataField="legNumber" headerText="Leg #"/>
+      <mx:DataGridColumn dataField="mpc" headerText="MPC"/>
+      <mx:DataGridColumn dataField="fromParty" headerText="From Party"/>
+      <mx:DataGridColumn dataField="toParty" headerText="To Party"/>
+      <mx:DataGridColumn dataField="service" headerText="Service"/>
+      <mx:DataGridColumn dataField="action" headerText="Action"/>
+      <mx:DataGridColumn dataField="sent" headerText="Sent"/>
+      <mx:DataGridColumn dataField="toURL" headerText="To Address"/>
+    </mx:columns>
+  </mx:DataGrid>
+  </widget:CollapsiblePanel>
+  
+  <widget:CollapsiblePanel title="SOAP Envelope" collapseDuration="200"
+      	      styleName="collapsiblePanel" collapsed="true" width="722"
+              paddingTop="8" height="95%">
+  <mx:TextArea id="env" width="700" height="100%" editable="false" />
+  </widget:CollapsiblePanel>
+  
+  <mx:RemoteObject id="ebManager" 
+  	               destination="EbManager" showBusyCursor="false"/>
+  
+  <mx:Script>
+  	<![CDATA[
+import org.holodeck.ebms3.web.*;
+import mx.controls.Alert;
+
+[Bindable] public var messages:Array;
+
+public function init():void
+{
+  ebManager.addEventListener("result", onResult);
+  ebManager.addEventListener("fault", onFault); 
+  ebManager.getOutgoingMessages();
+}
+
+public function onResult(event:Object):void
+{
+  if ( event.result == null ) return;
+  messages = event.result as Array;
+  if ( messages != null && messages.length > 0 ) 
+       grid.dataProvider = messages;
+}
+  	  
+public function onFault(obj:Object):void
+{
+  Alert.show("Could not connect to remote MSH to get message list", 
+              "Server Temporary Down" + obj.toString());
+}
+  	]]>
+  </mx:Script>
+</mx:VBox>
+

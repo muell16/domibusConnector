@@ -1,0 +1,73 @@
+<Reliability-Config>
+
+  <Reliability name="ORDER-ANON">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>true</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="ORDER-CALLBACK">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>true</InOrder>
+      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="ORDER-POLL">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>true</InOrder>
+      <AckReply>Poll</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="ANON">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="CALLBACK">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="POLL">
+      <AtMostOnce>true</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Poll</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
+    </Reliability>
+
+    <Reliability name="GD">
+      <AtMostOnce>false</AtMostOnce>
+      <AtLeastOnce>true</AtLeastOnce>
+      <InOrder>false</InOrder>
+      <AckReply>Response</AckReply>
+      <RetransmissionInterval>40000</RetransmissionInterval>
+      <ExponentialBackoff>false</ExponentialBackoff>
+      <MaximumRetransmissionCount>1</MaximumRetransmissionCount>
+    </Reliability>
+
+</Reliability-Config>

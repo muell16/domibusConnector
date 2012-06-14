@@ -1,0 +1,498 @@
+package org.holodeck.common.persistent;
+
+import org.holodeck.common.soap.Util;
+
+import java.util.*;
+import java.io.*;
+import javax.persistence.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.*;
+import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.om.*;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.activation.MimetypesFileTypeMap;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+
+/**
+ * @author Hamid Ben Malek
+ */
+@MappedSuperclass
+public class SwA implements java.io.Serializable
+{
+  private static final long serialVersionUID = -5949115384530590682L;
+
+  @Transient
+  protected static MimetypesFileTypeMap mimeTypes = null;
+
+  @Transient
+  protected ConfigurationContext configurationCtx = null;
+
+  @Transient
+  protected double soapVersion = 1.1;
+
+  @Column(name = "Envelope", length = 1999999999)
+  protected String envelope;
+
+  @OneToMany(cascade=CascadeType.ALL)
+  @LazyCollection(LazyCollectionOption.FALSE)
+  protected List<Attachment> attachments = new ArrayList<Attachment>();
+
+  @Lob
+  @Column(name = "Msg_Context", length = 1999999999)
+  protected byte[] msgContext;
+
+  @Transient
+  protected StoredMessageBean bean = null;
+
+  @Lob
+  @Column(name = "Bean", length = 1999999999)
+  protected byte[] serializedBean;
+
+  public SwA() {}
+
+ /* ========================= Convenient Extension ======================= */
+ /**
+  *  If this constructor is used and then this message is altered by
+  *  modifying the payloads for example, then to commit to these payloads,
+  *  the method init() should be invoked prior to saving the message to
+  *  database.
+  */
+  public SwA(ConfigurationContext configurationCtx)
+  {
+    this.configurationCtx = configurationCtx;
+  }
+  public SwA(ConfigurationContext configurationCtx, double soapVersion)
+  {
+    this.configurationCtx = configurationCtx;
+    this.soapVersion = soapVersion;
+  }
+  public void addToBody(OMElement payload)
+  {
+    if ( payload == null ) return;
+    MessageContext messageContext = new MessageContext();
+    messageContext.setConfigurationContext(configurationCtx);
+    try
+    {
+      if ( messageContext.getEnvelope() == null )
+           messageContext.setEnvelope(createEnvelope(soapVersion));
+      messageContext.getEnvelope().getBody().addChild(payload);
+
+      envelope = messageContext.getEnvelope().toStringWithConsume();
+      if ( bean == null) bean = new StoredMessageBean();
+      Helper.initFromMsgContext(bean, messageContext);
+      serializeMsgContext(messageContext);
+      serializedBean = serialize(bean);
+    }
+    catch(Exception ex) { ex.printStackTrace(); }
+  }
+
+  public OMElement addToBody(String xmlDocFile)
+  {
+    File payload = new File(xmlDocFile);
+    if ( !payload.exists() ) return null;
+    OMElement pLoad = Util.rootElement(payload);
+    addToBody(pLoad);
+    return pLoad;
+  }
+
+  public String addFileAttachment(String file, boolean attachmentsInDB)
+  {
+    File data = new File(file);
+    String cid = null;
+    if ( attachmentsInDB )
+    {
+      if ( !data.exists() ) return null;
+      FileDataSource fileDataSource = new FileDataSource(data);
+      fileDataSource.setFileTypeMap(Util.getMimeTypes());
+      DataHandler dataHandler = new DataHandler(fileDataSource);
+      cid = UUIDGenerator.getUUID();
+      Attachment part = new Attachment(dataHandler, cid);
+      String mimeType = mimeType(file);
+      //System.out.println("======== mime type of attachment is " + mimeType);
+      if ( mimeType != null ) part.setContentType(mimeType);
+      addAttachment(part);
+    }
+    else
+    {
+      Attachment part = new Attachment(file);
+      String mimeType = mimeType(file);
+      //System.out.println("======== mime type of attachment is " + mimeType);
+      if ( mimeType != null ) part.setContentType(mimeType);
+      addAttachment(part);
+    }
+    return cid;
+  }
+  public void addFileAttachment(String file, boolean attachmentsInDB,
+                                  String cid)
+  {
+    File data = new File(file);
+    if ( cid == null || cid.trim().equals("") )
+         cid = UUIDGenerator.getUUID();
+    if ( attachmentsInDB )
+    {
+      if ( !data.exists() ) return;
+      FileDataSource fileDataSource = new FileDataSource(data);
+      fileDataSource.setFileTypeMap(Util.getMimeTypes());
+      DataHandler dataHandler = new DataHandler(fileDataSource);
+      Attachment part = new Attachment(dataHandler, cid);
+      String mimeType = mimeType(file);
+      if ( mimeType != null ) part.setContentType(mimeType);
+      addAttachment(part);
+    }
+    else
+    {
+      Attachment part = new Attachment(file);
+      String mimeType = mimeType(file);
+      if ( mimeType != null ) part.setContentType(mimeType);
+      part.setContentID(cid);
+      addAttachment(part);
+    }
+  }
+  /* ====================================================================== */
+
+  public SwA(MessageContext context)
+  {
+    if (context == null) return;
+    if ( bean == null) bean = new StoredMessageBean();
+    Helper.initFromMsgContext(bean, context);
+    serializeMsgContext(context);
+    serializedBean = serialize(bean);
+    try
+    {
+      if (context.getEnvelope() != null)
+          envelope = context.getEnvelope().toStringWithConsume();
+
+      Attachments at = context.getAttachmentMap();
+      if (at == null) return;
+      String[] cids = at.getAllContentIDs();
+      if (cids == null || cids.length == 0) return;
+      DataHandler dh = null;
+      for (String cid : cids)
+      {
+        dh = at.getDataHandler(cid);
+        Attachment part = new Attachment(dh, cid);
+        addAttachment(part);
+      }
+
+    }
+    catch(Exception ex) { ex.printStackTrace(); }
+  }
+
+  public String getEnvelope() { return envelope; }
+  public void setEnvelope(String envelope) { this.envelope = envelope; }
+
+  public List<Attachment> getAttachments() { return attachments; }
+  public void setAttachments(List<Attachment> attachments)
+  {
+    this.attachments = attachments;
+  }
+
+  public void addAttachment(Attachment att)
+  {
+    if (att == null) return;
+    attachments.add(att);
+  }
+
+  public void addAttachment(String cid, DataHandler dh)
+  {
+    if (dh == null) return;
+    Attachment part = new Attachment(dh, cid);
+    addAttachment(part);
+  }
+
+  public StoredMessageBean getBean() { return bean; }
+  public void setBean(StoredMessageBean bean) { this.bean = bean; }
+
+  public byte[] getMsgContext() { return msgContext; }
+  public void setMsgContext(byte[] msgContext) { this.msgContext = msgContext;}
+
+  public byte[] getSerializedBean() { return serializedBean; }
+  public void setSerializedBean(byte[] serializedBean)
+  {
+    this.serializedBean = serializedBean;
+  }
+
+  public MessageContext getMessageContext(ConfigurationContext configCtx)
+  {
+    MessageContext ctx = null;
+    if ( msgContext == null || msgContext.length == 0 )
+         ctx = new MessageContext();
+    else ctx = (MessageContext)deserialize(msgContext);
+    bean = (StoredMessageBean)deserialize(serializedBean);
+
+    ctx.setConfigurationContext(configCtx);
+    populate(ctx);
+    ctx.activate(configCtx);
+    ctx.setConfigurationContext(configCtx);
+    if ( configCtx != null )
+    {
+      if (bean != null)
+      {
+        try
+        {
+          Helper.populateFromBean(bean, ctx, configCtx);
+        }
+        catch(Exception e) { e.printStackTrace(); }
+      }
+    }
+    return ctx;
+  }
+
+  public void populate(MessageContext context)
+  {
+    populateEnvelope(context);
+    populateAttachments(context);
+  }
+
+  public void populateEnvelope(MessageContext context)
+  {
+    if (context == null) return;
+    try
+    {
+      XMLInputFactory xif= XMLInputFactory.newInstance();
+      XMLStreamReader reader=
+              xif.createXMLStreamReader(new StringReader(envelope));
+      StAXSOAPModelBuilder builder= new StAXSOAPModelBuilder(reader);
+      SOAPEnvelope env = builder.getSOAPEnvelope();
+      env.build();
+      context.setEnvelope(env);
+    }
+    catch(Exception ex) { ex.printStackTrace(); }
+  }
+
+  public void populateAttachments(MessageContext context)
+  {
+    if (attachments != null && attachments.size() > 0)
+    {
+      for (Attachment part : attachments)
+      {
+        if ( part.getContents() != null && part.getContents().length > 0 )
+        {
+          DataHandler partDataHandler = part.getDataHandler();
+          if ( part.getContentID() != null )
+               context.addAttachment(part.getContentID(), partDataHandler);
+          else part.setContentID( context.addAttachment(partDataHandler) );
+        }
+        else addAttachmentFromFile(part, context);
+      }
+    }
+  }
+
+ /**
+  * This method will be overwritten by subclasses who have a parameter
+  * pointing to the folder where payload files may be store on the file
+  * system
+  */
+  public void addAttachmentFromFile(Attachment part, MessageContext context)
+  {
+    if ( part == null || context == null ) return;
+    if ( part.getFilePath() == null || part.getFilePath().trim().equals("") )
+         return;
+    File att = new File( part.getFilePath() );
+    if ( !att.exists() ) return;
+    FileDataSource fileDataSource = new FileDataSource(att);
+    fileDataSource.setFileTypeMap(getMimeTypes());
+    DataHandler dataHandler = new DataHandler(fileDataSource);
+    if ( part.getContentID() != null )
+         context.addAttachment(part.getContentID(), dataHandler);
+    else context.addAttachment(dataHandler);
+  }
+
+  private void serializeMsgContext(MessageContext context)
+  {
+    if (context == null) return;
+    try
+    {
+      ByteArrayOutputStream bos = new ByteArrayOutputStream() ;
+      ObjectOutput out = new ObjectOutputStream(bos) ;
+      out.writeObject(context);
+      out.close();
+      msgContext = bos.toByteArray();
+    }
+    catch(Exception ex) { ex.printStackTrace(); }
+  }
+
+  private byte[] serialize(Object obj)
+  {
+    if (obj == null) return null;
+    try
+    {
+      ByteArrayOutputStream bos = new ByteArrayOutputStream() ;
+      ObjectOutput out = new ObjectOutputStream(bos) ;
+      out.writeObject(obj);
+      out.close();
+      return bos.toByteArray();
+    }
+    catch(Exception ex) { ex.printStackTrace(); }
+    return null;
+  }
+
+  public Object deserialize(byte[] data)
+  {
+    if ( data == null || data.length == 0 ) return null;
+    Object result = null;
+    ByteArrayInputStream stream = new ByteArrayInputStream(data);
+    try
+    {
+      ObjectInputStream is = new ObjectInputStream(stream);
+      result = is.readObject();
+    }
+    catch(Exception ex) { ex.printStackTrace(); }
+    return result;
+  }
+
+  private SOAPEnvelope createEnvelope(double soapVersion)
+  {
+    SOAPFactory omFactory = null;
+    if ( soapVersion < 1.2 ) omFactory = OMAbstractFactory.getSOAP11Factory();
+    else omFactory = OMAbstractFactory.getSOAP12Factory();
+
+    SOAPEnvelope envelope = omFactory.getDefaultEnvelope();
+    envelope.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
+    envelope.declareNamespace("http://www.w3.org/1999/XMLSchema", "xsd");
+    return envelope;
+  }
+
+  public String mimeType(String fileName)
+  {
+    if ( fileName == null || fileName.trim().equals("") ) return null;
+    int dot = fileName.lastIndexOf(".");
+    if ( dot < 0 ) return null;
+    String extension = fileName.substring(dot + 1);
+    if ( extension.equalsIgnoreCase("hqx") )
+         return "application/mac-binhex40";
+    if ( extension.equalsIgnoreCase("cpt") )
+         return "application/mac-compactpro";
+    if ( extension.equalsIgnoreCase("doc") )
+         return "application/msword";
+    if ( extension.equalsIgnoreCase("pdf") )
+         return "application/pdf";
+    if ( extension.equalsIgnoreCase("ai") ||
+         extension.equalsIgnoreCase("eps") ||
+         extension.equalsIgnoreCase("ps")
+       )
+         return "application/postscript";
+    if ( extension.equalsIgnoreCase("rtf") ) return "application/rtf";
+    if ( extension.equalsIgnoreCase("bcpio") ) return "application/x-bcpio";
+    if ( extension.equalsIgnoreCase("bz2") ) return "application/x-bzip2";
+    if ( extension.equalsIgnoreCase("csh") ) return "application/x-csh";
+    if ( extension.equalsIgnoreCase("gtar") ) return "application/x-gtar";
+    if ( extension.equalsIgnoreCase("gz") ||
+         extension.equalsIgnoreCase("tgz")
+       )
+        return "application/x-gzip";
+    if ( extension.equalsIgnoreCase("kwd") ||
+         extension.equalsIgnoreCase("kwt")
+       )
+        return "application/x-kword";
+    if ( extension.equalsIgnoreCase("ksp") ) return "application/x-kspread";
+    if ( extension.equalsIgnoreCase("kpr") ||
+         extension.equalsIgnoreCase("kpt")
+       )
+        return "application/x-kpresenter";
+    if ( extension.equalsIgnoreCase("chrt") ) return "application/x-kchart";
+    if ( extension.equalsIgnoreCase("latex") ) return "application/x-latex";
+    if ( extension.equalsIgnoreCase("sh") ) return "application/x-sh";
+    if ( extension.equalsIgnoreCase("shar") ) return "application/x-shar";
+    if ( extension.equalsIgnoreCase("swf") )
+         return "application/x-shockwave-flash";
+    if ( extension.equalsIgnoreCase("tar") ) return "application/x-tar";
+    if ( extension.equalsIgnoreCase("tcl") ) return "application/x-tcl";
+    if ( extension.equalsIgnoreCase("tex") ) return "application/x-tex";
+    if ( extension.equalsIgnoreCase("texinfo") ||
+         extension.equalsIgnoreCase("texi")
+       )
+         return "application/x-texinfo";
+    if ( extension.equalsIgnoreCase("t") ||
+         extension.equalsIgnoreCase("tr") ||
+         extension.equalsIgnoreCase("roff")
+       )
+         return "application/x-troff";
+    if ( extension.equalsIgnoreCase("man") ) return "application/x-troff-man";
+    if ( extension.equalsIgnoreCase("zip") ) return "application/zip";
+    if ( extension.equalsIgnoreCase("mpga") ||
+         extension.equalsIgnoreCase("mp2") ||
+         extension.equalsIgnoreCase("mp3")
+       )
+        return "audio/mpeg";
+    if ( extension.equalsIgnoreCase("aif") ||
+         extension.equalsIgnoreCase("aiff") ||
+         extension.equalsIgnoreCase("aifc")
+       )
+        return "audio/x-aiff";
+    if ( extension.equalsIgnoreCase("wav") ) return "audio/x-wav";
+    if ( extension.equalsIgnoreCase("gif") ) return "image/gif";
+    if ( extension.equalsIgnoreCase("ief") ) return "image/ief";
+    if ( extension.equalsIgnoreCase("jpeg") ||
+         extension.equalsIgnoreCase("jpg") ||
+         extension.equalsIgnoreCase("jpe")
+       )
+         return "image/jpeg";
+    if ( extension.equalsIgnoreCase("png") ) return "image/png";
+    if ( extension.equalsIgnoreCase("tif") ||
+         extension.equalsIgnoreCase("tiff")
+       )
+        return "image/tiff";
+    if ( extension.equalsIgnoreCase("txt") ||
+         extension.equalsIgnoreCase("asc")
+       )
+        return "text/plain";
+    if ( extension.equalsIgnoreCase("rtf") ) return "text/rtf";
+    if ( extension.equalsIgnoreCase("sgml") ||
+         extension.equalsIgnoreCase("sgm")
+       )
+        return "text/sgml";
+    if ( extension.equalsIgnoreCase("xml") ) return "text/xml";
+    if ( extension.equalsIgnoreCase("mpeg") ||
+         extension.equalsIgnoreCase("mpg") ||
+         extension.equalsIgnoreCase("mpe")
+       )
+         return "video/mpeg";
+    if ( extension.equalsIgnoreCase("avi") ) return "video/x-msvideo";
+    if ( extension.equalsIgnoreCase("html") ||
+         extension.equalsIgnoreCase("htm")
+       )
+         return "text/html";
+
+    return null;
+  }
+
+  public static MimetypesFileTypeMap getMimeTypes()
+  {
+    if ( mimeTypes != null ) return mimeTypes;
+    mimeTypes = new MimetypesFileTypeMap();
+    mimeTypes.addMimeTypes("application/mac-binhex40 hqx");
+    mimeTypes.addMimeTypes("application/mac-compactpro cpt");
+    mimeTypes.addMimeTypes("application/msword doc");
+    mimeTypes.addMimeTypes("application/pdf pdf");
+    mimeTypes.addMimeTypes("application/postscript ai eps ps");
+    mimeTypes.addMimeTypes("application/rtf rtf");
+    mimeTypes.addMimeTypes("application/x-bcpio bcpio");
+    mimeTypes.addMimeTypes("application/x-bzip2 bz2");
+    mimeTypes.addMimeTypes("application/x-csh csh");
+    mimeTypes.addMimeTypes("application/x-gtar gtar");
+    mimeTypes.addMimeTypes("application/x-gzip gz tgz");
+    mimeTypes.addMimeTypes("application/x-kword kwd kwt");
+    mimeTypes.addMimeTypes("application/x-kspread ksp");
+    mimeTypes.addMimeTypes("application/x-kpresenter kpr kpt");
+    mimeTypes.addMimeTypes("application/x-kchart chrt");
+    mimeTypes.addMimeTypes("application/x-latex latex");
+    mimeTypes.addMimeTypes("application/x-sh sh");
+    mimeTypes.addMimeTypes("application/x-shar shar");
+    mimeTypes.addMimeTypes("application/x-shockwave-flash swf");
+    mimeTypes.addMimeTypes("application/x-tar tar");
+    mimeTypes.addMimeTypes("application/x-tcl tcl");
+
+    return mimeTypes;
+  }
+}

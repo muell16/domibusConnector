@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-2.5.xsd">
+
+  <!-- enables annotation based configuration -->
+  <context:annotation-config />
+
+  <!-- scans for annotated classes in the org.holodeck package -->
+  <context:component-scan base-package="org.holodeck"/>
+
+  <!-- allows for ${} replacement in the spring xml configuration from the system.properties file on the classpath -->
+  <!--context:property-placeholder location="classpath:system.properties"/-->
+
+  <!-- creates an activemq connection factory using the amq namespace -->
+  <amq:connectionFactory id="amqConnectionFactory" brokerURL="tcp://localhost:61616" />
+
+  <!-- CachingConnectionFactory Definition, sessionCacheSize property is the number of sessions to cache -->
+  <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+    <constructor-arg ref="amqConnectionFactory" />
+    <property name="exceptionListener" ref="jmsExceptionListener" />
+    <property name="sessionCacheSize" value="100" />
+  </bean>
+
+  <!-- JmsTemplate Definition -->
+  <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <constructor-arg ref="connectionFactory"/>
+  </bean>
+
+</beans>

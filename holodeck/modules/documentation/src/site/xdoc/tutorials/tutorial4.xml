@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to Fujitsu.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  
+--> 
+
+<document>
+  <properties>
+    <title>Tutorial 4</title>
+    <author>Jacques Durand</author>
+  </properties>
+  <body>
+    <section name="TUTORIAL 4: Secure Messaging.">
+      <p> This tutorial is about using Holodeck to send secure messages (signed, encrypted or both). Usage is manual as in previous tutorials.  This tutorial will illustrate one of the two modes of sending: the "push" mode.
+      </p>
+      <p>NOTE: this release of Holodeck (as of April 2009) uses a security module that in its current version only support signing and encrypting the SOAP envelope - not MIME attachments. In a future release, an enhanced version of this module will allow for signing attachments.
+ </p>
+      <p>
+	For this tutorial two distinct Holodeck instances will be set up on the same machine (as for tutorials 2 and 3). 
+
+        <!-- a href="http://svnbook.red-bean.com/">Version Control with Subversion</a -->.
+	The general model for manual usage of Holodeck, in the case of "push" messaging, is as follows:
+	<img src="../images/HDK-fig-ManualPush.png" alt="Manual Push Messaging"/>
+
+In this tutorial however, we will work with a single Holodeck instance for convenience: the Sending Holodeck and the Receiving Holodeck are the same.
+      </p>
+
+      <subsection name="Achieved in this Tutorial:">
+        <ul>
+          <li>Learn to configure Security for message authentication. </li>
+          <li>Learn how to use an existing Security policy. </li>
+        </ul>
+      </subsection>
+      <subsection name="STEP 1: Choose a level of security">
+	  <p>The processing mode (P-Mode) of a message also specifies the <b>security policy</b> for this message. This is done by referring at a special file that contains Security policies conforming to WS-Security Policy standard. There is a set of predefined security policies under: holodeck-A/config/policies. Each one of these files contains a wsp:Policy element (identified by an Id attribute, e.g. wsu:Id="SigOnly"). We will reuse one of these predefined policies. You could of course write your own policy later.</p>
+	  <p> (intro about security: key management  ). The P-Mode of your message actually does not directly refer to the security Policy to be used. In order to be usable, a security Policy must be complemented with practical information about where to find keys and certificates, along with access info (password...), which we call "keystore info". This combination { security Policy + keystore info } represents the <b>security profile</b> for this message. </p>
+      <p> Security Profiles are described in a single file under holodeck/config: <b>security-config.xml</b>. In this file, each security profile is introduced as a "security" element with a name (e.g.: security name="sign" ). This name is the one that must be referred by the P-Mode, in the "security" attribute of each Leg element.</p> 
+        <ul>
+	  <li>In this tutorial, we will sign both the ebms header (eb:Messaging) and the ebms that is stored in the SOAP Body. This is controlled by the policy file: holodeck/config/policies/policy-sign-body-header.xml. Verify that this policy file is present.</li>
+	  <li>Now open the security-config.xml file (under holodeck/config) and create a policy profile that point at this new policy. Just make a copy of the "sign" security profile whichrefer to the policy-sign-body.xml Policy (in the policy element), and replace this policy by: policy-sign-body-header.xml. Rename this new security profile from "sign" to "signall".</li>
+	  <li></li>
+        </ul>
+	 <p>NOTE: The "keystore" of an holodeck instance is under: holodeck/config/keys. Keystores are files produced by Java JDK KeyTool, and are of the form: [name].jks.  Keystores have already been configured in the installed version, for running tutorials. For a real application, these keystores should be accessed separately in order to add the right certificate and key information, using existing tools for this. This access is not specific to Holodeck, and is documented in the Java JDK. </p>
+      </subsection> 
+
+      <subsection name="STEP 2: Configure the P-Mode to reflect the new Security profile.">
+	<p>We will use the P-Mode named "UploadMode" that is in the file: config/pmodes/UploadMode.xml. This P-Mode already specifies a security profile for its One-way/Push MEP element (see the "security" attribute of the Leg element).</p>
+        <ul>
+	  <li>Open the UploadMode.xml P-Mode file, and replace the "sign" security profile with the "signall" profile defined in Step 1. You should have the security attribute show: security="sign", when done. We will keep the same name for the P-Mode ("UploadMode")</li>
+	  <li></li>
+	  <li></li>
+        </ul>
+      </subsection> 
+
+      <subsection name="STEP 3: Align the P-Mode of holodeck-B">
+	<p>Both Holodeck instances must share same P-Mode definitions and related files (security policies and security profiles).</p>
+        <ul>
+	  <li>Align the P-Modes: Make a copy of holodeck-A/config/pmodes/UploadMode.xml under holodeck-B (i.e. as holodeck-B/config/pmodes/UploadMode.xml)</li>
+	  <li>Align the security profiles: Make a copy of holodeck-A/config/security-config.xml under holodeck-B (i.e. as holodeck-B/config/security-config.xml)</li>
+	  <li>Align the security policies: Make a copy of holodeck-A/config/policies/policy-sign-body-header.xml under holodeck-B (i.e. as holodeck-B/config/policies/policy-sign-body-header.xml )</li>
+        </ul>
+      </subsection> 
+
+      <subsection name="STEP 4: Prepare a Message to be Sent">
+        <ul>
+	  <li>Create a new send-folder under store/send with message material, as done in previous tutorials.</li>
+	  <li>Empty the holodeck-B/store/receive folder.</li>
+	  <li>Edit the "metadata.xml.processed" so that it refer to the P-Mode we chose (pmode element set to "UploadMode"  ) </li>
+	  <li>Rename the "metadata.xml.processed" files as "metadata.xml".</li>
+        </ul>
+      </subsection>
+
+      <subsection name="STEP 5: Verify the Message Reception">
+        <p> We verify here that the message has been well received as in previous tutorials, but also that the message signing has been done properly.</p>
+        <ul>
+	  <li>Verify that the message material is now delivered by holodeck-B under holodeck-B/store/receive folder. </li>
+	  <li>Under holodeck-B/store/receive/messages_[mpcname]/msg-[timestamp], open the SOAP-header.xml file. You should see the SOAP header as received by the receiving holodeck before it is processed. The security header must be there (wsse:Security), and the SignedInfo element of the signature must refer (ds:Reference URI=[#id]) to the eb:Messaging SOAP header block which must be identified with the same id (wsu:Id attribute). </li>
+	  <li>Under the same receive-folder, open the envelope.xml file. You must see both the eb:Messaging header and the SOAP:Body element, the latter being also identified by a wsu:Id attribute that is also referred to by a ds:Reference element in the same signature (ds:Signature) visible in SOAP-header.xml file. NOTE: the signature header is no longer visible in envelope.xml.</li>
+	   <li>You can also see a copy of the entire envelope including teh signature in the log file: holodeck-B/server/logs/holodeck-ebms3.log</li>
+	   <li>In case the holodeck-B could not validate the signature (e.g. the right key could not be accessed in the local keystore), holodeck-B will not deliver the message under holodeck-B/store/receive. It will also generate a Fault. This Fault will be logged in: holodeck-B/server/logs/holodeck-ebms3.log. This log entry should be introduced as "ServerSide, OutFlow:" and then the SOAP Fault should appear.</li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>

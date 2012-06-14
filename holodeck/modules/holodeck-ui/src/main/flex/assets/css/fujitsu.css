@@ -1,0 +1,529 @@
+/* CSS file */
+VBox
+{
+  height:auto;
+  overflow:visible;
+}
+
+Application
+{
+  backgroundColor: #FFFFFF;
+}
+
+.ProgressBar
+{
+  barColor: #aadeff;
+  trackColors: #e6eeee, #e6eeee;
+  color: #006699;
+  paddingLeft: 0;
+  paddingRight: 0;
+  textIndent: 0;
+  trackHeight: 19;
+  verticalGap: 2;	
+}
+
+/*
+DataGrid 
+{
+   backgroundColor: #ffffff;
+   alternatingItemColors: #eeeeee, #ffffff;
+   headerColors: #000000, #ff9900;
+   rollOverColor: #093b6f;
+   textRollOverColor: #000000;
+   borderThickness: 0;
+   selectionColor: #ff9900;
+   color: #ff9900;
+   textSelectedColor: #ffffff;
+}
+*/
+.MyServicesDataGrid 
+{
+   backgroundColor: #ffffff;
+   alternatingItemColors: #eeeeee, #ffffff;
+   headerColors: #000000, #ff9900;
+   rollOverColor: #ffcccc;
+   textRollOverColor: #006600;
+   borderThickness: 0;
+   borderColor: #000000;
+   selectionColor: #000000;
+   color: #cc6666;
+   textSelectedColor: #ffffff;
+}
+
+.MyServicesDataGrid2 
+{
+   backgroundAlpha: 1;
+   backgroundColor: #ffffff;
+   alternatingItemColors: #eeeeee, #ffffff;
+   headerColors: #000000, #93B6FE;
+   rollOverColor: #ff9900;
+   textRollOverColor: #ffffff;
+   borderThickness: 0;
+   borderColor: #000000;
+   selectionColor: #000000;
+   color: #3366cc;
+   /* fontWeight: bold; */
+   fontFamily: Arial;
+   textSelectedColor: #ffffff;
+}
+/*
+Accordion
+{
+  fontSize: 12;
+  fontFamily: Arial;
+  headerHeight: 33;
+  
+  dropShadowEnabled: false;
+  shadowDistance: 11;
+  shadowDirection: left;
+  borderStyle: solid;
+  borderThickness: 3;
+  backgroundAlpha: 1;
+  highlightAlphas: 0,0;
+  fillAlphas: 1,1,1,1;
+  fillColors: #ffffff, #000000, #ffffff, #ffffff;
+ 
+  selectedFillColors: #93B6FE, #000000;
+  
+  themeColor: #93B6FE;
+  
+  backgroundColor: #ffffff;
+  borderColor: #000000; 
+  
+  color: #ffffff; 
+  
+  textRollOverColor: #000000;
+  textSeletedColor: #009900;
+} */
+
+Label { color: #000000; }
+/* ComboBox { color: #000000; } */
+TextInput { color: #000000; }
+/*
+DataGrid 
+{  
+  alternatingItemColors: #ffffff, #ffffff;
+  rollOverColor: #cccccc;
+  textRollOverColor: #000000;
+  selectionColor: #666666;
+  color: #003366;
+  textSelectedColor: #336699;
+} 
+*/
+
+.LinkButton 
+{
+   fontSize: 10;
+   fontFamily: Verdana;
+   color: #006699;
+   rollOverColor: #000000; /* #6699cc; */
+   textRollOverColor: #ffffff;
+   selectionColor: #6699cc;
+   textSelectedColor: #ffffff;
+}
+
+.none
+{
+  useRollOver: false;	
+}
+
+Panel
+{
+   /*	
+   headerColors: #000000, #ffffff;
+   borderColor: #000000;
+   */
+   headerColors: #000000, #93B6FE; /*#4682b4, #000000;*/
+   borderColor: #93B6FE; /* #4682b4;*/
+   headerHeight: 22;
+   
+   borderThickness: 1;
+   dropShadowEnabled: false;
+   shadowDirection: center;
+   roundedBottomCorners: false;
+   backgroundAlpha: 1;
+   borderAlpha: 0.84;
+   borderStyle: solid;
+   titleStyleName: whiteTitle;
+}
+
+.block
+{
+  cornerRadius: 0;
+  paddingLeft: 4;
+  paddingRight: 4;
+  headerHeight: 21;
+  dropShadowEnabled: false;
+  shadowDistance: 0;
+  roundedBottomCorners: false;
+  backgroundAlpha: 1;
+  borderAlpha: 1;
+  borderThickness: 1;
+  highlightAlphas: 0, 0;
+  borderStyle: none;
+  headerColors: #93B6FE, #ffffff;  /* #00000, #4682b4; */
+  backgroundColor: #eeeeee; /* #e6e6fa; */ /* #fffaf0; */
+  borderColor: #0093b6;
+  titleStyleName: whiteTitle;	
+}
+
+.textInputFront 
+{ 
+   borderStyle: solid;
+   borderColor: #009dff;
+   borderThickness: 1;
+   cornerRadius: 0;
+   textIndent: 1;
+   dropShadowEnabled: true;
+   shadowDirection: left;
+   shadowDistance: 8;
+   dropShadowColor: #000000;
+}
+
+.textInputBack 
+{ 
+   borderStyle: solid;
+   borderStyle: solid;
+   borderColor: #006699;
+   cornerRadius: 0;
+   textIndent: 1;
+   dropShadowEnabled: false;
+}
+
+.blackHeaderPanel
+{
+  headerHeight: 22;
+  dropShadowEnabled: false;
+  backgroundAlpha: 1;
+  borderAlpha: 1;
+  borderThicknessLeft: 1;
+  borderThicknessRight: 1;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 0;
+  highlightAlphas: 0.36, 0.01;
+  borderStyle: none;
+  headerColors: #000000, #000000;
+  backgroundColor: #ffffff;
+  borderColor: #000000;	
+  titleStyleName: whiteTitle;
+}
+
+.whiteTitle { color: #ffffff; }
+
+.blueHeaderPanel
+{
+  headerHeight: 22;
+  dropShadowEnabled: false;
+  backgroundAlpha: 1;
+  borderAlpha: 1;
+  borderThicknessLeft: 1;
+  borderThicknessRight: 1;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 0;
+  highlightAlphas: 0.55, 0.04;
+  borderStyle: none;
+  headerColors: #4682b4, #4682b4;
+  backgroundColor: #ffffff;
+  borderColor: #000000;
+  titleStyleName: whiteTitle;	
+}
+
+.highlighted
+{
+  color:                  #BDE9FA;
+  fontWeight:             "bold";
+}
+
+.notHighlighted
+{
+  color:           #ffffff; 
+  fontWeight:             "normal";
+}
+
+
+
+
+
+
+
+.myaccordionHeader {
+   			fontFamily: Tahoma;
+   			fontWeight: bold;
+		}
+/*		
+		AdvancedDataGrid {
+   			fontFamily: Tahoma;
+   			fontSize: 10;
+   			headerStyleName: "mydataGridHeaderStyle";
+		}
+*/
+		.mydataGridHeaderStyle {
+   			fontFamily: Tahoma;
+   			fontWeight: bold;
+   			fontStyle: normal;
+   			textDecoration: none;
+		}
+		
+		
+		.datagridStyle
+		{
+		   alternatingItemColors: #ffffff, #ffffff;
+		   rollOverColor: #cccccc;
+		   textRollOverColor: #000000;
+		   selectionColor: #666666;
+		   color: #003366;
+		   textSelectedColor: #336699;
+		}
+		
+		.dataGridHeader
+		{
+		  color: #003366;
+		}
+		
+		ToolTip {
+   			backgroundAlpha: 0.85;
+   			backgroundColor: #111111;
+   			color: #ffffff;
+   			fontFamily: Tahoma;
+   			
+}
+		.mySkin {
+			leftButtonStyleName: "leftButton2";
+			rightButtonStyleName: "rightButton2";
+			upButtonStyleName: "upButton2";
+			downButtonStyleName: "downButton2";
+			buttonWidth:20px;	
+		}
+		
+		.myTitleStyle {
+	color: #000000;
+	fontFamily: Tahoma;
+   	fontSize: 11;
+   	fontWeight: normal;		
+}
+
+/* =================== For SuperPanel ================== */
+/*
+.mypanelTitle {
+	fontFamily: Arial;
+	fontSize: 10;
+	fontWeight: bold;
+}
+.closeBtn {
+	upSkin:        Embed('/assets/img/closeButton.png');
+	overSkin:      Embed('/assets/img/closeButton.png');
+	downSkin:      Embed('/assets/img/closeButton.png');
+	disabledSkin:  Embed('/assets/img/closeButton.png');
+}
+.increaseBtn {
+	upSkin:        Embed('/assets/img/increaseButton.png');
+	overSkin:      Embed('/assets/img/increaseButton.png');
+	downSkin:      Embed('/assets/img/increaseButton.png');
+	disabledSkin:  Embed('/assets/img/increaseButton.png');
+}
+.decreaseBtn {
+	upSkin:        Embed('/assets/img/decreaseButton.png');
+	overSkin:      Embed('/assets/img/decreaseButton.png');
+	downSkin:      Embed('/assets/img/decreaseButton.png');
+	disabledSkin:  Embed('/assets/img/decreaseButton.png');
+}
+
+//.minimizeBtn {
+//	upSkin:        Embed('/assets/img/minimizeButton.png');
+//	overSkin:      Embed('/assets/img/minimizeButton.png');
+//	downSkin:      Embed('/assets/img/minimizeButton.png');
+//	disabledSkin:  Embed('/assets/img/minimizeButton.png');
+//}
+
+.resizeHndlr {
+	upSkin:        Embed('/assets/img/resizeHandler.png');
+	overSkin:      Embed('/assets/img/resizeHandler.png');
+	downSkin:      Embed('/assets/img/resizeHandler.png');
+	disabledSkin:  Embed('/assets/img/resizeHandler.png');
+}
+*/
+
+.pinkPanel 
+{
+   borderStyle: solid;
+   borderColor: #d9b7d9;
+   borderAlpha: 1;
+   borderThickness: 2;
+   roundedBottomCorners: true;
+   cornerRadius: 3;
+   headerHeight: 22;
+   backgroundAlpha: 0.51;
+   highlightAlphas: 0.2, 0.46;
+   headerColors: #bd8fb5, #e8d3e8; 
+   footerColors: #e7e7e7, #c7c7c7;
+   backgroundColor: #ffffff;
+   dropShadowEnabled: false;
+   titleStyleName: "myPinkPanelTitle";
+}
+.myPinkPanelTitle 
+{
+   textAlign: center;
+   fontFamily: Verdana;
+   fontWeight: bold;
+}
+/* ---------------------------------------------------------- */
+.pinkPanel2 
+{
+   borderStyle: none;
+   cornerRadius: 0;
+   highlightAlphas: 0, 0;
+   headerColors: #e47a7a, #e47a7a;
+}
+/* ---------------------------------------------------------- */
+.navigation 
+{
+  borderStyle: solid;
+  borderColor: #e47a7a;
+  borderThickness: 1;
+  cornerRadius: 0;
+  highlightAlphas: 0, 0;
+  headerColors: #e47a7a, #e47a7a;
+}
+/* ---------------------------------------------------------- */
+
+.collapsiblePanel 
+{
+  borderStyle: none;
+  borderAlpha: 1;
+  cornerRadius: 0;
+  highlightAlphas: 0, 0;
+  borderColor: #e47a7a;
+  highlightAlphas: 0, 0;
+  headerColors: #e47a7a, #eac1c1;
+}
+/* ---------------------------------------------------------- */
+
+.redPalePanel 
+{
+   borderStyle: solid;
+   borderColor: #db718d;
+   borderAlpha: 1;
+   borderThickness: 2;
+   roundedBottomCorners: true;
+   cornerRadius: 3;
+   headerHeight: 22;
+   backgroundAlpha: 0.51;
+   highlightAlphas: 0.24, 0.1;
+   headerColors: #db718d, #d05799;
+   footerColors: #e7e7e7, #c7c7c7;
+   backgroundColor: #ffffff;
+   dropShadowEnabled: false;
+   titleStyleName: "myRedPalePanelTitle";
+}
+.myRedPalePanelTitle 
+{
+   color: #ffffff;
+   textAlign: center;
+   fontFamily: Verdana;
+   fontWeight: bold;
+}
+
+/* ---------------------------------------------------------- */
+.pinkPanel3 
+{
+   borderStyle: none;
+   borderAlpha: 1;
+   cornerRadius: 0;
+   highlightAlphas: 0, 0;
+   headerColors: #c13c3c, #e7b8ca;
+   footerColors: #ffffff, #ffffff;
+   shadowDistance: 5;
+   titleStyleName: "pinkPanel3Title";
+}
+
+.pinkPanel3Title 
+{
+   color: #ffffff;
+   textAlign: center;
+   fontSize: 11;
+   fontWeight: bold;
+}
+/* ---------------------------------------------------------- */
+.bluePanel1 
+{
+   borderStyle: none;
+   borderAlpha: 1;
+   cornerRadius: 0;
+   highlightAlphas: 0, 0;
+   headerColors: #2670d0, #7aa7e1;
+   footerColors: #ffffff, #ffffff;
+   shadowDistance: 5;
+   titleStyleName: "bluePanel1Title";
+}
+.bluePanel1Title {
+   color: #ffffff;
+   textAlign: center;
+   fontSize: 11;
+   fontWeight: bold;
+}
+/* ---------------------------------------------------------- */
+.myHRule 
+{
+   strokeColor: #770e68;
+   shadowColor: #770e68;
+   strokeWidth: 4;
+}
+.myHRule2 
+{
+   strokeColor: #2670d0;
+   strokeWidth: 2;
+}
+
+.myHRule3 
+{
+   strokeColor: #e47a7a;
+   strokeWidth: 3;
+}
+
+.BorderlessPanel 
+{
+  borderStyle: none;
+  headerHeight: 0;
+}
+
+
+/* For TabBar */
+/*
+TabBar {
+   tabHeight: 46;
+   tabWidth: 43;
+   horizontalGap: -2;
+   paddingLeft: 0;
+   paddingRight: 0;
+   backgroundAlpha: 1;
+   backgroundColor: #ffffff;
+   borderStyle: solid;
+   borderColor: #ffffff;
+   borderThickness: 0;
+   color: #0b333c;
+   dropShadowEnabled: true;
+   shadowDirection: right;
+   shadowDistance: 4;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+   cornerRadius: 0;
+   highlightAlphas: 0, 0.3;
+   fillAlphas: 1, 0.91;
+   fillColors: #000000, #000000;
+   backgroundAlpha: 1;
+   color: #ffffff;
+   textRollOverColor: #cccccc;
+   themeColor: #000000;
+
+}
+
+.mySelectedTabs {
+   color: #000000;
+}
+
+*/

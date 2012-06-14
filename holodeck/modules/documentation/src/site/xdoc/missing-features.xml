@@ -1,0 +1,52 @@
+<document>
+  <properties>
+    <title>Holodeck Features</title>
+    <author>Hamid Ben Malek</author>
+  </properties>
+  <body>
+
+    <section name="Missing Features">
+
+ <p>
+  The following are the key features that the current version of Holodeck is missing:
+ </p>
+ <ul>
+  <li> Support for attachements by URL reference only. In ebMS 3 specification, one can send a message without
+       including the attachment with the message (the attachment payloads can be referenced in eb:PayloadInfo
+       element by specifying the href attribute that can be a complete URL (an external resource that is hosted
+       on some remote server). Holodeck needs to provide a way to reference payloads by just their
+       URLs without inluding them with the message.
+  </li>
+
+  <li> Support for mpc authentication via &lt;eb:Security actor="ebms3"/>. The current version of Holodeck does not
+       authenticate a PullRequest. If you need authentication, you would have to include it as part of the 
+       WSS-Security quality of service (part of the Security policy), and let the WSS module authenticate 
+       the PullRequest. Holodeck needs to provide authentication of the PullRequest because this authentication
+       is separate from the WSS authentication.
+  </li> 
+
+  <li> Support for signing/encrypting attachments. The current version of Holodeck is using Apache Rampart for the
+       WSS implementation and this later does not implement the specification for Securing attachments in a SwA.
+       Rampart says that it can secure the attachments of an MTOM message, but as far as SwA is concerned, there is
+       no support of that yet from Rampart.
+  </li> 
+
+  <li> Need to develop a sophisticated User Interface in Flex for the administration of MSH, and for remote 
+       interaction of users with Holodeck accross the Internet. The current version of Holodeck provides very basic
+       and simple functionality on this: you can submit messages remoteley accross the Internet, and you can view 
+       outgoing and received messages (without their attachments). No administration tasks or other functionality
+       is yet present in the Flex interface.
+  </li> 
+
+  <li> Need to develop a JMS connector for Holodeck. Holodeck needs to be able to communicate with JMS both for
+       the submission and delivery of messages. Applications could for example send messages to a given
+       persistent queue in JMS where Holodeck would pick them up for pushing or to be pulled. And similarly,
+       Holodeck could deliver received messages to a certain JMS topic to which many consumers may subscribe to.
+       This is partially implemented (consumers can consume messages from a queue or topic that holodeck forwards
+       messages to).
+  </li> 
+
+</ul>
+</section>
+</body>
+</document>

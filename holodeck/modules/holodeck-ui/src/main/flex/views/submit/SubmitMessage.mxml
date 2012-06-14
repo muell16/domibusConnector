@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	       width="100%" height="100%" xmlns:submit="views.submit.*" 
+	       xmlns:widget="views.widget.*"
+	       creationComplete="initApp()">
+  <mx:Panel title="Submitting a message to MSH" width="100%"
+            height="100%">
+    <mx:Form id="submitForm" width="100%">
+      <mx:FormItem label="PMode Name:" width="100%">
+        <!--mx:TextInput id="_pmode" width="100%" /-->
+        <mx:ComboBox id="_pmodes" />
+      </mx:FormItem>
+      <mx:FormItem label="AgreementRef:" width="100%">
+        <mx:TextInput id="_agreementRef" width="567" />
+      </mx:FormItem>
+      <mx:FormItem label="Conversation ID:" width="100%">
+        <mx:TextInput id="_conversationId" width="567" />
+      </mx:FormItem>
+      <mx:FormItem label="Ref To Message ID:" width="100%">
+        <mx:TextInput id="_refToMessageId" width="567" />
+      </mx:FormItem>
+      <widget:CollapsiblePanel title="From Party" collapseDuration="200"
+      	      styleName="collapsiblePanel" collapsed="true" width="700"
+              paddingTop="8">
+        <submit:FromParty id="fromParty" />
+      </widget:CollapsiblePanel>
+      <!--widget:CollapsableBox content="{fromParty}" title="From Party"/-->
+      <mx:Spacer height="3"/>
+      <widget:CollapsiblePanel title="Message Properties" collapseDuration="200"
+      	      styleName="collapsiblePanel" collapsed="true" width="700"
+              paddingTop="8">
+        <submit:MessageProperties id="messageProperties" />
+      </widget:CollapsiblePanel>
+      <!--widget:CollapsableBox content="{messageProperties}"
+      	                     title="Message Properties"/-->
+      <mx:Spacer height="3"/>
+      <widget:CollapsiblePanel title="Select Message Payloads" collapseDuration="200"
+      	      styleName="collapsiblePanel" collapsed="true" width="700"
+              paddingTop="8">
+        <submit:SelectPayload id="uploadPanel" />
+      </widget:CollapsiblePanel>
+      <!--widget:CollapsableBox content="{uploadPanel}"
+      	                     title="Select Message Payloads"/-->
+      <mx:Spacer height="3"/>
+      
+      <!--mx:FormItem label="Body Payload:" width="100%"
+      	  toolTip="Name of the file whose contents will be in the SOAP body">
+        <mx:ComboBox id="_payloads" dataProvider="{uploadPanel.payloads}"/>
+      </mx:FormItem-->
+      <widget:CollapsiblePanel title="Payloads Info" collapseDuration="200"
+      	      styleName="collapsiblePanel" collapsed="true" width="700"
+              paddingTop="4">
+        <submit:PayloadInfo id="payloadInfo" />
+      </widget:CollapsiblePanel>
+      <!--widget:CollapsableBox content="{payloadInfo}"
+      	                     title="Payloads Info"/-->
+      
+      <mx:Spacer height="12"/>
+      
+      <!--mx:ProgressBar id="_progressbar" labelPlacement="center" 
+  	              trackHeight="15" left="0" right="0" 
+     	          bottom="5" height="20" width="100%"/-->
+      <mx:HRule width="730" />
+      <mx:HBox width="100%" color="#336699">
+      	<!--mx:Spacer width="43%"/-->
+      	<mx:ProgressBar id="_progressbar" labelPlacement="center" 
+  	              trackHeight="15" left="0" right="0" 
+     	          bottom="5" height="20" width="660"/>
+      	<mx:Button label="Submit" id="_uploadbutton" width="65"
+      		       click="uploadFiles(true)"/>
+      	<!--mx:Spacer width="43%"/-->
+      </mx:HBox>
+    </mx:Form>
+  </mx:Panel>
+  
+  <mx:RemoteObject id="ebManager" 
+  	               destination="EbManager" showBusyCursor="false"/>
+  <mx:RemoteObject id="ebManager2" 
+  	               destination="EbManager" showBusyCursor="true"/>
+  <mx:Script source="submitMessageScript.as"/>	
+</mx:Canvas>

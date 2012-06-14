@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to Fujitsu.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  
+--> 
+
+<document>
+  <properties>
+    <title>Tutorial 3</title>
+    <author>Jacques Durand</author>
+  </properties>
+  <body>
+    <section name="TUTORIAL 3: Message Pulling">
+      <p>
+	Holodeck has two modes of transfering messages:
+      </p>
+      <p>
+	<b>1. Push.</b> In this mode, the Sending Holodeck takes the initiative of transfering, and "pushes" the messages to the Receiving Holodeck.</p>
+      <p>
+	<b>2. Pull.</b> In this mode, the Sending Holodeck holds the submitted message in its local store and waits for the Receiving instance to ask for it (i.e. to make a "pull request").</p>
+      <p>
+	This Tutorial will illustrate one of the second mode of sending: the "pull" mode. The Push mode has been practiced in the two previous tutorials (1 and 2). </p>
+	<p>For this tutorial we will use two distinct Holodeck instances as learned in Tutorial 2.
+The holodeck-A will be the instance from which a submitted message will be pulled. Everything will still be done "manually", without writing a single line of code. From a user perspective, there will be no difference in the way messages are submitted or delivered: this remains the same whether the message is pushed or pulled.
+      </p>
+	<p>The general model for manual usage of Holodeck, in the case of "pull" messaging, is very similar as for push messaging: from a user viewpoint, the only difference appears as a different PMode set-up.</p>
+	<img src="../images/HDK-fig-ManualPull.png" alt="Manual Push Messaging"/>
+
+      <subsection name="Achieved in this Tutorial:">
+        <ul>
+          <li>Preparing a PMode for message pulling. </li>
+	  <li>Configuring the automatic pulling mechanism.</li>
+	  <li>Executing a pulled transfer.</li>
+        </ul>
+      </subsection>
+
+      <subsection name="STEP 1: Preliminary Clean-up">
+	<p>You may decide to not stop the Holodeck instances A and B if they are still running from a previous tutorial. Otherwise you may start them right away (server/bin/startup.bat, as in Tutorial 2), but preferably after cleaning up their store/send and store/receive folders, as well as their logs:</p>
+	<li>Remove all content under the store/receive folder on both Holodeck A and B.</li> 
+	<li>Make sure that all message send-folders under store/send on holodeck-A and B, are all deactivated i.e. matadata.xml files all have an additional suffix, e.g. metadata.xml.processed. </li> 
+	<li>Clean-up the log files as indicated before. </li>
+	</subsection>
+
+      <subsection name="STEP 2: Prepare the PMode for pulling from A to B">
+      <p>
+	We will first work on holodeck-A: </p>
+      <ul>
+	<li>Access the <b>pmodes</b> folder of holodeck-A (holodeck-A\config\pmodes). Under this folder you should see an existing file: ImagePull.xml. make a copy of the ImagePull.xml file and call it mypullpmodes.xml.</li>
+          <li>Edit the PMode defined in mypullpmodes.xml and name it for example as :
+PMode name="pullShipment". Modify the Binding XML element: Binding/MEP/Leg (number=1) so that its Endpoint/@Address value is the URL of holodeck-A, as set-up in Tutorial 2. Choose an MPC name, e.g. "mpc://hdlk-A-pull", in the first Leg of the MEP.</li>
+          <li>Update the rest of the PMode (UserService element)so that it is identical to the PMode <b>sendShipment</b>, used in Tutorial 1 and 2. Make sure the userService attribute in the Binding element, is same as the name attribute of the UserService element.</li>
+        </ul>
+      <p>
+	We then move to holodeck-B: </p>
+      <ul>
+	<li>Access the <b>pmodes</b> folder of holodeck-B (holodeck-B\config\pmodes). Under this folder, move a copy of the mypullpmodes.xml you just edited.</li>
+        </ul>
+
+      </subsection>
+
+      <subsection name="STEP 3: Configure the automatic pulling mechanism">
+        <ul>
+	  <li>On holodeck-B: Open the file: holodeck-B\config\workers.xml. Let us assume we want to configure the pulling over the MPC "mpc://hdlk-A-pull" to which our submitted messages will be assigned on holodeck-A. </li>
+	  <li>You will set the mpc parameter of the "pull1" worker so that it contains the right mpc value (mpc://hdlk-A-pull): &lt;parameter name="mpc"&gt; [value]. On the worker element, you can also change the values of the following attributes: { interval="10000" total="-1" activate="true" }
+This means that a pulling request signal will be sent every 10 seconds, for an unlimited period of time (maximum number of messages - or "total" - set to -1). Whenever the "activate" attribute is set to false, the automated pulling will stop.
+	  </li>
+        </ul>
+      </subsection>
+
+      <subsection name="STEP 4: Prepare a Message to be Sent.">
+        <ul>
+	  <li>On holodeck-A: Reuse the same messages as in Tutorial 2. Just make sure that the PMode element in metadata.xml is referring to the new PMode name: pullShipment.</li>
+	  <li>If the metadata.xml file was renamed metadata.xml.processed due to some prior sending, rename it just metadata.xml.</li>
+	  <li>Your holodeck-A is now all set for pulling</li>
+        </ul>
+      </subsection>
+
+      <subsection name="STEP 5: Execute the pulled transfer.">
+	<p>Proceed then as in Tutorial 2: in the send-folder of the message you want to send out, rename metadata.xml.sample as just: metadata.xml. You should then observe in the store/receive of holodeck-B, the creation of a subfolder Messages-[same mpc name], which in turn contains a folder named as: msg-[timestamp], with the expected messages contents.</p>
+        <ul>
+	  <li></li>
+        </ul>
+      </subsection>
+
+    </section>
+  </body>
+</document>

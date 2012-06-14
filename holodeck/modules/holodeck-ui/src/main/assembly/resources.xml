@@ -1,0 +1,41 @@
+<assembly>
+  <id>holodeck</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <fileSet>
+      <directory>../holodeck-distribution/target/holodeck-distribution-1.0-holodeck</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/msh/**/web.xml</exclude>
+      </excludes>
+    </fileSet>
+  
+    <fileSet>
+      <directory>src/main/webapp</directory>
+      <outputDirectory>${holodeck.build.dir}/msh</outputDirectory>
+    </fileSet>
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <scope>runtime</scope>
+      <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+
+  <files>
+    <file>
+      <source>target/index.swf</source>
+      <outputDirectory>${holodeck.build.dir}/msh/</outputDirectory>
+    </file>
+
+    <file>
+      <source>src/main/webapp/WEB-INF/web.xml</source>
+      <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/</outputDirectory>
+    </file>
+  </files>
+</assembly>

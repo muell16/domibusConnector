@@ -1,0 +1,29 @@
+<!-- This file is for use in Manual mode only. The data it contains can be set by API when controling Holodeck from an application -->
+
+<Metadata>
+   <pmode>UploadMode</pmode>
+	<!-- contains the name of the P-Mode to be used for sending a message -->
+   <AgreementRef>AGR123</AgreementRef>
+	<!-- Optional. Contains the ID of some agreement between communicating parties (to appear in the message header). Of no significance for Holodeck. -->
+   <ConversationId>123456</ConversationId>
+	<!-- Optional. Contains the ID to be used in the Conversation element to appear in the message header. Of no significance for Holodeck. -->
+   <From>
+	<!-- Optional. Contains the identification of the Sending party. To appear in the message header. If not present, similar data from the P-Mode will be used. to appear in the message header. Of no significance for Holodeck. -->
+      <PartyId type="corp">fujitsu.com</PartyId>
+      <PartyId type="subdivision">fla.fujitsu.com</PartyId>
+      <Role>seller</Role>
+   </From>
+   <Properties>
+	<!-- Optional. Contains additional attributes that we may want to appear in the message header.  Of no significance for Holodeck. -->
+      <Property name="price">$40</Property>
+      <Property name="greeting">Hello there</Property>
+   </Properties>
+   <Payloads>
+	<!-- Optional. Describes all message parts. The one under BodyPayload will be stored in the SOAP:Body part of the SOAP envelope. Others will refer to every part that must be sent out as a SOAP (MIME) attachment. The user can choose the MIME Content-ID name (cid attribute). If absent, all files under the Send-folder will be packaged as attachments, with same cid name as their file name. -->
+      <BodyPayload>body.xml</BodyPayload>
+      <Payload cid="bradPicture">brad-pitt.jpg</Payload>
+      <Payload cid="geronimo">geronimo.pdf</Payload>
+      <Payload cid="claire">claire-forlani.jpg</Payload>
+      <Payload cid="bear" compressed="true">Bear.wmv</Payload>
+   </Payloads>
+</Metadata>
