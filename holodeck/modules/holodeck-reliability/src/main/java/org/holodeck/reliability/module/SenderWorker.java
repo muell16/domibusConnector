@@ -3,21 +3,18 @@ package org.holodeck.reliability.module;
 //import java.util.concurrent.*;
 //import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.AxisOperation;
-//import org.apache.axiom.soap.SOAPHeader;
-//import org.apache.axiom.om.OMElement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.holodeck.reliability.persistent.GMessage;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.log4j.Logger;
 import org.holodeck.common.soap.Util;
-
-import java.util.*;
+import org.holodeck.reliability.persistent.GMessage;
 
 /**
  * @author Hamid Ben Malek
@@ -31,8 +28,8 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
   //protected String groupId;
   //protected int seqNumber = -1;
 
-  private static final Log log =
-             LogFactory.getLog(SenderWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
+  private static final Logger log = Logger.getLogger(SenderWorker.class.getName());
 
   public SenderWorker(MessageContext msgCtx) { init(msgCtx); }
 

@@ -1,26 +1,23 @@
 package org.holodeck.reliability.module;
 
 import org.apache.axis2.AxisFault;
-//import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-//import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
-//import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-import org.apache.neethi.Policy;
+import org.apache.log4j.Logger;
 import org.apache.neethi.Assertion;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Policy;
 
 /**
  * @author Hamid Ben Malek
  */
 public class ReliabilityModule  implements Module
 {
-  private Log log = LogFactory.getLog(ReliabilityModule.class);
+//  private Log log = LogFactory.getLog(ReliabilityModule.class);
+  private Logger log = Logger.getLogger(ReliabilityModule.class);
 
   public void init(ConfigurationContext configContext, AxisModule module)
               throws AxisFault

@@ -1,25 +1,24 @@
 package org.holodeck.ebms3.workers.impl;
 
-import org.holodeck.common.soap.Util;
-import org.holodeck.ebms3.persistent.UserMsgToPush;
-import org.holodeck.ebms3.submit.MsgInfoSet;
-import org.holodeck.ebms3.module.Constants;
+import java.util.List;
 
 import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
-import java.io.File;
+import org.apache.log4j.Logger;
+import org.holodeck.common.logging.level.MessageLevel;
+import org.holodeck.common.logging.model.MsgInfo;
+import org.holodeck.common.soap.Util;
+import org.holodeck.ebms3.module.Constants;
+import org.holodeck.ebms3.persistent.UserMsgToPush;
+import org.holodeck.ebms3.submit.MsgInfoSet;
 
 /**
  * @author Hamid Ben Malek
  */
 public class SenderWorker implements Runnable
 {
-  private static final Log log =
-             LogFactory.getLog(SenderWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
+  private static final Logger log = Logger.getLogger(SenderWorker.class.getName());
+	private static final Logger log_msg = Logger.getLogger("message_logger");
 
   public void run()
   {
@@ -48,6 +47,9 @@ public class SenderWorker implements Runnable
     MsgInfoSet metadata = message.getMsgInfoSetBean();
 
     log.debug("SenderWorker: about to send to " + message.getToURL());
+//    log_msg.debug("Das ist der Test");
+//    log_msg.debug(new MsgInfo("msgid", "sender", "receiver"));
+    log_msg.log(MessageLevel.MESSAGE, new MsgInfo("msgid", "sender", "receiver") );
     message.send(metadata, cb);
   }
 }

@@ -1,27 +1,30 @@
 package org.holodeck.ebms3.consumers;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.*;
-import java.util.*;
-import java.io.*;
 
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.AxisServlet;
-import org.holodeck.ebms3.module.MsgInfo;
-import org.holodeck.ebms3.module.Constants;
+import org.apache.log4j.Logger;
 import org.holodeck.ebms3.module.Configuration;
-
-import org.simpleframework.xml.core.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.holodeck.ebms3.module.Constants;
+import org.holodeck.ebms3.module.MsgInfo;
+import org.simpleframework.xml.core.Persister;
 
 /**
  * @author Hamid Ben Malek
  */
 public class Gateway extends HttpServlet implements EbConsumer
 {
-  private static final Log log =
-                  LogFactory.getLog(Gateway.class.getName());
+//  private static final Log log = LogFactory.getLog(Gateway.class.getName());
+  private static final Logger log = Logger.getLogger(Gateway.class.getName());
 
   public static GatewayConfig gatewayConfig;
 

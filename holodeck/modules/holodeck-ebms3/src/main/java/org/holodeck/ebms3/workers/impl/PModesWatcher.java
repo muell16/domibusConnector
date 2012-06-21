@@ -1,21 +1,21 @@
 package org.holodeck.ebms3.workers.impl;
 
-import org.holodeck.ebms3.module.Configuration;
+import java.io.File;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 import org.holodeck.ebms3.config.PModePool;
+import org.holodeck.ebms3.module.Configuration;
 import org.holodeck.ebms3.workers.DirWatcher;
 import org.holodeck.ebms3.workers.Task;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.*;
-import java.util.Map;
 
 /**
  * @author Hamid Ben Malek
  */
 public class PModesWatcher extends DirWatcher implements Task
 {
-  private Log log = LogFactory.getLog(PModesWatcher.class);
+//  private Log log = LogFactory.getLog(PModesWatcher.class);
+  private Logger log = Logger.getLogger(PModesWatcher.class);
 
   protected File pmodesDir = null;
 

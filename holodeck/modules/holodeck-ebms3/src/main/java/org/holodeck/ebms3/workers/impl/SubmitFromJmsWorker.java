@@ -1,18 +1,17 @@
 package org.holodeck.ebms3.workers.impl;
 
-import org.holodeck.common.soap.Util;
-import org.holodeck.ebms3.persistent.UserMsgToPush;
-import org.holodeck.ebms3.submit.MsgInfoSet;
-import org.holodeck.ebms3.module.Constants;
-import org.holodeck.ebms3.workers.Task;
-
-import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.activemq.ActiveMQConnectionFactory;
-
-import javax.jms.*;
 import java.util.Map;
+
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.Session;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.log4j.Logger;
+import org.holodeck.ebms3.workers.Task;
 
 /**
  *  This implementation of this class is not finished yet. This class is supposed
@@ -27,8 +26,8 @@ import java.util.Map;
  */
 public class SubmitFromJmsWorker implements Task, MessageListener
 {
-  private static final Log log =
-             LogFactory.getLog(SubmitFromJmsWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(SubmitFromJmsWorker.class.getName());
+  private static final Logger log = Logger.getLogger(SubmitFromJmsWorker.class.getName());
 
   protected String destination;
   protected String brokerURL;

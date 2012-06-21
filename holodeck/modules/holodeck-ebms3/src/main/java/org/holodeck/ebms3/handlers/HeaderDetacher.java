@@ -1,25 +1,24 @@
 package org.holodeck.ebms3.handlers;
 
+import java.util.List;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.*;
-import org.apache.axiom.soap.*;
-
-import org.holodeck.ebms3.module.*;
+import org.apache.log4j.Logger;
 import org.holodeck.common.soap.Util;
-
-import java.util.*;
+import org.holodeck.ebms3.module.Constants;
 
 /**
  * @author Hamid Ben Malek
  */
 public class HeaderDetacher extends AbstractHandler
 {
-  private static final Log log =
-                  LogFactory.getLog(HeaderDetacher.class.getName());
+//  private static final Log log = LogFactory.getLog(HeaderDetacher.class.getName());
+  private static final Logger log = Logger.getLogger(HeaderDetacher.class);
+  
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

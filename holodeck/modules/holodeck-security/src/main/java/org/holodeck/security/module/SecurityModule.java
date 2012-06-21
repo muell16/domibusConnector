@@ -5,17 +5,17 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.modules.Module;
-import org.apache.neethi.Policy;
+import org.apache.log4j.Logger;
 import org.apache.neethi.Assertion;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Policy;
 
 /**
  * @author Hamid Ben Malek
  */
 public class SecurityModule implements Module
 {
-  private Log log = LogFactory.getLog(SecurityModule.class);
+//  private Log log = LogFactory.getLog(SecurityModule.class);
+  private Logger log = Logger.getLogger(SecurityModule.class);
 
 
   public void init(ConfigurationContext configContext, AxisModule module)

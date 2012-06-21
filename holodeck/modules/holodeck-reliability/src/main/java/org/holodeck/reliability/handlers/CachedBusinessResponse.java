@@ -1,16 +1,14 @@
 package org.holodeck.reliability.handlers;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.*;
-
-import org.holodeck.reliability.persistent.BusinessResponse;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
 import org.holodeck.reliability.module.Constants;
 import org.holodeck.reliability.module.DbStore;
-import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.persistent.BusinessResponse;
 
 /**
  * This handler operates at the server side in the OUT_FLOW period and it
@@ -21,8 +19,8 @@ import org.holodeck.common.soap.Util;
  */
 public class CachedBusinessResponse extends AbstractHandler
 {
-  private static final Log log =
-            LogFactory.getLog(CachedBusinessResponse.class.getName());
+//  private static final Log log = LogFactory.getLog(CachedBusinessResponse.class.getName());
+  private static final Logger log = Logger.getLogger(CachedBusinessResponse.class.getName());
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

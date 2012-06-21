@@ -5,6 +5,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.axiom.om.*;
 import org.apache.axiom.soap.*;
 
@@ -26,8 +27,9 @@ import java.util.*;
  */
 public class PullProcessor extends AbstractHandler
 {
-  private static final Log log =
-                  LogFactory.getLog(PullProcessor.class.getName());
+//  private static final Log log = LogFactory.getLog(PullProcessor.class.getName());
+  private static final Logger log = Logger.getLogger(PullProcessor.class.getName());
+  
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

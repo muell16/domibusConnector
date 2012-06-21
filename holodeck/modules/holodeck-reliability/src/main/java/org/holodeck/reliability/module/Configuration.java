@@ -1,20 +1,20 @@
 package org.holodeck.reliability.module;
 
-import org.apache.axis2.description.Parameter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.holodeck.reliability.config.*;
-
 import java.io.File;
 import java.util.List;
+
+import org.apache.axis2.description.Parameter;
+import org.apache.log4j.Logger;
+import org.holodeck.reliability.config.Reliability;
+import org.holodeck.reliability.config.ReliabilityConfig;
 
 /**
  * @author Hamid Ben Malek
  */
 public class Configuration extends FileWatcher
 {
-  private static Log log = LogFactory.getLog(Configuration.class);
+//  private static Log log = LogFactory.getLog(Configuration.class);
+  private static Logger log = Logger.getLogger(Configuration.class);
 
   public Configuration()
   {

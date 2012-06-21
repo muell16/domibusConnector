@@ -3,15 +3,13 @@ package org.holodeck.reliability.handlers;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.holodeck.reliability.persistent.GMessage;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.config.Reliability;
 import org.holodeck.reliability.module.Constants;
 import org.holodeck.reliability.module.DbStore;
 import org.holodeck.reliability.module.SenderWorker;
-import org.holodeck.reliability.config.Reliability;
-import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.persistent.GMessage;
 
 
 /**
@@ -23,7 +21,8 @@ import org.holodeck.common.soap.Util;
  */
 public class PreSend extends AbstractHandler
 {
-  private static final Log log = LogFactory.getLog(PreSend.class.getName());
+//  private static final Log log = LogFactory.getLog(PreSend.class.getName());
+  private static final Logger log = Logger.getLogger(PreSend.class.getName());
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

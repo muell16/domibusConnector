@@ -25,8 +25,9 @@ import java.lang.reflect.Constructor;
  */
 public class InvokeCallback extends AbstractHandler
 {
-  private static final Log log =
-                  LogFactory.getLog(InvokeCallback.class.getName());
+//  private static final Log log = LogFactory.getLog(InvokeCallback.class.getName());
+  private static final Log log = LogFactory.getLog(InvokeCallback.class.getName());
+  
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

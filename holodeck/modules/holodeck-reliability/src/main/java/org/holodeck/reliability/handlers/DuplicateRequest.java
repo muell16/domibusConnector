@@ -1,21 +1,15 @@
 package org.holodeck.reliability.handlers;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
-//import org.apache.axis2.engine.AxisEngine;
-//import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
-//import org.apache.axis2.context.OperationContext;
-//import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.*;
-import org.apache.axiom.soap.*;
-
-import org.holodeck.reliability.persistent.BusinessResponse;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
 import org.holodeck.reliability.module.Constants;
 import org.holodeck.reliability.module.DbStore;
-import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.persistent.BusinessResponse;
 
 /**
  * This handler simply returns a cached business response to a duplicate
@@ -26,8 +20,8 @@ import org.holodeck.common.soap.Util;
  */
 public class DuplicateRequest extends AbstractHandler
 {
-  private static final Log log =
-          LogFactory.getLog(DuplicateRequest.class.getName());
+//  private static final Log log = LogFactory.getLog(DuplicateRequest.class.getName());
+  private static final Logger log = Logger.getLogger(DuplicateRequest.class.getName());
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

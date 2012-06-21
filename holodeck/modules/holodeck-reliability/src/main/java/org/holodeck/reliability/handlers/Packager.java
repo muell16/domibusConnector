@@ -1,30 +1,33 @@
 package org.holodeck.reliability.handlers;
 
+import java.util.Date;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.*;
-import org.apache.axiom.soap.*;
-
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
 import org.holodeck.reliability.config.Reliability;
-import org.holodeck.reliability.persistent.SenderGroup;
-import org.holodeck.reliability.packaging.*;
 import org.holodeck.reliability.module.Constants;
 import org.holodeck.reliability.module.DbStore;
-import org.holodeck.common.soap.Util;
-
-import java.util.Date;
+import org.holodeck.reliability.packaging.MessageId;
+import org.holodeck.reliability.packaging.ReplyPattern;
+import org.holodeck.reliability.persistent.SenderGroup;
 
 /**
  * @author Hamid Ben Malek
  */
 public class Packager extends AbstractHandler
 {
-  private static final Log log =
-                         LogFactory.getLog(Packager.class.getName());
+//  private static final Log log = LogFactory.getLog(Packager.class.getName());
+  private static final Logger log = Logger.getLogger(Packager.class.getName());
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

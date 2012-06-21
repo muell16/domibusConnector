@@ -2,21 +2,16 @@ package org.holodeck.reliability.module;
 
 //import java.util.concurrent.*;
 //import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import java.util.*;
+import java.util.List;
 
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ConfigurationContext;
-//import org.apache.axis2.client.ServiceClient;
-//import org.apache.axis2.client.OperationClient;
-//import org.apache.axis2.client.Options;
-//import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.holodeck.reliability.persistent.CallbackAck;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.log4j.Logger;
 import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.persistent.CallbackAck;
 
 /**
  * This worker reads the acknolegedment messages from the "CallbackAck" table
@@ -31,8 +26,8 @@ public class CallbackAckWorker extends PeriodicWorker //implements Runnable
   protected ConfigurationContext configCtx;
   protected DbStore store;
 
-  private static final Log log =
-             LogFactory.getLog(CallbackAckWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(CallbackAckWorker.class.getName());
+  private static final Logger log = Logger.getLogger(CallbackAckWorker.class.getName());
 
   public CallbackAckWorker(ConfigurationContext confCtx) { init(confCtx); }
 

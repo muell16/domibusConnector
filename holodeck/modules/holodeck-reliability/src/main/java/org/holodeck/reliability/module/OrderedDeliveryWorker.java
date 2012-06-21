@@ -1,17 +1,12 @@
 package org.holodeck.reliability.module;
 
-import java.util.concurrent.*;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-//import org.apache.axis2.engine.AxisEngine;
-//import org.apache.axiom.soap.SOAPHeader;
-//import org.apache.axiom.om.OMElement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.holodeck.reliability.persistent.OMessage;
 import org.holodeck.reliability.persistent.ReceiverGroup;
 //import org.holodeck.common.soap.Util;
@@ -25,8 +20,8 @@ public class OrderedDeliveryWorker extends PeriodicWorker //implements Runnable
   protected ConfigurationContext configCtx;
   protected DbStore store;
 
-  private static final Log log =
-             LogFactory.getLog(OrderedDeliveryWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(OrderedDeliveryWorker.class.getName());
+  private static final Logger log = Logger.getLogger(OrderedDeliveryWorker.class.getName());
 
   public OrderedDeliveryWorker(ConfigurationContext confCtx) { init(confCtx); }
 

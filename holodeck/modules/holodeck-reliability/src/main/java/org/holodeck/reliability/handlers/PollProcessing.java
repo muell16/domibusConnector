@@ -1,19 +1,20 @@
 package org.holodeck.reliability.handlers;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.*;
-import org.apache.axiom.soap.*;
-
-import org.holodeck.reliability.persistent.MessageRange;
-import org.holodeck.reliability.packaging.*;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
 import org.holodeck.reliability.module.Constants;
 import org.holodeck.reliability.module.DbStore;
-import org.holodeck.common.soap.Util;
-import java.util.*;
+import org.holodeck.reliability.packaging.Response;
+import org.holodeck.reliability.persistent.MessageRange;
 
 /**
  * This handler operates on the server side. It first puts the RM-PollRequest
@@ -25,8 +26,8 @@ import java.util.*;
  */
 public class PollProcessing extends AbstractHandler
 {
-  private static final Log log =
-          LogFactory.getLog(PollProcessing.class.getName());
+//  private static final Log log = LogFactory.getLog(PollProcessing.class.getName());
+  private static final Logger log = Logger.getLogger(PollProcessing.class.getName());
   private String logPrefix = "";
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault

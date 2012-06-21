@@ -5,6 +5,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.client.async.AxisCallback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.holodeck.ebms3.submit.MsgInfoSet;
 import org.holodeck.ebms3.submit.EbMessage;
@@ -18,8 +19,8 @@ import java.util.Map;
  */
 public class PullWorker implements Task
 {
-  private static final Log log =
-             LogFactory.getLog(PullWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(PullWorker.class.getName());
+  private static final Logger log = Logger.getLogger(PullWorker.class.getName());
 
   protected String pmode;
   protected String mpc;

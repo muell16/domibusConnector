@@ -5,6 +5,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.holodeck.ebms3.module.Configuration;
 import org.holodeck.ebms3.config.Leg;
@@ -22,8 +23,8 @@ import org.holodeck.ebms3.config.Leg;
  */
 public class SecurityShot extends AbstractHandler
 {
-  private static final Log log =
-                  LogFactory.getLog(SecurityShot.class.getName());
+//  private static final Log log = LogFactory.getLog(SecurityShot.class.getName());
+  private static final Logger log = Logger.getLogger(SecurityShot.class.getName());
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault
   {

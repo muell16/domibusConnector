@@ -1,23 +1,21 @@
 package org.holodeck.ebms3.workers.impl;
 
-import org.holodeck.common.soap.Util;
-import org.holodeck.ebms3.persistent.ReceiptData;
-import org.holodeck.ebms3.submit.EbMessage;
-import org.holodeck.ebms3.module.Constants;
-import org.holodeck.ebms3.packaging.Messaging;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
+import org.holodeck.ebms3.module.Constants;
+import org.holodeck.ebms3.packaging.Messaging;
+import org.holodeck.ebms3.persistent.ReceiptData;
+import org.holodeck.ebms3.submit.EbMessage;
 
 /**
  * @author Hamid Ben Malek
  */
 public class ReceiptSender implements Runnable
 {
-  private static final Log log =
-             LogFactory.getLog(ReceiptSender.class.getName());
+//  private static final Log log = LogFactory.getLog(ReceiptSender.class.getName());
+  private static final Logger log = Logger.getLogger(ReceiptSender.class.getName());
 
   public void run()
   {

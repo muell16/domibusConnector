@@ -2,17 +2,18 @@ package org.holodeck.reliability.module;
 
 //import java.util.concurrent.*;
 //import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.holodeck.reliability.persistent.GMessage;
-import org.holodeck.reliability.packaging.PollRequest;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.log4j.Logger;
 import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.packaging.PollRequest;
+import org.holodeck.reliability.persistent.GMessage;
 
 /**
  * This worker sends poll request messages (it reads the “GMessages”
@@ -28,8 +29,8 @@ public class PollReqSenderWorker extends PeriodicWorker //implements Runnable
   protected ConfigurationContext configCtx;
   protected DbStore store;
 
-  private static final Log log =
-             LogFactory.getLog(PollReqSenderWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(PollReqSenderWorker.class.getName());
+  private static final Logger log = Logger.getLogger(PollReqSenderWorker.class.getName());
 
   public PollReqSenderWorker(ConfigurationContext confCtx) { init(confCtx); }
 

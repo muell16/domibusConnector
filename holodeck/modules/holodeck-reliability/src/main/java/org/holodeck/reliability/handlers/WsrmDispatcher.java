@@ -1,21 +1,22 @@
 package org.holodeck.reliability.handlers;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.engine.AbstractDispatcher;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.*;
-import org.apache.axiom.soap.*;
-import org.apache.axiom.attachments.Attachments;
-import org.holodeck.common.soap.Util;
-import org.holodeck.reliability.module.Constants;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
+
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AbstractDispatcher;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
+import org.holodeck.reliability.module.Constants;
 
 /**
  * This is an axis2 dispatcher inserted in the transport phase of
@@ -28,8 +29,8 @@ import java.util.Iterator;
  */
 public class WsrmDispatcher extends AbstractDispatcher
 {
-  private static final Log log =
-                  LogFactory.getLog(WsrmDispatcher.class.getName());
+//  private static final Log log = LogFactory.getLog(WsrmDispatcher.class.getName());
+  private static final Logger log = Logger.getLogger(WsrmDispatcher.class.getName());
 
   public AxisOperation findOperation(AxisService service, MessageContext msgCtx)
                        throws AxisFault

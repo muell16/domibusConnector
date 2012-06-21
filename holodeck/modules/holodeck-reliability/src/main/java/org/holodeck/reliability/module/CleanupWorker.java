@@ -2,13 +2,12 @@ package org.holodeck.reliability.module;
 
 //import java.util.concurrent.*;
 //import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import java.util.*;
+import java.util.List;
 
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.holodeck.reliability.persistent.*;
-//import org.holodeck.common.soap.Util;
+import org.apache.log4j.Logger;
+import org.holodeck.reliability.persistent.ReceiverGroup;
+import org.holodeck.reliability.persistent.SenderGroup;
 
 /**
  * This worker cleans the database by deleting the following:
@@ -25,8 +24,8 @@ public class CleanupWorker extends PeriodicWorker //implements Runnable
   protected ConfigurationContext configCtx;
   protected DbStore store;
 
-  private static final Log log =
-             LogFactory.getLog(CleanupWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(CleanupWorker.class.getName());
+  private static final Logger log = Logger.getLogger(CleanupWorker.class.getName());
 
   public CleanupWorker(ConfigurationContext confCtx) { init(confCtx); }
 

@@ -9,6 +9,7 @@ import org.apache.axis2.context.MessageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.holodeck.common.soap.Util;
 
@@ -19,8 +20,9 @@ import javax.xml.namespace.QName;
  */
 public class Ebms3Dispatcher extends AbstractDispatcher
 {
-  private static final Log log =
-                  LogFactory.getLog(Ebms3Dispatcher.class.getName());
+//  private static final Log log = LogFactory.getLog(Ebms3Dispatcher.class.getName());
+  private static final Logger log = Logger.getLogger(Ebms3Dispatcher.class);
+  
   private String logPrefix = "";
 
   public AxisOperation findOperation(AxisService service, MessageContext msgCtx)

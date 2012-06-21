@@ -1,24 +1,24 @@
 package org.holodeck.security.module;
 
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.log4j.Logger;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-
-import java.util.*;
-import java.io.File;
-
-import org.holodeck.security.model.SecurityConfig;
 import org.holodeck.security.model.Security;
+import org.holodeck.security.model.SecurityConfig;
 
 /**
  * @author Hamid Ben Malek
  */
 public class Configuration extends SecurityUtil
 {
-  private static Log log = LogFactory.getLog(Configuration.class);
+//  private static Log log = LogFactory.getLog(Configuration.class);
+  private static Logger log = Logger.getLogger(Configuration.class);
 
   protected static SecurityConfig securityConfig;
   protected static Map<String, Policy> initiatorPolicies;
