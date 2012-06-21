@@ -121,6 +121,7 @@
                 <copy todir="${basedir}/../holodeck-security/target/classes" overwrite="true">
                   <fileset dir="${basedir}/target/classes" includes="**/*.class"/>
                 </copy>
+                <mkdir dir="${basedir}/../../target/holodeck/server/temp" />
               </tasks>
             </configuration>
             <goals>
