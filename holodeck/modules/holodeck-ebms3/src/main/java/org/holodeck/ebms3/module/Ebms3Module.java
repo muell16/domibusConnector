@@ -9,6 +9,7 @@ import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
+import org.apache.log4j.Logger;
 import org.apache.neethi.Policy;
 import org.apache.neethi.Assertion;
 import org.apache.commons.logging.Log;
@@ -26,7 +27,8 @@ import javax.naming.InitialContext;
  */
 public class Ebms3Module  implements Module
 {
-  private Log log = LogFactory.getLog(Ebms3Module.class);
+//  private Log log = LogFactory.getLog(Ebms3Module.class);
+  private Logger log = Logger.getLogger(Ebms3Module.class);
   //protected SubmitWorker submitWorker;
   //protected SenderWorker sender;
   protected List<PullWorker> pullers = new ArrayList<PullWorker>();

@@ -1,15 +1,13 @@
 package org.holodeck.security.handlers;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.neethi.Policy;
-
-import org.holodeck.security.module.SecurityUtil;
 import org.holodeck.security.module.Configuration;
+import org.holodeck.security.module.SecurityUtil;
 
 /**
  *  This handler (which is part of the Holodeck-Security Module) runs before
@@ -21,8 +19,8 @@ import org.holodeck.security.module.Configuration;
  */
 public class RecipientHandler extends AbstractHandler
 {
-  private static final Log log =
-                  LogFactory.getLog(RecipientHandler.class.getName());
+//  private static final Log log = LogFactory.getLog(RecipientHandler.class.getName());
+  private static final Logger log = Logger.getLogger(RecipientHandler.class.getName());
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault
   {

@@ -1,24 +1,22 @@
 package org.holodeck.security.handlers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.neethi.Policy;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.log4j.Logger;
+import org.apache.neethi.Policy;
 import org.apache.rampart.RampartMessageData;
-
-import org.holodeck.security.module.SecurityUtil;
 import org.holodeck.security.module.Configuration;
+import org.holodeck.security.module.SecurityUtil;
 
 /**
  * @author Hamid Ben Malek
  */
 public class InitiatorHandler extends AbstractHandler
 {
-  private static final Log log =
-                  LogFactory.getLog(InitiatorHandler.class.getName());
+//  private static final Log log = LogFactory.getLog(InitiatorHandler.class.getName());
+  private static final Logger log = Logger.getLogger(InitiatorHandler.class.getName());
 
   public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault
   {

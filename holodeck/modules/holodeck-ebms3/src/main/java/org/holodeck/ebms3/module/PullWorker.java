@@ -4,6 +4,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.axiom.om.OMElement;
 
 import org.holodeck.ebms3.submit.MsgInfoSet;
@@ -14,8 +15,8 @@ import org.holodeck.ebms3.submit.EbMessage;
  */
 public class PullWorker extends ControlledPeriodicWorker
 {
-  private static final Log log =
-             LogFactory.getLog(PullWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(PullWorker.class.getName());
+  private static final Logger log = Logger.getLogger(PullWorker.class.getName());
 
   public PullWorker(OMElement pullElement, ConfigurationContext config)
   {

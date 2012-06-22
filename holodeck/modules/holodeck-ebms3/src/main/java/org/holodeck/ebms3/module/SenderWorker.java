@@ -1,25 +1,21 @@
 package org.holodeck.ebms3.module;
 
+import java.util.List;
+
+import org.apache.axis2.client.async.AxisCallback;
+import org.apache.log4j.Logger;
+import org.holodeck.common.logging.model.MsgInfo;
 import org.holodeck.common.soap.Util;
 import org.holodeck.ebms3.persistent.UserMsgToPush;
 import org.holodeck.ebms3.submit.MsgInfoSet;
-import org.holodeck.ebms3.submit.EbMessage;
-//import org.holodeck.ebms3.pmodes.Leg;
-//import org.holodeck.common.client.Client;
-import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.client.async.AxisCallback;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
 
 /**
  * @author Hamid Ben Malek
  */
 public class SenderWorker extends PeriodicWorker //implements Runnable
 {
-  private static final Log log =
-             LogFactory.getLog(SenderWorker.class.getName());
+//  private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
+	private static final Logger log = Logger.getLogger(SenderWorker.class);
 
   public void init()
   {

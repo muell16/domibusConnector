@@ -1,15 +1,14 @@
 package org.holodeck.ebms3.workers;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
-import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.Serializer;
-
-import java.util.*;
-import java.io.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.simpleframework.xml.core.Persister;
 
 /**
  * @author Hamid Ben Malek
@@ -19,8 +18,8 @@ public class WorkerPool extends FileWatcher implements java.io.Serializable
 {
   private static final long serialVersionUID = -5593318201928374737L;
 
-  private static final Log log =
-             LogFactory.getLog(WorkerPool.class.getName());
+//  private static final Log log = LogFactory.getLog(WorkerPool.class.getName());
+  private static final Logger log = Logger.getLogger(WorkerPool.class.getName());
 
   @ElementList(entry="Worker", inline=true, required=false)
   protected List<Worker> workers = new ArrayList<Worker>();

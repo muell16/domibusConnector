@@ -12,6 +12,7 @@ import org.apache.axiom.soap.*;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.holodeck.ebms3.config.PMode;
 
 
@@ -23,8 +24,8 @@ import java.lang.reflect.Method;
  */
 public class Ebms3MsgReceiver extends AbstractMessageReceiver
 {
-  private static final Log log =
-                  LogFactory.getLog(Ebms3MsgReceiver.class.getName());
+//  private static final Log log = LogFactory.getLog(Ebms3MsgReceiver.class.getName());
+  private static final Logger log = Logger.getLogger(Ebms3MsgReceiver.class.getName());
 
   public final void receive(MessageContext msgContext) throws AxisFault
   {

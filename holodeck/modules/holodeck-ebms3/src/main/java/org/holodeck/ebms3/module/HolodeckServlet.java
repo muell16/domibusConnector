@@ -17,6 +17,7 @@ import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.transport.http.*;
 import org.apache.axis2.util.*;
 import org.apache.commons.logging.*;
+import org.apache.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -32,7 +33,8 @@ import org.holodeck.common.soap.Util;
  */
 public class HolodeckServlet extends HttpServlet implements TransportListener
 {
-  private static final Log log = LogFactory.getLog(AxisServlet.class);
+//  private static final Log log = LogFactory.getLog(AxisServlet.class);
+  private static final Logger log = Logger.getLogger(AxisServlet.class);
   public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
   public static final String SESSION_ID = "SessionId";
   protected transient ConfigurationContext configContext;

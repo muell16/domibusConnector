@@ -1,16 +1,14 @@
 package org.holodeck.ebms3.workers;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.ElementMap;
-import org.holodeck.common.soap.Util;
-
 import java.util.Map;
-import java.util.TimerTask;
 import java.util.Timer;
+import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.ElementMap;
+import org.simpleframework.xml.Root;
 
 /**
  * @author Hamid Ben Malek
@@ -18,8 +16,8 @@ import org.apache.commons.logging.LogFactory;
 @Root(name="Worker")
 public class Worker implements Runnable
 {
-  private static final Log log =
-             LogFactory.getLog(Worker.class.getName());
+//  private static final Log log = LogFactory.getLog(Worker.class.getName());
+  private static final Logger log = Logger.getLogger(Worker.class.getName());
 
   @Attribute
   protected String name;

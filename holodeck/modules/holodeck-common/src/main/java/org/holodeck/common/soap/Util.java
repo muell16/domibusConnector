@@ -1,54 +1,84 @@
 package org.holodeck.common.soap;
 
-import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.attachments.IncomingAttachmentStreams;
-import org.apache.axiom.attachments.IncomingAttachmentInputStream;
-import org.apache.axis2.Constants;
-import org.apache.axis2.builder.BuilderUtil;
-import org.apache.axis2.transport.http.SOAPMessageFormatter;
-import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.OperationContext;
-//import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.jms.JMSConstants;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.OperationClient;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.XMLPrettyPrinter;
-import org.apache.axiom.om.*;
-import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axiom.soap.*;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.xpath.AXIOMXPath;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.jms.*;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.namespace.QName;
 import javax.activation.DataHandler;
 import javax.activation.MimetypesFileTypeMap;
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.net.URL;
-import java.util.*;
-import java.util.zip.*;
-import java.text.SimpleDateFormat;
-import java.lang.reflect.Constructor;
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.IncomingAttachmentInputStream;
+import org.apache.axiom.attachments.IncomingAttachmentStreams;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.om.xpath.AXIOMXPath;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.builder.BuilderUtil;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.SOAPMessageFormatter;
+import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.log4j.Logger;
 
 /**
  * @author Hamid Ben Malek
@@ -57,7 +87,8 @@ public class Util
 {
   public static OMFactory factory= OMAbstractFactory.getOMFactory();
 
-  private static final Log log = LogFactory.getLog(Util.class);
+//  private static final Log log = LogFactory.getLog(Util.class);
+  private static final Logger log = Logger.getLogger(Util.class);
 
   public static MimetypesFileTypeMap mimeTypes = null;
 
@@ -114,32 +145,32 @@ public class Util
     return element.toString();
   }
 
-  public static void debug(Log log, OMElement element)
+  public static void debug(Logger log, OMElement element)
   {
     if ( log == null || element == null ) return;
     log.debug( prettyToString(element) );
   }
-  public static void debug(Log log, String message, OMElement element)
+  public static void debug(Logger log, String message, OMElement element)
   {
     if ( log == null || element == null ) return;
     log.debug( message + " " + prettyToString(element) );
   }
-  public static void info(Log log, OMElement element)
+  public static void info(Logger log, OMElement element)
   {
     if ( log == null || element == null ) return;
     log.info( prettyToString(element) );
   }
-  public static void info(Log log, String message, OMElement element)
+  public static void info(Logger log, String message, OMElement element)
   {
     if ( log == null || element == null ) return;
     log.info( message + " " + prettyToString(element) );
   }
-  public static void error(Log log, OMElement element)
+  public static void error(Logger log, OMElement element)
   {
     if ( log == null || element == null ) return;
     log.error( prettyToString(element) );
   }
-  public static void error(Log log, String message, OMElement element)
+  public static void error(Logger log, String message, OMElement element)
   {
     if ( log == null || element == null ) return;
     log.error( message + " " + prettyToString(element) );

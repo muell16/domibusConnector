@@ -1,25 +1,25 @@
 package org.holodeck.ebms3.submit;
 
-import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.om.OMElement;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.holodeck.ebms3.persistent.ReceivedUserMsg;
-import org.holodeck.ebms3.module.MsgInfo;
-import org.holodeck.ebms3.module.Constants;
-import org.holodeck.ebms3.module.EbUtil;
-import org.holodeck.ebms3.module.PartInfo;
-import org.holodeck.common.soap.Util;
-import org.holodeck.common.persistent.Attachment;
-
-import javax.activation.DataHandler;
-import java.util.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+
+import javax.activation.DataHandler;
+
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.async.AxisCallback;
+import org.apache.axis2.context.MessageContext;
+import org.apache.log4j.Logger;
+import org.holodeck.common.persistent.Attachment;
+import org.holodeck.common.soap.Util;
+import org.holodeck.ebms3.module.Constants;
+import org.holodeck.ebms3.module.EbUtil;
+import org.holodeck.ebms3.module.MsgInfo;
+import org.holodeck.ebms3.module.PartInfo;
+import org.holodeck.ebms3.persistent.ReceivedUserMsg;
 
 /**
  *  This is a Callback class that simply saves the received user message
@@ -31,8 +31,8 @@ import java.text.SimpleDateFormat;
  */
 public class SaveReceivedMsg implements AxisCallback
 {
-  private static final Log log =
-                  LogFactory.getLog(SaveReceivedMsg.class.getName());
+//  private static final Log log = LogFactory.getLog(SaveReceivedMsg.class.getName());
+  private static final Logger log = Logger.getLogger(SaveReceivedMsg.class.getName());
 
   public void onComplete() {}
   public void onError(Exception ex) { ex.printStackTrace(); }

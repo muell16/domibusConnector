@@ -1,20 +1,20 @@
 package org.holodeck.ebms3.submit;
 
+import java.io.File;
+
+import org.apache.log4j.Logger;
 import org.holodeck.ebms3.module.Constants;
-import org.holodeck.ebms3.persistent.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.*;
+import org.holodeck.ebms3.persistent.SyncResponse;
+import org.holodeck.ebms3.persistent.UserMsgToPull;
+import org.holodeck.ebms3.persistent.UserMsgToPush;
 
 /**
  * @author Hamid Ben Malek
  */
 public class FileBasedSubmitter
 {
-  private static Log log =
-                  LogFactory.getLog(FileBasedSubmitter.class.getName());
+//  private static Log log = LogFactory.getLog(FileBasedSubmitter.class.getName());
+  private static Logger log = Logger.getLogger(FileBasedSubmitter.class.getName());
 
   public static synchronized void submitMsgFromFolders()
   {
