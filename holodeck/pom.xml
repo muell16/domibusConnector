@@ -110,7 +110,7 @@
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
@@ -121,13 +121,13 @@
       <artifactId>servlet-api</artifactId>
       <version>2.3</version>
       <scope>provided</scope>
-    </dependency>
-    <!-- <dependency>
+    </dependency-->
+ <!--    <dependency>
       <groupId>servlets.com</groupId>
       <artifactId>cos-unlimited</artifactId>
       <version>1.0</version>
-    </dependency>  -->
-
+    </dependency>
+ -->
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms</artifactId>
@@ -248,17 +248,12 @@
       <version>1.4</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml</artifactId>
       <version>2.2.1</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>openws</artifactId>
-      <version>1.2.2</version>
-    </dependency>    
+    </dependency> -->
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-saaj-api</artifactId>
@@ -307,12 +302,12 @@
       <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
-<!--     <dependency>
-      <groupId>javamail</groupId>
-      <artifactId>javamail</artifactId>
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
       <scope>provided</scope>
       <version>1.4</version>
-    </dependency> -->
+    </dependency>
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>activation</artifactId>
@@ -360,19 +355,19 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>3.3.1.GA</version>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>3.3.1.ga</version>
     </dependency>
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss-archive-browsing</artifactId>
       <version>5.0.0alpha-200607201-119</version>
     </dependency>
-<!--     <dependency>
+    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
-      <version>3.3.0.GA</version>
-    </dependency> -->
+      <version>3.3.0.ga</version>
+    </dependency>
     <dependency>
       <groupId>freemarker</groupId>
       <artifactId>freemarker</artifactId>
