@@ -128,6 +128,25 @@
       </includes>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
+    <!-- ================= Copying logging compiled classes =============== -->
+    <fileSet>
+      <directory>../holodeck-logging/target/classes</directory>
+      <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/classes</outputDirectory>
+      <includes>
+        <include>**/*.class</include>
+      </includes>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <!-- ===================== Copying logging meta-inf ==================== -->
+    <fileSet>
+      <directory>../holodeck-logging/src/main/resources/</directory>
+      <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/modules/holodeck-logging</outputDirectory>
+      <includes>
+        <include>META-INF/module.xml</include>
+        <include>Storage_Folder</include>
+      </includes>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
 
     <!-- ==================== Copying common compiled classes ================== -->
     <fileSet>

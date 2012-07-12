@@ -1,25 +1,23 @@
 package org.holodeck.ebms3.module;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-import org.apache.neethi.Policy;
-import org.apache.neethi.Assertion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.*;
-import org.holodeck.ebms3.submit.SubmitWorker;
+import org.apache.log4j.Logger;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
 import org.holodeck.ebms3.workers.WorkerPool;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 /**
  * @author Hamid Ben Malek
@@ -27,6 +25,7 @@ import javax.naming.InitialContext;
 public class Ebms3Module  implements Module
 {
   private Log log = LogFactory.getLog(Ebms3Module.class);
+  private Logger LOGGER = Logger.getLogger(Ebms3Module.class);
   //protected SubmitWorker submitWorker;
   //protected SenderWorker sender;
   protected List<PullWorker> pullers = new ArrayList<PullWorker>();
@@ -66,6 +65,7 @@ public class Ebms3Module  implements Module
     */
     startActiveMQ();
     log.debug("ActiveMQ Broker Started.");
+    LOGGER.debug("ActiveMQ Broker Started.");
     log.debug("Loading Workers...");
     loadWorkers();
     log.debug("Done loading Workers");
