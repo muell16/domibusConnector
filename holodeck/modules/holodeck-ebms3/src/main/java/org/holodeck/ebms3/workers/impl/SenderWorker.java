@@ -4,48 +4,31 @@ import java.util.List;
 
 import org.apache.axis2.client.async.AxisCallback;
 import org.apache.log4j.Logger;
-<<<<<<< HEAD
 import org.holodeck.common.soap.Util;
 import org.holodeck.ebms3.module.Constants;
 import org.holodeck.ebms3.persistent.UserMsgToPush;
 import org.holodeck.ebms3.submit.MsgInfoSet;
 import org.holodeck.logging.level.Message;
 import org.holodeck.logging.persistent.MessageInfo;
-=======
-import org.holodeck.common.logging.level.MessageLevel;
-import org.holodeck.common.logging.model.MsgInfo;
-import org.holodeck.common.soap.Util;
-import org.holodeck.ebms3.module.Constants;
-import org.holodeck.ebms3.persistent.UserMsgToPush;
-import org.holodeck.ebms3.submit.MsgInfoSet;
->>>>>>> refs/remotes/origin/master
 
 /**
  * @author Hamid Ben Malek
  */
-public class SenderWorker implements Runnable
-{
-//  private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
-<<<<<<< HEAD
+public class SenderWorker implements Runnable {
 	private static final Logger log = Logger.getLogger(SenderWorker.class.getName());
-=======
-  private static final Logger log = Logger.getLogger(SenderWorker.class.getName());
-	private static final Logger log_msg = Logger.getLogger("message_logger");
->>>>>>> refs/remotes/origin/master
 
-  public void run()
-  {
-    List<UserMsgToPush> messages = Constants.store.getMessagesToPush();
-    if ( messages == null || messages.size() == 0 ) return;
-    for (UserMsgToPush message : messages)
-    {
-      send(message);
-      message.setPushed(true);
-      Constants.store.save(message);
-    }
-  }
+	public void run() {
+		List<UserMsgToPush> messages = Constants.store.getMessagesToPush();
+		if (messages == null || messages.size() == 0)
+			return;
+		for (UserMsgToPush message : messages) {
+			send(message);
+			message.setPushed(true);
+			Constants.store.save(message);
+		}
+	}
 
-  private void send(UserMsgToPush message)
+	private void send(UserMsgToPush message)
   {
     AxisCallback cb = null;
     if ( message.getCallbackClass() != null &&
@@ -58,17 +41,10 @@ public class SenderWorker implements Runnable
       catch(Exception ex) { log.debug(ex.getMessage()); }
     }
     MsgInfoSet metadata = message.getMsgInfoSetBean();
-<<<<<<< HEAD
-//    log.debug("SenderWorker: about to send to " + message.getToURL());
     log.log(Message.MESSAGE, new MessageInfo(message.getId(), metadata.getProducer().getName(), metadata.getProducer().getRole(),message.getToURL(),"","eCodex-Test","","","IT-NRW", "statusOK"));
-//    log.info(new MessageInfo(message.getId(), metadata.getProducer().getName(), metadata.getProducer().getRole(),message.getToURL(),"","eCodex-Test","","","IT-NRW"));
-=======
 
     log.debug("SenderWorker: about to send to " + message.getToURL());
-//    log_msg.debug("Das ist der Test");
-//    log_msg.debug(new MsgInfo("msgid", "sender", "receiver"));
-    log_msg.log(MessageLevel.MESSAGE, new MsgInfo("msgid", "sender", "receiver") );
->>>>>>> refs/remotes/origin/master
+    
     message.send(metadata, cb);
   }
 }

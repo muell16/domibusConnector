@@ -12,14 +12,6 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
-<<<<<<< HEAD
-=======
-import org.apache.log4j.Logger;
-import org.apache.neethi.Policy;
-import org.apache.neethi.Assertion;
->>>>>>> refs/remotes/origin/master
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
@@ -30,15 +22,7 @@ import org.holodeck.ebms3.workers.WorkerPool;
  */
 public class Ebms3Module  implements Module
 {
-<<<<<<< HEAD
-  private Log log = LogFactory.getLog(Ebms3Module.class);
-  private Logger LOGGER = Logger.getLogger(Ebms3Module.class);
-=======
-//  private Log log = LogFactory.getLog(Ebms3Module.class);
   private Logger log = Logger.getLogger(Ebms3Module.class);
->>>>>>> refs/remotes/origin/master
-  //protected SubmitWorker submitWorker;
-  //protected SenderWorker sender;
   protected List<PullWorker> pullers = new ArrayList<PullWorker>();
   protected BrokerService broker;
 
@@ -76,7 +60,6 @@ public class Ebms3Module  implements Module
     */
     startActiveMQ();
     log.debug("ActiveMQ Broker Started.");
-    LOGGER.debug("ActiveMQ Broker Started.");
     log.debug("Loading Workers...");
     loadWorkers();
     log.debug("Done loading Workers");

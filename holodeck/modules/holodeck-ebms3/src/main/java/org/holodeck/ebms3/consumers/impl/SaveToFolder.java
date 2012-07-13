@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.log4j.Logger;
-import org.holodeck.common.logging.level.MessageLevel;
 import org.holodeck.common.soap.Util;
 import org.holodeck.ebms3.consumers.EbConsumer;
 import org.holodeck.ebms3.module.Constants;
@@ -38,8 +37,6 @@ public class SaveToFolder implements EbConsumer {
 		writeSoapHeader(msgCtx, directory);
 		System.out
 				.println("=================================================================");
-		System.out.println("Logging Test");
-//		logger.log(MessageLevel.MESSAGE, new org.holodeck.common.logging.model.MsgInfo(msgCtx.getMessageID(), msgCtx.getFrom().getAddress(), msgCtx.getTo().getAddress()));
 	}
 
 	public void pull(MsgInfo msgInfo, MessageContext outMsgCtx) {

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.axis2.client.async.AxisCallback;
 import org.apache.log4j.Logger;
-import org.holodeck.common.logging.model.MsgInfo;
 import org.holodeck.common.soap.Util;
 import org.holodeck.ebms3.persistent.UserMsgToPush;
 import org.holodeck.ebms3.submit.MsgInfoSet;
@@ -14,7 +13,6 @@ import org.holodeck.ebms3.submit.MsgInfoSet;
  */
 public class SenderWorker extends PeriodicWorker //implements Runnable
 {
-//  private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
 	private static final Logger log = Logger.getLogger(SenderWorker.class);
 
   public void init()

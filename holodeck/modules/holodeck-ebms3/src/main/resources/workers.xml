@@ -28,6 +28,6 @@
           workerClass="org.holodeck.ebms3.workers.impl.JmsConsumer">
     <parameter name="jndi.ConnectionFactory">java:comp/env/jms/ConnectionFactory</parameter>
     <parameter name="jndi.destination">java:comp/env/jms/holodeckTopic</parameter>
-  </Worker-->
+  </Worker>
 
 </Workers>
