@@ -44,9 +44,8 @@ public class SenderWorker implements Runnable
       catch(Exception ex) { log.debug(ex.getMessage()); }
     }
     MsgInfoSet metadata = message.getMsgInfoSetBean();
-    System.out.println("Speichern");
 //    log.debug("SenderWorker: about to send to " + message.getToURL());
-    log.log(Message.MESSAGE, new MessageInfo(message.getId(), metadata.getProducer().getName(), metadata.getProducer().getRole(),message.getToURL(),"","eCodex-Test","","","IT-NRW"));
+    log.log(Message.MESSAGE, new MessageInfo(message.getId(), metadata.getProducer().getName(), metadata.getProducer().getRole(),message.getToURL(),"","eCodex-Test","","","IT-NRW", "statusOK"));
 //    log.info(new MessageInfo(message.getId(), metadata.getProducer().getName(), metadata.getProducer().getRole(),message.getToURL(),"","eCodex-Test","","","IT-NRW"));
     message.send(metadata, cb);
   }

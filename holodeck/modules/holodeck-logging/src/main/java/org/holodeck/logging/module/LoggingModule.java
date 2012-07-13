@@ -11,10 +11,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
-import org.holodeck.logging.persistent.LoggerMessage;
 
 /**
- * @author Hamid Ben Malek
+ * This Class represents the starting point of this module and is used to initialize the database connection
+ * 
+ * @author Stefan Mueller
+ * @author Tim Nowosadtko
+ * @date 07-13-2012
  */
 public class LoggingModule  implements Module
 {
@@ -33,11 +36,8 @@ public class LoggingModule  implements Module
     //storing the module as a static variable
     Constants.setAxisModule(module);
 
-//    System.out.println("Es soll etwas in die Datenbank geschrieben werden");
     
     DbStore dbs = new DbStore("logging-mysql");
-    //dbs.save(new LogEvent("Nachricht", "Absender", "Empfaenger", "Gateway"));
-//    dbs.save(new LoggerMessage("msgid", "sender", "fromRole", "recipient", "toRole", "service", "action", "converationid", "pmode"));
     Constants.store = dbs;
     
     try
@@ -46,9 +46,6 @@ public class LoggingModule  implements Module
     }
     catch(Exception e) { e.printStackTrace(); log.error(e.getMessage()); }
     Constants.store = loadDataStore(config, module);
-
-    startResendTasks(configContext, module);
-
 
     log.debug("Logging Module Started.");
   }
@@ -80,7 +77,7 @@ public class LoggingModule  implements Module
   private DbStore loadDataStore(AxisConfiguration config, AxisModule module)
   {
     Parameter pUnitParam = module.getParameter("PersistenceUnit");
-    String pUnit = "wsrm-mysql";
+    String pUnit = "logging-mysql";
     if (pUnitParam != null)
     {
       pUnit = (String)pUnitParam.getValue();
@@ -88,25 +85,5 @@ public class LoggingModule  implements Module
     }
     DbStore store = new DbStore(pUnit);
     return store;
-  }
-
- /**
-  *  If the parameter "ResendFromDBAtStartup" is true, load
-  *  GMessages that are not expired, not yet acknowledged and
-  *  their resendCount &lt; maximumRetransmissionCount and add
-  *  them to resender worker queue.
-  */
-  private void startResendTasks(ConfigurationContext configContext,
-                                AxisModule module)
-  {
-    Parameter resendFromDbParam = module.getParameter("ResendFromDBAtStartup");
-    if (resendFromDbParam != null)
-    {
-      String val = (String)resendFromDbParam.getValue();
-      if ( val != null && val.trim().equalsIgnoreCase("true") )
-      {
-       
-      }
-    }
   }
 }

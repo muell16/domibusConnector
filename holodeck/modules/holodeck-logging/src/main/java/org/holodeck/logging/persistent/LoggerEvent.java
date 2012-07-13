@@ -1,7 +1,6 @@
 package org.holodeck.logging.persistent;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,14 +11,15 @@ import javax.persistence.Table;
 import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.Size;
 
 
 /**
+ * This Class represents a database table for standard logging events
+ * 
  * @author Stefan Mueller
  * @author Tim Nowosadtko
+ * @date 07-13-2012
  */
-
 @Entity
 @Table(name = "LoggerEvent")
 
@@ -27,37 +27,39 @@ public class LoggerEvent {
 	
 	@Id @GeneratedValue(generator="system-uuid")
 	@GenericGenerator(name="system-uuid", strategy="uuid")
-
+	@Column(name = "Id")
+	protected String id;
+	
 	@Column(name = "LOGDate")
-	private String LOGDate;
+	protected Date LOGDate;
 	
 	@Column(name = "Logger")
-	private String Logger;
+	protected String Logger;
 	
 	@Column(name = "Priority")
-	private String Priority;
+	protected String Priority;
 	
 	@Column(name = "Log_ClassName")
-	private String Log_ClassName;
+	protected String Log_ClassName;
 	
 	@Column(name = "Log_MethodName")
-	private String Log_MethodName;
+	protected String Log_MethodName;
 	
 	@Column(name = "Log_LineNumber")
-	private String Log_LineNumber;
+	protected String Log_LineNumber;
 	
 	@Column(name = "Msg",length=2000)
-	private String Msg;
+	protected String Msg;
 	
 	public LoggerEvent(){
-		
+		LOGDate = new Date();
 	}
 	
-	public LoggerEvent(String lOGDate, String logger, String priority,
+	public LoggerEvent(String logger, String priority,
 			String log_ClassName, String log_MethodName, String log_LineNumber,
 			String msg) {
 		super();
-		LOGDate = lOGDate;
+		LOGDate = new Date();
 		Logger = logger;
 		Priority = priority;
 		Log_ClassName = log_ClassName;
@@ -66,25 +68,38 @@ public class LoggerEvent {
 		Msg = msg;
 	}
 	
+    /**
+     * @param LoggingEvent
+     * This constructor expects a LoggingEvent instance and creates an new instance of LoggerEvent
+     */
 	public LoggerEvent(LoggingEvent event){
 		LocationInfo locinfo = event.getLocationInformation();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		this.LOGDate=df.format(new Date(event.getTimeStamp()));
+		this.LOGDate = new Date(event.getTimeStamp());
 		this.Logger=event.getLoggerName();
 		this.Priority=event.getLevel().toString(); 
 		Log_ClassName = locinfo.getClassName();
 		Log_MethodName = locinfo.getMethodName();
 		Log_LineNumber = locinfo.getLineNumber();
 		Msg = event.getMessage() == null ? "null" : event.getMessage().toString();
-
 	}
 	
 	
-	public String getLOGDate() {
+	/*
+	 * Setter and Getter
+	 */
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Date getLOGDate() {
 		return LOGDate;
 	}
-	public void setLOGDate(String lOGDate) {
+	public void setLOGDate(Date lOGDate) {
 		LOGDate = lOGDate;
 	}
 	public String getLogger() {

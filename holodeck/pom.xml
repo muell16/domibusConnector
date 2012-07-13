@@ -128,12 +128,12 @@
       <version>2.3</version>
       <scope>provided</scope>
     </dependency-->
-    <dependency>
+ <!--    <dependency>
       <groupId>servlets.com</groupId>
       <artifactId>cos-unlimited</artifactId>
       <version>1.0</version>
     </dependency>
-
+ -->
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms</artifactId>
@@ -254,12 +254,12 @@
       <version>1.4</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml</artifactId>
       <version>2.2.1</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-saaj-api</artifactId>
@@ -309,8 +309,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javamail</groupId>
-      <artifactId>javamail</artifactId>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
       <scope>provided</scope>
       <version>1.4</version>
     </dependency>
@@ -354,14 +354,14 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.6</version>
     </dependency>
-    <dependency>
+      <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.2.5.ga</version>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>3.3.1.GA</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
+      <artifactId>hibernate-core</artifactId>
       <version>3.3.1.GA</version>
     </dependency>
     <dependency>
@@ -373,6 +373,11 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
       <version>3.3.0.GA</version>
+    </dependency>
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-archive-browsing</artifactId>
+      <version>5.0.0alpha-200607201-119</version>
     </dependency>
     <dependency>
       <groupId>freemarker</groupId>

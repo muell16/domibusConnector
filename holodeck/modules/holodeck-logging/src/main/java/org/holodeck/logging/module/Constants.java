@@ -3,7 +3,11 @@ package org.holodeck.logging.module;
 import org.apache.axis2.description.AxisModule;
 
 /**
- * @author Hamid Ben Malek
+ * Class for storing some objects you need in the whole module
+ * 
+ * @author Stefan Mueller
+ * @author Tim Nowosadtko
+ * @date 07-13-2012
  */
 public class Constants
 {

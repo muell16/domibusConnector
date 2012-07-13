@@ -1,13 +1,21 @@
 package org.holodeck.logging.persistent;
 
-import javax.persistence.*;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 
 /**
+ * This Class represents a database table for logging ebms messages
+ * 
  * @author Stefan Mueller
  * @author Tim Nowosadtko
  */
-
 @Entity
 @Table(name = "LoggerMessage")
 public class LoggerMessage implements java.io.Serializable {
@@ -15,7 +23,9 @@ public class LoggerMessage implements java.io.Serializable {
 
 	@Id @GeneratedValue(generator="system-uuid")
 	@GenericGenerator(name="system-uuid", strategy="uuid")
-
+	@Column(name = "id")
+	protected String id;
+	
 	@Column(name = "messageId")
 	protected String messageId;
 
@@ -42,14 +52,22 @@ public class LoggerMessage implements java.io.Serializable {
 	
 	@Column(name = "pmode")
 	protected String pmode;
+	
+	@Column(name = "timestamp")
+	protected Date timestamp;
+	
+	@Column(name = "status")
+	protected String status;
+
 
 	public LoggerMessage() {
+		timestamp = new Date();
 	}
 	
 
 	public LoggerMessage(String messageId, String sender, String fromRole,
 			String recipient, String toRole, String service, String action,
-			String conversationId, String pmode) {
+			String conversationId, String pmode, String status) {
 		super();
 		this.messageId = messageId;
 		this.sender = sender;
@@ -60,6 +78,9 @@ public class LoggerMessage implements java.io.Serializable {
 		this.action = action;
 		this.conversationId = conversationId;
 		this.pmode = pmode;
+		this.status = status;
+		
+		this.timestamp = new Date();
 	}
 	
 	public LoggerMessage(MessageInfo mi){
@@ -72,13 +93,26 @@ public class LoggerMessage implements java.io.Serializable {
 		this.action = mi.getAction();
 		this.conversationId = mi.getConversationId();
 		this.pmode = mi.getPmode();
+		this.status = mi.getStatus();
+		
+		
+		this.timestamp = new Date();
 	}
 	
+	/*
+	 * Setter and Getter
+	 */
+	public String getId() {
+		return id;
+	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	public String getPmode() {
 		return pmode;
 	}
-
 
 	public void setPmode(String pmode) {
 		this.pmode = pmode;
@@ -148,5 +182,19 @@ public class LoggerMessage implements java.io.Serializable {
 	public void setConversationId(String conversationId) {
 		this.conversationId = conversationId;
 	}
+	public Date getTimestamp() {
+		return timestamp;
+	}
 
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

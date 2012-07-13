@@ -2,6 +2,7 @@ package org.holodeck.logging.persistent;
 
 
 /**
+ * 
  * @author Stefan Mueller
  * @author Tim Nowosadtko
  */
@@ -18,13 +19,14 @@ public class MessageInfo implements java.io.Serializable {
 	protected String action;
 	protected String conversationId;
 	protected String pmode;
+	protected String status;
 
 	public MessageInfo() {
 	}
 	
 	public MessageInfo(String messageId, String sender, String fromRole,
 			String recipient, String toRole, String service, String action,
-			String conversationId, String pmode) {
+			String conversationId, String pmode, String status) {
 		super();
 		this.messageId = messageId;
 		this.sender = sender;
@@ -35,6 +37,7 @@ public class MessageInfo implements java.io.Serializable {
 		this.action = action;
 		this.conversationId = conversationId;
 		this.pmode = pmode;
+		this.status = status;
 	}
 	
 
@@ -110,6 +113,14 @@ public class MessageInfo implements java.io.Serializable {
 
 	public void setConversationId(String conversationId) {
 		this.conversationId = conversationId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

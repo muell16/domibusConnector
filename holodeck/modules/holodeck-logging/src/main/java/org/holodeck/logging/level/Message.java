@@ -2,6 +2,14 @@ package org.holodeck.logging.level;
 
 import org.apache.log4j.Level;
 
+
+/**
+ * This Class defines a custom loglevel for messages. The level is 10 above debug
+ * 
+ * @author Stefan Mueller
+ * @author Tim Nowosadtko
+ * @date 07-13-2012
+ */
 @SuppressWarnings("serial")
 public class Message extends Level {
 	
@@ -45,9 +53,4 @@ public class Message extends Level {
 		return Level.toLevel(level, defaultLevel);
 	}
 	
-//	public final String toString(){
-//		
-//		return "Message sended out.";
-//	}
-//	
 }
