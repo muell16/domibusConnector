@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>holodeck-ebms3</name>
+	<name>holodeck-logging</name>
 	<comment></comment>
 	<projects>
-		<project>holodeck-logging</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
