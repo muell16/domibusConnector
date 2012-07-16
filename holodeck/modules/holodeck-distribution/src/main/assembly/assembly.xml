@@ -293,6 +293,11 @@
       <source>src/main/conf/reliability-schema-mysql.ddl</source>
       <outputDirectory>${holodeck.build.dir}/store/derby/</outputDirectory>
     </file>
+    <!-- Copy the generated ddl from the source to the destination folder. The other files ddl files (ebms3, reliablity) are static!!! -->
+    <file>
+      <source>../holodeck-logging/target/hibernate3/sql/schema.ddl</source>
+      <outputDirectory>${holodeck.build.dir}/store/derby/</outputDirectory>
+    </file>
   </files>
 
   <!-- ================== Copying dependency libraries ========================= -->
