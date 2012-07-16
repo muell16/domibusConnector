@@ -74,7 +74,7 @@
           <componentProperties>
             <implementation>jpaconfiguration</implementation>
             <persistenceunit>logging-mysql</persistenceunit>
-            <outputfilename>schema.ddl</outputfilename>
+            <outputfilename>logging-schema-mysql.ddl</outputfilename>
             <drop>true</drop>
             <create>true</create>
             <export>true</export>
