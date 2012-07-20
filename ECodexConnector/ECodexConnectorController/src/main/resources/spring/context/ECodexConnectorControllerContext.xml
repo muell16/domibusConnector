@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<import resource="/eu/ecodex/connector/security/ECodexConnectorSecurityToolkitContext.xml"/>
+	<import resource="/eu/ecodex/connector/eivdences/ECodexConnectorEvidencesToolkitContext.xml"/>
+	<import resource="/eu/ecodex/connector/mapping/ECodexConnectorContentMapperContext.xml"/>
+	<import resource="/eu/ecodex/connector/gwc/ECodexConnectorGatewayWebserviceClientContext.xml"/>
+	
+	<import resource="quartz-context.xml"/>
+	
+  	<bean id="connectorController" class="eu.ecodex.connector.controller.ECodexConnectorControllerImpl">
+  	</bean>
+  
+</beans>

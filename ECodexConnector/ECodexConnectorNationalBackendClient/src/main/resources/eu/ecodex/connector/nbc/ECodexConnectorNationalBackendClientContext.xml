@@ -1,0 +1,6 @@
+<beans>
+  
+  <bean id="nationalBackendClient" class="eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClientImpl">
+  </bean>
+  
+</beans>

@@ -1,0 +1,29 @@
+<FindBugsFilter>
+	<!-- exclude generated sources from findbugs -->
+	<Match>
+		<Package name="at.gv.brz.bjujq.kopplung.gateway.ierv" />
+	</Match>
+	<Match>
+		<Package
+			name="at.gv.e_government.reference.namespace.erv_zuse_kopplung.v1_" />
+	</Match>
+	<Match>
+		<Package
+			name="at.gv.e_government.reference.namespace.erv_zuse_kopplung.webservice.v1_0_" />
+	</Match>
+	<Match>
+		<Package
+			name="at.gv.e_government.reference.namespace.persondata._20020228_" />
+	</Match>
+	<Match>
+		<Package name="org.w3._2000._09.xmldsig_" />
+	</Match>
+	<Match>
+		<Package
+			name="org.e_government.reference.namespace.zuse.recipientnotification._10_" />
+	</Match>
+	<Match>
+		<Class
+			name="at.gv.brz.bjujq.kopplung.gateway.util.RollbackPenaltyTransactionSynchronizationAdapter" />
+	</Match>
+</FindBugsFilter>
