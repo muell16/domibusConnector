@@ -12,6 +12,7 @@ import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperExcepti
 public interface ECodexConnectorContentMapper {
 
     /**
+     * 
      * Method to map international eCodex XML to national format. Must be
      * overridden when ContentMapper is used by configuration.
      * 
