@@ -1,0 +1,6 @@
+<beans>
+  
+  <bean id="contentMapper" class="eu.ecodex.connector.mapping.ECodexConnectorContentMapperImpl">
+  </bean>
+  
+</beans>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+<bean id="handleNationalMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject" ref="connectorController"/>
+  <property name="targetMethod" value="handleNationalMessages"/>
+  <property name="concurrent" value="false"/>
+</bean>
+
+<bean id="handleGatewayMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject" ref="connectorController"/>
+  <property name="targetMethod" value="handleGatewayMessages"/>
+  <property name="concurrent" value="false"/>
+</bean>
+
+<bean id="nationalTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+  <property name="jobDetail" ref="handleNationalMessages"/>
+  <property name="startDelay" value="10000"/>
+  <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
+</bean>
+
+<bean id="gatewayTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+  <property name="jobDetail" ref="handleGatewayMessages"/>
+  <property name="startDelay" value="15000"/>
+  <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
+</bean>
+
+<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+  <property name="triggers">
+    <list>
+      <ref bean="nationalTrigger"/>
+      <ref bean="gatewayTrigger"/>
+    </list>
+  </property>
+</bean>
+
+</beans>
