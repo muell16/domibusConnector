@@ -1,5 +1,5 @@
 <Workers>
-  
+
   <Worker name="pull1" interval="20000" total="1" activate="false"
           workerClass="org.holodeck.ebms3.workers.impl.PullWorker">
 
@@ -15,11 +15,12 @@
     <parameter name="pmodesDir">../../../../config/pmodes</parameter>
   </Worker>
 
-  <Worker name="submitWorker" interval="20000" activate="true"
-          workerClass="org.holodeck.ebms3.workers.impl.SubmitWorker" />
+  <!-- Commented because they are not necessary -->
+<!--   <Worker name="submitWorker" interval="20000" activate="true" -->
+<!--           workerClass="org.holodeck.ebms3.workers.impl.SubmitWorker" /> -->
 
-  <Worker name="senderWorker" interval="20000" activate="true"
-          workerClass="org.holodeck.ebms3.workers.impl.SenderWorker" />
+<!--   <Worker name="senderWorker" interval="20000" activate="true" -->
+<!--           workerClass="org.holodeck.ebms3.workers.impl.SenderWorker" /> -->
 
   <Worker name="receiptSenderWorker" interval="60000" activate="false"
           workerClass="org.holodeck.ebms3.workers.impl.ReceiptSender" />

@@ -1,55 +1,42 @@
 <gateway>
+<!--   <consumption> -->
+<!--     <consumer className="org.holodeck.ebms3.consumers.impl.SaveToTopic"> -->
+<!--       <parameter name="jndi.destination">java:comp/env/jms/holodeckTopic</parameter> -->
+<!--       <parameter name="jndi.ConnectionFactory">java:comp/env/jms/ConnectionFactory</parameter> -->
+<!--     </consumer> -->
+<!--   </consumption> -->
+<!--   <consumption> -->
+<!--     <consumer className="org.holodeck.ebms3.consumers.impl.SaveToFolder"> -->
+<!--       a parameter to indicate to the consumer application "ConsumerTest" -->
+<!--            where to save the attachment in the request. The value could be -->
+<!--            either an absolute path or relative to the "Received_Messages_Folder" -->
+<!--            (directory where the MSH saves attachments of the received messages) -->
+<!--       <parameter name="directory">Messages</parameter> -->
+<!--     </consumer> -->
+<!--   </consumption> -->
 
-  <consumption>
-    <consumer className="org.holodeck.ebms3.consumers.impl.SaveToTopic">
-      <parameter name="jndi.destination">java:comp/env/jms/holodeckTopic</parameter>
-      <parameter name="jndi.ConnectionFactory">java:comp/env/jms/ConnectionFactory</parameter>
-    </consumer>
-  </consumption>
-
-  <consumption>
-    <consumer className="org.holodeck.ebms3.consumers.impl.SaveToFolder">
-
+	<consumption>
+		<consumer className="org.holodeck.backend.consumer.BackendConsumer">
       <!-- a parameter to indicate to the consumer application "ConsumerTest"
            where to save the attachment in the request. The value could be
            either an absolute path or relative to the "Received_Messages_Folder"
            (directory where the MSH saves attachments of the received messages) -->
+			<parameter name="directory">Messages</parameter>
+		</consumer>
+	</consumption>
 
-      <parameter name="directory">Messages</parameter>
-
-    </consumer>
-
-  </consumption>
- 
-
-  <consumption>
-    <filter>
-      <mpc>shipment</mpc>
-      <!--
-      <messageId>...</messageId
-      <refToMessageId>...</refToMessageId>
-      <fromParties>
-        <party type="">...</party>
-        <party type="">...</party>
-      </fromParties>
-      <fromRole>...</fromRole>
-      <toParties>
-        <party type="">...</party>
-        <party type="">...</party>
-      </toParties>
-      <toRole>...</toRole>
-      <agreementRef>...</agreementRef>
-      <pmode>...</pmode>
-      <service>...</service>
-      <action>...</action>
-      <conversationId>...</conversationId>
-      <messageProperties>
-        <property name="">...</party>
-        <property name="">...</party>
-      </messageProperties>
-      -->
-    </filter>
-    <consumer className="org.autotech.AutotechEbms3Service" />
-  </consumption>
+	<consumption>
+		<filter>
+			<mpc>shipment</mpc>
+			<!-- <messageId>...</messageId <refToMessageId>...</refToMessageId> <fromParties> 
+				<party type="">...</party> <party type="">...</party> </fromParties> <fromRole>...</fromRole> 
+				<toParties> <party type="">...</party> <party type="">...</party> </toParties> 
+				<toRole>...</toRole> <agreementRef>...</agreementRef> <pmode>...</pmode> 
+				<service>...</service> <action>...</action> <conversationId>...</conversationId> 
+				<messageProperties> <property name="">...</party> <property name="">...</party> 
+				</messageProperties> -->
+		</filter>
+		<consumer className="org.autotech.AutotechEbms3Service" />
+	</consumption>
 
 </gateway>

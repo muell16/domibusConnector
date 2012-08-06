@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+  <!-- enables annotation based configuration -->
+  <context:annotation-config />
+
+  <!-- scans for annotated classes in the org.holodeck.backend package -->
+  <context:component-scan base-package="org.holodeck.backend"/>
+
+  <!-- Added JPA config for backend  -->
+  <!-- enables interpretation of the @PersistenceUnit/@PersistenceContext annotations providing convenient
+       access to EntityManagerFactory/EntityManager -->
+  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+  <!-- uses the persistence unit defined in the META-INF/persistence.xml JPA configuration file -->
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="${PersistenceUnit}" />
+  </bean>
+
+  <!-- transaction manager for use with a single JPA EntityManagerFactory for transactional data access
+       to a single datasource -->
+  <bean id="jpaTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+
+  <!-- enables interpretation of the @Transactional annotation for declerative transaction managment
+       using the specified JpaTransactionManager -->
+  <tx:annotation-driven transaction-manager="jpaTransactionManager" proxy-target-class="true"/>
+
+  <!-- Task for backend  -->
+  <bean id="deleteMessagesJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  	<property name="targetObject" ref="deleteMessagesJob"/>
+  	<property name="targetMethod" value="execute"/>
+  </bean>
+
+  <bean id="deleteMessagesTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	  <property name="jobDetail" ref="deleteMessagesJobDetail"/>
+	  <property name="cronExpression" value="${DeleteMessagesCron}"/>
+  </bean>
+
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+  	<property name="triggers">
+    	<list>
+      		<ref bean="deleteMessagesTrigger"/>
+    	</list>
+  	</property>
+  </bean>
+</beans>

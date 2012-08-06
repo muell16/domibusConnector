@@ -234,6 +234,55 @@
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     -->
+
+
+	   <!-- ================= Backend files =============== -->
+	   <!-- ================= Copying backend compiled classes =============== -->
+	   <fileSet>
+	     <directory>../holodeck-backend/target/classes</directory>
+	     <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/classes</outputDirectory>
+	     <includes>
+	       <include>**/*.class</include>
+	       <include>**/*.xsb</include>
+	     </includes>
+	     <useDefaultExcludes>true</useDefaultExcludes>
+	   </fileSet>
+	   <!-- ===================== Copying backend meta-inf ==================== -->
+	   <fileSet>
+	     <directory>../holodeck-backend/src/main/resources/</directory>
+	     <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/modules/holodeck-backend</outputDirectory>
+	     <includes>
+	       <include>META-INF/module.xml</include>
+	     </includes>
+	     <useDefaultExcludes>true</useDefaultExcludes>
+	   </fileSet>
+	    <!-- ======================== Copying backend service ========================== -->
+	    <fileSet>
+	      <directory>src/main/conf/backend</directory>
+	      <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/services/backend</outputDirectory>
+	      <includes>
+	        <include>**</include>
+	      </includes>
+	      <useDefaultExcludes>true</useDefaultExcludes>
+	    </fileSet>
+	   <!-- ===================== Copying backend ddl ==================== -->
+	   <fileSet>
+	     <directory>src/main/conf</directory>
+	     <outputDirectory>${holodeck.build.dir}/store/derby/</outputDirectory>
+	     <includes>
+	       <include>backend-schema-mysql.ddl</include>
+	     </includes>
+	     <useDefaultExcludes>true</useDefaultExcludes>
+	   </fileSet>
+	   <!-- ===================== Copying backend spring config ==================== -->
+	   <fileSet>
+	     <directory>../holodeck-backend/src/main/resources/</directory>
+	     <outputDirectory>${holodeck.build.dir}/msh/WEB-INF/classes</outputDirectory>
+	     <includes>
+	       <include>backendApplicationContext.xml</include>
+	     </includes>
+	     <useDefaultExcludes>true</useDefaultExcludes>
+	   </fileSet>
   </fileSets>
   
   <!-- ========== Copying axis2.xml, holodeck.xml, web.xml and derby DB =========== -->

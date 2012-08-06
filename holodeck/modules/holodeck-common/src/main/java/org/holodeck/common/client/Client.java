@@ -251,7 +251,7 @@ public class Client
       response =
          mepClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
     }
-    catch(Exception ex) { ex.printStackTrace(); }
+    catch(Exception ex) { ex.printStackTrace(); throw new RuntimeException(ex); }
     return response;
   }
   public MessageContext inOut(String toURL, String action, String[] modules)
@@ -268,7 +268,7 @@ public class Client
       response =
          mepClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
     }
-    catch(Exception ex) { ex.printStackTrace(); }
+    catch(Exception ex) { ex.printStackTrace(); throw new RuntimeException(ex); }
     return response;
   }
 
@@ -292,7 +292,7 @@ public class Client
       //response =
       //   mepClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
     }
-    catch(Exception ex) { ex.printStackTrace(); }
+    catch(Exception ex) { ex.printStackTrace(); throw new RuntimeException(ex); }
     //return response;
   }
 
@@ -307,7 +307,7 @@ public class Client
       mepClient.addMessageContext(getMessageContext());
       mepClient.execute(false);
     }
-    catch(Exception ex) { ex.printStackTrace(); }
+    catch(Exception ex) { ex.printStackTrace(); throw new RuntimeException(ex); }
   }
 
   public void terminate()

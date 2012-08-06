@@ -80,6 +80,19 @@
 			<param name="AcceptOnMatch" value="false" />
 		</filter>
 	</appender>
+	<appender class="org.apache.log4j.RollingFileAppender" name="BackendFILE">
+		<param value="true" name="Append" />
+		<param value="../logs/holodeck-backend.log" name="File" />
+		<param value="5120KB" name="MaxFileSize" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param value="%-5p %c %x - %m%n" name="ConversionPattern" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelMatchFilter">
+			<param name="LevelToMatch"
+				value="MESSAGE#org.holodeck.common.logging.level.MessageLevel" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
 
 
 	<appender name="message_appender"
@@ -271,7 +284,11 @@
 		<level value="debug" />
 		<appender-ref ref="SecurityFILE" />
 	</logger>
-	<!--logger additivity="false" name="org.holodeck.ebms3.module"> <level value="debug" 
+	<logger additivity="false" name="org.holodeck.backend">
+		<level value="debug" />
+		<appender-ref ref="BackendFILE" />
+	</logger>
+	<!--logger additivity="false" name="org.holodeck.ebms3.module"> <level value="debug"
 		/> <appender-ref ref="jdbc" /> </logger -->
 
 	<!--logger additivity="false" name="message_logger">
