@@ -59,8 +59,15 @@
       <artifactId>holodeck-security</artifactId>
       <scope>system</scope>
       <systemPath>${basedir}/../holodeck-security/target/holodeck-security.jar</systemPath>
-    </dependency>  
-    
+    </dependency>
+
+    <dependency>
+      <groupId>org.holodeck</groupId>
+      <artifactId>holodeck-backend</artifactId>
+      <scope>system</scope>
+      <systemPath>${basedir}/../holodeck-backend/target/holodeck-backend.jar</systemPath>
+    </dependency>
+
   </dependencies>
   
   

@@ -1,0 +1,14 @@
+<module name="holodeck-backend" class="org.holodeck.backend.module.BackendModule">
+	<parameter name="PersistenceUnit">backend-mysql</parameter>
+
+	<parameter name="Evidences" locked="false">false</parameter>
+	<parameter name="MessagesTimeLive">60</parameter>
+	<parameter name="MessagesFolder">../../../../backend_store</parameter>
+<!-- <parameter name="DeleteMessagesCron">0 0 0 * * ?</parameter> --><!-- Daily at 00:00 -->
+	<parameter name="DeleteMessagesCron">0 1/2 * * * ?</parameter>
+
+	<InFlow/>
+	<OutFlow/>
+	<INFaultFlow/>
+	<OutFaultFlow/>
+</module>

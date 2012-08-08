@@ -1,5 +1,5 @@
 <Workers>
-  
+
   <Worker name="pull1" interval="20000" total="1" activate="false"
           workerClass="org.holodeck.ebms3.workers.impl.PullWorker">
 
