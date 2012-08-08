@@ -18,8 +18,10 @@
     <module>modules/holodeck-reliability</module>
     <module>modules/holodeck-security</module>
     <module>modules/holodeck-ebms3</module>
+    <module>modules/holodeck-backend</module>
     <!--module>modules/holodeck-ui</module-->
-    <module>modules/holodeck-distribution</module>
+	  <module>modules/holodeck-distribution</module>
+    <module>modules/holodeck-backend-test</module>
     <module>modules/documentation</module>
   </modules>
 
@@ -68,6 +70,11 @@
       <dependency>
         <groupId>org.holodeck</groupId>
         <artifactId>holodeck-documentation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.holodeck</groupId>
+        <artifactId>holodeck-backend</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -165,12 +172,17 @@
       <artifactId>org.osgi.core</artifactId>
       <version>4.2.0</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
       <version>2.5.6</version>
     </dependency>
+    <dependency>
+	  <groupId>org.opensymphony.quartz</groupId>
+	  <artifactId>quartz</artifactId>
+	  <version>1.6.5</version>
+	</dependency>
     <!--
     <dependency>
       <groupId>org.springframework</groupId>
@@ -198,7 +210,7 @@
       <artifactId>jdom</artifactId>
       <version>1.1</version>
     </dependency>
-    
+
     <!-- ===================== Axis2-1.4.1 Libraries ====================== -->
     <dependency>
       <groupId>org.apache</groupId>
@@ -254,12 +266,17 @@
       <version>1.4</version>
       <scope>provided</scope>
     </dependency>
-<!--     <dependency>
+    <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml</artifactId>
       <version>2.2.1</version>
       <scope>provided</scope>
-    </dependency> -->
+    </dependency>
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>openws</artifactId>
+      <version>1.2.0</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-saaj-api</artifactId>
@@ -375,11 +392,6 @@
       <version>3.3.0.GA</version>
     </dependency>
     <dependency>
-      <groupId>jboss</groupId>
-      <artifactId>jboss-archive-browsing</artifactId>
-      <version>5.0.0alpha-200607201-119</version>
-    </dependency>
-    <dependency>
       <groupId>freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.8</version>
@@ -430,6 +442,31 @@
       <version>2.1_3</version>
     </dependency>
 
+    <!-- Library to Test Backend WS -->
+	<dependency>
+		<groupId>org.codehaus.cargo</groupId>
+		<artifactId>cargo-core-api-container</artifactId>
+		<version>1.2.2</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.codehaus.cargo</groupId>
+		<artifactId>cargo-core-container-tomcat</artifactId>
+		<version>1.2.2</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.codehaus.cargo</groupId>
+		<artifactId>cargo-core-api-generic</artifactId>
+		<version>1.2.2</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.codehaus.cargo</groupId>
+		<artifactId>cargo-core-api-util</artifactId>
+		<version>1.2.2</version>
+		<scope>test</scope>
+	</dependency>
   </dependencies>
 
   <reporting>
@@ -682,5 +719,21 @@
       <id>Wicket</id>
       <url>http://wicketstuff.org/maven/repository</url>
     </repository>
+    <repository>
+      <id>thirdparty-releases</id>
+      <name>JBoss Thirdparty Releases</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+    </repository>
+	<repository>
+		<id>codehaus-snapshots</id>
+		<name>Codehaus Snapshots</name>
+		<url>http://nexus.codehaus.org/snapshots/</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
   </repositories>
 </project>
