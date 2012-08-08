@@ -13,7 +13,6 @@
 
   <!-- enables annotation based configuration -->
   <context:annotation-config />
-
   <!-- scans for annotated classes in the org.holodeck.backend package -->
   <context:component-scan base-package="org.holodeck.backend"/>
 
