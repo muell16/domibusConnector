@@ -10,7 +10,7 @@
 		<param value="../logs/axis2.log" name="File" />
 		<param value="5120KB" name="MaxFileSize" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p (%F:%L) %c %x - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p (%F:%L) %c %x - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
@@ -20,7 +20,7 @@
 	</appender>
 	<appender class="org.apache.log4j.ConsoleAppender" name="CONSOLE">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p %c - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p %c - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
@@ -33,7 +33,7 @@
 		<param value="../logs/holodeck-ebms3.log" name="File" />
 		<param value="5120KB" name="MaxFileSize" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p %c %x - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p %c %x - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
@@ -46,7 +46,7 @@
 		<param value="../logs/hibernate.log" name="File" />
 		<param value="5120KB" name="MaxFileSize" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p %c %x - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p %c %x - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
@@ -59,7 +59,7 @@
 		<param value="../logs/holodeck-security.log" name="File" />
 		<param value="5120KB" name="MaxFileSize" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p %c %x - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p %c %x - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
@@ -72,7 +72,7 @@
 		<param value="../logs/holodeck-reliability.log" name="File" />
 		<param value="5120KB" name="MaxFileSize" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p %c %x - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p %c %x - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
@@ -85,7 +85,7 @@
 		<param value="../logs/holodeck-backend.log" name="File" />
 		<param value="5120KB" name="MaxFileSize" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-5p %c %x - %m%n" name="ConversionPattern" />
+			<param value="%d %-5p %c %x - %m%n" name="ConversionPattern" />
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelMatchFilter">
 			<param name="LevelToMatch"
