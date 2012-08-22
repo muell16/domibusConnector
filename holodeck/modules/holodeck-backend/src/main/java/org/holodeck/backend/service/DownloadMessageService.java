@@ -56,7 +56,7 @@ public class DownloadMessageService {
 
 		listPendingMessagesValidator.validate(listPendingMessagesRequest);
 
-		List<Message> messages = messageDAO.findNotDownloadedSortedByDate();
+		List<Message> messages = messageDAO.findNotDownloadedSortedByMessageDate();
 
 		backend.ecodex.org.ListPendingMessagesResponse listPendingMessagesResponse = org.holodeck.backend.util.Converter
 				.convertMessageListToListPendingMessagesResponse(messages);
@@ -88,7 +88,7 @@ public class DownloadMessageService {
 			message = messageDAO.findById(Integer.parseInt(downloadMessageRequest.getMessageID()));
 		}
 		else{
-			message = messageDAO.getFirstNotDownloadedSortedByDate();
+			message = messageDAO.getFirstNotDownloadedSortedByMessageDate();
 		}
 
 		File messageFile = new File(message.getDirectory(), org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME);

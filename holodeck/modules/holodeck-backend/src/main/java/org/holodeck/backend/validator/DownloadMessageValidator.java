@@ -47,7 +47,7 @@ public class DownloadMessageValidator {
 			message = messageDAO.findById(Integer.parseInt(downloadMessageRequest.getMessageID()));
 		}
 		else{
-			message = messageDAO.getFirstNotDownloadedSortedByDate();
+			message = messageDAO.getFirstNotDownloadedSortedByMessageDate();
 		}
 
 		if(message == null || message.getDeleted()){

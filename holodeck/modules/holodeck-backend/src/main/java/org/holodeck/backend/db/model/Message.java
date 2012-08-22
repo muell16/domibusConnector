@@ -33,25 +33,25 @@ public class Message implements java.io.Serializable {
 
 	// Fields
 	/** The id message. */
-	@TableGenerator(name="TABLE_GEN_MESSAGE", table="SEQUENCE_TABLE", pkColumnName="SEQ_NAME",
-			valueColumnName="SEQ_COUNT", pkColumnValue="MESSAGE_SEQ", allocationSize=1)
 	@Id
+	@TableGenerator(name="TABLE_GEN_MESSAGE", table="SEQUENCE_TABLE", pkColumnName="SEQ_NAME",
+	valueColumnName="SEQ_COUNT", pkColumnValue="MESSAGE_SEQ", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.TABLE, generator="TABLE_GEN_MESSAGE")
-	@Column(name = "idMessage", unique = true, nullable = false)
+	@Column(name = "idMessage")
 	private Integer idMessage;
 	
-	/** The uid. */
-	@Column(name = "uid", length = 128)
-	private String uid;
+	/** The messageUID. */
+	@Column(name = "messageUID", length = 128)
+	private String messageUID;
 	
 	/** The pmode. */
 	@Column(name = "pmode", length = 128)
 	private String pmode;
 	
-	/** The date. */
+	/** The messageDate. */
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "date", length = 19)
-	private Date date;
+	@Column(name = "messageDate", length = 19)
+	private Date messageDate;
 	
 	/** The directory. */
 	@Column(name = "directory", length = 1024)
@@ -89,20 +89,20 @@ public class Message implements java.io.Serializable {
 	 * Instantiates a new message.
 	 *
 	 * @param idMessage the id message
-	 * @param uid the uid
+	 * @param messageUID the messageUID
 	 * @param pmode the pmode
-	 * @param date the date
+	 * @param messageDate the messageDate
 	 * @param directory the directory
 	 * @param downloaded the downloaded
 	 * @param deleted the deleted
 	 * @param payloads the payloads
 	 */
-	public Message(Integer idMessage, String uid, String pmode, Timestamp date, String directory, boolean downloaded,
+	public Message(Integer idMessage, String messageUID, String pmode, Timestamp messageDate, String directory, boolean downloaded,
 			boolean deleted, List<Payload> payloads) {
 		this.idMessage = idMessage;
-		this.uid = uid;
+		this.messageUID = messageUID;
 		this.pmode = pmode;
-		this.date = date;
+		this.messageDate = messageDate;
 		this.directory = directory;
 		this.downloaded = downloaded;
 		this.deleted = deleted;
@@ -147,39 +147,39 @@ public class Message implements java.io.Serializable {
 	}
 
 	/**
-	 * Gets the uid.
+	 * Gets the messageUID.
 	 *
-	 * @return the uid
+	 * @return the messageUID
 	 */
-	public String getUid() {
-		return this.uid;
+	public String getMessageUID() {
+		return this.messageUID;
 	}
 
 	/**
-	 * Sets the uid.
+	 * Sets the messageUID.
 	 *
-	 * @param uid the new uid
+	 * @param messageUID the new messageUID
 	 */
-	public void setUid(String uid) {
-		this.uid = uid;
+	public void setMessageUID(String messageUID) {
+		this.messageUID = messageUID;
 	}
 
 	/**
-	 * Gets the date.
+	 * Gets the messageDate.
 	 *
-	 * @return the date
+	 * @return the messageDate
 	 */
-	public Date getDate() {
-		return this.date;
+	public Date getMessageDate() {
+		return this.messageDate;
 	}
 
 	/**
-	 * Sets the date.
+	 * Sets the messageDate.
 	 *
-	 * @param date the new date
+	 * @param messageDate the new messageDate
 	 */
-	public void setDate(Date date) {
-		this.date = date;
+	public void setMessageDate(Date messageDate) {
+		this.messageDate = messageDate;
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class Message implements java.io.Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "Message [idMessage=" + idMessage + ", uid=" + uid + ", pmode=" + pmode + ", date=" + date
+		return "Message [idMessage=" + idMessage + ", messageUID=" + messageUID + ", pmode=" + pmode + ", messageDate=" + messageDate
 				+ ", directory=" + directory + ", downloaded=" + downloaded + ", deleted=" + deleted + ", payloads="
 				+ payloads + "]";
 	}

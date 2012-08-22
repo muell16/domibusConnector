@@ -81,8 +81,8 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 	 */
 	private void saveMessage(MsgInfo msgInfo, File directory){
 		Message message = new Message();
-		message.setDate(new Date());
-		message.setUid(msgInfo.getMessageId());
+		message.setMessageDate(new Date());
+		message.setMessageUID(msgInfo.getMessageId());
 		message.setPmode(msgInfo.getPmode());
 		message.setDirectory(directory.getAbsolutePath());
 

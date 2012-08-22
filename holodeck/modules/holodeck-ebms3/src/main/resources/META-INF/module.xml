@@ -1,5 +1,5 @@
 <module name="holodeck-ebms3" class="org.holodeck.ebms3.module.Ebms3Module">
-  <parameter name="PersistenceUnit">ebms3-mysql</parameter>
+  <parameter name="PersistenceUnit">ebms3-oracle</parameter>
   <parameter name="PModesDir" locked="false">../../../../config/pmodes</parameter>
   <parameter name="Modules">holodeck-ebms3, holodeck-reliability, holodeck-security, rampart</parameter>
   <parameter name="GATEWAY_CONFIG_FILE">../../../../config/gateway.xml</parameter>

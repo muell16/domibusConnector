@@ -26,7 +26,7 @@ public class MessageDAO implements IMessageDAO {
 
 	//property constants
 	/** The Constant UID. */
-	public static final String UID = "uid";
+	public static final String MESSAGE_UID = "MessageUID";
 	
 	/** The Constant DIRECTORY. */
 	public static final String DIRECTORY = "directory";
@@ -140,10 +140,10 @@ public class MessageDAO implements IMessageDAO {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.holodeck.backend.db.dao.IMessageDAO#findByUid(java.lang.Object, int[])
+	 * @see org.holodeck.backend.db.dao.IMessageDAO#findByMessageUID(java.lang.Object, int[])
 	 */
-	public List<Message> findByUid(Object uid, int... rowStartIdxAndCount) {
-		return findByProperty(UID, uid, rowStartIdxAndCount);
+	public List<Message> findByMessageUID(Object MessageUID, int... rowStartIdxAndCount) {
+		return findByProperty(MESSAGE_UID, MessageUID, rowStartIdxAndCount);
 	}
 
 	/* (non-Javadoc)
@@ -196,20 +196,20 @@ public class MessageDAO implements IMessageDAO {
 	}
 
 	/**
-	 * Find not downloaded sorted by date.
+	 * Find not downloaded sorted by messageDate.
 	 *
 	 * @param rowStartIdxAndCount the row start idx and count
 	 * @return the list
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Message> findNotDownloadedSortedByDate(final int... rowStartIdxAndCount) {
+	public List<Message> findNotDownloadedSortedByMessageDate(final int... rowStartIdxAndCount) {
 		log.debug("finding NotDownloadedSortedByDate Message instances");
 		try {
 			final String queryString = "select model" +
 							" from Message model" +
 							" where model.downloaded = false" +
 							" and model.deleted = false" +
-							" order by model.date asc";
+							" order by model.messageDate asc";
 			Query query = getEntityManager().createQuery(queryString);
 			if (rowStartIdxAndCount != null && rowStartIdxAndCount.length > 0) {
 				int rowStartIdx = Math.max(0, rowStartIdxAndCount[0]);
@@ -231,14 +231,14 @@ public class MessageDAO implements IMessageDAO {
 	}
 
 	/**
-	 * Gets the first not downloaded sorted by date.
+	 * Gets the first not downloaded sorted by messageDate.
 	 *
-	 * @return the first not downloaded sorted by date
+	 * @return the first not downloaded sorted by messageDate
 	 */
-	public Message getFirstNotDownloadedSortedByDate() {
-		log.debug("finding FirstNotDownloadedSortedByDate");
+	public Message getFirstNotDownloadedSortedByMessageDate() {
+		log.debug("finding FirstNotDownloadedSortedByMessageDate");
 		try {
-			List<Message> messages = findNotDownloadedSortedByDate(0,1);
+			List<Message> messages = findNotDownloadedSortedByMessageDate(0,1);
 
 			if(messages!=null && messages.size()==1){
 				return messages.get(0);
@@ -247,7 +247,7 @@ public class MessageDAO implements IMessageDAO {
 				return null;
 			}
 		} catch (RuntimeException re) {
-			log.error("getFirstNotDownloadedSortedByDate failed", re);
+			log.error("getFirstNotDownloadedSortedByMessageDate failed", re);
 			throw re;
 		}
 	}
@@ -265,7 +265,7 @@ public class MessageDAO implements IMessageDAO {
 			final String queryString = "select model" +
 							" from Message model" +
 							" where model.deleted = false" +
-							" and model.date < :minDate";
+							" and model.messageDate < :minDate";
 			Query query = getEntityManager().createQuery(queryString);
 
 			Calendar calendar = Calendar.getInstance();

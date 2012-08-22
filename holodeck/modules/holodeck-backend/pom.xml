@@ -59,7 +59,7 @@
 					</components>
 					<componentProperties>
 						<implementation>jpaconfiguration</implementation>
-						<persistenceunit>backend-mysql</persistenceunit>
+						<persistenceunit>backend-oracle</persistenceunit>
 						<outputfilename>schema.ddl</outputfilename>
 						<drop>true</drop>
 						<create>true</create>
@@ -75,18 +75,23 @@
 						</goals>
 					</execution>
 				</executions>
-				<dependencies>
-          			<dependency>
-            			<groupId>org.apache.derby</groupId>
-            			<artifactId>derby</artifactId>
-            			<version>10.4.2.0</version>
-          			</dependency>
+        		<dependencies>
+<!--           		<dependency> -->
+<!--             		<groupId>org.apache.derby</groupId> -->
+<!--             		<artifactId>derby</artifactId> -->
+<!--             		<version>10.4.2.0</version> -->
+<!--          		</dependency> -->
+<!--           		<dependency> -->
+<!--             		<groupId>mysql</groupId> -->
+<!--             		<artifactId>mysql-connector-java</artifactId> -->
+<!--             		<version>5.1.6</version> -->
+<!--           		</dependency> -->
 					<dependency>
-						<groupId>mysql</groupId>
-						<artifactId>mysql-connector-java</artifactId>
-						<version>5.1.6</version>
-					</dependency>
-				</dependencies>
+					    <groupId>com.oracle</groupId>
+					    <artifactId>ojdbc</artifactId>
+					    <version>10.2.0.5</version>
+					</dependency>	
+		        </dependencies>
 			</plugin>
 		</plugins>
 	</build>

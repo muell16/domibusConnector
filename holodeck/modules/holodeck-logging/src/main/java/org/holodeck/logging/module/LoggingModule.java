@@ -37,8 +37,8 @@ public class LoggingModule  implements Module
     Constants.setAxisModule(module);
 
     
-    DbStore dbs = new DbStore("logging-mysql");
-    Constants.store = dbs;
+//    DbStore dbs = new DbStore("logging-mysql");
+//    Constants.store = dbs;
     
     try
     {

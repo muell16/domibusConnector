@@ -26,11 +26,11 @@ public class Payload implements java.io.Serializable {
 
 	// Fields
 	/** The id payload. */
+	@Id
 	@TableGenerator(name="TABLE_GEN_PAYLOAD", table="SEQUENCE_TABLE", pkColumnName="SEQ_NAME",
 	    	valueColumnName="SEQ_COUNT", pkColumnValue="PAYLOAD_SEQ", allocationSize=1)
-	@Id
 	@GeneratedValue(strategy=GenerationType.TABLE, generator="TABLE_GEN_PAYLOAD")
-	@Column(name = "idPayload", unique = true, nullable = false)
+	@Column(name = "idPayload")
 	private Integer idPayload;
 	
 	/** The message. */

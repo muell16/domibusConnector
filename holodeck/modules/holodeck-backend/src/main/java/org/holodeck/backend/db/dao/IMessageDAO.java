@@ -59,7 +59,7 @@ public interface IMessageDAO {
 	 * @param rowStartIdxAndCount the row start idx and count
 	 * @return the list
 	 */
-	public List<Message> findByUid(Object uid, int... rowStartIdxAndCount);
+	public List<Message> findByMessageUID(Object uid, int... rowStartIdxAndCount);
 
 	/**
 	 * Find by directory.
