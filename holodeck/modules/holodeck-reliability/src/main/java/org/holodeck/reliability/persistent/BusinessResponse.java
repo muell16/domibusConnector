@@ -17,7 +17,7 @@ public class BusinessResponse extends Client
 {
   @Id @GeneratedValue(generator="system-uuid")
   @GenericGenerator(name="system-uuid", strategy="uuid")
-  @Column(name = "BusinessResponse_ID")
+  @Column(name = "BR_ID")
   protected String id = null;
 
   @Column(name = "GroupId")
