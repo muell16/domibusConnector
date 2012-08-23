@@ -513,14 +513,10 @@ public class HolodeckServlet extends HttpServlet implements TransportListener
             port = "8080";
         }
         if (ip == null) {
-            try {
-                ip = HttpUtils.getIpAddress(axisConfiguration);
-                if (ip == null) {
-                    ip = "localhost";
-                }
-            } catch (SocketException e) {
-                throw AxisFault.makeFault(e);
-            }
+//          TODO check         ip = HttpUtils.getIpAddress(axisConfiguration);
+                   if (ip == null) {
+                       ip = "localhost";
+                   }
         }
 
         String endpointRefernce = "http://" + ip + ":" + port;

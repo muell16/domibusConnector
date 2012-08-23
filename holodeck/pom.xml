@@ -123,7 +123,7 @@
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
     </dependency>
-    <!--dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
@@ -134,13 +134,13 @@
       <artifactId>servlet-api</artifactId>
       <version>2.3</version>
       <scope>provided</scope>
-    </dependency-->
- <!--    <dependency>
+    </dependency>
+    <!-- <dependency>
       <groupId>servlets.com</groupId>
       <artifactId>cos-unlimited</artifactId>
       <version>1.0</version>
-    </dependency>
- -->
+    </dependency>  -->
+
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms</artifactId>
@@ -172,7 +172,7 @@
       <artifactId>org.osgi.core</artifactId>
       <version>4.2.0</version>
     </dependency>
-
+    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
@@ -183,7 +183,7 @@
 	  <artifactId>quartz</artifactId>
 	  <version>1.6.5</version>
 	</dependency>
-    <!--
+     <!--
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
@@ -210,7 +210,7 @@
       <artifactId>jdom</artifactId>
       <version>1.1</version>
     </dependency>
-
+    
     <!-- ===================== Axis2-1.4.1 Libraries ====================== -->
     <dependency>
       <groupId>org.apache</groupId>
@@ -275,30 +275,31 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>openws</artifactId>
-      <version>1.2.0</version>
-    </dependency>
-    <dependency>
+      <version>1.2.2</version>
+    </dependency>    
+
+    <!-- <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-saaj-api</artifactId>
       <version>1.4.1</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-saaj</artifactId>
-      <version>1.4.1</version>
+      <version>1.5.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-kernel</artifactId>
-      <version>1.4.1</version>
+      <version>1.5.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-fastinfoset</artifactId>
-      <version>1.4.1</version>
+      <version>1.5.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -325,12 +326,12 @@
       <version>2.0.4</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
+<!--     <dependency>
+      <groupId>javamail</groupId>
+      <artifactId>javamail</artifactId>
       <scope>provided</scope>
       <version>1.4</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>activation</artifactId>
@@ -371,78 +372,66 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.6</version>
     </dependency>
-      <dependency>
+    <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.3.1.GA</version>
+      <artifactId>hibernate</artifactId>
+      <version>3.2.5.ga</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <version>3.3.1.GA</version>
     </dependency>
+    <!--<dependency>
+      <groupId>hibernate-entitymanager</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>3.3.1.GA</version>
+    </dependency>-->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>3.3.1.ga</version>
+    </dependency>
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>jboss-archive-browsing</artifactId>
       <version>5.0.0alpha-200607201-119</version>
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
       <version>3.3.0.GA</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.8</version>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.apache.derby</groupId> -->
-<!--       <artifactId>derby</artifactId> -->
-<!--       <version>10.4.2.0</version> -->
-<!--     </dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>org.apache.derby</groupId> -->
-<!--       <artifactId>derbyclient</artifactId> -->
-<!--       <version>10.2.2.0</version> -->
-<!--     </dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>org.apache.derby</groupId> -->
-<!--       <artifactId>derbynet</artifactId> -->
-<!--       <version>10.4.2.0</version> -->
-<!--     </dependency> -->
-<!--     <dependency> -->
-<!-- 	<groupId>mysql</groupId> -->
-<!-- 		<artifactId>mysql-connector-java</artifactId> -->
-<!-- 		<version>5.1.6</version> -->
-<!-- 	</dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>org.apache.derby</groupId> -->
-<!--       <artifactId>derbytools</artifactId> -->
-<!--       <version>10.4.2.0</version> -->
-<!--     </dependency> -->
-
-	<!-- Oracle driver 9.2.0.8 -->
-<!-- 	<dependency> -->
-<!-- 	    <groupId>com.oracle</groupId> -->
-<!-- 	    <artifactId>ojdbc</artifactId> -->
-<!-- 	    <version>9.2.0.8</version> -->
-<!-- 	</dependency> -->
-
-	<!-- Oracle driver 10.2.0.5 -->
-	<dependency>
-	    <groupId>com.oracle</groupId>
-	    <artifactId>ojdbc</artifactId>
-	    <version>10.2.0.5</version>
-	</dependency>	
-
-	<!-- Oracle driver 11.2.0.3 -->
-<!-- 	<dependency> -->
-<!-- 	    <groupId>com.oracle</groupId> -->
-<!-- 	    <artifactId>ojdbc</artifactId> -->
-<!-- 	    <version>11.2.0.3</version> -->
-<!-- 	</dependency> -->
-	
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.4.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbyclient</artifactId>
+      <version>10.2.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbynet</artifactId>
+      <version>10.4.2.0</version>
+    </dependency>
+    <dependency>
+	<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>5.1.6</version>
+	</dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
+      <version>10.4.2.0</version>
+    </dependency>
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>javassist</artifactId>
@@ -463,7 +452,11 @@
       <artifactId>cglib</artifactId>
       <version>2.1_3</version>
     </dependency>
-
+    <dependency>
+    	<groupId>com.oracle</groupId>
+    	<artifactId>ojdbc6</artifactId>
+    	<version>11.1.0.7.0</version>
+    </dependency>
     <!-- Library to Test Backend WS -->
 	<dependency>
 		<groupId>org.codehaus.cargo</groupId>
@@ -489,7 +482,18 @@
 		<version>1.2.2</version>
 		<scope>test</scope>
 	</dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-api</artifactId>
+    	<version>1.5.2</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-log4j12</artifactId>
+    	<version>1.5.2</version>
+    </dependency>
   </dependencies>
+
 
   <reporting>
     <plugins>
@@ -757,5 +761,6 @@
 			<enabled>true</enabled>
 		</snapshots>
 	</repository>
+    
   </repositories>
 </project>
