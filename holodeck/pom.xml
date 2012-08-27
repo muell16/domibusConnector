@@ -21,7 +21,7 @@
     <module>modules/holodeck-backend</module>
     <!--module>modules/holodeck-ui</module-->
 	  <module>modules/holodeck-distribution</module>
-    <module>modules/holodeck-backend-test</module>
+    <!--<module>modules/holodeck-backend-test</module> -->
     <module>modules/documentation</module>
   </modules>
 
