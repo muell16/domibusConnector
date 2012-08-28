@@ -260,6 +260,8 @@ shift
 goto setArgs
 :doneSetArgs
 
+set JAVA_OPTS=%JAVA_OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
+
 rem Execute Java with the applicable properties
 if not "%JPDA%" == "" goto doJpda
 if not "%SECURITY_POLICY_FILE%" == "" goto doSecurity
