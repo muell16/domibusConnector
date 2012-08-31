@@ -65,7 +65,7 @@ public class OrderedDeliveryWorker extends PeriodicWorker //implements Runnable
             MessageContext mc = m.getMessageContext();
                     //m.getMessageContext(configCtx);
 
-            AxisEngine engine = new AxisEngine(configCtx);
+            AxisEngine engine = new AxisEngine();
             try
             {
                engine.resume(mc);

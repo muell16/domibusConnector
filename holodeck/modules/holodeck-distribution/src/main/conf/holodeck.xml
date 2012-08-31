@@ -1,20 +1,3 @@
 <Context docBase="../../msh" reloadable="true">
-  
-  <Resource name="jms/ConnectionFactory" auth="Container" 
-            type="org.apache.activemq.ActiveMQConnectionFactory" 
-            description="JMS Connection Factory"
-            factory="org.apache.activemq.jndi.JNDIReferenceFactory" 
-            brokerURL="tcp://localhost:61616" brokerName="LocalActiveMQBroker"
-            useEmbeddedBroker="true"/>
-
-  <Resource name="jms/holodeckTopic" auth="Container" 
-            type="org.apache.activemq.command.ActiveMQTopic" description="Holodeck Topic"
-            factory="org.apache.activemq.jndi.JNDIReferenceFactory" 
-            physicalName="HOLODECK.TOPIC"/>
-
-  <Resource name="jms/holodeckQueue" auth="Container" 
-            type="org.apache.activemq.command.ActiveMQQueue" description="Holodeck Queue"
-            factory="org.apache.activemq.jndi.JNDIReferenceFactory" 
-            physicalName="HOLODECK.QUEUE"/>
-  
+    
 </Context>

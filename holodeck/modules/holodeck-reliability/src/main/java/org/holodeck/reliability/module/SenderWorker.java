@@ -3,18 +3,21 @@ package org.holodeck.reliability.module;
 //import java.util.concurrent.*;
 //import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.AxisOperation;
+//import org.apache.axiom.soap.SOAPHeader;
+//import org.apache.axiom.om.OMElement;
 import org.apache.log4j.Logger;
-import org.holodeck.common.soap.Util;
+
+
 import org.holodeck.reliability.persistent.GMessage;
+import org.holodeck.common.soap.Util;
+
+import java.util.*;
 
 /**
  * @author Hamid Ben Malek
@@ -28,8 +31,9 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
   //protected String groupId;
   //protected int seqNumber = -1;
 
-//  private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
-  private static final Logger log = Logger.getLogger(SenderWorker.class.getName());
+//private static final Log log = LogFactory.getLog(SenderWorker.class.getName());
+private static final Logger log = Logger.getLogger(SenderWorker.class.getName());
+
 
   public SenderWorker(MessageContext msgCtx) { init(msgCtx); }
 
@@ -38,7 +42,7 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
                       )
   {
     //this.executor = exec;
-    this.configCtx = ctx;
+	this.configCtx = ctx;
     //this.groupId = groupId;
     //this.seqNumber = seqNumber;
     if ( configCtx != null )
@@ -50,7 +54,8 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
   //public void run()
   protected void task()
   {
-    // Fetch the message from DB first...
+    try {
+    	// Fetch the message from DB first...
     List<GMessage> messages = getMessagesToResend();
     if ( messages == null || messages.size() <= 0 ) return;
     //GMessage message = store.getGMessage(groupId, seqNumber);
@@ -65,14 +70,11 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
       }
       long now = System.currentTimeMillis();
       if ( message.getTimeToSend() > now ) continue; // return;
-      if ( configCtx != null ) message.setConfigurationContext(configCtx);
-      MessageContext msgCtx = message.getMessageContext();
-              //message.getMessageContext(configCtx);
-
+      MessageContext msgCtx = message.getMessageContext(); // Message context from database
+      
       AxisOperation operation = msgCtx.getAxisOperation();
       String mep = "http://www.w3.org/ns/wsdl/in-out";
       if ( operation != null ) mep = operation.getMessageExchangePattern();
-      //String mep = message.getBean().getAxisOperationMEP();
 
       String groupId = message.getGroupId();
       int seqNumber = message.getSeqNumber();
@@ -80,8 +82,6 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
               " and seq=" + seqNumber + " to " + message.getRemoteServiceURL() +
                " \n: " + Util.toString(msgCtx.getEnvelope()));
 
-      //retransmit(msgCtx, message.getRemoteServiceURL(),
-      //               message.getBean().getAction(), mep, message.getCallback());
       retransmit(msgCtx, message.getRemoteServiceURL(),
                  msgCtx.getOptions().getAction(), mep, message.getCallback());
 
@@ -100,12 +100,17 @@ public class SenderWorker extends PeriodicWorker //implements Runnable
       message.setTimeToSend(nextTime);
       store.save(message);
     }
+    }catch (Exception e){
+    	e.printStackTrace();
+    }
   }
 
   private MessageContext retransmit(MessageContext msgCtx, String toURL,
                                     String action, String mep, Callback cb)
   {
     if ( msgCtx == null ) return null;
+    configCtx = msgCtx.getConfigurationContext();
+    configCtx.registerOperationContext(msgCtx.getMessageID(), msgCtx.getOperationContext());
     OperationContext opCtx =
             configCtx.getOperationContext(msgCtx.getMessageID());
     opCtx.setComplete(false);

@@ -57,10 +57,10 @@ public class Ebms3Module  implements Module
     sender = new SenderWorker();
     sender.start();
     log.debug("SenderWorker started");
-    */
+    
     startActiveMQ();
     log.debug("ActiveMQ Broker Started.");
-    log.debug("Loading Workers...");
+    */log.debug("Loading Workers...");
     loadWorkers();
     log.debug("Done loading Workers");
     log.debug("ebms3 Module Started.");

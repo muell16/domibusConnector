@@ -42,6 +42,20 @@
     </recipient>
   </security>
 
+  <security name="sign-encrypt-body-header">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>service</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
   <security name="sec-conv">
     <policy>policy-sec-conv.xml</policy>
     <initiator>
