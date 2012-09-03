@@ -1,0 +1,15 @@
+<Metadata>
+   <pmode>EE_Form_A</pmode>
+   <AgreementRef>AGR123</AgreementRef>
+   <From>
+      <PartyId>AT</PartyId>
+      <Role>GW</Role>
+   </From>
+   <Properties>
+      <Property name="greeting">Hello there</Property>
+   </Properties>
+   <Payloads>
+      <BodyPayload>payload.xml</BodyPayload>
+      <Payload cid="someattachment">attachment.txt</Payload>
+   </Payloads>
+</Metadata>
