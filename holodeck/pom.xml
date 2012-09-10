@@ -644,6 +644,14 @@
 
   <repositories>
     <repository>
+      <id>eviware</id>
+      <url>http://www.eviware.com/repository/maven2</url>
+    </repository>
+    <repository>
+      <id>wso2</id>
+      <url>http://dist.wso2.org/maven2</url>
+    </repository>
+    <repository>
       <id>holodeck-default</id>
       <name>Holodeck Default</name>
       <url>http://holodeck-b2b.sourceforge.net/maven-repo</url>
@@ -682,9 +690,9 @@
       <url>http://people.apache.org/repo/m2-incubating-repository</url>
     </repository>
     <repository>
-      <id>jboss</id>
-      <url>http://repository.jboss.com/maven2</url>
-    </repository>
+	  <id>jboss-deprecated</id>
+	  <url>http://repository.jboss.org/nexus/content/repositories/deprecated</url>
+	</repository>
     <repository>
       <id>maven-snapshots</id>
       <name>Maven Central Development Repository</name>
@@ -693,10 +701,10 @@
         <enabled>false</enabled>
       </releases>
     </repository>
-    <repository>
-      <id>ws-zones-repository</id>
-      <url>http://ws.zones.apache.org/repository2</url>
-    </repository>
+<!--     <repository> -->
+<!--       <id>ws-zones-repository</id> -->
+<!--       <url>http://ws.zones.apache.org/repository2</url> -->
+<!--     </repository> -->
     <repository>
       <id>AppFuse</id>
       <url>http://static.appfuse.org/repository</url>
