@@ -33,6 +33,7 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
+import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
 import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
@@ -40,8 +41,7 @@ public class SubmissionAcceptanceRejectionTest  {
 
 	private static Logger LOG = LoggerFactory.getLogger(SubmissionAcceptanceRejectionTest.class);
 	
-	@Test
-	public void createSubmissionAcceptanceFromEDeliverDetails() throws DatatypeConfigurationException, JAXBException, MalformedURLException, FileNotFoundException {
+	private EDeliveryDetails createEntityDetailsObject() {
 		
 		PostalAdress address = new PostalAdress();
 		address.setCountry("country");
@@ -60,8 +60,12 @@ public class SubmissionAcceptanceRejectionTest  {
 		detail.setPostalAdress(address);
 		detail.setServer(server);
 		
-		EDeliveryDetails details = new EDeliveryDetails(detail);
 		
+		return new EDeliveryDetails(detail);
+	}
+	
+	
+	private REMDispatchType createRemDispatchTypeObject() throws MalformedURLException, DatatypeConfigurationException {
 		GregorianCalendar cal = new GregorianCalendar();
 		XMLGregorianCalendar testDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
 		
@@ -127,15 +131,37 @@ public class SubmissionAcceptanceRejectionTest  {
 		dispatchMessage.setMsgMetaData(msgMetaData);
 		dispatchMessage.setOriginalMsg(orgMsgType);
 		
-		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(details, dispatchMessage, true);
+		return dispatchMessage;
+	}
+	
+	@Test
+	public void createEvidences() throws DatatypeConfigurationException, JAXBException, MalformedURLException, FileNotFoundException {
 		
-		FileOutputStream fo = new FileOutputStream("src/test/resources/test.xsd");
-		evidence.serialize(fo);
+		SubmissionAcceptanceRejection evidence1 = createSubmissionAcceptance();
+		
+		DeliveryNonDeliveryToRecipient evidence2 = new DeliveryNonDeliveryToRecipient(createEntityDetailsObject(), evidence1);
+		
+		FileOutputStream fo = new FileOutputStream("src/test/resources/DeliveryNonDelivery.xsd");
+		evidence2.serialize(fo);
 		
 		
 		
 		assertTrue(true);
 		
 	}
+	
+	private SubmissionAcceptanceRejection createSubmissionAcceptance() throws DatatypeConfigurationException, JAXBException, MalformedURLException, FileNotFoundException {
+		EDeliveryDetails details = createEntityDetailsObject();
+		
+		REMDispatchType dispatchMessage = createRemDispatchTypeObject();
+		
+		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(details, dispatchMessage, true);
+		
+		FileOutputStream fo = new FileOutputStream("src/test/resources/SubmissionAcceptance.xsd");
+		evidence.serialize(fo);
+		
+		return evidence;
+	}
+	
 	
 }
