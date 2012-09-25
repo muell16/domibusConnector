@@ -10,7 +10,7 @@
   <parameter name="RELIABILITY_CONFIG_FILE">../../../../config/reliability-config.xml</parameter>
   <parameter name="PersistenceUnit">wsrm-oracle</parameter>
   <parameter name="MessageLifetime" locked="false">P29D</parameter>
-  <parameter name="ResendFromDBAtStartup">true</parameter>
+  <parameter name="ResendFromDBAtStartup">false</parameter>
   <!--parameter name="Quality">
     <Reliability name="ORDER-ANON">
       <AtMostOnce>true</AtMostOnce>
