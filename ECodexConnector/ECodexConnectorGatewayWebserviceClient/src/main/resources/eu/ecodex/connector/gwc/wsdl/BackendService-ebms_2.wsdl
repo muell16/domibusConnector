@@ -10,7 +10,7 @@ Version	|	Date		|	Author			|	Description
 #########################################################################################
 -->
 <wsdl:definitions xmlns:eb1="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://org.ecodex.backend" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://www.w3.org/2003/05/soap-envelope" name="eCodex" targetNamespace="http://org.ecodex.backend">
-	<wsdl:import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" location="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd"/>
+	<wsdl:import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" location="ebms-header-3_0-200704.xsd"/>
 	<wsdl:types>
 		<xsd:schema targetNamespace="http://org.ecodex.backend" xmlns="http://www.w3.org/2001/XMLSchema">
 			<xsd:element name="sendRequest">

@@ -17,13 +17,13 @@
 
 <bean id="nationalTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
   <property name="jobDetail" ref="handleNationalMessages"/>
-  <property name="startDelay" value="10000"/>
+  <property name="startDelay" value="1000"/>
   <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
 </bean>
 
 <bean id="gatewayTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
   <property name="jobDetail" ref="handleGatewayMessages"/>
-  <property name="startDelay" value="15000"/>
+  <property name="startDelay" value="5000"/>
   <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
 </bean>
 

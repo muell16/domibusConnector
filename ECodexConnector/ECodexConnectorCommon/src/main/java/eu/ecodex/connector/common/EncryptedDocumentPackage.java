@@ -2,8 +2,32 @@ package eu.ecodex.connector.common;
 
 public class EncryptedDocumentPackage {
 
-    Object trustOkTokenXml;
+    byte[] trustOkTokenXml;
     Object asicsContainer;
-    Object mappedDocument;
+    byte[] content;
+
+    public byte[] getTrustOkTokenXml() {
+        return trustOkTokenXml;
+    }
+
+    public void setTrustOkTokenXml(byte[] trustOkTokenXml) {
+        this.trustOkTokenXml = trustOkTokenXml;
+    }
+
+    public Object getAsicsContainer() {
+        return asicsContainer;
+    }
+
+    public void setAsicsContainer(Object asicsContainer) {
+        this.asicsContainer = asicsContainer;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
 }

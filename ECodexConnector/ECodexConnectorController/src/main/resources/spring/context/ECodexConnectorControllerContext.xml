@@ -3,14 +3,21 @@
 
 <beans>
 
-	<import resource="/eu/ecodex/connector/security/ECodexConnectorSecurityToolkitContext.xml"/>
-	<import resource="/eu/ecodex/connector/eivdences/ECodexConnectorEvidencesToolkitContext.xml"/>
-	<import resource="/eu/ecodex/connector/mapping/ECodexConnectorContentMapperContext.xml"/>
-	<import resource="/eu/ecodex/connector/gwc/ECodexConnectorGatewayWebserviceClientContext.xml"/>
+	<import resource="classpath:/eu/ecodex/connector/common/ECodexConnectorCommonContext.xml"/>
+	<import resource="classpath:/eu/ecodex/connector/security/ECodexConnectorSecurityToolkitContext.xml"/>
+	<import resource="classpath:/eu/ecodex/connector/evidences/ECodexConnectorEvidencesToolkitContext.xml"/>
+	<import resource="classpath:/eu/ecodex/connector/mapping/ECodexConnectorContentMapperContext.xml"/>
+	<import resource="classpath:/eu/ecodex/connector/gwc/ECodexConnectorGatewayWebserviceClientContext.xml"/>
+	<import resource="classpath:/eu/ecodex/connector/nbc/ECodexConnectorNationalBackendClientContext.xml"/>
+	
 	
 	<import resource="quartz-context.xml"/>
 	
   	<bean id="connectorController" class="eu.ecodex.connector.controller.ECodexConnectorControllerImpl">
+  		<property name="connectorProperties" ref="connectorProperties" />
+  		<property name="contentMapper" ref="contentMapper" />
+  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
+  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
   	</bean>
   
 </beans>

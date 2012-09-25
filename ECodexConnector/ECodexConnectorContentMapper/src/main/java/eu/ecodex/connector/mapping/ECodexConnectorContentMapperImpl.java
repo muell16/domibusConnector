@@ -1,17 +1,20 @@
 package eu.ecodex.connector.mapping;
 
+import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 
-public abstract class ECodexConnectorContentMapperImpl implements ECodexConnectorContentMapper {
+public class ECodexConnectorContentMapperImpl implements ECodexConnectorContentMapper {
 
     @Override
-    public byte[] mapInternationalToNational(byte[] internationalContent) throws ECodexConnectorContentMapperException {
-        throw new ECodexConnectorContentMapperException("Method must be overridden when used by configuration!");
+    public byte[] mapInternationalToNational(byte[] internationalContent) throws ECodexConnectorContentMapperException,
+            ImplementationMissingException {
+        throw new ImplementationMissingException("ECodexConnectorContentMapper", "mapInternationalToNational");
     }
 
     @Override
-    public byte[] mapNationalToInternational(byte[] nationalContent) throws ECodexConnectorContentMapperException {
-        throw new ECodexConnectorContentMapperException("Method must be overridden when used by configuration!");
+    public byte[] mapNationalToInternational(byte[] nationalContent) throws ECodexConnectorContentMapperException,
+            ImplementationMissingException {
+        throw new ImplementationMissingException("ECodexConnectorContentMapper", "mapNationalToInternational");
     }
 
 }

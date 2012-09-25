@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-<beans>
-  
-  <import resource="/eu/ecodex/connector/common/ECodexConnectorCommonContext.xml"/>
-  
-  <bean id="gatewayWebServiceClient" class="eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClientImpl">
-  	<constructor-arg ref="connectorProperties"/>
-  </bean>
-  
+	<jaxws:client id="gatewayClient" serviceClass="backend.ecodex.org.BackendInterface"
+		address="${gateway.endpoint.address}BackendPort" />
+
+	<bean id="gatewayWebServiceClient"
+		class="eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClientImpl">
+		<property name="gatewayBackendWebservice" ref="gatewayClient" />
+		<property name="messageStateLogger" ref="messageStateLogger"/>
+	</bean>
+
 </beans>

@@ -2,6 +2,7 @@ package eu.ecodex.connector.nbc;
 
 import eu.ecodex.connector.common.EncryptedDocumentPackage;
 import eu.ecodex.connector.common.MessageState;
+import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 /**
@@ -21,9 +22,10 @@ public interface ECodexConnectorNationalBackendClient {
      *            itself, an asic-s container and the trustOkToken as XML.
      * @return the immediate state of the message within the national backend
      *         system if available.
+     * @throws ImplementationMissingException
      */
     public MessageState deliverMessage(EncryptedDocumentPackage documentPackage)
-            throws ECodexConnectorNationalBackendClientException;
+            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException;
 
     /**
      * Method to request the state of a message formerly sent to the national
@@ -33,17 +35,21 @@ public interface ECodexConnectorNationalBackendClient {
      *            - the ID of the message of which the state is requested.
      * @return an enum value which represents the state of the message within
      *         the national backend system.
+     * @throws ImplementationMissingException
      */
-    public MessageState requestState(String messageId) throws ECodexConnectorNationalBackendClientException;
+    public MessageState requestState(String messageId) throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException;
 
     /**
-     * Method to ask the national backend system if there are pending messages
-     * to send.
+     * Method to request all messages from the national backend system that are
+     * not yet handled.
      * 
-     * @return a String array which contains the message ID's of the messages to
-     *         send over gateway.
+     * @return an array of encrypted document package which contains the message
+     *         itself, an asic-s container and the trustOkToken as XML.
+     * @throws ImplementationMissingException
      */
-    public String[] checkPendingMessages() throws ECodexConnectorNationalBackendClientException;
+    public EncryptedDocumentPackage[] requestAllPendingMessages() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException;
 
     /**
      * Method to request a message from the national backend system to send over
@@ -54,8 +60,9 @@ public interface ECodexConnectorNationalBackendClient {
      *            checkPendingMessges()
      * @return an encrypted document package which contains the message itself,
      *         an asic-s container and the trustOkToken as XML.
+     * @throws ImplementationMissingException
      */
     public EncryptedDocumentPackage requestMessage(String messageId)
-            throws ECodexConnectorNationalBackendClientException;
+            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException;
 
 }

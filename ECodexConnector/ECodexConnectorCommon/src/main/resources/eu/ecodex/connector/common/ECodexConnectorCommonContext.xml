@@ -1,20 +1,15 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
 
 	<import resource="dao.xml"/>
-	
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-
-		<property name="location">
-			<value>${ecodex.connector.properties.location}</value>
-		</property>
-	</bean>
-	
+		
 	<bean id="connectorProperties" class="eu.ecodex.connector.common.ECodexConnectorProperties">
 		<property name="gatewayEndpointAddress" value="${gateway.endpoint.address}" />
+		<property name="useContentMapper" value="${connector.use.content.mapper}" />
+		<property name="useSecurityToolkit" value="${connector.use.security.toolkit}" />
+		<property name="useEvidencesToolkit" value="${connector.use.evidences.toolkit}" />
 	</bean>
 	
 	<bean id="messageStateLogger" class="eu.ecodex.connector.common.MessageStateLogger">

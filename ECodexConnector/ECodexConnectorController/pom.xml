@@ -13,5 +13,10 @@
 			<artifactId>ECodexConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.7.3</version>
+		</dependency>
 	</dependencies>
 </project>

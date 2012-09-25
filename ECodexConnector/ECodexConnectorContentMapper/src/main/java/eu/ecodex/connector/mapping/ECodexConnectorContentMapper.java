@@ -1,5 +1,6 @@
 package eu.ecodex.connector.mapping;
 
+import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 
 /**
@@ -20,8 +21,10 @@ public interface ECodexConnectorContentMapper {
      *            - eCodex XML.
      * @return nationalContent as byte array.
      * @throws ECodexConnectorContentMapperException
+     * @throws ImplementationMissingException
      */
-    public byte[] mapInternationalToNational(byte[] internationalContent) throws ECodexConnectorContentMapperException;
+    public byte[] mapInternationalToNational(byte[] internationalContent) throws ECodexConnectorContentMapperException,
+            ImplementationMissingException;
 
     /**
      * Method to map national XML to international eCodex format. Must be
@@ -30,7 +33,9 @@ public interface ECodexConnectorContentMapper {
      * @param nationalContent
      * @return eCodex XML as byte array.
      * @throws ECodexConnectorContentMapperException
+     * @throws ImplementationMissingException
      */
-    public byte[] mapNationalToInternational(byte[] nationalContent) throws ECodexConnectorContentMapperException;
+    public byte[] mapNationalToInternational(byte[] nationalContent) throws ECodexConnectorContentMapperException,
+            ImplementationMissingException;
 
 }
