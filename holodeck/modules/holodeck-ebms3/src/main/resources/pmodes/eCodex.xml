@@ -57,7 +57,8 @@
 
     <Binding name="EE_Form_A">
       <MEP name="One-Way/Push">
-	      <Leg number="1" mpc="epo" userService="EPO_Form_A" reliability="ORDER-ANON" security="sign-encrypt-body-header"> 
+	      <!-- <Leg number="1" mpc="epo" userService="EPO_Form_A" reliability="ORDER-ANON" security="sign-encrypt-body-header"> --> 
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" security="sign-encrypt-body-header">
           <Endpoint address="http://localhost:8085/holodeck/services/msh" soapVersion="1.1" />
         </Leg>
       </MEP>
@@ -65,7 +66,8 @@
 
     <Binding name="IT_Form_A">
       <MEP name="One-Way/Push">
-	      <Leg number="1" mpc="epo" userService="EPO_Form_A" reliability="CALLBACK" security="sign-encrypt-body-header"> 
+	      <!-- <Leg number="1" mpc="epo" userService="EPO_Form_A" reliability="CALLBACK" security="sign-encrypt-body-header"> -->
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" security="sign-encrypt-body-header">  
           <Endpoint address="http://localhost:8090/holodeck/services/msh" soapVersion="1.1" />
         </Leg>
       </MEP>
@@ -73,7 +75,8 @@
 
     <Binding name="AT_Form_A">
       <MEP name="One-Way/Push">
-	      <Leg number="1" mpc="epo" userService="EPO_Form_A" reliability="CALLBACK" > 
+	      <!-- <Leg number="1" mpc="epo" userService="EPO_Form_A" reliability="CALLBACK" > -->
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" >  
           <Endpoint address="http://localhost:8080/holodeck/services/msh" soapVersion="1.1" />
         </Leg>
       </MEP>
@@ -83,7 +86,8 @@
 
     <Binding name="EE_SmallClaims_Form_A">
       <MEP name="One-Way/Push">
-	      <Leg number="1" mpc="small" userService="SmallClaims_Form_A" reliability="CALLBACK" security="sign-encrypt-body-header"> 
+	      <!-- <Leg number="1" mpc="small" userService="SmallClaims_Form_A" reliability="CALLBACK" security="sign-encrypt-body-header"> --> 
+	      <Leg number="1" mpc="small" userService="SmallClaims_Form_A" security="sign-encrypt-body-header">
           <Endpoint address="http://localhost:8090/holodeck/services/msh" soapVersion="1.1" />
         </Leg>
       </MEP>
