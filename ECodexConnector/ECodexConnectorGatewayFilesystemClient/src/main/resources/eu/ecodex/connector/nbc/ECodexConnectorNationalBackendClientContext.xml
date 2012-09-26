@@ -1,6 +1,0 @@
-<beans>
-  
-  <bean id="gatewayFilesystemClient" class="eu.ecodex.connector.fsc.ECodexConnectorGatewayFilesystemClientImpl">
-  </bean>
-  
-</beans>

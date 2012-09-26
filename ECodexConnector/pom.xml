@@ -13,7 +13,6 @@
 		<module>ECodexConnectorSecurityToolkit</module>
 		<module>ECodexConnectorController</module>
 		<module>ECodexConnectorCommon</module>
-		<module>ECodexConnectorGatewayFilesystemClient</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
