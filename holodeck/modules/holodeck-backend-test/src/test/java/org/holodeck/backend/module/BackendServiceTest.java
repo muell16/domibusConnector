@@ -566,7 +566,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test (expected = java.lang.Error.class)
-	public void testSend30MBPDFMessage() throws java.lang.Error {
+	public void testSend30MBPDFMessage() throws java.lang.Throwable {
 		String messageStartTest = "Init testSend30MBPDFMessage";
 		String messageEndTest = "End testSend30MBPDFMessage";
 		String urlMessage = "/send/messaging_1.xml";
@@ -580,8 +580,8 @@ public class BackendServiceTest{
 
 		System.out.println(messageStartTest);
 		
-		try
-		{
+//		try
+//		{
 			backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
 			sendRequest24 = (org.holodeck.backend.client.types.SendRequest) getTestObject(org.holodeck.backend.client.types.SendRequest.class);
 			inputStream = BackendServiceTest.class.getResourceAsStream(urlMessage);
@@ -599,11 +599,11 @@ public class BackendServiceTest{
 			Assert.assertNotNull(listPendingMessagesResponse.getMessageID());
 			Assert.assertEquals(1, listPendingMessagesResponse.getMessageID().length);
 			fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-		}
-		catch(java.lang.Error e)
-		{
-			System.out.println("dentro de la excepcion" + e.toString());
-		}
+//		}
+//		catch(java.lang.Error e)
+//		{
+//			System.out.println("dentro de la excepcion" + e.toString());
+//		}
 		System.out.println(messageEndTest);
 	}
 	
@@ -1093,7 +1093,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test (expected = java.lang.Error.class)
-	public void testSendTwentySmallPDFMessages() {
+	public void testSendTwentySmallPDFMessages() throws java.lang.Throwable{
 		String messageStartTest = "Init testSendTwentySmallPDFMessages";
 		String messageEndTest = "End testSendTwentySmallPDFMessages";
 		String urlMessage = "/send/messaging_1.xml";
@@ -1109,8 +1109,8 @@ public class BackendServiceTest{
 			
 		System.out.println(messageStartTest);
 		
-		try 
-		{
+//		try 
+//		{
 			for (i = 0; i < max; i ++)
 			{
 				backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
@@ -1127,8 +1127,8 @@ public class BackendServiceTest{
 				backendServiceStub.sendMessage(sendRequest24, messaging);
 			}
             fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-	    }
-	    catch(java.lang.Error e) { }
+//	    }
+//	    catch(java.lang.Error e) { }
 
 		System.out.println(messageEndTest);
 	}
@@ -1143,7 +1143,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test (expected = java.lang.Error.class)
-	public void testSendTwentyNormalPDFMessages() {
+	public void testSendTwentyNormalPDFMessages() throws java.lang.Throwable{
 		String messageStartTest = "Init testSendTwentyNormalPDFMessages";
 		String messageEndTest = "End testSendTwentyNormalPDFMessages";
 		String urlMessage = "/send/messaging_1.xml";
@@ -1159,8 +1159,8 @@ public class BackendServiceTest{
 			
 		System.out.println(messageStartTest);
 		
-		try 
-		{
+//		try 
+//		{
 			for (i = 0; i < max; i ++)
 			{
 				backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
@@ -1177,8 +1177,8 @@ public class BackendServiceTest{
 				backendServiceStub.sendMessage(sendRequest24, messaging);
 			}
             fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-	    }
-	    catch(java.lang.Error e) { }
+//	    }
+//	    catch(java.lang.Error e) { }
 
 		System.out.println(messageEndTest);
 	}
@@ -1193,7 +1193,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test (expected = java.lang.Error.class)
-	public void testSendTwentyLargePDFMessages() {
+	public void testSendTwentyLargePDFMessages() throws java.lang.Throwable{
 		String messageStartTest = "Init testSendTwentyLargePDFMessages";
 		String messageEndTest = "End testSendTwentyLargePDFMessages";
 		String urlMessage = "/send/messaging_1.xml";
@@ -1209,8 +1209,8 @@ public class BackendServiceTest{
 			
 		System.out.println(messageStartTest);
 		
-		try 
-		{
+//		try 
+//		{
 			for (i = 0; i < max; i ++)
 			{
 				backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
@@ -1227,8 +1227,8 @@ public class BackendServiceTest{
 				backendServiceStub.sendMessage(sendRequest24, messaging);
 			}
             fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-	    }
-	    catch(java.lang.Error e) { }
+//	    }
+//	    catch(java.lang.Error e) { }
 
 		System.out.println(messageEndTest);
 	}
@@ -1243,7 +1243,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test (expected = java.lang.Error.class)
-	public void testSendTwentyXMLMessages() {
+	public void testSendTwentyXMLMessages() throws java.lang.Throwable{
 		String messageStartTest = "Init testSendTwentyXMLMessages";
 		String messageEndTest = "End testSendTwentyXMLMessages";
 		String urlMessage = "/send/messaging_1.xml";
@@ -1259,8 +1259,8 @@ public class BackendServiceTest{
 			
 		System.out.println(messageStartTest);
 		
-		try 
-		{
+//		try 
+//		{
 			for (i = 0; i < max; i ++)
 			{
 				backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
@@ -1277,8 +1277,8 @@ public class BackendServiceTest{
 				backendServiceStub.sendMessage(sendRequest24, messaging);
 			}
             fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-	    }
-	    catch(java.lang.Error e) { }
+//	    }
+//	    catch(java.lang.Error e) { }
 
 		System.out.println(messageEndTest);
 	}
@@ -1293,7 +1293,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test 
-	public void testSendTwentyTXTMessages() {
+	public void testSendTwentyTXTMessages() throws java.lang.Throwable{
 		String messageStartTest = "Init testSendTwentyTXTMessages";
 		String messageEndTest = "End testSendTwentyTXTMessages";
 		String urlMessage = "/send/messaging_1.xml";
@@ -1309,8 +1309,8 @@ public class BackendServiceTest{
 			
 		System.out.println(messageStartTest);
 		
-		try 
-		{
+//		try 
+//		{
 			for (i = 0; i < max; i ++)
 			{
 				backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
@@ -1327,8 +1327,8 @@ public class BackendServiceTest{
 				backendServiceStub.sendMessage(sendRequest24, messaging);
 			}
             fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-	    }
-	    catch(java.lang.Error e) { }
+//	    }
+//	    catch(java.lang.Error e) { }
 
 		System.out.println(messageEndTest);
 	}
@@ -1343,7 +1343,7 @@ public class BackendServiceTest{
 	 */
 	@Ignore
 	@Test (expected = java.lang.Error.class)
-	public void testSendTwentyPNGMessages() {
+	public void testSendTwentyPNGMessages() throws java.lang.Throwable{
 		String messageStartTest = "Init testSendTwentyPNGMessages";
 		String messageEndTest = "End testSendTwentyPNGMessages";
 		String urlMessage = "/send/messaging_1.xml";
@@ -1359,8 +1359,8 @@ public class BackendServiceTest{
 			
 		System.out.println(messageStartTest);
 		
-		try 
-		{
+//		try 
+//		{
 			for (i = 0; i < max; i ++)
 			{
 				backendServiceStub = new org.holodeck.backend.client.BackendServiceStub(BACKEND_WS_URL);//the default implementation should point to the right endpoint
@@ -1377,8 +1377,8 @@ public class BackendServiceTest{
 				backendServiceStub.sendMessage(sendRequest24, messaging);
 			}
             fail("There has been an error. The maximum amount of files that can be sent has been exceeded.");
-	    }
-	    catch(java.lang.Error e) { }
+//	    }
+//	    catch(java.lang.Error e) { }
 
 		System.out.println(messageEndTest);
 	}
