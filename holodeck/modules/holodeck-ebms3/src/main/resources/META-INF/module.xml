@@ -1,146 +1,108 @@
-<module name="holodeck-reliability" class="org.holodeck.reliability.module.ReliabilityModule">
-  
-  <!--
-   The name of the folder in which attachments will be stored.
+<module name="holodeck-ebms3" class="org.holodeck.ebms3.module.Ebms3Module">
+  <parameter name="PersistenceUnit">ebms3-oracle</parameter>
+  <parameter name="PModesDir" locked="false">../../../../config/pmodes</parameter>
+  <parameter name="Modules">holodeck-ebms3, holodeck-reliability, holodeck-security, rampart</parameter>
+  <parameter name="GATEWAY_CONFIG_FILE">../../../../config/gateway.xml</parameter>
+  <parameter name="MSHAddress" locked="false">http://localhost:8080/holodeck/services/msh</parameter>
+
+  <!-- ======================================================================================
+   The name of the folder in which submitted messages will be stored.
    It could be an absolute path to some folder on the file system, or
    just the name of a folder (in which case it will be automatically
-   created under WEB-INF\modules\holodeck-reliability directory).
+   created under WEB-INF directory).
+   ====================================================================================== -->
+  <parameter name="SubmittedMessagesFolder">../../../../store/send</parameter>
+
+  <!-- ======================================================================================
+  The value of this parameter is a comma-separated list of possible names
+  (or IP addresses this local machine, that is the machine running this MSH)
+  may have. It helps the MSH by looking at a given URL to determine if
+  it is the URL of this MSH or the URL of another remote MSH by just
+  comparing the machine name in the URL to the values of this parameter.
+  ======================================================================================  -->
+  <parameter name="LocalMachine">localhost,127.0.0.1,holodeck,192.240.13.76</parameter>
+
+  <!--
+  If true, the MSH, when writing a message to database, it will also
+  persist all the attachments the message may have to database. This
+  would work for small to medium attachments (may be up 1 Giga per
+  attachment). However, if an attachment is way bigger than 1 Giga, the
+  database columns may be limited in storage space, and in this case it would
+  be better if the MSH persist the attachment on the file system where
+  there is no limit on storage (except for the disk capacity of course).
+  Make this parameter false if you are planning on having attachment very
+  large that may exceed 1 GB (a giga bytes) or whatever limit your database is set to
   -->
-  <parameter name="MessageStorageFolder">Storage_Folder</parameter>
-  <parameter name="RELIABILITY_CONFIG_FILE">../../../../config/reliability-config.xml</parameter>
-  <parameter name="PersistenceUnit">wsrm-oracle</parameter>
-  <parameter name="MessageLifetime" locked="false">P29D</parameter>
-  <parameter name="ResendFromDBAtStartup">false</parameter>
-  <!--parameter name="Quality">
-    <Reliability name="ORDER-ANON">
-      <AtMostOnce>true</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>true</InOrder>
-      <AckReply>Response</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
-    </Reliability>
-    <Reliability name="ORDER-CALLBACK">
-      <AtMostOnce>true</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>true</InOrder>
-      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
-    </Reliability>
-    <Reliability name="ORDER-POLL">
-      <AtMostOnce>true</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>true</InOrder>
-      <AckReply>Poll</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
-    </Reliability>
-    <Reliability name="ANON">
-      <AtMostOnce>true</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>false</InOrder>
-      <AckReply>Response</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
-    </Reliability>
-    <Reliability name="CALLBACK">
-      <AtMostOnce>true</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>false</InOrder>
-      <AckReply ackTo="http://localhost:8080/holodeck/services/wsrm">Callback</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
-    </Reliability>
-    <Reliability name="POLL">
-      <AtMostOnce>true</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>false</InOrder>
-      <AckReply>Poll</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>5</MaximumRetransmissionCount>
-    </Reliability>
+  <parameter name="StoreAttachmentsInDB">false</parameter>
 
-    <Reliability name="GD">
-      <AtMostOnce>false</AtMostOnce>
-      <AtLeastOnce>true</AtLeastOnce>
-      <InOrder>false</InOrder>
-      <AckReply>Response</AckReply>
-      <RetransmissionInterval>40000</RetransmissionInterval>
-      <ExponentialBackoff>false</ExponentialBackoff>
-      <MaximumRetransmissionCount>1</MaximumRetransmissionCount>
-    </Reliability>
-  </parameter-->
+  <!-- =====================================================================================
+   The name of the folder in which the attachments of the arriving messages
+   will be stored.
+   It could be an absolute path to some folder on the file system, or
+   just the name of a folder (in which case it will be automatically
+   created under WEB-INF\modules\holodeck-ebms3 directory).
+  ====================================================================================== -->
+  <parameter name="ReceivedMessagesFolder">../../../../store/receive</parameter>
 
+  <parameter name="Workers">../../../../config/workers.xml</parameter>  
 
+  
 
   <InFlow>
-    <!--
-    <handler name="ProfileHeaderExtractor" class="org.holodeck.reliability.module.ProfileHeaderExtractor">
-      <order phase="OperationInPhase" />
+    <handler name="PModeFinder" class="org.holodeck.ebms3.handlers.PModeFinder">
+      <order phase="ebms3InPhase" phaseFirst="true"/>
     </handler>
-    <handler name="ValidationTask" class="org.holodeck.reliability.module.ValidationTask">
-      <order phase="OperationInPhase" />
+    <handler name="ErrorLogger" class="org.holodeck.ebms3.handlers.ErrorLogger">
+      <order phase="ebms3InPhase" after="PModeFinder"/>
     </handler>
-    -->
-    <handler name="DuplicateRequestTask" class="org.holodeck.reliability.handlers.DuplicateRequest">
-      <order phase="holodeckReliabilityInPhase" phaseFirst="true"/>
+    <handler name="Validation" class="org.holodeck.ebms3.handlers.Validation">
+      <order phase="ebms3InPhase" after="ErrorLogger"/>
     </handler>
-    <handler name="ResponseProcessingTask" class="org.holodeck.reliability.handlers.ResponseProcessing">
-      <order phase="holodeckReliabilityInPhase" after="DuplicateRequestTask"/>
+    <handler name="ReceiptProcessor" class="org.holodeck.ebms3.handlers.ReceiptProcessor">
+      <order phase="ebms3InPhase" after="Validation"/>
     </handler>
-    <handler name="PollProcessingTask" class="org.holodeck.reliability.handlers.PollProcessing">
-      <order phase="holodeckReliabilityInPhase" after="ResponseProcessingTask"/>
+    <handler name="ReceiptGen" class="org.holodeck.ebms3.handlers.ReceiptGen">
+      <order phase="ebms3InPhase" after="ReceiptProcessor"/>
     </handler>
-    <handler name="GroupInitTask" class="org.holodeck.reliability.handlers.ReceiverGroupInit">
-      <order phase="holodeckReliabilityInPhase" after="PollProcessingTask"/>
+    <handler name="PullProcessor" class="org.holodeck.ebms3.handlers.PullProcessor">
+      <order phase="ebms3InPhase" after="ReceiptGen"/>
     </handler>
-    <handler name="ReliabilityTask" class="org.holodeck.reliability.handlers.ReliabilityProcessing">
-      <order phase="holodeckReliabilityInPhase" after="GroupInitTask"/>
+    <handler name="RespPackager" class="org.holodeck.ebms3.handlers.ResponsePackager">
+      <order phase="ebms3InPhase" after="PullProcessor"/>
     </handler>
-    <handler name="CallbackTask" class="org.holodeck.reliability.handlers.CallbackProcessing">
-      <order phase="holodeckReliabilityInPhase" after="ReliabilityTask"/>
+    <handler name="ReceivedUserMsg" class="org.holodeck.ebms3.handlers.ReceivedUserMsgHandler">
+      <order phase="ebms3InPhase" after="RespPackager"/> 
+    </handler> 
+    <handler name="InvokeCallback" class="org.holodeck.ebms3.handlers.InvokeCallback">
+      <order phase="ebms3InPhase" after="ReceivedUserMsg"/>
     </handler>
-    <handler name="PreDeliveryTask" class="org.holodeck.reliability.handlers.PreDelivery">
-      <order phase="holodeckReliabilityInPhase" after="CallbackTask"/>
-    </handler>
-    <handler name="WsrHeaderDetacherTask" class="org.holodeck.reliability.handlers.WsrmHeadersDetacher">
-      <order phase="holodeckReliabilityInPhase" after="PreDeliveryTask"/>
+    <handler name="HeaderDetacher" class="org.holodeck.ebms3.handlers.HeaderDetacher">
+      <order phase="ebms3InPhase" after="InvokeCallback"/>
     </handler>
   </InFlow>
 
   <OutFlow>
-    <!--
-    <handler name="ValidationTask" class="org.holodeck.reliability.module.ValidationTask">
-      <order phase="OperationOutPhase" />
+    <handler name="Packager" class="org.holodeck.ebms3.handlers.Packager">
+      <order phase="ebms3OutPhase" phaseFirst="true"/>
     </handler>
-    -->
-    <handler name="Packager" class="org.holodeck.reliability.handlers.Packager">
-      <order phase="holodeckReliabilityOutPhase" phaseFirst="true"/>
+    <handler name="CallbackPersist"
+             class="org.holodeck.ebms3.handlers.CallbackPersist">
+      <order phase="ebms3OutPhase" after="Packager"/>
     </handler>
-    <handler name="PreSendTask" class="org.holodeck.reliability.handlers.PreSend">
-      <order phase="holodeckReliabilityOutPhase" after="Packager"/>
+    <handler name="RespPackager" class="org.holodeck.ebms3.handlers.ResponsePackager">
+      <order phase="ebms3OutPhase" after="CallbackPersist"/>
     </handler>
-    <handler name="ResponseAckAppenderTask" class="org.holodeck.reliability.handlers.ResponseAckAppender">
-      <order phase="holodeckReliabilityOutPhase" after="PreSendTask"/>
+    <handler name="PullProcessor" class="org.holodeck.ebms3.handlers.PullProcessor">
+      <order phase="ebms3OutPhase" after="RespPackager"/>
     </handler>
-    <handler name="PollProcessingTask" class="org.holodeck.reliability.handlers.PollProcessing">
-      <order phase="holodeckReliabilityOutPhase" after="ResponseAckAppenderTask"/>
+    <handler name="TrackReceipt" class="org.holodeck.ebms3.handlers.TrackReceipt">
+      <order phase="ebms3OutPhase" after="PullProcessor"/>
     </handler>
-    <handler name="CachedBusinessResponseTask" class="org.holodeck.reliability.handlers.CachedBusinessResponse">
-      <order phase="holodeckReliabilityOutPhase" after="PollProcessingTask"/>
+    <handler name="ReceiptAppender" class="org.holodeck.ebms3.handlers.ReceiptAppender">
+      <order phase="ebms3OutPhase" after="TrackReceipt"/>
     </handler>
   </OutFlow>
 
   <INFaultFlow/>
-
   <OutFaultFlow/>
-
-  
 </module>
