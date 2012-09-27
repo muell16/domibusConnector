@@ -1,7 +1,8 @@
 package eu.ecodex.connector.evidences;
 
+import org.etsi.uri._02640.v2.REMEvidenceType;
+
 import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
-import eu.ecodex.connector.evidences.jaxb.EvidenceMessage;
 import eu.ecodex.connector.evidences.type.EvidenceInput;
 
 /**
@@ -15,10 +16,10 @@ public interface ECodexConnectorEvidencesToolkit {
     /**
      * Method to transform messageState from national backend system into an eCodex evidence message .
      * 
-     * @param input. Contains messageId, messageState and comment.
+     * @param input. Contains messageId, messageState, comment, recipientAddress and recipientName;
      * @return An JAXB Object which can be easily marshalled into an XML containing the evidence message.
      * @throws EvidencesToolkitException
      */
-    EvidenceMessage createEvidenceMessage(EvidenceInput input) throws EvidencesToolkitException;
+	REMEvidenceType createEvidenceMessage(EvidenceInput input) throws EvidencesToolkitException;
 
 }
