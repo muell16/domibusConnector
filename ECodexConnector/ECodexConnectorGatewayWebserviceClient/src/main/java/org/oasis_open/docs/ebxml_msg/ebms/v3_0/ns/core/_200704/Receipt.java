@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p>Java-Klasse für Receipt complex type.
+ * <p>Java-Klasse fÃ¼r Receipt complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

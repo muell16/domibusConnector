@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p>Java-Klasse für Body complex type.
+ * <p>Java-Klasse fÃ¼r Body complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

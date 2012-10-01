@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  * 	allow it to contain any elements.
  * 			
  * 
- * <p>Java-Klasse für SignalMessage complex type.
+ * <p>Java-Klasse fÃ¼r SignalMessage complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
