@@ -110,4 +110,21 @@ public class DownloadMessageService {
 
 		return messagingResponse;
 	}
+	
+	@Transactional
+	public void deleteMessage(backend.ecodex.org.DownloadMessageRequest downloadMessageRequest){
+		Message message = null;
+		if(StringUtils.isNotEmpty(downloadMessageRequest.getMessageID()) && StringUtils.isNumeric(downloadMessageRequest.getMessageID())){
+			message = messageDAO.findById(Integer.parseInt(downloadMessageRequest.getMessageID()));
+		}
+		else{
+			message = messageDAO.getFirstNotDownloadedSortedByMessageDate();
+		}
+		
+		if(message!=null){
+			message.setDownloaded(true);
+
+			messageDAO.save(message);
+		}		
+	}
 }

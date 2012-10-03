@@ -4,6 +4,7 @@
 package org.holodeck.backend.module;
 
 import org.apache.log4j.Logger;
+import org.holodeck.backend.db.dao.MessageDAO;
 import org.holodeck.backend.module.exception.DownloadMessageFault;
 import org.holodeck.backend.module.exception.ListPendingMessagesFault;
 import org.holodeck.backend.module.exception.SendMessageFault;
@@ -145,6 +146,10 @@ public class BackendServiceSkeleton extends org.holodeck.backend.spring.BackendS
 					.downloadMessage(downloadMessageResponse, downloadMessageRequest);
 			return messagingE;
 		} catch (DownloadMessageServiceException serviceException) {
+			if(serviceException.getCode()==Code.ERROR_DOWNLOAD_003){
+				downloadMessageService.deleteMessage(downloadMessageRequest);
+			}			
+			
 			DownloadMessageFault fault = new DownloadMessageFault(serviceException);
 			fault.setFaultMessage(serviceException.getFault());
 			throw fault;
