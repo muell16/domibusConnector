@@ -13,10 +13,10 @@
 			<artifactId>ECodexConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>de.nrw.it.ecodex.evidences</groupId>
 			<artifactId>EvidencesModel</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 </project>
