@@ -11,11 +11,11 @@
         <!-- properties -->
        <property name="hibernate.archive.autodetection">class, hbm</property>
        <property name="show_sql" >false</property>
-       <property name="default_schema" >elias_scheifia</property>
+       <property name="default_schema" >schema</property>
        <property name="connection.driver_class" >oracle.jdbc.driver.OracleDriver</property>
-       <property name="connection.url" >jdbc:oracle:thin:@sbmje1.brz.gv.at:1521/sitope.brz</property>
-       <property name="connection.username" >elias_scheifia</property>
-       <property name="connection.password" >elias_scheifia</property>
+       <property name="connection.url" >jdbc:oracle:thin:@somewhere</property>
+       <property name="connection.username" >user</property>
+       <property name="connection.password" >password</property>
        <property name="dialect" >org.hibernate.dialect.Oracle10gDialect</property>
 
        <property name="c3p0.min_size" >5</property>
