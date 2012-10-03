@@ -8,7 +8,7 @@
   -->
   <parameter name="MessageStorageFolder">Storage_Folder</parameter>
   <parameter name="RELIABILITY_CONFIG_FILE">../../../../config/reliability-config.xml</parameter>
-  <parameter name="PersistenceUnit">logging-oracle</parameter>
+  <parameter name="PersistenceUnit">logging</parameter>
   <parameter name="MessageLifetime" locked="false">P29D</parameter>
   <parameter name="ResendFromDBAtStartup">false</parameter>
 
