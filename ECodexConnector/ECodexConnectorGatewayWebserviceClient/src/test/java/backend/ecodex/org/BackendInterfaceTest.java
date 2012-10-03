@@ -97,7 +97,8 @@ public class BackendInterfaceTest extends AbstractJUnit4SpringContextTests {
         }
     }
 
-    private void downloadMessage(String messageId) {
+    // @Test
+    public void downloadMessage(String messageId) {
         LOGGER.info("Try to download message with the id [{}]", messageId);
 
         Holder<DownloadMessageResponse> response = new Holder<DownloadMessageResponse>();
