@@ -3,226 +3,35 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
 
-  <persistence-unit name="ebms3-mysql" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="ebms3" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
+    
     <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/ebms3" />
-      <property name="hibernate.connection.username" value="ebms3" />
-      <property name="hibernate.connection.password" value="ebms3" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
     </properties>
   </persistence-unit>
 
-  <persistence-unit name="ebms3-derby" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="wsrm" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
+    
     <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class"
-                value="org.apache.derby.jdbc.EmbeddedDriver" />
-      <property name="hibernate.connection.url"
-                value="jdbc:derby:../../store/derby/ebms3DB;create=false" />
-      <property name="hibernate.connection.username" value="ebms3" />
-      <property name="hibernate.connection.password" value="ebms3" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect" />
-    </properties>
-  </persistence-unit>
-
-  <persistence-unit name="wsrm-mysql" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-    <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/wsrm" />
-      <property name="hibernate.connection.username" value="wsrm" />
-      <property name="hibernate.connection.password" value="wsrm" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
-    </properties>
-  </persistence-unit>
-
-  <persistence-unit name="wsrm-derby" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-    <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver" />
-      <property name="hibernate.connection.url" value="jdbc:derby:../../store/derby/wsrmDB;create=false" />
-      <property name="hibernate.connection.username" value="wsrm" />
-      <property name="hibernate.connection.password" value="wsrm" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect" />
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
     </properties>
   </persistence-unit>
   
-    <persistence-unit name="logging-mysql" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="logging" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
+    
     <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/logging" />
-      <property name="hibernate.connection.username" value="logging" />
-      <property name="hibernate.connection.password" value="logging" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
     </properties>
   </persistence-unit>
 
-  <persistence-unit name="backend-mysql" transaction-type="RESOURCE_LOCAL">
-	  <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-	  <properties>
-		  <property name="hibernate.archive.autodetection" value="class, hbm" />
-		  <property name="hibernate.show_sql" value="false" />
-		  <property name="hibernate.format_sql" value="true" />
-		  <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-		  <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/backend" />
-		  <property name="hibernate.connection.username" value="backend" />
-		  <property name="hibernate.connection.password" value="backend" />
-		  <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-
-		  <property name="hibernate.c3p0.min_size" value="5"/>
-		  <property name="hibernate.c3p0.max_size" value="20"/>
-		  <property name="hibernate.c3p0.timeout" value="300"/>
-		  <property name="hibernate.c3p0.max_statements" value="500"/>
-		  <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-		  <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
-	  </properties>
-  </persistence-unit>
-
-  <persistence-unit name="backend-derby" transaction-type="RESOURCE_LOCAL">
-	  <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-	  <properties>
-		  <property name="hibernate.archive.autodetection" value="class, hbm" />
-		  <property name="hibernate.show_sql" value="false" />
-		  <property name="hibernate.format_sql" value="true" />
-		  <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver" />
-		  <property name="hibernate.connection.url" value="jdbc:derby:../../store/derby/backendDB;create=false" />
-		  <property name="hibernate.connection.username" value="backend" />
-		  <property name="hibernate.connection.password" value="backend" />
-		  <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect" />
-	  </properties>
-  </persistence-unit>
-
-  <persistence-unit name="ebms3-oracle" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="backend" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
+    
     <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver" />
-      <property name="hibernate.connection.url" value="jdbc:oracle:thin:@10.12.18.140:1521:lexnet" />
-      <property name="hibernate.connection.username" value="ebms1" />
-      <property name="hibernate.connection.password" value="ebms1" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
-    </properties>
-  </persistence-unit>
-
-  <persistence-unit name="wsrm-oracle" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-    <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver" />
-      <property name="hibernate.connection.url" value="jdbc:oracle:thin:@10.12.18.140:1521:lexnet" />
-      <property name="hibernate.connection.username" value="wsrm1" />
-      <property name="hibernate.connection.password" value="wsrm1" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
-    </properties>
-  </persistence-unit>
-  
-  <persistence-unit name="logging-oracle" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-    <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver" />
-      <property name="hibernate.connection.url" value="jdbc:oracle:thin:@10.12.18.140:1521:lexnet" />
-      <property name="hibernate.connection.username" value="logging1" />
-      <property name="hibernate.connection.password" value="logging1" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
-    </properties>
-  </persistence-unit>
-
-  <persistence-unit name="backend-oracle" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
-    <properties>
-      <property name="hibernate.archive.autodetection" value="class, hbm" />
-      <property name="hibernate.show_sql" value="false" />
-      <property name="hibernate.format_sql" value="true" />
-      <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver" />
-      <property name="hibernate.connection.url" value="jdbc:oracle:thin:@10.12.18.140:1521:lexnet" />
-      <property name="hibernate.connection.username" value="backend1" />
-      <property name="hibernate.connection.password" value="backend1" />
-      <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
-
-      <property name="hibernate.c3p0.min_size" value="5"/>
-      <property name="hibernate.c3p0.max_size" value="20"/>
-      <property name="hibernate.c3p0.timeout" value="300"/>
-      <property name="hibernate.c3p0.max_statements" value="500"/>
-      <property name="hibernate.c3p0.idle_test_period" value="3000"/>
-      <property name="hibernate.c3p0.maxStatementsPerConnection" value="500"/>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
     </properties>
   </persistence-unit>
 </persistence>

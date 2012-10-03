@@ -1,138 +1,138 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>org.holodeck</groupId>
-    <artifactId>holodeck</artifactId>
-    <version>1.0</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
+	<parent>
+		<groupId>org.holodeck</groupId>
+		<artifactId>holodeck</artifactId>
+		<version>1.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.holodeck</groupId>
-  <artifactId>holodeck-reliability</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-  <name>Holodeck Reliability</name>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.holodeck</groupId>
+	<artifactId>holodeck-reliability</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+	<name>Holodeck Reliability</name>
 
-  <distributionManagement>
-    <site>
-      <id>internal</id>
-      <url>file:///${basedir}/../../target/site/modules/holodeck-reliability</url>
-    </site>
-  </distributionManagement>
-  
-  <dependencies>
-    
-    <dependency>
-      <groupId>org.holodeck</groupId>
-      <artifactId>holodeck-common</artifactId>     
-      <scope>system</scope>
-      <systemPath>${basedir}/../holodeck-common/target/holodeck-common.jar</systemPath>
-      
-   </dependency> 
-  </dependencies>
-    
-  <build>
-    <finalName>holodeck-reliability</finalName>
+	<distributionManagement>
+		<site>
+			<id>internal</id>
+			<url>file:///${basedir}/../../target/site/modules/holodeck-reliability</url>
+		</site>
+	</distributionManagement>
 
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
-              <resources>          
-                <resource>
-                  <directory>${basedir}/../../modules/holodeck-distribution/src/main/resources/META-INF</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>              
-            </configuration>            
-          </execution>
-        </executions>
-      </plugin>
+	<dependencies>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <mainClass>net.hotels.HotelTest</mainClass>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>hibernate3-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <outputFile>${project.artifactId}_create_tabless.sql</outputFile>
-          <components>
-            <component>
-              <name>hbm2ddl</name>
-              <implementation>annotationconfiguration</implementation>
-            </component>
-          </components>
-          <componentProperties>
-            <implementation>jpaconfiguration</implementation>
-            <persistenceunit>wsrm-oracle</persistenceunit>
-            <outputfilename>schema.ddl</outputfilename>
-            <drop>true</drop>
-            <create>true</create>
-            <export>true</export>
-            <format>true</format>
-          </componentProperties>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>hbm2ddl</goal>
-            </goals>
-          </execution>
-        </executions>
-        <dependencies>
-<!--           <dependency> -->
-<!--             <groupId>org.apache.derby</groupId> -->
-<!--             <artifactId>derby</artifactId> -->
-<!--             <version>10.4.2.0</version> -->
-<!--           </dependency> -->
-<!--           <dependency> -->
-<!--             <groupId>mysql</groupId> -->
-<!--             <artifactId>mysql-connector-java</artifactId> -->
-<!--             <version>5.1.6</version> -->
-<!--           </dependency> -->
-    <dependency>
-    	<groupId>com.oracle</groupId>
-    	<artifactId>ojdbc6</artifactId>
-    	<version>11.1.0.7.0</version>
-    </dependency>
-        </dependencies>
-      </plugin>
-      
-    </plugins>
-  </build>
+		<dependency>
+			<groupId>org.holodeck</groupId>
+			<artifactId>holodeck-common</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}/../holodeck-common/target/holodeck-common.jar</systemPath>
+
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>holodeck-reliability</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/../../modules/holodeck-distribution/src/main/resources/META-INF</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>net.hotels.HotelTest</mainClass>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>hibernate3-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<outputFile>${project.artifactId}_create_tabless.sql</outputFile>
+					<components>
+						<component>
+							<name>hbm2ddl</name>
+							<implementation>annotationconfiguration</implementation>
+						</component>
+					</components>
+					<componentProperties>
+						<implementation>jpaconfiguration</implementation>
+						<persistenceunit>wsrm</persistenceunit>
+						<outputfilename>schema.ddl</outputfilename>
+						<drop>true</drop>
+						<create>true</create>
+						<export>true</export>
+						<format>true</format>
+					</componentProperties>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>hbm2ddl</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.derby</groupId>
+						<artifactId>derby</artifactId>
+						<version>10.4.2.0</version>
+					</dependency>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.6</version>
+					</dependency>
+					<dependency>
+						<groupId>com.oracle</groupId>
+						<artifactId>ojdbc6</artifactId>
+						<version>11.1.0.7.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+		</plugins>
+	</build>
 </project>

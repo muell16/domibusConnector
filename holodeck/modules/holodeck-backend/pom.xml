@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.holodeck</groupId>
 		<artifactId>holodeck</artifactId>
@@ -45,28 +46,28 @@
 				</configuration>
 			</plugin>
 
-	<plugin>
-		<artifactId>maven-resources-plugin</artifactId>
-		<version>2.6</version>
-		<executions>
-			<execution>
-				<id>copy-resources</id>
-				<phase>validate</phase>
-				<goals>
-					<goal>copy-resources</goal>
-				</goals>
-				<configuration>
-					<outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
-					<resources>
-						<resource>
-							<directory>${basedir}/../../modules/holodeck-distribution/src/main/resources/META-INF</directory>
-							<filtering>true</filtering>
-						</resource>
-					</resources>
-				</configuration>
-			</execution>
-		</executions>
-	</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/META-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/../../modules/holodeck-distribution/src/main/resources/META-INF</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -82,7 +83,7 @@
 					</components>
 					<componentProperties>
 						<implementation>jpaconfiguration</implementation>
-						<persistenceunit>backend-oracle</persistenceunit>
+						<persistenceunit>backend</persistenceunit>
 						<outputfilename>schema.ddl</outputfilename>
 						<drop>true</drop>
 						<create>true</create>
@@ -98,23 +99,23 @@
 						</goals>
 					</execution>
 				</executions>
-        		<dependencies>
-<!--           		<dependency> -->
-<!--             		<groupId>org.apache.derby</groupId> -->
-<!--             		<artifactId>derby</artifactId> -->
-<!--             		<version>10.4.2.0</version> -->
-<!--          		</dependency> -->
-<!--           		<dependency> -->
-<!--             		<groupId>mysql</groupId> -->
-<!--             		<artifactId>mysql-connector-java</artifactId> -->
-<!--             		<version>5.1.6</version> -->
-<!--           		</dependency> -->
-    <dependency>
-    	<groupId>com.oracle</groupId>
-    	<artifactId>ojdbc6</artifactId>
-    	<version>11.1.0.7.0</version>
-    </dependency>	
-		        </dependencies>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.derby</groupId>
+						<artifactId>derby</artifactId>
+						<version>10.4.2.0</version>
+					</dependency>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.6</version>
+					</dependency>
+					<dependency>
+						<groupId>com.oracle</groupId>
+						<artifactId>ojdbc6</artifactId>
+						<version>11.1.0.7.0</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
