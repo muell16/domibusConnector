@@ -15,11 +15,12 @@
     <parameter name="pmodesDir">../../../../config/pmodes</parameter>
   </Worker>
 
-  <Worker name="submitWorker" interval="20000" activate="true"
-          workerClass="org.holodeck.ebms3.workers.impl.SubmitWorker" />
+<!-- This workers must be disabled if the backend module works correctly  -->
+<!--   <Worker name="submitWorker" interval="20000" activate="true" -->
+<!--           workerClass="org.holodeck.ebms3.workers.impl.SubmitWorker" /> -->
 
-  <Worker name="senderWorker" interval="20000" activate="true"
-          workerClass="org.holodeck.ebms3.workers.impl.SenderWorker" />
+<!--   <Worker name="senderWorker" interval="20000" activate="true" -->
+<!--           workerClass="org.holodeck.ebms3.workers.impl.SenderWorker" /> -->
 
   <Worker name="receiptSenderWorker" interval="60000" activate="false"
           workerClass="org.holodeck.ebms3.workers.impl.ReceiptSender" />
