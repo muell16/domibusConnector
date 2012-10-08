@@ -1,13 +1,13 @@
 <Workers>
   
-  <Worker name="pull1" interval="20000" total="1" activate="false"
-          workerClass="org.holodeck.ebms3.workers.impl.PullWorker">
+<!--   <Worker name="pull1" interval="20000" total="1" activate="false" -->
+<!--           workerClass="org.holodeck.ebms3.workers.impl.PullWorker"> -->
 
-    <parameter name="pmode">ImagePulling</parameter>
-    <parameter name="mpc">mpc://imageStore</parameter>
-    <parameter name="callbackClass">org.holodeck.ebms3.submit.SaveReceivedMsg</parameter>
+<!--     <parameter name="pmode">ImagePulling</parameter> -->
+<!--     <parameter name="mpc">mpc://imageStore</parameter> -->
+<!--     <parameter name="callbackClass">org.holodeck.ebms3.submit.SaveReceivedMsg</parameter> -->
 
-  </Worker>
+<!--   </Worker> -->
 
 
   <Worker name="pmodesWatcher" interval="20000" activate="true"
