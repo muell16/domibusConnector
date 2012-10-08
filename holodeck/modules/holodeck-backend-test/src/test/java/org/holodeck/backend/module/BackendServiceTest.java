@@ -65,6 +65,7 @@ public class BackendServiceTest{
 			File actualDirectory = new File(".");
 
 			FileUtils.copyFileToDirectory(new File(tomcatDirectory.getAbsoluteFile() + "/../msh/WEB-INF/classes/META-INF/persistence.xml"), new File(actualDirectory.getAbsoluteFile() + "/target/test-classes/META-INF"));
+			FileUtils.copyFileToDirectory(new File(tomcatDirectory.getAbsoluteFile() + "/../msh/WEB-INF/classes/META-INF/hibernate.cfg.xml"), new File(actualDirectory.getAbsoluteFile() + "/target/test-classes/META-INF"));
 
 			System.out.println("copying directory[" + tomcatDirectory.getAbsolutePath() +"] to directory[" + tomcatDirectory.getParentFile().getAbsoluteFile() + "/server_test" + "]");
 
