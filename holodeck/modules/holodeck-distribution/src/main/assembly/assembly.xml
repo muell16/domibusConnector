@@ -35,6 +35,15 @@
         <exclude>WEB-INF/classes/**</exclude>
       </excludes>
     </fileSet>
+    
+    <!-- ==================== Copying DB Scripts ================= -->
+    <fileSet>
+      <directory>${db-scripts-home}</directory>
+      <outputDirectory>${holodeck.build.dir}/msh/db-scripts</outputDirectory>
+      <includes>
+        <include>**</include>
+      </includes>
+    </fileSet>
 
     <!-- ================= Copying ebms3 compiled classes =============== -->
     <fileSet>

@@ -17,6 +17,7 @@
     <!-- Modify the value of axis2-home and tomcat-home and axis2.xml -->
     <axis2-home>../../extra/axis2-war-1.5.1</axis2-home>
     <tomcat-home>../../extra/tomcat-6.0.26</tomcat-home>
+    <db-scripts-home>../../extra/db-scripts</db-scripts-home>
     <axis2.xml>src/main/conf/axis2-1.5.1/axis2.xml</axis2.xml>
 
     <holodeck.build.dir>/../../../../target/holodeck</holodeck.build.dir>
