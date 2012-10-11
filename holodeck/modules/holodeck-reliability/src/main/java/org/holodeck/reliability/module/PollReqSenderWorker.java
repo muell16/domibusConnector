@@ -16,7 +16,7 @@ import org.holodeck.reliability.packaging.PollRequest;
 import org.holodeck.reliability.persistent.GMessage;
 
 /**
- * This worker sends poll request messages (it reads the “GMessages”
+ * This worker sends poll request messages (it reads the GMessages
  * table, find out which messages have their replyPattern set to "Poll",
  * have not been acknowledged yet, and send poll requests to inquire
  * about their status).
