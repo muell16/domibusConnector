@@ -3,7 +3,7 @@
 
 	<parameter name="Evidences" locked="false">false</parameter>
 	<parameter name="MessagesTimeLive">60</parameter>
-	<parameter name="MessagesFolder">../../../../backend_store</parameter>
+	<parameter name="MessagesFolder">../../backend_store</parameter>
 <!-- <parameter name="DeleteMessagesCron">0 0 0 * * ?</parameter> --><!-- Daily at 00:00 -->
 	<parameter name="DeleteMessagesCron">0 1/2 * * * ?</parameter>
 
