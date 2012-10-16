@@ -158,4 +158,94 @@ public class Converter {
 			throw downloadMessageServiceException;
 		}
 	}
+
+	/**
+	 * Convert user message to msg info set.
+	 *
+	 * @param userMessage the user message
+	 * @return the org.holodeck.ebms3.submit. msg info set
+	 */
+	public static org.holodeck.logging.persistent.MessageInfo convertUserMessageToMessageInfo(
+			org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage userMessage, String messageId, String service, String action, String status)
+	{
+		org.holodeck.logging.persistent.MessageInfo messageInfo = new org.holodeck.logging.persistent.MessageInfo();
+		if (userMessage.getCollaborationInfo() != null) {
+			if (userMessage.getCollaborationInfo().getAgreementRef() != null) {
+				messageInfo.setPmode(userMessage.getCollaborationInfo().getAgreementRef().getPmode().getNonEmptyString());
+			}
+			if (userMessage.getCollaborationInfo().getConversationId() != null) {
+				messageInfo.setConversationId(userMessage.getCollaborationInfo().getConversationId().toString());
+			}
+		}
+		if (userMessage.getPartyInfo() != null) {
+			if (userMessage.getPartyInfo().getFrom() != null) {
+				if (userMessage.getPartyInfo().getFrom().getRole() != null) {
+					messageInfo.setFromRole(userMessage.getPartyInfo().getFrom().getRole().getNonEmptyString());
+				}
+				if (userMessage.getPartyInfo().getFrom().getPartyId() != null) {
+					String sender = null; 
+					
+					for (org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId partyId : userMessage
+							.getPartyInfo().getFrom().getPartyId()) {
+						org.holodeck.ebms3.config.Party party = new org.holodeck.ebms3.config.Party();
+						party.setPartyId(partyId.getNonEmptyString());
+						if (partyId.getType() != null) {
+							party.setType(partyId.getType().getNonEmptyString());
+						}
+
+						if(sender == null){
+							sender = "";
+						}
+						else{
+							sender += "\n";
+						}
+						
+						if(party.getPartyId()!=null){
+							sender += party.getPartyId();
+						}
+					}
+					
+					messageInfo.setSender(sender);
+				}
+			}
+			
+			if (userMessage.getPartyInfo().getTo() != null) {
+				if (userMessage.getPartyInfo().getTo().getRole() != null) {
+					messageInfo.setToRole(userMessage.getPartyInfo().getTo().getRole().getNonEmptyString());
+				}
+				if (userMessage.getPartyInfo().getTo().getPartyId() != null) {
+					String recipient = null; 
+					
+					for (org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId partyId : userMessage
+							.getPartyInfo().getTo().getPartyId()) {
+						org.holodeck.ebms3.config.Party party = new org.holodeck.ebms3.config.Party();
+						party.setPartyId(partyId.getNonEmptyString());
+						if (partyId.getType() != null) {
+							party.setType(partyId.getType().getNonEmptyString());
+						}
+
+						if(recipient == null){
+							recipient = "";
+						}
+						else{
+							recipient += "\n";
+						}
+						
+						if(party.getPartyId()!=null){
+							recipient += party.getPartyId();
+						}
+					}
+					
+					messageInfo.setRecipient(recipient);
+				}
+			}
+		}
+
+		messageInfo.setMessageId(messageId);
+		messageInfo.setService(service);
+		messageInfo.setAction(action);
+		messageInfo.setStatus(status);		
+
+		return messageInfo;
+	}
 }

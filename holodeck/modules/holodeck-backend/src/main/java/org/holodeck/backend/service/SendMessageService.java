@@ -58,6 +58,8 @@ public class SendMessageService {
 			backend.ecodex.org.SendRequest sendRequest) throws SendMessageServiceException
 	{
 		log.debug("Called SendMessageService.sendMessage");
+		
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_INIT_STATUS));
 
 		sendMessageValidator.validate(messaging, sendRequest);
 
@@ -75,18 +77,12 @@ public class SendMessageService {
 				counter++;
 			}
 
-			org.apache.axiom.om.OMElement addressElement = messaging.getOMElement(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE.MY_QNAME, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-
-			String addressXMLContent = addressElement.toString();
-
-			IOUtils.write(addressXMLContent, new FileOutputStream(new File(tempDir, org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME)));
-
-			msgInfoSet.getPayloads().addPayload(org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME, org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME);
-
 			File metadataFile = new File(tempDir, org.holodeck.backend.module.Constants.METADATA_FILE_NAME);
 			msgInfoSet.writeToFile(metadataFile.getAbsolutePath());
 		} catch (Exception e) {
 			log.error("Error sending message", e);
+			
+		    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_KO_STATUS));
 
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
 					"Error writing data into temporal directory[" + tempDir + "]", e, Code.ERROR_SEND_002);
@@ -102,6 +98,8 @@ public class SendMessageService {
 		} catch (IOException e) {
 			log.error("Error deleting temporal directory[" + tempDir + "]", e);
 		}
+		
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
 	}
 
 	/**
@@ -115,6 +113,8 @@ public class SendMessageService {
 			backend.ecodex.org.SendRequestURL sendRequestURL) throws SendMessageServiceException
 	{
 		log.debug("Called SendMessageService.sendMessageWithReference");
+		
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessageWithReference", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_INIT_STATUS));
 
 		sendMessageWithReferenceValidator.validate(messaging, sendRequestURL);
 
@@ -152,18 +152,12 @@ public class SendMessageService {
 				counter++;
 			}
 
-			org.apache.axiom.om.OMElement addressElement = messaging.getOMElement(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE.MY_QNAME, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-
-			String addressXMLContent = addressElement.toString();
-
-			IOUtils.write(addressXMLContent, new FileOutputStream(new File(tempDir, org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME)));
-
-			msgInfoSet.getPayloads().addPayload(org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME, org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME);
-
 			File metadataFile = new File(tempDir, org.holodeck.backend.module.Constants.METADATA_FILE_NAME);
 			msgInfoSet.writeToFile(metadataFile.getAbsolutePath());
 		} catch (Exception e) {
 			log.error("Error sending message", e);
+			
+		    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessageWithReference", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_KO_STATUS));
 
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
 					"Error writing data into temporal directory[" + tempDir + "]", e, Code.ERROR_SEND_002);
@@ -179,5 +173,7 @@ public class SendMessageService {
 		} catch (IOException e) {
 			log.error("Error deleting temporal directory[" + tempDir + "]", e);
 		}
+		
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessageWithReference", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
 	}
 }

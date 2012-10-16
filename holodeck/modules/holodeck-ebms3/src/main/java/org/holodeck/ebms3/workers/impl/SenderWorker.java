@@ -41,7 +41,6 @@ public class SenderWorker implements Runnable {
       catch(Exception ex) { log.debug(ex.getMessage()); }
     }
     MsgInfoSet metadata = message.getMsgInfoSetBean();
-    log.log(Message.MESSAGE, new MessageInfo(message.getId(), metadata.getProducer().getName(), metadata.getProducer().getRole(),message.getToURL(),"","eCodex-Test","","","IT-NRW", "statusOK"));
 
     log.debug("SenderWorker: about to send to " + message.getToURL());
     

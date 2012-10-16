@@ -4,6 +4,9 @@
 package org.holodeck.backend.consumer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,11 +18,13 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.log4j.Logger;
 import org.holodeck.backend.db.dao.MessageDAO;
 import org.holodeck.backend.db.model.Message;
 import org.holodeck.backend.db.model.Payload;
+import org.holodeck.backend.util.IOUtils;
 import org.holodeck.common.soap.Util;
 import org.holodeck.ebms3.consumers.EbConsumer;
 import org.holodeck.ebms3.module.MsgInfo;
@@ -62,7 +67,13 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 		writeAttachments(msgCtx, msgInfo.getParts(), directory);
 		writeMessaging(msgCtx, msgInfo.getParts(), directory);
 
-		saveMessage(msgInfo, directory);
+		Message message = saveMessage(msgInfo, directory);
+
+		File messageFile = new File(message.getDirectory(), org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME);
+
+		org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messaging = org.holodeck.backend.util.Converter.convertFileToMessagingE(messageFile);
+		
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], Integer.toString(message.getIdMessage()), "BackendConsumer", "push", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_RECEIVED_STATUS));
 
 		log.debug("Saved push message");
 	}
@@ -79,7 +90,7 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 	 * @param msgInfo the msg info
 	 * @param directory the directory
 	 */
-	private void saveMessage(MsgInfo msgInfo, File directory){
+	private Message saveMessage(MsgInfo msgInfo, File directory){
 		Message message = new Message();
 		message.setMessageDate(new Date());
 		message.setMessageUID(msgInfo.getMessageId());
@@ -91,11 +102,6 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 		int counter = 1;
 
 		for (PartInfo part : msgInfo.getParts()) {
-			if (part.getCid() != null
-					&& org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME.equalsIgnoreCase(part.getCid())) {
-				continue;
-			}
-
 			Payload payload = new Payload();
 
 			String payloadFileName = MessageFormat.format(
@@ -111,6 +117,8 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 		message.setPayloads(payloads);
 
 		messageDAO.save(message);
+		
+		return message;
 	}
 
 	/**
@@ -142,7 +150,7 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 		String path = receivedMsgsFolder + File.separator + dir;
 		File saveFolder = new File(path);
 		if (!saveFolder.mkdirs()) {
-			System.out.println("Unable to create direcoty " + path);
+			log.error("Unable to create direcoty " + path);
 		}
 		return saveFolder;
 	}
@@ -163,26 +171,24 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 		if (atts == null)
 			return;
 
-		String cid = null;
-
-		for (PartInfo part : parts) {
-			if (part.getCid() != null
-					&& org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME.equalsIgnoreCase(part.getCid())) {
-				cid = part.getCid();
+		java.util.Iterator<OMElement> iterator = msgCtx.getEnvelope().getHeader().getChildren();
+		
+		org.apache.axiom.om.OMElement messaging = null;
+		
+		while(iterator.hasNext()){
+			org.apache.axiom.om.OMElement omElement = iterator.next();
+			
+			if(omElement.getLocalName().equalsIgnoreCase(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE.MY_QNAME.getLocalPart())){
+				messaging = omElement;
 			}
 		}
 
-		if (cid == null)
-			return;
-
-		String soapPartCid = atts.getSOAPPartContentID();
-
-		if (cid != null && !cid.equals(soapPartCid)) {
-			DataHandler dh = atts.getDataHandler(cid);
-			String name = org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME;
-			File att = new File(directory, name);
-			Util.writeDataHandlerToFile(dh, att);
+		try {
+			IOUtils.write(messaging.toString(), new FileOutputStream(new File(directory, org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME)));
+		} catch (Exception e) {
+			log.error("Unable to write messaging file", e);
 		}
+		
 	}
 
 	/**
@@ -201,11 +207,6 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 		int counter = 1;
 
 		for (PartInfo part : parts) {
-			if (part.getCid() != null
-					&& org.holodeck.backend.module.Constants.MESSAGING_FILE_NAME.equalsIgnoreCase(part.getCid())) {
-				continue;
-			}
-
 			DataHandler dh = atts.getDataHandler(part.getCid());
 
 			String payloadFileName = MessageFormat.format(

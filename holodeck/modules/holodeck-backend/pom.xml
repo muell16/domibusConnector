@@ -32,6 +32,12 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/../holodeck-ebms3/target/holodeck-ebms3.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>org.holodeck</groupId>
+			<artifactId>holodeck-logging</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}/../holodeck-logging/target/holodeck-logging.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>

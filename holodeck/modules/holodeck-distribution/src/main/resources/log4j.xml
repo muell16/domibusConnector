@@ -7,7 +7,7 @@
         <param value="../logs/axis2.log" name="File"/>
         <param value="5120KB" name="MaxFileSize"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p (%F:%L) %c %x - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p (%F:%L) %c %x - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     <appender class="org.apache.log4j.RollingFileAppender" name="Ebms3FILE">
@@ -15,7 +15,7 @@
         <param value="../logs/holodeck-ebms3.log" name="File"/>
         <param value="5120KB" name="MaxFileSize"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p %c %x - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p %c %x - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     <appender class="org.apache.log4j.RollingFileAppender" name="HibFILE">
@@ -23,7 +23,7 @@
         <param value="../logs/hibernate.log" name="File"/>
         <param value="5120KB" name="MaxFileSize"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p %c %x - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p %c %x - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     <appender class="org.apache.log4j.RollingFileAppender" name="LoggingFILE">
@@ -31,7 +31,7 @@
         <param value="../logs/holodeck-logging.log" name="File"/>
         <param value="5120KB" name="MaxFileSize"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p %c %x - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p %c %x - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
      <appender class="org.apache.log4j.RollingFileAppender" name="WsrmFILE">
@@ -39,7 +39,7 @@
         <param value="../logs/holodeck-reliability.log" name="File"/>
         <param value="5120KB" name="MaxFileSize"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p %c %x - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p %c %x - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     <appender class="org.apache.log4j.RollingFileAppender" name="SecurityFILE">
@@ -47,46 +47,50 @@
         <param value="../logs/holodeck-security.log" name="File"/>
         <param value="5120KB" name="MaxFileSize"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p %c %x - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p %c %x - %m%n" name="ConversionPattern"/>
+        </layout>
+    </appender>
+    <appender class="org.apache.log4j.RollingFileAppender" name="BackendFILE">
+        <param value="true" name="Append"/>
+        <param value="../logs/holodeck-backend.log" name="File"/>
+        <param value="5120KB" name="MaxFileSize"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param value="%d %-5p %c %x - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     
     
     <appender class="org.apache.log4j.ConsoleAppender" name="CONSOLE">
         <layout class="org.apache.log4j.PatternLayout">
-            <param value="%-5p %c - %m%n" name="ConversionPattern"/>
+            <param value="%d %-5p %c - %m%n" name="ConversionPattern"/>
         </layout>
     </appender>
     
     
-    <appender class="org.holodeck.logging.appender.HolodeckAppender" name="DBLOGGER">
-    </appender>
-    
-    <appender class="org.holodeck.logging.appender.HolodeckAppender" name="MESSAGELOGGER">
+    <appender class="org.holodeck.logging.appender.HolodeckAppender" name="MessageHolodeckAppender">
+    	<param name="Threshold" value="MESSAGE"/>
+	</appender>
+    <appender class="org.holodeck.logging.appender.HolodeckAppender" name="EventHolodeckAppender">
+    	<param name="Threshold" value="ERROR"/>
     </appender>
     
     <!-- ================ -->   
 	<!-- Limit categories -->   
-	<!-- ================   
-	<category name="org.holodeck.ebms3.workers.impl">   
-	<priority value="message" class="org.holodeck.logging.level.Message" />   
-	<appender-ref ref="MESSAGELOGGER"/>   
-	</category>
-    --> 
-    
-    <logger additivity="true" name="org.holodeck">
-    	<level value="message" class="org.holodeck.logging.level.Message" />
-        <appender-ref ref="MESSAGELOGGER"/>
-    </logger>
+	<!-- ================ -->    
     
     <logger additivity="false" name="org.holodeck">
-    	<level value="error" />
-        <appender-ref ref="DBLOGGER"/>
+        <appender-ref ref="MessageHolodeckAppender"/>
+        <appender-ref ref="EventHolodeckAppender"/>
     </logger>
     
     <logger additivity="false" name="org.holodeck.logging">
         <level value="debug"/>
         <appender-ref ref="LoggingFILE"/>
+    </logger>
+    
+    <logger additivity="true" name="org.holodeck.backend">
+        <level value="debug"/>
+        <appender-ref ref="BackendFILE"/>
     </logger>
     
     

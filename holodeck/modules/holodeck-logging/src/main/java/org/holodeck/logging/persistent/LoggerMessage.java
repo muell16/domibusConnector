@@ -20,6 +20,12 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "LoggerMessage")
 public class LoggerMessage implements java.io.Serializable {
 	private static final long serialVersionUID = 1200796957717630663L;
+	
+	public final static String MESSAGE_SENT_INIT_STATUS = "SENT_INIT";
+	public final static String MESSAGE_SENT_OK_STATUS = "SENT_OK";
+	public final static String MESSAGE_SENT_KO_STATUS = "SENT_KO";
+	public final static String MESSAGE_RECEIVED_STATUS = "MESSAGE_RECEIVED";
+	public final static String MESSAGE_DOWNLOADED_STATUS = "MESSAGE_DOWNLOADED";
 
 	@Id @GeneratedValue(generator="system-uuid")
 	@GenericGenerator(name="system-uuid", strategy="uuid")

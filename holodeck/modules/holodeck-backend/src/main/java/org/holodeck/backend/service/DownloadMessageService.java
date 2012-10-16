@@ -17,6 +17,7 @@ import org.holodeck.backend.service.exception.DownloadMessageServiceException;
 import org.holodeck.backend.util.StringUtils;
 import org.holodeck.backend.validator.DownloadMessageValidator;
 import org.holodeck.backend.validator.ListPendingMessagesValidator;
+import org.holodeck.ebms3.packaging.MessageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +79,7 @@ public class DownloadMessageService {
 			backend.ecodex.org.DownloadMessageRequest downloadMessageRequest)
 			throws DownloadMessageServiceException
 	{
-		log.debug("Called SendMessageService.sendMessageWithReference");
+		log.debug("Called SendMessageService.downloadMessage");
 
 		downloadMessageValidator.validate(downloadMessageRequest);
 
@@ -107,6 +108,8 @@ public class DownloadMessageService {
 
 			messageDAO.save(message);
 		}
+		
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messagingResponse.getMessaging().getUserMessage()[0], Integer.toString(message.getIdMessage()), "DownloadMessageService", "downloadMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_DOWNLOADED_STATUS));
 
 		return messagingResponse;
 	}
