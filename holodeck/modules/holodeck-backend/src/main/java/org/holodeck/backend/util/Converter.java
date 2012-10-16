@@ -48,6 +48,11 @@ public class Converter {
 				msgInfoSet.setConversationId(userMessage.getCollaborationInfo().getConversationId().toString());
 			}
 		}
+		if (userMessage.getMessageInfo() != null && userMessage.getMessageInfo().getRefToMessageId() != null) {
+			if (userMessage.getMessageInfo().getRefToMessageId() != null) {
+				msgInfoSet.setRefToMessageId(userMessage.getMessageInfo().getRefToMessageId().getNonEmptyString());
+			}
+		}
 		if (userMessage.getPartyInfo() != null) {
 			if (userMessage.getPartyInfo().getFrom() != null) {
 				org.holodeck.ebms3.config.Producer producer = new Producer();
