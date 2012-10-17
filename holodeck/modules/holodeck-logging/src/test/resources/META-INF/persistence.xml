@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence>
+
+  <persistence-unit name="ebms3" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="wsrm" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
+    </properties>
+  </persistence-unit>
+  
+  <persistence-unit name="logging" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <class>org.holodeck.logging.persistent.LoggerEvent</class>
+    <class>org.holodeck.logging.persistent.LoggerMessage</class>
+    <properties>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
+      <property name="hibernate.hbm2ddl.auto" value="verify"/>      
+      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="backend" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
+    </properties>
+  </persistence-unit>
+</persistence>
