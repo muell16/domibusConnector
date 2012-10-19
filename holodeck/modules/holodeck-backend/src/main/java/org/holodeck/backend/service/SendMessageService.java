@@ -91,7 +91,7 @@ public class SendMessageService {
 
 		UserMsgToPush userMsgToPush = sendMessageHelper.submitFromFolder(tempDir);
 
-		sendMessageHelper.send(userMsgToPush);
+		String messageId = sendMessageHelper.send(userMsgToPush);
 
 		try {
 			FileUtils.deleteDirectory(tempDir);
@@ -99,7 +99,7 @@ public class SendMessageService {
 			log.error("Error deleting temporal directory[" + tempDir + "]", e);
 		}
 		
-	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], messageId, "SendMessageService", "sendMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class SendMessageService {
 
 		UserMsgToPush userMsgToPush = sendMessageHelper.submitFromFolder(tempDir);
 
-		sendMessageHelper.send(userMsgToPush);
+		String messageId = sendMessageHelper.send(userMsgToPush);
 
 		try {
 			FileUtils.deleteDirectory(tempDir);
@@ -174,6 +174,6 @@ public class SendMessageService {
 			log.error("Error deleting temporal directory[" + tempDir + "]", e);
 		}
 		
-	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], "", "SendMessageService", "sendMessageWithReference", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], messageId, "SendMessageService", "sendMessageWithReference", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
 	}
 }

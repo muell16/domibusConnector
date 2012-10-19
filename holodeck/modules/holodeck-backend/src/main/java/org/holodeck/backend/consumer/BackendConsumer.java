@@ -73,7 +73,7 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 
 		org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messaging = org.holodeck.backend.util.Converter.convertFileToMessagingE(messageFile);
 		
-	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], Integer.toString(message.getIdMessage()), "BackendConsumer", "push", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_RECEIVED_STATUS));
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], messaging.getMessaging().getUserMessage()[0].getMessageInfo().getMessageId().getNonEmptyString(), "BackendConsumer", "push", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_RECEIVED_STATUS));
 
 		log.debug("Saved push message");
 	}
