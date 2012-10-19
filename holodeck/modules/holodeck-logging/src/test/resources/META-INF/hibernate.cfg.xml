@@ -13,9 +13,9 @@
        <property name="show_sql" >true</property>
        <!-- property name="default_schema" >ecodex</property-->
        <property name="connection.driver_class" >com.mysql.jdbc.Driver</property>
-       <property name="connection.url" >jdbc:mysql://localhost:3306/ecodex</property>
-       <property name="connection.username" >ecodex</property>
-       <property name="connection.password" >ecodex</property>
+       <property name="connection.url" >jdbc:mysql://localhost:3306/holodeck</property>
+       <property name="connection.username" >holodeck</property>
+       <property name="connection.password" >holodeck</property>
        <property name="dialect" >org.hibernate.dialect.MySQLDialect</property>
 
        <property name="c3p0.min_size" >5</property>

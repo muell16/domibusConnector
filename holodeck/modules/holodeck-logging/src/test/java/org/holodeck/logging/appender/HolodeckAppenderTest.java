@@ -3,29 +3,14 @@ package org.holodeck.logging.appender;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.holodeck.logging.module.Constants;
 import org.holodeck.logging.module.DbStore;
-import org.holodeck.logging.persistent.LoggerEvent;
 import org.holodeck.logging.persistent.MessageInfo;
 import org.junit.After;
 import org.junit.Before;
@@ -63,29 +48,34 @@ public class HolodeckAppenderTest {
 	 */
 	@Test
 	public void testAppend_1() throws Exception {
-		Logger log = Logger.getLogger("TestLogger for loggerevent");
-		String sql = "select lo.id from LoggerEvent lo";
+		Logger log = Logger.getLogger(HolodeckAppenderTest.class.getName());
+		String testme = "This is a Test for the Logger";
+		String sql = "select lo.id from LoggerEvent lo where lo.Msg ='"+testme+"'";
+		
 		int numBefore = 0;
 		int numafter = 0;
-		List resultbefore;
-
-		List resultafter;
+		List<?> resultbefore;
+		List<?> resultafter;
+		
+		// Count of data at method call
 		resultbefore = dbs.findAll(sql);
 		numBefore = resultbefore.size();
-		numBefore = resultbefore.size();
-
+		
+		// Call method append.
 		HolodeckAppender fixture = new HolodeckAppender();
-		LoggingEvent event = new LoggingEvent("2", log, Priority.DEBUG,
-				new Object(), null);
+		LoggingEvent event = new LoggingEvent("2", log, Level.DEBUG,
+				testme, null);
 		assertFalse("leider ist noch kein Messageinfo: ",
 				event.getMessage() instanceof MessageInfo);
 		fixture.append(event);
 
+		// Count of data after method call
 		resultafter = dbs.findAll(sql);
 		numafter = resultafter.size();
-		assertEquals("Loggerevent ist nicht in Log-DB gespeichert",
+		assertEquals("Loggerevent does not exists in the Log-DB",
 				numBefore + 1, numafter);
 
+		dbs.delete("DELETE FROM LoggerEvent lo where lo.Msg ='"+testme+"'");
 	}
 
 	/**
@@ -98,32 +88,32 @@ public class HolodeckAppenderTest {
 	 */
 	@Test
 	public void testAppend_2() throws Exception {
-		Logger log = Logger.getLogger("TestLogger for LoggerMessages");
-		String sql = "select mes.id from LoggerMessage mes";
+		Logger log = Logger.getLogger(HolodeckAppenderTest.class.getName());
+		String mID = "42";
+		String sql = "SELECT mes.id FROM LoggerMessage mes WHERE messageId='"+mID+"'";
 		int numBefore = 0;
 		int numafter = 0;
-		List resultbefore;
-		List resultafter;
-		// Anzahl der Datensätze vor Methodeaufruf.
+		List<?> resultbefore;
+		List<?> resultafter;
+		// Count of data at method call
 		resultbefore = dbs.findAll(sql);
 		numBefore = resultbefore.size();
 		numBefore = resultbefore.size();
-		// Methode append wird aufgerufen.
+		// Call method append.
 		HolodeckAppender fixture = new HolodeckAppender();
-		MessageInfo newMessage = new MessageInfo("78", "It.nrw", "admin",
-				"it.Kenneydamm", "Mitarbeiter", "sendService", "send", "78",
-				"pmode", "SEND");
-		LoggingEvent event = new LoggingEvent("2", log, Priority.DEBUG,
+		MessageInfo newMessage = new MessageInfo(mID, "testsender", "testfromRole", "testrecipient", "testtoRole", "testservice", "testaction", "testconversationId", "testpmode", "teststatus");
+		LoggingEvent event = new LoggingEvent("2", log, Level.DEBUG,
 				newMessage, null);
-		assertTrue("leider ist noch kein Messageinfo: ",
-				event.getMessage() instanceof MessageInfo);
+
 		fixture.append(event);
-		// Anzahl der Datensätze nach Methodeaufruf.
+		// Count of data after method call
 		resultafter = dbs.findAll(sql);
 		numafter = resultafter.size();
-		assertEquals("Loggermessage ist nicht in Log-DB gespeichert",
+		assertEquals("Loggermessage does not exists in the Log-DB",
 				numBefore + 1, numafter);
 		
+		dbs.delete("DELETE FROM LoggerMessage mes WHERE mes.messageId='"+mID+"'");
+
 
 	}
 

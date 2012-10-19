@@ -1,12 +1,14 @@
 package org.holodeck.logging.module;
 
-import java.net.URL;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.Version;
-import org.apache.axis2.modules.Module;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * The class <code>ConstantsTest</code> contains tests for the class <code>{@link Constants}</code>.
