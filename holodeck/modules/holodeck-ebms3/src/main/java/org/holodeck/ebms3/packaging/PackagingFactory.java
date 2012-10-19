@@ -1,32 +1,38 @@
 package org.holodeck.ebms3.packaging;
 
-import org.apache.axis2.context.MessageContext;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.om.OMElement;
-
-import org.holodeck.ebms3.submit.MsgInfoSet;
-import org.holodeck.ebms3.module.Constants;
-import org.holodeck.ebms3.module.Configuration;
-import org.holodeck.ebms3.module.MsgInfo;
-import org.holodeck.ebms3.config.PMode;
-import org.holodeck.ebms3.config.Leg;
-import org.holodeck.ebms3.config.UserService;
-import org.holodeck.ebms3.config.Producer;
-import org.holodeck.ebms3.config.Party;
-import org.holodeck.ebms3.config.Service;
-import org.holodeck.common.soap.Util;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Iterator;
-import java.util.Date;
+
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axis2.context.MessageContext;
+import org.holodeck.common.soap.Util;
+import org.holodeck.ebms3.config.Leg;
+import org.holodeck.ebms3.config.PMode;
+import org.holodeck.ebms3.config.Party;
+import org.holodeck.ebms3.config.Producer;
+import org.holodeck.ebms3.config.Service;
+import org.holodeck.ebms3.config.UserService;
+import org.holodeck.ebms3.module.Configuration;
+import org.holodeck.ebms3.module.Constants;
+import org.holodeck.ebms3.module.MsgInfo;
+import org.holodeck.ebms3.submit.MsgInfoSet;
 
 /**
  * @author Hamid Ben Malek
  */
 public class PackagingFactory
 {
+  private static final ThreadLocal<String> messageIDHolder = new ThreadLocal<String>();
+  
+  public static String getcurrentMessageID(){
+	  return messageIDHolder.get();
+  }
+	
   public static synchronized Messaging createMessagingElement(MessageContext msgCtx)
   {
     if ( msgCtx == null ) return null;
@@ -66,6 +72,27 @@ public class PackagingFactory
     {
       UserMessage userMessage =
          createUserMessage(fLeg.getMpc(), mis, us, msgCtx.getAttachmentMap());
+      
+      OMElement messageInfoOMElement = userMessage.getFirstGrandChildWithName(Constants.MESSAGE_INFO);
+      if(messageInfoOMElement!=null && messageInfoOMElement.getChildrenWithLocalName(Constants.MESSAGE_ID).hasNext()){
+    	  java.util.Iterator<OMElement> iterator = messageInfoOMElement.getChildren();
+    	  
+    	  OMElement messageIDOMElement = null;
+    	  
+    	  while(iterator.hasNext()){
+    		  OMElement omElement = iterator.next();
+    		  
+    		  if(omElement.getLocalName().equalsIgnoreCase(Constants.MESSAGE_ID)){
+    			  messageIDOMElement = omElement;
+    		  }
+    	  }
+    	  if(messageIDOMElement!=null){
+    		  String messageID = messageIDOMElement.getText();
+    		  
+    		  messageIDHolder.set(messageID);
+    	  }
+      }
+      
       return new Messaging(factory, null, userMessage);
     }
     String mep = Configuration.getMep(mis);
@@ -87,6 +114,27 @@ public class PackagingFactory
     // construct an anonymous UserMessage ...
     UserMessage u =
       createAnonymousUserMessage(fLeg.getMpc(), mis, msgCtx.getAttachmentMap());
+    
+    OMElement messageInfoOMElement = u.getFirstGrandChildWithName(Constants.MESSAGE_INFO);
+    if(messageInfoOMElement!=null && messageInfoOMElement.getChildrenWithLocalName(Constants.MESSAGE_ID).hasNext()){
+  	  java.util.Iterator<OMElement> iterator = messageInfoOMElement.getChildren();
+  	  
+  	  OMElement messageIDOMElement = null;
+  	  
+  	  while(iterator.hasNext()){
+  		  OMElement omElement = iterator.next();
+  		  
+  		  if(omElement.getLocalName().equalsIgnoreCase(Constants.MESSAGE_ID)){
+  			  messageIDOMElement = omElement;
+  		  }
+  	  }
+  	  if(messageIDOMElement!=null){
+  		  String messageID = messageIDOMElement.getText();
+		  
+		  messageIDHolder.set(messageID);
+  	  }
+    }
+    
     return new Messaging(factory, null, u);
   }
 

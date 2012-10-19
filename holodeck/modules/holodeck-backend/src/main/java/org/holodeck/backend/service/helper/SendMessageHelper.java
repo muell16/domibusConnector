@@ -48,6 +48,10 @@ public class SendMessageHelper {
 
 		try{
 			message.send(metadata, cb);
+			
+			String messageId = org.holodeck.ebms3.packaging.PackagingFactory.getcurrentMessageID();
+
+			log.debug("SenderWorker: message[" + messageId + "] was sent succcessfully");
 		} catch (RuntimeException e) {
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
 					"Error while sending message", e, Code.ERROR_SEND_003);
