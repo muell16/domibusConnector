@@ -1,8 +1,10 @@
 package eu.ecodex;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.util.GregorianCalendar;
@@ -11,6 +13,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.etsi.uri._01903.v1_3.AnyType;
 import org.etsi.uri._02640.soapbinding.v1.DeliveryConstraints;
@@ -28,7 +32,9 @@ import org.etsi.uri._02640.v2.PostalAddressType;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import eu.ecodex.signature.SignatureUtils;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
@@ -135,33 +141,51 @@ public class SubmissionAcceptanceRejectionTest  {
 	}
 	
 	@Test
-	public void createEvidences() throws DatatypeConfigurationException, JAXBException, MalformedURLException, FileNotFoundException {
+	public void createEvidences() throws DatatypeConfigurationException, JAXBException, ParserConfigurationException, SAXException, IOException, TransformerException {
 		
 		SubmissionAcceptanceRejection evidence1 = createSubmissionAcceptance();
 		
 		DeliveryNonDeliveryToRecipient evidence2 = new DeliveryNonDeliveryToRecipient(createEntityDetailsObject(), evidence1);
 		
-		FileOutputStream fo = new FileOutputStream("src/test/resources/DeliveryNonDelivery.xsd");
-		evidence2.serialize(fo);
+		FileOutputStream fo = new FileOutputStream("src/test/resources/DeliveryNonDelivery.xml");
 		
+		
+		evidence2.serialize(fo);
 		
 		
 		assertTrue(true);
 		
 	}
 	
-	private SubmissionAcceptanceRejection createSubmissionAcceptance() throws DatatypeConfigurationException, JAXBException, MalformedURLException, FileNotFoundException {
+	private SubmissionAcceptanceRejection createSubmissionAcceptance() throws DatatypeConfigurationException, JAXBException, ParserConfigurationException, SAXException, IOException, TransformerException {
 		EDeliveryDetails details = createEntityDetailsObject();
 		
 		REMDispatchType dispatchMessage = createRemDispatchTypeObject();
 		
 		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(details, dispatchMessage, true);
 		
-		FileOutputStream fo = new FileOutputStream("src/test/resources/SubmissionAcceptance.xsd");
+//		FileOutputStream fo = new FileOutputStream("src/test/resources/SubmissionAcceptance.xml");
+		ByteArrayOutputStream fo = new ByteArrayOutputStream();
+		
 		evidence.serialize(fo);
+		
+		byte[] bytes = fo.toByteArray();
+		
+		
+		byte[] signedByteArray = SignatureUtils.signByteArray(bytes);
+		
+		FileOutputStream fos = new FileOutputStream(new File("output_signed.xml"));
+		fos.write(signedByteArray);
+		fos.flush();
+		fos.close();
+
 		
 		return evidence;
 	}
+	
+
+	
+	
 	
 	
 }

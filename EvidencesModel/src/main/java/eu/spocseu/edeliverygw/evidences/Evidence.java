@@ -27,8 +27,11 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.etsi.uri._02231.v2.ElectronicAddressType;
 import org.etsi.uri._02640.v2.AttributedElectronicAddressType;
@@ -40,12 +43,16 @@ import org.etsi.uri._02640.v2.EventReasonsType;
 import org.etsi.uri._02640.v2.EvidenceIssuerPolicyIDType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
+import org.etsi.uri._02640.v2.ObjectFactory;
 import org.etsi.uri._02640.v2.PostalAddressType;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
+import eu.ecodex.signature.SignatureUtils;
 import eu.spocseu.common.SpocsConstants.Evidences;
+import eu.spocseu.edeliverygw.JaxbContextHolder;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
@@ -288,4 +295,6 @@ public abstract class Evidence
 	}
 
 	public abstract void serialize(OutputStream out) throws JAXBException;
+	
+		
 }

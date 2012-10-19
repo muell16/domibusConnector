@@ -23,10 +23,14 @@ See SPOCS_WP3_LICENSE_URL for license information
 --------------------------------------------------------------------------- */
 package eu.spocseu.edeliverygw.evidences;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.etsi.uri._02640.soapbinding.v1.REMDispatchType;
 import org.etsi.uri._02640.v2.AttributedElectronicAddressType;
@@ -37,6 +41,8 @@ import org.etsi.uri._02640.v2.ObjectFactory;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
 
 import eu.spocseu.common.SpocsConstants.Evidences;
 import eu.spocseu.edeliverygw.JaxbContextHolder;
@@ -58,7 +64,6 @@ public class SubmissionAcceptanceRejection extends Evidence
 	protected SubmissionAcceptanceRejection(EDeliveryDetails details)
 	{
 		super(details);
-
 	}
 
 	protected SubmissionAcceptanceRejection(EDeliveryDetails details,
@@ -199,7 +204,11 @@ public class SubmissionAcceptanceRejection extends Evidence
 			jaxbObj.setReplyToAddress(eAddress);
 		}
 		jaxbObj.setId(UUID.randomUUID().toString());
+		
 	}
+	
+	
+
 
 	/**
 	 * This method serializes the underlying JAXB object.
@@ -209,13 +218,15 @@ public class SubmissionAcceptanceRejection extends Evidence
 	 */
 	public void serialize(OutputStream out) throws JAXBException
 	{
-		JaxbContextHolder
+		JAXBElement<REMEvidenceType> output = new ObjectFactory().createSubmissionAcceptanceRejection(jaxbObj);
+		
+		
+		Marshaller m = JaxbContextHolder
 				.getSpocsJaxBContext()
-				.createMarshaller()
-				.marshal(
-					new ObjectFactory()
-							.createSubmissionAcceptanceRejection(jaxbObj),
-					out);
+				.createMarshaller();
+		
+		m.marshal(output, out);		
+		
+	}	
 
-	}
 }
