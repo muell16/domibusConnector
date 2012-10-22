@@ -63,6 +63,7 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 	 */
 	public DeliveryNonDeliveryToRecipient(REMEvidenceType evidenceType)
 	{
+		
 		super(evidenceType);
 
 	}

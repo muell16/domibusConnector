@@ -1,0 +1,76 @@
+package eu.ecodex.evidences;
+
+import org.etsi.uri._02640.v2.REMEvidenceType;
+
+import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
+import eu.ecodex.evidences.types.ECodexMessageDetails;
+import eu.spocseu.edeliverygw.REMErrorEvent;
+import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
+
+/**
+ * Interface with methods for building REM:Evidences in e-CODEX context.
+ * All evidences created by this Builder will be signed with an enveloped 
+ * signature.  
+ * Important:
+ * The returned byte Array represents a marshalled xml file and should be 
+ * validated if needed. After unmarshalling the content of this file the 
+ * signature will most likely break. So make sure that you validate the
+ * the file before. 
+ * 
+ * @author muell16
+ *
+ */
+public interface EvidenceBuilder {
+		
+    /**
+     * 
+     * Method for building the first Evidence and sign it with
+     * an enveloped signature. 
+     * 
+     * @param isAcceptance				EventCode ("http:uri.etsi.org/02640/Event#Acceptance", "http:uri.etsi.org/02640/Event#Rejection") of the evidence.  
+     * @param eventReasons				List of Reasons for an Error. Ignored when isAcceptance == true
+     * @param evidenceIssuerDetails		Details of the connector creating this evidence
+     * @param messageDetails			Details of the message (messageId(national), messageId(ebMS), Hash of the original message and used hash algorithm) and sender + recipient
+     * 
+     * @return signed SubmissionAcceptanceRejection - Evidence as byte array.
+     * @throws ECodexEvidenceBuilderException
+     */
+	public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, 
+													  REMErrorEvent eventReason, 
+													  EDeliveryDetails evidenceIssuerDetails, 
+													  ECodexMessageDetails messageDetails)
+												  	  throws ECodexEvidenceBuilderException;
+	
+	/**
+	 * Method for building the second evidence from the first one
+	 * and sign it with an enveloped signature. 
+	 * 
+	 * @param isDelivery				EventCode ("http:uri.etsi.org/02640/Event#Acceptance", "http:uri.etsi.org/02640/Event#Rejection") of the evidence.  
+     * @param eventReasons				List of Reasons for an Error. Ignored when isAcceptance == true
+     * @param evidenceIssuerDetails		Details of the connector creating this evidence
+	 * @param previousEvidence			A SubmissionAcceptanceRejection - Evidence
+	 * @return signed DeliveryNonDeliveryToRecipient - Evidence as byte array.
+	 * @throws ECodexEvidenceBuilderException
+	 */
+	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
+													   REMErrorEvent eventReason, 
+													   REMEvidenceType previousEvidence) 
+													   throws ECodexEvidenceBuilderException;
+	
+	/**
+	 * Method for building the third evidence from the second one
+	 * and sign it with an enveloped signature. 
+	 * 
+	 * @param isRetrieval				EventCode ("http:uri.etsi.org/02640/Event#Acceptance", "http:uri.etsi.org/02640/Event#Rejection") of the evidence.  
+     * @param eventReasons				List of Reasons for an Error. Ignored when isAcceptance == true
+     * @param evidenceIssuerDetails		Details of the connector creating this evidence
+	 * @param previousEvidence			An already filled REM:Evidence
+	 * @return signed RetrievalNonRetrievalByRecipient - Evidence as byte array.
+	 * @throws ECodexEvidenceBuilderException
+	 */
+	public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, 
+														 REMErrorEvent eventReason,
+														 REMEvidenceType previousEvidence) 
+														 throws ECodexEvidenceBuilderException;
+	
+}

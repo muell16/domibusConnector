@@ -209,7 +209,9 @@ public class SpocsFragments
 		}
 		eAddre.setValue(address);
 		eAddre.setScheme("mailto");
-		SpocsFragments.validateElectronicAdress(eAddre);
+		
+		//No addressvalidation for e-CODEX because there is no format defined
+//		SpocsFragments.validateElectronicAdress(eAddre);
 		return eAddre;
 	}
 

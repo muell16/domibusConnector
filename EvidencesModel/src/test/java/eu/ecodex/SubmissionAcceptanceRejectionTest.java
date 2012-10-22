@@ -3,6 +3,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -29,12 +30,20 @@ import org.etsi.uri._02640.v2.EntityNameType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
+import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import eu.ecodex.evidences.ECodexEvidenceBuilder;
+import eu.ecodex.evidences.EvidenceBuilder;
+import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
+import eu.ecodex.evidences.types.ECodexMessageDetails;
+import eu.ecodex.signature.EvidenceUtils;
+import eu.ecodex.signature.EvidenceUtilsImpl;
 import eu.ecodex.signature.SignatureUtils;
+import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
@@ -100,7 +109,7 @@ public class SubmissionAcceptanceRejectionTest  {
 		NamesPostalAddressListType namesPostalList = new NamesPostalAddressListType();
 		namesPostalList.getNamePostalAddress().add(namesPostal);
 		
-				
+		
 		EntityDetailsType recipient = new EntityDetailsType();
 		recipient.setNamesPostalAddresses(namesPostalList);	
 		recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress("stefan.mueller@it.nrw.de", "displayName"));
@@ -185,7 +194,58 @@ public class SubmissionAcceptanceRejectionTest  {
 	
 
 	
-	
+	@Test
+	public void testEcodexEvidence() {
+		
+		EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
+		ECodexMessageDetails messageDetails = new ECodexMessageDetails();
+		messageDetails.setEbmsMessageId("ebms3MsgId");
+		messageDetails.setHashAlgorithm("sha1");
+		messageDetails.setHashValue(new byte[]{0x000A, 0x000A});
+		messageDetails.setNationalMessageId("nationalMsgId");
+		messageDetails.setRecipientAddress("recipientAddress");
+		messageDetails.setSenderAddress("senderAddress");
+		
+		EvidenceBuilder builder = new ECodexEvidenceBuilder("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+		
+		try {
+			byte[] evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, evidenceIssuerDetails, messageDetails);
+			
+			EvidenceUtils utils = new EvidenceUtilsImpl("", "", "", "");
+			
+			REMEvidenceType evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray);
+			
+			byte[] signedByteArray = builder.createDeliveryNonDeliveryToRecipient(true, null, evidenceType);
+			
+			
+			
+			FileOutputStream fos = new FileOutputStream(new File("output2_signed.xml"));
+			fos.write(signedByteArray);
+			fos.flush();
+			fos.close();
+			
+			
+			evidenceType = utils.convertIntoEvidenceType(signedByteArray);
+			
+			signedByteArray = builder.createRetrievalNonRetrievalByRecipient(false, REMErrorEvent.OTHER, evidenceType);
+			
+			fos = new FileOutputStream(new File("output3_signed.xml"));
+			fos.write(signedByteArray);
+			fos.flush();
+			fos.close();
+			
+			
+		} catch (ECodexEvidenceBuilderException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 }

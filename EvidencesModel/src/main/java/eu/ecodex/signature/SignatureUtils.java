@@ -134,83 +134,85 @@ import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
  * </pre>
  */
 public class SignatureUtils {
-	
-	public static void main(String[] args) throws FileNotFoundException, SAXException, IOException, ParserConfigurationException, TransformerException, DatatypeConfigurationException, JAXBException {
-////		SignatureUtils.signEnveloped("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance.xsd");
-		
-//		String documentToBeSigned = "D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance.xsd";
-//		
-//		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-//		dbf.setNamespaceAware(true);
-////		Document doc = dbf.newDocumentBuilder().parse(new FileInputStream(documentToBeSigned));
-//		Document doc = dbf.newDocumentBuilder().newDocument();
-//		
-//		SignatureUtils test = new SignatureUtils();
-//		SubmissionAcceptanceRejection jaxbObject = test.createSubmissionAcceptance();
-//		
-//		JaxbContextHolder.getSpocsJaxBContext().createMarshaller().marshal(new ObjectFactory()
-//		.createSubmissionAcceptanceRejection(jaxbObject.getJaxBObj()), doc);
-//		
-//		Document signedDocument = SignatureUtils.signDomDocument(doc);
-//		
-//		OutputStream os;
-//		String filename = FilenameUtils.getBaseName(documentToBeSigned);
-//		String extension = FilenameUtils.getExtension(documentToBeSigned);
-//		os = new FileOutputStream(FilenameUtils.getFullPath(documentToBeSigned) + filename + "_signed." + extension);
-//
-//		TransformerFactory tf = TransformerFactory.newInstance();
-//		Transformer trans = tf.newTransformer();
-//		trans.transform(new DOMSource(signedDocument), new StreamResult(os));
-		
-		SignatureUtils test = new SignatureUtils();
-		SubmissionAcceptanceRejection evidence = test.createSubmissionAcceptance();
-		
-		
-		SignatureUtils.signEnveloped("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance.xsd");
-		
-	}
-	
 
-	
+	public static void main(String[] args) throws FileNotFoundException,
+			SAXException, IOException, ParserConfigurationException,
+			TransformerException, DatatypeConfigurationException, JAXBException {
+		// //
+		// SignatureUtils.signEnveloped("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance.xsd");
+
+		// String documentToBeSigned =
+		// "D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance.xsd";
+		//
+		// DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		// dbf.setNamespaceAware(true);
+		// // Document doc = dbf.newDocumentBuilder().parse(new
+		// FileInputStream(documentToBeSigned));
+		// Document doc = dbf.newDocumentBuilder().newDocument();
+		//
+		// SignatureUtils test = new SignatureUtils();
+		// SubmissionAcceptanceRejection jaxbObject =
+		// test.createSubmissionAcceptance();
+		//
+		// JaxbContextHolder.getSpocsJaxBContext().createMarshaller().marshal(new
+		// ObjectFactory()
+		// .createSubmissionAcceptanceRejection(jaxbObject.getJaxBObj()), doc);
+		//
+		// Document signedDocument = SignatureUtils.signDomDocument(doc);
+		//
+		// OutputStream os;
+		// String filename = FilenameUtils.getBaseName(documentToBeSigned);
+		// String extension = FilenameUtils.getExtension(documentToBeSigned);
+		// os = new
+		// FileOutputStream(FilenameUtils.getFullPath(documentToBeSigned) +
+		// filename + "_signed." + extension);
+		//
+		// TransformerFactory tf = TransformerFactory.newInstance();
+		// Transformer trans = tf.newTransformer();
+		// trans.transform(new DOMSource(signedDocument), new StreamResult(os));
+
+		SignatureUtils test = new SignatureUtils();
+		SubmissionAcceptanceRejection evidence = test
+				.createSubmissionAcceptance();
+
+		SignatureUtils
+				.signEnveloped("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance.xsd");
+
+	}
+
 	public static void signEnveloped(String documentToBeSigned) {
 
-				
 		// Create a DOM XMLSignatureFactory that will be used to generate the
 		// enveloped signature
-		
+
 		try {
 			XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
 
 			// Create a Reference to the enveloped document (in this case we are
 			// signing the whole document, so a URI of "" signifies that) and
-			// also specify the SHA1 digest algorithm and the ENVELOPED Transform.
+			// also specify the SHA1 digest algorithm and the ENVELOPED
+			// Transform.
 			Reference ref = fac.newReference("", fac.newDigestMethod(
-						DigestMethod.SHA1, null), Collections.singletonList(fac
-						.newTransform(Transform.ENVELOPED,
-								(TransformParameterSpec) null)), null, null);
-				
-				// Create the SignedInfo
-				SignedInfo si = fac
-						.newSignedInfo(fac.newCanonicalizationMethod(
-								CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-								(C14NMethodParameterSpec) null), fac
-								.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
-								Collections.singletonList(ref));
+					DigestMethod.SHA1, null), Collections.singletonList(fac
+					.newTransform(Transform.ENVELOPED,
+							(TransformParameterSpec) null)), null, null);
 
-			
+			// Create the SignedInfo
+			SignedInfo si = fac.newSignedInfo(fac.newCanonicalizationMethod(
+					CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+					(C14NMethodParameterSpec) null), fac.newSignatureMethod(
+					SignatureMethod.RSA_SHA1, null), Collections
+					.singletonList(ref));
 
-			// Create a DSA KeyPair
-//			 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-//			 kpg.initialize(2048);
-//			 KeyPair kp = kpg.generateKeyPair();
+			// Load Private and Public Key from JavaKeyStore
 			KeyPair kp = getKeyPairFromKeyStore(
 					"D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks",
 					"123456", "evidenceBuilderKey", "123456");
 
-			// Create a KeyValue containing the DSA PublicKey that was generated
+			// Create a KeyValue containing the PublicKey from the JKS
 			KeyInfoFactory kif = fac.getKeyInfoFactory();
 			KeyValue kv;
-			
+
 			kv = kif.newKeyValue(kp.getPublic());
 			// Create a KeyInfo and add the KeyValue to it
 			KeyInfo ki = kif.newKeyInfo(Collections.singletonList(kv));
@@ -219,9 +221,10 @@ public class SignatureUtils {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
 			Document doc;
-			doc = dbf.newDocumentBuilder().parse(new FileInputStream(documentToBeSigned));
+			doc = dbf.newDocumentBuilder().parse(
+					new FileInputStream(documentToBeSigned));
 
-			// Create a DOMSignContext and specify the DSA PrivateKey and
+			// Create a DOMSignContext and specify the PrivateKey and
 			// location of the resulting XMLSignature's parent element
 			DOMSignContext dsc = new DOMSignContext(kp.getPrivate(),
 					doc.getDocumentElement());
@@ -236,7 +239,9 @@ public class SignatureUtils {
 			OutputStream os;
 			String filename = FilenameUtils.getBaseName(documentToBeSigned);
 			String extension = FilenameUtils.getExtension(documentToBeSigned);
-			os = new FileOutputStream(FilenameUtils.getFullPath(documentToBeSigned) + filename + "_signed." + extension);
+			os = new FileOutputStream(
+					FilenameUtils.getFullPath(documentToBeSigned) + filename
+							+ "_signed." + extension);
 
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer trans = tf.newTransformer();
@@ -264,38 +269,33 @@ public class SignatureUtils {
 		}
 
 	}
-	
+
 	public static byte[] signByteArray(byte[] xmlData) {
 		byte[] signedByteArray = null;
-		
+
 		// Create a DOM XMLSignatureFactory that will be used to generate the
 		// enveloped signature
-		
+
 		try {
 			XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
 
 			// Create a Reference to the enveloped document (in this case we are
 			// signing the whole document, so a URI of "" signifies that) and
-			// also specify the SHA1 digest algorithm and the ENVELOPED Transform.
+			// also specify the SHA1 digest algorithm and the ENVELOPED
+			// Transform.
 			Reference ref = fac.newReference("", fac.newDigestMethod(
-						DigestMethod.SHA1, null), Collections.singletonList(fac
-						.newTransform(Transform.ENVELOPED,
-								(TransformParameterSpec) null)), null, null);
-				
-				// Create the SignedInfo
-				SignedInfo si = fac
-						.newSignedInfo(fac.newCanonicalizationMethod(
-								CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-								(C14NMethodParameterSpec) null), fac
-								.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
-								Collections.singletonList(ref));
+					DigestMethod.SHA1, null), Collections.singletonList(fac
+					.newTransform(Transform.ENVELOPED,
+							(TransformParameterSpec) null)), null, null);
 
-			
+			// Create the SignedInfo
+			SignedInfo si = fac.newSignedInfo(fac.newCanonicalizationMethod(
+					CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+					(C14NMethodParameterSpec) null), fac.newSignatureMethod(
+					SignatureMethod.RSA_SHA1, null), Collections
+					.singletonList(ref));
 
-			// Create a DSA KeyPair
-//			 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-//			 kpg.initialize(2048);
-//			 KeyPair kp = kpg.generateKeyPair();
+			// Load KeyPair from Java Key Store
 			KeyPair kp = getKeyPairFromKeyStore(
 					"D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks",
 					"123456", "evidenceBuilderKey", "123456");
@@ -303,7 +303,7 @@ public class SignatureUtils {
 			// Create a KeyValue containing the DSA PublicKey that was generated
 			KeyInfoFactory kif = fac.getKeyInfoFactory();
 			KeyValue kv;
-			
+
 			kv = kif.newKeyValue(kp.getPublic());
 			// Create a KeyInfo and add the KeyValue to it
 			KeyInfo ki = kif.newKeyInfo(Collections.singletonList(kv));
@@ -312,9 +312,9 @@ public class SignatureUtils {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
 			Document doc;
-			doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlData));
-			
-			
+			doc = dbf.newDocumentBuilder().parse(
+					new ByteArrayInputStream(xmlData));
+
 			// Create a DOMSignContext and specify the DSA PrivateKey and
 			// location of the resulting XMLSignature's parent element
 			DOMSignContext dsc = new DOMSignContext(kp.getPrivate(),
@@ -327,21 +327,22 @@ public class SignatureUtils {
 			signature.sign(dsc);
 
 			// output the resulting document
-//			OutputStream os;
-//			os = new FileOutputStream("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance_signed.xsd");
-//
-//			TransformerFactory tf = TransformerFactory.newInstance();
-//			Transformer trans = tf.newTransformer();
-//			trans.transform(new DOMSource(doc), new StreamResult(os));
-			
+			// OutputStream os;
+			// os = new
+			// FileOutputStream("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance_signed.xsd");
+			//
+			// TransformerFactory tf = TransformerFactory.newInstance();
+			// Transformer trans = tf.newTransformer();
+			// trans.transform(new DOMSource(doc), new StreamResult(os));
+
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
+
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer trans = tf.newTransformer();
 			trans.transform(new DOMSource(doc), new StreamResult(bos));
-			
+
 			signedByteArray = bos.toByteArray();
-			
+
 		} catch (KeyException e1) {
 			e1.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -363,38 +364,35 @@ public class SignatureUtils {
 		} catch (InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
 		}
-		
+
 		return signedByteArray;
 
 	}
-	
+
 	public static Document signDomDocument(Document document) {
 		Document signedDocument = null;
-		
-		
+
 		// Create a DOM XMLSignatureFactory that will be used to generate the
 		// enveloped signature
-		
+
 		try {
 			XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
 
 			// Create a Reference to the enveloped document (in this case we are
 			// signing the whole document, so a URI of "" signifies that) and
-			// also specify the SHA1 digest algorithm and the ENVELOPED Transform.
+			// also specify the SHA1 digest algorithm and the ENVELOPED
+			// Transform.
 			Reference ref = fac.newReference("", fac.newDigestMethod(
-						DigestMethod.SHA1, null), Collections.singletonList(fac
-						.newTransform(Transform.ENVELOPED,
-								(TransformParameterSpec) null)), null, null);
-				
-				// Create the SignedInfo
-				SignedInfo si = fac
-						.newSignedInfo(fac.newCanonicalizationMethod(
-								CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-								(C14NMethodParameterSpec) null), fac
-								.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
-								Collections.singletonList(ref));
+					DigestMethod.SHA1, null), Collections.singletonList(fac
+					.newTransform(Transform.ENVELOPED,
+							(TransformParameterSpec) null)), null, null);
 
-			
+			// Create the SignedInfo
+			SignedInfo si = fac.newSignedInfo(fac.newCanonicalizationMethod(
+					CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+					(C14NMethodParameterSpec) null), fac.newSignatureMethod(
+					SignatureMethod.RSA_SHA1, null), Collections
+					.singletonList(ref));
 
 			// Create a DSA KeyPair
 			// KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -407,7 +405,7 @@ public class SignatureUtils {
 			// Create a KeyValue containing the DSA PublicKey that was generated
 			KeyInfoFactory kif = fac.getKeyInfoFactory();
 			KeyValue kv;
-			
+
 			kv = kif.newKeyValue(kp.getPublic());
 			// Create a KeyInfo and add the KeyValue to it
 			KeyInfo ki = kif.newKeyInfo(Collections.singletonList(kv));
@@ -416,7 +414,8 @@ public class SignatureUtils {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
 			Document doc;
-//			doc = dbf.newDocumentBuilder().parse(new FileInputStream(documentToBeSigned));
+			// doc = dbf.newDocumentBuilder().parse(new
+			// FileInputStream(documentToBeSigned));
 			doc = document;
 
 			// Create a DOMSignContext and specify the DSA PrivateKey and
@@ -431,17 +430,20 @@ public class SignatureUtils {
 			signature.sign(dsc);
 
 			// output the resulting document
-//			OutputStream os;
-//			String filename = FilenameUtils.getBaseName(documentToBeSigned);
-//			String extension = FilenameUtils.getExtension(documentToBeSigned);
-//			os = new FileOutputStream(FilenameUtils.getFullPath(documentToBeSigned) + filename + "_signed." + extension);
+			// OutputStream os;
+			// String filename = FilenameUtils.getBaseName(documentToBeSigned);
+			// String extension =
+			// FilenameUtils.getExtension(documentToBeSigned);
+			// os = new
+			// FileOutputStream(FilenameUtils.getFullPath(documentToBeSigned) +
+			// filename + "_signed." + extension);
 
-//			TransformerFactory tf = TransformerFactory.newInstance();
-//			Transformer trans = tf.newTransformer();
-//			trans.transform(new DOMSource(doc), new StreamResult(os));
-			
+			// TransformerFactory tf = TransformerFactory.newInstance();
+			// Transformer trans = tf.newTransformer();
+			// trans.transform(new DOMSource(doc), new StreamResult(os));
+
 			signedDocument = doc;
-			
+
 		} catch (KeyException e1) {
 			e1.printStackTrace();
 		} catch (MarshalException e) {
@@ -453,55 +455,63 @@ public class SignatureUtils {
 		} catch (InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
 		}
-		
+
 		return signedDocument;
 	}
-	
+
 	public static JAXBElement<REMEvidenceType> signDOMDocument(Document document) {
-		return SignatureUtils.convertIntoREMEvidenceType(SignatureUtils.signDomDocument(document));
+		return SignatureUtils.convertIntoREMEvidenceType(SignatureUtils
+				.signDomDocument(document));
 	}
-	
-	
-	public static JAXBElement<REMEvidenceType> signEvidence(REMEvidenceType evidence) {
+
+	public static JAXBElement<REMEvidenceType> signEvidence(
+			REMEvidenceType evidence) {
 		JAXBElement<REMEvidenceType> signedJaxBObject = null;
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(true);
-		
-		
+
 		try {
-			Document unsignedDOMDocument = dbf.newDocumentBuilder().newDocument();
-			JaxbContextHolder.getSpocsJaxBContext().createMarshaller().marshal(new ObjectFactory()
-			.createSubmissionAcceptanceRejection(evidence), unsignedDOMDocument);
-			
-			signedJaxBObject = SignatureUtils.signDOMDocument(unsignedDOMDocument);
-			
+			Document unsignedDOMDocument = dbf.newDocumentBuilder()
+					.newDocument();
+			JaxbContextHolder
+					.getSpocsJaxBContext()
+					.createMarshaller()
+					.marshal(
+							new ObjectFactory()
+									.createSubmissionAcceptanceRejection(evidence),
+							unsignedDOMDocument);
+
+			signedJaxBObject = SignatureUtils
+					.signDOMDocument(unsignedDOMDocument);
+
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		return signedJaxBObject;
 	}
-	
-	public static JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(Document domDocument) {
-//		JaxbContextHolder.getSpocsJaxBContext().createMarshaller().marshal(new ObjectFactory()
-//		.createSubmissionAcceptanceRejection(jaxbObject.getJaxBObj()), doc);
+
+	public static JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(
+			Document domDocument) {
+		// JaxbContextHolder.getSpocsJaxBContext().createMarshaller().marshal(new
+		// ObjectFactory()
+		// .createSubmissionAcceptanceRejection(jaxbObject.getJaxBObj()), doc);
 		JAXBElement<REMEvidenceType> jaxbObj = null;
-		
-		
+
 		try {
 			System.out.println("vor dem cast");
-			jaxbObj = JaxbContextHolder.getSpocsJaxBContext().createUnmarshaller().unmarshal(domDocument, REMEvidenceType.class);
+			jaxbObj = JaxbContextHolder.getSpocsJaxBContext()
+					.createUnmarshaller()
+					.unmarshal(domDocument, REMEvidenceType.class);
 			System.out.println("nach dem cast");
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		
+
 		return jaxbObj;
 	}
-	
 
 	private static KeyPair getKeyPairFromKeyStore(String store,
 			String storePass, String alias, String keyPass) {
@@ -546,111 +556,111 @@ public class SignatureUtils {
 
 		return keyPair;
 	}
-	
-private EDeliveryDetails createEntityDetailsObject() {
-		
+
+	private EDeliveryDetails createEntityDetailsObject() {
+
 		PostalAdress address = new PostalAdress();
 		address.setCountry("country");
 		address.setLocality("locality");
 		address.setPostalCode("postalcode");
 		address.setStreetAddress("streetaddress");
-		
+
 		Server server = new Server();
 		server.setDefaultCitizenQAAlevel(1);
 		server.setGatewayAddress("gatewayaddress");
 		server.setGatewayDomain("gatewaydomain");
 		server.setGatewayName("gatewayname");
-		
+
 		EDeliveryDetail detail = new EDeliveryDetail();
-		
+
 		detail.setPostalAdress(address);
 		detail.setServer(server);
-		
-		
+
 		return new EDeliveryDetails(detail);
 	}
-	
-	
-	private REMDispatchType createRemDispatchTypeObject() throws MalformedURLException, DatatypeConfigurationException {
+
+	private REMDispatchType createRemDispatchTypeObject()
+			throws MalformedURLException, DatatypeConfigurationException {
 		GregorianCalendar cal = new GregorianCalendar();
-		XMLGregorianCalendar testDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-		
-		
+		XMLGregorianCalendar testDate = DatatypeFactory.newInstance()
+				.newXMLGregorianCalendar(cal);
+
 		DeliveryConstraints deliveryConstraints = new DeliveryConstraints();
 		deliveryConstraints.setAny(new AnyType());
 		deliveryConstraints.setInitialSend(testDate);
 		deliveryConstraints.setObsoleteAfter(testDate);
 		deliveryConstraints.setOrigin(testDate);
-		
-		
+
 		PostalAddressType postAdressType = new PostalAddressType();
 		postAdressType.setCountryName("countryName");
 		postAdressType.setLang("lang");
 		postAdressType.setLocality("locality");
 		postAdressType.setPostalCode("postalcode");
 		postAdressType.setStateOrProvince("stateOrProvince");
-		
+
 		EntityNameType entityNameType = new EntityNameType();
 		entityNameType.setLang("lang");
-		
+
 		NamePostalAddressType namesPostal = new NamePostalAddressType();
 		namesPostal.setPostalAddress(postAdressType);
 		namesPostal.setEntityName(entityNameType);
-		
+
 		NamesPostalAddressListType namesPostalList = new NamesPostalAddressListType();
 		namesPostalList.getNamePostalAddress().add(namesPostal);
-		
-				
+
 		EntityDetailsType recipient = new EntityDetailsType();
-		recipient.setNamesPostalAddresses(namesPostalList);	
-		recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress("stefan.mueller@it.nrw.de", "displayName"));
-		
+		recipient.setNamesPostalAddresses(namesPostalList);
+		recipient.getAttributedElectronicAddressOrElectronicAddress().add(
+				SpocsFragments.createElectoricAddress(
+						"stefan.mueller@it.nrw.de", "displayName"));
+
 		Destinations destinations = new Destinations();
 		destinations.setRecipient(recipient);
-		
+
 		MsgIdentification msgIdentification = new MsgIdentification();
 		msgIdentification.setMessageID("messageID");
-		
+
 		Originators originators = new Originators();
 		originators.setFrom(recipient);
 		originators.setReplyTo(recipient);
 		originators.setSender(recipient);
-		
-		
+
 		MsgMetaData msgMetaData = new MsgMetaData();
 		msgMetaData.setDeliveryConstraints(deliveryConstraints);
 		msgMetaData.setDestinations(destinations);
 		msgMetaData.setMsgIdentification(msgIdentification);
 		msgMetaData.setOriginators(originators);
-		
-		
-		byte[] contentValue = {0x000A, 0x000A};
-				
+
+		byte[] contentValue = { 0x000A, 0x000A };
+
 		OriginalMsgType orgMsgType = new OriginalMsgType();
 		orgMsgType.setContentType("contentType");
 		orgMsgType.setSize(BigInteger.valueOf(1000));
 		orgMsgType.setValue(contentValue);
-		
-		
+
 		REMDispatchType dispatchMessage = new REMDispatchType();
 		dispatchMessage.setId("id");
 		dispatchMessage.setMsgMetaData(msgMetaData);
 		dispatchMessage.setOriginalMsg(orgMsgType);
-		
+
 		return dispatchMessage;
 	}
-	
-	private SubmissionAcceptanceRejection createSubmissionAcceptance() throws DatatypeConfigurationException, JAXBException, MalformedURLException, FileNotFoundException {
+
+	private SubmissionAcceptanceRejection createSubmissionAcceptance()
+			throws DatatypeConfigurationException, JAXBException,
+			MalformedURLException, FileNotFoundException {
 		EDeliveryDetails details = createEntityDetailsObject();
-		
+
 		REMDispatchType dispatchMessage = createRemDispatchTypeObject();
-		
-		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(details, dispatchMessage, true);
-		
-		FileOutputStream fo = new FileOutputStream("src/test/resources/SubmissionAcceptance.xml");
+
+		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(
+				details, dispatchMessage, true);
+
+		FileOutputStream fo = new FileOutputStream(
+				"src/test/resources/SubmissionAcceptance.xml");
 		evidence.serialize(fo);
-		
+
 		return evidence;
 	}
-	
+
 }
