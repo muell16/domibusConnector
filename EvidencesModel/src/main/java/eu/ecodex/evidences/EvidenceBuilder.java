@@ -45,7 +45,7 @@ public interface EvidenceBuilder {
 	 * Method for building the second evidence from the first one
 	 * and sign it with an enveloped signature. 
 	 * 
-	 * @param isDelivery				EventCode ("http:uri.etsi.org/02640/Event#Acceptance", "http:uri.etsi.org/02640/Event#Rejection") of the evidence.  
+	 * @param isDelivery				EventCode ("http:uri.etsi.org/REM/Event#Delivery", "http:uri.etsi.org/REM/Event#DeliveryExpiration") of the evidence.  
      * @param eventReasons				List of Reasons for an Error. Ignored when isAcceptance == true
      * @param evidenceIssuerDetails		Details of the connector creating this evidence
 	 * @param previousEvidence			A SubmissionAcceptanceRejection - Evidence
@@ -61,7 +61,7 @@ public interface EvidenceBuilder {
 	 * Method for building the third evidence from the second one
 	 * and sign it with an enveloped signature. 
 	 * 
-	 * @param isRetrieval				EventCode ("http:uri.etsi.org/02640/Event#Acceptance", "http:uri.etsi.org/02640/Event#Rejection") of the evidence.  
+	 * @param isRetrieval				EventCode ("http:uri.etsi.org/REM/Event#Retrieval", "http:uri.etsi.org/REM/Event#NonRetrievalExpiration") of the evidence.  
      * @param eventReasons				List of Reasons for an Error. Ignored when isAcceptance == true
      * @param evidenceIssuerDetails		Details of the connector creating this evidence
 	 * @param previousEvidence			An already filled REM:Evidence

@@ -45,6 +45,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.log4j.Logger;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -52,6 +53,7 @@ import org.xml.sax.SAXException;
 import eu.spocseu.edeliverygw.JaxbContextHolder;
 
 public class EvidenceUtilsImpl implements EvidenceUtils {
+	private static Logger LOG = Logger.getLogger(EvidenceUtilsImpl.class);
 
 	private String javaKeyStorePath, javaKeyStorePassword, alias, keyPassword;
 
@@ -67,6 +69,7 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 
 	@Override
 	public byte[] signByteArray(byte[] xmlData) {
+		LOG.debug("Start Signprocess");
 		byte[] signedByteArray = null;
 
 		// Create a DOM XMLSignatureFactory that will be used to generate the
@@ -109,7 +112,7 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 			doc = dbf.newDocumentBuilder().parse(
 					new ByteArrayInputStream(xmlData));
 
-			// Create a DOMSignContext and specify the DSA PrivateKey and
+			// Create a DOMSignContext and specify the PrivateKey and
 			// location of the resulting XMLSignature's parent element
 			DOMSignContext dsc = new DOMSignContext(kp.getPrivate(),
 					doc.getDocumentElement());
@@ -120,14 +123,6 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 			// Marshal, generate (and sign) the enveloped signature
 			signature.sign(dsc);
 
-			// output the resulting document
-			// OutputStream os;
-			// os = new
-			// FileOutputStream("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\test\\resources\\SubmissionAcceptance_signed.xsd");
-			//
-			// TransformerFactory tf = TransformerFactory.newInstance();
-			// Transformer trans = tf.newTransformer();
-			// trans.transform(new DOMSource(doc), new StreamResult(os));
 
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -164,6 +159,7 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 
 	private synchronized static KeyPair getKeyPairFromKeyStore(String store,
 			String storePass, String alias, String keyPass) {
+		LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")" );
 		KeyStore ks;
 		FileInputStream kfis;
 		KeyPair keyPair = null;
@@ -212,6 +208,8 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 		dbf.setNamespaceAware(true);
 		REMEvidenceType convertedEvidence = null;
 		Document doc;
+		
+		LOG.debug("Convert byte-array into Evidence");
 		try {
 			doc = dbf.newDocumentBuilder().parse(
 					new ByteArrayInputStream(xmlData));
@@ -231,9 +229,6 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 	
 	private JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(
 			Document domDocument) {
-		// JaxbContextHolder.getSpocsJaxBContext().createMarshaller().marshal(new
-		// ObjectFactory()
-		// .createSubmissionAcceptanceRejection(jaxbObject.getJaxBObj()), doc);
 		JAXBElement<REMEvidenceType> jaxbObj = null;
 
 		try {

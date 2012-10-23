@@ -133,7 +133,7 @@ import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
  *  </code>
  * </pre>
  */
-public class SignatureUtils {
+ class SignatureUtils {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			SAXException, IOException, ParserConfigurationException,
