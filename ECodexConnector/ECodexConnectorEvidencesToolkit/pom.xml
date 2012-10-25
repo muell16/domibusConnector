@@ -13,10 +13,10 @@
 			<artifactId>ECodexConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>de.nrw.it.ecodex.evidences</groupId>
-			<artifactId>EvidencesModel</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency> -->
+		<dependency>
+			<groupId>eu.ecodex.evidences</groupId>
+			<artifactId>EvidenceBuilder</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>
