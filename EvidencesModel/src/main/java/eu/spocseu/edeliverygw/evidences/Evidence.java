@@ -75,12 +75,16 @@ public abstract class Evidence
 
 	protected Evidence(EDeliveryDetails _details)
 	{
+		initEvidenceIssuerDetailsWithEdeliveryDetails(_details);
+	}
+	
+	protected void initEvidenceIssuerDetailsWithEdeliveryDetails(EDeliveryDetails _details) {
 		details = _details;
 		jaxbObj = new REMEvidenceType();
 		jaxbObj.setVersion("2.1.1");
 		EvidenceIssuerPolicyIDType issuerPolicy = new EvidenceIssuerPolicyIDType();
 		issuerPolicy.getPolicyID()
-				.add("http://uri.eu-spocs.eu/eDeliveryPolicy");
+				.add("http://uri.eu-ecodex.eu/eDeliveryPolicy");
 
 		jaxbObj.setEvidenceIssuerPolicyID(issuerPolicy);
 		jaxbObj.setEvidenceIdentifier(UUID.randomUUID().toString());

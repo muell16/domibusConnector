@@ -147,6 +147,15 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 		super(details);
 		init(details, submissionAcceptanceRejection, isDelivery);
 	}
+	
+	
+	public DeliveryNonDeliveryToRecipient(EDeliveryDetails details,
+			REMEvidenceType submissionAcceptanceRejection, boolean isDelivery)
+	{
+		initEvidenceIssuerDetailsWithEdeliveryDetails(details);
+		init(details, submissionAcceptanceRejection, isDelivery);
+	}
+	
 
 	/**
 	 * This method serializes the underlying JAXB object.
@@ -182,6 +191,25 @@ public class DeliveryNonDeliveryToRecipient extends Evidence
 					.getFaultEventCode());
 		}
 		initWithPrevious(submissionAcceptanceRejection.getXSDObject());
+		isSuccessful = isDelivery;
+	}
+	
+	private void init(EDeliveryDetails details,
+			REMEvidenceType submissionAcceptanceRejection, boolean isDelivery)
+	{
+
+		evidenceType = Evidences.DELIVERY_NON_DELIVERY_TO_RECIPIENT;
+		if (isDelivery) {
+			LOG.debug("Create DeliveryNonDeliveryToRecipient in success case.");
+			setEventCode(Evidences.DELIVERY_NON_DELIVERY_TO_RECIPIENT
+					.getSuccessEventCode());
+			
+		} else {
+			LOG.debug("Create DeliveryNonDeliveryToRecipient in fault case.");
+			setEventCode(Evidences.DELIVERY_NON_DELIVERY_TO_RECIPIENT
+					.getFaultEventCode());
+		}
+		initWithPrevious(submissionAcceptanceRejection);
 		isSuccessful = isDelivery;
 	}
 

@@ -2,8 +2,6 @@ package eu.ecodex;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -215,7 +213,7 @@ public class SubmissionAcceptanceRejectionTest  {
 			
 			REMEvidenceType evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray);
 			
-			byte[] signedByteArray = builder.createDeliveryNonDeliveryToRecipient(true, null, evidenceType);
+			byte[] signedByteArray = builder.createDeliveryNonDeliveryToRecipient(true, null, evidenceIssuerDetails, evidenceType);
 			
 			
 			
@@ -227,7 +225,7 @@ public class SubmissionAcceptanceRejectionTest  {
 			
 			evidenceType = utils.convertIntoEvidenceType(signedByteArray);
 			
-			signedByteArray = builder.createRetrievalNonRetrievalByRecipient(false, REMErrorEvent.OTHER, evidenceType);
+			signedByteArray = builder.createRetrievalNonRetrievalByRecipient(false, REMErrorEvent.OTHER, evidenceIssuerDetails, evidenceType);
 			
 //			fos = new FileOutputStream(new File("output3_signed.xml"));
 //			fos.write(signedByteArray);

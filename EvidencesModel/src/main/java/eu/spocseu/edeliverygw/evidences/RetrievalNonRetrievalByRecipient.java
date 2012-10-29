@@ -84,6 +84,7 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 		init(details, evidence, true);
 
 	}
+	
 
 	/**
 	 * This constructor creates a RetrievalNonRetrievalByRecipient object based
@@ -119,6 +120,13 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 		super(details);
 		init(details, evidence, false);
 		super.setEventReason(eventReson);
+	}
+	
+	public RetrievalNonRetrievalByRecipient(EDeliveryDetails details,
+			REMEvidenceType evidenceType, boolean isAcceptance)
+	{
+		initEvidenceIssuerDetailsWithEdeliveryDetails(details);
+		init(details, evidenceType, isAcceptance);
 	}
 
 	/**
@@ -167,6 +175,24 @@ public class RetrievalNonRetrievalByRecipient extends Evidence
 					.getFaultEventCode());
 		}
 		initWithPrevious(previousEvidence.getXSDObject());
+		isSuccessful = isAcceptance;
+	}
+	
+	private void init(EDeliveryDetails details, REMEvidenceType previousEvidence,
+			boolean isAcceptance)
+	{
+		
+		evidenceType = Evidences.RETRIEVAL_NON_RETRIEVAL_BY_RECIPIENT;
+		if (isAcceptance) {
+			LOG.debug("Create RetrievalNonRetrievalByRecipient in success case.");
+			setEventCode(Evidences.RETRIEVAL_NON_RETRIEVAL_BY_RECIPIENT
+					.getSuccessEventCode());
+		} else {
+			LOG.debug("Create RetrievalNonRetrievalByRecipient in fault case.");
+			setEventCode(Evidences.RETRIEVAL_NON_RETRIEVAL_BY_RECIPIENT
+					.getFaultEventCode());
+		}
+		initWithPrevious(previousEvidence);
 		isSuccessful = isAcceptance;
 	}
 

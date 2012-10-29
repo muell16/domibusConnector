@@ -23,7 +23,6 @@ import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.ecodex.signature.EvidenceUtils;
 import eu.ecodex.signature.EvidenceUtilsImpl;
-import eu.spocseu.common.SpocsConstants.Evidences;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
@@ -113,24 +112,16 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 	@Override
 	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
 													   REMErrorEvent eventReason, 
+													   EDeliveryDetails evidenceIssuerDetails, 
 												   	   REMEvidenceType previousEvidence) 
 												   			   throws ECodexEvidenceBuilderException {
 		
 		
-		DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(previousEvidence);
+		DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
 		
-		if (isDelivery) {
-			LOG.debug("Create DeliveryNonDeliveryToRecipient in success case.");
-			evidence.getXSDObject().setEventCode(Evidences.DELIVERY_NON_DELIVERY_TO_RECIPIENT
-					.getSuccessEventCode());
-			
-		} else {
-			LOG.debug("Create DeliveryNonDeliveryToRecipient in fault case.");
-			evidence.getXSDObject().setEventCode(Evidences.DELIVERY_NON_DELIVERY_TO_RECIPIENT
-					.getFaultEventCode());
-			if(eventReason != null)
-				evidence.setEventReason(eventReason);
-		}
+		if(eventReason != null)
+			evidence.setEventReason(eventReason);
+		
 		
 		byte[] signedByteArray = signEvidence(evidence, true);
 		
@@ -141,24 +132,16 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 	@Override
 	public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval,
 														 REMErrorEvent eventReason, 
+														 EDeliveryDetails evidenceIssuerDetails, 
 														 REMEvidenceType previousEvidence) 
 																 throws ECodexEvidenceBuilderException {
 		
 		
-		RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(previousEvidence);
+		RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
 		
-		if (isRetrieval) {
-			LOG.debug("Create RetrievalNonRetrievalByRecipient in success case.");
-			evidence.getXSDObject().setEventCode(Evidences.RETRIEVAL_NON_RETRIEVAL_BY_RECIPIENT
-					.getSuccessEventCode());
-			
-		} else {
-			LOG.debug("Create RetrievalNonRetrievalByRecipient in fault case.");
-			evidence.getXSDObject().setEventCode(Evidences.RETRIEVAL_NON_RETRIEVAL_BY_RECIPIENT
-					.getFaultEventCode());
-			if(eventReason != null)
-				evidence.setEventReason(eventReason);
-		}
+
+		if(eventReason != null)
+			evidence.setEventReason(eventReason);
 		
 		
 		byte[] signedByteArray = signEvidence(evidence, true);

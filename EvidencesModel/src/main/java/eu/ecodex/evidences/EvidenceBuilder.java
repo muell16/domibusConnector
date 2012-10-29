@@ -54,6 +54,7 @@ public interface EvidenceBuilder {
 	 */
 	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
 													   REMErrorEvent eventReason, 
+													   EDeliveryDetails evidenceIssuerDetails, 
 													   REMEvidenceType previousEvidence) 
 													   throws ECodexEvidenceBuilderException;
 	
@@ -70,6 +71,7 @@ public interface EvidenceBuilder {
 	 */
 	public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, 
 														 REMErrorEvent eventReason,
+														 EDeliveryDetails evidenceIssuerDetails, 
 														 REMEvidenceType previousEvidence) 
 														 throws ECodexEvidenceBuilderException;
 	
