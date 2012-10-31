@@ -137,6 +137,7 @@ public class LoggingModuleTest {
 		fixture.init(configContext, module);
 		
 		assertTrue("store 'logging-mysql' was started.",Constants.store.getEntityManagerFactory().isOpen());
+
 		
 		DbStore dbs= Constants.store;
 		
