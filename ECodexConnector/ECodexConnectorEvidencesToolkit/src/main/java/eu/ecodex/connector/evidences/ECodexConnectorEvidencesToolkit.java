@@ -3,7 +3,7 @@ package eu.ecodex.connector.evidences;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 
 import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
-import eu.ecodex.connector.evidences.type.EvidenceInput;
+import eu.ecodex.connector.evidences.type.RejectionReason;
 
 /**
  * Interface to publish methods for creation of eCodex Evidence Messages.
@@ -13,13 +13,20 @@ import eu.ecodex.connector.evidences.type.EvidenceInput;
  */
 public interface ECodexConnectorEvidencesToolkit {
 
-    /**
-     * Method to transform messageState from national backend system into an eCodex evidence message .
-     * 
-     * @param input. Contains messageId, messageState, comment, recipientAddress and recipientName;
-     * @return An JAXB Object which can be easily marshalled into an XML containing the evidence message.
-     * @throws EvidencesToolkitException
-     */
-	REMEvidenceType createEvidenceMessage(EvidenceInput input) throws EvidencesToolkitException;
+    byte[] createSubmissionAcceptance(String nationalMessageId, byte[] originalMessage, String senderAddress,
+            String recipientAddress) throws EvidencesToolkitException;
+
+    byte[] createSubmissionRejection(RejectionReason rejectionReason, String nationalMessageId, byte[] originalMessage,
+            String senderAddress, String recipientAddress) throws EvidencesToolkitException;
+
+    byte[] createDeliveryEvidence(REMEvidenceType previousEvidence) throws EvidencesToolkitException;
+
+    byte[] createNonDeliveryEvidence(RejectionReason rejectionReason, REMEvidenceType previousEvidence)
+            throws EvidencesToolkitException;
+
+    byte[] createRetrievalEvidence(REMEvidenceType previousEvidence) throws EvidencesToolkitException;
+
+    byte[] createNonRetrievalEvidence(RejectionReason rejectionReason, REMEvidenceType previousEvidence)
+            throws EvidencesToolkitException;
 
 }

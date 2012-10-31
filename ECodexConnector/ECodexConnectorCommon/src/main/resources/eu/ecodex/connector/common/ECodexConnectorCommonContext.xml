@@ -7,9 +7,14 @@
 		
 	<bean id="connectorProperties" class="eu.ecodex.connector.common.ECodexConnectorProperties">
 		<property name="gatewayEndpointAddress" value="${gateway.endpoint.address}" />
+		<property name="gatewayName" value="${gateway.name}" />
 		<property name="useContentMapper" value="${connector.use.content.mapper}" />
 		<property name="useSecurityToolkit" value="${connector.use.security.toolkit}" />
 		<property name="useEvidencesToolkit" value="${connector.use.evidences.toolkit}" />
+		<property name="postalAddressStreet" value="${postal.address.street}" />
+		<property name="postalAddressLocality" value="${postal.address.locality}" />
+		<property name="postalAddressPostalCode" value="${postal.address.postal.code}" />
+		<property name="postalAddressCountry" value="${postal.address.country}" />
 	</bean>
 	
 	<bean id="messageStateLogger" class="eu.ecodex.connector.common.MessageStateLogger">
