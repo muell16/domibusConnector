@@ -4,6 +4,10 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
+	<jaxws:client id="sendingGatewayClient" serviceClass="backend.ecodex.org.BackendInterface"
+		address="http://test.edelivery.it.nrw.de/backend" />
 
+	<jaxws:client id="receivingGatewayClient" serviceClass="backend.ecodex.org.BackendInterface"
+		address="http://localhost:8085/holodeck/services/BackendService" />
 	
 </beans>
