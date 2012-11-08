@@ -24,8 +24,8 @@
     <class>org.holodeck.logging.persistent.LoggerMessage</class>
     <properties>
       <property name="hibernate.ejb.cfgfile" value="/META-INF/hibernate.cfg.xml"/>
-      <property name="hibernate.hbm2ddl.auto" value="create"/>      
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect" />
+      <property name="hibernate.hbm2ddl.auto" value="verify"/>      
+      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
     </properties>
   </persistence-unit>
 
