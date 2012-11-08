@@ -21,7 +21,6 @@ public class Message extends Level {
 		super(level, levelStr, syslogEquivalent);
 	}
 
-	
 
 	public static Level toLevel(String level) {
 		if(level != null && level.toUpperCase().equals("MESSAGE")) {
