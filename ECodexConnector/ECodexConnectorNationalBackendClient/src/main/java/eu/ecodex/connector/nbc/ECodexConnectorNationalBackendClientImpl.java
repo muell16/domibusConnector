@@ -1,34 +1,42 @@
 package eu.ecodex.connector.nbc;
 
-import eu.ecodex.connector.common.EncryptedDocumentPackage;
-import eu.ecodex.connector.common.MessageState;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 public class ECodexConnectorNationalBackendClientImpl implements ECodexConnectorNationalBackendClient {
 
     @Override
-    public MessageState deliverMessage(EncryptedDocumentPackage documentPackage)
-            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException {
-        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "deliverMessage");
-    }
-
-    @Override
-    public MessageState requestState(String messageId) throws ECodexConnectorNationalBackendClientException,
+    public void deliverMessage(Message message) throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
-        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "requestState");
+        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "deliverMessage");
+
     }
 
     @Override
-    public EncryptedDocumentPackage requestMessage(String messageId)
-            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException {
+    public String[] requestMessagesUnsent() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
+        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "requestMessagesUnsent");
+    }
+
+    @Override
+    public void requestMessage(Message message) throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
         throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "requestMessage");
     }
 
     @Override
-    public EncryptedDocumentPackage[] requestAllPendingMessages() throws ECodexConnectorNationalBackendClientException,
+    public MessageConfirmation[] requestConfirmations() throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
-        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "requestAllPendingMessages");
+        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "requestConfirmations");
+    }
+
+    @Override
+    public MessageConfirmation deliverLastEvidenceForMessage() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
+        throw new ImplementationMissingException("ECodexConnectorNationalBackendClient",
+                "deliverLastEvidenceForMessage");
     }
 
 }

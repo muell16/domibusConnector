@@ -1,8 +1,10 @@
 package eu.ecodex.connector.nbc;
 
-import eu.ecodex.connector.common.EncryptedDocumentPackage;
-import eu.ecodex.connector.common.MessageState;
+import eu.ecodex.connector.common.enums.ConfirmationStateEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 /**
@@ -15,54 +17,68 @@ import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientExc
 public interface ECodexConnectorNationalBackendClient {
 
     /**
-     * Method to deliver a message to the national backend system.
+     * This method delivers a message received from the corresponding gateway.
+     * The message content is already transformed into a national format, if
+     * there is a content mapper configured and implemented.
      * 
-     * @param documentPackage
-     *            - an encrypted document package which contains the message
-     *            itself, an asic-s container and the trustOkToken as XML.
-     * @return the immediate state of the message within the national backend
-     *         system if available.
+     * @param message
+     *            A {@link Message} object with all data concerning the message.
+     * @throws ECodexConnectorNationalBackendClientException
      * @throws ImplementationMissingException
      */
-    public MessageState deliverMessage(EncryptedDocumentPackage documentPackage)
-            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException;
-
-    /**
-     * Method to request the state of a message formerly sent to the national
-     * backend system.
-     * 
-     * @param messageId
-     *            - the ID of the message of which the state is requested.
-     * @return an enum value which represents the state of the message within
-     *         the national backend system.
-     * @throws ImplementationMissingException
-     */
-    public MessageState requestState(String messageId) throws ECodexConnectorNationalBackendClientException,
+    public void deliverMessage(Message message) throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException;
 
     /**
-     * Method to request all messages from the national backend system that are
-     * not yet handled.
+     * If there is a new evidence generated for this message and sent to the
+     * connector, this new evidence must be sent to the national system.
      * 
-     * @return an array of encrypted document package which contains the message
-     *         itself, an asic-s container and the trustOkToken as XML.
+     * @return A {@link MessageConfirmation} object containing the messageId,
+     *         the evidence was generated for, the {@link ConfirmationStateEnum}
+     *         and the evidence itself.
+     * @throws ECodexConnectorNationalBackendClientException
      * @throws ImplementationMissingException
      */
-    public EncryptedDocumentPackage[] requestAllPendingMessages() throws ECodexConnectorNationalBackendClientException,
+    public MessageConfirmation deliverLastEvidenceForMessage() throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException;
 
     /**
-     * Method to request a message from the national backend system to send over
-     * gateway.
+     * Requests all messages from the national system that are not yet handled
+     * by this connector instance, therefore not sent over the gateway.
      * 
-     * @param messageId
-     *            - The message ID of the message. Has to be requested by method
-     *            checkPendingMessges()
-     * @return an encrypted document package which contains the message itself,
-     *         an asic-s container and the trustOkToken as XML.
+     * @return an Array of messageId's that are queued in the national backend
+     *         system and have to be handled by the connector.
+     * @throws ECodexConnectorNationalBackendClientException
      * @throws ImplementationMissingException
      */
-    public EncryptedDocumentPackage requestMessage(String messageId)
-            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException;
+    public String[] requestMessagesUnsent() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException;
 
+    /**
+     * Requests a certain message that has to be handled by the connector and
+     * sent over the gateway.
+     * 
+     * @param message
+     *            A {@link Message} object with all data concerning the message.
+     *            This object contains {@link MessageDetails} which holds the
+     *            messageId of the message that is requested.
+     * @throws ECodexConnectorNationalBackendClientException
+     * @throws ImplementationMissingException
+     */
+    public void requestMessage(Message message) throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException;
+
+    /**
+     * Requests new confirmations for messages delivered by the gateway to the
+     * national backend system before. If the national system marks a message as
+     * delivered, or retrieved a {@link MessageConfirmation} should be created
+     * and queued.
+     * 
+     * @return an Array of {@link MessageConfirmation} Objects which contain
+     *         informations on what message is in which confirmation state.
+     * @throws ECodexConnectorNationalBackendClientException
+     * @throws ImplementationMissingException
+     */
+    public MessageConfirmation[] requestConfirmations() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException;
 }

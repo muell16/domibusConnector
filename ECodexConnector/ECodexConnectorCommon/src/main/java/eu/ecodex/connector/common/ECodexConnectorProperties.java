@@ -4,7 +4,7 @@ public class ECodexConnectorProperties {
 
     String gatewayEndpointAddress;
     String gatewayName;
-    String gatewayAsSenderPartyId;
+    String gatewayRole;
     boolean useContentMapper;
     boolean useSecurityToolkit;
     boolean useEvidencesToolkit;
@@ -29,12 +29,12 @@ public class ECodexConnectorProperties {
         this.gatewayName = gatewayName;
     }
 
-    public String getGatewayAsSenderPartyId() {
-        return gatewayAsSenderPartyId;
+    public String getGatewayRole() {
+        return gatewayRole;
     }
 
-    public void setGatewayAsSenderPartyId(String gatewayAsSenderPartyId) {
-        this.gatewayAsSenderPartyId = gatewayAsSenderPartyId;
+    public void setGatewayRole(String gatewayRole) {
+        this.gatewayRole = gatewayRole;
     }
 
     public boolean isUseContentMapper() {

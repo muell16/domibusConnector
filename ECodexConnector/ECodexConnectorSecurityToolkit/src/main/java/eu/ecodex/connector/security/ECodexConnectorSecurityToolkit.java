@@ -1,6 +1,6 @@
 package eu.ecodex.connector.security;
 
-import eu.ecodex.connector.common.EncryptedDocumentPackage;
+import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 
 /**
@@ -23,8 +23,7 @@ public interface ECodexConnectorSecurityToolkit {
      *         the message.
      * @throws ECodexConnectorSecurityException
      */
-    public EncryptedDocumentPackage encryptDocument(Object mainDocument, Object[] attachments)
-            throws ECodexConnectorSecurityException;
+    public Message encryptDocument(Object mainDocument, Object[] attachments) throws ECodexConnectorSecurityException;
 
     /**
      * Method to validate a document's signature.
