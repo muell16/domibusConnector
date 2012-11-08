@@ -27,6 +27,7 @@ import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
 import eu.spocseu.edeliverygw.evidences.Evidence;
+import eu.spocseu.edeliverygw.evidences.RelayREMMDAcceptanceRejection;
 import eu.spocseu.edeliverygw.evidences.RetrievalNonRetrievalByRecipient;
 import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
@@ -108,7 +109,22 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 		return signedByteArray;
 	}
 	
+	@Override
+	public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance,
+			 										  REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+			 										  REMEvidenceType previousEvidence)
+			 												  throws ECodexEvidenceBuilderException {
 
+		RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, new SubmissionAcceptanceRejection(previousEvidence), isAcceptance);
+		
+		if(eventReason != null)
+			evidence.setEventReason(eventReason);
+
+		byte[] signedByteArray = signEvidence(evidence, true);
+
+		return signedByteArray;
+	} 
+	
 	@Override
 	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
 													   REMErrorEvent eventReason, 
@@ -175,11 +191,6 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 		
 		return signedByteArray;
 	}
-
-
-	
-	
-	
 	
 
 }
