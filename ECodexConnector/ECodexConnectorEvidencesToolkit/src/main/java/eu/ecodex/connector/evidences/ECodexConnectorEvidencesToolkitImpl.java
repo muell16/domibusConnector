@@ -30,6 +30,10 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     public byte[] createSubmissionRejection(RejectionReason rejectionReason, String nationalMessageId,
             byte[] originalMessage, String senderAddress, String recipientAddress) throws EvidencesToolkitException {
 
+        if (rejectionReason == null) {
+            throw new EvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
+        }
+
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
 
         return createSubmissionAcceptanceRejection(false, event, nationalMessageId, originalMessage, senderAddress,
@@ -45,6 +49,10 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     public byte[] createNonDeliveryEvidence(RejectionReason rejectionReason, REMEvidenceType previousEvidence)
             throws EvidencesToolkitException {
 
+        if (rejectionReason == null) {
+            throw new EvidencesToolkitException("in case of a NonDelivery the rejectionReason may not be null!");
+        }
+
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
 
         return createDeliveryNonDeliveryEvidence(false, event, previousEvidence);
@@ -58,6 +66,11 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     @Override
     public byte[] createNonRetrievalEvidence(RejectionReason rejectionReason, REMEvidenceType previousEvidence)
             throws EvidencesToolkitException {
+
+        if (rejectionReason == null) {
+            throw new EvidencesToolkitException("in case of a NonRetrieval the rejectionReason may not be null!");
+        }
+
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
 
         return createRetrievalNonRetrievalEvidence(false, event, previousEvidence);
@@ -92,8 +105,12 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             throws EvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
-        ECodexMessageDetails messageDetails = buildMessageDetails(nationalMessageId, originalMessage, senderAddress,
-                recipientAddress);
+        ECodexMessageDetails messageDetails = null;
+        try {
+            messageDetails = buildMessageDetails(nationalMessageId, originalMessage, senderAddress, recipientAddress);
+        } catch (EvidencesToolkitException e) {
+            throw e;
+        }
 
         try {
             return evidenceBuilder.createSubmissionAcceptanceRejection(true, null, evidenceIssuerDetails,
@@ -123,13 +140,27 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     private ECodexMessageDetails buildMessageDetails(String nationalMessageId, byte[] originalMessage,
-            String senderAddress, String recipientAddress) {
+            String senderAddress, String recipientAddress) throws EvidencesToolkitException {
         ECodexMessageDetails messageDetails = new ECodexMessageDetails();
 
+        if (originalMessage == null || originalMessage.length < 1) {
+            throw new EvidencesToolkitException("there is no original message to build an evidence for!");
+        }
         byte[] hashValue = hashValueBuilder.buildHashValue(originalMessage);
         messageDetails.setHashAlgorithm(hashValueBuilder.getAlgorithm().toString());
         messageDetails.setHashValue(hashValue);
 
+        if (nationalMessageId == null || nationalMessageId.isEmpty()) {
+            throw new EvidencesToolkitException(
+                    "the nationalMessageId may not be null for building a submission evidence!");
+        }
+        if (recipientAddress == null || recipientAddress.isEmpty()) {
+            throw new EvidencesToolkitException(
+                    "the recipientAddress may not be null for building a submission evidence!");
+        }
+        if (senderAddress == null || senderAddress.isEmpty()) {
+            throw new EvidencesToolkitException("the senderAddress may not be null for building a submission evidence!");
+        }
         messageDetails.setNationalMessageId(nationalMessageId);
         messageDetails.setRecipientAddress(recipientAddress);
         messageDetails.setSenderAddress(senderAddress);

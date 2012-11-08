@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.EncryptedDocumentPackage;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageContent;
+import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
@@ -43,9 +45,9 @@ public class ECodexConnectorControllerImpl implements ECodexConnectorController 
     public void handleNationalMessages() throws ECodexConnectorControllerException {
         LOGGER.debug("Started handle national Messages!");
 
-        EncryptedDocumentPackage[] messages = null;
+        String[] messages = null;
         try {
-            messages = nationalBackendClient.requestAllPendingMessages();
+            messages = nationalBackendClient.requestMessagesUnsent();
         } catch (ECodexConnectorNationalBackendClientException e1) {
             e1.printStackTrace();
         } catch (ImplementationMissingException e) {
@@ -54,28 +56,47 @@ public class ECodexConnectorControllerImpl implements ECodexConnectorController 
 
         if (messages != null && messages.length > 0) {
 
-            for (EncryptedDocumentPackage message : messages) {
+            for (String messageId : messages) {
 
-                byte[] content = null;
-
-                if (connectorProperties.isUseContentMapper()) {
-                    try {
-                        content = contentMapper.mapNationalToInternational(message.getContent());
-                    } catch (ECodexConnectorContentMapperException e) {
-                        e.printStackTrace();
-                    } catch (ImplementationMissingException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                try {
-                    gatewayWebserviceClient.sendMessage(content);
-                } catch (ECodexConnectorGatewayWebserviceClientException e) {
-                    e.printStackTrace();
-                }
+                handleNationalMessage(messageId);
             }
         }
 
+    }
+
+    private void handleNationalMessage(String messageId) throws ECodexConnectorControllerException {
+
+        MessageDetails details = new MessageDetails();
+        details.setNationalMessageId(messageId);
+
+        MessageContent content = new MessageContent();
+
+        Message message = new Message(details, content);
+
+        try {
+            nationalBackendClient.requestMessage(message);
+        } catch (ECodexConnectorNationalBackendClientException e1) {
+            e1.printStackTrace();
+        } catch (ImplementationMissingException e1) {
+            e1.printStackTrace();
+        }
+
+        if (connectorProperties.isUseContentMapper()) {
+            try {
+                byte[] xmlContent = contentMapper.mapNationalToInternational(message.getMessageContent()
+                        .getXmlContent());
+            } catch (ECodexConnectorContentMapperException e) {
+                e.printStackTrace();
+            } catch (ImplementationMissingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            gatewayWebserviceClient.sendMessage(message);
+        } catch (ECodexConnectorGatewayWebserviceClientException e) {
+            throw new ECodexConnectorControllerException("Could not send ECodex Message to Gateway! ", e);
+        }
     }
 
     @Override

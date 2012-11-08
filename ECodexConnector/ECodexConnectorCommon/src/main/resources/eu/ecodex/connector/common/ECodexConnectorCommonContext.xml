@@ -8,6 +8,7 @@
 	<bean id="connectorProperties" class="eu.ecodex.connector.common.ECodexConnectorProperties">
 		<property name="gatewayEndpointAddress" value="${gateway.endpoint.address}" />
 		<property name="gatewayName" value="${gateway.name}" />
+		<property name="gatewayRole" value="${gateway.role}" />
 		<property name="useContentMapper" value="${connector.use.content.mapper}" />
 		<property name="useSecurityToolkit" value="${connector.use.security.toolkit}" />
 		<property name="useEvidencesToolkit" value="${connector.use.evidences.toolkit}" />
