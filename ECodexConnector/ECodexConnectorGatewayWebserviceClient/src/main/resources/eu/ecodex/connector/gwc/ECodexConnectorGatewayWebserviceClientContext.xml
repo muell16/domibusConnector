@@ -12,7 +12,7 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	<bean id="gatewayWebServiceClient"
 		class="eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClientImpl">
 		<property name="gatewayBackendWebservice" ref="gatewayClient" />
-		<property name="messageStateLogger" ref="messageStateLogger"/>
+		<!-- <property name="messageStateLogger" ref="messageStateLogger"/> -->
 		<property name="connectorProperties" ref="connectorProperties" />
 	</bean>
 

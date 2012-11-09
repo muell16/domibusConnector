@@ -29,6 +29,16 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>eu.ecodex.connector</groupId>
+			<artifactId>ECodexConnectorSecurityToolkit</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.ecodex.connector</groupId>
+			<artifactId>ECodexConnectorEvidencesToolkit</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>1.7.3</version>

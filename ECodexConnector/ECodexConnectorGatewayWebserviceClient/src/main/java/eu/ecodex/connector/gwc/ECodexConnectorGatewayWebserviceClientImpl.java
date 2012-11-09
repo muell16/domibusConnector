@@ -212,12 +212,20 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
         details.setConversationId(userMessage.getCollaborationInfo().getConversationId());
 
         String actionString = userMessage.getCollaborationInfo().getAction();
-        ActionEnum action = ActionEnum.valueOf(actionString);
-        details.setAction(action);
+        try {
+            ActionEnum action = ActionEnum.valueOf(actionString);
+            details.setAction(action);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("No action {} found!", actionString);
+        }
 
         String serviceString = userMessage.getCollaborationInfo().getService().getValue();
-        ServiceEnum service = ServiceEnum.valueOf(serviceString);
-        details.setService(service);
+        try {
+            ServiceEnum service = ServiceEnum.valueOf(serviceString);
+            details.setService(service);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("No service {} found!", actionString);
+        }
 
         From from = userMessage.getPartyInfo().getFrom();
         PartnerEnum fromPartner = PartnerEnum.findValue(from.getPartyId().get(0).getValue(), from.getRole());
