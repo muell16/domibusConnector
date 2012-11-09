@@ -2,8 +2,24 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
+
+	<import resource="classpath:/eu/ecodex/connector/common/ECodexConnectorCommonContext.xml"/>
   
   <bean id="evidencesToolkit" class="eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkitImpl">
+  	<property name="evidenceBuilder" ref="evidenceBuilder"/>
+  	<property name="hashValueBuilder" ref="hashValueBuilder"/>
+  	<property name="connectorProperties" ref="connectorProperties" />
+  </bean>
+  
+  <bean id="evidenceBuilder" class="eu.ecodex.evidences.ECodexEvidenceBuilder">
+  	<constructor-arg value="${java.keystore.path}"/>
+  	<constructor-arg value="${java.keystore.password}"/>
+  	<constructor-arg value="${key.alias}"/>
+  	<constructor-arg value="${key.password}"/>
+  </bean>
+  
+  <bean id="hashValueBuilder" class="eu.ecodex.connector.evidences.HashValueBuilder">
+  	<constructor-arg value="${hash.algorithm}"/>
   </bean>
   
 </beans>

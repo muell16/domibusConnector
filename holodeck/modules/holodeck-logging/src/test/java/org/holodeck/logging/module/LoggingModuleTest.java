@@ -3,12 +3,17 @@ package org.holodeck.logging.module;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.List;
 
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisBinding;
 import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
@@ -120,37 +125,31 @@ public class LoggingModuleTest {
 	public void testInit()
 		throws Exception {
 		
-//		LoggingModule fixture = new LoggingModule();
-//		ConfigurationContext configContext = new ConfigurationContext(new AxisConfiguration());
-//		AxisModule module = new AxisModule();
-//		Parameter param= new Parameter();
-//		param.setName("PersistenceUnit");
-//		Object value= new String("logging");
-//		param.setValue(value);
-//		module.addParameter(param);
-//		try{
-////		fixture.init(configContext, module);
-//		
-////		assertTrue("store ist nicht mit Name 'logging-mysql' gestartet.",Constants.store.getEntityManagerFactory().isOpen());
-//		
-////		DbStore dbs= Constants.store;
-//		
-////		String query= "select lo.id from LoggerEvent lo";
-////		List result = dbs.findAll(query);
-////		assertNotNull(result.isEmpty());
-//			String mID = "urn:uuid:371697B346FEDAE2FE1350391400240";
-//			log.log(Message.MESSAGE, new MessageInfo(mID, "testsender", "testfromRole", "testrecipient", "testtoRole", "testservice", "testaction", "testconversationId", "testpmode", "teststatus"));
-//			
-//			DbStore dbs= Constants.store;
-//			
-//			String query= "select lo.messageID from LoggerEvent lo where lo.messageID="+mID+";";
-//			List result = dbs.findAll(query);
-//			assertNotNull(result.isEmpty());
-//			
-//		}catch(Exception e){
-//			fail("Die Intialisierung ist noch nicht erfolgreich. Bitte Hibernate Configuration pr�fen!");
-//			
-//		}
+		LoggingModule fixture = new LoggingModule();
+		ConfigurationContext configContext = new ConfigurationContext(new AxisConfiguration());
+		AxisModule module = new AxisModule();
+		Parameter param= new Parameter();
+		param.setName("PersistenceUnit");
+		Object value= new String("logging");
+		param.setValue(value);
+		module.addParameter(param);
+		try{
+		fixture.init(configContext, module);
+		
+		assertTrue("store 'logging-mysql' was started.",Constants.store.getEntityManagerFactory().isOpen());
+
+		
+		DbStore dbs= Constants.store;
+		
+		String query= "select lo.id from LoggerEvent lo";
+		List<?> result = dbs.findAll(query);
+		assertNotNull(result.isEmpty());
+			
+			
+		}catch(Exception e){
+			fail("Die Intialisierung ist noch nicht erfolgreich. Bitte Hibernate Configuration pr�fen!");
+			
+		}
 		}
 
 	

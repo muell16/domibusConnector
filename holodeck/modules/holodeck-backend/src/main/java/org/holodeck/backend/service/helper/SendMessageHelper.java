@@ -32,7 +32,7 @@ public class SendMessageHelper {
 	 * @param message the message
 	 * @throws SendMessageServiceException the send message service exception
 	 */
-	public void send(UserMsgToPush message) throws SendMessageServiceException {
+	public String send(UserMsgToPush message) throws SendMessageServiceException {
 		AxisCallback cb = null;
 		if (message.getCallbackClass() != null && !message.getCallbackClass().trim().equals("")) {
 			try {
@@ -44,10 +44,16 @@ public class SendMessageHelper {
 			}
 		}
 		MsgInfoSet metadata = message.getMsgInfoSetBean();
-		log.debug("SenderWorker: about to send to " + message.getToURL());
+		log.debug("[ SendMessageHelper ]: about to send to " + message.getToURL());
 
 		try{
 			message.send(metadata, cb);
+			
+			String messageId = org.holodeck.ebms3.packaging.PackagingFactory.getcurrentMessageID();
+
+			log.debug("[ SendMessageHelper ]: message[" + messageId + "] was sent succcessfully");
+			
+			return messageId;
 		} catch (RuntimeException e) {
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
 					"Error while sending message", e, Code.ERROR_SEND_003);

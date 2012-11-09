@@ -109,7 +109,7 @@ public class DownloadMessageService {
 			messageDAO.save(message);
 		}
 		
-	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messagingResponse.getMessaging().getUserMessage()[0], Integer.toString(message.getIdMessage()), "DownloadMessageService", "downloadMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_DOWNLOADED_STATUS));
+	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messagingResponse.getMessaging().getUserMessage()[0], messagingResponse.getMessaging().getUserMessage()[0].getMessageInfo().getMessageId().getNonEmptyString(), "DownloadMessageService", "downloadMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_DOWNLOADED_STATUS));
 
 		return messagingResponse;
 	}

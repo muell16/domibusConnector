@@ -3,10 +3,39 @@ package eu.ecodex.connector.common;
 public class ECodexConnectorProperties {
 
     String gatewayEndpointAddress;
+    String gatewayName;
+    String gatewayRole;
     boolean useContentMapper;
     boolean useSecurityToolkit;
     boolean useEvidencesToolkit;
-    String gatewayAsSenderPartyId;
+    String postalAddressStreet;
+    String postalAddressLocality;
+    String postalAddressPostalCode;
+    String postalAddressCountry;
+
+    public String getGatewayEndpointAddress() {
+        return gatewayEndpointAddress;
+    }
+
+    public void setGatewayEndpointAddress(String gatewayEndpointAddress) {
+        this.gatewayEndpointAddress = gatewayEndpointAddress;
+    }
+
+    public String getGatewayName() {
+        return gatewayName;
+    }
+
+    public void setGatewayName(String gatewayName) {
+        this.gatewayName = gatewayName;
+    }
+
+    public String getGatewayRole() {
+        return gatewayRole;
+    }
+
+    public void setGatewayRole(String gatewayRole) {
+        this.gatewayRole = gatewayRole;
+    }
 
     public boolean isUseContentMapper() {
         return useContentMapper;
@@ -32,20 +61,36 @@ public class ECodexConnectorProperties {
         this.useEvidencesToolkit = useEvidencesToolkit;
     }
 
-    public String getGatewayEndpointAddress() {
-        return gatewayEndpointAddress;
+    public String getPostalAddressStreet() {
+        return postalAddressStreet;
     }
 
-    public void setGatewayEndpointAddress(String gatewayEndpointAddress) {
-        this.gatewayEndpointAddress = gatewayEndpointAddress;
+    public void setPostalAddressStreet(String postalAddressStreet) {
+        this.postalAddressStreet = postalAddressStreet;
     }
 
-    public String getGatewayAsSenderPartyId() {
-        return gatewayAsSenderPartyId;
+    public String getPostalAddressLocality() {
+        return postalAddressLocality;
     }
 
-    public void setGatewayAsSenderPartyId(String gatewayAsSenderPartyId) {
-        this.gatewayAsSenderPartyId = gatewayAsSenderPartyId;
+    public void setPostalAddressLocality(String postalAddressLocality) {
+        this.postalAddressLocality = postalAddressLocality;
+    }
+
+    public String getPostalAddressPostalCode() {
+        return postalAddressPostalCode;
+    }
+
+    public void setPostalAddressPostalCode(String postalAddressPostalCode) {
+        this.postalAddressPostalCode = postalAddressPostalCode;
+    }
+
+    public String getPostalAddressCountry() {
+        return postalAddressCountry;
+    }
+
+    public void setPostalAddressCountry(String postalAddressCountry) {
+        this.postalAddressCountry = postalAddressCountry;
     }
 
 }
