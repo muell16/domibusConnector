@@ -26,7 +26,8 @@ public class LoggingModule  implements Module
   public void init(ConfigurationContext configContext, AxisModule module)
               throws AxisFault
   {
-    if ( log.isDebugEnabled() ) log.debug("initialization..., ");
+    //Get Axis configration
+	if ( log.isDebugEnabled() ) log.debug("initialization..., ");
     AxisConfiguration config = configContext.getAxisConfiguration();
 
     //storing the Reliability module as a parameter.
