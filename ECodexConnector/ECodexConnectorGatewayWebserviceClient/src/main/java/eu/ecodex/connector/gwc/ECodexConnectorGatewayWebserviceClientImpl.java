@@ -49,17 +49,11 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
     private static final String PMODE = "EE_Form_A";
 
     private BackendInterface gatewayBackendWebservice;
-    // private MessageStateLogger messageStateLogger;
     private ECodexConnectorProperties connectorProperties;
 
     public void setGatewayBackendWebservice(BackendInterface gatewayBackendWebservice) {
         this.gatewayBackendWebservice = gatewayBackendWebservice;
     }
-
-    // public void setMessageStateLogger(MessageStateLogger messageStateLogger)
-    // {
-    // this.messageStateLogger = messageStateLogger;
-    // }
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
