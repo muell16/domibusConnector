@@ -1,5 +1,15 @@
 package eu.ecodex.connector.common.message;
 
+/**
+ * This object contains an attachment for a message. With every message there
+ * can be some documents (mostly PDF's) sent along with. Therefore those
+ * documents are attached to the message over this type. For every attachment
+ * there is the document itself as a byte[], a name for the attachment and a
+ * mimeType.
+ * 
+ * @author riederb
+ * 
+ */
 public class MessageAttachment {
 
     private byte[] attachment;

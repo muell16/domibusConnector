@@ -1,24 +1,27 @@
 package eu.ecodex.connector.common.message;
 
-import eu.ecodex.connector.common.enums.ConfirmationStateEnum;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 
+/**
+ * This is an object that internally represents the evidences for a message. It
+ * contains the evidence itself as a byte[] containing a structured document,
+ * and an enum type which describes the evidence type. The messageId field is
+ * required to connect this confirmation to a message.
+ * 
+ * @author riederb
+ * 
+ */
 public class MessageConfirmation {
 
     private String messageId;
-    private ConfirmationStateEnum confirmationState;
+    private ECodexEvidenceType evidenceType;
     private byte[] evidence;
 
-    public MessageConfirmation(String messageId, ConfirmationStateEnum confirmationState, byte[] evidence) {
+    public MessageConfirmation(String messageId, ECodexEvidenceType evidenceType, byte[] evidence) {
         super();
         this.messageId = messageId;
-        this.confirmationState = confirmationState;
+        this.evidenceType = evidenceType;
         this.evidence = evidence;
-    }
-
-    public MessageConfirmation(String messageId, ConfirmationStateEnum confirmationState) {
-        super();
-        this.messageId = messageId;
-        this.confirmationState = confirmationState;
     }
 
     public MessageConfirmation() {
@@ -32,12 +35,12 @@ public class MessageConfirmation {
         this.messageId = messageId;
     }
 
-    public ConfirmationStateEnum getConfirmationState() {
-        return confirmationState;
+    public ECodexEvidenceType getEvidenceType() {
+        return evidenceType;
     }
 
-    public void setConfirmationState(ConfirmationStateEnum confirmationState) {
-        this.confirmationState = confirmationState;
+    public void setEvidenceType(ECodexEvidenceType evidenceType) {
+        this.evidenceType = evidenceType;
     }
 
     public byte[] getEvidence() {

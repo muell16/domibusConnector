@@ -1,6 +1,5 @@
 package eu.ecodex.connector.nbc;
 
-import eu.ecodex.connector.common.enums.ConfirmationStateEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
@@ -17,9 +16,9 @@ import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientExc
 public interface ECodexConnectorNationalBackendClient {
 
     /**
-     * This method delivers a message received from the corresponding gateway.
-     * The message content is already transformed into a national format, if
-     * there is a content mapper configured and implemented.
+     * This method delivers a message received by the gateway. The message
+     * content is already transformed into a national format, if there is a
+     * content mapper configured and implemented.
      * 
      * @param message
      *            A {@link Message} object with all data concerning the message.
@@ -30,7 +29,7 @@ public interface ECodexConnectorNationalBackendClient {
             ImplementationMissingException;
 
     /**
-     * If there is a new evidence generated for this message and sent to the
+     * If there is a new evidence generated for a message and sent to the
      * connector, this new evidence must be sent to the national system.
      * 
      * @return A {@link MessageConfirmation} object containing the messageId,
@@ -69,8 +68,8 @@ public interface ECodexConnectorNationalBackendClient {
             ImplementationMissingException;
 
     /**
-     * Requests new confirmations for messages delivered by the gateway to the
-     * national backend system before. If the national system marks a message as
+     * Requests all new confirmations for messages delivered to the national
+     * backend system before. If the national system marks a message as
      * delivered, or retrieved a {@link MessageConfirmation} should be created
      * and queued.
      * 

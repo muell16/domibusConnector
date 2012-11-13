@@ -6,6 +6,7 @@ package eu.ecodex.connector.common.message;
  * @author riederb
  * 
  */
+
 public class Message {
 
     private final MessageDetails messageDetails;
@@ -13,6 +14,15 @@ public class Message {
     private MessageAttachment[] attachments;
     private MessageConfirmation[] confirmations;
 
+    /**
+     * There is only a constructor available with messageDetails and
+     * messageContent as they are mandatory as a minimum for a message.
+     * 
+     * @param messageDetails
+     *            the message details concerning some information on the message
+     * @param messageContent
+     *            the structured content of the message
+     */
     public Message(MessageDetails messageDetails, MessageContent messageContent) {
         super();
         this.messageDetails = messageDetails;
