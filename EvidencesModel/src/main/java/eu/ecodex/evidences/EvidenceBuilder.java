@@ -41,6 +41,25 @@ public interface EvidenceBuilder {
 													  ECodexMessageDetails messageDetails)
 												  	  throws ECodexEvidenceBuilderException;
 	
+	
+	/**
+	 * Method for building the second evidence from the first one
+	 * and sign it with an enveloped signature. 
+	 * 
+	 * @param isAcceptance				EventCode ("http:uri.etsi.org/02640/Event#Acceptance", "http:uri.etsi.org/02640/Event#Rejection") of the evidence.   
+     * @param eventReasons				List of Reasons for an Error. Ignored when isAcceptance == true
+     * @param evidenceIssuerDetails		Details of the connector creating this evidence
+	 * @param previousEvidence			A SubmissionAcceptanceRejection - Evidence
+	 * @return signed RelayREMMDAcceptanceRejection - Evidence as byte array.
+	 * @throws ECodexEvidenceBuilderException
+	 */
+	public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance,
+			 										  REMErrorEvent eventReason, 
+			 										  EDeliveryDetails evidenceIssuerDetails,
+			 										  REMEvidenceType previousEvidence)
+			 										  throws ECodexEvidenceBuilderException;
+	
+	
 	/**
 	 * Method for building the second evidence from the first one
 	 * and sign it with an enveloped signature. 
