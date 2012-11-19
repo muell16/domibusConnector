@@ -122,6 +122,7 @@ public class SubmissionAcceptanceRejection extends Evidence
 					.getSuccessEventCode());
 		} else {
 			LOG.debug("Create SubmissionAcceptanceRejection in fault case.");
+			LOG.debug("FaultCode: " + Evidences.SUBMISSION_ACCEPTANCE_REJECTION.getFaultEventCode());
 			setEventCode(Evidences.SUBMISSION_ACCEPTANCE_REJECTION
 					.getFaultEventCode());
 		}

@@ -1,13 +1,18 @@
 package eu.ecodex.evidences;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.GregorianCalendar;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.etsi.uri._02640.soapbinding.v1.DeliveryConstraints;
@@ -18,11 +23,14 @@ import org.etsi.uri._02640.soapbinding.v1.Originators;
 import org.etsi.uri._02640.soapbinding.v1.REMDispatchType;
 import org.etsi.uri._02640.v2.EntityDetailsType;
 import org.etsi.uri._02640.v2.REMEvidenceType;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.ecodex.signature.EvidenceUtils;
-import eu.ecodex.signature.EvidenceUtilsImpl;
+import eu.ecodex.signature.EvidenceUtilsXades;
+import eu.spocseu.edeliverygw.JaxbContextHolder;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
@@ -40,7 +48,8 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 	
 	
 	public ECodexEvidenceBuilder(String javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
-		signer = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);		
+//		signer = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);		
+		signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);		
 	}
 	
 
@@ -95,8 +104,7 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 		dispatch.setMsgMetaData(msgMetaData);
 		
 		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(evidenceIssuerDetails, dispatch, isAcceptance);
-		//Nur wenn ein Fehler aufgetreten ist ausfüllen.
-		if(!isAcceptance) 
+		if(eventReason != null) 
 			evidence.setEventReason(eventReason);
 		
 		evidence.setUAMessageId(messageDetails.getNationalMessageId());
@@ -111,10 +119,14 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 	
 	@Override
 	public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance,
-			 										  REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-			 										  REMEvidenceType previousEvidence)
+			 										  REMErrorEvent eventReason, 
+			 										  EDeliveryDetails evidenceIssuerDetails,
+			 										  byte[] previousEvidenceInByte)
 			 												  throws ECodexEvidenceBuilderException {
-
+		
+		
+		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);		
+		
 		RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, new SubmissionAcceptanceRejection(previousEvidence), isAcceptance);
 		
 		if(eventReason != null)
@@ -129,9 +141,10 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
 													   REMErrorEvent eventReason, 
 													   EDeliveryDetails evidenceIssuerDetails, 
-												   	   REMEvidenceType previousEvidence) 
+													   byte[] previousEvidenceInByte) 
 												   			   throws ECodexEvidenceBuilderException {
 		
+		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);	
 		
 		DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
 		
@@ -149,9 +162,10 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 	public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval,
 														 REMErrorEvent eventReason, 
 														 EDeliveryDetails evidenceIssuerDetails, 
-														 REMEvidenceType previousEvidence) 
+														 byte[] previousEvidenceInByte) 
 																 throws ECodexEvidenceBuilderException {
 		
+		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);	
 		
 		RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
 		
@@ -190,7 +204,44 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 		byte[] signedByteArray = signer.signByteArray(bytes);
 		
 		return signedByteArray;
-	}
+	}	
 	
+	private REMEvidenceType convertIntoEvidenceType(byte[] xmlData) {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		REMEvidenceType convertedEvidence = null;
+		Document doc;
+
+		LOG.debug("Convert byte-array into Evidence");
+		try {
+			doc = dbf.newDocumentBuilder().parse(
+					new ByteArrayInputStream(xmlData));
+
+			convertedEvidence = convertIntoREMEvidenceType(doc).getValue();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+
+		return convertedEvidence;
+	}
+
+	private JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(
+			Document domDocument) {
+		JAXBElement<REMEvidenceType> jaxbObj = null;
+
+		try {
+			jaxbObj = JaxbContextHolder.getSpocsJaxBContext()
+					.createUnmarshaller()
+					.unmarshal(domDocument, REMEvidenceType.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+
+		return jaxbObj;
+	}
 
 }

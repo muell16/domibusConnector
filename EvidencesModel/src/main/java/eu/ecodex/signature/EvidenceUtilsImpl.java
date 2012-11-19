@@ -2,25 +2,14 @@ package eu.ecodex.signature;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.Key;
 import java.security.KeyException;
 import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -45,31 +34,19 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
-import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import eu.spocseu.edeliverygw.JaxbContextHolder;
-
-public class EvidenceUtilsImpl implements EvidenceUtils {
-	private static Logger LOG = Logger.getLogger(EvidenceUtilsImpl.class);
-
-	private String javaKeyStorePath, javaKeyStorePassword, alias, keyPassword;
+public class EvidenceUtilsImpl extends EvidenceUtils {
 
 	public EvidenceUtilsImpl(String javaKeyStorePath,
-							 String javaKeyStorePassword, 
-							 String alias, 
-							 String keyPassword) {
-		this.javaKeyStorePath = javaKeyStorePath;
-		this.javaKeyStorePassword = javaKeyStorePassword;
-		this.alias = alias;
-		this.keyPassword = keyPassword;
+			String javaKeyStorePassword, String alias, String keyPassword) {
+		super(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	}
 
 	@Override
 	public byte[] signByteArray(byte[] xmlData) {
-		LOG.debug("Start Signprocess");
+		LOG.info("Java API Signer used");
 		byte[] signedByteArray = null;
 
 		// Create a DOM XMLSignatureFactory that will be used to generate the
@@ -95,7 +72,8 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 					.singletonList(ref));
 
 			// Load KeyPair from Java Key Store
-			KeyPair kp = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+			KeyPair kp = getKeyPairFromKeyStore(javaKeyStorePath,
+					javaKeyStorePassword, alias, keyPassword);
 
 			// Create a KeyValue containing the PublicKey that was generated
 			KeyInfoFactory kif = fac.getKeyInfoFactory();
@@ -104,7 +82,8 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 			kv = kif.newKeyValue(kp.getPublic());
 			// Create a KeyInfo and add the KeyValue to it
 			KeyInfo ki = kif.newKeyInfo(Collections.singletonList(kv));
-
+			
+			
 			// Instantiate the document to be signed
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
@@ -122,7 +101,6 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 
 			// Marshal, generate (and sign) the enveloped signature
 			signature.sign(dsc);
-
 
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -157,89 +135,10 @@ public class EvidenceUtilsImpl implements EvidenceUtils {
 		return signedByteArray;
 	}
 
-	private synchronized static KeyPair getKeyPairFromKeyStore(String store,
-			String storePass, String alias, String keyPass) {
-		LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")" );
-		KeyStore ks;
-		FileInputStream kfis;
-		KeyPair keyPair = null;
-
-		Key key = null;
-		PublicKey publicKey = null;
-		PrivateKey privateKey = null;
-		try {
-			ks = KeyStore.getInstance("JKS");
-			kfis = new FileInputStream(store);
-			ks.load(kfis, storePass.toCharArray());
-			if (ks.containsAlias(alias)) {
-				key = ks.getKey(alias, keyPass.toCharArray());
-				if (key instanceof PrivateKey) {
-					X509Certificate cert = (X509Certificate) ks
-							.getCertificate(alias);
-					publicKey = cert.getPublicKey();
-					privateKey = (PrivateKey) key;
-					keyPair = new KeyPair(publicKey, privateKey);
-				} else {
-					keyPair = null;
-				}
-			} else {
-				keyPair = null;
-			}
-		} catch (UnrecoverableKeyException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return keyPair;
-	}
-
 	@Override
-	public REMEvidenceType convertIntoEvidenceType(byte[] xmlData) {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		REMEvidenceType convertedEvidence = null;
-		Document doc;
-		
-		LOG.debug("Convert byte-array into Evidence");
-		try {
-			doc = dbf.newDocumentBuilder().parse(
-					new ByteArrayInputStream(xmlData));
-			
-			convertedEvidence = convertIntoREMEvidenceType(doc).getValue();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-
-		
-		return convertedEvidence;
-	}
-	
-	private JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(
-			Document domDocument) {
-		JAXBElement<REMEvidenceType> jaxbObj = null;
-
-		try {
-			jaxbObj = JaxbContextHolder.getSpocsJaxBContext()
-					.createUnmarshaller()
-					.unmarshal(domDocument, REMEvidenceType.class);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-
-		return jaxbObj;
+	public boolean verifySignature(byte[] xmlData) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -2,6 +2,7 @@ package eu.ecodex;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -40,6 +41,7 @@ import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.ecodex.signature.EvidenceUtils;
 import eu.ecodex.signature.EvidenceUtilsImpl;
+import eu.ecodex.signature.EvidenceUtilsXades;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
@@ -159,6 +161,8 @@ public class SubmissionAcceptanceRejectionTest  {
 		evidence2.serialize(fo);
 		
 		
+		
+		
 		assertTrue(true);
 		
 	}
@@ -177,67 +181,19 @@ public class SubmissionAcceptanceRejectionTest  {
 		
 		byte[] bytes = fo.toByteArray();
 		
-		EvidenceUtils utils = new EvidenceUtilsImpl("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+		EvidenceUtils utils = new EvidenceUtilsXades("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
 		
 		byte[] signedByteArray = utils.signByteArray(bytes);
 		
-//		FileOutputStream fos = new FileOutputStream(new File("output_signed.xml"));
-//		fos.write(signedByteArray);
-//		fos.flush();
-//		fos.close();
+		System.out.println("Ergebnis Validierung: " + utils.verifySignature(signedByteArray) );
+		
+		FileOutputStream fos = new FileOutputStream(new File("output_signed.xml"));
+		fos.write(signedByteArray);
+		fos.flush();
+		fos.close();
 
 		
 		return evidence;
 	}
-	
-
-	
-	@Test
-	public void testEcodexEvidence() {
-		
-		EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
-		ECodexMessageDetails messageDetails = new ECodexMessageDetails();
-		messageDetails.setEbmsMessageId("ebms3MsgId");
-		messageDetails.setHashAlgorithm("sha1");
-		messageDetails.setHashValue(new byte[]{0x000A, 0x000A});
-		messageDetails.setNationalMessageId("nationalMsgId");
-		messageDetails.setRecipientAddress("recipientAddress");
-		messageDetails.setSenderAddress("senderAddress");
-		
-		EvidenceBuilder builder = new ECodexEvidenceBuilder("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
-		
-		try {
-			byte[] evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, evidenceIssuerDetails, messageDetails);
-			
-			EvidenceUtils utils = new EvidenceUtilsImpl("", "", "", "");
-			
-			REMEvidenceType evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray);
-			
-			byte[] signedByteArray = builder.createDeliveryNonDeliveryToRecipient(true, null, evidenceIssuerDetails, evidenceType);
-			
-			
-			
-//			FileOutputStream fos = new FileOutputStream(new File("output2_signed.xml"));
-//			fos.write(signedByteArray);
-//			fos.flush();
-//			fos.close();
-			
-			
-			evidenceType = utils.convertIntoEvidenceType(signedByteArray);
-			
-			signedByteArray = builder.createRetrievalNonRetrievalByRecipient(false, REMErrorEvent.OTHER, evidenceIssuerDetails, evidenceType);
-			
-//			fos = new FileOutputStream(new File("output3_signed.xml"));
-//			fos.write(signedByteArray);
-//			fos.flush();
-//			fos.close();
-			
-			
-		} catch (ECodexEvidenceBuilderException e) {
-			e.printStackTrace();
-		} 
-		
-	}
-	
 	
 }

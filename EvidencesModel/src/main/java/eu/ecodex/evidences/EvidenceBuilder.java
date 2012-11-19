@@ -1,7 +1,5 @@
 package eu.ecodex.evidences;
 
-import org.etsi.uri._02640.v2.REMEvidenceType;
-
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.spocseu.edeliverygw.REMErrorEvent;
@@ -56,7 +54,7 @@ public interface EvidenceBuilder {
 	public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance,
 			 										  REMErrorEvent eventReason, 
 			 										  EDeliveryDetails evidenceIssuerDetails,
-			 										  REMEvidenceType previousEvidence)
+			 										  byte[] previousEvidence)
 			 										  throws ECodexEvidenceBuilderException;
 	
 	
@@ -74,7 +72,7 @@ public interface EvidenceBuilder {
 	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
 													   REMErrorEvent eventReason, 
 													   EDeliveryDetails evidenceIssuerDetails, 
-													   REMEvidenceType previousEvidence) 
+													   byte[] previousEvidence) 
 													   throws ECodexEvidenceBuilderException;
 	
 	/**
@@ -91,7 +89,7 @@ public interface EvidenceBuilder {
 	public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, 
 														 REMErrorEvent eventReason,
 														 EDeliveryDetails evidenceIssuerDetails, 
-														 REMEvidenceType previousEvidence) 
+														 byte[] previousEvidence) 
 														 throws ECodexEvidenceBuilderException;
 	
 }
