@@ -11,23 +11,13 @@ import eu.ecodex.connector.controller.exception.ECodexConnectorControllerExcepti
 public interface ECodexConnectorController {
 
     /**
-     * Method which handles all the way from national backend system to gateway.
-     * Triggered by a timer job it executes every period (configurable) to check
-     * pending messages on national side and handles all messages way through to
-     * the gateway.
+     * Method which handles all the way through the connector. Triggered by a
+     * timer job executed every configured time-period it checks (depending on
+     * the implementation) pending messages on one side and handles all messages
+     * way through to the other side.
      * 
      * @throws ECodexConnectorControllerException
      */
-    public void handleNationalMessages() throws ECodexConnectorControllerException;
-
-    /**
-     * Method which handles all the way from gateway to the national backend
-     * system. Triggered by a timer job it executes every period (configurable)
-     * to check pending messages on the gateway and handles all messages way
-     * through to the national backend side.
-     * 
-     * @throws ECodexConnectorControllerException
-     */
-    public void handleGatewayMessages() throws ECodexConnectorControllerException;
+    public void handleMessages() throws ECodexConnectorControllerException;
 
 }

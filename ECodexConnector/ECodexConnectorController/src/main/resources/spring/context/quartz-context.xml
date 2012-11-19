@@ -4,14 +4,14 @@
 <beans>
 
 <bean id="handleNationalMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-  <property name="targetObject" ref="connectorController"/>
-  <property name="targetMethod" value="handleNationalMessages"/>
+  <property name="targetObject" ref="nationalToInternationalController"/>
+  <property name="targetMethod" value="handleMessages"/>
   <property name="concurrent" value="false"/>
 </bean>
 
 <bean id="handleGatewayMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-  <property name="targetObject" ref="connectorController"/>
-  <property name="targetMethod" value="handleGatewayMessages"/>
+  <property name="targetObject" ref="internationalToNationalController"/>
+  <property name="targetMethod" value="handleMessages"/>
   <property name="concurrent" value="false"/>
 </bean>
 

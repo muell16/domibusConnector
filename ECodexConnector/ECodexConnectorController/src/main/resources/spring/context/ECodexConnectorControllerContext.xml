@@ -10,10 +10,17 @@
 	<import resource="classpath:/eu/ecodex/connector/gwc/ECodexConnectorGatewayWebserviceClientContext.xml"/>
 	<import resource="classpath:/eu/ecodex/connector/nbc/ECodexConnectorNationalBackendClientContext.xml"/>
 	
-	
 	<import resource="quartz-context.xml"/>
 	
-  	<bean id="connectorController" class="eu.ecodex.connector.controller.ECodexConnectorControllerImpl">
+  	<bean id="nationalToInternationalController" class="eu.ecodex.connector.controller.ECodexConnectorNationalToInternationalController">
+  		<property name="connectorProperties" ref="connectorProperties" />
+  		<property name="contentMapper" ref="contentMapper" />
+  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
+  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
+  		<property name="evidencesToolkit" ref="evidencesToolkit"/>
+  	</bean>
+  	
+  	<bean id="internationalToNationalController" class="eu.ecodex.connector.controller.ECodexConnectorInternationalToNationalController">
   		<property name="connectorProperties" ref="connectorProperties" />
   		<property name="contentMapper" ref="contentMapper" />
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>
