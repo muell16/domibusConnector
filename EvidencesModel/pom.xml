@@ -29,16 +29,71 @@
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 				</configuration>
 			</plugin>
-			
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<instrumentation>
+						<ignores>
+						<ignore>java.security.KeyException</ignore>
+						<ignore>java.net.MalformedURLException</ignore>
+						<ignore>javax.xml.bind.JAXBException</ignore>
+						<ignore>javax.xml.datatype.DatatypeConfigurationException</ignore>
+						</ignores>
+						<excludes>
+							<exclude>eu/spocseu/edeliverygw/*.*</exclude>
+							<exclude>eu/spocseu/edeliverygw/**/*.*</exclude>
+							<exclude>eu/spocseu/edeliverygw/**/**/*.*</exclude>
+							<exclude>org/etsi/uri/**/**/*.*</exclude>
+							<exclude>org/w3/**/**/**/*.*</exclude>
+							<exclude>eu/spocseu/common/*.*</exclude>
+							<exclude>oasis/**/**/**/**/**/*.*</exclude>
+					
+						</excludes>
+					</instrumentation>
+					<formats>
+						<format>html</format>
+					</formats>
+				</configuration>
+				<executions>
+					<execution>
+						<id>site</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>instrument</id>
+						<phase>site</phase>
+						<goals>
+							<goal>cobertura</goal>
+						</goals>
+					</execution>
+
+				</executions>
+			</plugin>
+
 		</plugins>
 
 	</build>
-	
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+
+			</plugin>
+		</plugins>
+	</reporting>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.1</version>
+			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

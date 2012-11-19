@@ -9,15 +9,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -34,6 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
@@ -156,8 +156,7 @@ public class ECodexEvidenceBuilderTest {
 				javaKeyStorePassword, alias, keyPassword);
 		publicKey = keypair.getPublic();
 
-		assertTrue("Signatrue is wrong",
-				signatureValidate(document, publicKey));
+		assertTrue("Signature failed", signatureValidate(document, publicKey));
 
 	}
 
@@ -202,11 +201,11 @@ public class ECodexEvidenceBuilderTest {
 				javaKeyStorePassword, alias, keyPassword);
 		publicKey = keypair.getPublic();
 
-		assertTrue("Signatrue is wrong",
-				signatureValidate(document, publicKey));
+		assertTrue("Signature failed", signatureValidate(document, publicKey));
 
 	}
-//  create a REMEvidenceType "SubmissionAcceptanceRejection"
+
+	// create a REMEvidenceType "SubmissionAcceptanceRejection"
 	private REMEvidenceType createREMEvidenceType1()
 			throws ECodexEvidenceBuilderException {
 		REMEvidenceType evidenceType;
@@ -266,12 +265,13 @@ public class ECodexEvidenceBuilderTest {
 				javaKeyStorePassword, alias, keyPassword);
 		publicKey = keypair.getPublic();
 
-		assertTrue("Signatrue is wrong",
-				signatureValidate(document, publicKey));
+		assertTrue("Signature failed", signatureValidate(document, publicKey));
 	}
-//  create a REMEvidenceType "DeliveryNonDeliveryToRecipient"
 
-	private REMEvidenceType createREMEvidenceType2() throws ECodexEvidenceBuilderException {
+	// create a REMEvidenceType "DeliveryNonDeliveryToRecipient"
+
+	private REMEvidenceType createREMEvidenceType2()
+			throws ECodexEvidenceBuilderException {
 		REMEvidenceType evidenceType;
 		byte[] evidenceAsByteArray;
 		byte[] evidenceAsByteArray1;
@@ -283,13 +283,15 @@ public class ECodexEvidenceBuilderTest {
 				createMessageDetailsObject());
 		EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
 				javaKeyStorePassword, alias, keyPassword);
-		
-		evidenceAsByteArray1=builder.createDeliveryNonDeliveryToRecipient(true, REMErrorEvent.OTHER, createEntityDetailsObject(), utils.convertIntoEvidenceType(evidenceAsByteArray));
+
+		evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(
+				true, REMErrorEvent.OTHER, createEntityDetailsObject(),
+				utils.convertIntoEvidenceType(evidenceAsByteArray));
 
 		evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray1);
 
 		return evidenceType;
-		
+
 	}
 
 	/**
@@ -297,7 +299,7 @@ public class ECodexEvidenceBuilderTest {
 	 * createRetrievalNonRetrievalByRecipient(boolean,REMErrorEvent
 	 * ,EDeliveryDetails,REMEvidenceType) method test.
 	 * 
-	 *  Case: Eventreason = UNKNOWN_ORIGINATOR_ADDRESS;
+	 * Case: Eventreason = UNKNOWN_ORIGINATOR_ADDRESS;
 	 * 
 	 * @throws Exception
 	 * 
@@ -332,8 +334,7 @@ public class ECodexEvidenceBuilderTest {
 				javaKeyStorePassword, alias, keyPassword);
 		publicKey = keypair.getPublic();
 
-		assertTrue("Signatrue is wrong",
-				signatureValidate(document, publicKey));
+		assertTrue("Signature failed", signatureValidate(document, publicKey));
 	}
 
 	/**
@@ -376,8 +377,7 @@ public class ECodexEvidenceBuilderTest {
 				javaKeyStorePassword, alias, keyPassword);
 		publicKey = keypair.getPublic();
 
-		assertTrue("Signatrue is wrong",
-				signatureValidate(document, publicKey));
+		assertTrue("Signature failed", signatureValidate(document, publicKey));
 	}
 
 	/**
@@ -411,48 +411,59 @@ public class ECodexEvidenceBuilderTest {
 		FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 		fileoutXML.write(signedxmlData);
 		fileoutXML.close();
-
+//		to test: if file A.xml is changed.
+		signedxmlData=getBytesFromFile("src/test/resources/signatureTestbysourceInfochange.xml");
 		Document document;
 		document = dbf.newDocumentBuilder().parse(
 				new ByteArrayInputStream(signedxmlData));
-//		KeyPair keypair= generateNewRandomKeyPair();
+		// KeyPair keypair= generateNewRandomKeyPair();
 		KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath,
 				javaKeyStorePassword, alias, keyPassword);
 		publicKey = keypair.getPublic();
-		System.out.println(publicKey.toString());
+		
+//		System.out.println(publicKey.toString());
 
-		assertTrue("Signatrue is wrong",
-				signatureValidate(document, publicKey));
+		assertTrue("Signature failed", signatureValidate(document, publicKey));
 	}
-	//Signature validation 
+
+	// Signature validation
 	private boolean signatureValidate(Document doc, PublicKey publicKey)
 			throws Exception {
-		boolean signStatus= true;
+		boolean signStatus = true;
 		NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS,
 				"Signature");
 		if (nl.getLength() == 0) {
 			throw new Exception("Cannot find Signature element");
 		}
+		Node signatureNode = nl.item(0);
+		XMLSignatureFactory factory = getSignatureFactory();
+		// to test: CASE 1
+//		XMLSignature signature = factory
+//				.unmarshalXMLSignature(new DOMStructure(signatureNode));
 		
 		// Create ValidateContext
 		DOMValidateContext valContext = new DOMValidateContext(publicKey,
-				nl.item(0));
-		XMLSignatureFactory factory = getSignatureFactory();
-		XMLSignature signature = factory.unmarshalXMLSignature(valContext);
+				signatureNode);
+		
+		//to test: CASE 2
+		XMLSignature signature = 
+	            factory.unmarshalXMLSignature(valContext);
+		
+		
 		// Validate the XMLSignature
-		signStatus= signStatus && signature.validate(valContext);
-		 // check the validation status of each Reference
+		signStatus = signStatus && signature.validate(valContext);
+		// check the validation status of each Reference
 		List<?> refs = signature.getSignedInfo().getReferences();
-		for(int i=0; i<refs.size(); i++) {
-			Reference ref = (Reference)refs.get(i);
-			System.out.println("Reference["+i+"] validity status: " + ref.validate(valContext));
-			signStatus= signStatus && ref.validate(valContext);
-			}
-	return signStatus;
+		for (int i = 0; i < refs.size(); i++) {
+			Reference ref = (Reference) refs.get(i);
+			
+//			System.out.println("Reference[" + i + "] validity status: "
+//					+ ref.validate(valContext));
+			signStatus = signStatus && ref.validate(valContext);
+		}
+		return signStatus;
 	}
-	 
-	
-	
+
 	private XMLSignatureFactory getSignatureFactory()
 			throws InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
@@ -462,7 +473,7 @@ public class ECodexEvidenceBuilderTest {
 
 	}
 
-	// private methode to get the keypair
+	// private method to get the keypair
 	private KeyPair getKeyPairFromKeyStore(String store, String storePass,
 			String alias, String keyPass) {
 		KeyStore ks;
@@ -506,20 +517,51 @@ public class ECodexEvidenceBuilderTest {
 
 		return keyPair;
 	}
-	
-//	create random KeyPair with algorithm "RSA"
-	private static KeyPair generateNewRandomKeyPair()
-			throws NoSuchAlgorithmException {
-		final int KEY_SIZE = 1024;
-		final String ALGORITHM = "RSA";
-		final String RANDOM_ALG = "SHA1PRNG";
-		KeyPairGenerator kg = null;
-		SecureRandom random = null;
-		kg = KeyPairGenerator.getInstance(ALGORITHM);
-		random = SecureRandom.getInstance(RANDOM_ALG);
-		kg.initialize(KEY_SIZE, random);
-		return kg.generateKeyPair();
-	}
+	//create array bytes from xmlFile
+		private byte[] getBytesFromFile(String xmlFilePath) throws Exception {
+			 
+			byte[] bytes = null;
+	 		File file = new File(xmlFilePath);
+			InputStream is;
+			is = new FileInputStream(file);
+			// Get the size of the file
+			long length = file.length();
+	 		// to ensure that file is not larger than Integer.MAX_VALUE.
+			if (length > Integer.MAX_VALUE) {
+				// throw new Exception("Too large file");
+				System.err.println("Too large file");
+			}
+			// Create the byte array to hold the data
+			bytes = new byte[(int) length];
+	 		// Read in the bytes
+			int offset = 0;
+			int numRead = 0;
+			while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+				offset += numRead;
+			}
+			// Ensure all the bytes have been read in
+			if (offset < bytes.length) {
+				System.err.println("Could not completely read file " + file.getName());
+			}
+	 		// Close the input stream and return bytes
+			is.close();
+			return bytes;
+		}
+
+	// create random KeyPair with algorithm "RSA"
+//	private static KeyPair generateNewRandomKeyPair()
+//			throws NoSuchAlgorithmException {
+//		final int KEY_SIZE = 1024;
+//		final String ALGORITHM = "RSA";
+//		final String RANDOM_ALG = "SHA1PRNG";
+//		KeyPairGenerator kg = null;
+//		SecureRandom random = null;
+//		kg = KeyPairGenerator.getInstance(ALGORITHM);
+//		random = SecureRandom.getInstance(RANDOM_ALG);
+//		kg.initialize(KEY_SIZE, random);
+//		return kg.generateKeyPair();
+//	}
+
 	/**
 	 * Perform pre-test initialization.
 	 * 

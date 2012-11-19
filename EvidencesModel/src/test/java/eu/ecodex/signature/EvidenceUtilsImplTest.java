@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
@@ -35,8 +36,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
+//import org.jcp.xml.dsig.internal.dom;
 /**
  * The class <code>EvidenceUtilsImplTest</code> contains tests for the class <code>{@link EvidenceUtilsImpl}</code>.
  *
@@ -183,7 +185,8 @@ public class EvidenceUtilsImplTest {
 		EvidenceUtilsImpl fixture= new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 		
 		byte[] signedxmlData=fixture.signByteArray(xmlData);
-		File xmloutputfile=new File("src/test/resources/DeliveryNonDelivery.xml");
+		
+		File xmloutputfile=new File("src/test/resources/SignByteArrayTestoutputFile.xml");
 		FileOutputStream fileoutXML=new FileOutputStream(xmloutputfile);
 		fileoutXML.write(signedxmlData);
 		fileoutXML.close();
@@ -204,7 +207,7 @@ public class EvidenceUtilsImplTest {
 //    	System.out.println(keypair.getPublic().toString());
 		try {
 			
-			assertTrue("Signatrue is wrong",
+			assertTrue("Signature failed",
 					signatureValidate(document, publicKey));
 		} catch (MarshalException ex) {
 			fail("Unmarshal failed: " + ex.getMessage());
@@ -216,30 +219,34 @@ public class EvidenceUtilsImplTest {
 		
 		
 	}
-	//signature validation 
+	// Signature validation
 		private boolean signatureValidate(Document doc, PublicKey publicKey)
 				throws Exception {
-			boolean signStatus= true;
+			boolean signStatus = true;
 			NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS,
 					"Signature");
 			if (nl.getLength() == 0) {
 				throw new Exception("Cannot find Signature element");
 			}
+			Node signatureNode = nl.item(0);
+			XMLSignatureFactory factory = getSignatureFactory();
+			XMLSignature signature = factory
+					.unmarshalXMLSignature(new DOMStructure(signatureNode));
 			// Create ValidateContext
 			DOMValidateContext valContext = new DOMValidateContext(publicKey,
-					nl.item(0));
-			XMLSignatureFactory factory = getSignatureFactory();
-			XMLSignature signature = factory.unmarshalXMLSignature(valContext);
+					signatureNode);
+
 			// Validate the XMLSignature
-			signStatus= signStatus && signature.validate(valContext);
-			 // check the validation status of each Reference
+			signStatus = signStatus && signature.validate(valContext);
+			// check the validation status of each Reference
 			List<?> refs = signature.getSignedInfo().getReferences();
-			for(int i=0; i<refs.size(); i++) {
-				Reference ref = (Reference)refs.get(i);
-				System.out.println("Reference["+i+"] validity status: " + ref.validate(valContext));
-				signStatus= signStatus && ref.validate(valContext);
-				}
-		return signStatus;
+			for (int i = 0; i < refs.size(); i++) {
+				Reference ref = (Reference) refs.get(i);
+//				System.out.println("Reference[" + i + "] validity status: "
+//						+ ref.validate(valContext));
+				signStatus = signStatus && ref.validate(valContext);
+			}
+			return signStatus;
 		}
 		
 		private XMLSignatureFactory getSignatureFactory()
@@ -251,17 +258,13 @@ public class EvidenceUtilsImplTest {
 
 		}
 
-	@SuppressWarnings("restriction")
+
 	@Before
 	public void setUp()
 		throws Exception {
-//		String providerName = System.getProperty("jsr105Provider",
-//				"org.jcp.xml.dsig.internal.dom.XMLDSigRI");
-//		signFactory = XMLSignatureFactory.getInstance("DOM",
-//				(Provider) Class.forName(providerName).newInstance());
-		
+	
 		signFactory = XMLSignatureFactory.getInstance
-	            ("DOM", new org.jcp.xml.dsig.internal.dom.XMLDSigRI());	
+	            ("DOM");	
 	}
 
 	/**
