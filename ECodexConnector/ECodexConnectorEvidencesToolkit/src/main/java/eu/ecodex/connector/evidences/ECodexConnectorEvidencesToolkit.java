@@ -1,7 +1,6 @@
 package eu.ecodex.connector.evidences;
 
-import org.etsi.uri._02640.v2.REMEvidenceType;
-
+import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
 
@@ -13,20 +12,16 @@ import eu.ecodex.connector.evidences.type.RejectionReason;
  */
 public interface ECodexConnectorEvidencesToolkit {
 
-    byte[] createSubmissionAcceptance(String nationalMessageId, byte[] originalMessage, String senderAddress,
-            String recipientAddress) throws EvidencesToolkitException;
+    void createSubmissionAcceptance(Message message) throws EvidencesToolkitException;
 
-    byte[] createSubmissionRejection(RejectionReason rejectionReason, String nationalMessageId, byte[] originalMessage,
-            String senderAddress, String recipientAddress) throws EvidencesToolkitException;
+    void createSubmissionRejection(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;
 
-    byte[] createDeliveryEvidence(REMEvidenceType previousEvidence) throws EvidencesToolkitException;
+    void createDeliveryEvidence(Message message) throws EvidencesToolkitException;
 
-    byte[] createNonDeliveryEvidence(RejectionReason rejectionReason, REMEvidenceType previousEvidence)
-            throws EvidencesToolkitException;
+    void createNonDeliveryEvidence(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;
 
-    byte[] createRetrievalEvidence(REMEvidenceType previousEvidence) throws EvidencesToolkitException;
+    void createRetrievalEvidence(Message message) throws EvidencesToolkitException;
 
-    byte[] createNonRetrievalEvidence(RejectionReason rejectionReason, REMEvidenceType previousEvidence)
-            throws EvidencesToolkitException;
+    void createNonRetrievalEvidence(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;
 
 }

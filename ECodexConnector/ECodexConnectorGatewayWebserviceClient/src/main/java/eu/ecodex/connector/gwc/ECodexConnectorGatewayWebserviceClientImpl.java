@@ -2,6 +2,7 @@ package eu.ecodex.connector.gwc;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -49,17 +50,11 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
     private static final String PMODE = "EE_Form_A";
 
     private BackendInterface gatewayBackendWebservice;
-    // private MessageStateLogger messageStateLogger;
     private ECodexConnectorProperties connectorProperties;
 
     public void setGatewayBackendWebservice(BackendInterface gatewayBackendWebservice) {
         this.gatewayBackendWebservice = gatewayBackendWebservice;
     }
-
-    // public void setMessageStateLogger(MessageStateLogger messageStateLogger)
-    // {
-    // this.messageStateLogger = messageStateLogger;
-    // }
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -159,7 +154,7 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
         Message message = new Message(details, content);
 
         if (payload.size() > 1) {
-            MessageAttachment[] attachments = extractAttachments(payload);
+            List<MessageAttachment> attachments = extractAttachments(payload);
             message.setAttachments(attachments);
         }
 
@@ -177,8 +172,8 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
         return content;
     }
 
-    private MessageAttachment[] extractAttachments(List<DataHandler> payload) {
-        MessageAttachment[] attachments = new MessageAttachment[payload.size() - 1];
+    private List<MessageAttachment> extractAttachments(List<DataHandler> payload) {
+        List<MessageAttachment> attachments = new ArrayList<MessageAttachment>();
         for (int counter = 1; counter < payload.size(); counter++) {
             DataHandler dh = payload.get(counter);
             try {
@@ -189,7 +184,7 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
                 MessageAttachment attachment = new MessageAttachment();
                 attachment.setAttachment(b);
                 attachment.setMimeType(dh.getContentType());
-                attachments[counter] = attachment;
+                attachments.add(attachment);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -270,8 +265,8 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
 
         if (message.getConfirmations() != null) {
             // Pick only the last produced evidence
-            DataHandler evidenceHandler = new DataHandler(
-                    message.getConfirmations()[message.getConfirmations().length].getEvidence(), "text/xml");
+            DataHandler evidenceHandler = new DataHandler(message.getConfirmations()
+                    .get(message.getConfirmations().size() - 1).getEvidence(), "text/xml");
             request.getPayload().add(evidenceHandler);
         }
 

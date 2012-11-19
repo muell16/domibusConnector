@@ -18,6 +18,7 @@
   		<property name="contentMapper" ref="contentMapper" />
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>
   		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
+  		<property name="evidencesToolkit" ref="evidencesToolkit"/>
   	</bean>
   
 </beans>

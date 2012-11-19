@@ -38,8 +38,8 @@ public interface ECodexConnectorNationalBackendClient {
      * @throws ECodexConnectorNationalBackendClientException
      * @throws ImplementationMissingException
      */
-    public MessageConfirmation deliverLastEvidenceForMessage() throws ECodexConnectorNationalBackendClientException,
-            ImplementationMissingException;
+    public void deliverLastEvidenceForMessage(MessageConfirmation confirmation)
+            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException;
 
     /**
      * Requests all messages from the national system that are not yet handled

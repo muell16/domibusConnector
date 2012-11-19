@@ -22,6 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageContent;
+import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
 
@@ -37,10 +40,14 @@ public class ECodexConnectorEvidencesToolkitTest {
     @Test
     public void testCreateSubmissionAcceptance() {
         LOG.debug("Started testCreateSubmissionAcceptance");
+
+        Message message = buildTestMessage();
+
         try {
-            byte[] evidence = evidencesToolkit.createSubmissionAcceptance("nationalMessageId1", new String(
-                    "originalMessage").getBytes(), "someSenderAddress", "someRecipientAddress");
-            String evidencePretty = prettyPrint(evidence);
+            evidencesToolkit.createSubmissionAcceptance(message);
+            Assert.assertNotNull(message.getConfirmations());
+            Assert.assertEquals(1, message.getConfirmations().size());
+            String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
             LOG.debug(evidencePretty);
         } catch (EvidencesToolkitException e) {
             e.printStackTrace();
@@ -58,10 +65,14 @@ public class ECodexConnectorEvidencesToolkitTest {
     @Test
     public void testCreateSubmissionRejection() {
         LOG.debug("Started testCreateSubmissionRejection");
+
+        Message message = buildTestMessage();
+
         try {
-            byte[] evidence = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, "nationalMessageId1",
-                    new String("originalMessage").getBytes(), "someSenderAddress", "someRecipientAddress");
-            String evidencePretty = prettyPrint(evidence);
+            evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message);
+            Assert.assertNotNull(message.getConfirmations());
+            Assert.assertEquals(1, message.getConfirmations().size());
+            String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
             LOG.debug(evidencePretty);
         } catch (EvidencesToolkitException e) {
             e.printStackTrace();
@@ -74,6 +85,20 @@ public class ECodexConnectorEvidencesToolkitTest {
             Assert.fail();
         }
         LOG.debug("Finished testCreateSubmissionRejection");
+    }
+
+    private Message buildTestMessage() {
+        MessageDetails details = new MessageDetails();
+        details.setNationalMessageId("nationalMessageId1");
+        details.setOriginalSenderAddress("someSenderAddress");
+        details.setFinalRecipientAddress("someRecipientAddress");
+
+        MessageContent content = new MessageContent();
+        content.setXmlContent(new String("originalMessage").getBytes());
+
+        Message message = new Message(details, content);
+
+        return message;
     }
 
     private String prettyPrint(byte[] input) throws TransformerFactoryConfigurationError, TransformerException {

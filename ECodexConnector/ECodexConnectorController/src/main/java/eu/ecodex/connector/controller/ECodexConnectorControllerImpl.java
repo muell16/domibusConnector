@@ -9,6 +9,8 @@ import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
+import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
+import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.connector.mapping.ECodexConnectorContentMapper;
@@ -24,6 +26,7 @@ public class ECodexConnectorControllerImpl implements ECodexConnectorController 
     ECodexConnectorContentMapper contentMapper;
     ECodexConnectorNationalBackendClient nationalBackendClient;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
+    ECodexConnectorEvidencesToolkit evidencesToolit;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -39,6 +42,10 @@ public class ECodexConnectorControllerImpl implements ECodexConnectorController 
 
     public void setGatewayWebserviceClient(ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient) {
         this.gatewayWebserviceClient = gatewayWebserviceClient;
+    }
+
+    public void setEvidencesToolit(ECodexConnectorEvidencesToolkit evidencesToolit) {
+        this.evidencesToolit = evidencesToolit;
     }
 
     @Override
@@ -85,9 +92,24 @@ public class ECodexConnectorControllerImpl implements ECodexConnectorController 
             try {
                 byte[] xmlContent = contentMapper.mapNationalToInternational(message.getMessageContent()
                         .getXmlContent());
+                message.getMessageContent().setXmlContent(xmlContent);
             } catch (ECodexConnectorContentMapperException e) {
                 e.printStackTrace();
             } catch (ImplementationMissingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (connectorProperties.isUseSecurityToolkit()) {
+            // TODO: Integration of SecurityToolkit to build ASIC-S container
+            // and TrustOKToken
+            LOGGER.warn("SecurityToolkit not available yet! Must send message unsecure!");
+        }
+
+        if (connectorProperties.isUseEvidencesToolkit()) {
+            try {
+                evidencesToolit.createSubmissionAcceptance(message);
+            } catch (EvidencesToolkitException e) {
                 e.printStackTrace();
             }
         }

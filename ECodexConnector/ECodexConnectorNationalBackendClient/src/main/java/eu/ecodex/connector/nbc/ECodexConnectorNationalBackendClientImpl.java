@@ -33,8 +33,8 @@ public class ECodexConnectorNationalBackendClientImpl implements ECodexConnector
     }
 
     @Override
-    public MessageConfirmation deliverLastEvidenceForMessage() throws ECodexConnectorNationalBackendClientException,
-            ImplementationMissingException {
+    public void deliverLastEvidenceForMessage(MessageConfirmation confirmation)
+            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException {
         throw new ImplementationMissingException("ECodexConnectorNationalBackendClient",
                 "deliverLastEvidenceForMessage");
     }

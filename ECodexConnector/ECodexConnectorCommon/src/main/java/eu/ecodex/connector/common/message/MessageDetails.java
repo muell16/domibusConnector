@@ -21,6 +21,8 @@ public class MessageDetails {
     private ActionEnum action;
     private PartnerEnum fromPartner;
     private PartnerEnum toPartner;
+    private String originalSenderAddress;
+    private String finalRecipientAddress;
 
     public String getNationalMessageId() {
         return nationalMessageId;
@@ -84,6 +86,22 @@ public class MessageDetails {
 
     public void setToPartner(PartnerEnum toPartner) {
         this.toPartner = toPartner;
+    }
+
+    public String getOriginalSenderAddress() {
+        return originalSenderAddress;
+    }
+
+    public void setOriginalSenderAddress(String originalSenderAddress) {
+        this.originalSenderAddress = originalSenderAddress;
+    }
+
+    public String getFinalRecipientAddress() {
+        return finalRecipientAddress;
+    }
+
+    public void setFinalRecipientAddress(String finalRecipientAddress) {
+        this.finalRecipientAddress = finalRecipientAddress;
     }
 
 }

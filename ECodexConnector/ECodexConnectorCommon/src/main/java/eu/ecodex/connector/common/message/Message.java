@@ -1,5 +1,8 @@
 package eu.ecodex.connector.common.message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This is a container object that represents all data of a message.
  * 
@@ -11,12 +14,13 @@ public class Message {
 
     private final MessageDetails messageDetails;
     private final MessageContent messageContent;
-    private MessageAttachment[] attachments;
-    private MessageConfirmation[] confirmations;
+    private List<MessageAttachment> attachments;
+    private List<MessageConfirmation> confirmations;
 
     /**
-     * There is only a constructor available with messageDetails and
-     * messageContent as they are mandatory as a minimum for a message.
+     * This constructor is for messages which contain content and original
+     * documents. {@link MessageDetails} and {@link MessageContent} are
+     * mandatory as a minimum for a message.
      * 
      * @param messageDetails
      *            the message details concerning some information on the message
@@ -29,20 +33,33 @@ public class Message {
         this.messageContent = messageContent;
     }
 
-    public MessageAttachment[] getAttachments() {
-        return attachments;
+    /**
+     * This constructor is for evidence messages which are returned by the
+     * partner gateway. {@link MessageDetails} and {@link MessageConfirmation}
+     * are mandatory as a minimum for an evidence message.
+     * 
+     * @param messageDetails
+     * @param messageConfirmation
+     */
+    public Message(MessageDetails messageDetails, MessageConfirmation messageConfirmation) {
+        super();
+        this.messageDetails = messageDetails;
+        messageContent = null;
+        addConfirmation(messageConfirmation);
     }
 
-    public void setAttachments(MessageAttachment[] attachments) {
-        this.attachments = attachments;
+    public void addConfirmation(MessageConfirmation confirmation) {
+        if (confirmations == null) {
+            confirmations = new ArrayList<MessageConfirmation>();
+        }
+        confirmations.add(confirmation);
     }
 
-    public MessageConfirmation[] getConfirmations() {
-        return confirmations;
-    }
-
-    public void setConfirmations(MessageConfirmation[] confirmations) {
-        this.confirmations = confirmations;
+    public void addAttachment(MessageAttachment attachment) {
+        if (attachments == null) {
+            attachments = new ArrayList<MessageAttachment>();
+        }
+        attachments.add(attachment);
     }
 
     public MessageDetails getMessageDetails() {
@@ -51,6 +68,22 @@ public class Message {
 
     public MessageContent getMessageContent() {
         return messageContent;
+    }
+
+    public List<MessageAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<MessageAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public List<MessageConfirmation> getConfirmations() {
+        return confirmations;
+    }
+
+    public void setConfirmations(List<MessageConfirmation> confirmations) {
+        this.confirmations = confirmations;
     }
 
 }
