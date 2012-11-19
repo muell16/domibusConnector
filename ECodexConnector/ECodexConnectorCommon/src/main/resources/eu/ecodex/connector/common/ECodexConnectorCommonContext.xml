@@ -18,8 +18,6 @@
 		<property name="postalAddressCountry" value="${postal.address.country}" />
 	</bean>
 	
-	<bean id="messageStateLogger" class="eu.ecodex.connector.common.MessageStateLogger">
-		<property name="loggerDao" ref="messageStateLogDao" />
-	</bean>
+	
 	
 </beans>

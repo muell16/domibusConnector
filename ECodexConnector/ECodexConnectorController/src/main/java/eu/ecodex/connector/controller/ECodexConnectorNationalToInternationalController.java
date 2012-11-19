@@ -76,7 +76,7 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
 
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
-                evidencesToolit.createSubmissionAcceptance(message);
+                evidencesToolkit.createSubmissionAcceptance(message);
             } catch (EvidencesToolkitException e) {
                 e.printStackTrace();
             }

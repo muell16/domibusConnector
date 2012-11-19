@@ -44,6 +44,6 @@
 	<context:annotation-config />
 
 	<bean id="evidenceDao"
-		class="eu.ecodex.connector.common.db.dao.impl.ECodecEvicenceDaoImpl" />
+		class="eu.ecodex.connector.common.db.dao.impl.ECodexEvidenceDaoImpl" />
 
 </beans>

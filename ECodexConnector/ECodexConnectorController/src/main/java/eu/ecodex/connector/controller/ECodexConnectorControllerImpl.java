@@ -12,7 +12,7 @@ public abstract class ECodexConnectorControllerImpl implements ECodexConnectorCo
     ECodexConnectorContentMapper contentMapper;
     ECodexConnectorNationalBackendClient nationalBackendClient;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
-    ECodexConnectorEvidencesToolkit evidencesToolit;
+    ECodexConnectorEvidencesToolkit evidencesToolkit;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -30,8 +30,8 @@ public abstract class ECodexConnectorControllerImpl implements ECodexConnectorCo
         this.gatewayWebserviceClient = gatewayWebserviceClient;
     }
 
-    public void setEvidencesToolit(ECodexConnectorEvidencesToolkit evidencesToolit) {
-        this.evidencesToolit = evidencesToolit;
+    public void setEvidencesToolkit(ECodexConnectorEvidencesToolkit evidencesToolkit) {
+        this.evidencesToolkit = evidencesToolkit;
     }
 
 }
