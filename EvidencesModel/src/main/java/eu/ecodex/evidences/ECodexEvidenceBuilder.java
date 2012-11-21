@@ -127,7 +127,7 @@ public class ECodexEvidenceBuilder  implements EvidenceBuilder {
 		
 		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);		
 		
-		RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, new SubmissionAcceptanceRejection(previousEvidence), isAcceptance);
+		RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, previousEvidence, isAcceptance);
 		
 		if(eventReason != null)
 			evidence.setEventReason(eventReason);

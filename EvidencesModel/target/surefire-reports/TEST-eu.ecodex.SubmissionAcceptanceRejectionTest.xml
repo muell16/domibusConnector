@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="1.828" errors="0" skipped="0" tests="1" name="eu.ecodex.SubmissionAcceptanceRejectionTest">
+<testsuite failures="0" time="1.718" errors="0" skipped="0" tests="2" name="eu.ecodex.SubmissionAcceptanceRejectionTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Programme\Java\jdk6\jre\bin"/>
@@ -19,7 +19,7 @@
     <property name="basedir" value="D:\git\ecodex_evidences\EvidencesModel"/>
     <property name="java.endorsed.dirs" value="C:\Programme\Java\jdk6\jre\lib\endorsed"/>
     <property name="os.arch" value="x86"/>
-    <property name="surefire.real.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefirebooter8322324763750668217.jar"/>
+    <property name="surefire.real.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefirebooter8222945021751510986.jar"/>
     <property name="java.io.tmpdir" value="C:\DOKUME~1\muell16\LOKALE~1\Temp\"/>
     <property name="line.separator" value="
 "/>
@@ -28,7 +28,7 @@
     <property name="os.name" value="Windows XP"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
     <property name="java.library.path" value="C:\Programme\Java\jdk6\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Programme\TortoiseSVN\bin;C:\WINDOWS\system32\WindowsPowerShell\v1.0;C:\Programme\Windows Imaging\;d:\ZPOnF\Workspace_Git\build\\externals\svn\bin;d:\ZPOnF\Workspace_Git\build\\externals\svn\bin;d:\ZPOnF\Workspace_Git\build\\externals\svn\bin;d:\ZPOnF\Workspace_Git\build\;C:\Programme\Java\jdk6\bin;D:\Java\xmlbeans-2.5.0\bin;D:\Programme\XML_Validator;D:\Java\apache-maven-3.0.4\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Programme\TortoiseSVN\bin;C:\WINDOWS\system32\WindowsPowerShell\v1.0;C:\Programme\Windows Imaging\;."/>
-    <property name="surefire.test.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\test-classes;D:\git\ecodex_evidences\EvidencesModel\target\classes;D:\Java\mavenrepo\junit\junit\4.1\junit-4.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-log4j12\1.6.1\slf4j-log4j12-1.6.1.jar;D:\Java\mavenrepo\log4j\log4j\1.2.16\log4j-1.2.16.jar;D:\Java\mavenrepo\javax\mail\mail\1.4.1\mail-1.4.1.jar;D:\Java\mavenrepo\javax\activation\activation\1.1\activation-1.1.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-xjc\2.2.6\jaxb-xjc-2.2.6.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-impl\2.2.6\jaxb-impl-2.2.6.jar;D:\Java\mavenrepo\javax\xml\bind\jaxb-api\2.2.6\jaxb-api-2.2.6.jar;D:\Java\mavenrepo\commons-io\commons-io\2.4\commons-io-2.4.jar;D:\Java\mavenrepo\eu\europa\ec\markt\dss\signature-applet-r5\1.0\signature-applet-r5-1.0.jar;D:\Java\mavenrepo\org\bouncycastle\bcprov-jdk16\1.46\bcprov-jdk16-1.46.jar;D:\Java\mavenrepo\org\bouncycastle\bcmail-jdk16\1.46\bcmail-jdk16-1.46.jar;"/>
+    <property name="surefire.test.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\test-classes;D:\git\ecodex_evidences\EvidencesModel\target\classes;D:\Java\mavenrepo\junit\junit\4.4\junit-4.4.jar;D:\Java\mavenrepo\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-log4j12\1.6.1\slf4j-log4j12-1.6.1.jar;D:\Java\mavenrepo\log4j\log4j\1.2.16\log4j-1.2.16.jar;D:\Java\mavenrepo\javax\mail\mail\1.4.1\mail-1.4.1.jar;D:\Java\mavenrepo\javax\activation\activation\1.1\activation-1.1.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-xjc\2.2.6\jaxb-xjc-2.2.6.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-impl\2.2.6\jaxb-impl-2.2.6.jar;D:\Java\mavenrepo\javax\xml\bind\jaxb-api\2.2.6\jaxb-api-2.2.6.jar;D:\Java\mavenrepo\commons-io\commons-io\2.4\commons-io-2.4.jar;D:\Java\mavenrepo\eu\europa\ec\markt\dss\signature-applet-r5\1.0\signature-applet-r5-1.0.jar;D:\Java\mavenrepo\org\bouncycastle\bcprov-jdk16\1.46\bcprov-jdk16-1.46.jar;D:\Java\mavenrepo\org\bouncycastle\bcmail-jdk16\1.46\bcmail-jdk16-1.46.jar;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="50.0"/>
     <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
@@ -39,11 +39,11 @@
     <property name="java.specification.version" value="1.6"/>
     <property name="file.encoding" value="Cp1252"/>
     <property name="user.name" value="muell16"/>
-    <property name="java.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\test-classes;D:\git\ecodex_evidences\EvidencesModel\target\classes;D:\Java\mavenrepo\junit\junit\4.1\junit-4.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-log4j12\1.6.1\slf4j-log4j12-1.6.1.jar;D:\Java\mavenrepo\log4j\log4j\1.2.16\log4j-1.2.16.jar;D:\Java\mavenrepo\javax\mail\mail\1.4.1\mail-1.4.1.jar;D:\Java\mavenrepo\javax\activation\activation\1.1\activation-1.1.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-xjc\2.2.6\jaxb-xjc-2.2.6.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-impl\2.2.6\jaxb-impl-2.2.6.jar;D:\Java\mavenrepo\javax\xml\bind\jaxb-api\2.2.6\jaxb-api-2.2.6.jar;D:\Java\mavenrepo\commons-io\commons-io\2.4\commons-io-2.4.jar;D:\Java\mavenrepo\eu\europa\ec\markt\dss\signature-applet-r5\1.0\signature-applet-r5-1.0.jar;D:\Java\mavenrepo\org\bouncycastle\bcprov-jdk16\1.46\bcprov-jdk16-1.46.jar;D:\Java\mavenrepo\org\bouncycastle\bcmail-jdk16\1.46\bcmail-jdk16-1.46.jar;"/>
+    <property name="java.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\test-classes;D:\git\ecodex_evidences\EvidencesModel\target\classes;D:\Java\mavenrepo\junit\junit\4.4\junit-4.4.jar;D:\Java\mavenrepo\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-log4j12\1.6.1\slf4j-log4j12-1.6.1.jar;D:\Java\mavenrepo\log4j\log4j\1.2.16\log4j-1.2.16.jar;D:\Java\mavenrepo\javax\mail\mail\1.4.1\mail-1.4.1.jar;D:\Java\mavenrepo\javax\activation\activation\1.1\activation-1.1.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-xjc\2.2.6\jaxb-xjc-2.2.6.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-impl\2.2.6\jaxb-impl-2.2.6.jar;D:\Java\mavenrepo\javax\xml\bind\jaxb-api\2.2.6\jaxb-api-2.2.6.jar;D:\Java\mavenrepo\commons-io\commons-io\2.4\commons-io-2.4.jar;D:\Java\mavenrepo\eu\europa\ec\markt\dss\signature-applet-r5\1.0\signature-applet-r5-1.0.jar;D:\Java\mavenrepo\org\bouncycastle\bcprov-jdk16\1.46\bcprov-jdk16-1.46.jar;D:\Java\mavenrepo\org\bouncycastle\bcmail-jdk16\1.46\bcmail-jdk16-1.46.jar;"/>
     <property name="java.vm.specification.version" value="1.0"/>
     <property name="sun.arch.data.model" value="32"/>
     <property name="java.home" value="C:\Programme\Java\jdk6\jre"/>
-    <property name="sun.java.command" value="D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefirebooter8322324763750668217.jar D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefire6871590374485572987tmp D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefire631033763717550224tmp"/>
+    <property name="sun.java.command" value="D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefirebooter8222945021751510986.jar D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefire2821853975342081724tmp D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefire5491350929735188145tmp"/>
     <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.language" value="de"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -60,5 +60,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="1.734" classname="eu.ecodex.SubmissionAcceptanceRejectionTest" name="createEvidences"/>
+  <testcase time="0.422" classname="eu.ecodex.SubmissionAcceptanceRejectionTest" name="createEvidences"/>
+  <testcase time="1.296" classname="eu.ecodex.SubmissionAcceptanceRejectionTest" name="evidenceChain"/>
 </testsuite>

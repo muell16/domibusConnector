@@ -51,7 +51,8 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 {
 	private static Logger LOG = LoggerFactory
 			.getLogger(RelayREMMDAcceptanceRejection.class);
-
+	
+	private boolean isSuccessful;
 	/**
 	 * This constructor creates this RelayREMMDAcceptanceRejection evidence with
 	 * the given JAXB object and the configuration.
@@ -129,6 +130,13 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 		super(details);
 		init(submissionAcceptanceRejection, isAcceptance);
 	}
+	
+	public RelayREMMDAcceptanceRejection(EDeliveryDetails details,
+			REMEvidenceType submissionAcceptanceRejection, boolean isDelivery)
+	{
+		initEvidenceIssuerDetailsWithEdeliveryDetails(details);
+		init(details, submissionAcceptanceRejection, isDelivery);
+	}
 
 	private void init(Evidence submissionAcceptanceRejection,
 			boolean isAcceptance)
@@ -182,6 +190,30 @@ public class RelayREMMDAcceptanceRejection extends Evidence
 							.createRelayREMMDAcceptanceRejection(jaxbObj),
 					out);
 
+	}
+	
+	private void init(EDeliveryDetails details,
+			REMEvidenceType submissionAcceptanceRejection, boolean isDelivery)
+	{
+
+		evidenceType = Evidences.RELAY_REM_MD_ACCEPTANCE_REJECTION;
+		if (isDelivery) {
+			LOG.debug("Create RelayREMMDAcceptanceRejection in success case.");
+			setEventCode(Evidences.RELAY_REM_MD_ACCEPTANCE_REJECTION
+					.getSuccessEventCode());
+			
+		} else {
+			LOG.debug("Create RelayREMMDAcceptanceRejection in fault case.");
+			setEventCode(Evidences.RELAY_REM_MD_ACCEPTANCE_REJECTION
+					.getFaultEventCode());
+		}
+		initWithPrevious(submissionAcceptanceRejection);
+		isSuccessful = isDelivery;
+	}
+
+	public boolean isSuccessful()
+	{
+		return isSuccessful;
 	}
 
 }

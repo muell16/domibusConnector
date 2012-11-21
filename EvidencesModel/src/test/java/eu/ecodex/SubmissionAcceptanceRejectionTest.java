@@ -29,10 +29,7 @@ import org.etsi.uri._02640.v2.EntityNameType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
-import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import eu.ecodex.evidences.ECodexEvidenceBuilder;
@@ -40,9 +37,7 @@ import eu.ecodex.evidences.EvidenceBuilder;
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.ecodex.signature.EvidenceUtils;
-import eu.ecodex.signature.EvidenceUtilsImpl;
 import eu.ecodex.signature.EvidenceUtilsXades;
-import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
@@ -52,8 +47,10 @@ import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
 public class SubmissionAcceptanceRejectionTest  {
-
-	private static Logger LOG = LoggerFactory.getLogger(SubmissionAcceptanceRejectionTest.class);
+	
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceUtils utils = new EvidenceUtilsXades("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	
 	
 	private EDeliveryDetails createEntityDetailsObject() {
 		
@@ -167,6 +164,47 @@ public class SubmissionAcceptanceRejectionTest  {
 		
 	}
 	
+	@Test
+	public void evidenceChain() throws DatatypeConfigurationException, ECodexEvidenceBuilderException, IOException {
+		
+		
+		EDeliveryDetails details = createEntityDetailsObject();
+		
+		ECodexMessageDetails msgDetails = new ECodexMessageDetails();
+		msgDetails.setEbmsMessageId("ebmsMessageId");
+		msgDetails.setHashAlgorithm("hashAlgorithm");
+		msgDetails.setHashValue(new byte[]{127, 0, 127});
+		msgDetails.setNationalMessageId("nationalMessageId");
+		msgDetails.setRecipientAddress("recipientAddress");
+		msgDetails.setSenderAddress("senderAddress");
+		
+		byte[] subm = builder.createSubmissionAcceptanceRejection(true, null, details, msgDetails);
+		writeFile(subm, "src/test/resources/submissionAcceptance.xml");
+		assertTrue(utils.verifySignature(subm));
+		
+		byte[] relayrem = builder.createRelayREMMDAcceptanceRejection(false, null, details, subm);
+		writeFile(relayrem, "src/test/resources/relayremmdAcceptance.xml");
+		assertTrue(utils.verifySignature(relayrem));
+		
+		byte[] delivery = builder.createDeliveryNonDeliveryToRecipient(true, null, details, relayrem);
+		writeFile(delivery, "src/test/resources/deliveryAcceptance.xml");
+		assertTrue(utils.verifySignature(delivery));
+		
+		byte[] retrieval = builder.createRetrievalNonRetrievalByRecipient(true, null, details, delivery);
+		writeFile(retrieval, "src/test/resources/retrievalAcceptance.xml");
+		assertTrue(utils.verifySignature(retrieval));
+		
+				
+		
+	}
+	
+	private void writeFile(byte[] data, String fileName) throws IOException {
+		FileOutputStream fos = new FileOutputStream(new File(fileName));
+		fos.write(data);
+		fos.flush();
+		fos.close();
+	}
+	
 	private SubmissionAcceptanceRejection createSubmissionAcceptance() throws DatatypeConfigurationException, JAXBException, ParserConfigurationException, SAXException, IOException, TransformerException {
 		EDeliveryDetails details = createEntityDetailsObject();
 		
@@ -191,7 +229,7 @@ public class SubmissionAcceptanceRejectionTest  {
 		fos.write(signedByteArray);
 		fos.flush();
 		fos.close();
-
+		
 		
 		return evidence;
 	}
