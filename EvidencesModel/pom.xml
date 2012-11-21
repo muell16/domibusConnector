@@ -4,9 +4,9 @@
 	<groupId>de.nrw.it.ecodex.evidences</groupId>
 	<artifactId>EvidencesBuilder</artifactId>
 	<name>EvidencesModel</name>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<packaging>jar</packaging>
-	<description>EvidenceBuilder helps creating Evidence in the e-CODEX context.</description>
+	<description>EvidenceBuilder helps creating Evidences in the e-CODEX context.</description>
 	<url>http://www.e-codex.eu</url>
 
 
