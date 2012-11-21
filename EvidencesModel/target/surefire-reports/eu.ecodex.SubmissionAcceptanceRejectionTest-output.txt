@@ -1,516 +1,412 @@
 INFO  EvidenceUtilsImpl - Xades Signer started
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Signature applied to document. Validationresult: Result[VALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
-INFO: TLCase : 6 - CertCase : 10
-INFO  EvidenceUtilsImpl - Verify Signature, Result: VALID
-Ergebnis Validierung: true
-INFO  EvidenceUtilsImpl - Xades Signer started
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext <init>
-INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
-INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
-INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
-INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
-INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
-INFO: Verify with offline services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
-INFO: OCSP response not found
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
-INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
-INFO: Verify with online services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
-WARNUNG: OCSPSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
-WARNUNG: CRLSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
-WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
-INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
-WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
-INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
-INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
-WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
-INFO: Service Information null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
-INFO: TLCase : 6 - CertCase : 10
-INFO  EvidenceUtilsImpl - Signature applied to document. Validationresult: Result[VALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext <init>
-INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
-INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
-INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
-INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
-INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
-INFO: Verify with offline services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
-INFO: OCSP response not found
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
-INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
-INFO: Verify with online services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
-WARNUNG: OCSPSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
-WARNUNG: CRLSource null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
-WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext validate
-INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
-WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
-INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
-INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
-WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
-INFO: Service Information null
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Verify Signature, Result: VALID
 INFO  EvidenceUtilsImpl - Xades Signer started
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:10 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
-INFO: Every CertificateRef found Result[INVALID]
 INFO  EvidenceUtilsImpl - Signature applied to document. Validationresult: Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
-WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
-INFO: Service Information null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
-INFO: TLCase : 6 - CertCase : 10
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext <init>
-INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
-INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
-INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
-INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
-INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
-INFO: Verify with offline services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
-INFO: OCSP response not found
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
-INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
-INFO: Verify with online services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
-WARNUNG: OCSPSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
-WARNUNG: CRLSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
-INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
-WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
-INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
-WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
-INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+INFO: TLCase : 6 - CertCase : 10
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+INFO: Verify with offline services
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+INFO: OCSP response not found
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+INFO: We had no response from OCSP nor CRL
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+INFO: Verify with online services
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+WARNUNG: OCSPSource null
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+WARNUNG: CRLSource null
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+INFO: We had no response from OCSP nor CRL
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
+WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext validate
+INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+INFO: Every certificate found Result[VALID]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+INFO: Every CertificateRef found Result[INVALID]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+INFO: Service Information null
+21.11.2012 10:11:18 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Verify Signature, Result: VALID
 INFO  EvidenceUtilsImpl - Xades Signer started
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Signature applied to document. Validationresult: Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Verify Signature, Result: VALID
 INFO  EvidenceUtilsImpl - Xades Signer started
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Signature applied to document. Validationresult: Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext <init>
 INFO: New context for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: New token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"] hashCode 1520004950
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getOneNotYetVerifiedToken
 INFO: === Get token to validate Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getIssuerCertificate
 INFO: Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext addNotYetVerifiedToken
 INFO: Token was already in list Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with offline services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 INFO: OCSP response not found
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 INFO: No CRL found for certificate CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getCertificateValidity
 INFO: Verify with online services
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: OCSP request for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ocsp.OCSPCertificateVerifier check
 WARNUNG: OCSPSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: No OCSP check performed, looking for a CRL for CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.crl.CRLCertificateVerifier check
 WARNUNG: CRLSource null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.OCSPAndCRLCertificateVerifier check
 INFO: We had no response from OCSP nor CRL
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 WARNUNG: No status for Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext validate
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext validate
 INFO: ValidationContext contains 1 SignedToken and 1 of them have been verified. List : RevocationData[token=Certificate[subjectName="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT",issuedBy="CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT"],data=*** NO VALIDATION DATA AVAILABLE ***] 
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelXL
 INFO: Every certificate found Result[VALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.SignedDocumentValidator verifyLevelC
 INFO: Every CertificateRef found Result[INVALID]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getParentFromTrustedList
 WARNUNG: No issuer in the TrustedList for this certificate. The parent found is Certificate[for=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,source=null,issuedBy=CN=Evidence Builder, OU=WP5, O=e-CODEX, L=Wien, ST=Wien, C=AT,serial=1350449121]
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.ValidationContext getQualificationStatement
 INFO: Service Information null
-21.11.2012 08:21:11 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
+21.11.2012 10:11:19 eu.europa.ec.markt.dss.validation.report.SignatureInformation <init>
 INFO: TLCase : 6 - CertCase : 10
 INFO  EvidenceUtilsImpl - Verify Signature, Result: VALID
