@@ -145,24 +145,6 @@ public class SubmissionAcceptanceRejectionTest  {
 		return dispatchMessage;
 	}
 	
-	@Test
-	public void createEvidences() throws DatatypeConfigurationException, JAXBException, ParserConfigurationException, SAXException, IOException, TransformerException {
-		
-		SubmissionAcceptanceRejection evidence1 = createSubmissionAcceptance();
-		
-		DeliveryNonDeliveryToRecipient evidence2 = new DeliveryNonDeliveryToRecipient(createEntityDetailsObject(), evidence1);
-		
-		FileOutputStream fo = new FileOutputStream("src/test/resources/DeliveryNonDelivery.xml");
-		
-		
-		evidence2.serialize(fo);
-		
-		
-		
-		
-		assertTrue(true);
-		
-	}
 	
 	@Test
 	public void evidenceChain() throws DatatypeConfigurationException, ECodexEvidenceBuilderException, IOException {
@@ -203,35 +185,6 @@ public class SubmissionAcceptanceRejectionTest  {
 		fos.write(data);
 		fos.flush();
 		fos.close();
-	}
-	
-	private SubmissionAcceptanceRejection createSubmissionAcceptance() throws DatatypeConfigurationException, JAXBException, ParserConfigurationException, SAXException, IOException, TransformerException {
-		EDeliveryDetails details = createEntityDetailsObject();
-		
-		REMDispatchType dispatchMessage = createRemDispatchTypeObject();
-		
-		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(details, dispatchMessage, true);
-		
-//		FileOutputStream fo = new FileOutputStream("src/test/resources/SubmissionAcceptance.xml");
-		ByteArrayOutputStream fo = new ByteArrayOutputStream();
-		
-		evidence.serialize(fo);
-		
-		byte[] bytes = fo.toByteArray();
-		
-		EvidenceUtils utils = new EvidenceUtilsXades("D:\\git\\ecodex_evidences\\EvidencesModel\\src\\main\\resources\\evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
-		
-		byte[] signedByteArray = utils.signByteArray(bytes);
-		
-		System.out.println("Ergebnis Validierung: " + utils.verifySignature(signedByteArray) );
-		
-		FileOutputStream fos = new FileOutputStream(new File("output_signed.xml"));
-		fos.write(signedByteArray);
-		fos.flush();
-		fos.close();
-		
-		
-		return evidence;
 	}
 	
 }
