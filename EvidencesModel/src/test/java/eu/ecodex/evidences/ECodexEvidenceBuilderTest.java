@@ -28,7 +28,6 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +37,6 @@ import org.w3c.dom.NodeList;
 
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
-import eu.ecodex.signature.EvidenceUtils;
-import eu.ecodex.signature.EvidenceUtilsImpl;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
@@ -130,13 +127,14 @@ public class ECodexEvidenceBuilderTest {
 	public void testCreateDeliveryNonDeliveryToRecipient() throws Exception {
 
 		byte[] signedxmlData;
+		byte[] previousEvidence;
 		PublicKey publicKey;
 		ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(
 				javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 		boolean isDelivery = true;
 		REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
 		EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
-		REMEvidenceType previousEvidence = createREMEvidenceType1();
+		previousEvidence = createREMEvidenceType1();
 		
 		signedxmlData = ecodexEvidenceBuilder
 				.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason,
@@ -175,13 +173,14 @@ public class ECodexEvidenceBuilderTest {
 	public void testCreateDeliveryNonDeliveryToRecipient_1() throws Exception {
 
 		byte[] signedxmlData;
+		byte[] previousEvidence;
 		PublicKey publicKey;
 		ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(
 				javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 		boolean isDelivery = true;
 		REMErrorEvent eventReason = null;
 		EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
-		REMEvidenceType previousEvidence = createREMEvidenceType1();
+		previousEvidence = createREMEvidenceType1();
 
 		signedxmlData = ecodexEvidenceBuilder
 				.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason,
@@ -206,9 +205,9 @@ public class ECodexEvidenceBuilderTest {
 	}
 
 	// create a REMEvidenceType "SubmissionAcceptanceRejection"
-	private REMEvidenceType createREMEvidenceType1()
+	private byte[] createREMEvidenceType1()
 			throws ECodexEvidenceBuilderException {
-		REMEvidenceType evidenceType;
+//		REMEvidenceType evidenceType;
 
 		byte[] evidenceAsByteArray;
 		ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(
@@ -218,11 +217,11 @@ public class ECodexEvidenceBuilderTest {
 				REMErrorEvent.OTHER, createEntityDetailsObject(),
 				createMessageDetailsObject());
 
-		EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
-				javaKeyStorePassword, alias, keyPassword);
-		evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray);
+//		EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
+//				javaKeyStorePassword, alias, keyPassword);
+//		evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray);
 
-		return evidenceType;
+		return evidenceAsByteArray;
 	}
 
 	/**
@@ -239,16 +238,17 @@ public class ECodexEvidenceBuilderTest {
 	@Test
 	public void testCreateRetrievalNonRetrievalByRecipient() throws Exception {
 		byte[] signedxmlData;
+		byte[] previousEvidence;
 		PublicKey publicKey;
 		ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(
 				javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 		boolean isDelivery = true;
 		REMErrorEvent eventReason = null;
 		EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
-		REMEvidenceType previousEvidence = createREMEvidenceType2();
+		previousEvidence = createREMEvidenceType2();
 
 		signedxmlData = ecodexEvidenceBuilder
-				.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason,
+				.createRetrievalNonRetrievalByRecipient(isDelivery, eventReason,
 						evidenceIssuerDetails, previousEvidence);
 		// output the signed Xmlfile
 		File xmloutputfile = new File(
@@ -270,9 +270,9 @@ public class ECodexEvidenceBuilderTest {
 
 	// create a REMEvidenceType "DeliveryNonDeliveryToRecipient"
 
-	private REMEvidenceType createREMEvidenceType2()
+	private byte[] createREMEvidenceType2()
 			throws ECodexEvidenceBuilderException {
-		REMEvidenceType evidenceType;
+//		REMEvidenceType evidenceType;
 		byte[] evidenceAsByteArray;
 		byte[] evidenceAsByteArray1;
 		ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(
@@ -281,16 +281,16 @@ public class ECodexEvidenceBuilderTest {
 		evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true,
 				REMErrorEvent.OTHER, createEntityDetailsObject(),
 				createMessageDetailsObject());
-		EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
-				javaKeyStorePassword, alias, keyPassword);
+//		EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
+//				javaKeyStorePassword, alias, keyPassword);
 
 		evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(
 				true, REMErrorEvent.OTHER, createEntityDetailsObject(),
-				utils.convertIntoEvidenceType(evidenceAsByteArray));
+				evidenceAsByteArray);
 
-		evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray1);
+//		evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray1);
 
-		return evidenceType;
+		return evidenceAsByteArray1;
 
 	}
 
@@ -308,16 +308,17 @@ public class ECodexEvidenceBuilderTest {
 	@Test
 	public void testCreateRetrievalNonRetrievalByRecipient_1() throws Exception {
 		byte[] signedxmlData;
+		byte[] previousEvidence;
 		PublicKey publicKey;
 		ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(
 				javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 		boolean isDelivery = true;
 		REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
 		EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
-		REMEvidenceType previousEvidence = createREMEvidenceType2();
+		previousEvidence = createREMEvidenceType2();
 
 		signedxmlData = ecodexEvidenceBuilder
-				.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason,
+				.createRetrievalNonRetrievalByRecipient(isDelivery, eventReason,
 						evidenceIssuerDetails, previousEvidence);
 		// output the signed Xmlfile
 		File xmloutputfile = new File(
@@ -475,7 +476,7 @@ public class ECodexEvidenceBuilderTest {
 
 	// private method to get the keypair
 	private KeyPair getKeyPairFromKeyStore(String store, String storePass,
-			String alias, String keyPass) {
+			String alias, String keyPass) throws Exception {
 		KeyStore ks;
 		FileInputStream kfis;
 		KeyPair keyPair = null;
@@ -483,7 +484,7 @@ public class ECodexEvidenceBuilderTest {
 		Key key = null;
 		PublicKey publicKey = null;
 		PrivateKey privateKey = null;
-		try {
+		
 			ks = KeyStore.getInstance("JKS");
 			kfis = new FileInputStream(store);
 			ks.load(kfis, storePass.toCharArray());
@@ -501,20 +502,6 @@ public class ECodexEvidenceBuilderTest {
 			} else {
 				keyPair = null;
 			}
-		} catch (UnrecoverableKeyException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		return keyPair;
 	}
 	//create array bytes from xmlFile
