@@ -45,5 +45,7 @@
 
 	<bean id="evidenceDao"
 		class="eu.ecodex.connector.common.db.dao.impl.ECodexEvidenceDaoImpl" />
+		
+	<bean id="messageDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexMessageDaoImpl" />
 
 </beans>

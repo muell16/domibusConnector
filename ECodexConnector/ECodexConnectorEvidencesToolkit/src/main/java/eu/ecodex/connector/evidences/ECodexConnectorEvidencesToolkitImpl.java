@@ -1,14 +1,5 @@
 package eu.ecodex.connector.evidences;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.etsi.uri._02640.v2.REMEvidenceType;
-
 import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.message.Message;
@@ -58,8 +49,40 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     @Override
-    public void createDeliveryEvidence(Message message) throws EvidencesToolkitException {
+    public void createRelayREMMDAcceptance(Message message) throws EvidencesToolkitException {
         MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+
+        byte[] evidence = createRelayREMMDAcceptanceRejection(true, null, prevConfirmation.getEvidence());
+
+        MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
+                ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, evidence);
+
+        message.addConfirmation(confirmation);
+
+    }
+
+    @Override
+    public void createRelayREMMDRejection(RejectionReason rejectionReason, Message message)
+            throws EvidencesToolkitException {
+        if (rejectionReason == null) {
+            throw new EvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
+        }
+
+        REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
+
+        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+
+        byte[] evidence = createRelayREMMDAcceptanceRejection(false, event, prevConfirmation.getEvidence());
+
+        MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
+                ECodexEvidenceType.RELAY_REMMD_REJECTION, evidence);
+
+        message.addConfirmation(confirmation);
+    }
+
+    @Override
+    public void createDeliveryEvidence(Message message) throws EvidencesToolkitException {
+        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         byte[] evidence = createDeliveryNonDeliveryEvidence(true, null, prevConfirmation.getEvidence());
 
@@ -79,7 +102,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
 
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         byte[] evidence = createDeliveryNonDeliveryEvidence(false, event, prevConfirmation.getEvidence());
 
@@ -142,16 +165,9 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             byte[] previousEvidence) throws EvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
-        REMEvidenceType previousEvidenceType = null;
-        try {
-            previousEvidenceType = unmarshalEvidence(previousEvidence);
-        } catch (JAXBException e1) {
-            e1.printStackTrace();
-        }
-
         try {
             return evidenceBuilder.createRetrievalNonRetrievalByRecipient(isRetrieval, eventReason,
-                    evidenceIssuerDetails, previousEvidenceType);
+                    evidenceIssuerDetails, previousEvidence);
         } catch (ECodexEvidenceBuilderException e) {
             throw new EvidencesToolkitException(e);
         }
@@ -161,27 +177,24 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             byte[] previousEvidence) throws EvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
-        REMEvidenceType previousEvidenceType = null;
-        try {
-            previousEvidenceType = unmarshalEvidence(previousEvidence);
-        } catch (JAXBException e1) {
-            e1.printStackTrace();
-        }
-
         try {
             return evidenceBuilder.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason, evidenceIssuerDetails,
-                    previousEvidenceType);
+                    previousEvidence);
         } catch (ECodexEvidenceBuilderException e) {
             throw new EvidencesToolkitException(e);
         }
     }
 
-    private REMEvidenceType unmarshalEvidence(byte[] evidence) throws JAXBException {
-        InputStream i = new ByteArrayInputStream(evidence);
-        JAXBContext jc = JAXBContext.newInstance(REMEvidenceType.class);
-        Unmarshaller u = jc.createUnmarshaller();
-        REMEvidenceType t = (REMEvidenceType) u.unmarshal(i);
-        return t;
+    private byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason,
+            byte[] previousEvidence) throws EvidencesToolkitException {
+        EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
+
+        try {
+            return evidenceBuilder.createRelayREMMDAcceptanceRejection(isAcceptance, eventReason,
+                    evidenceIssuerDetails, previousEvidence);
+        } catch (ECodexEvidenceBuilderException e) {
+            throw new EvidencesToolkitException(e);
+        }
     }
 
     private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent reason, Message message)

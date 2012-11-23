@@ -16,6 +16,10 @@ public interface ECodexConnectorEvidencesToolkit {
 
     void createSubmissionRejection(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;
 
+    void createRelayREMMDAcceptance(Message message) throws EvidencesToolkitException;
+
+    void createRelayREMMDRejection(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;
+
     void createDeliveryEvidence(Message message) throws EvidencesToolkitException;
 
     void createNonDeliveryEvidence(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;

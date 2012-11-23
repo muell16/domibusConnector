@@ -1,6 +1,7 @@
 package eu.ecodex.connector.common.db.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -41,6 +43,9 @@ public class ECodexMessage {
 
     @Column(name = "UPDATED")
     private Date updated;
+
+    @OneToMany(mappedBy = "message")
+    private Set<ECodexEvidence> evidences;
 
     public Long getId() {
         return id;
@@ -96,5 +101,13 @@ public class ECodexMessage {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public Set<ECodexEvidence> getEvidences() {
+        return evidences;
+    }
+
+    public void setEvidences(Set<ECodexEvidence> evidences) {
+        this.evidences = evidences;
     }
 }

@@ -60,6 +60,10 @@ public class ECodexEvidence {
 
     public void setMessage(ECodexMessage message) {
         this.message = message;
+
+        if (null != this.message.getEvidences() && !this.message.getEvidences().contains(this)) {
+            this.message.getEvidences().add(this);
+        }
     }
 
     public ECodexEvidenceType getType() {

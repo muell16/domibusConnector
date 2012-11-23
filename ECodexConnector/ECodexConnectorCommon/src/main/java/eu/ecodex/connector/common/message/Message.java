@@ -3,6 +3,8 @@ package eu.ecodex.connector.common.message;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.ecodex.connector.common.db.model.ECodexMessage;
+
 /**
  * This is a container object that represents all data of a message.
  * 
@@ -16,6 +18,7 @@ public class Message {
     private final MessageContent messageContent;
     private List<MessageAttachment> attachments;
     private List<MessageConfirmation> confirmations;
+    private ECodexMessage dbMessage;
 
     /**
      * This constructor is for messages which contain content and original
@@ -84,6 +87,14 @@ public class Message {
 
     public void setConfirmations(List<MessageConfirmation> confirmations) {
         this.confirmations = confirmations;
+    }
+
+    public ECodexMessage getDbMessage() {
+        return dbMessage;
+    }
+
+    public void setDbMessage(ECodexMessage dbMessage) {
+        this.dbMessage = dbMessage;
     }
 
 }

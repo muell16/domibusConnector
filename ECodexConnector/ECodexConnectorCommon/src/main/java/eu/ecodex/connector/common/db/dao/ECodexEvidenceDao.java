@@ -4,6 +4,6 @@ import eu.ecodex.connector.common.db.model.ECodexEvidence;
 
 public interface ECodexEvidenceDao {
 
-    void saveEvidence(ECodexEvidence evidence);
+    void saveNewEvidence(ECodexEvidence evidence);
 
 }

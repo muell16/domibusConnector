@@ -89,4 +89,10 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
         }
     }
 
+    @Override
+    public void handleEvidences() throws ECodexConnectorControllerException {
+        // TODO Auto-generated method stub
+
+    }
+
 }
