@@ -3,6 +3,7 @@
  */
 package org.holodeck.backend.module;
 
+import org.apache.axis2.AxisFault;
 import org.holodeck.backend.module.exception.DownloadMessageFault;
 import org.holodeck.backend.module.exception.ListPendingMessagesFault;
 import org.holodeck.backend.module.exception.SendMessageFault;
@@ -36,6 +37,8 @@ public class BackendServiceMessageReceiverInOut extends org.apache.axis2.receive
 					&& ((methodName = org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(op.getName()
 							.getLocalPart())) != null)) {
 				if ("sendMessageWithReference".equals(methodName)) {
+					backend.ecodex.org.SendResponse sendResponse = null;
+					
 					backend.ecodex.org.SendRequestURL wrappedParam = (backend.ecodex.org.SendRequestURL) fromOM(
 							msgContext.getEnvelope().getBody().getFirstElement(),
 							backend.ecodex.org.SendRequestURL.class,
@@ -44,9 +47,11 @@ public class BackendServiceMessageReceiverInOut extends org.apache.axis2.receive
 							msgContext.getEnvelope().getHeader().getFirstElement(),
 							org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE.class,
 							getEnvelopeNamespaces(msgContext.getEnvelope()));
-					skel.sendMessageWithReference(messaging, wrappedParam);
-					envelope = toEnvelope(getSOAPFactory(msgContext));
+					sendResponse = skel.sendMessageWithReference(messaging, wrappedParam);
+					envelope = toEnvelope(getSOAPFactory(msgContext), sendResponse, false);
 				} else if ("sendMessage".equals(methodName)) {
+					backend.ecodex.org.SendResponse sendResponse = null;
+					
 					backend.ecodex.org.SendRequest wrappedParam = (backend.ecodex.org.SendRequest) fromOM(
 							msgContext.getEnvelope().getBody().getFirstElement(),
 							backend.ecodex.org.SendRequest.class, getEnvelopeNamespaces(msgContext.getEnvelope()));
@@ -54,8 +59,8 @@ public class BackendServiceMessageReceiverInOut extends org.apache.axis2.receive
 							msgContext.getEnvelope().getHeader().getFirstElement(),
 							org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE.class,
 							getEnvelopeNamespaces(msgContext.getEnvelope()));
-					skel.sendMessage(messaging, wrappedParam);
-					envelope = toEnvelope(getSOAPFactory(msgContext));
+					sendResponse = skel.sendMessage(messaging, wrappedParam);
+					envelope = toEnvelope(getSOAPFactory(msgContext), sendResponse, false);
 				} else if ("listPendingMessages".equals(methodName)) {
 					backend.ecodex.org.ListPendingMessagesResponse listPendingMessagesResponse10 = null;
 					backend.ecodex.org.ListPendingMessagesRequest wrappedParam = (backend.ecodex.org.ListPendingMessagesRequest) fromOM(
@@ -185,6 +190,29 @@ public class BackendServiceMessageReceiverInOut extends org.apache.axis2.receive
 		try {
 			return param.getOMElement(backend.ecodex.org.SendRequest.MY_QNAME,
 					org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+		} catch (org.apache.axis2.databinding.ADBException e) {
+			throw org.apache.axis2.AxisFault.makeFault(e);
+		}
+	}
+
+	/**
+	 * To om.
+	 *
+	 * @param param the param
+	 * @param optimizeContent the optimize content
+	 * @return the org.apache.axiom.om. om element
+	 * @throws AxisFault the axis fault
+	 */
+	private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory,
+			backend.ecodex.org.SendResponse param, boolean optimizeContent)
+			throws org.apache.axis2.AxisFault
+	{
+		try {
+			org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+			if (param != null)
+				emptyEnvelope.getBody().addChild(
+						param.getOMElement(backend.ecodex.org.SendResponse.MY_QNAME, factory));
+			return emptyEnvelope;
 		} catch (org.apache.axis2.databinding.ADBException e) {
 			throw org.apache.axis2.AxisFault.makeFault(e);
 		}
@@ -379,6 +407,9 @@ public class BackendServiceMessageReceiverInOut extends org.apache.axis2.receive
 			}
 			if (backend.ecodex.org.SendRequest.class.equals(type)) {
 				return backend.ecodex.org.SendRequest.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+			}
+			if (backend.ecodex.org.SendResponse.class.equals(type)) {
+				return backend.ecodex.org.SendResponse.Factory.parse(param.getXMLStreamReaderWithoutCaching());
 			}
 			if (backend.ecodex.org.FaultDetail.class.equals(type)) {
 				return backend.ecodex.org.FaultDetail.Factory.parse(param.getXMLStreamReaderWithoutCaching());

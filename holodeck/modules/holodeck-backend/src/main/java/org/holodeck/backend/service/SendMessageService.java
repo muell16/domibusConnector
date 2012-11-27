@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +23,7 @@ import org.holodeck.backend.validator.SendMessageValidator;
 import org.holodeck.backend.validator.SendMessageWithReferenceValidator;
 import org.holodeck.ebms3.persistent.UserMsgToPush;
 import org.holodeck.ebms3.submit.MsgInfoSet;
+import org.holodeck.ebms3.submit.Payload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +57,7 @@ public class SendMessageService {
 	 * @param sendRequest the send request
 	 * @throws SendMessageServiceException the send message service exception
 	 */
-	public void sendMessage(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messaging,
+	public backend.ecodex.org.SendResponse sendMessage(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messaging,
 			backend.ecodex.org.SendRequest sendRequest) throws SendMessageServiceException
 	{
 		log.debug("Called SendMessageService.sendMessage");
@@ -65,17 +68,45 @@ public class SendMessageService {
 
 		MsgInfoSet msgInfoSet = Converter.convertUserMessageToMsgInfoSet(messaging.getMessaging().getUserMessage()[0]);
 
+		String action = messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAction().toString();
+		String fromPartyid = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getNonEmptyString();
+		String fromPartyidType = null;
+//		String fromPartyidType = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getType().getNonEmptyString();
+		String toPartyid = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getNonEmptyString();
+		String toPartyidType = null;
+//		String toPartyidType = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getType().getNonEmptyString();
+		String service = messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getService().getNonEmptyString();
+		
+		msgInfoSet.setPmode(org.holodeck.ebms3.module.Configuration.getPMode(action, service, fromPartyid, fromPartyidType, toPartyid, toPartyidType));
+		
 		File tempDir = org.holodeck.backend.util.IOUtils.createTempDir();
 		try {
 			int counter = 1;
+			
+			List<Payload> payloads = new ArrayList<Payload>();
 			for (javax.activation.DataHandler dataHandler : sendRequest.getPayload()) {
+				Payload p = new Payload();
+				
 				String payloadFileName = MessageFormat.format(
 						org.holodeck.backend.module.Constants.PAYLOAD_FILE_NAME_FORMAT, counter);
-				IOUtils.write(IOUtils.toByteArray(dataHandler), new FileOutputStream(new File(tempDir,
-						payloadFileName)));
-				msgInfoSet.getPayloads().addPayload(payloadFileName, payloadFileName);
+				IOUtils.write(IOUtils.toByteArray(dataHandler),
+						new FileOutputStream(new File(tempDir, payloadFileName)));
+				
+				p.setCid(payloadFileName);
+				p.setPayload(payloadFileName);
+				
+				String description = null;
+				try {
+					description = messaging.getMessaging().getUserMessage()[0].getPayloadInfo().getPartInfo()[counter - 1]
+							.getDescription().getNonEmptyString();
+				} catch (Exception e) {
+				}				
+				p.setDescription(description);
+				
+				payloads.add(p);
 				counter++;
 			}
+			msgInfoSet.getPayloads().setPayloads(payloads);
 
 			File metadataFile = new File(tempDir, org.holodeck.backend.module.Constants.METADATA_FILE_NAME);
 			msgInfoSet.writeToFile(metadataFile.getAbsolutePath());
@@ -100,6 +131,11 @@ public class SendMessageService {
 		}
 		
 	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], messageId, "SendMessageService", "sendMessage", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
+	    
+	    backend.ecodex.org.SendResponse sendResponse = new backend.ecodex.org.SendResponse();
+	    sendResponse.setMessageID(messageId);
+	    
+	    return sendResponse;
 	}
 
 	/**
@@ -109,7 +145,7 @@ public class SendMessageService {
 	 * @param sendRequestURL the send request url
 	 * @throws SendMessageServiceException the send message service exception
 	 */
-	public void sendMessageWithReference(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messaging,
+	public backend.ecodex.org.SendResponse sendMessageWithReference(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messaging,
 			backend.ecodex.org.SendRequestURL sendRequestURL) throws SendMessageServiceException
 	{
 		log.debug("Called SendMessageService.sendMessageWithReference");
@@ -119,6 +155,17 @@ public class SendMessageService {
 		sendMessageWithReferenceValidator.validate(messaging, sendRequestURL);
 
 		MsgInfoSet msgInfoSet = Converter.convertUserMessageToMsgInfoSet(messaging.getMessaging().getUserMessage()[0]);
+
+		String action = messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAction().toString();
+		String fromPartyid = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getNonEmptyString();
+		String fromPartyidType = null;
+//		String fromPartyidType = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getType().getNonEmptyString();
+		String toPartyid = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getNonEmptyString();
+		String toPartyidType = null;
+//		String toPartyidType = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getType().getNonEmptyString();
+		String service = messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getService().getNonEmptyString();
+		
+		msgInfoSet.setPmode(org.holodeck.ebms3.module.Configuration.getPMode(action, service, fromPartyid, fromPartyidType, toPartyid, toPartyidType));
 
 		File tempDir = org.holodeck.backend.util.IOUtils.createTempDir();
 		try {
@@ -175,5 +222,10 @@ public class SendMessageService {
 		}
 		
 	    log.log(org.holodeck.logging.level.Message.MESSAGE, org.holodeck.backend.util.Converter.convertUserMessageToMessageInfo(messaging.getMessaging().getUserMessage()[0], messageId, "SendMessageService", "sendMessageWithReference", org.holodeck.logging.persistent.LoggerMessage.MESSAGE_SENT_OK_STATUS));
+	    
+	    backend.ecodex.org.SendResponse sendResponse = new backend.ecodex.org.SendResponse();
+	    sendResponse.setMessageID(messageId);
+	    
+	    return sendResponse;
 	}
 }
