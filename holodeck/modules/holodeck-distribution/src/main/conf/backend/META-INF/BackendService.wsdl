@@ -13,7 +13,7 @@ Version	|	Date		|	Author			|	Description
 <wsdl:definitions xmlns:eb1="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://org.ecodex.backend" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 		xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns="http://schemas.xmlsoap.org/soap/envelope/" 
 		xmlns:ns1="http://www.w3.org/2003/05/soap-envelope" name="eCodex" targetNamespace="http://org.ecodex.backend">
-	<wsdl:import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" location="ebms-header-3_0-200704.xsd"/>
+	<xsd:import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" location="ebms-header-3_0-200704.xsd"/>
 	<wsdl:types>
 		<xsd:schema targetNamespace="http://org.ecodex.backend" xmlns="http://www.w3.org/2001/XMLSchema">
 			<xsd:element name="sendRequest">
@@ -57,6 +57,13 @@ Version	|	Date		|	Author			|	Description
                <xsd:element name="ID" type="xsd:string"/>-->
 						<!-- URL to the Attachments data file -->
 						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="sendResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="messageID" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
@@ -122,7 +129,7 @@ Version	|	Date		|	Author			|	Description
 									</xsd:enumeration>
 									<xsd:enumeration value="ERROR_SEND_001">
 										<xsd:annotation>
-											<xsd:documentation>PMode invalid</xsd:documentation>
+											<xsd:documentation>Cannot identify a valid PMode</xsd:documentation>
 										</xsd:annotation>
 									</xsd:enumeration>
 									<xsd:enumeration value="ERROR_SEND_002">
@@ -172,7 +179,9 @@ Version	|	Date		|	Author			|	Description
 		<wsdl:part name="sendRequestURL" element="tns:sendRequestURL"/>
 		<wsdl:part name="ebMSHeaderInfo" element="eb1:Messaging"/>
 	</wsdl:message>
-	<wsdl:message name="sendResponse"/>
+	<wsdl:message name="sendResponse">
+		<wsdl:part name="sendResponse" element="tns:sendResponse"/>
+	</wsdl:message>
 	<wsdl:message name="downloadMessageRequest">
 		<wsdl:part name="downloadMessageRequest" element="tns:downloadMessageRequest"/>
 	</wsdl:message>
