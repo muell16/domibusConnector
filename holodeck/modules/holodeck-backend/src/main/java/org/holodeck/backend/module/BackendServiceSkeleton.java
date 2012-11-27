@@ -4,7 +4,6 @@
 package org.holodeck.backend.module;
 
 import org.apache.log4j.Logger;
-import org.holodeck.backend.db.dao.MessageDAO;
 import org.holodeck.backend.module.exception.DownloadMessageFault;
 import org.holodeck.backend.module.exception.ListPendingMessagesFault;
 import org.holodeck.backend.module.exception.SendMessageFault;
@@ -41,7 +40,7 @@ public class BackendServiceSkeleton extends org.holodeck.backend.spring.BackendS
 	 * @param sendRequestURL the send request url
 	 * @throws SendMessageWithReferenceFault the send message with reference fault
 	 */
-	public void sendMessageWithReference(
+	public backend.ecodex.org.SendResponse sendMessageWithReference(
 			org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messagingRequest,
 			backend.ecodex.org.SendRequestURL sendRequestURL) throws SendMessageWithReferenceFault
 	{
@@ -50,7 +49,7 @@ public class BackendServiceSkeleton extends org.holodeck.backend.spring.BackendS
 
 			init();
 
-			sendMessageService.sendMessageWithReference(messagingRequest, sendRequestURL);
+			return sendMessageService.sendMessageWithReference(messagingRequest, sendRequestURL);
 		} catch (SendMessageServiceException serviceException) {
 			SendMessageWithReferenceFault fault = new SendMessageWithReferenceFault(serviceException);
 			fault.setFaultMessage(serviceException.getFault());
@@ -72,7 +71,7 @@ public class BackendServiceSkeleton extends org.holodeck.backend.spring.BackendS
 	 * @param sendRequest the send request
 	 * @throws SendMessageFault the send message fault
 	 */
-	public void sendMessage(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messagingRequest,
+	public backend.ecodex.org.SendResponse sendMessage(org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessagingE messagingRequest,
 			backend.ecodex.org.SendRequest sendRequest) throws SendMessageFault
 	{
 		try {
@@ -80,7 +79,7 @@ public class BackendServiceSkeleton extends org.holodeck.backend.spring.BackendS
 
 			init();
 
-			sendMessageService.sendMessage(messagingRequest, sendRequest);
+			return sendMessageService.sendMessage(messagingRequest, sendRequest);
 		} catch (SendMessageServiceException serviceException) {
 			SendMessageFault fault = new SendMessageFault(serviceException);
 			fault.setFaultMessage(serviceException.getFault());
