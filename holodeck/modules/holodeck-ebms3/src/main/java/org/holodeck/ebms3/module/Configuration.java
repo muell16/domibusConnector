@@ -1,20 +1,26 @@
 package org.holodeck.ebms3.module;
 
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.om.OMElement;
-import org.holodeck.ebms3.config.*;
-import org.holodeck.ebms3.submit.MsgInfoSet;
-import org.holodeck.common.soap.Util;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.log4j.Logger;
+import org.holodeck.common.soap.Util;
+import org.holodeck.ebms3.config.Binding;
+import org.holodeck.ebms3.config.CollaborationInfo;
+import org.holodeck.ebms3.config.Leg;
+import org.holodeck.ebms3.config.MEP;
+import org.holodeck.ebms3.config.PMode;
+import org.holodeck.ebms3.config.PModePool;
+import org.holodeck.ebms3.config.Party;
+import org.holodeck.ebms3.config.Producer;
+import org.holodeck.ebms3.config.ToParty;
+import org.holodeck.ebms3.submit.MsgInfoSet;
 
 /**
  * @author Hamid Ben Malek
@@ -126,6 +132,135 @@ public class Configuration extends Constants
     if ( pmode != null ) return pmode.getBinding();
     else return null;
   }
+
+	public static PMode getPModeO(String action, String service, String fromPartyid, String fromPartyidType,
+			String toPartyid, String toPartyidType)
+	{
+		for (org.holodeck.ebms3.config.PMode pmode : org.holodeck.ebms3.module.Constants.pmodes.values()) {
+			org.holodeck.ebms3.config.Binding binding = pmode.getBinding();
+			if (binding == null || binding.getMep() == null) {
+				continue;
+			}
+			boolean producerFounded = false;
+			if (pmode.getProducers() != null) {
+				for (org.holodeck.ebms3.config.Producer producer : pmode.getProducers()) {
+					if (producer.getParties() != null && producer.getParties().size() > 0
+							&& producer.getParties().get(0).getPartyId()!=null
+							&& producer.getParties().get(0).getPartyId().equalsIgnoreCase(fromPartyid)
+//							&& producer.getParties().get(0).getType()!=null
+//							&& producer.getParties().get(0).getType().equalsIgnoreCase(fromPartyidType)
+						) {
+						producerFounded = true;
+						break;
+					}
+				}
+			}
+			if (!producerFounded && binding.getMep().getLegs() != null) {
+				for (org.holodeck.ebms3.config.Leg leg : binding.getMep().getLegs()) {
+					if (leg.getProducer() != null && leg.getProducer().getParties() != null
+							&& leg.getProducer().getParties().size() > 0
+							&& leg.getProducer().getParties().get(0).getPartyId()!=null
+							&& leg.getProducer().getParties().get(0).getPartyId().equalsIgnoreCase(fromPartyid)
+//							&& leg.getProducer().getParties().get(0).getType()!=null
+//							&& leg.getProducer().getParties().get(0).getType().equalsIgnoreCase(fromPartyidType)
+						) {
+						producerFounded = true;
+						break;
+					}
+				}
+			}
+			if (!producerFounded) {
+				continue;
+			}
+			boolean toFounded = false;
+			if (pmode.getUserServices() != null) {
+				for (org.holodeck.ebms3.config.UserService userService : pmode.getUserServices()) {
+					if (userService.getToParty() != null && userService.getToParty().getParties() != null
+							&& userService.getToParty().getParties().size() > 0
+							&& userService.getToParty().getParties().get(0).getPartyId()!=null
+							&& userService.getToParty().getParties().get(0).getPartyId().equalsIgnoreCase(toPartyid)
+//							&& userService.getToParty().getParties().get(0).getType()!=null
+//							&& userService.getToParty().getParties().get(0).getType().equalsIgnoreCase(toPartyidType)
+						) {
+						toFounded = true;
+						break;
+					}
+				}
+			}
+			if (!toFounded && binding.getMep().getLegs() != null) {
+				for (org.holodeck.ebms3.config.Leg leg : binding.getMep().getLegs()) {
+					if (leg.getUserService().getToParty() != null
+							&& leg.getUserService().getToParty().getParties() != null
+							&& leg.getUserService().getToParty().getParties().size() > 0
+							&& leg.getUserService().getToParty().getParties().get(0).getPartyId()!=null
+							&& leg.getUserService().getToParty().getParties().get(0).getPartyId().equalsIgnoreCase(toPartyid)
+//							&& leg.getUserService().getToParty().getParties().get(0).getType()!=null
+//							&& leg.getUserService().getToParty().getParties().get(0).getType().equalsIgnoreCase(toPartyidType)
+						) {
+						toFounded = true;
+						break;
+					}
+				}
+			}
+			if (!toFounded) {
+				continue;
+			}
+			boolean serviceAndActionFounded = false;
+			if (pmode.getUserServices() != null) {
+				for (org.holodeck.ebms3.config.UserService userService : pmode.getUserServices()) {
+					if (userService.getCollaborationInfo() != null
+							&& userService.getCollaborationInfo().getAction()!=null 
+							&& userService.getCollaborationInfo().getAction().equals(action)
+							&& userService.getCollaborationInfo().getService().getValue()!=null
+							&& userService.getCollaborationInfo().getService().getValue().equals(service)) {
+						serviceAndActionFounded = true;
+						break;
+					}
+				}
+			}
+			if (!serviceAndActionFounded && binding.getMep().getLegs() != null) {
+				for (org.holodeck.ebms3.config.Leg leg : binding.getMep().getLegs()) {
+					if (leg.getUserService() != null
+							&& leg.getUserService().getCollaborationInfo() != null
+							&& leg.getUserService().getCollaborationInfo().getAction()!=null
+							&& leg.getUserService().getCollaborationInfo().getAction().equals(action)
+							&& leg.getUserService().getCollaborationInfo().getService().getValue()!=null
+							&& leg.getUserService().getCollaborationInfo().getService().getValue().equals(service)) {
+						serviceAndActionFounded = true;
+						break;
+					}
+				}
+			}
+			if (serviceAndActionFounded) {
+				return pmode;
+			}
+		}
+		return null;
+	}
+	
+	public static String getPMode(String action, String service, String fromPartyid, String fromPartyidType,
+			String toPartyid, String toPartyidType)
+	{
+		org.holodeck.ebms3.config.PMode pmode = getPModeO(action, service, fromPartyid, fromPartyidType, toPartyid,
+				toPartyidType);
+		if (pmode != null) {
+			return pmode.getName();
+		} else {
+			return null;
+		}
+	}
+
+	public static String getMep(String action, String service, String fromPartyid, String fromPartyidType,
+			String toPartyid, String toPartyidType)
+	{
+		org.holodeck.ebms3.config.PMode pmode = getPModeO(action, service, fromPartyid, fromPartyidType, toPartyid,
+				toPartyidType);
+		if (pmode != null) {
+			return pmode.getBinding().getMep().getName();
+		} else {
+			return null;
+		}
+	}
 
   public static String getMpc(String pmodeName, int legNumber)
   {
