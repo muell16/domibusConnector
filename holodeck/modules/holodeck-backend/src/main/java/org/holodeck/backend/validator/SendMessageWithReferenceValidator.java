@@ -8,10 +8,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.holodeck.backend.util.StringUtils;
 import org.apache.log4j.Logger;
 import org.holodeck.backend.service.exception.SendMessageServiceException;
-import org.holodeck.ebms3.submit.MsgInfoSet;
+import org.holodeck.backend.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import backend.ecodex.org.Code;
@@ -142,21 +141,45 @@ public class SendMessageWithReferenceValidator {
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
 					"AgreementRef is empty", Code.ERROR_GENERAL_002);
 			throw sendMessageServiceException;
-		}
-
-		if(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef().getPmode()==null
-				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef().getPmode().getNonEmptyString())){
-			log.error("Pmode is empty");
+		}	
+		
+		if(messaging.getMessaging().getUserMessage()[0].getPartyInfo()==null
+				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo() == null
+				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId() == null
+				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId().length == 0
+				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getNonEmptyString())
+//				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getType()==null
+//				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getType().getNonEmptyString())
+				
+				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom() == null
+				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId() == null
+				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId().length == 0
+				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getNonEmptyString())
+//				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getType()==null
+//				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getType().getNonEmptyString())
+				
+				|| messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getService()==null
+				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getService().getNonEmptyString())
+				|| messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAction()==null
+				|| StringUtils.isEmpty(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAction().toString())
+				){
+			log.error("The parameterers needed to find an appropiate pmode are missing or invalid");
 
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
-					"Pmode is empty", Code.ERROR_GENERAL_002);
+					"The parameterers needed to find an appropiate pmode are missing or invalid", Code.ERROR_GENERAL_002);
 			throw sendMessageServiceException;
 		}
-
-		MsgInfoSet msgInfoSet = new MsgInfoSet();
-		msgInfoSet.setPmode(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef().getPmode().getNonEmptyString());
-
-		String mep = org.holodeck.ebms3.module.Configuration.getMep(msgInfoSet);
+		
+		String action = messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAction().toString();
+		String fromPartyid = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getNonEmptyString();
+		String fromPartyidType = null;
+//		String fromPartyidType = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getFrom().getPartyId()[0].getType().getNonEmptyString();
+		String toPartyid = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getNonEmptyString();
+		String toPartyidType = null;
+//		String toPartyidType = messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo().getPartyId()[0].getType().getNonEmptyString();
+		String service = messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getService().getNonEmptyString();
+		
+		String mep = org.holodeck.ebms3.module.Configuration.getMep(action, service, fromPartyid, fromPartyidType, toPartyid, toPartyidType);
 
 		if(mep==null){
 			log.error("Invalid pmode");
