@@ -41,8 +41,6 @@ public class Converter {
 		if (userMessage.getCollaborationInfo() != null) {
 			if (userMessage.getCollaborationInfo().getAgreementRef() != null) {
 				msgInfoSet.setAgreementRef(userMessage.getCollaborationInfo().getAgreementRef().getNonEmptyString());
-
-				msgInfoSet.setPmode(userMessage.getCollaborationInfo().getAgreementRef().getPmode().getNonEmptyString());
 			}
 			if (userMessage.getCollaborationInfo().getConversationId() != null) {
 				msgInfoSet.setConversationId(userMessage.getCollaborationInfo().getConversationId().toString());
