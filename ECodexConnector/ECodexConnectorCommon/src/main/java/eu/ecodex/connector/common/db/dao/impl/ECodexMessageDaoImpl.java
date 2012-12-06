@@ -23,4 +23,10 @@ public class ECodexMessageDaoImpl implements ECodexMessageDao {
         message.setUpdated(new Date());
         em.persist(message);
     }
+
+    @Override
+    public void mergeMessage(ECodexMessage message) {
+        message.setUpdated(new Date());
+        em.merge(message);
+    }
 }

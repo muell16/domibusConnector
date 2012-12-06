@@ -36,19 +36,21 @@ public class ECodexConnectorEvidencesToolkitTest {
 
     @Resource
     private ECodexConnectorEvidencesToolkit evidencesToolkit;
+    @Resource
+    private HashValueBuilder hashValueBuilder;
 
     @Test
     public void testCreateSubmissionAcceptance() {
-        LOG.debug("Started testCreateSubmissionAcceptance");
+        LOG.info("Started testCreateSubmissionAcceptance");
 
         Message message = buildTestMessage();
 
         try {
-            evidencesToolkit.createSubmissionAcceptance(message);
+            evidencesToolkit.createSubmissionAcceptance(message, buildHashValue());
             Assert.assertNotNull(message.getConfirmations());
             Assert.assertEquals(1, message.getConfirmations().size());
             String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
-            LOG.debug(evidencePretty);
+            LOG.info(evidencePretty);
         } catch (EvidencesToolkitException e) {
             e.printStackTrace();
             Assert.fail();
@@ -59,21 +61,21 @@ public class ECodexConnectorEvidencesToolkitTest {
             e.printStackTrace();
             Assert.fail();
         }
-        LOG.debug("Finished testCreateSubmissionAcceptance");
+        LOG.info("Finished testCreateSubmissionAcceptance");
     }
 
     @Test
     public void testCreateSubmissionRejection() {
-        LOG.debug("Started testCreateSubmissionRejection");
+        LOG.info("Started testCreateSubmissionRejection");
 
         Message message = buildTestMessage();
 
         try {
-            evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message);
+            evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message, buildHashValue());
             Assert.assertNotNull(message.getConfirmations());
             Assert.assertEquals(1, message.getConfirmations().size());
             String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
-            LOG.debug(evidencePretty);
+            LOG.info(evidencePretty);
         } catch (EvidencesToolkitException e) {
             e.printStackTrace();
             Assert.fail();
@@ -84,7 +86,7 @@ public class ECodexConnectorEvidencesToolkitTest {
             e.printStackTrace();
             Assert.fail();
         }
-        LOG.debug("Finished testCreateSubmissionRejection");
+        LOG.info("Finished testCreateSubmissionRejection");
     }
 
     private Message buildTestMessage() {
@@ -99,6 +101,10 @@ public class ECodexConnectorEvidencesToolkitTest {
         Message message = new Message(details, content);
 
         return message;
+    }
+
+    private byte[] buildHashValue() {
+        return hashValueBuilder.buildHashValue(new String("originalMessage").getBytes());
     }
 
     private String prettyPrint(byte[] input) throws TransformerFactoryConfigurationError, TransformerException {

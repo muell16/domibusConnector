@@ -1,7 +1,9 @@
 package eu.ecodex.connector.controller;
 
 import eu.ecodex.connector.common.ECodexConnectorProperties;
+import eu.ecodex.connector.common.db.service.ECodexMessageService;
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
+import eu.ecodex.connector.evidences.HashValueBuilder;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.mapping.ECodexConnectorContentMapper;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
@@ -13,6 +15,8 @@ public abstract class ECodexConnectorControllerImpl implements ECodexConnectorCo
     ECodexConnectorNationalBackendClient nationalBackendClient;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
     ECodexConnectorEvidencesToolkit evidencesToolkit;
+    HashValueBuilder hashValueBuilder;
+    ECodexMessageService dbMessageService;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -32,6 +36,14 @@ public abstract class ECodexConnectorControllerImpl implements ECodexConnectorCo
 
     public void setEvidencesToolkit(ECodexConnectorEvidencesToolkit evidencesToolkit) {
         this.evidencesToolkit = evidencesToolkit;
+    }
+
+    protected void setHashValueBuilder(HashValueBuilder hashValueBuilder) {
+        this.hashValueBuilder = hashValueBuilder;
+    }
+
+    protected void setDbMessageService(ECodexMessageService dbMessageService) {
+        this.dbMessageService = dbMessageService;
     }
 
 }

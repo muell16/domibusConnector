@@ -20,18 +20,20 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     private ECodexConnectorProperties connectorProperties;
 
     @Override
-    public void createSubmissionAcceptance(Message message) throws EvidencesToolkitException {
+    public byte[] createSubmissionAcceptance(Message message, byte[] hash) throws EvidencesToolkitException {
 
-        byte[] evidence = createSubmissionAcceptanceRejection(true, null, message);
+        byte[] evidence = createSubmissionAcceptanceRejection(true, null, message, hash);
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
                 ECodexEvidenceType.SUBMISSION_ACCEPTANCE, evidence);
 
         message.addConfirmation(confirmation);
+
+        return evidence;
     }
 
     @Override
-    public void createSubmissionRejection(RejectionReason rejectionReason, Message message)
+    public byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, byte[] hash)
             throws EvidencesToolkitException {
 
         if (rejectionReason == null) {
@@ -40,12 +42,14 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
 
-        byte[] evidence = createSubmissionAcceptanceRejection(false, event, message);
+        byte[] evidence = createSubmissionAcceptanceRejection(false, event, message, hash);
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
                 ECodexEvidenceType.SUBMISSION_REJECTION, evidence);
 
         message.addConfirmation(confirmation);
+
+        return evidence;
     }
 
     @Override
@@ -197,8 +201,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         }
     }
 
-    private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent reason, Message message)
-            throws EvidencesToolkitException {
+    private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent reason, Message message,
+            byte[] hash) throws EvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
         String nationalMessageId = message.getMessageDetails().getNationalMessageId();
@@ -211,13 +215,14 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         ECodexMessageDetails messageDetails = null;
         try {
-            messageDetails = buildMessageDetails(nationalMessageId, originalMessage, senderAddress, recipientAddress);
+            messageDetails = buildMessageDetails(nationalMessageId, originalMessage, senderAddress, recipientAddress,
+                    hash);
         } catch (EvidencesToolkitException e) {
             throw e;
         }
 
         try {
-            return evidenceBuilder.createSubmissionAcceptanceRejection(true, null, evidenceIssuerDetails,
+            return evidenceBuilder.createSubmissionAcceptanceRejection(isAcceptance, reason, evidenceIssuerDetails,
                     messageDetails);
         } catch (ECodexEvidenceBuilderException e) {
             throw new EvidencesToolkitException(e);
@@ -244,15 +249,14 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     private ECodexMessageDetails buildMessageDetails(String nationalMessageId, byte[] originalMessage,
-            String senderAddress, String recipientAddress) throws EvidencesToolkitException {
+            String senderAddress, String recipientAddress, byte[] hash) throws EvidencesToolkitException {
         ECodexMessageDetails messageDetails = new ECodexMessageDetails();
 
         if (originalMessage == null || originalMessage.length < 1) {
             throw new EvidencesToolkitException("there is no original message to build an evidence for!");
         }
-        byte[] hashValue = hashValueBuilder.buildHashValue(originalMessage);
         messageDetails.setHashAlgorithm(hashValueBuilder.getAlgorithm().toString());
-        messageDetails.setHashValue(hashValue);
+        messageDetails.setHashValue(hash);
 
         if (nationalMessageId == null || nationalMessageId.isEmpty()) {
             throw new EvidencesToolkitException(

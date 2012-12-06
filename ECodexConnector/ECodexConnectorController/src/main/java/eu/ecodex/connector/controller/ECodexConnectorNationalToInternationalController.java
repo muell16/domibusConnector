@@ -3,6 +3,9 @@ package eu.ecodex.connector.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.ecodex.connector.common.db.model.ECodexMessage;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
+import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageContent;
@@ -56,6 +59,8 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
             e1.printStackTrace();
         }
 
+        ECodexMessage dbMessage = dbMessageService.createAndPersistDBMessage(message, ECodexMessageDirection.NAT_TO_GW);
+
         if (connectorProperties.isUseContentMapper()) {
             try {
                 byte[] xmlContent = contentMapper.mapNationalToInternational(message.getMessageContent()
@@ -75,11 +80,24 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
         }
 
         if (connectorProperties.isUseEvidencesToolkit()) {
+            // whatever the source for the hash will be - by now it is the pdf
+            // document
+            byte[] hash = hashValueBuilder.buildHashValue(message.getMessageContent().getPdfDocument());
+
+            // now persist the hash value into the database entry for the
+            // message
+            dbMessage.setHashValue(new String(hash));
+            dbMessageService.mergeDBMessage(dbMessage);
+
             try {
-                evidencesToolkit.createSubmissionAcceptance(message);
+                byte[] submissionAcceptance = evidencesToolkit.createSubmissionAcceptance(message, hash);
+                // immediately persist new evidence into database
+                dbMessageService.createAndPersistDBEvidenceForDBMessage(dbMessage, submissionAcceptance,
+                        ECodexEvidenceType.SUBMISSION_ACCEPTANCE);
             } catch (EvidencesToolkitException e) {
                 e.printStackTrace();
             }
+
         }
 
         try {

@@ -1,8 +1,9 @@
 package eu.ecodex.connector.common.message;
 
 /**
- * This is a container object that contains the XML content of the message. It
- * is mandatory to build a {@link Message} object.
+ * This is a container object that contains the content of the message in XML
+ * format as well as the PDF document itself. It is mandatory to build a
+ * {@link Message} object.
  * 
  * @author riederb
  * 
@@ -10,6 +11,7 @@ package eu.ecodex.connector.common.message;
 public class MessageContent {
 
     private byte[] xmlContent;
+    private byte[] pdfDocument;
 
     public byte[] getXmlContent() {
         return xmlContent;
@@ -17,6 +19,14 @@ public class MessageContent {
 
     public void setXmlContent(byte[] xmlContent) {
         this.xmlContent = xmlContent;
+    }
+
+    public byte[] getPdfDocument() {
+        return pdfDocument;
+    }
+
+    public void setPdfDocument(byte[] pdfDocument) {
+        this.pdfDocument = pdfDocument;
     }
 
 }

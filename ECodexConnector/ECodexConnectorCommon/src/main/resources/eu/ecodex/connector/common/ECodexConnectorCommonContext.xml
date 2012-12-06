@@ -18,6 +18,9 @@
 		<property name="postalAddressCountry" value="${postal.address.country}" />
 	</bean>
 	
-	
+	<bean id="dbMessageService" class="eu.ecodex.connector.common.db.service.impl.ECodexMessageServiceImpl">
+		<property name="messageDao" ref="messageDao" />
+		<property name="evidenceDao" ref="evidenceDao" />
+	</bean>
 	
 </beans>

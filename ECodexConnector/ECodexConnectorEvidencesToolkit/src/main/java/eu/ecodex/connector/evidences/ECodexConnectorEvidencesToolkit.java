@@ -12,9 +12,10 @@ import eu.ecodex.connector.evidences.type.RejectionReason;
  */
 public interface ECodexConnectorEvidencesToolkit {
 
-    void createSubmissionAcceptance(Message message) throws EvidencesToolkitException;
+    byte[] createSubmissionAcceptance(Message message, byte[] hash) throws EvidencesToolkitException;
 
-    void createSubmissionRejection(RejectionReason rejectionReason, Message message) throws EvidencesToolkitException;
+    byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, byte[] hash)
+            throws EvidencesToolkitException;
 
     void createRelayREMMDAcceptance(Message message) throws EvidencesToolkitException;
 
