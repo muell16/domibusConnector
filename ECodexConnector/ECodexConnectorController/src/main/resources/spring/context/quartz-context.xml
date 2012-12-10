@@ -3,26 +3,26 @@
 
 <beans>
 
-<bean id="handleNationalMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-  <property name="targetObject" ref="nationalToInternationalController"/>
+<bean id="handleOutgoingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject" ref="outgoingController"/>
   <property name="targetMethod" value="handleMessages"/>
   <property name="concurrent" value="false"/>
 </bean>
 
-<bean id="handleGatewayMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-  <property name="targetObject" ref="internationalToNationalController"/>
+<bean id="handleIncomingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject" ref="incomingController"/>
   <property name="targetMethod" value="handleMessages"/>
   <property name="concurrent" value="false"/>
 </bean>
 
-<bean id="nationalTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-  <property name="jobDetail" ref="handleNationalMessages"/>
+<bean id="outgoingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+  <property name="jobDetail" ref="handleOutgoingMessages"/>
   <property name="startDelay" value="1000"/>
   <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
 </bean>
 
-<bean id="gatewayTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-  <property name="jobDetail" ref="handleGatewayMessages"/>
+<bean id="incomingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+  <property name="jobDetail" ref="handleIncomingMessages"/>
   <property name="startDelay" value="5000"/>
   <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
 </bean>
@@ -30,8 +30,8 @@
 <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
   <property name="triggers">
     <list>
-      <ref bean="nationalTrigger"/>
-      <ref bean="gatewayTrigger"/>
+      <ref bean="outgoingTrigger"/>
+      <ref bean="incomingTrigger"/>
     </list>
   </property>
 </bean>

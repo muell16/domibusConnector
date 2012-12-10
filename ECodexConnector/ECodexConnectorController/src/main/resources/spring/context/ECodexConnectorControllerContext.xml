@@ -12,7 +12,17 @@
 	
 	<import resource="quartz-context.xml"/>
 	
-  	<bean id="nationalToInternationalController" class="eu.ecodex.connector.controller.ECodexConnectorNationalToInternationalController">
+  	<bean id="outgoingController" class="eu.ecodex.connector.controller.ECodexConnectorOutgoingController">
+  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
+  		<property name="outgoingMessageService" ref="outgoingMessageService"/>
+  	</bean>
+  	
+  	<bean id="incomingController" class="eu.ecodex.connector.controller.ECodexConnectorIncomingController">
+  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
+  		<property name="incomingMessageService" ref="incomingMessageService" />
+  	</bean>
+  	
+  	<bean id="outgoingMessageService" class="eu.ecodex.connector.controller.message.OutgoingMessageService">
   		<property name="connectorProperties" ref="connectorProperties" />
   		<property name="contentMapper" ref="contentMapper" />
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>
@@ -22,7 +32,7 @@
   		<property name="hashValueBuilder" ref="hashValueBuilder"/>
   	</bean>
   	
-  	<bean id="internationalToNationalController" class="eu.ecodex.connector.controller.ECodexConnectorInternationalToNationalController">
+  	<bean id="incomingMessageService" class="eu.ecodex.connector.controller.message.IncomingMessageService">
   		<property name="connectorProperties" ref="connectorProperties" />
   		<property name="contentMapper" ref="contentMapper" />
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>

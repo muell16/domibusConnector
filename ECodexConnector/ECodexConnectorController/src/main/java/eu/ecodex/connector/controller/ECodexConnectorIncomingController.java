@@ -1,0 +1,56 @@
+package eu.ecodex.connector.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
+import eu.ecodex.connector.controller.message.MessageService;
+import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
+import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
+
+public class ECodexConnectorIncomingController implements ECodexConnectorController {
+
+    static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorIncomingController.class);
+
+    private ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
+    private MessageService incomingMessageService;
+
+    public void setGatewayWebserviceClient(ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient) {
+        this.gatewayWebserviceClient = gatewayWebserviceClient;
+    }
+
+    public void setIncomingMessageService(MessageService incomingMessageService) {
+        this.incomingMessageService = incomingMessageService;
+    }
+
+    @Override
+    public void handleMessages() throws ECodexConnectorControllerException {
+        LOGGER.info("Started handle gateway Messages!");
+
+        String[] messageIDs = null;
+        try {
+            messageIDs = gatewayWebserviceClient.listPendingMessages();
+        } catch (ECodexConnectorGatewayWebserviceClientException e) {
+            throw new ECodexConnectorControllerException(e);
+        }
+
+        if (messageIDs != null && messageIDs.length > 0) {
+            for (String messageId : messageIDs) {
+                try {
+                    incomingMessageService.handleMessage(messageId);
+                } catch (ECodexConnectorControllerException e) {
+                    LOGGER.error("Error handling message with id " + messageId, e);
+                }
+            }
+        } else {
+            LOGGER.info("No pending messages on gateway!");
+        }
+    }
+
+    @Override
+    public void handleEvidences() throws ECodexConnectorControllerException {
+        // TODO Auto-generated method stub
+
+    }
+
+}

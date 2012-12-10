@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller;
+package eu.ecodex.connector.controller.message;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,41 +18,12 @@ import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientE
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
-public class ECodexConnectorNationalToInternationalController extends ECodexConnectorControllerImpl {
+public class OutgoingMessageService extends AbstractMessageService implements MessageService {
 
-    static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorNationalToInternationalController.class);
+    static Logger LOGGER = LoggerFactory.getLogger(OutgoingMessageService.class);
 
     @Override
-    public void handleMessages() throws ECodexConnectorControllerException {
-        LOGGER.debug("Started to check national implementation for pending messages!");
-
-        String[] messages = null;
-        try {
-            messages = nationalBackendClient.requestMessagesUnsent();
-        } catch (ECodexConnectorNationalBackendClientException nbce) {
-            throw new ECodexConnectorControllerException(
-                    "Exception while trying to get messages list from national system. ", nbce);
-        } catch (ImplementationMissingException ime) {
-            throw new ECodexConnectorControllerException(
-                    "Exception while trying to get messages list from national system. ", ime);
-        }
-
-        if (messages != null && messages.length > 0) {
-
-            for (String messageId : messages) {
-
-                try {
-                    handleNationalMessage(messageId);
-                } catch (ECodexConnectorControllerException ce) {
-                    LOGGER.error(ce.getMessage());
-                    throw ce;
-                }
-            }
-        }
-    }
-
-    private void handleNationalMessage(String messageId) throws ECodexConnectorControllerException {
-
+    public void handleMessage(String messageId) throws ECodexConnectorControllerException {
         MessageDetails details = new MessageDetails();
         details.setNationalMessageId(messageId);
 
@@ -71,6 +42,7 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
         }
 
         ECodexMessage dbMessage = dbMessageService.createAndPersistDBMessage(message, ECodexMessageDirection.NAT_TO_GW);
+        byte[] hashValue = buildAndPersistHashValue(message, dbMessage);
 
         if (connectorProperties.isUseContentMapper()) {
             try {
@@ -78,8 +50,10 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
                         .getXmlContent());
                 message.getMessageContent().setXmlContent(xmlContent);
             } catch (ECodexConnectorContentMapperException cme) {
+                createSubmissionRejectionAndReturnIt(message, hashValue);
                 cme.printStackTrace();
             } catch (ImplementationMissingException ime) {
+                createSubmissionRejectionAndReturnIt(message, hashValue);
                 ime.printStackTrace();
             }
         }
@@ -89,8 +63,6 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
             // and TrustOKToken
             LOGGER.warn("SecurityToolkit not available yet! Must send message unsecure!");
         }
-
-        byte[] hashValue = buildAndPersistHashValue(message, dbMessage);
 
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
@@ -112,7 +84,6 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
             createSubmissionRejectionAndReturnIt(message, hashValue);
             throw new ECodexConnectorControllerException("Could not send ECodex Message to Gateway! ", gwse);
         }
-
     }
 
     private byte[] buildAndPersistHashValue(Message message, ECodexMessage dbMessage) {
@@ -144,12 +115,6 @@ public class ECodexConnectorNationalToInternationalController extends ECodexConn
         } catch (ImplementationMissingException ime) {
             throw new ECodexConnectorControllerException("Exception while trying to send submission rejection. ", ime);
         }
-
-    }
-
-    @Override
-    public void handleEvidences() throws ECodexConnectorControllerException {
-        // TODO Auto-generated method stub
 
     }
 

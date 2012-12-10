@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller;
+package eu.ecodex.connector.controller.message;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,35 +11,12 @@ import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientE
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
-public class ECodexConnectorInternationalToNationalController extends ECodexConnectorControllerImpl {
+public class IncomingMessageService extends AbstractMessageService implements MessageService {
 
-    static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorInternationalToNationalController.class);
+    static Logger LOGGER = LoggerFactory.getLogger(IncomingMessageService.class);
 
     @Override
-    public void handleMessages() throws ECodexConnectorControllerException {
-        LOGGER.info("Started handle gateway Messages!");
-
-        String[] messageIDs = null;
-        try {
-            messageIDs = gatewayWebserviceClient.listPendingMessages();
-        } catch (ECodexConnectorGatewayWebserviceClientException e) {
-            throw new ECodexConnectorControllerException(e);
-        }
-
-        if (messageIDs != null && messageIDs.length > 0) {
-            for (String messageId : messageIDs) {
-                try {
-                    handleGatewayMessage(messageId);
-                } catch (ECodexConnectorControllerException e) {
-                    LOGGER.error("Error handling message with id " + messageId, e);
-                }
-            }
-        } else {
-            LOGGER.info("No pending messages on gateway!");
-        }
-    }
-
-    private void handleGatewayMessage(String messageId) throws ECodexConnectorControllerException {
+    public void handleMessage(String messageId) throws ECodexConnectorControllerException {
         Message message = null;
         try {
             message = gatewayWebserviceClient.downloadMessage(messageId);
@@ -92,11 +69,6 @@ public class ECodexConnectorInternationalToNationalController extends ECodexConn
         } catch (ImplementationMissingException e) {
             throw new ECodexConnectorControllerException(e);
         }
-    }
-
-    @Override
-    public void handleEvidences() throws ECodexConnectorControllerException {
-        // TODO Auto-generated method stub
 
     }
 
