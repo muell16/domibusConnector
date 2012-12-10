@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
-import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
+import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
@@ -56,7 +56,7 @@ public class ECodexConnectorInternationalToNationalController extends ECodexConn
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
                 evidencesToolkit.createRelayREMMDAcceptance(message);
-            } catch (EvidencesToolkitException e) {
+            } catch (ECodexConnectorEvidencesToolkitException e) {
                 throw new ECodexConnectorControllerException("Error creating Evidence for message!", e);
             }
 

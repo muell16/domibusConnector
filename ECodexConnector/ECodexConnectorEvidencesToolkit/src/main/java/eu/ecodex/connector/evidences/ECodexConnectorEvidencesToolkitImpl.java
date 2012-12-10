@@ -4,7 +4,7 @@ import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
+import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
 import eu.ecodex.evidences.EvidenceBuilder;
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
@@ -20,7 +20,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     private ECodexConnectorProperties connectorProperties;
 
     @Override
-    public byte[] createSubmissionAcceptance(Message message, byte[] hash) throws EvidencesToolkitException {
+    public byte[] createSubmissionAcceptance(Message message, byte[] hash) throws ECodexConnectorEvidencesToolkitException {
 
         byte[] evidence = createSubmissionAcceptanceRejection(true, null, message, hash);
 
@@ -34,10 +34,10 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
     @Override
     public byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, byte[] hash)
-            throws EvidencesToolkitException {
+            throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
-            throw new EvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -53,7 +53,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     @Override
-    public void createRelayREMMDAcceptance(Message message) throws EvidencesToolkitException {
+    public void createRelayREMMDAcceptance(Message message) throws ECodexConnectorEvidencesToolkitException {
         MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         byte[] evidence = createRelayREMMDAcceptanceRejection(true, null, prevConfirmation.getEvidence());
@@ -67,9 +67,9 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
     @Override
     public void createRelayREMMDRejection(RejectionReason rejectionReason, Message message)
-            throws EvidencesToolkitException {
+            throws ECodexConnectorEvidencesToolkitException {
         if (rejectionReason == null) {
-            throw new EvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -85,7 +85,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     @Override
-    public void createDeliveryEvidence(Message message) throws EvidencesToolkitException {
+    public void createDeliveryEvidence(Message message) throws ECodexConnectorEvidencesToolkitException {
         MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         byte[] evidence = createDeliveryNonDeliveryEvidence(true, null, prevConfirmation.getEvidence());
@@ -98,10 +98,10 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
     @Override
     public void createNonDeliveryEvidence(RejectionReason rejectionReason, Message message)
-            throws EvidencesToolkitException {
+            throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
-            throw new EvidencesToolkitException("in case of a NonDelivery the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException("in case of a NonDelivery the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -117,7 +117,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     @Override
-    public void createRetrievalEvidence(Message message) throws EvidencesToolkitException {
+    public void createRetrievalEvidence(Message message) throws ECodexConnectorEvidencesToolkitException {
         MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.DELIVERY, message);
 
         byte[] evidence = createRetrievalNonRetrievalEvidence(true, null, prevConfirmation.getEvidence());
@@ -130,10 +130,10 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
     @Override
     public void createNonRetrievalEvidence(RejectionReason rejectionReason, Message message)
-            throws EvidencesToolkitException {
+            throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
-            throw new EvidencesToolkitException("in case of a NonRetrieval the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException("in case of a NonRetrieval the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -166,43 +166,43 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     private byte[] createRetrievalNonRetrievalEvidence(boolean isRetrieval, REMErrorEvent eventReason,
-            byte[] previousEvidence) throws EvidencesToolkitException {
+            byte[] previousEvidence) throws ECodexConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
         try {
             return evidenceBuilder.createRetrievalNonRetrievalByRecipient(isRetrieval, eventReason,
                     evidenceIssuerDetails, previousEvidence);
         } catch (ECodexEvidenceBuilderException e) {
-            throw new EvidencesToolkitException(e);
+            throw new ECodexConnectorEvidencesToolkitException(e);
         }
     }
 
     private byte[] createDeliveryNonDeliveryEvidence(boolean isDelivery, REMErrorEvent eventReason,
-            byte[] previousEvidence) throws EvidencesToolkitException {
+            byte[] previousEvidence) throws ECodexConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
         try {
             return evidenceBuilder.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason, evidenceIssuerDetails,
                     previousEvidence);
         } catch (ECodexEvidenceBuilderException e) {
-            throw new EvidencesToolkitException(e);
+            throw new ECodexConnectorEvidencesToolkitException(e);
         }
     }
 
     private byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason,
-            byte[] previousEvidence) throws EvidencesToolkitException {
+            byte[] previousEvidence) throws ECodexConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
         try {
             return evidenceBuilder.createRelayREMMDAcceptanceRejection(isAcceptance, eventReason,
                     evidenceIssuerDetails, previousEvidence);
         } catch (ECodexEvidenceBuilderException e) {
-            throw new EvidencesToolkitException(e);
+            throw new ECodexConnectorEvidencesToolkitException(e);
         }
     }
 
     private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent reason, Message message,
-            byte[] hash) throws EvidencesToolkitException {
+            byte[] hash) throws ECodexConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
         String nationalMessageId = message.getMessageDetails().getNationalMessageId();
@@ -217,7 +217,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         try {
             messageDetails = buildMessageDetails(nationalMessageId, originalMessage, senderAddress, recipientAddress,
                     hash);
-        } catch (EvidencesToolkitException e) {
+        } catch (ECodexConnectorEvidencesToolkitException e) {
             throw e;
         }
 
@@ -225,7 +225,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             return evidenceBuilder.createSubmissionAcceptanceRejection(isAcceptance, reason, evidenceIssuerDetails,
                     messageDetails);
         } catch (ECodexEvidenceBuilderException e) {
-            throw new EvidencesToolkitException(e);
+            throw new ECodexConnectorEvidencesToolkitException(e);
         }
     }
 
@@ -249,25 +249,25 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     private ECodexMessageDetails buildMessageDetails(String nationalMessageId, byte[] originalMessage,
-            String senderAddress, String recipientAddress, byte[] hash) throws EvidencesToolkitException {
+            String senderAddress, String recipientAddress, byte[] hash) throws ECodexConnectorEvidencesToolkitException {
         ECodexMessageDetails messageDetails = new ECodexMessageDetails();
 
         if (originalMessage == null || originalMessage.length < 1) {
-            throw new EvidencesToolkitException("there is no original message to build an evidence for!");
+            throw new ECodexConnectorEvidencesToolkitException("there is no original message to build an evidence for!");
         }
         messageDetails.setHashAlgorithm(hashValueBuilder.getAlgorithm().toString());
         messageDetails.setHashValue(hash);
 
         if (nationalMessageId == null || nationalMessageId.isEmpty()) {
-            throw new EvidencesToolkitException(
+            throw new ECodexConnectorEvidencesToolkitException(
                     "the nationalMessageId may not be null for building a submission evidence!");
         }
         if (recipientAddress == null || recipientAddress.isEmpty()) {
-            throw new EvidencesToolkitException(
+            throw new ECodexConnectorEvidencesToolkitException(
                     "the recipientAddress may not be null for building a submission evidence!");
         }
         if (senderAddress == null || senderAddress.isEmpty()) {
-            throw new EvidencesToolkitException("the senderAddress may not be null for building a submission evidence!");
+            throw new ECodexConnectorEvidencesToolkitException("the senderAddress may not be null for building a submission evidence!");
         }
         messageDetails.setNationalMessageId(nationalMessageId);
         messageDetails.setRecipientAddress(recipientAddress);

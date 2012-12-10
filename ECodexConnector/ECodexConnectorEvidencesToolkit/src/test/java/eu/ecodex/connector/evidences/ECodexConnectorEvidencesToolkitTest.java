@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
-import eu.ecodex.connector.evidences.exception.EvidencesToolkitException;
+import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,7 +51,7 @@ public class ECodexConnectorEvidencesToolkitTest {
             Assert.assertEquals(1, message.getConfirmations().size());
             String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
             LOG.info(evidencePretty);
-        } catch (EvidencesToolkitException e) {
+        } catch (ECodexConnectorEvidencesToolkitException e) {
             e.printStackTrace();
             Assert.fail();
         } catch (TransformerFactoryConfigurationError e) {
@@ -76,7 +76,7 @@ public class ECodexConnectorEvidencesToolkitTest {
             Assert.assertEquals(1, message.getConfirmations().size());
             String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
             LOG.info(evidencePretty);
-        } catch (EvidencesToolkitException e) {
+        } catch (ECodexConnectorEvidencesToolkitException e) {
             e.printStackTrace();
             Assert.fail();
         } catch (TransformerFactoryConfigurationError e) {
