@@ -74,6 +74,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SendResponse }
+     * 
+     */
+    public SendResponse createSendResponse() {
+        return new SendResponse();
+    }
+
+    /**
      * Create an instance of {@link DownloadMessageRequest }
      * 
      */

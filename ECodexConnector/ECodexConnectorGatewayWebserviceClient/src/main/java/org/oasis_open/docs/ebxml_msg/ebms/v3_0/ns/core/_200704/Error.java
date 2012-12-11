@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java-Klasse fÃ¼r Error complex type.
+ * <p>Java-Klasse für Error complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

@@ -6,10 +6,13 @@
 Version	|	Date		|	Author			|	Description
 
 1.0		  	11/06/2012		santosa				Initial version
+1.1		  	05/11/2012		santosa				Compatibility to SOAP 1.2
 	
 #########################################################################################
 -->
-<wsdl:definitions xmlns:eb1="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://org.ecodex.backend" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://www.w3.org/2003/05/soap-envelope" name="eCodex" targetNamespace="http://org.ecodex.backend">
+<wsdl:definitions xmlns:eb1="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://org.ecodex.backend" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns="http://schemas.xmlsoap.org/soap/envelope/" 
+		xmlns:ns1="http://www.w3.org/2003/05/soap-envelope" name="eCodex" targetNamespace="http://org.ecodex.backend">
 	<wsdl:import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" location="ebms-header-3_0-200704.xsd"/>
 	<wsdl:types>
 		<xsd:schema targetNamespace="http://org.ecodex.backend" xmlns="http://www.w3.org/2001/XMLSchema">
@@ -54,6 +57,13 @@ Version	|	Date		|	Author			|	Description
                <xsd:element name="ID" type="xsd:string"/>-->
 						<!-- URL to the Attachments data file -->
 						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="sendResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="messageID" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
@@ -119,7 +129,7 @@ Version	|	Date		|	Author			|	Description
 									</xsd:enumeration>
 									<xsd:enumeration value="ERROR_SEND_001">
 										<xsd:annotation>
-											<xsd:documentation>PMode invalid</xsd:documentation>
+											<xsd:documentation>Cannot identify a valid PMode</xsd:documentation>
 										</xsd:annotation>
 									</xsd:enumeration>
 									<xsd:enumeration value="ERROR_SEND_002">
@@ -169,7 +179,9 @@ Version	|	Date		|	Author			|	Description
 		<wsdl:part name="sendRequestURL" element="tns:sendRequestURL"/>
 		<wsdl:part name="ebMSHeaderInfo" element="eb1:Messaging"/>
 	</wsdl:message>
-	<wsdl:message name="sendResponse"/>
+	<wsdl:message name="sendResponse">
+		<wsdl:part name="sendResponse" element="tns:sendResponse"/>
+	</wsdl:message>
 	<wsdl:message name="downloadMessageRequest">
 		<wsdl:part name="downloadMessageRequest" element="tns:downloadMessageRequest"/>
 	</wsdl:message>
@@ -218,58 +230,58 @@ Version	|	Date		|	Author			|	Description
 		</wsdl:operation>
 	</wsdl:portType>
 	<wsdl:binding name="eCODEX" type="tns:BackendInterface">
-		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<wsdl:operation name="sendMessage">
 			<wsdl:input name="sendMessageRequest">
-				<soap:body parts="sendRequest" use="literal"/>
-				<soap:header message="tns:sendRequest" part="ebMSHeaderInfo" use="literal"/>
+				<soap12:body parts="sendRequest" use="literal"/>
+				<soap12:header message="tns:sendRequest" part="ebMSHeaderInfo" use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="sendMessageResponse">
-				<soap:body use="literal"/>
+				<soap12:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="fault">
-				<soap:fault name="fault" use="literal"/>
+				<soap12:fault name="fault" use="literal"/>
 			</wsdl:fault>
 		</wsdl:operation>
 		<wsdl:operation name="sendMessageWithReference">
 			<wsdl:input name="sendMessageWithReferenceRequest">
-				<soap:body parts="sendRequestURL" use="literal"/>
-				<soap:header message="tns:sendRequestURL" part="ebMSHeaderInfo" use="literal"/>
+				<soap12:body parts="sendRequestURL" use="literal"/>
+				<soap12:header message="tns:sendRequestURL" part="ebMSHeaderInfo" use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="sendMessageWithReferenceResponse">
-				<soap:body use="literal"/>
+				<soap12:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="fault">
-				<soap:fault name="fault" use="literal"/>
+				<soap12:fault name="fault" use="literal"/>
 			</wsdl:fault>
 		</wsdl:operation>
 		<wsdl:operation name="downloadMessage">
 			<wsdl:input name="downloadMessageRequest">
-				<soap:body use="literal"/>
+				<soap12:body use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="downloadMessageResponse">
-				<soap:body parts="downloadMessageResponse" use="literal"/>
-				<soap:header message="tns:downloadMessageResponse" part="ebMSHeaderInfo" use="literal"/>
+				<soap12:body parts="downloadMessageResponse" use="literal"/>
+				<soap12:header message="tns:downloadMessageResponse" part="ebMSHeaderInfo" use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="fault">
-				<soap:fault name="fault" use="literal"/>
+				<soap12:fault name="fault" use="literal"/>
 			</wsdl:fault>
 		</wsdl:operation>
 		<wsdl:operation name="listPendingMessages">
 			<wsdl:input name="listPendingMessagesRequest">
-				<soap:body use="literal"/>
+				<soap12:body use="literal"/>
 			</wsdl:input>
 			<wsdl:output name="listPendingMessagesResponse">
-				<soap:body use="literal"/>
+				<soap12:body use="literal"/>
 			</wsdl:output>
 			<wsdl:fault name="fault">
-				<soap:fault name="fault" use="literal"/>
+				<soap12:fault name="fault" use="literal"/>
 			</wsdl:fault>
 		</wsdl:operation>
 	</wsdl:binding>
 	<wsdl:service name="BackendService">
 		<wsdl:port name="BackendPort" binding="tns:eCODEX">
-			<soap:address location="http://www.ecodex.org/eCODEX"/>
+			<soap12:address location="http://www.ecodex.org/eCODEX"/>
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>

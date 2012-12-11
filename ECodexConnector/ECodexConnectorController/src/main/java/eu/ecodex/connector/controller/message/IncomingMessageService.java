@@ -51,9 +51,9 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
         if (connectorProperties.isUseContentMapper()) {
             try {
-                byte[] xmlContent = contentMapper.mapInternationalToNational(message.getMessageContent()
-                        .getXmlContent());
-                message.getMessageContent().setXmlContent(xmlContent);
+                byte[] mappedContent = contentMapper.mapInternationalToNational(message.getMessageContent()
+                        .getECodexContent());
+                message.getMessageContent().setNationalXmlContent(mappedContent);
             } catch (ECodexConnectorContentMapperException e) {
                 throw new ECodexConnectorControllerException("Error mapping content of message into national format!",
                         e);

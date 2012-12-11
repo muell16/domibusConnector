@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java-Klasse fÃ¼r AgreementRef complex type.
+ * <p>Java-Klasse für AgreementRef complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

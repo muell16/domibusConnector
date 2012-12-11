@@ -3,7 +3,7 @@
 
 <beans>
 
-	<import resource="classpath:/eu/ecodex/connector/common/ECodexConnectorCommonContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
   
   <bean id="evidencesToolkit" class="eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkitImpl">
   	<property name="evidenceBuilder" ref="evidenceBuilder"/>

@@ -4,7 +4,7 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-	<import resource="classpath:/eu/ecodex/connector/common/ECodexConnectorCommonContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
 
 	<jaxws:client id="gatewayClient" serviceClass="backend.ecodex.org.BackendInterface"
 		address="${gateway.endpoint.address}BackendPort" />
@@ -12,7 +12,17 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	<bean id="gatewayWebServiceClient"
 		class="eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClientImpl">
 		<property name="gatewayBackendWebservice" ref="gatewayClient" />
+		<property name="sendMessageHelper" ref="sendMessageHelper" />
+		<property name="downloadMessageHelper" ref="downloadMessageHelper" />
+	</bean>
+	
+	<bean id="sendMessageHelper" class="eu.ecodex.connector.gwc.helper.SendMessageHelper">
 		<property name="connectorProperties" ref="connectorProperties" />
+		<property name="dbMessageService" ref="dbMessageService" />
+	</bean>
+	
+	<bean id="downloadMessageHelper" class="eu.ecodex.connector.gwc.helper.DownloadMessageHelper">
+	
 	</bean>
 
 </beans>

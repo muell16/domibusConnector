@@ -9,7 +9,7 @@ import javax.xml.namespace.QName;
 
 
 /**
- * <p>Java-Klasse fÃ¼r SupportedEnvType complex type.
+ * <p>Java-Klasse für SupportedEnvType complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

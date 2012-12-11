@@ -3,12 +3,12 @@
 
 <beans>
 
-	<import resource="classpath:/eu/ecodex/connector/common/ECodexConnectorCommonContext.xml"/>
-	<import resource="classpath:/eu/ecodex/connector/security/ECodexConnectorSecurityToolkitContext.xml"/>
-	<import resource="classpath:/eu/ecodex/connector/evidences/ECodexConnectorEvidencesToolkitContext.xml"/>
-	<import resource="classpath:/eu/ecodex/connector/mapping/ECodexConnectorContentMapperContext.xml"/>
-	<import resource="classpath:/eu/ecodex/connector/gwc/ECodexConnectorGatewayWebserviceClientContext.xml"/>
-	<import resource="classpath:/eu/ecodex/connector/nbc/ECodexConnectorNationalBackendClientContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorSecurityToolkitContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorEvidencesToolkitContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorContentMapperContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorGatewayWebserviceClientContext.xml"/>
+	<import resource="classpath:/spring/context/ECodexConnectorNationalBackendClientContext.xml"/>
 	
 	<import resource="quartz-context.xml"/>
 	

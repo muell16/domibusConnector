@@ -20,7 +20,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     private ECodexConnectorProperties connectorProperties;
 
     @Override
-    public byte[] createSubmissionAcceptance(Message message, byte[] hash) throws ECodexConnectorEvidencesToolkitException {
+    public byte[] createSubmissionAcceptance(Message message, byte[] hash)
+            throws ECodexConnectorEvidencesToolkitException {
 
         byte[] evidence = createSubmissionAcceptanceRejection(true, null, message, hash);
 
@@ -37,7 +38,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
-            throw new ECodexConnectorEvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException(
+                    "in case of a rejection the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -69,7 +71,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     public void createRelayREMMDRejection(RejectionReason rejectionReason, Message message)
             throws ECodexConnectorEvidencesToolkitException {
         if (rejectionReason == null) {
-            throw new ECodexConnectorEvidencesToolkitException("in case of a rejection the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException(
+                    "in case of a rejection the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -101,7 +104,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
-            throw new ECodexConnectorEvidencesToolkitException("in case of a NonDelivery the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException(
+                    "in case of a NonDelivery the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -133,7 +137,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
             throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
-            throw new ECodexConnectorEvidencesToolkitException("in case of a NonRetrieval the rejectionReason may not be null!");
+            throw new ECodexConnectorEvidencesToolkitException(
+                    "in case of a NonRetrieval the rejectionReason may not be null!");
         }
 
         REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
@@ -207,7 +212,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         String nationalMessageId = message.getMessageDetails().getNationalMessageId();
 
-        byte[] originalMessage = message.getMessageContent().getXmlContent();
+        byte[] originalMessage = message.getMessageContent().getNationalXmlContent();
 
         String senderAddress = message.getMessageDetails().getOriginalSenderAddress();
 
@@ -267,7 +272,8 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
                     "the recipientAddress may not be null for building a submission evidence!");
         }
         if (senderAddress == null || senderAddress.isEmpty()) {
-            throw new ECodexConnectorEvidencesToolkitException("the senderAddress may not be null for building a submission evidence!");
+            throw new ECodexConnectorEvidencesToolkitException(
+                    "the senderAddress may not be null for building a submission evidence!");
         }
         messageDetails.setNationalMessageId(nationalMessageId);
         messageDetails.setRecipientAddress(recipientAddress);

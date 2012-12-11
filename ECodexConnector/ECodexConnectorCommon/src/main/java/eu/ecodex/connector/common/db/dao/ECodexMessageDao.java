@@ -7,4 +7,5 @@ public interface ECodexMessageDao {
     void saveNewMessage(ECodexMessage message);
 
     void mergeMessage(ECodexMessage message);
+
 }

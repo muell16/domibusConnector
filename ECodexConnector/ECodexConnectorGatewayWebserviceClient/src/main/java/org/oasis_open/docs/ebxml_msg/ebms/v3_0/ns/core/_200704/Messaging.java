@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
  * 	eb:SignalMessage or eb:UserMessage element must present).
  * 			
  * 
- * <p>Java-Klasse fÃ¼r Messaging complex type.
+ * <p>Java-Klasse für Messaging complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
@@ -157,8 +157,8 @@ public class Messaging {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Element }
      * {@link Object }
+     * {@link Element }
      * 
      * 
      */

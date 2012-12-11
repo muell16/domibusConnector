@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java-Klasse fÃ¼r PartyId complex type.
+ * <p>Java-Klasse für PartyId complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

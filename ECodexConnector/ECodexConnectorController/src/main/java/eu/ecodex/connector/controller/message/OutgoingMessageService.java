@@ -42,13 +42,14 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         ECodexMessage dbMessage = dbMessageService.createAndPersistDBMessage(message, ECodexMessageDirection.NAT_TO_GW);
+        message.setDbMessage(dbMessage);
         byte[] hashValue = buildAndPersistHashValue(message, dbMessage);
 
         if (connectorProperties.isUseContentMapper()) {
             try {
-                byte[] xmlContent = contentMapper.mapNationalToInternational(message.getMessageContent()
-                        .getXmlContent());
-                message.getMessageContent().setXmlContent(xmlContent);
+                byte[] mappedContent = contentMapper.mapNationalToInternational(message.getMessageContent()
+                        .getNationalXmlContent());
+                message.getMessageContent().setECodexContent(mappedContent);
             } catch (ECodexConnectorContentMapperException cme) {
                 createSubmissionRejectionAndReturnIt(message, hashValue);
                 cme.printStackTrace();

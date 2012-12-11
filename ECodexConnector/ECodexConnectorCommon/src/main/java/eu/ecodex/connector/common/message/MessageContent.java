@@ -10,15 +10,24 @@ package eu.ecodex.connector.common.message;
  */
 public class MessageContent {
 
-    private byte[] xmlContent;
+    private byte[] nationalXmlContent;
+    private byte[] eCodexContent;
     private byte[] pdfDocument;
 
-    public byte[] getXmlContent() {
-        return xmlContent;
+    public byte[] getNationalXmlContent() {
+        return nationalXmlContent;
     }
 
-    public void setXmlContent(byte[] xmlContent) {
-        this.xmlContent = xmlContent;
+    public void setNationalXmlContent(byte[] nationalXmlContent) {
+        this.nationalXmlContent = nationalXmlContent;
+    }
+
+    public byte[] getECodexContent() {
+        return eCodexContent;
+    }
+
+    public void setECodexContent(byte[] eCodexContent) {
+        this.eCodexContent = eCodexContent;
     }
 
     public byte[] getPdfDocument() {

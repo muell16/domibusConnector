@@ -23,6 +23,7 @@ public class MessageDetails {
     private PartnerEnum toPartner;
     private String originalSenderAddress;
     private String finalRecipientAddress;
+    private Long dbMessageId;
 
     public String getNationalMessageId() {
         return nationalMessageId;
@@ -102,6 +103,14 @@ public class MessageDetails {
 
     public void setFinalRecipientAddress(String finalRecipientAddress) {
         this.finalRecipientAddress = finalRecipientAddress;
+    }
+
+    public Long getDbMessageId() {
+        return dbMessageId;
+    }
+
+    public void setDbMessageId(Long dbMessageId) {
+        this.dbMessageId = dbMessageId;
     }
 
 }

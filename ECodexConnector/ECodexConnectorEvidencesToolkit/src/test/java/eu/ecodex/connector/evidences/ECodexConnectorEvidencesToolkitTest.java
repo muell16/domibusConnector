@@ -96,7 +96,7 @@ public class ECodexConnectorEvidencesToolkitTest {
         details.setFinalRecipientAddress("someRecipientAddress");
 
         MessageContent content = new MessageContent();
-        content.setXmlContent(new String("originalMessage").getBytes());
+        content.setNationalXmlContent(new String("originalMessage").getBytes());
 
         Message message = new Message(details, content);
 
