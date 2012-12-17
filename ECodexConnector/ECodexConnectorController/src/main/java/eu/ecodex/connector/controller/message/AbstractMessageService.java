@@ -1,7 +1,7 @@
 package eu.ecodex.connector.controller.message;
 
 import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.db.service.ECodexMessageService;
+import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
 import eu.ecodex.connector.evidences.HashValueBuilder;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
@@ -16,7 +16,7 @@ public class AbstractMessageService {
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
     ECodexConnectorEvidencesToolkit evidencesToolkit;
     HashValueBuilder hashValueBuilder;
-    ECodexMessageService dbMessageService;
+    ECodexConnectorPersistenceService persistenceService;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -42,7 +42,7 @@ public class AbstractMessageService {
         this.hashValueBuilder = hashValueBuilder;
     }
 
-    public void setDbMessageService(ECodexMessageService dbMessageService) {
-        this.dbMessageService = dbMessageService;
+    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 }

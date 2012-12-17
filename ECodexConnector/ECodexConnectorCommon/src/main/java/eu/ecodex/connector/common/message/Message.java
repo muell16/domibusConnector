@@ -51,6 +51,12 @@ public class Message {
         addConfirmation(messageConfirmation);
     }
 
+    public Message(MessageDetails messageDetails) {
+        super();
+        this.messageDetails = messageDetails;
+        messageContent = null;
+    }
+
     public void addConfirmation(MessageConfirmation confirmation) {
         if (confirmations == null) {
             confirmations = new ArrayList<MessageConfirmation>();

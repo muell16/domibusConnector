@@ -25,10 +25,10 @@ public class ECodexMessage {
     @GeneratedValue(generator = "ECMSG_SEQ_GEN", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "EBMS_MESSAGE_ID")
+    @Column(name = "EBMS_MESSAGE_ID", unique = true)
     private String ebmsMessageId;
 
-    @Column(name = "NAT_MESSAGE_ID")
+    @Column(name = "NAT_MESSAGE_ID", unique = true)
     private String nationalMessageId;
 
     @Column(name = "CONVERSATION_ID")

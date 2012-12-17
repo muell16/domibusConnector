@@ -1,7 +1,7 @@
 package eu.ecodex.connector.common.enums;
 
 public enum PartnerEnum {
-    DE("DE", "GW"), IT("DE", "GW"), ES("DE", "GW"), EE("DE", "GW");
+    AT("AT", "GW"), DE("DE", "GW"), IT("IT", "GW"), ES("ES", "GW"), EE("EE", "GW");
 
     private final String name;
     private final String role;

@@ -3,7 +3,6 @@ package eu.ecodex.connector.controller.message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.db.model.ECodexMessage;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
@@ -41,9 +40,9 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                     "Exception while trying to receive message from national system. ", ime);
         }
 
-        ECodexMessage dbMessage = dbMessageService.createAndPersistDBMessage(message, ECodexMessageDirection.NAT_TO_GW);
-        message.setDbMessage(dbMessage);
-        byte[] hashValue = buildAndPersistHashValue(message, dbMessage);
+        persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.NAT_TO_GW);
+
+        byte[] hashValue = buildAndPersistHashValue(message);
 
         if (connectorProperties.isUseContentMapper()) {
             try {
@@ -69,7 +68,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             try {
                 byte[] submissionAcceptance = evidencesToolkit.createSubmissionAcceptance(message, hashValue);
                 // immediately persist new evidence into database
-                dbMessageService.createAndPersistDBEvidenceForDBMessage(dbMessage, submissionAcceptance,
+                persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionAcceptance,
                         ECodexEvidenceType.SUBMISSION_ACCEPTANCE);
             } catch (ECodexConnectorEvidencesToolkitException ete) {
                 createSubmissionRejectionAndReturnIt(message, hashValue);
@@ -87,15 +86,15 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
     }
 
-    private byte[] buildAndPersistHashValue(Message message, ECodexMessage dbMessage) {
+    private byte[] buildAndPersistHashValue(Message message) {
         // whatever the source for the hash will be - by now it is the pdf
         // document
         byte[] hash = hashValueBuilder.buildHashValue(message.getMessageContent().getPdfDocument());
 
         // now persist the hash value into the database entry for the
         // message
-        dbMessage.setHashValue(new String(hash));
-        dbMessageService.mergeDBMessage(dbMessage);
+        message.getDbMessage().setHashValue(new String(hash));
+        persistenceService.mergeMessageWithDatabase(message);
 
         return hash;
     }
@@ -105,9 +104,14 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         try {
             byte[] submissionRejection = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message,
                     hashValue);
-            MessageConfirmation confirmation = new MessageConfirmation(message.getMessageDetails()
-                    .getNationalMessageId(), ECodexEvidenceType.SUBMISSION_REJECTION, submissionRejection);
-            nationalBackendClient.deliverLastEvidenceForMessage(confirmation);
+            MessageConfirmation confirmation = new MessageConfirmation(ECodexEvidenceType.SUBMISSION_REJECTION,
+                    submissionRejection);
+
+            MessageDetails details = new MessageDetails();
+            details.setRefToMessageId(message.getMessageDetails().getNationalMessageId());
+
+            Message returnMessage = new Message(details, confirmation);
+            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
         } catch (ECodexConnectorEvidencesToolkitException e) {
             LOGGER.error("Could not even generate submission rejection! ", e);
             return;

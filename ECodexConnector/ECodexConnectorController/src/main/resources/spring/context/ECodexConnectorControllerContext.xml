@@ -28,7 +28,7 @@
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>
   		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
   		<property name="evidencesToolkit" ref="evidencesToolkit"/>
-  		<property name="dbMessageService" ref="dbMessageService" />
+  		<property name="persistenceService" ref="persistenceService" />
   		<property name="hashValueBuilder" ref="hashValueBuilder"/>
   	</bean>
   	
@@ -38,7 +38,13 @@
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>
   		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
   		<property name="evidencesToolkit" ref="evidencesToolkit"/>
-  		<property name="dbMessageService" ref="dbMessageService" />
+  		<property name="persistenceService" ref="persistenceService" />
+  	</bean>
+  	
+  	<bean id="outgoingEvidenceService" class="eu.ecodex.connector.controller.message.OutgoingEvidenceService">
+  		<property name="persistenceService" ref="persistenceService" />
+  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
+  		<property name="evidencesToolkit" ref="evidencesToolkit"/>
   	</bean>
   
 </beans>

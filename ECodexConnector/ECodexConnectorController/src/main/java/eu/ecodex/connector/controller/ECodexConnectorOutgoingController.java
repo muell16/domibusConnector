@@ -4,8 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
+import eu.ecodex.connector.controller.message.EvidenceService;
 import eu.ecodex.connector.controller.message.MessageService;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
@@ -16,6 +17,7 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
 
     private ECodexConnectorNationalBackendClient nationalBackendClient;
     private MessageService outgoingMessageService;
+    private EvidenceService outgoingEvidenceService;
 
     public void setNationalBackendClient(ECodexConnectorNationalBackendClient nationalBackendClient) {
         this.nationalBackendClient = nationalBackendClient;
@@ -23,6 +25,10 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
 
     public void setOutgoingMessageService(MessageService outgoingMessageService) {
         this.outgoingMessageService = outgoingMessageService;
+    }
+
+    public void setOutgoingEvidenceService(EvidenceService outgoingEvidenceService) {
+        this.outgoingEvidenceService = outgoingEvidenceService;
     }
 
     @Override
@@ -60,9 +66,9 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
     public void handleEvidences() throws ECodexConnectorControllerException {
         LOGGER.info("Started to check national implementation for pending confirmations!");
 
-        MessageConfirmation[] confirmations = null;
+        Message[] confirmationMessages = null;
         try {
-            confirmations = nationalBackendClient.requestConfirmations();
+            confirmationMessages = nationalBackendClient.requestConfirmations();
         } catch (ECodexConnectorNationalBackendClientException e) {
             throw new ECodexConnectorControllerException(
                     "Exception while trying to get confirmations from national system. ", e);
@@ -71,23 +77,18 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
                     "Exception while trying to get confirmations from national system. ", e);
         }
 
-        if (confirmations != null && confirmations.length > 0) {
+        if (confirmationMessages != null && confirmationMessages.length > 0) {
 
-            for (MessageConfirmation confirmation : confirmations) {
+            for (Message confirmationMessage : confirmationMessages) {
 
                 try {
-                    handleConfirmation(confirmation);
+                    outgoingEvidenceService.handleEvidence(confirmationMessage);
                 } catch (ECodexConnectorControllerException ce) {
                     LOGGER.error(ce.getMessage());
                     throw ce;
                 }
             }
         }
-    }
-
-    private void handleConfirmation(MessageConfirmation confirmation) throws ECodexConnectorControllerException {
-        // TODO Auto-generated method stub
-
     }
 
 }

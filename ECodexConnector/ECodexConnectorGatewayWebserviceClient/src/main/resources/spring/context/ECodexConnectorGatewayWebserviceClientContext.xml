@@ -18,7 +18,7 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<bean id="sendMessageHelper" class="eu.ecodex.connector.gwc.helper.SendMessageHelper">
 		<property name="connectorProperties" ref="connectorProperties" />
-		<property name="dbMessageService" ref="dbMessageService" />
+		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 	
 	<bean id="downloadMessageHelper" class="eu.ecodex.connector.gwc.helper.DownloadMessageHelper">

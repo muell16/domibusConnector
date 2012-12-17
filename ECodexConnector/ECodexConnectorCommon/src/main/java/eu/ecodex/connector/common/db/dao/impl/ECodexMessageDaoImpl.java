@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,5 +29,21 @@ public class ECodexMessageDaoImpl implements ECodexMessageDao {
     public void mergeMessage(ECodexMessage message) {
         message.setUpdated(new Date());
         em.merge(message);
+    }
+
+    @Override
+    public ECodexMessage findMessageByNationalId(String nationalMessageId) {
+        Query q = em.createQuery("from ECodexMessage m where m.nationalMessageId=?");
+        q.setParameter(0, nationalMessageId);
+
+        return (ECodexMessage) q.getSingleResult();
+    }
+
+    @Override
+    public ECodexMessage findMessageByEbmsId(String ebmsMessageId) {
+        Query q = em.createQuery("from ECodexMessage m where m.ebmsMessageId=?");
+        q.setParameter(0, ebmsMessageId);
+
+        return (ECodexMessage) q.getSingleResult();
     }
 }

@@ -8,4 +8,7 @@ public interface ECodexMessageDao {
 
     void mergeMessage(ECodexMessage message);
 
+    ECodexMessage findMessageByNationalId(String nationalMessageId);
+
+    ECodexMessage findMessageByEbmsId(String ebmsMessageId);
 }

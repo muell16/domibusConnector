@@ -18,7 +18,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import backend.ecodex.org.SendRequest;
 import backend.ecodex.org.SendResponse;
 import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.db.service.ECodexMessageService;
+import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageDetails;
@@ -30,14 +30,14 @@ public class SendMessageHelper {
     private static final String PMODE = "EE_Form_A";
 
     private ECodexConnectorProperties connectorProperties;
-    private ECodexMessageService dbMessageService;
+    private ECodexConnectorPersistenceService persistenceService;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
-    public void setDbMessageService(ECodexMessageService dbMessageService) {
-        this.dbMessageService = dbMessageService;
+    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 
     public SendRequest buildSendRequest(Message message) throws IOException,
@@ -95,7 +95,7 @@ public class SendMessageHelper {
             String ebmsMessageId = response.getMessageID().get(0);
             if (!ebmsMessageId.isEmpty()) {
                 message.getDbMessage().setEbmsMessageId(ebmsMessageId);
-                dbMessageService.mergeDBMessage(message.getDbMessage());
+                persistenceService.mergeMessageWithDatabase(message);
             }
         }
     }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
@@ -32,7 +33,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
-                evidencesToolkit.createRelayREMMDAcceptance(message);
+                MessageConfirmation relayRemMDAcceptance = evidencesToolkit.createRelayREMMDAcceptance(message);
+                message.addConfirmation(relayRemMDAcceptance);
             } catch (ECodexConnectorEvidencesToolkitException e) {
                 throw new ECodexConnectorControllerException("Error creating Evidence for message!", e);
             }

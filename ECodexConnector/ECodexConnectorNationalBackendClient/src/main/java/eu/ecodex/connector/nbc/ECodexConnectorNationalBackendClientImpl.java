@@ -2,7 +2,6 @@ package eu.ecodex.connector.nbc;
 
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 public class ECodexConnectorNationalBackendClientImpl implements ECodexConnectorNationalBackendClient {
@@ -27,13 +26,13 @@ public class ECodexConnectorNationalBackendClientImpl implements ECodexConnector
     }
 
     @Override
-    public MessageConfirmation[] requestConfirmations() throws ECodexConnectorNationalBackendClientException,
+    public Message[] requestConfirmations() throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
         throw new ImplementationMissingException("ECodexConnectorNationalBackendClient", "requestConfirmations");
     }
 
     @Override
-    public void deliverLastEvidenceForMessage(MessageConfirmation confirmation)
+    public void deliverLastEvidenceForMessage(Message confirmationMessage)
             throws ECodexConnectorNationalBackendClientException, ImplementationMissingException {
         throw new ImplementationMissingException("ECodexConnectorNationalBackendClient",
                 "deliverLastEvidenceForMessage");
