@@ -3,9 +3,12 @@ package eu.ecodex.connector.controller.message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.ecodex.connector.common.enums.ActionEnum;
+import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
@@ -32,30 +35,12 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         }
 
         if (connectorProperties.isUseEvidencesToolkit()) {
-            try {
-                MessageConfirmation relayRemMDAcceptance = evidencesToolkit.createRelayREMMDAcceptance(message);
-                message.addConfirmation(relayRemMDAcceptance);
-            } catch (ECodexConnectorEvidencesToolkitException e) {
-                throw new ECodexConnectorControllerException("Error creating Evidence for message!", e);
-            }
-
-            // TODO: MessageDetails building: From and To changed, Service and
-            // Action other?
-            Message evidenceMessage = new Message(message.getMessageDetails(), message.getConfirmations().get(
-                    message.getConfirmations().size() - 1));
-            try {
-                gatewayWebserviceClient.sendMessage(evidenceMessage);
-            } catch (ECodexConnectorGatewayWebserviceClientException e) {
-                LOGGER.error("Exception sending RelayREMMD evidence back to sender gateway of message "
-                        + message.getMessageDetails().getEbmsMessageId(), e);
-            }
+            createRelayREMMDEvidenceAndSendIt(message);
         }
 
         if (connectorProperties.isUseContentMapper()) {
             try {
-                byte[] mappedContent = contentMapper.mapInternationalToNational(message.getMessageContent()
-                        .getECodexContent());
-                message.getMessageContent().setNationalXmlContent(mappedContent);
+                contentMapper.mapInternationalToNational(message.getMessageContent());
             } catch (ECodexConnectorContentMapperException e) {
                 throw new ECodexConnectorControllerException("Error mapping content of message into national format!",
                         e);
@@ -72,6 +57,35 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException(e);
         }
 
+    }
+
+    private void createRelayREMMDEvidenceAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
+        MessageConfirmation relayRemMDAcceptance = null;
+        try {
+            relayRemMDAcceptance = evidencesToolkit.createRelayREMMDAcceptance(originalMessage);
+            // message.addConfirmation(relayRemMDAcceptance);
+        } catch (ECodexConnectorEvidencesToolkitException e) {
+            throw new ECodexConnectorControllerException("Error creating RelayREMMDAcceptance for message!", e);
+        }
+
+        MessageDetails details = new MessageDetails();
+        details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
+        details.setConversationId(originalMessage.getMessageDetails().getConversationId());
+        details.setService(originalMessage.getMessageDetails().getService());
+        details.setAction(ActionEnum.Evidence_RelayREMMD);
+        PartnerEnum fromPartner = PartnerEnum.findValue(connectorProperties.getGatewayName(),
+                connectorProperties.getGatewayRole());
+        details.setFromPartner(fromPartner);
+        details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
+
+        Message evidenceMessage = new Message(details, relayRemMDAcceptance);
+
+        try {
+            gatewayWebserviceClient.sendMessage(evidenceMessage);
+        } catch (ECodexConnectorGatewayWebserviceClientException e) {
+            LOGGER.error("Exception sending RelayREMMD evidence back to sender gateway of message "
+                    + originalMessage.getMessageDetails().getEbmsMessageId(), e);
+        }
     }
 
 }

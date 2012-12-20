@@ -1,6 +1,7 @@
 package eu.ecodex.connector.mapping;
 
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 
 /**
@@ -15,27 +16,30 @@ public interface ECodexConnectorContentMapper {
     /**
      * 
      * Method to map international eCodex XML to national format. Must be
-     * overridden when ContentMapper is used by configuration.
+     * overridden when ContentMapper is used by configuration. The national xml
+     * content will be written into the messageContent object.
      * 
-     * @param internationalContent
-     *            - eCodex XML.
-     * @return nationalContent as byte array.
+     * @param messageContent
+     *            - a {@link MessageContent} object containing the eCodex xml
+     *            Content.
      * @throws ECodexConnectorContentMapperException
      * @throws ImplementationMissingException
      */
-    public byte[] mapInternationalToNational(byte[] internationalContent) throws ECodexConnectorContentMapperException,
+    public void mapInternationalToNational(MessageContent messageContent) throws ECodexConnectorContentMapperException,
             ImplementationMissingException;
 
     /**
      * Method to map national XML to international eCodex format. Must be
-     * overridden when ContentMapper is used by configuration.
+     * overridden when ContentMapper is used by configuration. The eCodex xml
+     * content will be written into the messageContent object.
      * 
-     * @param nationalContent
-     * @return eCodex XML as byte array.
+     * @param messageContent
+     *            - a {@link MessageContent} object containing the national xml
+     *            Content.
      * @throws ECodexConnectorContentMapperException
      * @throws ImplementationMissingException
      */
-    public byte[] mapNationalToInternational(byte[] nationalContent) throws ECodexConnectorContentMapperException,
+    public void mapNationalToInternational(MessageContent messageContent) throws ECodexConnectorContentMapperException,
             ImplementationMissingException;
 
 }
