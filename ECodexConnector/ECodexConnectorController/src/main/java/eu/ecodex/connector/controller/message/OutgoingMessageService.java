@@ -8,7 +8,6 @@ import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
@@ -22,23 +21,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     static Logger LOGGER = LoggerFactory.getLogger(OutgoingMessageService.class);
 
     @Override
-    public void handleMessage(String messageId) throws ECodexConnectorControllerException {
-        MessageDetails details = new MessageDetails();
-        details.setNationalMessageId(messageId);
-
-        MessageContent content = new MessageContent();
-
-        Message message = new Message(details, content);
-
-        try {
-            nationalBackendClient.requestMessage(message);
-        } catch (ECodexConnectorNationalBackendClientException e1) {
-            throw new ECodexConnectorControllerException(
-                    "Exception while trying to receive message from national system. ", e1);
-        } catch (ImplementationMissingException ime) {
-            throw new ECodexConnectorControllerException(
-                    "Exception while trying to receive message from national system. ", ime);
-        }
+    public void handleMessage(Message message) throws ECodexConnectorControllerException {
 
         persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.NAT_TO_GW);
 

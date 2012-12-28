@@ -47,4 +47,8 @@
   		<property name="evidencesToolkit" ref="evidencesToolkit"/>
   	</bean>
   
+  	<bean id="incomingEvidenceService" class="eu.ecodex.connector.controller.message.IncomingEvidenceService">
+  		<property name="persistenceService" ref="persistenceService" />
+  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
+  	</bean>
 </beans>

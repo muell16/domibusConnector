@@ -6,4 +6,5 @@ public interface ECodexEvidenceDao {
 
     void saveNewEvidence(ECodexEvidence evidence);
 
+    void mergeEvidence(ECodexEvidence evidence);
 }

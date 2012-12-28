@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.enums.ActionEnum;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
+import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
@@ -20,13 +22,9 @@ public class IncomingMessageService extends AbstractMessageService implements Me
     static Logger LOGGER = LoggerFactory.getLogger(IncomingMessageService.class);
 
     @Override
-    public void handleMessage(String messageId) throws ECodexConnectorControllerException {
-        Message message = null;
-        try {
-            message = gatewayWebserviceClient.downloadMessage(messageId);
-        } catch (ECodexConnectorGatewayWebserviceClientException e) {
-            throw new ECodexConnectorControllerException("Error downloading message from the gateway!", e);
-        }
+    public void handleMessage(Message message) throws ECodexConnectorControllerException {
+
+        persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.GW_TO_NAT);
 
         if (connectorProperties.isUseSecurityToolkit()) {
             // TODO: Integration of SecurityToolkit to unpack ASIC-S container
@@ -63,7 +61,9 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         MessageConfirmation relayRemMDAcceptance = null;
         try {
             relayRemMDAcceptance = evidencesToolkit.createRelayREMMDAcceptance(originalMessage);
-            // message.addConfirmation(relayRemMDAcceptance);
+            originalMessage.addConfirmation(relayRemMDAcceptance);
+            persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage,
+                    relayRemMDAcceptance.getEvidence(), ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE);
         } catch (ECodexConnectorEvidencesToolkitException e) {
             throw new ECodexConnectorControllerException("Error creating RelayREMMDAcceptance for message!", e);
         }

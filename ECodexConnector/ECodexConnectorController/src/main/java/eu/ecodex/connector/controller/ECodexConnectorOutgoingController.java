@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageContent;
+import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.controller.message.EvidenceService;
 import eu.ecodex.connector.controller.message.MessageService;
@@ -51,7 +53,7 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
             for (String messageId : messages) {
 
                 try {
-                    outgoingMessageService.handleMessage(messageId);
+                    handleMessage(messageId);
                 } catch (ECodexConnectorControllerException ce) {
                     LOGGER.error(ce.getMessage());
                     throw ce;
@@ -59,6 +61,32 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
             }
         } else {
             LOGGER.info("There are no unsent outgoing messages on national system!");
+        }
+    }
+
+    private void handleMessage(String messageId) throws ECodexConnectorControllerException {
+        MessageDetails details = new MessageDetails();
+        details.setNationalMessageId(messageId);
+
+        MessageContent content = new MessageContent();
+
+        Message message = new Message(details, content);
+
+        try {
+            nationalBackendClient.requestMessage(message);
+        } catch (ECodexConnectorNationalBackendClientException e1) {
+            throw new ECodexConnectorControllerException(
+                    "Exception while trying to receive message from national system. ", e1);
+        } catch (ImplementationMissingException ime) {
+            throw new ECodexConnectorControllerException(
+                    "Exception while trying to receive message from national system. ", ime);
+        }
+
+        try {
+            outgoingMessageService.handleMessage(message);
+        } catch (ECodexConnectorControllerException ce) {
+            LOGGER.error(ce.getMessage());
+            throw ce;
         }
     }
 

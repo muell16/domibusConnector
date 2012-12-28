@@ -41,4 +41,11 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
 
         return q;
     }
+
+    @Override
+    public void mergeEvidence(ECodexEvidence evidence) {
+        evidence.setUpdated(new Date());
+        em.merge(evidence);
+
+    }
 }

@@ -3,7 +3,6 @@ package eu.ecodex.connector.controller.message;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.enums.ServiceEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
@@ -37,20 +36,25 @@ public class OutgoingEvidenceService implements EvidenceService {
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
         Message originalMessage = persistenceService.findMessageByNationalId(messageID);
+        ECodexEvidenceType evidenceType = confirmationMessage.getConfirmations().get(0).getEvidenceType();
 
         MessageDetails details = new MessageDetails();
-        details.setAction(ActionEnum.Form_A);
-        details.setService(ServiceEnum.Evidence);
+        ActionEnum action = createEvidenceAction(evidenceType);
+        details.setAction(action);
+        details.setService(confirmationMessage.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
 
         MessageConfirmation confirmation = null;
         try {
-            confirmation = generateEvidence(confirmationMessage.getConfirmations().get(0).getEvidenceType(),
-                    originalMessage);
+            confirmation = generateEvidence(evidenceType, originalMessage);
         } catch (ECodexConnectorEvidencesToolkitException e) {
             throw new ECodexConnectorControllerException("Could not handle Evidence to Message " + messageID, e);
         }
+
+        originalMessage.addConfirmation(confirmation);
+        persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
+                evidenceType);
 
         Message evidenceMessage = new Message(details, confirmation);
 
@@ -74,6 +78,21 @@ public class OutgoingEvidenceService implements EvidenceService {
             return evidencesToolkit.createNonRetrievalEvidence(RejectionReason.OTHER, originalMessage);
         default:
             throw new ECodexConnectorControllerException("Illegal Evidence type to be generated!");
+        }
+    }
+
+    private ActionEnum createEvidenceAction(ECodexEvidenceType type) throws ECodexConnectorControllerException {
+        switch (type) {
+        case DELIVERY:
+            return ActionEnum.Evidence_Delivery;
+        case NON_DELIVERY:
+            return ActionEnum.Evidence_Delivery;
+        case RETRIEVAL:
+            return ActionEnum.Evidence_Retrieval;
+        case NON_RETRIEVAL:
+            return ActionEnum.Evidence_Retrieval;
+        default:
+            throw new ECodexConnectorControllerException("Illegal Evidence type! No Action found!");
         }
     }
 
