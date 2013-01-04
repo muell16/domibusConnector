@@ -3,15 +3,23 @@
 
 <beans>
 
+<bean id="incomingMessagesJob" class="eu.ecodex.connector.controller.job.IncomingMessagesJob">
+	<property name="incomingController" ref="incomingController" />
+</bean>
+
+<bean id="outgoingMessagesJob" class="eu.ecodex.connector.controller.job.OutgoingMessagesJob">
+	<property name="outgoingController" ref="outgoingController" />
+</bean>
+
 <bean id="handleOutgoingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-  <property name="targetObject" ref="outgoingController"/>
-  <property name="targetMethod" value="handleMessages"/>
+  <property name="targetObject" ref="outgoingMessagesJob"/>
+  <property name="targetMethod" value="handleOutgoingMessages"/>
   <property name="concurrent" value="false"/>
 </bean>
 
 <bean id="handleIncomingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-  <property name="targetObject" ref="incomingController"/>
-  <property name="targetMethod" value="handleMessages"/>
+  <property name="targetObject" ref="incomingMessagesJob"/>
+  <property name="targetMethod" value="handleIncomingMessages"/>
   <property name="concurrent" value="false"/>
 </bean>
 

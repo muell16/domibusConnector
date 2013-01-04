@@ -70,7 +70,7 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
     }
 
     @Override
-    public String[] listPendingMessages() {
+    public String[] listPendingMessages() throws ECodexConnectorGatewayWebserviceClientException {
         LOGGER.debug("started... ");
         try {
             ListPendingMessagesResponse response = gatewayBackendWebservice.listPendingMessages(downloadMessageHelper
@@ -79,9 +79,10 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
             LOGGER.debug(response.getMessageID().toString());
             return response.getMessageID().toArray(new String[response.getMessageID().size()]);
         } catch (ListPendingMessagesFault e) {
-            LOGGER.error("Could not execute! ", e);
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not execute! ", e);
+        } catch (Exception e) {
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not execute! ", e);
         }
-        return null;
 
     }
 

@@ -35,8 +35,6 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
 
     @Override
     public void handleMessages() throws ECodexConnectorControllerException {
-        LOGGER.info("Started to handle outgoing messages from national system to gateway!");
-
         String[] messages = null;
         try {
             messages = nationalBackendClient.requestMessagesUnsent();

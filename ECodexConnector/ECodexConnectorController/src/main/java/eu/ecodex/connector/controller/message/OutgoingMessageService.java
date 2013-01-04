@@ -45,12 +45,15 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             LOGGER.warn("SecurityToolkit not available yet! Must send message unsecure!");
         }
 
+        MessageConfirmation confirmation = null;
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
                 byte[] submissionAcceptance = evidencesToolkit.createSubmissionAcceptance(message, hashValue);
                 // immediately persist new evidence into database
                 persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionAcceptance,
                         ECodexEvidenceType.SUBMISSION_ACCEPTANCE);
+
+                confirmation = new MessageConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, submissionAcceptance);
             } catch (ECodexConnectorEvidencesToolkitException ete) {
                 createSubmissionRejectionAndReturnIt(message, hashValue);
                 throw new ECodexConnectorControllerException("Could not generate evidence for submission acceptance! ",
@@ -65,6 +68,18 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             createSubmissionRejectionAndReturnIt(message, hashValue);
             throw new ECodexConnectorControllerException("Could not send ECodex Message to Gateway! ", gwse);
         }
+
+        try {
+            Message returnMessage = buildEvidenceMessage(confirmation, message);
+            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
+        } catch (ECodexConnectorNationalBackendClientException e) {
+            LOGGER.error("Could not send submission acceptance back to national connector! ", e);
+            e.printStackTrace();
+        } catch (ImplementationMissingException e) {
+            LOGGER.error("Could not send submission acceptance back to national connector! ", e);
+            e.printStackTrace();
+        }
+
     }
 
     private byte[] buildAndPersistHashValue(Message message) {
@@ -85,13 +100,15 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         try {
             byte[] submissionRejection = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message,
                     hashValue);
+
+            // immediately persist new evidence into database
+            persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionRejection,
+                    ECodexEvidenceType.SUBMISSION_REJECTION);
+
             MessageConfirmation confirmation = new MessageConfirmation(ECodexEvidenceType.SUBMISSION_REJECTION,
                     submissionRejection);
 
-            MessageDetails details = new MessageDetails();
-            details.setRefToMessageId(message.getMessageDetails().getNationalMessageId());
-
-            Message returnMessage = new Message(details, confirmation);
+            Message returnMessage = buildEvidenceMessage(confirmation, message);
             nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
         } catch (ECodexConnectorEvidencesToolkitException e) {
             LOGGER.error("Could not even generate submission rejection! ", e);
@@ -102,6 +119,15 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Exception while trying to send submission rejection. ", ime);
         }
 
+    }
+
+    private Message buildEvidenceMessage(MessageConfirmation confirmation, Message originalMessage) {
+        MessageDetails details = new MessageDetails();
+        details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
+
+        Message returnMessage = new Message(details, confirmation);
+
+        return returnMessage;
     }
 
 }

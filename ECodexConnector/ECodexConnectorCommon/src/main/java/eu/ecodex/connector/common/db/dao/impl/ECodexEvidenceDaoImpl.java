@@ -1,6 +1,7 @@
 package eu.ecodex.connector.common.db.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -47,5 +48,12 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
         evidence.setUpdated(new Date());
         em.merge(evidence);
 
+    }
+
+    public List<ECodexEvidence> getEvidencesNotFinished() {
+        Query q = em
+                .createQuery("from ECodexEvidence e where e.message.ebmsMessageId = ? and (e.type = ? of e.type = ?)");
+
+        return null;
     }
 }
