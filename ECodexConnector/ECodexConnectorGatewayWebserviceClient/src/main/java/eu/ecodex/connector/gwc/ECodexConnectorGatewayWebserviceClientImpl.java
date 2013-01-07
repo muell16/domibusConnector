@@ -12,7 +12,6 @@ import backend.ecodex.org.DownloadMessageRequest;
 import backend.ecodex.org.DownloadMessageResponse;
 import backend.ecodex.org.ListPendingMessagesFault;
 import backend.ecodex.org.ListPendingMessagesResponse;
-import backend.ecodex.org.SendMessageFault;
 import backend.ecodex.org.SendRequest;
 import backend.ecodex.org.SendResponse;
 import eu.ecodex.connector.common.message.Message;
@@ -63,7 +62,7 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
         try {
             SendResponse response = gatewayBackendWebservice.sendMessage(request, ebMSHeaderInfo);
             sendMessageHelper.extractEbmsMessageIdAndPersistIntoDB(response, message);
-        } catch (SendMessageFault e) {
+        } catch (Exception e) {
             LOGGER.error("sendMessage failed: ", e);
             throw new ECodexConnectorGatewayWebserviceClientException(e);
         }

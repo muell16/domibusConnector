@@ -1,27 +1,44 @@
 package eu.ecodex.connector.nbc;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.InitializingBean;
+
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.enums.ServiceEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
-public class ECodexConnectorService implements ECodexConnectorNationalBackendClient {
+public class ECodexConnectorService implements ECodexConnectorNationalBackendClient, InitializingBean {
 
     org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ECodexConnectorService.class);
+
+    private Properties properties;
 
     private final Map<String, File> messageDirs = new HashMap<String, File>();
 
@@ -36,15 +53,8 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
     @Override
     public String[] requestMessagesUnsent() throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
-        InputStream is = this.getClass().getResourceAsStream("/example.properties");
-        Properties props = new Properties();
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        String messagesDir = props.getProperty("listener.dir");
+        String messagesDir = properties.getProperty("listener.dir");
 
         File messagesFolder = new File(messagesDir);
 
@@ -81,8 +91,11 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
 
         if (messageFolder.exists() && messageFolder.isDirectory() && messageFolder.listFiles().length > 0) {
             String oldMessageFolderName = messageFolder.getAbsolutePath();
+
             File workMessageFolder = new File(oldMessageFolderName + "_work");
-            if (!messageFolder.renameTo(workMessageFolder)) {
+            try {
+                FileUtils.moveDirectory(messageFolder, workMessageFolder);
+            } catch (IOException e1) {
                 throw new ECodexConnectorNationalBackendClientException("Could not rename message folder "
                         + messageFolder.getAbsolutePath() + " to " + workMessageFolder.getAbsolutePath());
             }
@@ -108,10 +121,13 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
             messageDirs.remove(message.getMessageDetails().getNationalMessageId());
 
             File doneMessageFolder = new File(oldMessageFolderName + "_done");
-            if (!workMessageFolder.renameTo(doneMessageFolder)) {
+            try {
+                FileUtils.moveDirectory(workMessageFolder, doneMessageFolder);
+            } catch (IOException e1) {
                 LOGGER.error("Could not rename message folder {} to {}", workMessageFolder.getAbsolutePath(),
                         doneMessageFolder.getAbsolutePath());
             }
+
         }
     }
 
@@ -126,9 +142,41 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
     @Override
     public void deliverLastEvidenceForMessage(Message confirmationMessage)
             throws ECodexConnectorNationalBackendClientException, ImplementationMissingException {
-        System.out
-                .println("This is the national implementation of the deliverLastEvidenceForMessage method of the NationalBackendClient");
+        if (confirmationMessage.getConfirmations() == null || confirmationMessage.getConfirmations().isEmpty()) {
+            throw new ECodexConnectorNationalBackendClientException(
+                    "method 'deliverLastEvidenceForMessage' called, but no confirmation enclosed!");
+        }
+        MessageConfirmation messageConfirmation = confirmationMessage.getConfirmations().get(0);
 
+        LOGGER.info("Received evidence of type {} for message {}", messageConfirmation.getEvidenceType().name(),
+                confirmationMessage.getMessageDetails().getRefToMessageId());
+        try {
+            LOGGER.debug(prettyPrint(messageConfirmation.getEvidence()));
+        } catch (TransformerFactoryConfigurationError e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    private String prettyPrint(byte[] input) throws TransformerFactoryConfigurationError, TransformerException {
+        // Instantiate transformer input
+        Source xmlInput = new StreamSource(new ByteArrayInputStream(input));
+        StreamResult xmlOutput = new StreamResult(new StringWriter());
+
+        // Configure transformer
+        Transformer transformer = TransformerFactory.newInstance().newTransformer(); // An
+                                                                                     // identity
+                                                                                     // transformer
+        transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "testing.dtd");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        transformer.transform(xmlInput, xmlOutput);
+
+        return xmlOutput.getWriter().toString();
     }
 
     private byte[] fileToByteArray(File file) throws IOException {
@@ -155,15 +203,37 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
     }
 
     private Properties loadDetailsFileAsProperties(File detailsFile) {
+
         Properties details = new Properties();
+        FileInputStream fileInputStream = null;
         try {
-            details.load(new FileInputStream(detailsFile));
+            fileInputStream = new FileInputStream(detailsFile);
+            details.load(fileInputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (fileInputStream != null) {
+            try {
+                fileInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return details;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        InputStream is = this.getClass().getResourceAsStream("/example.properties");
+        properties = new Properties();
+        try {
+            properties.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

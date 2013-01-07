@@ -2,6 +2,7 @@ package eu.ecodex.connector.common.db.service.impl;
 
 import java.sql.Clob;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.lob.ClobImpl;
 
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
@@ -11,6 +12,7 @@ import eu.ecodex.connector.common.db.model.ECodexMessage;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
+import eu.ecodex.connector.common.exception.PersistenceException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
@@ -29,7 +31,8 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
-    public void persistMessageIntoDatabase(Message message, ECodexMessageDirection direction) {
+    public void persistMessageIntoDatabase(Message message, ECodexMessageDirection direction)
+            throws PersistenceException {
         ECodexMessage dbMessage = new ECodexMessage();
 
         dbMessage.setDirection(direction);
@@ -37,7 +40,13 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setNationalMessageId(message.getMessageDetails().getNationalMessageId());
 
-        messageDao.saveNewMessage(dbMessage);
+        try {
+            messageDao.saveNewMessage(dbMessage);
+        } catch (ConstraintViolationException cve) {
+            throw new PersistenceException(
+                    "Could not persist message into database. Most likely the nationalMessageId or the ebmsMessageId already exist. ",
+                    cve);
+        }
 
         message.setDbMessage(dbMessage);
         message.getMessageDetails().setDbMessageId(dbMessage.getId());

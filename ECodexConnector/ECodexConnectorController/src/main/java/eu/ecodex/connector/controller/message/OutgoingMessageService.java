@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.exception.PersistenceException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
@@ -23,9 +24,14 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     @Override
     public void handleMessage(Message message) throws ECodexConnectorControllerException {
 
-        persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.NAT_TO_GW);
+        try {
+            persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.NAT_TO_GW);
+        } catch (PersistenceException e1) {
+            // createSubmissionRejectionAndReturnIt(message, hashValue);
+            throw new ECodexConnectorControllerException(e1);
+        }
 
-        byte[] hashValue = buildAndPersistHashValue(message);
+        String hashValue = buildAndPersistHashValue(message);
 
         if (connectorProperties.isUseContentMapper()) {
             try {
@@ -82,20 +88,20 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
     }
 
-    private byte[] buildAndPersistHashValue(Message message) {
+    private String buildAndPersistHashValue(Message message) {
         // whatever the source for the hash will be - by now it is the pdf
         // document
-        byte[] hash = hashValueBuilder.buildHashValue(message.getMessageContent().getPdfDocument());
+        String hash = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
 
         // now persist the hash value into the database entry for the
         // message
-        message.getDbMessage().setHashValue(new String(hash));
+        message.getDbMessage().setHashValue(hash);
         persistenceService.mergeMessageWithDatabase(message);
 
         return hash;
     }
 
-    private void createSubmissionRejectionAndReturnIt(Message message, byte[] hashValue)
+    private void createSubmissionRejectionAndReturnIt(Message message, String hashValue)
             throws ECodexConnectorControllerException {
         try {
             byte[] submissionRejection = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message,

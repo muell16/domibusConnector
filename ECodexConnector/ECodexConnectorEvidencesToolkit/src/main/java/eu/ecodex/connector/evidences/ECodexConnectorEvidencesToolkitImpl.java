@@ -1,5 +1,7 @@
 package eu.ecodex.connector.evidences;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.message.Message;
@@ -20,7 +22,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     private ECodexConnectorProperties connectorProperties;
 
     @Override
-    public byte[] createSubmissionAcceptance(Message message, byte[] hash)
+    public byte[] createSubmissionAcceptance(Message message, String hash)
             throws ECodexConnectorEvidencesToolkitException {
 
         byte[] evidence = createSubmissionAcceptanceRejection(true, null, message, hash);
@@ -34,7 +36,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     @Override
-    public byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, byte[] hash)
+    public byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, String hash)
             throws ECodexConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
@@ -243,12 +245,10 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent reason, Message message,
-            byte[] hash) throws ECodexConnectorEvidencesToolkitException {
+            String hash) throws ECodexConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
         String nationalMessageId = message.getMessageDetails().getNationalMessageId();
-
-        byte[] originalMessage = message.getMessageContent().getNationalXmlContent();
 
         String senderAddress = message.getMessageDetails().getOriginalSenderAddress();
 
@@ -256,8 +256,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         ECodexMessageDetails messageDetails = null;
         try {
-            messageDetails = buildMessageDetails(nationalMessageId, originalMessage, senderAddress, recipientAddress,
-                    hash);
+            messageDetails = buildMessageDetails(nationalMessageId, senderAddress, recipientAddress, hash);
         } catch (ECodexConnectorEvidencesToolkitException e) {
             throw e;
         }
@@ -289,15 +288,12 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         return evidenceIssuerDetails;
     }
 
-    private ECodexMessageDetails buildMessageDetails(String nationalMessageId, byte[] originalMessage,
-            String senderAddress, String recipientAddress, byte[] hash) throws ECodexConnectorEvidencesToolkitException {
+    private ECodexMessageDetails buildMessageDetails(String nationalMessageId, String senderAddress,
+            String recipientAddress, String hash) throws ECodexConnectorEvidencesToolkitException {
         ECodexMessageDetails messageDetails = new ECodexMessageDetails();
 
-        if (originalMessage == null || originalMessage.length < 1) {
-            throw new ECodexConnectorEvidencesToolkitException("there is no original message to build an evidence for!");
-        }
         messageDetails.setHashAlgorithm(hashValueBuilder.getAlgorithm().toString());
-        messageDetails.setHashValue(hash);
+        messageDetails.setHashValue(Hex.decode(hash));
 
         if (nationalMessageId == null || nationalMessageId.isEmpty()) {
             throw new ECodexConnectorEvidencesToolkitException(

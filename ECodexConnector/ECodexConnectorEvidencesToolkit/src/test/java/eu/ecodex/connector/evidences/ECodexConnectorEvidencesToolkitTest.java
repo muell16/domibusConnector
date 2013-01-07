@@ -103,8 +103,8 @@ public class ECodexConnectorEvidencesToolkitTest {
         return message;
     }
 
-    private byte[] buildHashValue() {
-        return hashValueBuilder.buildHashValue(new String("originalMessage").getBytes());
+    private String buildHashValue() {
+        return hashValueBuilder.buildHashValueAsString(new String("originalMessage").getBytes());
     }
 
     private String prettyPrint(byte[] input) throws TransformerFactoryConfigurationError, TransformerException {

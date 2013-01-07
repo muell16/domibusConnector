@@ -13,9 +13,9 @@ import eu.ecodex.connector.evidences.type.RejectionReason;
  */
 public interface ECodexConnectorEvidencesToolkit {
 
-    byte[] createSubmissionAcceptance(Message message, byte[] hash) throws ECodexConnectorEvidencesToolkitException;
+    byte[] createSubmissionAcceptance(Message message, String hash) throws ECodexConnectorEvidencesToolkitException;
 
-    byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, byte[] hash)
+    byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, String hash)
             throws ECodexConnectorEvidencesToolkitException;
 
     MessageConfirmation createRelayREMMDAcceptance(Message message) throws ECodexConnectorEvidencesToolkitException;

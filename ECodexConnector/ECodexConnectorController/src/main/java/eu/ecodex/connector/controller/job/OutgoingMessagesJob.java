@@ -27,6 +27,6 @@ public class OutgoingMessagesJob {
             LOGGER.error("Exception while proceeding job handleOutgoingMessages: ", e);
         }
         LOGGER.info("Job for handling outgoing messages finished in {} ms.",
-                (start.getTime() - System.currentTimeMillis()));
+                (System.currentTimeMillis() - start.getTime()));
     }
 }

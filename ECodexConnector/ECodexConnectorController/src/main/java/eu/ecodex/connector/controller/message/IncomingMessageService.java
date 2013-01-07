@@ -8,6 +8,7 @@ import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.exception.PersistenceException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
@@ -24,7 +25,11 @@ public class IncomingMessageService extends AbstractMessageService implements Me
     @Override
     public void handleMessage(Message message) throws ECodexConnectorControllerException {
 
-        persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.GW_TO_NAT);
+        try {
+            persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.GW_TO_NAT);
+        } catch (PersistenceException e1) {
+            throw new ECodexConnectorControllerException(e1);
+        }
 
         if (connectorProperties.isUseSecurityToolkit()) {
             // TODO: Integration of SecurityToolkit to unpack ASIC-S container

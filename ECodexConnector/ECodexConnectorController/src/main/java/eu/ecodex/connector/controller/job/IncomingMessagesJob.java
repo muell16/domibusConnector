@@ -27,6 +27,6 @@ public class IncomingMessagesJob {
         // e);
         // }
         LOGGER.info("Job for handling incoming messages finished in {} ms.",
-                (start.getTime() - System.currentTimeMillis()));
+                (System.currentTimeMillis() - start.getTime()));
     }
 }
