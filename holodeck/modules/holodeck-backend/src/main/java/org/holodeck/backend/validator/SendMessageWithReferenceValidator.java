@@ -134,8 +134,7 @@ public class SendMessageWithReferenceValidator {
 			throw sendMessageServiceException;
 		}
 
-		if(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef()==null ||
-				messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef().getPmode()==null){
+		if(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef()==null){
 			log.error("AgreementRef is empty");
 
 			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
