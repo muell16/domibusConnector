@@ -2,7 +2,6 @@ package eu.ecodex.connector.gwc.helper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -13,6 +12,7 @@ import javax.xml.ws.Holder;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3c.dom.Document;
@@ -20,35 +20,60 @@ import org.w3c.dom.Element;
 
 import backend.ecodex.org.DownloadMessageResponse;
 import eu.ecodex.connector.common.enums.ActionEnum;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.enums.ServiceEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
+import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
+import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 public class DownloadMessageHelper {
 
-    public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader) {
+    public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
+            throws ECodexConnectorGatewayWebserviceClientException {
         UserMessage userMessage = ebMSHeader.value.getUserMessage().get(0);
         MessageDetails details = convertUserMessageToMessageDetails(userMessage);
 
-        // TODO: Woher weiss ich, welcher Payload der content ist? Gibt es
-        // referenzen aus der payloadInfo in der UserMessage? Derzeitige
-        // Annahme: Der erste Payload ist der XML Content! Außerdem: Wie
-        // identifiziere ich einen Payload als Evidence?
-
-        List<DataHandler> payload = response.value.getPayload();
-        MessageContent content = extractMessageContent(payload);
+        MessageContent content = new MessageContent();
 
         Message message = new Message(details, content);
 
-        if (payload.size() > 1) {
-            List<MessageAttachment> attachments = extractAttachments(payload);
-            message.setAttachments(attachments);
+        List<DataHandler> payload = response.value.getPayload();
+        if (payload != null && !payload.isEmpty() && userMessage.getPayloadInfo() != null
+                && userMessage.getPayloadInfo().getPartInfo() != null
+                && userMessage.getPayloadInfo().getPartInfo().size() == payload.size()) {
+
+            int index = 0;
+            for (DataHandler dh : payload) {
+                PartInfo partInfo = userMessage.getPayloadInfo().getPartInfo().get(index);
+                if (partInfo.getDescription().getValue().equals("ECodexContentXML")) {
+                    extractMessageContent(dh, message.getMessageContent());
+                } else if (matchesEvidenceType(partInfo.getDescription().getValue())) {
+                    message.addConfirmation(extractMessageConfirmation(dh, partInfo.getDescription().getValue()));
+                } else {
+                    message.addAttachment(extractAttachments(dh, partInfo.getDescription().getValue()));
+                }
+                index++;
+            }
+        } else {
+            throw new ECodexConnectorGatewayWebserviceClientException(
+                    "Payload is empty or payload size does not match PayloadInfo size!");
         }
 
         return message;
+    }
+
+    private boolean matchesEvidenceType(String type) {
+        return type.equals(ECodexEvidenceType.SUBMISSION_ACCEPTANCE.toString())
+                || type.equals(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE.toString())
+                || type.equals(ECodexEvidenceType.RELAY_REMMD_REJECTION.toString())
+                || type.equals(ECodexEvidenceType.DELIVERY.toString())
+                || type.equals(ECodexEvidenceType.NON_DELIVERY.toString())
+                || type.equals(ECodexEvidenceType.RETRIEVAL.toString())
+                || type.equals(ECodexEvidenceType.NON_RETRIEVAL.toString());
     }
 
     public Element createEmptyListPendingMessagesRequest() {
@@ -65,35 +90,43 @@ public class DownloadMessageHelper {
         return request;
     }
 
-    private MessageContent extractMessageContent(List<DataHandler> payload) {
-        DataHandler dh = payload.get(0);
-        MessageContent content = new MessageContent();
+    private void extractMessageContent(DataHandler dh, MessageContent content) {
         try {
             content.setECodexContent(convertDataHandlerContentToByteArray(dh));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return content;
     }
 
-    private List<MessageAttachment> extractAttachments(List<DataHandler> payload) {
-        List<MessageAttachment> attachments = new ArrayList<MessageAttachment>();
-        for (int counter = 1; counter < payload.size(); counter++) {
-            DataHandler dh = payload.get(counter);
-            try {
-                ByteArrayInputStream is = (ByteArrayInputStream) dh.getContent();
-                byte[] b = new byte[is.available()];
-                is.read(b);
-
-                MessageAttachment attachment = new MessageAttachment();
-                attachment.setAttachment(b);
-                attachment.setMimeType(dh.getContentType());
-                attachments.add(attachment);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private MessageConfirmation extractMessageConfirmation(DataHandler dh, String type) {
+        MessageConfirmation confirmation = new MessageConfirmation();
+        ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(type);
+        confirmation.setEvidenceType(evidenceType);
+        try {
+            confirmation.setEvidence(convertDataHandlerContentToByteArray(dh));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return attachments;
+
+        return confirmation;
+    }
+
+    private MessageAttachment extractAttachments(DataHandler dh, String description) {
+        try {
+            ByteArrayInputStream is = (ByteArrayInputStream) dh.getContent();
+            byte[] b = new byte[is.available()];
+            is.read(b);
+
+            MessageAttachment attachment = new MessageAttachment();
+            attachment.setAttachment(b);
+            attachment.setMimeType(dh.getContentType());
+            attachment.setName(description);
+            return attachment;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private byte[] convertDataHandlerContentToByteArray(DataHandler dh) throws IOException {

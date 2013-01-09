@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.xml.transform.OutputKeys;
@@ -29,10 +30,12 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import eu.ecodex.connector.common.enums.ActionEnum;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.enums.ServiceEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
@@ -45,13 +48,18 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
 
     private final Map<String, File> messageDirs = new HashMap<String, File>();
 
+    private Map<Message, ECodexEvidenceType> outstandingEvidences = new HashMap<Message, ECodexEvidenceType>();
+
     @Override
     public void deliverMessage(Message message) throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
         String messagesDir = properties.getProperty("listener.dir");
 
-        String messageID = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()) + "_message_received";
+        String messageID = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "_message_received";
         File messageFolder = new File(messagesDir + File.separator + messageID);
+        if (!messageFolder.exists()) {
+            messageFolder.mkdir();
+        }
 
         if (message.getMessageContent() != null) {
             if (message.getMessageContent().getPdfDocument() != null
@@ -77,6 +85,19 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
                 convertMessageDetailsToDetailsFile(messageDetails, message.getMessageDetails());
             }
         }
+
+        if (message.getAttachments() != null) {
+            for (MessageAttachment attachment : message.getAttachments()) {
+                File attachmentFile = new File(messageFolder.getAbsolutePath() + File.separator + attachment.getName());
+                try {
+                    byteArrayToFile(attachment.getAttachment(), attachmentFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        outstandingEvidences.put(message, ECodexEvidenceType.DELIVERY);
 
     }
 
@@ -150,7 +171,7 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
 
             messageDirs.remove(message.getMessageDetails().getNationalMessageId());
 
-            File doneMessageFolder = new File(oldMessageFolderName + "_done");
+            File doneMessageFolder = new File(oldMessageFolderName + "_sent");
             try {
                 FileUtils.moveDirectory(workMessageFolder, doneMessageFolder);
             } catch (IOException e1) {
@@ -164,8 +185,30 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
     @Override
     public Message[] requestConfirmations() throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
-        System.out
-                .println("This is the national implementation of the requestConfirmations method of the NationalBackendClient");
+        if (!outstandingEvidences.isEmpty()) {
+            Message[] confirmationMessages = new Message[outstandingEvidences.size()];
+
+            Map<Message, ECodexEvidenceType> newOutstandingEvidences = new HashMap<Message, ECodexEvidenceType>();
+            int index = 0;
+            for (Entry<Message, ECodexEvidenceType> entry : outstandingEvidences.entrySet()) {
+                Message originalMessage = entry.getKey();
+                MessageDetails details = new MessageDetails();
+                details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
+                details.setFromPartner(originalMessage.getMessageDetails().getToPartner());
+                details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
+                details.setService(originalMessage.getMessageDetails().getService());
+                MessageConfirmation confirmation = new MessageConfirmation(entry.getValue());
+                Message message = new Message(details, confirmation);
+                confirmationMessages[index] = message;
+                index++;
+                if (entry.getValue().equals(ECodexEvidenceType.DELIVERY)) {
+                    newOutstandingEvidences.put(entry.getKey(), ECodexEvidenceType.RETRIEVAL);
+                }
+            }
+            outstandingEvidences = newOutstandingEvidences;
+
+            return confirmationMessages;
+        }
         return null;
     }
 

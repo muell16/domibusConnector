@@ -29,8 +29,8 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
 
     public ECodexEvidence getDeliveredNonDeliveredForMessage(String ebmsMessageId) {
         Query q = createEvidenceQueryForMessage(ebmsMessageId);
-        q.setParameter(1, ECodexEvidenceType.DELIVERY.name());
-        q.setParameter(1, ECodexEvidenceType.NON_DELIVERY.name());
+        q.setParameter(2, ECodexEvidenceType.DELIVERY.name());
+        q.setParameter(3, ECodexEvidenceType.NON_DELIVERY.name());
 
         return (ECodexEvidence) q.getSingleResult();
     }
@@ -38,7 +38,7 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
     private Query createEvidenceQueryForMessage(String ebmsMessageId) {
         Query q = em
                 .createQuery("from ECodexEvidence e where e.message.ebmsMessageId = ? and (e.type = ? of e.type = ?)");
-        q.setParameter(0, ebmsMessageId);
+        q.setParameter(1, ebmsMessageId);
 
         return q;
     }

@@ -1,6 +1,8 @@
 package eu.ecodex.connector.gwc.helper;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
@@ -22,6 +24,7 @@ import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
+import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
@@ -73,7 +76,8 @@ public class SendMessageHelper {
 
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                DataHandler dh = new DataHandler(attachment.getAttachment(), attachment.getMimeType());
+                DataSource ds = new ByteArrayDataSource(attachment.getAttachment(), attachment.getMimeType());
+                DataHandler dh = new DataHandler(ds);
                 request.getPayload().add(dh);
                 pli.getPartInfo().add(buildPartInfo(attachment.getName()));
             }
@@ -81,12 +85,11 @@ public class SendMessageHelper {
 
         if (message.getConfirmations() != null) {
             // Pick only the last produced evidence
-            DataHandler evidenceHandler = new DataHandler(new String(message.getConfirmations()
-                    .get(message.getConfirmations().size() - 1).getEvidence()), "text/xml");
+            MessageConfirmation messageConfirmation = message.getConfirmations().get(
+                    message.getConfirmations().size() - 1);
+            DataHandler evidenceHandler = new DataHandler(new String(messageConfirmation.getEvidence()), "text/xml");
             request.getPayload().add(evidenceHandler);
-            pli.getPartInfo().add(
-                    buildPartInfo(message.getConfirmations().get(message.getConfirmations().size() - 1)
-                            .getEvidenceType().toString()));
+            pli.getPartInfo().add(buildPartInfo(messageConfirmation.getEvidenceType().toString()));
         }
 
         userMessage.setPayloadInfo(pli);
@@ -120,9 +123,14 @@ public class SendMessageHelper {
 
         From from = new From();
         PartyId partyId = new PartyId();
-        partyId.setValue(connectorProperties.getGatewayName());
+        if (messageDetails.getFromPartner() != null) {
+            partyId.setValue(messageDetails.getFromPartner().getName());
+            from.setRole(messageDetails.getFromPartner().getRole());
+        } else {
+            partyId.setValue(connectorProperties.getGatewayName());
+            from.setRole(connectorProperties.getGatewayRole());
+        }
         from.getPartyId().add(partyId);
-        from.setRole(connectorProperties.getGatewayRole());
         partyInfo.setFrom(from);
 
         To to = new To();

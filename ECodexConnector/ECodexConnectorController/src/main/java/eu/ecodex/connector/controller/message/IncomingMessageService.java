@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
-import eu.ecodex.connector.common.enums.PartnerEnum;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.exception.PersistenceException;
 import eu.ecodex.connector.common.message.Message;
@@ -78,9 +77,11 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
         details.setService(originalMessage.getMessageDetails().getService());
         details.setAction(ActionEnum.RelayREMMDAcceptanceRejection);
-        PartnerEnum fromPartner = PartnerEnum.findValue(connectorProperties.getGatewayName(),
-                connectorProperties.getGatewayRole());
-        details.setFromPartner(fromPartner);
+        // PartnerEnum fromPartner =
+        // PartnerEnum.findValue(connectorProperties.getGatewayName(),
+        // connectorProperties.getGatewayRole());
+        // details.setFromPartner(fromPartner);
+        details.setFromPartner(originalMessage.getMessageDetails().getToPartner());
         details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
 
         Message evidenceMessage = new Message(details, relayRemMDAcceptance);

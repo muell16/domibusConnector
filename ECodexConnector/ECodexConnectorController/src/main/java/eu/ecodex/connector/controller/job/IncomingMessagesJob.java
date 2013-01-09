@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.controller.ECodexConnectorController;
+import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 
 public class IncomingMessagesJob {
 
@@ -20,12 +21,11 @@ public class IncomingMessagesJob {
     public void handleIncomingMessages() {
         LOGGER.info("Job for handling incoming messages triggered.");
         Date start = new Date();
-        // try {
-        // incomingController.handleMessages();
-        // } catch (ECodexConnectorControllerException e) {
-        // LOGGER.error("Exception while proceeding job handleIncomingMessages: ",
-        // e);
-        // }
+        try {
+            incomingController.handleMessages();
+        } catch (ECodexConnectorControllerException e) {
+            LOGGER.error("Exception while proceeding job handleIncomingMessages: ", e);
+        }
         LOGGER.info("Job for handling incoming messages finished in {} ms.",
                 (System.currentTimeMillis() - start.getTime()));
     }

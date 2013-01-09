@@ -193,9 +193,11 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     private MessageConfirmation findConfirmation(ECodexEvidenceType evidenctType, Message message) {
-        for (MessageConfirmation confirmation : message.getConfirmations()) {
-            if (confirmation.getEvidenceType().equals(evidenctType)) {
-                return confirmation;
+        if (message.getConfirmations() != null) {
+            for (MessageConfirmation confirmation : message.getConfirmations()) {
+                if (confirmation.getEvidenceType().equals(evidenctType)) {
+                    return confirmation;
+                }
             }
         }
         return null;

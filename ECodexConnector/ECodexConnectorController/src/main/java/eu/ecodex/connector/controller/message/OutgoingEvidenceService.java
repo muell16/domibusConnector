@@ -35,7 +35,7 @@ public class OutgoingEvidenceService implements EvidenceService {
     public void handleEvidence(Message confirmationMessage) throws ECodexConnectorControllerException {
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
-        Message originalMessage = persistenceService.findMessageByNationalId(messageID);
+        Message originalMessage = persistenceService.findMessageByEbmsId(messageID);
         ECodexEvidenceType evidenceType = confirmationMessage.getConfirmations().get(0).getEvidenceType();
 
         MessageDetails details = new MessageDetails();
@@ -44,8 +44,8 @@ public class OutgoingEvidenceService implements EvidenceService {
         details.setService(confirmationMessage.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-        details.setFromPartner(originalMessage.getMessageDetails().getToPartner());
-        details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
+        details.setFromPartner(confirmationMessage.getMessageDetails().getFromPartner());
+        details.setToPartner(confirmationMessage.getMessageDetails().getToPartner());
 
         MessageConfirmation confirmation = null;
         try {

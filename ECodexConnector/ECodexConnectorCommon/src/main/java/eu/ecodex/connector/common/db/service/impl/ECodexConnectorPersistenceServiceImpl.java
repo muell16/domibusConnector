@@ -99,6 +99,8 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         Message message = new Message(details);
 
+        message.setDbMessage(dbMessage);
+
         for (ECodexEvidence dbEvidence : dbMessage.getEvidences()) {
             try {
                 MessageConfirmation confirmation = mapDbEvidenceToMessageConfirmation(dbEvidence);

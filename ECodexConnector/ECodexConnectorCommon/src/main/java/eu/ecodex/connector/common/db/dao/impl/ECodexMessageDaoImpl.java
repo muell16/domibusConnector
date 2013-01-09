@@ -33,17 +33,19 @@ public class ECodexMessageDaoImpl implements ECodexMessageDao {
     }
 
     @Override
+    @Transactional
     public ECodexMessage findMessageByNationalId(String nationalMessageId) {
         Query q = em.createQuery("from ECodexMessage m where m.nationalMessageId=?");
-        q.setParameter(0, nationalMessageId);
+        q.setParameter(1, nationalMessageId);
 
         return (ECodexMessage) q.getSingleResult();
     }
 
     @Override
+    @Transactional
     public ECodexMessage findMessageByEbmsId(String ebmsMessageId) {
         Query q = em.createQuery("from ECodexMessage m where m.ebmsMessageId=?");
-        q.setParameter(0, ebmsMessageId);
+        q.setParameter(1, ebmsMessageId);
 
         return (ECodexMessage) q.getSingleResult();
     }

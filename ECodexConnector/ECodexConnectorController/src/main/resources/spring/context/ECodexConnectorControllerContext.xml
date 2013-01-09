@@ -15,11 +15,13 @@
   	<bean id="outgoingController" class="eu.ecodex.connector.controller.ECodexConnectorOutgoingController">
   		<property name="nationalBackendClient" ref="nationalBackendClient"/>
   		<property name="outgoingMessageService" ref="outgoingMessageService"/>
+  		<property name="outgoingEvidenceService" ref="outgoingEvidenceService" />
   	</bean>
   	
   	<bean id="incomingController" class="eu.ecodex.connector.controller.ECodexConnectorIncomingController">
   		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
   		<property name="incomingMessageService" ref="incomingMessageService" />
+  		<property name="incomingEvidenceService" ref="incomingEvidenceService" />
   	</bean>
   	
   	<bean id="outgoingMessageService" class="eu.ecodex.connector.controller.message.OutgoingMessageService">
