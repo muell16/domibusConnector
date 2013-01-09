@@ -4,10 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +48,35 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
     @Override
     public void deliverMessage(Message message) throws ECodexConnectorNationalBackendClientException,
             ImplementationMissingException {
-        System.out
-                .println("This is the national implementation of the deliverMessage method of the NationalBackendClient");
+        String messagesDir = properties.getProperty("listener.dir");
+
+        String messageID = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()) + "_message_received";
+        File messageFolder = new File(messagesDir + File.separator + messageID);
+
+        if (message.getMessageContent() != null) {
+            if (message.getMessageContent().getPdfDocument() != null
+                    && message.getMessageContent().getPdfDocument().length > 0) {
+                File contentPdf = new File(messageFolder.getAbsolutePath() + File.separator + "content.pdf");
+                try {
+                    byteArrayToFile(message.getMessageContent().getPdfDocument(), contentPdf);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (message.getMessageContent().getNationalXmlContent() != null
+                    && message.getMessageContent().getNationalXmlContent().length > 0) {
+                File contentXml = new File(messageFolder.getAbsolutePath() + File.separator + "content.xml");
+                try {
+                    byteArrayToFile(message.getMessageContent().getNationalXmlContent(), contentXml);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (message.getMessageDetails() != null) {
+                File messageDetails = new File(messageFolder.getAbsolutePath() + File.separator + "message.details");
+                convertMessageDetailsToDetailsFile(messageDetails, message.getMessageDetails());
+            }
+        }
 
     }
 
@@ -188,6 +218,16 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
         return data;
     }
 
+    private void byteArrayToFile(byte[] data, File file) throws IOException {
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(data);
+        fos.flush();
+        fos.close();
+    }
+
     private void convertDetailsToMessageDetails(File detailsFile, MessageDetails messageDetails) {
         Properties details = loadDetailsFileAsProperties(detailsFile);
 
@@ -200,6 +240,47 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
         String toName = details.getProperty("recipient.name");
         String toRole = details.getProperty("recipient.role");
         messageDetails.setToPartner(PartnerEnum.findValue(toName, toRole));
+    }
+
+    private void convertMessageDetailsToDetailsFile(File detailsFile, MessageDetails messageDetails) {
+        if (!detailsFile.exists()) {
+            try {
+                detailsFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Properties details = new Properties();
+        details.setProperty("recipient.name", messageDetails.getToPartner().getName());
+        details.setProperty("recipient.role", messageDetails.getToPartner().getRole());
+        details.setProperty("sender.name", messageDetails.getFromPartner().getName());
+        details.setProperty("sender.role", messageDetails.getFromPartner().getRole());
+        // details.setProperty("final.recipient.address", "");
+        // details.setProperty("original.sender.address", "");
+        details.setProperty("action", messageDetails.getAction().toString());
+        details.setProperty("service", messageDetails.getService().toString());
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(detailsFile);
+        } catch (FileNotFoundException e2) {
+            e2.printStackTrace();
+        }
+
+        try {
+            details.store(fos, null);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        if (fos != null) {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private Properties loadDetailsFileAsProperties(File detailsFile) {

@@ -17,7 +17,6 @@ public class ECodexNationalImplementationExample {
         ApplicationContext context = new ClassPathXmlApplicationContext(
                 "classpath:spring/context/ECodexNationalImplementationContext.xml");
 
-        System.out.println("ksdkfjsdkf");
     }
 
 }

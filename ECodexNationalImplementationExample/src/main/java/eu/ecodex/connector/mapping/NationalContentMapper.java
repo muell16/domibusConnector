@@ -9,15 +9,13 @@ public class NationalContentMapper implements ECodexConnectorContentMapper {
     @Override
     public void mapInternationalToNational(MessageContent messageContent) throws ECodexConnectorContentMapperException,
             ImplementationMissingException {
-        System.out.println("Ich bin die nationale Implementierung des Content Mappers für Österreich!!!");
-
+        messageContent.setNationalXmlContent(messageContent.getECodexContent());
     }
 
     @Override
     public void mapNationalToInternational(MessageContent messageContent) throws ECodexConnectorContentMapperException,
             ImplementationMissingException {
-        System.out.println("Ich bin die nationale Implementierung des Content Mappers für Österreich!!!");
-
+        messageContent.setECodexContent(messageContent.getNationalXmlContent());
     }
 
 }
