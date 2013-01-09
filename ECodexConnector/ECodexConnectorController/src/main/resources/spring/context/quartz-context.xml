@@ -31,7 +31,7 @@
 
 <bean id="incomingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
   <property name="jobDetail" ref="handleIncomingMessages"/>
-  <property name="startDelay" value="5000"/>
+  <property name="startDelay" value="11000"/>
   <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
 </bean>
 

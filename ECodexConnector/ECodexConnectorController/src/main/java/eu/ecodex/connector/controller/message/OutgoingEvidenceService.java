@@ -44,6 +44,8 @@ public class OutgoingEvidenceService implements EvidenceService {
         details.setService(confirmationMessage.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
+        details.setFromPartner(originalMessage.getMessageDetails().getToPartner());
+        details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
 
         MessageConfirmation confirmation = null;
         try {
@@ -84,13 +86,13 @@ public class OutgoingEvidenceService implements EvidenceService {
     private ActionEnum createEvidenceAction(ECodexEvidenceType type) throws ECodexConnectorControllerException {
         switch (type) {
         case DELIVERY:
-            return ActionEnum.Evidence_Delivery;
+            return ActionEnum.DeliveryNonDeliveryToRecipient;
         case NON_DELIVERY:
-            return ActionEnum.Evidence_Delivery;
+            return ActionEnum.DeliveryNonDeliveryToRecipient;
         case RETRIEVAL:
-            return ActionEnum.Evidence_Retrieval;
+            return ActionEnum.RetrievalNonRetrievalToRecipient;
         case NON_RETRIEVAL:
-            return ActionEnum.Evidence_Retrieval;
+            return ActionEnum.RetrievalNonRetrievalToRecipient;
         default:
             throw new ECodexConnectorControllerException("Illegal Evidence type! No Action found!");
         }

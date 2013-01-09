@@ -77,7 +77,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
         details.setService(originalMessage.getMessageDetails().getService());
-        details.setAction(ActionEnum.Evidence_RelayREMMD);
+        details.setAction(ActionEnum.RelayREMMDAcceptanceRejection);
         PartnerEnum fromPartner = PartnerEnum.findValue(connectorProperties.getGatewayName(),
                 connectorProperties.getGatewayRole());
         details.setFromPartner(fromPartner);

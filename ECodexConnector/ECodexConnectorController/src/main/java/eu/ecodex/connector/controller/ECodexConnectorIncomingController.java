@@ -81,9 +81,9 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
     }
 
     private boolean isMessageEvidence(Message message) {
-        return message.getMessageDetails().getAction().equals(ActionEnum.Evidence_RelayREMMD)
-                || message.getMessageDetails().getAction().equals(ActionEnum.Evidence_Delivery)
-                || message.getMessageDetails().getAction().equals(ActionEnum.Evidence_Retrieval);
+        return message.getMessageDetails().getAction().equals(ActionEnum.RelayREMMDAcceptanceRejection)
+                || message.getMessageDetails().getAction().equals(ActionEnum.DeliveryNonDeliveryToRecipient)
+                || message.getMessageDetails().getAction().equals(ActionEnum.RetrievalNonRetrievalToRecipient);
     }
 
 }

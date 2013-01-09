@@ -1,7 +1,5 @@
 package eu.ecodex.connector.gwc;
 
-import java.io.IOException;
-
 import javax.xml.ws.Holder;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
@@ -47,17 +45,13 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
 
     @Override
     public void sendMessage(Message message) throws ECodexConnectorGatewayWebserviceClientException {
-        SendRequest request = null;
+        SendRequest request = new SendRequest();
+        Messaging ebMSHeaderInfo = new Messaging();
         try {
-            request = sendMessageHelper.buildSendRequest(message);
+            sendMessageHelper.buildMessage(request, ebMSHeaderInfo, message);
         } catch (ECodexConnectorGatewayWebserviceClientException e) {
             throw e;
-        } catch (IOException e1) {
-            LOGGER.error("Could not build sendRequest! ", e1);
-            throw new ECodexConnectorGatewayWebserviceClientException(e1);
         }
-
-        Messaging ebMSHeaderInfo = sendMessageHelper.buildEbmsHeader(message);
 
         try {
             SendResponse response = gatewayBackendWebservice.sendMessage(request, ebMSHeaderInfo);

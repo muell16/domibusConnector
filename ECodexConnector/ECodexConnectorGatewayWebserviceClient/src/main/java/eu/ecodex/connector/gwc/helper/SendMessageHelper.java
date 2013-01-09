@@ -1,16 +1,17 @@
 package eu.ecodex.connector.gwc.helper;
 
-import java.io.IOException;
-
 import javax.activation.DataHandler;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
@@ -40,40 +41,11 @@ public class SendMessageHelper {
         this.persistenceService = persistenceService;
     }
 
-    public SendRequest buildSendRequest(Message message) throws IOException,
-            ECodexConnectorGatewayWebserviceClientException {
-        SendRequest request = new SendRequest();
-
-        if (message.getMessageContent() != null) {
-            DataHandler contentHandler = new DataHandler(message.getMessageContent().getECodexContent(), "text/xml");
-            request.getPayload().add(contentHandler);
-        }
-
-        if (message.getAttachments() != null) {
-            for (MessageAttachment attachment : message.getAttachments()) {
-                DataHandler dh = new DataHandler(attachment.getAttachment(), attachment.getMimeType());
-                request.getPayload().add(dh);
-            }
-        }
-
-        if (message.getConfirmations() != null) {
-            // Pick only the last produced evidence
-            DataHandler evidenceHandler = new DataHandler(message.getConfirmations()
-                    .get(message.getConfirmations().size() - 1).getEvidence(), "text/xml");
-            request.getPayload().add(evidenceHandler);
-        }
-
-        if (request.getPayload().isEmpty()) {
-            throw new ECodexConnectorGatewayWebserviceClientException("No payload to send. Message without content?");
-        }
-
-        return request;
-    }
-
-    public Messaging buildEbmsHeader(Message message) {
-        Messaging ebMSHeaderInfo = new Messaging();
-
+    public void buildMessage(SendRequest request, Messaging ebMSHeaderInfo, Message message)
+            throws ECodexConnectorGatewayWebserviceClientException {
         UserMessage userMessage = new UserMessage();
+
+        buildSendRequestAndPayloadInfo(userMessage, request, message);
 
         userMessage.setPartyInfo(buildPartyInfo(message.getMessageDetails()));
 
@@ -86,8 +58,51 @@ public class SendMessageHelper {
         userMessage.setMessageInfo(info);
 
         ebMSHeaderInfo.getUserMessage().add(userMessage);
+    }
 
-        return ebMSHeaderInfo;
+    private void buildSendRequestAndPayloadInfo(UserMessage userMessage, SendRequest request, Message message)
+            throws ECodexConnectorGatewayWebserviceClientException {
+        PayloadInfo pli = new PayloadInfo();
+
+        if (message.getMessageContent() != null) {
+            DataHandler contentHandler = new DataHandler(new String(message.getMessageContent().getECodexContent()),
+                    "text/xml");
+            request.getPayload().add(contentHandler);
+            pli.getPartInfo().add(buildPartInfo("ECodexContentXML"));
+        }
+
+        if (message.getAttachments() != null) {
+            for (MessageAttachment attachment : message.getAttachments()) {
+                DataHandler dh = new DataHandler(attachment.getAttachment(), attachment.getMimeType());
+                request.getPayload().add(dh);
+                pli.getPartInfo().add(buildPartInfo(attachment.getName()));
+            }
+        }
+
+        if (message.getConfirmations() != null) {
+            // Pick only the last produced evidence
+            DataHandler evidenceHandler = new DataHandler(new String(message.getConfirmations()
+                    .get(message.getConfirmations().size() - 1).getEvidence()), "text/xml");
+            request.getPayload().add(evidenceHandler);
+            pli.getPartInfo().add(
+                    buildPartInfo(message.getConfirmations().get(message.getConfirmations().size() - 1)
+                            .getEvidenceType().toString()));
+        }
+
+        userMessage.setPayloadInfo(pli);
+
+        if (request.getPayload().isEmpty()) {
+            throw new ECodexConnectorGatewayWebserviceClientException("No payload to send. Message without content?");
+        }
+    }
+
+    private PartInfo buildPartInfo(String description) {
+        PartInfo pi = new PartInfo();
+        Description desc = new Description();
+        desc.setValue(description);
+        pi.setDescription(desc);
+
+        return pi;
     }
 
     public void extractEbmsMessageIdAndPersistIntoDB(SendResponse response, Message message) {

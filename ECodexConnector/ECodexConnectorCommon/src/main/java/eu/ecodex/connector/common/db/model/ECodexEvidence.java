@@ -12,18 +12,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 
 @Entity
 @Table(name = "ECODEX_EVIDENCES")
-@SequenceGenerator(sequenceName = "ECMSG_SEQ", name = "ECMSG_SEQ_GEN")
 public class ECodexEvidence {
 
     @Id
-    @GeneratedValue(generator = "ECMSG_SEQ_GEN", strategy = GenerationType.SEQUENCE)
+    @TableGenerator(name = "ecodexSeqStore", table = "ECODEX_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "ECODEX_EVIDENCES.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ecodexSeqStore")
     private Long id;
 
     @ManyToOne

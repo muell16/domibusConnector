@@ -11,18 +11,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 
 @Entity
 @Table(name = "ECODEX_MESSAGES")
-@SequenceGenerator(sequenceName = "ECMSG_SEQ", name = "ECMSG_SEQ_GEN")
 public class ECodexMessage {
 
     @Id
-    @GeneratedValue(generator = "ECMSG_SEQ_GEN", strategy = GenerationType.SEQUENCE)
+    @TableGenerator(name = "ecodexSeqStore", table = "ECODEX_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "ECODEX_MESSAGES.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ecodexSeqStore")
     private Long id;
 
     @Column(name = "EBMS_MESSAGE_ID", unique = true)
