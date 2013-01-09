@@ -173,7 +173,7 @@ public class Converter {
 	{
 		org.holodeck.logging.persistent.MessageInfo messageInfo = new org.holodeck.logging.persistent.MessageInfo();
 		if (userMessage.getCollaborationInfo() != null) {
-			if (userMessage.getCollaborationInfo().getAgreementRef() != null) {
+			if (userMessage.getCollaborationInfo().getAgreementRef() != null && userMessage.getCollaborationInfo().getAgreementRef().getPmode()!=null) {
 				messageInfo.setPmode(userMessage.getCollaborationInfo().getAgreementRef().getPmode().getNonEmptyString());
 			}
 			if (userMessage.getCollaborationInfo().getConversationId() != null) {
