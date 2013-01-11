@@ -65,6 +65,8 @@ public class OutgoingEvidenceService implements EvidenceService {
         } catch (ECodexConnectorGatewayWebserviceClientException gwse) {
             throw new ECodexConnectorControllerException("Could not send ECodex Evidence Message to Gateway! ", gwse);
         }
+
+        persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
     }
 
     private MessageConfirmation generateEvidence(ECodexEvidenceType type, Message originalMessage)

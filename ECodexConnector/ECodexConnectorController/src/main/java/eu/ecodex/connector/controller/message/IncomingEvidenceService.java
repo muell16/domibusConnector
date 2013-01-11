@@ -40,6 +40,8 @@ public class IncomingEvidenceService implements EvidenceService {
         } catch (ImplementationMissingException e) {
             throw new ECodexConnectorControllerException(e);
         }
+
+        persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
     }
 
 }

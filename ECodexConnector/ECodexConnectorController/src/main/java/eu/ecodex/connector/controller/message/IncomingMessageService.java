@@ -37,6 +37,14 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         }
 
         if (connectorProperties.isUseEvidencesToolkit()) {
+            // MessageConfirmation submissionAcceptance =
+            // findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE,
+            // message);
+            // if (submissionAcceptance != null) {
+            // persistenceService.persistEvidenceForMessageIntoDatabase(message,
+            // submissionAcceptance.getEvidence(),
+            // ECodexEvidenceType.SUBMISSION_ACCEPTANCE);
+            // }
             createRelayREMMDEvidenceAndSendIt(message);
         }
 
@@ -64,6 +72,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
     private void createRelayREMMDEvidenceAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
         MessageConfirmation relayRemMDAcceptance = null;
         try {
+
             relayRemMDAcceptance = evidencesToolkit.createRelayREMMDAcceptance(originalMessage);
             originalMessage.addConfirmation(relayRemMDAcceptance);
             persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage,
@@ -92,6 +101,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             LOGGER.error("Exception sending RelayREMMD evidence back to sender gateway of message "
                     + originalMessage.getMessageDetails().getEbmsMessageId(), e);
         }
+
+        persistenceService.setEvidenceDeliveredToGateway(originalMessage, relayRemMDAcceptance.getEvidenceType());
     }
 
 }

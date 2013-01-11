@@ -42,7 +42,7 @@ public class ECodexMessage {
     @Column(name = "HASH_VALUE")
     private String hashValue;
 
-    @Column(name = "UPDATED")
+    @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)

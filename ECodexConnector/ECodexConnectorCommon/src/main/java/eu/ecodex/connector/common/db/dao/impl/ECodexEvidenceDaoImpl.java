@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
+import eu.ecodex.connector.common.db.model.ECodexMessage;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 
 @Repository
@@ -44,10 +45,19 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
     }
 
     @Override
+    @Transactional
     public void mergeEvidence(ECodexEvidence evidence) {
         evidence.setUpdated(new Date());
         em.merge(evidence);
 
+    }
+
+    @Override
+    public List<ECodexEvidence> findEvidencesForMessage(ECodexMessage message) {
+        Query q = em.createQuery("from ECodexEvidence e where e.message.id=?");
+        q.setParameter(1, message.getId());
+
+        return q.getResultList();
     }
 
     public List<ECodexEvidence> getEvidencesNotFinished() {

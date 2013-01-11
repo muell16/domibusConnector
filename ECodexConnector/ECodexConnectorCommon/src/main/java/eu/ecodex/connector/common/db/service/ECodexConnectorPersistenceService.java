@@ -16,4 +16,8 @@ public interface ECodexConnectorPersistenceService {
     Message findMessageByNationalId(String nationalMessageId);
 
     Message findMessageByEbmsId(String ebmsMessageId);
+
+    void setEvidenceDeliveredToGateway(Message message, ECodexEvidenceType evidenceType);
+
+    void setEvidenceDeliveredToNationalSystem(Message message, ECodexEvidenceType evidenceType);
 }

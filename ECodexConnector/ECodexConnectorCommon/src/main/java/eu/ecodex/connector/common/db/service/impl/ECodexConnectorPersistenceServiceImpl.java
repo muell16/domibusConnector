@@ -1,6 +1,8 @@
 package eu.ecodex.connector.common.db.service.impl;
 
 import java.sql.Clob;
+import java.util.Date;
+import java.util.List;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.lob.ClobImpl;
@@ -60,6 +62,39 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    public void setEvidenceDeliveredToGateway(Message message, ECodexEvidenceType evidenceType) {
+        messageDao.mergeMessage(message.getDbMessage());
+        List<ECodexEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessage());
+        ECodexEvidence dbEvidence = findEvidence(evidences, evidenceType);
+        if (dbEvidence != null) {
+            dbEvidence.setDeliveredToGateway(new Date());
+            evidenceDao.mergeEvidence(dbEvidence);
+        }
+    }
+
+    @Override
+    public void setEvidenceDeliveredToNationalSystem(Message message, ECodexEvidenceType evidenceType) {
+        messageDao.mergeMessage(message.getDbMessage());
+        List<ECodexEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessage());
+        ECodexEvidence dbEvidence = findEvidence(evidences, evidenceType);
+        if (dbEvidence != null) {
+            dbEvidence.setDeliveredToNationalSystem(new Date());
+            evidenceDao.mergeEvidence(dbEvidence);
+        }
+    }
+
+    private ECodexEvidence findEvidence(List<ECodexEvidence> evidences, ECodexEvidenceType evidenceType) {
+        if (evidences != null) {
+            for (ECodexEvidence evidence : evidences) {
+                if (evidence.getType().equals(evidenceType)) {
+                    return evidence;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, ECodexEvidenceType evidenceType) {
         ECodexEvidence dbEvidence = new ECodexEvidence();
 
@@ -67,6 +102,8 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         Clob cEvidence = new ClobImpl(new String(evidence));
         dbEvidence.setEvidence(cEvidence);
         dbEvidence.setType(evidenceType);
+        dbEvidence.setDeliveredToGateway(null);
+        dbEvidence.setDeliveredToNationalSystem(null);
 
         evidenceDao.saveNewEvidence(dbEvidence);
     }

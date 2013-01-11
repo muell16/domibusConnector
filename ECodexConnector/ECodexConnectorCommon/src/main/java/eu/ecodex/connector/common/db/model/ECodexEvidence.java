@@ -43,7 +43,7 @@ public class ECodexEvidence {
     @Column(name = "DELIVERED_GW")
     private Date deliveredToGateway;
 
-    @Column(name = "UPDATED")
+    @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
     public Long getId() {

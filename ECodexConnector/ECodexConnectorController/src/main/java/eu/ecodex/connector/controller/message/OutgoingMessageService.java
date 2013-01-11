@@ -82,16 +82,20 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Could not send ECodex Message to Gateway! ", gwse);
         }
 
+        persistenceService.setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
+
         try {
             Message returnMessage = buildEvidenceMessage(confirmation, message);
             nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
         } catch (ECodexConnectorNationalBackendClientException e) {
-            LOGGER.error("Could not send submission acceptance back to national connector! ", e);
-            e.printStackTrace();
+            throw new ECodexConnectorControllerException(
+                    "Could not send submission acceptance back to national connector! ", e);
         } catch (ImplementationMissingException e) {
-            LOGGER.error("Could not send submission acceptance back to national connector! ", e);
-            e.printStackTrace();
+            throw new ECodexConnectorControllerException(
+                    "Could not send submission acceptance back to national connector! ", e);
         }
+
+        persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
 
     }
 
@@ -123,6 +127,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
             Message returnMessage = buildEvidenceMessage(confirmation, message);
             nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
+            persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
         } catch (ECodexConnectorEvidencesToolkitException e) {
             LOGGER.error("Could not even generate submission rejection! ", e);
             return;
