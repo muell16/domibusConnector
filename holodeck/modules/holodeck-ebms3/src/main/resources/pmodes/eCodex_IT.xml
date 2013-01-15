@@ -1,0 +1,451 @@
+<PModes>
+
+    <Producer name="EE">
+      <PartyId>EE</PartyId>
+      <Role>GW</Role>
+    </Producer>
+
+    <Producer name="AT">
+      <PartyId>AT</PartyId>
+      <Role>GW</Role>
+    </Producer>
+
+    <Producer name="DE">
+      <PartyId>AT</PartyId>
+      <Role>GW</Role>
+    </Producer>
+
+<!-- Definition of the Buisness Process for EPO for Italy -->
+
+    <UserService name="EPO_Form_A">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_A</Action>
+      </CollaborationInfo>
+    </UserService>
+   
+    <UserService name="EPO_Form_B">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_B</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <UserService name="EPO_Form_C">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_C</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <UserService name="EPO_Form_D">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_D</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <UserService name="EPO_Form_E">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_E</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <UserService name="EPO_Form_F">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_F</Action>
+      </CollaborationInfo>
+    </UserService>
+
+    <UserService name="EPO_Form_G">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>Form_G</Action>
+      </CollaborationInfo>
+    </UserService>
+
+     <UserService name="EPO_SubmissionAcceptance">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>SubmissionAcceptanceRejection</Action>
+      </CollaborationInfo>
+    </UserService>
+
+     <UserService name="EPO_RelayMD">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>RelayREMMDAcceptanceRejection</Action>
+      </CollaborationInfo>
+    </UserService>
+     
+     <UserService name="EPO_Delivery">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>DeliveryNonDeliveryToRecipient</Action>
+      </CollaborationInfo>
+    </UserService>
+     
+     <UserService name="EPO_Retrieval">
+      <ToPartyInfo>
+        <PartyId>IT</PartyId>
+        <Role>GW</Role>
+      </ToPartyInfo>
+      <CollaborationInfo>
+        <Service>EPO</Service>
+        <Action>RetrievalNonRetrievalToRecipient</Action>
+      </CollaborationInfo>
+    </UserService>
+
+<!--Defintion of the bindings for EPO -->
+<!-- From EE to IT -->
+
+    <Binding name="EE_IT_EPO_Form_A">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_Form_B">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_Form_C">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_Form_D">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_Form_E">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_Form_F">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_Form_G">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_SubmissionAcceptance">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="EE_IT_EPO_RelayMD">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="EE_IT_EPO_Delivery">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="EE_IT_EPO_Retrieval">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="EE" security="sign-encrypt-body-header_EE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+
+<!-- From AT to IT -->
+
+    <Binding name="AT_IT_EPO_Form_A">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_Form_B">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_Form_C">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_Form_D">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_Form_E">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_Form_F">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_Form_G">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_SubmissionAcceptance">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="AT_IT_EPO_RelayMD">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="AT_IT_EPO_Delivery">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="AT_IT_EPO_Retrieval">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="AT" security="sign-encrypt-body-header_AT_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+<!-- From DE to IT -->
+
+    <Binding name="DE_IT_EPO_Form_A">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_Form_B">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_Form_C">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_Form_D">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_Form_E">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_Form_F">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_Form_G">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_SubmissionAcceptance">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="DE_IT_EPO_RelayMD">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="DE_IT_EPO_Delivery">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="DE_IT_EPO_Retrieval">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="DE" security="sign-encrypt-body-header_DE_IT"> 
+          <Endpoint address="http://217.133.94.62:8080/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+<!--Defintion of the PModes -->
+
+	<PMode name="EE_IT_EPO_Form_A" binding="EE_IT_EPO_Form_A" /> 
+	<PMode name="EE_IT_EPO_Form_B" binding="EE_IT_EPO_Form_B" /> 
+	<PMode name="EE_IT_EPO_Form_C" binding="EE_IT_EPO_Form_C" /> 
+	<PMode name="EE_IT_EPO_Form_D" binding="EE_IT_EPO_Form_D" /> 
+	<PMode name="EE_IT_EPO_Form_E" binding="EE_IT_EPO_Form_E" /> 
+	<PMode name="EE_IT_EPO_Form_F" binding="EE_IT_EPO_Form_F" /> 
+	<PMode name="EE_IT_EPO_Form_G" binding="EE_IT_EPO_Form_G" /> 
+	<PMode name="EE_IT_EPO_SubmissionAcceptance" binding="EE_IT_EPO_SubmissionAcceptance" /> 
+	<PMode name="EE_IT_EPO_RelayMD" binding="EE_IT_EPO_RelayMD" /> 
+	<PMode name="EE_IT_EPO_Delivery" binding="EE_IT_EPO_Delivery" /> 
+	<PMode name="EE_IT_EPO_Retrieval" binding="EE_IT_EPO_Retrieval" /> 
+	
+	<PMode name="AT_IT_EPO_Form_A" binding="AT_IT_EPO_Form_A" /> 
+	<PMode name="AT_IT_EPO_Form_B" binding="AT_IT_EPO_Form_B" /> 
+	<PMode name="AT_IT_EPO_Form_C" binding="AT_IT_EPO_Form_C" /> 
+	<PMode name="AT_IT_EPO_Form_D" binding="AT_IT_EPO_Form_D" /> 
+	<PMode name="AT_IT_EPO_Form_E" binding="AT_IT_EPO_Form_E" /> 
+	<PMode name="AT_IT_EPO_Form_F" binding="AT_IT_EPO_Form_F" /> 
+	<PMode name="AT_IT_EPO_Form_G" binding="AT_IT_EPO_Form_G" /> 
+	<PMode name="AT_IT_EPO_SubmissionAcceptance" binding="AT_IT_EPO_SubmissionAcceptance" /> 
+	<PMode name="AT_IT_EPO_RelayMD" binding="AT_IT_EPO_RelayMD" /> 
+	<PMode name="AT_IT_EPO_Delivery" binding="AT_IT_EPO_Delivery" /> 
+	<PMode name="AT_IT_EPO_Retrieval" binding="AT_IT_EPO_Retrieval" /> 
+	
+	<PMode name="DE_IT_EPO_Form_A" binding="DE_IT_EPO_Form_A" /> 
+	<PMode name="DE_IT_EPO_Form_B" binding="DE_IT_EPO_Form_B" /> 
+	<PMode name="DE_IT_EPO_Form_C" binding="DE_IT_EPO_Form_C" /> 
+	<PMode name="DE_IT_EPO_Form_D" binding="DE_IT_EPO_Form_D" /> 
+	<PMode name="DE_IT_EPO_Form_E" binding="DE_IT_EPO_Form_E" /> 
+	<PMode name="DE_IT_EPO_Form_F" binding="DE_IT_EPO_Form_F" /> 
+	<PMode name="DE_IT_EPO_Form_G" binding="DE_IT_EPO_Form_G" /> 
+	<PMode name="DE_IT_EPO_SubmissionAcceptance" binding="DE_IT_EPO_SubmissionAcceptance" /> 
+	<PMode name="DE_IT_EPO_RelayMD" binding="DE_IT_EPO_RelayMD" /> 
+	<PMode name="DE_IT_EPO_Delivery" binding="DE_IT_EPO_Delivery" /> 
+	<PMode name="DE_IT_EPO_Retrieval" binding="DE_IT_EPO_Retrieval" /> 
+
+</PModes>
