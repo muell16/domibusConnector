@@ -121,10 +121,6 @@
       <url-pattern>/resources</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>Manager</servlet-name>
-      <url-pattern>/findleaks</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
     <servlet-name>Status</servlet-name>
     <url-pattern>/status/*</url-pattern>
   </servlet-mapping>
@@ -172,7 +168,6 @@
       <url-pattern>/status/*</url-pattern>
       <url-pattern>/roles</url-pattern>
       <url-pattern>/resources</url-pattern>
-      <url-pattern>/findleaks</url-pattern>
     </web-resource-collection>
     <auth-constraint>
        <!-- NOTE:  This role is not present in the default users file -->
