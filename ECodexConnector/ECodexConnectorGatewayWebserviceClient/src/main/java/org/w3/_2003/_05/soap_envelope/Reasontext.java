@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * <p>Java-Klasse für reasontext complex type.
+ * <p>Java-Klasse fÃ¼r reasontext complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 

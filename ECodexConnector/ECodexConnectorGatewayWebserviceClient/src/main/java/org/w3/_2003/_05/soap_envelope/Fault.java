@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
  * 	    Fault reporting structure
  * 	  
  * 
- * <p>Java-Klasse für Fault complex type.
+ * <p>Java-Klasse fÃ¼r Fault complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
