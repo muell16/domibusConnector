@@ -17,7 +17,6 @@ import org.holodeck.backend.service.exception.DownloadMessageServiceException;
 import org.holodeck.backend.util.StringUtils;
 import org.holodeck.backend.validator.DownloadMessageValidator;
 import org.holodeck.backend.validator.ListPendingMessagesValidator;
-import org.holodeck.ebms3.packaging.MessageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
