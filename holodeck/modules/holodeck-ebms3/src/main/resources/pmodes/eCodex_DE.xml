@@ -144,7 +144,7 @@
     <Binding name="IT_DE_EPO_Form_A">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -152,7 +152,7 @@
     <Binding name="IT_DE_EPO_Form_B">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -160,7 +160,7 @@
     <Binding name="IT_DE_EPO_Form_C">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -168,7 +168,7 @@
     <Binding name="IT_DE_EPO_Form_D">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -176,7 +176,7 @@
     <Binding name="IT_DE_EPO_Form_E">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -184,7 +184,7 @@
     <Binding name="IT_DE_EPO_Form_F">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -192,7 +192,7 @@
     <Binding name="IT_DE_EPO_Form_G">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -200,7 +200,7 @@
     <Binding name="IT_DE_EPO_SubmissionAcceptance">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -208,7 +208,7 @@
     <Binding name="IT_DE_EPO_RelayMD">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -216,7 +216,7 @@
     <Binding name="IT_DE_EPO_Delivery">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -224,7 +224,7 @@
     <Binding name="IT_DE_EPO_Retrieval">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="IT" security="sign-encrypt-body-header_IT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -234,7 +234,7 @@
     <Binding name="EE_DE_EPO_Form_A">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -242,7 +242,7 @@
     <Binding name="EE_DE_EPO_Form_B">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -250,7 +250,7 @@
     <Binding name="EE_DE_EPO_Form_C">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -258,7 +258,7 @@
     <Binding name="EE_DE_EPO_Form_D">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -266,7 +266,7 @@
     <Binding name="EE_DE_EPO_Form_E">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -274,7 +274,7 @@
     <Binding name="EE_DE_EPO_Form_F">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -282,7 +282,7 @@
     <Binding name="EE_DE_EPO_Form_G">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -290,7 +290,7 @@
     <Binding name="EE_DE_EPO_SubmissionAcceptance">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -298,7 +298,7 @@
     <Binding name="EE_DE_EPO_RelayMD">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -306,7 +306,7 @@
     <Binding name="EE_DE_EPO_Delivery">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -314,7 +314,7 @@
     <Binding name="EE_DE_EPO_Retrieval">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="EE" security="sign-encrypt-body-header_EE_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -323,7 +323,7 @@
     <Binding name="AT_DE_EPO_Form_A">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -331,7 +331,7 @@
     <Binding name="AT_DE_EPO_Form_B">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -339,7 +339,7 @@
     <Binding name="AT_DE_EPO_Form_C">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -347,7 +347,7 @@
     <Binding name="AT_DE_EPO_Form_D">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -355,7 +355,7 @@
     <Binding name="AT_DE_EPO_Form_E">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -363,7 +363,7 @@
     <Binding name="AT_DE_EPO_Form_F">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -371,7 +371,7 @@
     <Binding name="AT_DE_EPO_Form_G">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -379,7 +379,7 @@
     <Binding name="AT_DE_EPO_SubmissionAcceptance">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -387,7 +387,7 @@
     <Binding name="AT_DE_EPO_RelayMD">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -395,7 +395,7 @@
     <Binding name="AT_DE_EPO_Delivery">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
@@ -403,7 +403,7 @@
     <Binding name="AT_DE_EPO_Retrieval">
       <MEP name="One-Way/Push">
 	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="AT" security="sign-encrypt-body-header_AT_DE"> 
-          <Endpoint address="http://Germany_IP:8080/holodeck/services/msh" soapVersion="1.1" />
+          <Endpoint address="http://test.edelivery.it.nrw.de/gateway" soapVersion="1.1" />
         </Leg>
       </MEP>
     </Binding>
