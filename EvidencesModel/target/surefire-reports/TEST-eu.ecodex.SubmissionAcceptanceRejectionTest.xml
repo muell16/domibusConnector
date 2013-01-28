@@ -1,64 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="1.219" errors="0" skipped="0" tests="1" name="eu.ecodex.SubmissionAcceptanceRejectionTest">
+<testsuite failures="0" time="15.882" errors="0" skipped="0" tests="1" name="eu.ecodex.SubmissionAcceptanceRejectionTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
-    <property name="sun.boot.library.path" value="C:\Programme\Java\jdk6\jre\bin"/>
-    <property name="java.vm.version" value="20.10-b01"/>
+    <property name="sun.boot.library.path" value="/home/dev/Java/jdk1.6.0_34/jre/lib/i386"/>
+    <property name="java.vm.version" value="20.9-b04"/>
     <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
     <property name="java.vendor.url" value="http://java.sun.com/"/>
-    <property name="path.separator" value=";"/>
-    <property name="java.vm.name" value="Java HotSpot(TM) Client VM"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) Server VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
     <property name="user.country" value="DE"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="sun.os.patch.level" value="Service Pack 3"/>
+    <property name="sun.os.patch.level" value="unknown"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="D:\git\ecodex_evidences\EvidencesModel"/>
-    <property name="java.runtime.version" value="1.6.0_35-b10"/>
-    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="basedir" value="D:\git\ecodex_evidences\EvidencesModel"/>
-    <property name="java.endorsed.dirs" value="C:\Programme\Java\jdk6\jre\lib\endorsed"/>
-    <property name="os.arch" value="x86"/>
-    <property name="surefire.real.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefirebooter3377652396795114592.jar"/>
-    <property name="java.io.tmpdir" value="C:\DOKUME~1\muell16\LOKALE~1\Temp\"/>
+    <property name="user.dir" value="/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel"/>
+    <property name="java.runtime.version" value="1.6.0_34-b04"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="basedir" value="/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel"/>
+    <property name="java.endorsed.dirs" value="/home/dev/Java/jdk1.6.0_34/jre/lib/endorsed"/>
+    <property name="os.arch" value="i386"/>
+    <property name="surefire.real.class.path" value="/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/surefire/surefirebooter2751290446418107982.jar"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
     <property name="line.separator" value="
 "/>
     <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
-    <property name="user.variant" value=""/>
-    <property name="os.name" value="Windows XP"/>
-    <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Programme\Java\jdk6\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Programme\TortoiseSVN\bin;C:\WINDOWS\system32\WindowsPowerShell\v1.0;C:\Programme\Windows Imaging\;d:\ZPOnF\Workspace_Git\build\\externals\svn\bin;d:\ZPOnF\Workspace_Git\build\\externals\svn\bin;d:\ZPOnF\Workspace_Git\build\\externals\svn\bin;d:\ZPOnF\Workspace_Git\build\;C:\Programme\Java\jdk6\bin;D:\Java\xmlbeans-2.5.0\bin;D:\Programme\XML_Validator;D:\Java\apache-maven-3.0.4\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Programme\TortoiseSVN\bin;C:\WINDOWS\system32\WindowsPowerShell\v1.0;C:\Programme\Windows Imaging\;."/>
-    <property name="surefire.test.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\test-classes;D:\git\ecodex_evidences\EvidencesModel\target\classes;D:\Java\mavenrepo\junit\junit\4.4\junit-4.4.jar;D:\Java\mavenrepo\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-log4j12\1.6.1\slf4j-log4j12-1.6.1.jar;D:\Java\mavenrepo\log4j\log4j\1.2.16\log4j-1.2.16.jar;D:\Java\mavenrepo\javax\mail\mail\1.4.1\mail-1.4.1.jar;D:\Java\mavenrepo\javax\activation\activation\1.1\activation-1.1.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-xjc\2.2.6\jaxb-xjc-2.2.6.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-impl\2.2.6\jaxb-impl-2.2.6.jar;D:\Java\mavenrepo\javax\xml\bind\jaxb-api\2.2.6\jaxb-api-2.2.6.jar;D:\Java\mavenrepo\commons-io\commons-io\2.4\commons-io-2.4.jar;D:\Java\mavenrepo\eu\europa\ec\markt\dss\signature-applet-r5\1.0\signature-applet-r5-1.0.jar;D:\Java\mavenrepo\org\bouncycastle\bcprov-jdk16\1.46\bcprov-jdk16-1.46.jar;D:\Java\mavenrepo\org\bouncycastle\bcmail-jdk16\1.46\bcmail-jdk16-1.46.jar;"/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/home/dev/Java/jdk1.6.0_34/jre/lib/i386/server:/home/dev/Java/jdk1.6.0_34/jre/lib/i386:/home/dev/Java/jdk1.6.0_34/jre/../lib/i386:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/i386/client:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/i386::/usr/java/packages/lib/i386:/lib:/usr/lib"/>
+    <property name="surefire.test.class.path" value="/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/test-classes:/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/classes:/home/dev/maven_repo/junit/junit/4.4/junit-4.4.jar:/home/dev/maven_repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar:/home/dev/maven_repo/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar:/home/dev/maven_repo/log4j/log4j/1.2.16/log4j-1.2.16.jar:/home/dev/maven_repo/javax/mail/mail/1.4.1/mail-1.4.1.jar:/home/dev/maven_repo/javax/activation/activation/1.1/activation-1.1.jar:/home/dev/maven_repo/com/sun/xml/bind/jaxb-xjc/2.2.6/jaxb-xjc-2.2.6.jar:/home/dev/maven_repo/com/sun/xml/bind/jaxb-impl/2.2.6/jaxb-impl-2.2.6.jar:/home/dev/maven_repo/javax/xml/bind/jaxb-api/2.2.6/jaxb-api-2.2.6.jar:/home/dev/maven_repo/commons-io/commons-io/2.4/commons-io-2.4.jar:/home/dev/maven_repo/eu/europa/ec/markt/dss/signature-applet-r5/1.0/signature-applet-r5-1.0.jar:/home/dev/maven_repo/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar:/home/dev/maven_repo/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar:"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="50.0"/>
-    <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
-    <property name="os.version" value="5.1"/>
-    <property name="user.home" value="C:\Dokumente und Einstellungen\muell16"/>
+    <property name="sun.management.compiler" value="HotSpot Tiered Compilers"/>
+    <property name="os.version" value="3.4.11-2.16-default"/>
+    <property name="user.home" value="/home/dev"/>
     <property name="user.timezone" value="Europe/Berlin"/>
-    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="file.encoding" value="UTF-8"/>
     <property name="java.specification.version" value="1.6"/>
-    <property name="file.encoding" value="Cp1252"/>
-    <property name="user.name" value="muell16"/>
-    <property name="java.class.path" value="D:\git\ecodex_evidences\EvidencesModel\target\test-classes;D:\git\ecodex_evidences\EvidencesModel\target\classes;D:\Java\mavenrepo\junit\junit\4.4\junit-4.4.jar;D:\Java\mavenrepo\org\slf4j\slf4j-api\1.6.1\slf4j-api-1.6.1.jar;D:\Java\mavenrepo\org\slf4j\slf4j-log4j12\1.6.1\slf4j-log4j12-1.6.1.jar;D:\Java\mavenrepo\log4j\log4j\1.2.16\log4j-1.2.16.jar;D:\Java\mavenrepo\javax\mail\mail\1.4.1\mail-1.4.1.jar;D:\Java\mavenrepo\javax\activation\activation\1.1\activation-1.1.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-xjc\2.2.6\jaxb-xjc-2.2.6.jar;D:\Java\mavenrepo\com\sun\xml\bind\jaxb-impl\2.2.6\jaxb-impl-2.2.6.jar;D:\Java\mavenrepo\javax\xml\bind\jaxb-api\2.2.6\jaxb-api-2.2.6.jar;D:\Java\mavenrepo\commons-io\commons-io\2.4\commons-io-2.4.jar;D:\Java\mavenrepo\eu\europa\ec\markt\dss\signature-applet-r5\1.0\signature-applet-r5-1.0.jar;D:\Java\mavenrepo\org\bouncycastle\bcprov-jdk16\1.46\bcprov-jdk16-1.46.jar;D:\Java\mavenrepo\org\bouncycastle\bcmail-jdk16\1.46\bcmail-jdk16-1.46.jar;"/>
+    <property name="user.name" value="dev"/>
+    <property name="java.class.path" value="/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/test-classes:/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/classes:/home/dev/maven_repo/junit/junit/4.4/junit-4.4.jar:/home/dev/maven_repo/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar:/home/dev/maven_repo/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar:/home/dev/maven_repo/log4j/log4j/1.2.16/log4j-1.2.16.jar:/home/dev/maven_repo/javax/mail/mail/1.4.1/mail-1.4.1.jar:/home/dev/maven_repo/javax/activation/activation/1.1/activation-1.1.jar:/home/dev/maven_repo/com/sun/xml/bind/jaxb-xjc/2.2.6/jaxb-xjc-2.2.6.jar:/home/dev/maven_repo/com/sun/xml/bind/jaxb-impl/2.2.6/jaxb-impl-2.2.6.jar:/home/dev/maven_repo/javax/xml/bind/jaxb-api/2.2.6/jaxb-api-2.2.6.jar:/home/dev/maven_repo/commons-io/commons-io/2.4/commons-io-2.4.jar:/home/dev/maven_repo/eu/europa/ec/markt/dss/signature-applet-r5/1.0/signature-applet-r5-1.0.jar:/home/dev/maven_repo/org/bouncycastle/bcprov-jdk16/1.46/bcprov-jdk16-1.46.jar:/home/dev/maven_repo/org/bouncycastle/bcmail-jdk16/1.46/bcmail-jdk16-1.46.jar:"/>
     <property name="java.vm.specification.version" value="1.0"/>
     <property name="sun.arch.data.model" value="32"/>
-    <property name="java.home" value="C:\Programme\Java\jdk6\jre"/>
-    <property name="sun.java.command" value="D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefirebooter3377652396795114592.jar D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefire2023253733983076489tmp D:\git\ecodex_evidences\EvidencesModel\target\surefire\surefire6008219667919566126tmp"/>
+    <property name="java.home" value="/home/dev/Java/jdk1.6.0_34/jre"/>
+    <property name="sun.java.command" value="/home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/surefire/surefirebooter2751290446418107982.jar /home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/surefire/surefire4162709272559975070tmp /home/dev/workspaces/default-workspace/ecodex_evidences/EvidencesModel/target/surefire/surefire6525592981284186189tmp"/>
     <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.language" value="de"/>
-    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
     <property name="java.vm.info" value="mixed mode"/>
-    <property name="java.version" value="1.6.0_35"/>
-    <property name="java.ext.dirs" value="C:\Programme\Java\jdk6\jre\lib\ext;C:\WINDOWS\Sun\Java\lib\ext"/>
-    <property name="sun.boot.class.path" value="C:\Programme\Java\jdk6\jre\lib\endorsed\webservices-api-2.0.1.jar;C:\Programme\Java\jdk6\jre\lib\endorsed\webservices-api-2.1-b16.jar;C:\Programme\Java\jdk6\jre\lib\resources.jar;C:\Programme\Java\jdk6\jre\lib\rt.jar;C:\Programme\Java\jdk6\jre\lib\sunrsasign.jar;C:\Programme\Java\jdk6\jre\lib\jsse.jar;C:\Programme\Java\jdk6\jre\lib\jce.jar;C:\Programme\Java\jdk6\jre\lib\charsets.jar;C:\Programme\Java\jdk6\jre\lib\modules\jdk.boot.jar;C:\Programme\Java\jdk6\jre\classes"/>
+    <property name="java.version" value="1.6.0_34"/>
+    <property name="java.ext.dirs" value="/home/dev/Java/jdk1.6.0_34/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="sun.boot.class.path" value="/home/dev/Java/jdk1.6.0_34/jre/lib/endorsed/webservices-api-2.1-b16.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/endorsed/webservices-api.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/endorsed/webservices-api-2.0.1.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/resources.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/rt.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/sunrsasign.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/jsse.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/jce.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/charsets.jar:/home/dev/Java/jdk1.6.0_34/jre/lib/modules/jdk.boot.jar:/home/dev/Java/jdk1.6.0_34/jre/classes"/>
     <property name="java.vendor" value="Sun Microsystems Inc."/>
-    <property name="localRepository" value="D:\Java\mavenrepo"/>
-    <property name="file.separator" value="\"/>
+    <property name="localRepository" value="/home/dev/maven_repo"/>
+    <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
-    <property name="sun.desktop" value="windows"/>
-    <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
+    <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="1.219" classname="eu.ecodex.SubmissionAcceptanceRejectionTest" name="evidenceChain"/>
+  <testcase time="14.657" classname="eu.ecodex.SubmissionAcceptanceRejectionTest" name="evidenceChain"/>
 </testsuite>

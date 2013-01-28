@@ -1,18 +1,13 @@
 package eu.ecodex.evidences;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.GregorianCalendar;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.etsi.uri._02640.soapbinding.v1.DeliveryConstraints;
@@ -23,14 +18,11 @@ import org.etsi.uri._02640.soapbinding.v1.Originators;
 import org.etsi.uri._02640.soapbinding.v1.REMDispatchType;
 import org.etsi.uri._02640.v2.EntityDetailsType;
 import org.etsi.uri._02640.v2.REMEvidenceType;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.ecodex.signature.EvidenceUtils;
 import eu.ecodex.signature.EvidenceUtilsXades;
-import eu.spocseu.edeliverygw.JaxbContextHolder;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
@@ -40,208 +32,149 @@ import eu.spocseu.edeliverygw.evidences.RetrievalNonRetrievalByRecipient;
 import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
-public class ECodexEvidenceBuilder  implements EvidenceBuilder {
-	private static Logger LOG = Logger.getLogger(ECodexEvidenceBuilder.class);
-	
-	private static EvidenceUtils signer = null;
-	
-	
-	
-	public ECodexEvidenceBuilder(String javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
-//		signer = new EvidenceUtilsImpl(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);		
-		signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);		
-	}
-	
+public class ECodexEvidenceBuilder implements EvidenceBuilder {
+    private static Logger LOG = Logger.getLogger(ECodexEvidenceBuilder.class);
 
-	@Override
-	public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance,
-													  REMErrorEvent eventReason,
-													  EDeliveryDetails evidenceIssuerDetails,
-													  ECodexMessageDetails messageDetails)
-															  throws ECodexEvidenceBuilderException {
-		
-		
-		// This is the message and all related information
-		REMDispatchType dispatch = new REMDispatchType();
-		
-		MsgMetaData msgMetaData = new MsgMetaData();
-		EntityDetailsType recipient = new EntityDetailsType();
-		EntityDetailsType sender = new EntityDetailsType();
-		try {
-			recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
-			sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		
-		Destinations destinations = new Destinations();
-		destinations.setRecipient(sender);
-		
-		Originators originators = new Originators();
-		originators.setFrom(recipient);
-		originators.setReplyTo(recipient);
-		originators.setSender(recipient);
-		
-		MsgIdentification msgIdentification = new MsgIdentification();
-		msgIdentification.setMessageID(messageDetails.getEbmsMessageId());
-		
-		msgMetaData.setDestinations(destinations);
-		msgMetaData.setOriginators(originators);
-		msgMetaData.setMsgIdentification(msgIdentification);
-		
-		GregorianCalendar cal = new GregorianCalendar();
-		XMLGregorianCalendar initialSend = null;
-		try {
-			initialSend = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-		} catch (DatatypeConfigurationException e1) {
-			e1.printStackTrace();
-		}
-		DeliveryConstraints deliveryConstraints = new DeliveryConstraints();
-		deliveryConstraints.setInitialSend(initialSend);
-		
-		msgMetaData.setDeliveryConstraints(deliveryConstraints);
-		
-		dispatch.setMsgMetaData(msgMetaData);
-		
-		SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(evidenceIssuerDetails, dispatch, isAcceptance);
-		if(eventReason != null) 
-			evidence.setEventReason(eventReason);
-		
-		evidence.setUAMessageId(messageDetails.getNationalMessageId());
-		evidence.setHashInformation(messageDetails.getHashValue(), messageDetails.getHashAlgorithm());
-		
-		
-		byte[] signedByteArray = signEvidence(evidence, false);
-		
-		
-		return signedByteArray;
-	}
-	
-	@Override
-	public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance,
-			 										  REMErrorEvent eventReason, 
-			 										  EDeliveryDetails evidenceIssuerDetails,
-			 										  byte[] previousEvidenceInByte)
-			 												  throws ECodexEvidenceBuilderException {
-		
-		
-		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);		
-		
-		RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, previousEvidence, isAcceptance);
-		
-		if(eventReason != null)
-			evidence.setEventReason(eventReason);
+    private static EvidenceUtils signer = null;
 
-		byte[] signedByteArray = signEvidence(evidence, true);
+    public ECodexEvidenceBuilder(String javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
+	// signer = new EvidenceUtilsImpl(javaKeyStorePath,
+	// javaKeyStorePassword, alias, keyPassword);
+	signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+    }
 
-		return signedByteArray;
-	} 
-	
-	@Override
-	public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery,
-													   REMErrorEvent eventReason, 
-													   EDeliveryDetails evidenceIssuerDetails, 
-													   byte[] previousEvidenceInByte) 
-												   			   throws ECodexEvidenceBuilderException {
-		
-		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);	
-		
-		DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
-		
-		if(eventReason != null)
-			evidence.setEventReason(eventReason);
-		
-		
-		byte[] signedByteArray = signEvidence(evidence, true);
-		
-		return signedByteArray;
+    @Override
+    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException {
+
+	// This is the message and all related information
+	REMDispatchType dispatch = new REMDispatchType();
+
+	MsgMetaData msgMetaData = new MsgMetaData();
+	EntityDetailsType recipient = new EntityDetailsType();
+	EntityDetailsType sender = new EntityDetailsType();
+	try {
+	    recipient.getAttributedElectronicAddressOrElectronicAddress().add(
+		    SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
+	    sender.getAttributedElectronicAddressOrElectronicAddress().add(
+		    SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
+	} catch (MalformedURLException e) {
+	    e.printStackTrace();
 	}
 
+	Destinations destinations = new Destinations();
+	destinations.setRecipient(sender);
 
-	@Override
-	public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval,
-														 REMErrorEvent eventReason, 
-														 EDeliveryDetails evidenceIssuerDetails, 
-														 byte[] previousEvidenceInByte) 
-																 throws ECodexEvidenceBuilderException {
-		
-		REMEvidenceType previousEvidence = convertIntoEvidenceType(previousEvidenceInByte);	
-		
-		RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
-		
+	Originators originators = new Originators();
+	originators.setFrom(recipient);
+	originators.setReplyTo(recipient);
+	originators.setSender(recipient);
 
-		if(eventReason != null)
-			evidence.setEventReason(eventReason);
-		
-		
-		byte[] signedByteArray = signEvidence(evidence, true);
-		
-		return signedByteArray;
+	MsgIdentification msgIdentification = new MsgIdentification();
+	msgIdentification.setMessageID(messageDetails.getEbmsMessageId());
+
+	msgMetaData.setDestinations(destinations);
+	msgMetaData.setOriginators(originators);
+	msgMetaData.setMsgIdentification(msgIdentification);
+
+	GregorianCalendar cal = new GregorianCalendar();
+	XMLGregorianCalendar initialSend = null;
+	try {
+	    initialSend = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+	} catch (DatatypeConfigurationException e1) {
+	    e1.printStackTrace();
+	}
+	DeliveryConstraints deliveryConstraints = new DeliveryConstraints();
+	deliveryConstraints.setInitialSend(initialSend);
+
+	msgMetaData.setDeliveryConstraints(deliveryConstraints);
+
+	dispatch.setMsgMetaData(msgMetaData);
+
+	SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(evidenceIssuerDetails, dispatch, isAcceptance);
+	if (eventReason != null)
+	    evidence.setEventReason(eventReason);
+
+	evidence.setUAMessageId(messageDetails.getNationalMessageId());
+	evidence.setHashInformation(messageDetails.getHashValue(), messageDetails.getHashAlgorithm());
+
+	byte[] signedByteArray = signEvidence(evidence, false);
+
+	return signedByteArray;
+    }
+
+    @Override
+    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    byte[] previousEvidenceInByte) throws ECodexEvidenceBuilderException {
+
+	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+
+	RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, previousEvidence, isAcceptance);
+
+	if (eventReason != null)
+	    evidence.setEventReason(eventReason);
+
+	byte[] signedByteArray = signEvidence(evidence, true);
+
+	return signedByteArray;
+    }
+
+    @Override
+    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    byte[] previousEvidenceInByte) throws ECodexEvidenceBuilderException {
+
+	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+
+	DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
+
+	if (eventReason != null)
+	    evidence.setEventReason(eventReason);
+
+	byte[] signedByteArray = signEvidence(evidence, true);
+
+	return signedByteArray;
+    }
+
+    @Override
+    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    byte[] previousEvidenceInByte) throws ECodexEvidenceBuilderException {
+
+	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+
+	RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
+
+	if (eventReason != null)
+	    evidence.setEventReason(eventReason);
+
+	byte[] signedByteArray = signEvidence(evidence, true);
+
+	return signedByteArray;
+    }
+
+    private byte[] signEvidence(Evidence evidenceToBeSigned, boolean removeOldSignature) {
+
+	if (removeOldSignature) {
+	    // delete old signature field
+	    evidenceToBeSigned.getXSDObject().setSignature(null);
+	    LOG.debug("Old Signature removed");
 	}
 
+	ByteArrayOutputStream fo = new ByteArrayOutputStream();
 
-	private byte[] signEvidence(Evidence evidenceToBeSigned, boolean removeOldSignature) {
-		
-		if(removeOldSignature) {
-			// delete old signature field
-			evidenceToBeSigned.getXSDObject().setSignature(null);
-			LOG.debug("Old Signature removed");
-		}
-		
-		
-		ByteArrayOutputStream fo = new ByteArrayOutputStream();
-		
-		
-		try {
-			
-			evidenceToBeSigned.serialize(fo);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		} 
-		
-		byte[] bytes = fo.toByteArray();
-		
-		byte[] signedByteArray = signer.signByteArray(bytes);
-		
-		return signedByteArray;
-	}	
-	
-	private REMEvidenceType convertIntoEvidenceType(byte[] xmlData) {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		REMEvidenceType convertedEvidence = null;
-		Document doc;
+	try {
 
-		LOG.debug("Convert byte-array into Evidence");
-		try {
-			doc = dbf.newDocumentBuilder().parse(
-					new ByteArrayInputStream(xmlData));
-
-			convertedEvidence = convertIntoREMEvidenceType(doc).getValue();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-
-		return convertedEvidence;
+	    evidenceToBeSigned.serialize(fo);
+	} catch (JAXBException e) {
+	    e.printStackTrace();
 	}
 
-	private JAXBElement<REMEvidenceType> convertIntoREMEvidenceType(
-			Document domDocument) {
-		JAXBElement<REMEvidenceType> jaxbObj = null;
+	byte[] bytes = fo.toByteArray();
 
-		try {
-			jaxbObj = JaxbContextHolder.getSpocsJaxBContext()
-					.createUnmarshaller()
-					.unmarshal(domDocument, REMEvidenceType.class);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+	byte[] signedByteArray = signer.signByteArray(bytes);
 
-		return jaxbObj;
-	}
+	return signedByteArray;
+    }
+
+    
 
 }
