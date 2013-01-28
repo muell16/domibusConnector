@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
@@ -13,8 +14,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.crypto.Cipher;
@@ -65,7 +68,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	// java.security.cert.X509Certificate cert =
 	// (java.security.cert.X509Certificate) ks.getCertificate("myKeyName");
 	java.security.cert.X509Certificate cert = keyInfos.getCert();
-
+	
 	// Signature creation
 	// Create and configure the signature creation service
 	XAdESService service = new XAdESService();
@@ -75,9 +78,9 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	sigParam.setSignaturePackaging(SignaturePackaging.ENVELOPED);
 	sigParam.setSigningDate(new Date());
 	sigParam.setSigningCertificate(cert);
-
+	sigParam.setCertificateChain(keyInfos.getCertChain());
+	
 	InMemoryDocument docum = new InMemoryDocument(xmlData);
-
 	// Create the digest of the data to be signed
 	Digest dgst = service.digest(docum, sigParam);
 
@@ -126,7 +129,6 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 
 	return isValid(validationResult);
     }
-    
 
     private boolean isValid(String validationResult) {
 
@@ -168,16 +170,25 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	    ks = KeyStore.getInstance("JKS");
 	    kfis = new FileInputStream(store);
 	    ks.load(kfis, storePass.toCharArray());
+
 	    if (ks.containsAlias(alias)) {
 		key = ks.getKey(alias, keyPass.toCharArray());
 		if (key instanceof PrivateKey) {
 		    X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
+
 		    keyInfos.setCert(cert);
 		    privateKey = (PrivateKey) key;
 		    keyInfos.setPrivKey(privateKey);
 		} else {
 		    keyInfos = null;
 		}
+
+		try {
+		    keyInfos.setCertChain(ks.getCertificateChain(alias));
+		}catch(ClassCastException e) {
+		    LOG.error(e.getMessage());
+		}
+
 	    } else {
 		keyInfos = null;
 	    }
@@ -203,6 +214,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 class KeyInfos {
     private PrivateKey privKey;
     private X509Certificate cert;
+    private ArrayList<X509Certificate> certChain;
 
     public PrivateKey getPrivKey() {
 	return privKey;
@@ -219,4 +231,45 @@ class KeyInfos {
     public void setCert(X509Certificate cert) {
 	this.cert = cert;
     }
+
+    public ArrayList<X509Certificate> getCertChain() {
+	return certChain;
+    }
+
+    public void setCertChain(ArrayList<X509Certificate> certChain) {
+	this.certChain = certChain;
+    }
+
+    public boolean addToCertificateChain(X509Certificate cert) {
+	if (certChain == null) {
+	    certChain = new ArrayList<X509Certificate>();
+	}
+	return certChain.add(cert);
+    }
+
+    public boolean setCertChain(Certificate[] certs) throws ClassCastException {
+	
+	X509Certificate[] x509Certs = KeyInfos.convert(certs, X509Certificate.class);
+
+	for (X509Certificate cert : x509Certs) {
+	    if (addToCertificateChain(cert) == false)
+		return false;
+	}
+	return true;
+    }
+
+    public static <T> T[] convert(Object[] objects, Class type) throws ClassCastException {
+	T[] convertedObjects = (T[]) Array.newInstance(type, objects.length);
+
+	try {
+	    for (int i = 0; i < objects.length; i++) {
+		convertedObjects[i] = (T) objects[i];
+	    }
+	} catch (ClassCastException e) {
+	    throw new ClassCastException("Exception on convert() : " + e.getMessage());
+	}
+
+	return convertedObjects;
+    }
+
 }
