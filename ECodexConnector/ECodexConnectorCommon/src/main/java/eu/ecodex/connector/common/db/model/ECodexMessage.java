@@ -42,6 +42,15 @@ public class ECodexMessage {
     @Column(name = "HASH_VALUE")
     private String hashValue;
 
+    @Column(name = "DELIVERED_NAT")
+    private Date deliveredToNationalSystem;
+
+    @Column(name = "DELIVERED_GW")
+    private Date deliveredToGateway;
+
+    @Column(name = "CONFIRMED")
+    private Date confirmed;
+
     @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
@@ -94,6 +103,30 @@ public class ECodexMessage {
 
     public void setHashValue(String hashValue) {
         this.hashValue = hashValue;
+    }
+
+    public Date getDeliveredToNationalSystem() {
+        return deliveredToNationalSystem;
+    }
+
+    public void setDeliveredToNationalSystem(Date deliveredToNationalSystem) {
+        this.deliveredToNationalSystem = deliveredToNationalSystem;
+    }
+
+    public Date getDeliveredToGateway() {
+        return deliveredToGateway;
+    }
+
+    public void setDeliveredToGateway(Date deliveredToGateway) {
+        this.deliveredToGateway = deliveredToGateway;
+    }
+
+    public Date getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Date confirmed) {
+        this.confirmed = confirmed;
     }
 
     public Date getUpdated() {

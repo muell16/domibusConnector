@@ -12,6 +12,9 @@ public class ECodexConnectorProperties {
     String postalAddressLocality;
     String postalAddressPostalCode;
     String postalAddressCountry;
+    long timeoutRelayREMMD;
+    long timeoutDelivery;
+    long timeoutRetrieval;
 
     public String getGatewayEndpointAddress() {
         return gatewayEndpointAddress;
@@ -91,6 +94,30 @@ public class ECodexConnectorProperties {
 
     public void setPostalAddressCountry(String postalAddressCountry) {
         this.postalAddressCountry = postalAddressCountry;
+    }
+
+    public long getTimeoutRelayREMMD() {
+        return timeoutRelayREMMD;
+    }
+
+    public void setTimeoutRelayREMMD(long timeoutRelayREMMD) {
+        this.timeoutRelayREMMD = timeoutRelayREMMD;
+    }
+
+    public long getTimeoutDelivery() {
+        return timeoutDelivery;
+    }
+
+    public void setTimeoutDelivery(long timeoutDelivery) {
+        this.timeoutDelivery = timeoutDelivery;
+    }
+
+    public long getTimeoutRetrieval() {
+        return timeoutRetrieval;
+    }
+
+    public void setTimeoutRetrieval(long timeoutRetrieval) {
+        this.timeoutRetrieval = timeoutRetrieval;
     }
 
 }

@@ -32,6 +32,7 @@
   		<property name="evidencesToolkit" ref="evidencesToolkit"/>
   		<property name="persistenceService" ref="persistenceService" />
   		<property name="hashValueBuilder" ref="hashValueBuilder"/>
+  		<property name="securityToolkit" ref="connectorSecurityToolkit"/>
   	</bean>
   	
   	<bean id="incomingMessageService" class="eu.ecodex.connector.controller.message.IncomingMessageService">
@@ -41,6 +42,7 @@
   		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
   		<property name="evidencesToolkit" ref="evidencesToolkit"/>
   		<property name="persistenceService" ref="persistenceService" />
+  		<property name="securityToolkit" ref="connectorSecurityToolkit"/>
   	</bean>
   	
   	<bean id="outgoingEvidenceService" class="eu.ecodex.connector.controller.message.OutgoingEvidenceService">

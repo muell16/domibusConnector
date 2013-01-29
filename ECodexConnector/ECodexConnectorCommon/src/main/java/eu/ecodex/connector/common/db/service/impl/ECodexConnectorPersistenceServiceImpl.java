@@ -1,10 +1,10 @@
 package eu.ecodex.connector.common.db.service.impl;
 
 import java.sql.Clob;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.lob.ClobImpl;
 
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
@@ -44,7 +44,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         try {
             messageDao.saveNewMessage(dbMessage);
-        } catch (ConstraintViolationException cve) {
+        } catch (Exception cve) {
             throw new PersistenceException(
                     "Could not persist message into database. Most likely the nationalMessageId or the ebmsMessageId already exist. ",
                     cve);
@@ -59,6 +59,22 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         messageDao.mergeMessage(message.getDbMessage());
 
+    }
+
+    @Override
+    public void setMessageDeliveredToGateway(Message message) {
+        ECodexMessage dbMessage = messageDao.mergeMessage(message.getDbMessage());
+        dbMessage.setDeliveredToGateway(new Date());
+        dbMessage = messageDao.mergeMessage(dbMessage);
+        message.setDbMessage(dbMessage);
+    }
+
+    @Override
+    public void setMessageDeliveredToNationalSystem(Message message) {
+        ECodexMessage dbMessage = messageDao.mergeMessage(message.getDbMessage());
+        dbMessage.setDeliveredToNationalSystem(new Date());
+        dbMessage = messageDao.mergeMessage(dbMessage);
+        message.setDbMessage(dbMessage);
     }
 
     @Override
@@ -125,6 +141,30 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         Message message = mapDbMessageToMessage(dbMessage);
 
         return message;
+    }
+
+    @Override
+    public List<Message> findOutgoingUnconfirmedMessages() {
+        List<ECodexMessage> dbMessages = messageDao.findOutgoingUnconfirmedMessages();
+        if (dbMessages != null && !dbMessages.isEmpty()) {
+            List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
+            for (ECodexMessage dbMessage : dbMessages) {
+                unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Message> findIncomingUnconfirmedMessages() {
+        List<ECodexMessage> dbMessages = messageDao.findIncomingUnconfirmedMessages();
+        if (dbMessages != null && !dbMessages.isEmpty()) {
+            List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
+            for (ECodexMessage dbMessage : dbMessages) {
+                unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
+            }
+        }
+        return null;
     }
 
     private Message mapDbMessageToMessage(ECodexMessage dbMessage) {

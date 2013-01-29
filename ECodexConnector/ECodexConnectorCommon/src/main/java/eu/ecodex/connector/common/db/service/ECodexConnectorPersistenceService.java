@@ -1,5 +1,7 @@
 package eu.ecodex.connector.common.db.service;
 
+import java.util.List;
+
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.PersistenceException;
@@ -20,4 +22,12 @@ public interface ECodexConnectorPersistenceService {
     void setEvidenceDeliveredToGateway(Message message, ECodexEvidenceType evidenceType);
 
     void setEvidenceDeliveredToNationalSystem(Message message, ECodexEvidenceType evidenceType);
+
+    void setMessageDeliveredToGateway(Message message);
+
+    void setMessageDeliveredToNationalSystem(Message message);
+
+    List<Message> findOutgoingUnconfirmedMessages();
+
+    List<Message> findIncomingUnconfirmedMessages();
 }

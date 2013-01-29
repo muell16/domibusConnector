@@ -30,22 +30,12 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException(e1);
         }
 
-        if (connectorProperties.isUseSecurityToolkit()) {
-            // TODO: Integration of SecurityToolkit to unpack ASIC-S container
-            // and TrustOKToken
-            LOGGER.warn("SecurityToolkit not available yet! Must send message unsecure!");
+        if (connectorProperties.isUseEvidencesToolkit()) {
+            createRelayREMMDEvidenceAndSendIt(message);
         }
 
-        if (connectorProperties.isUseEvidencesToolkit()) {
-            // MessageConfirmation submissionAcceptance =
-            // findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE,
-            // message);
-            // if (submissionAcceptance != null) {
-            // persistenceService.persistEvidenceForMessageIntoDatabase(message,
-            // submissionAcceptance.getEvidence(),
-            // ECodexEvidenceType.SUBMISSION_ACCEPTANCE);
-            // }
-            createRelayREMMDEvidenceAndSendIt(message);
+        if (connectorProperties.isUseSecurityToolkit()) {
+            securityToolkit.validateContainer(message);
         }
 
         if (connectorProperties.isUseContentMapper()) {
@@ -67,6 +57,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException(e);
         }
 
+        persistenceService.setMessageDeliveredToNationalSystem(message);
+
     }
 
     private void createRelayREMMDEvidenceAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
@@ -86,10 +78,6 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
         details.setService(originalMessage.getMessageDetails().getService());
         details.setAction(ActionEnum.RelayREMMDAcceptanceRejection);
-        // PartnerEnum fromPartner =
-        // PartnerEnum.findValue(connectorProperties.getGatewayName(),
-        // connectorProperties.getGatewayRole());
-        // details.setFromPartner(fromPartner);
         details.setFromPartner(originalMessage.getMessageDetails().getToPartner());
         details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
 

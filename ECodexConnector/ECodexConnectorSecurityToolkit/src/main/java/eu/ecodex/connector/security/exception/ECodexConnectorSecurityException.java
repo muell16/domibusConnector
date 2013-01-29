@@ -1,6 +1,6 @@
 package eu.ecodex.connector.security.exception;
 
-public class ECodexConnectorSecurityException extends Exception {
+public class ECodexConnectorSecurityException extends RuntimeException {
 
     /**
      * 

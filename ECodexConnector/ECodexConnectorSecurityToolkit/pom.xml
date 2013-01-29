@@ -13,6 +13,17 @@
 			<artifactId>ECodexConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
+			<artifactId>ecodex-container</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-ext</artifactId>
+			<version>1.7</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

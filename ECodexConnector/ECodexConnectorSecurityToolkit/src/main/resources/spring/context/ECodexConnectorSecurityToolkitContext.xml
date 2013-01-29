@@ -3,7 +3,86 @@
 
 <beans>
   
-  <bean id="connectorSecurityToolkit" class="eu.ecodex.connector.security.ECodexConnectorSecurityToolkitImpl">
+  <bean id="securityContainer" class="eu.ecodex.connector.security.container.ECodexSecurityContainer">
+  	<property name="javaKeyStorePath" value="${java.keystore.path}" />
+  	<property name="javaKeyStorePassword" value="${java.keystore.password}" />
+  	<property name="keyAlias" value="${key.alias}" />
+  	<property name="keyPassword" value="${key.password}" />
+  	<property name="containerService" ref="containerService"/>
+  	<property name="tokenIssuer" ref="tokenIssuer"/>
+  </bean>
+  
+  <bean id="connectorProxyDao" class="eu.ecodex.connector.security.proxy.ECodexConnectorProxyDao">
+  	<constructor-arg value="${http.proxy.enabled}"/>
+  	<constructor-arg value="${http.proxy.host}"/>
+  	<constructor-arg value="${http.proxy.port}"/>
+  	<constructor-arg value="${http.proxy.user}"/>
+  	<constructor-arg value="${http.proxy.password}"/>
+  </bean>
+  
+  <bean id="proxyPreferenceManager" class="eu.europa.ec.markt.dss.manager.ProxyPreferenceManager">
+  	<property name="proxyDao" ref="connectorProxyDao"/>
+  </bean>
+  
+  <bean id="httpDataLoader" class="eu.europa.ec.markt.dss.validation.https.CommonsHttpDataLoader" singleton="false">
+  	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
+  </bean>
+  
+  <bean id="ocspDataLoader" class="eu.europa.ec.markt.dss.validation.https.CommonsHttpDataLoader" singleton="false">
+  	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
+  	<property name="contentType" value="application/ocsp-request"/>
+  </bean>
+  
+  <bean id="trustedListsCertificateSource" class="eu.europa.ec.markt.dss.validation.tsl.TrustedListsCertificateSource" init-method="init">
+  	<property name="tslLoader" ref="httpDataLoader"/>
+  	<property name="checkSignature" value="false"/>
+  	<property name="lotlUrl" value="https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml"/>
+  </bean>
+  
+  <bean id="crlSource" class="eu.europa.ec.markt.dss.validation.crl.OnlineCRLSource">
+  	<property name="urlDataLoader" ref="httpDataLoader"/>
+  </bean>
+  
+  <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation.ocsp.OnlineOCSPSource">
+  	<property name="httpDataLoader" ref="ocspDataLoader"/>
+  </bean>
+  
+  <bean id="certificateVerifier" class="eu.europa.ec.markt.dss.validation.TrustedListCertificateVerifier">
+  	<property name="crlSource" ref="crlSource"/>
+  	<property name="ocspSource" ref="ocspSource"/>
+  	<property name="trustedListCertificatesSource" ref="trustedListsCertificateSource"/>
+  </bean>
+  
+  <bean id="environmentConfiguration" class="eu.ecodex.dss.model.EnvironmentConfiguration"/>
+  
+  <bean id="legalValidationService" class="eu.ecodex.dss.service.impl.dss.DSSECodexLegalValidationService">
+  	<property name="environmentConfiguration" ref="environmentConfiguration"/>
+  </bean>
+  
+  <bean id="technicalValidationService" class="eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService">
+  	<property name="certificateVerifier" ref="certificateVerifier"/>
+  	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
+  	<property name="environmentConfiguration" ref="environmentConfiguration"/>
+  </bean>
+  
+  <bean id="containerService" class="eu.ecodex.dss.service.impl.dss.DSSECodexContainerService">
+  	<property name="certificateVerifier" ref="certificateVerifier"/>
+  	<property name="legalValidationService" ref="legalValidationService"/>
+  	<property name="technicalValidationService" ref="technicalValidationService"/>
+  </bean>
+  
+  <bean id="tokenIssuer" class="eu.ecodex.dss.model.token.TokenIssuer">
+  	<property name="country" value="${token.issuer.country}" />
+  	<property name="serviceProvider" value="${token.issuer.service.provider}" />
+  	<property name="advancedElectronicSystem" value="SIGNATURE_BASED" />
+  </bean>
+  
+  <bean id="connectorSecurityToolkitFactory" class="eu.ecodex.connector.security.ECodexConnectorSecurityToolkitFactory">
+  	<property name="implementationClassName" value="${connector.security.toolkit.implementation.class.name}" />
+  </bean>
+
+  <bean id="connectorSecurityToolkit" factory-bean="connectorSecurityToolkitFactory" factory-method="createECodexConnectorSecurityToolkit">
+  	<property name="securityContainer" ref="securityContainer" />
   </bean>
   
 </beans>

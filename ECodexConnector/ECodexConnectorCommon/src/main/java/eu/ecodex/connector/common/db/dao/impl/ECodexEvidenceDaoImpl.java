@@ -60,10 +60,4 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
         return q.getResultList();
     }
 
-    public List<ECodexEvidence> getEvidencesNotFinished() {
-        Query q = em
-                .createQuery("from ECodexEvidence e where e.message.ebmsMessageId = ? and (e.type = ? of e.type = ?)");
-
-        return null;
-    }
 }

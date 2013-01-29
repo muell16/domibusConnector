@@ -8,7 +8,6 @@ import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.exception.PersistenceException;
 import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
@@ -47,15 +46,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         if (connectorProperties.isUseSecurityToolkit()) {
-            // TODO: Integration of SecurityToolkit to build ASIC-S container
-            // and TrustOKToken
-            LOGGER.warn("SecurityToolkit not available yet! Must send message unsecure!");
-            if (message.getMessageContent().getPdfDocument() != null
-                    && message.getMessageContent().getPdfDocument().length > 0) {
-                MessageAttachment attachment = new MessageAttachment(message.getMessageContent().getPdfDocument(),
-                        "content.pdf", "application/octet-stream");
-                message.addAttachment(attachment);
-            }
+            securityToolkit.buildContainer(message);
         }
 
         MessageConfirmation confirmation = null;
@@ -82,6 +73,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Could not send ECodex Message to Gateway! ", gwse);
         }
 
+        persistenceService.setMessageDeliveredToGateway(message);
         persistenceService.setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
 
         try {

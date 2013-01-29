@@ -1,6 +1,8 @@
 package eu.ecodex.connector.controller.message;
 
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
+import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
@@ -42,6 +44,12 @@ public class IncomingEvidenceService implements EvidenceService {
         }
 
         persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
+
+        if (originalMessage.getDbMessage().getDirection().equals(ECodexMessageDirection.NAT_TO_GW)
+                && (confirmation.getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE) || confirmation
+                        .getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION))) {
+
+        }
     }
 
 }
