@@ -48,7 +48,7 @@ public class IncomingEvidenceService implements EvidenceService {
         if (originalMessage.getDbMessage().getDirection().equals(ECodexMessageDirection.NAT_TO_GW)
                 && (confirmation.getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE) || confirmation
                         .getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION))) {
-
+            persistenceService.confirmMessage(originalMessage);
         }
     }
 

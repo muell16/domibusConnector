@@ -1,6 +1,9 @@
 package eu.ecodex.connector.gwc;
 
+import java.net.ConnectException;
+
 import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 
@@ -8,7 +11,6 @@ import backend.ecodex.org.BackendInterface;
 import backend.ecodex.org.DownloadMessageFault;
 import backend.ecodex.org.DownloadMessageRequest;
 import backend.ecodex.org.DownloadMessageResponse;
-import backend.ecodex.org.ListPendingMessagesFault;
 import backend.ecodex.org.ListPendingMessagesResponse;
 import backend.ecodex.org.SendRequest;
 import backend.ecodex.org.SendResponse;
@@ -78,9 +80,17 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
 
             LOGGER.debug(response.getMessageID().toString());
             return response.getMessageID().toArray(new String[response.getMessageID().size()]);
-        } catch (ListPendingMessagesFault e) {
-            throw new ECodexConnectorGatewayWebserviceClientException("Could not execute! ", e);
+            // } catch (ListPendingMessagesFault e) {
+            // throw new
+            // ECodexConnectorGatewayWebserviceClientException("Could not execute! ",
+            // e);
         } catch (Exception e) {
+            if (e instanceof WebServiceException) {
+                if (e.getCause() instanceof ConnectException) {
+                    throw new ECodexConnectorGatewayWebserviceClientException(
+                            "The corresponding gateway cannot be reached!");
+                }
+            }
             throw new ECodexConnectorGatewayWebserviceClientException("Could not execute! ", e);
         }
 

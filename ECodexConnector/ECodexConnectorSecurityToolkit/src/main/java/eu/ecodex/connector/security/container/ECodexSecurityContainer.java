@@ -220,6 +220,27 @@ public class ECodexSecurityContainer implements InitializingBean {
                             }
                         }
                     }
+                    Document tokenPDF = container.getTokenPDF();
+                    if (tokenPDF != null) {
+                        try {
+                            MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, "Token.pdf",
+                                    MimeType.PDF.getCode());
+                            message.addAttachment(attachment);
+                        } catch (IOException e) {
+                            LOGGER.error("Could not read Token PDF!", e);
+                        }
+                    }
+
+                    Document tokenXML = container.getTokenXML();
+                    if (tokenXML != null) {
+                        try {
+                            MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, "Token.xml",
+                                    MimeType.XML.getCode());
+                            message.addAttachment(attachment);
+                        } catch (IOException e) {
+                            LOGGER.error("Could not read Token XML!", e);
+                        }
+                    }
                 }
             } catch (ECodexException e) {
                 throw new ECodexConnectorSecurityException(e);

@@ -36,7 +36,7 @@ public class CheckEvidencesJob {
         }
 
         LOGGER.info("Job for checking evidence timer finished in {} ms.",
-                (start.getTime() - System.currentTimeMillis()));
+                (System.currentTimeMillis() - start.getTime()));
     }
 
     public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {

@@ -49,6 +49,20 @@ public class ECodexMessageDaoImpl implements ECodexMessageDao {
     }
 
     @Override
+    public ECodexMessage confirmMessage(ECodexMessage message) {
+        message.setConfirmed(new Date());
+        message = mergeMessage(message);
+        return message;
+    }
+
+    @Override
+    public ECodexMessage rejectMessage(ECodexMessage message) {
+        message.setRejected(new Date());
+        message = mergeMessage(message);
+        return message;
+    }
+
+    @Override
     @Transactional
     public ECodexMessage findMessageByEbmsId(String ebmsMessageId) {
         Query q = em.createQuery("from ECodexMessage m where m.ebmsMessageId=?");
@@ -57,19 +71,21 @@ public class ECodexMessageDaoImpl implements ECodexMessageDao {
         return (ECodexMessage) q.getSingleResult();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<ECodexMessage> findOutgoingUnconfirmedMessages() {
         Query q = em
-                .createQuery("from ECodexMessage m where m.confirmed is null and m.direction = ? and m.deliveredToGateway is not null ");
+                .createQuery("from ECodexMessage m where m.confirmed is null and m.rejected is null and m.direction = ? and m.deliveredToGateway is not null ");
         q.setParameter(1, ECodexMessageDirection.NAT_TO_GW);
 
         return q.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<ECodexMessage> findIncomingUnconfirmedMessages() {
         Query q = em
-                .createQuery("from ECodexMessage m where m.confirmed is null and m.direction = ? and m.deliveredToNationalSystem is not null ");
+                .createQuery("from ECodexMessage m where m.confirmed is null and m.rejected is null and m.direction = ? and m.deliveredToNationalSystem is not null ");
         q.setParameter(1, ECodexMessageDirection.GW_TO_NAT);
 
         return q.getResultList();

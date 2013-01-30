@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.lob.ClobImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
 import eu.ecodex.connector.common.db.dao.ECodexMessageDao;
@@ -125,6 +126,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Message findMessageByNationalId(String nationalMessageId) {
         ECodexMessage dbMessage = messageDao.findMessageByNationalId(nationalMessageId);
 
@@ -135,6 +137,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Message findMessageByEbmsId(String ebmsMessageId) {
         ECodexMessage dbMessage = messageDao.findMessageByEbmsId(ebmsMessageId);
 
@@ -144,8 +147,23 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Message> findOutgoingUnconfirmedMessages() {
         List<ECodexMessage> dbMessages = messageDao.findOutgoingUnconfirmedMessages();
+        if (dbMessages != null && !dbMessages.isEmpty()) {
+            List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
+            for (ECodexMessage dbMessage : dbMessages) {
+                unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
+            }
+            return unconfirmedMessages;
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Message> findIncomingUnconfirmedMessages() {
+        List<ECodexMessage> dbMessages = messageDao.findIncomingUnconfirmedMessages();
         if (dbMessages != null && !dbMessages.isEmpty()) {
             List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
             for (ECodexMessage dbMessage : dbMessages) {
@@ -156,15 +174,15 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
-    public List<Message> findIncomingUnconfirmedMessages() {
-        List<ECodexMessage> dbMessages = messageDao.findIncomingUnconfirmedMessages();
-        if (dbMessages != null && !dbMessages.isEmpty()) {
-            List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
-            for (ECodexMessage dbMessage : dbMessages) {
-                unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
-            }
-        }
-        return null;
+    public void confirmMessage(Message message) {
+        ECodexMessage newDbMessage = messageDao.confirmMessage(message.getDbMessage());
+        message.setDbMessage(newDbMessage);
+    }
+
+    @Override
+    public void rejectMessage(Message message) {
+        ECodexMessage newDbMessage = messageDao.rejectMessage(message.getDbMessage());
+        message.setDbMessage(newDbMessage);
     }
 
     private Message mapDbMessageToMessage(ECodexMessage dbMessage) {

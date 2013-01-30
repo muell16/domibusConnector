@@ -11,6 +11,11 @@
 	<property name="outgoingController" ref="outgoingController" />
 </bean>
 
+<bean id="checkEvidencesJob" class="eu.ecodex.connector.controller.job.CheckEvidencesJob">
+	<property name="persistenceService" ref="persistenceService" />
+	<property name="connectorProperties" ref="connectorProperties" />
+</bean>
+
 <bean id="handleOutgoingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
   <property name="targetObject" ref="outgoingMessagesJob"/>
   <property name="targetMethod" value="handleOutgoingMessages"/>
@@ -20,6 +25,12 @@
 <bean id="handleIncomingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
   <property name="targetObject" ref="incomingMessagesJob"/>
   <property name="targetMethod" value="handleIncomingMessages"/>
+  <property name="concurrent" value="false"/>
+</bean>
+
+<bean id="checkEvidences" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<property name="targetObject" ref="checkEvidencesJob"/>
+  <property name="targetMethod" value="checkEvidences"/>
   <property name="concurrent" value="false"/>
 </bean>
 
@@ -35,11 +46,18 @@
   <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
 </bean>
 
+<bean id="checkEvidencesTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+  <property name="jobDetail" ref="checkEvidences"/>
+  <property name="startDelay" value="21000"/>
+  <property name="repeatInterval" value="${connector.check.messages.period.ms}"/>
+</bean>
+
 <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
   <property name="triggers">
     <list>
       <ref bean="outgoingTrigger"/>
       <ref bean="incomingTrigger"/>
+      <ref bean="checkEvidencesTrigger"/>
     </list>
   </property>
 </bean>

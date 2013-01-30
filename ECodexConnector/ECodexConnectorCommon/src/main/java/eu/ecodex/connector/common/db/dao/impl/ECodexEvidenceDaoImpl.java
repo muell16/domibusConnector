@@ -52,6 +52,7 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<ECodexEvidence> findEvidencesForMessage(ECodexMessage message) {
         Query q = em.createQuery("from ECodexEvidence e where e.message.id=?");

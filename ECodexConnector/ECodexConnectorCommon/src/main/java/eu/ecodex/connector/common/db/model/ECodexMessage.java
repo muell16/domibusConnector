@@ -51,6 +51,9 @@ public class ECodexMessage {
     @Column(name = "CONFIRMED")
     private Date confirmed;
 
+    @Column(name = "REJECTED")
+    private Date rejected;
+
     @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
@@ -127,6 +130,14 @@ public class ECodexMessage {
 
     public void setConfirmed(Date confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public Date getRejected() {
+        return rejected;
+    }
+
+    public void setRejected(Date rejected) {
+        this.rejected = rejected;
     }
 
     public Date getUpdated() {

@@ -120,6 +120,8 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             Message returnMessage = buildEvidenceMessage(confirmation, message);
             nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
             persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+
+            persistenceService.rejectMessage(message);
         } catch (ECodexConnectorEvidencesToolkitException e) {
             LOGGER.error("Could not even generate submission rejection! ", e);
             return;

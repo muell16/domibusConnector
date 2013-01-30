@@ -17,4 +17,8 @@ public interface ECodexMessageDao {
     List<ECodexMessage> findOutgoingUnconfirmedMessages();
 
     List<ECodexMessage> findIncomingUnconfirmedMessages();
+
+    ECodexMessage confirmMessage(ECodexMessage message);
+
+    ECodexMessage rejectMessage(ECodexMessage message);
 }

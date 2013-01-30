@@ -30,4 +30,8 @@ public interface ECodexConnectorPersistenceService {
     List<Message> findOutgoingUnconfirmedMessages();
 
     List<Message> findIncomingUnconfirmedMessages();
+
+    void confirmMessage(Message message);
+
+    void rejectMessage(Message message);
 }
