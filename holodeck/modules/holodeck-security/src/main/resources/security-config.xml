@@ -6,12 +6,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_EE</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_EE</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_EE</user>
+      <encryptionUser>service_EE</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -20,12 +20,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_IT</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_IT</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_IT</user>
+      <encryptionUser>service_IT</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -34,12 +34,26 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_DE</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_DE</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_DE</user>
+      <encryptionUser>service_DE</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign-encrypt-body-header_ES_AT">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_ES</user>
+      <encryptionUser>service_ES</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -48,12 +62,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_EE</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_EE</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_EE</user>
+      <encryptionUser>service_EE</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -62,12 +76,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_AT</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_AT</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_AT</user>
+      <encryptionUser>service_AT</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -76,12 +90,26 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_DE</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_DE</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_DE</user>
+      <encryptionUser>service_DE</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign-encrypt-body-header_ES_IT">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_ES</user>
+      <encryptionUser>service_ES</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -90,12 +118,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_IT</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_IT</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_IT</user>
+      <encryptionUser>service_IT</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -104,12 +132,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_AT</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_AT</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_AT</user>
+      <encryptionUser>service_AT</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -118,26 +146,41 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_DE</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_DE</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_DE</user>
+      <encryptionUser>service_DE</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
+
+  <security name="sign-encrypt-body-header_ES_EE">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_ES</user>
+      <encryptionUser>service_ES</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
 
   <security name="sign-encrypt-body-header_IT_DE">
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_IT</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_IT</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_IT</user>
+      <encryptionUser>service_IT</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -146,12 +189,12 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_AT</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_AT</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_AT</user>
+      <encryptionUser>service_AT</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
@@ -160,15 +203,85 @@
     <policy>policy-sign-body-header.xml</policy>
     <initiator>
       <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
-      <encryptionUser>service_EE</encryptionUser>
+      <encryptionUser>client</encryptionUser>
       <keystore type="JKS" password="apache">client.jks</keystore>
     </initiator>
     <recipient>
-      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service</user>
-      <encryptionUser>client_EE</encryptionUser>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_EE</user>
+      <encryptionUser>service_EE</encryptionUser>
       <keystore type="JKS" password="apache">service.jks</keystore>
     </recipient>
   </security>
 
+  <security name="sign-encrypt-body-header_ES_DE">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_ES</user>
+      <encryptionUser>service_ES</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+
+  <security name="sign-encrypt-body-header_EE_ES">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_EE</user>
+      <encryptionUser>service_EE</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign-encrypt-body-header_DE_ES">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_DE</user>
+      <encryptionUser>service_DE</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign-encrypt-body-header_IT_ES">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_IT</user>
+      <encryptionUser>service_IT</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
+
+  <security name="sign-encrypt-body-header_AT_ES">
+    <policy>policy-sign-body-header.xml</policy>
+    <initiator>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">client</user>
+      <encryptionUser>client</encryptionUser>
+      <keystore type="JKS" password="apache">client.jks</keystore>
+    </initiator>
+    <recipient>
+      <user callbackClass="org.holodeck.security.sample.PWCBHandler">service_AT</user>
+      <encryptionUser>service_AT</encryptionUser>
+      <keystore type="JKS" password="apache">service.jks</keystore>
+    </recipient>
+  </security>
 
 </config>

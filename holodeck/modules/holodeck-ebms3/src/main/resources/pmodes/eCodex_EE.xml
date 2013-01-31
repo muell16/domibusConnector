@@ -15,6 +15,11 @@
       <Role>GW</Role>
     </Producer>
 
+    <Producer name="ES">
+      <PartyId>ES</PartyId>
+      <Role>GW</Role>
+    </Producer>
+	
 <!-- Definition of the Buisness Process for EPO for Estonia -->
 
     <UserService name="EPO_Form_A">
@@ -412,6 +417,96 @@
       </MEP>
     </Binding>
 
+<!-- From ES to EE -->
+
+    <Binding name="ES_EE_EPO_Form_A">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_A" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="ES_EE_EPO_Form_B">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_B" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="ES_EE_EPO_Form_C">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_C" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_Form_D">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_D" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_Form_E">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_E" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_Form_F">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_F" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_Form_G">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Form_G" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_SubmissionAcceptance">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_SubmissionAcceptance" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+
+    <Binding name="ES_EE_EPO_RelayMD">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_RelayMD" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_Delivery">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Delivery" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+    
+    <Binding name="ES_EE_EPO_Retrieval">
+      <MEP name="One-Way/Push">
+	      <Leg number="1" mpc="epo" userService="EPO_Retrieval" producer="ES" security="sign-encrypt-body-header_ES_EE"> 
+          <Endpoint address="http://test-ecodex-gw.just.ee:8010/holodeck/services/msh" soapVersion="1.1" />
+        </Leg>
+      </MEP>
+    </Binding>
+	
 <!--Defintion of the PModes -->
 
 	<PMode name="AT_EE_EPO_Form_A" binding="AT_EE_EPO_Form_A" /> 
@@ -449,5 +544,17 @@
 	<PMode name="DE_EE_EPO_RelayMD" binding="DE_EE_EPO_RelayMD" /> 
 	<PMode name="DE_EE_EPO_Delivery" binding="DE_EE_EPO_Delivery" /> 
 	<PMode name="DE_EE_EPO_Retrieval" binding="DE_EE_EPO_Retrieval" />
+
+	<PMode name="ES_EE_EPO_Form_A" binding="ES_EE_EPO_Form_A" /> 
+	<PMode name="ES_EE_EPO_Form_B" binding="ES_EE_EPO_Form_B" /> 
+	<PMode name="ES_EE_EPO_Form_C" binding="ES_EE_EPO_Form_C" /> 
+	<PMode name="ES_EE_EPO_Form_D" binding="ES_EE_EPO_Form_D" /> 
+	<PMode name="ES_EE_EPO_Form_E" binding="ES_EE_EPO_Form_E" /> 
+	<PMode name="ES_EE_EPO_Form_F" binding="ES_EE_EPO_Form_F" /> 
+	<PMode name="ES_EE_EPO_Form_G" binding="ES_EE_EPO_Form_G" /> 
+	<PMode name="ES_EE_EPO_SubmissionAcceptance" binding="ES_EE_EPO_SubmissionAcceptance" /> 
+	<PMode name="ES_EE_EPO_RelayMD" binding="ES_EE_EPO_RelayMD" /> 
+	<PMode name="ES_EE_EPO_Delivery" binding="ES_EE_EPO_Delivery" /> 
+	<PMode name="ES_EE_EPO_Retrieval" binding="ES_EE_EPO_Retrieval" />
 
 </PModes>
