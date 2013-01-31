@@ -34,6 +34,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void persistMessageIntoDatabase(Message message, ECodexMessageDirection direction)
             throws PersistenceException {
         ECodexMessage dbMessage = new ECodexMessage();
@@ -56,6 +57,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void mergeMessageWithDatabase(Message message) {
 
         messageDao.mergeMessage(message.getDbMessage());
@@ -63,6 +65,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void setMessageDeliveredToGateway(Message message) {
         ECodexMessage dbMessage = messageDao.mergeMessage(message.getDbMessage());
         dbMessage.setDeliveredToGateway(new Date());
@@ -71,6 +74,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void setMessageDeliveredToNationalSystem(Message message) {
         ECodexMessage dbMessage = messageDao.mergeMessage(message.getDbMessage());
         dbMessage.setDeliveredToNationalSystem(new Date());
@@ -79,6 +83,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void setEvidenceDeliveredToGateway(Message message, ECodexEvidenceType evidenceType) {
         messageDao.mergeMessage(message.getDbMessage());
         List<ECodexEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessage());
@@ -90,6 +95,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void setEvidenceDeliveredToNationalSystem(Message message, ECodexEvidenceType evidenceType) {
         messageDao.mergeMessage(message.getDbMessage());
         List<ECodexEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessage());
@@ -112,6 +118,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, ECodexEvidenceType evidenceType) {
         ECodexEvidence dbEvidence = new ECodexEvidence();
 
@@ -174,12 +181,14 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     }
 
     @Override
+    @Transactional
     public void confirmMessage(Message message) {
         ECodexMessage newDbMessage = messageDao.confirmMessage(message.getDbMessage());
         message.setDbMessage(newDbMessage);
     }
 
     @Override
+    @Transactional
     public void rejectMessage(Message message) {
         ECodexMessage newDbMessage = messageDao.rejectMessage(message.getDbMessage());
         message.setDbMessage(newDbMessage);

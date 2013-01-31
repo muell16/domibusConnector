@@ -11,8 +11,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.Holder;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3c.dom.Document;
@@ -166,6 +168,21 @@ public class DownloadMessageHelper {
         To to = userMessage.getPartyInfo().getTo();
         PartnerEnum toPartner = PartnerEnum.findValue(to.getPartyId().get(0).getValue(), to.getRole());
         details.setToPartner(toPartner);
+
+        MessageProperties mp = userMessage.getMessageProperties();
+        if (mp != null) {
+            List<Property> properties = mp.getProperty();
+            if (properties != null && !properties.isEmpty()) {
+                for (Property property : properties) {
+                    if (property.getName().equals("finalRecipient")) {
+                        details.setFinalRecipient(property.getValue());
+                    }
+                    if (property.getName().equals("originalSender")) {
+                        details.setOriginalSender(property.getValue());
+                    }
+                }
+            }
+        }
 
         return details;
     }

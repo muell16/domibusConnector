@@ -21,8 +21,8 @@ public class MessageDetails {
     private ActionEnum action;
     private PartnerEnum fromPartner;
     private PartnerEnum toPartner;
-    private String originalSenderAddress;
-    private String finalRecipientAddress;
+    private String originalSender;
+    private String finalRecipient;
     private Long dbMessageId;
 
     public String getNationalMessageId() {
@@ -89,20 +89,20 @@ public class MessageDetails {
         this.toPartner = toPartner;
     }
 
-    public String getOriginalSenderAddress() {
-        return originalSenderAddress;
+    public String getOriginalSender() {
+        return originalSender;
     }
 
-    public void setOriginalSenderAddress(String originalSenderAddress) {
-        this.originalSenderAddress = originalSenderAddress;
+    public void setOriginalSender(String originalSender) {
+        this.originalSender = originalSender;
     }
 
-    public String getFinalRecipientAddress() {
-        return finalRecipientAddress;
+    public String getFinalRecipient() {
+        return finalRecipient;
     }
 
-    public void setFinalRecipientAddress(String finalRecipientAddress) {
-        this.finalRecipientAddress = finalRecipientAddress;
+    public void setFinalRecipient(String finalRecipient) {
+        this.finalRecipient = finalRecipient;
     }
 
     public Long getDbMessageId() {

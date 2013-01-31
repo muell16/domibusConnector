@@ -119,7 +119,7 @@ public class ECodexSecurityContainer implements InitializingBean {
         BusinessContent businessContent = new BusinessContent();
 
         Document document = new MemoryDocument(message.getMessageContent().getPdfDocument(), "mainDocument",
-                MimeType.XML);
+                MimeType.PDF);
         businessContent.setDocument(document);
 
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {

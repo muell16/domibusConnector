@@ -9,11 +9,13 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
@@ -50,6 +52,8 @@ public class SendMessageHelper {
 
         buildSendRequestAndPayloadInfo(userMessage, request, message);
 
+        userMessage.setMessageProperties(buildMessageProperties(message));
+
         userMessage.setPartyInfo(buildPartyInfo(message.getMessageDetails()));
 
         userMessage.setCollaborationInfo(buildCollaborationInfo(message.getMessageDetails()));
@@ -61,6 +65,31 @@ public class SendMessageHelper {
         userMessage.setMessageInfo(info);
 
         ebMSHeaderInfo.getUserMessage().add(userMessage);
+    }
+
+    private MessageProperties buildMessageProperties(Message message) {
+        if (message.getMessageDetails().getFinalRecipient() == null
+                && message.getMessageDetails().getOriginalSender() == null) {
+            return null;
+        }
+        MessageProperties mp = new MessageProperties();
+
+        if (message.getMessageDetails().getFinalRecipient() != null) {
+
+            Property finalRecipient = new Property();
+            finalRecipient.setName("finalRecipient");
+            finalRecipient.setValue(message.getMessageDetails().getFinalRecipient());
+            mp.getProperty().add(finalRecipient);
+        }
+
+        if (message.getMessageDetails().getOriginalSender() != null) {
+            Property originalSender = new Property();
+            originalSender.setName("originalSender");
+            originalSender.setValue(message.getMessageDetails().getOriginalSender());
+            mp.getProperty().add(originalSender);
+        }
+
+        return mp;
     }
 
     private void buildSendRequestAndPayloadInfo(UserMessage userMessage, SendRequest request, Message message)

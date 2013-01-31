@@ -3,56 +3,74 @@
 
 <beans>
 
-	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
-	<import resource="classpath:/spring/context/ECodexConnectorSecurityToolkitContext.xml"/>
-	<import resource="classpath:/spring/context/ECodexConnectorEvidencesToolkitContext.xml"/>
-	<import resource="classpath:/spring/context/ECodexConnectorContentMapperContext.xml"/>
-	<import resource="classpath:/spring/context/ECodexConnectorGatewayWebserviceClientContext.xml"/>
-	<import resource="classpath:/spring/context/ECodexConnectorNationalBackendClientContext.xml"/>
-	
-	<import resource="quartz-context.xml"/>
-	
-  	<bean id="outgoingController" class="eu.ecodex.connector.controller.ECodexConnectorOutgoingController">
-  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
-  		<property name="outgoingMessageService" ref="outgoingMessageService"/>
-  		<property name="outgoingEvidenceService" ref="outgoingEvidenceService" />
-  	</bean>
-  	
-  	<bean id="incomingController" class="eu.ecodex.connector.controller.ECodexConnectorIncomingController">
-  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
-  		<property name="incomingMessageService" ref="incomingMessageService" />
-  		<property name="incomingEvidenceService" ref="incomingEvidenceService" />
-  	</bean>
-  	
-  	<bean id="outgoingMessageService" class="eu.ecodex.connector.controller.message.OutgoingMessageService">
-  		<property name="connectorProperties" ref="connectorProperties" />
-  		<property name="contentMapper" ref="contentMapper" />
-  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
-  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
-  		<property name="evidencesToolkit" ref="evidencesToolkit"/>
-  		<property name="persistenceService" ref="persistenceService" />
-  		<property name="hashValueBuilder" ref="hashValueBuilder"/>
-  		<property name="securityToolkit" ref="connectorSecurityToolkit"/>
-  	</bean>
-  	
-  	<bean id="incomingMessageService" class="eu.ecodex.connector.controller.message.IncomingMessageService">
-  		<property name="connectorProperties" ref="connectorProperties" />
-  		<property name="contentMapper" ref="contentMapper" />
-  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
-  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
-  		<property name="evidencesToolkit" ref="evidencesToolkit"/>
-  		<property name="persistenceService" ref="persistenceService" />
-  		<property name="securityToolkit" ref="connectorSecurityToolkit"/>
-  	</bean>
-  	
-  	<bean id="outgoingEvidenceService" class="eu.ecodex.connector.controller.message.OutgoingEvidenceService">
-  		<property name="persistenceService" ref="persistenceService" />
-  		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient"/>
-  		<property name="evidencesToolkit" ref="evidencesToolkit"/>
-  	</bean>
-  
-  	<bean id="incomingEvidenceService" class="eu.ecodex.connector.controller.message.IncomingEvidenceService">
-  		<property name="persistenceService" ref="persistenceService" />
-  		<property name="nationalBackendClient" ref="nationalBackendClient"/>
-  	</bean>
+	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml" />
+	<import
+		resource="classpath:/spring/context/ECodexConnectorSecurityToolkitContext.xml" />
+	<import
+		resource="classpath:/spring/context/ECodexConnectorEvidencesToolkitContext.xml" />
+	<import
+		resource="classpath:/spring/context/ECodexConnectorContentMapperContext.xml" />
+	<import
+		resource="classpath:/spring/context/ECodexConnectorGatewayWebserviceClientContext.xml" />
+	<import
+		resource="classpath:/spring/context/ECodexConnectorNationalBackendClientContext.xml" />
+
+	<import resource="quartz-context.xml" />
+
+	<bean id="outgoingController"
+		class="eu.ecodex.connector.controller.ECodexConnectorOutgoingController">
+		<property name="nationalBackendClient" ref="nationalBackendClient" />
+		<property name="outgoingMessageService" ref="outgoingMessageService" />
+		<property name="outgoingEvidenceService" ref="outgoingEvidenceService" />
+	</bean>
+
+	<bean id="incomingController"
+		class="eu.ecodex.connector.controller.ECodexConnectorIncomingController">
+		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
+		<property name="incomingMessageService" ref="incomingMessageService" />
+		<property name="incomingEvidenceService" ref="incomingEvidenceService" />
+	</bean>
+
+	<bean id="outgoingMessageService"
+		class="eu.ecodex.connector.controller.message.OutgoingMessageService">
+		<property name="connectorProperties" ref="connectorProperties" />
+		<property name="contentMapper" ref="contentMapper" />
+		<property name="nationalBackendClient" ref="nationalBackendClient" />
+		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
+		<property name="evidencesToolkit" ref="evidencesToolkit" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="hashValueBuilder" ref="hashValueBuilder" />
+		<property name="securityToolkit" ref="connectorSecurityToolkit" />
+	</bean>
+
+	<bean id="incomingMessageService"
+		class="eu.ecodex.connector.controller.message.IncomingMessageService">
+		<property name="connectorProperties" ref="connectorProperties" />
+		<property name="contentMapper" ref="contentMapper" />
+		<property name="nationalBackendClient" ref="nationalBackendClient" />
+		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
+		<property name="evidencesToolkit" ref="evidencesToolkit" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="securityToolkit" ref="connectorSecurityToolkit" />
+	</bean>
+
+	<bean id="outgoingEvidenceService"
+		class="eu.ecodex.connector.controller.message.OutgoingEvidenceService">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
+		<property name="evidencesToolkit" ref="evidencesToolkit" />
+	</bean>
+
+	<bean id="incomingEvidenceService"
+		class="eu.ecodex.connector.controller.message.IncomingEvidenceService">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="nationalBackendClient" ref="nationalBackendClient" />
+	</bean>
+
+	<bean id="checkOutgoing" class="eu.ecodex.connector.controller.check.CheckOutgoing">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="connectorProperties" ref="connectorProperties" />
+		<property name="nationalBackendClient" ref="nationalBackendClient" />
+		<property name="evidencesToolkit" ref="evidencesToolkit" />
+	</bean>
 </beans>

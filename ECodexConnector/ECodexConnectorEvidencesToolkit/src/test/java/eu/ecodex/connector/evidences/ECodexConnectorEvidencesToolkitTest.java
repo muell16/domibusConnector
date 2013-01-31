@@ -92,8 +92,8 @@ public class ECodexConnectorEvidencesToolkitTest {
     private Message buildTestMessage() {
         MessageDetails details = new MessageDetails();
         details.setNationalMessageId("nationalMessageId1");
-        details.setOriginalSenderAddress("someSenderAddress");
-        details.setFinalRecipientAddress("someRecipientAddress");
+        details.setOriginalSender("someSenderAddress");
+        details.setFinalRecipient("someRecipientAddress");
 
         MessageContent content = new MessageContent();
         content.setNationalXmlContent(new String("originalMessage").getBytes());

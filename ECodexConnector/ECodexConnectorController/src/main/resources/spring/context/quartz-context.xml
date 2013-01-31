@@ -12,8 +12,7 @@
 </bean>
 
 <bean id="checkEvidencesJob" class="eu.ecodex.connector.controller.job.CheckEvidencesJob">
-	<property name="persistenceService" ref="persistenceService" />
-	<property name="connectorProperties" ref="connectorProperties" />
+	<property name="checkOutgoing" ref="checkOutgoing" />
 </bean>
 
 <bean id="handleOutgoingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

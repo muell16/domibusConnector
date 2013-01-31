@@ -8,7 +8,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
@@ -22,7 +21,6 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
     private EntityManager em;
 
     @Override
-    @Transactional
     public void saveNewEvidence(ECodexEvidence evidence) {
         evidence.setUpdated(new Date());
         em.persist(evidence);
@@ -45,7 +43,6 @@ public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
     }
 
     @Override
-    @Transactional
     public void mergeEvidence(ECodexEvidence evidence) {
         evidence.setUpdated(new Date());
         em.merge(evidence);

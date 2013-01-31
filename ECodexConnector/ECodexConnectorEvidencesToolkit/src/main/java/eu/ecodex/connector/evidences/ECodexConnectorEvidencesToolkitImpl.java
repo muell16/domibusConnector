@@ -252,9 +252,9 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         String nationalMessageId = message.getMessageDetails().getNationalMessageId();
 
-        String senderAddress = message.getMessageDetails().getOriginalSenderAddress();
+        String senderAddress = message.getMessageDetails().getOriginalSender();
 
-        String recipientAddress = message.getMessageDetails().getFinalRecipientAddress();
+        String recipientAddress = message.getMessageDetails().getFinalRecipient();
 
         ECodexMessageDetails messageDetails = null;
         try {

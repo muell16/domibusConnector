@@ -25,12 +25,20 @@ public class IncomingEvidenceService implements EvidenceService {
 
     @Override
     public void handleEvidence(Message confirmationMessage) throws ECodexConnectorControllerException {
+
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
         Message originalMessage = persistenceService.findMessageByEbmsId(messageID);
 
         MessageConfirmation confirmation = confirmationMessage.getConfirmations().get(0);
         originalMessage.addConfirmation(confirmation);
+
+        if (isMessageAlreadyRejected(originalMessage)) {
+            persistenceService.rejectMessage(originalMessage);
+            throw new ECodexConnectorControllerException("Received evidence of type "
+                    + confirmation.getEvidenceType().toString() + " for an already rejected Message with ebms ID "
+                    + messageID);
+        }
 
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
                 confirmation.getEvidenceType());
@@ -50,6 +58,22 @@ public class IncomingEvidenceService implements EvidenceService {
                         .getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION))) {
             persistenceService.confirmMessage(originalMessage);
         }
+    }
+
+    private boolean isMessageAlreadyRejected(Message message) {
+        if (message.getDbMessage().getRejected() != null) {
+            return true;
+        }
+        if (message.getConfirmations() != null) {
+            for (MessageConfirmation confirmation : message.getConfirmations()) {
+                if (confirmation.getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION)
+                        || confirmation.getEvidenceType().equals(ECodexEvidenceType.NON_DELIVERY)
+                        || confirmation.getEvidenceType().equals(ECodexEvidenceType.NON_RETRIEVAL)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

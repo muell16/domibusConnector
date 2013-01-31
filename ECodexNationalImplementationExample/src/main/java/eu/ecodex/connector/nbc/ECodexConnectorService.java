@@ -277,8 +277,8 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
         messageDetails.setAction(ActionEnum.Form_A);
         messageDetails.setService(ServiceEnum.EPO);
 
-        messageDetails.setFinalRecipientAddress(details.getProperty("final.recipient.address"));
-        messageDetails.setOriginalSenderAddress(details.getProperty("original.sender.address"));
+        messageDetails.setFinalRecipient(details.getProperty("final.recipient"));
+        messageDetails.setOriginalSender(details.getProperty("original.sender"));
 
         String toName = details.getProperty("recipient.name");
         String toRole = details.getProperty("recipient.role");
@@ -299,8 +299,8 @@ public class ECodexConnectorService implements ECodexConnectorNationalBackendCli
         details.setProperty("recipient.role", messageDetails.getToPartner().getRole());
         details.setProperty("sender.name", messageDetails.getFromPartner().getName());
         details.setProperty("sender.role", messageDetails.getFromPartner().getRole());
-        // details.setProperty("final.recipient.address", "");
-        // details.setProperty("original.sender.address", "");
+        details.setProperty("final.recipient", messageDetails.getFinalRecipient());
+        details.setProperty("original.sender", messageDetails.getOriginalSender());
         details.setProperty("action", messageDetails.getAction().toString());
         details.setProperty("service", messageDetails.getService().toString());
 
