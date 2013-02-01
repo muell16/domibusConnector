@@ -18,5 +18,11 @@
 			<artifactId>EvidenceBuilder</artifactId>
 			<version>1.0.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-ext</artifactId>
+			<version>1.7</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
