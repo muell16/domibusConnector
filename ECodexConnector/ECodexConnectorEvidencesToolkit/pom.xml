@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.ecodex.connector</groupId>
 		<artifactId>ECodexConnector</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.1</version>
 	</parent>
 	<artifactId>ECodexConnectorEvidencesToolkit</artifactId>
 	<dependencies>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>eu.ecodex.evidences</groupId>
 			<artifactId>EvidenceBuilder</artifactId>
-			<version>1.0.5</version>
+			<version>1.0.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
