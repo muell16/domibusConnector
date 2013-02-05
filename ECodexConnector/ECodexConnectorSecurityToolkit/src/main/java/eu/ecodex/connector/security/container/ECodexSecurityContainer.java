@@ -125,7 +125,7 @@ public class ECodexSecurityContainer implements InitializingBean {
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             for (MessageAttachment attachment : message.getAttachments()) {
                 businessContent.addAttachment(new MemoryDocument(attachment.getAttachment(), attachment.getName(),
-                        MimeType.valueOf(attachment.getMimeType())));
+                        MimeType.fromFileName(attachment.getName())));
             }
         }
 
