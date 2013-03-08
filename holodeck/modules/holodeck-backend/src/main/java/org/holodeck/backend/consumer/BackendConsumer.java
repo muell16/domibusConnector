@@ -4,9 +4,7 @@
 package org.holodeck.backend.consumer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,8 +62,8 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 
 		MessageContext msgCtx = MessageContext.getCurrentMessageContext();
 		File directory = getSaveLocation(msgInfo.getMpc());
-		writeAttachments(msgCtx, msgInfo.getParts(), directory);
-		writeMessaging(msgCtx, msgInfo.getParts(), directory);
+		writeAttachments(msgCtx, directory);
+		writeMessaging(msgCtx, directory);
 
 		Message message = saveMessage(msgInfo, directory);
 
@@ -162,8 +160,8 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 	 * @param parts the parts
 	 * @param directory the directory
 	 */
-	private void writeMessaging(MessageContext msgCtx, List<PartInfo> parts, File directory) {
-		if (msgCtx == null || parts == null || parts.size() <= 0)
+	private void writeMessaging(MessageContext msgCtx, File directory) {
+		if (msgCtx == null)
 			return;
 
 		Attachments atts = msgCtx.getAttachmentMap();
@@ -198,16 +196,20 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 	 * @param parts the parts
 	 * @param directory the directory
 	 */
-	private void writeAttachments(MessageContext msgCtx, List<PartInfo> parts, File directory) {
-		if (msgCtx == null || parts == null || parts.size() <= 0)
+	private void writeAttachments(MessageContext msgCtx, File directory) {
+		if (msgCtx == null)
 			return;
 
 		Attachments atts = msgCtx.getAttachmentMap();
 
 		int counter = 1;
 
-		for (PartInfo part : parts) {
-			DataHandler dh = atts.getDataHandler(part.getCid());
+		for (String contentID : atts.getAllContentIDs()) {			
+			DataHandler dh = atts.getDataHandler(contentID);
+			
+			if(dh==null){
+				continue;
+			}
 
 			String payloadFileName = MessageFormat.format(
 					org.holodeck.backend.module.Constants.PAYLOAD_FILE_NAME_FORMAT, counter);
