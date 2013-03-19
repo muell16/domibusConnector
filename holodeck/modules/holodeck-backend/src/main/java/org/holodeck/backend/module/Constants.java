@@ -40,7 +40,7 @@ public class Constants {
 	public static final String METADATA_FILE_NAME = "metadata.xml";
 
 	/** The Constant PATTERN_DATE_FORMAT. */
-	public static final String PATTERN_DATE_FORMAT = "yyyy_MM_dd__HH_mm_ss";
+	public static final String PATTERN_DATE_FORMAT = "yyyy_MM_dd__HH_mm_ss_SSS";
 
 	/** The module. */
 	public static AxisModule module;

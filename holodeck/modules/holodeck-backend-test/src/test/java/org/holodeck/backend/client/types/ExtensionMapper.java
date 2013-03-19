@@ -18,7 +18,7 @@ public class ExtensionMapper {
 	public static java.lang.Object getTypeObject(java.lang.String namespaceURI, java.lang.String typeName,
 			javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception
 	{
-		if ("http://org.ecodex.backend".equals(namespaceURI) && "code_type1".equals(typeName)) {
+		if ("http://org.ecodex.backend/1_0/".equals(namespaceURI) && "code_type1".equals(typeName)) {
 			return Code_type1.Factory.parse(reader);
 		}
 		if ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/".equals(namespaceURI)
@@ -75,7 +75,7 @@ public class ExtensionMapper {
 		if ("http://www.w3.org/2003/05/soap-envelope".equals(namespaceURI) && "Envelope".equals(typeName)) {
 			return Envelope0.Factory.parse(reader);
 		}
-		if ("http://org.ecodex.backend".equals(namespaceURI) && "code_type1".equals(typeName)) {
+		if ("http://org.ecodex.backend/1_0/".equals(namespaceURI) && "code_type1".equals(typeName)) {
 			return Code_type1.Factory.parse(reader);
 		}
 		if ("http://www.w3.org/2003/05/soap-envelope".equals(namespaceURI) && "faultcodeEnum".equals(typeName)) {

@@ -9,7 +9,7 @@ package backend.ecodex.org;
 public class Code implements org.apache.axis2.databinding.ADBBean {
 	
 	/** The Constant MY_QNAME. */
-	public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName("http://org.ecodex.backend",
+	public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/",
 			"code_type1", "ns1");
 
 	/**
@@ -19,7 +19,7 @@ public class Code implements org.apache.axis2.databinding.ADBBean {
 	 * @return the java.lang. string
 	 */
 	private static java.lang.String generatePrefix(java.lang.String namespace) {
-		if (namespace.equals("http://org.ecodex.backend")) {
+		if (namespace.equals("http://org.ecodex.backend/1_0/")) {
 			return "ns1";
 		}
 		return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -218,7 +218,7 @@ public class Code implements org.apache.axis2.databinding.ADBBean {
 		}
 		// add the type details if this is used in a simple type
 		if (serializeType) {
-			java.lang.String namespacePrefix = registerPrefix(xmlWriter, "http://org.ecodex.backend");
+			java.lang.String namespacePrefix = registerPrefix(xmlWriter, "http://org.ecodex.backend/1_0/");
 			if ((namespacePrefix != null) && (namespacePrefix.trim().length() > 0)) {
 				writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "type", namespacePrefix
 						+ ":code_type1", xmlWriter);

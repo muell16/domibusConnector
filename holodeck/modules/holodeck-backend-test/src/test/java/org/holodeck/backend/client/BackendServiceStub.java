@@ -57,19 +57,19 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 		org.apache.axis2.description.AxisOperation __operation;
 		_operations = new org.apache.axis2.description.AxisOperation[4];
 		__operation = new org.apache.axis2.description.OutInAxisOperation();
-		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessageWithReference"));
+		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessageWithReference"));
 		_service.addOperation(__operation);
 		_operations[0] = __operation;
 		__operation = new org.apache.axis2.description.OutInAxisOperation();
-		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessage"));
+		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessage"));
 		_service.addOperation(__operation);
 		_operations[1] = __operation;
 		__operation = new org.apache.axis2.description.OutInAxisOperation();
-		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend", "listPendingMessages"));
+		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "listPendingMessages"));
 		_service.addOperation(__operation);
 		_operations[2] = __operation;
 		__operation = new org.apache.axis2.description.OutInAxisOperation();
-		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend", "downloadMessage"));
+		__operation.setName(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "downloadMessage"));
 		_service.addOperation(__operation);
 		_operations[3] = __operation;
 	}
@@ -79,29 +79,29 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 	 * Populate faults.
 	 */
 	private void populateFaults() {
-		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.SendMessageWithReferenceFault");
-		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.SendMessageWithReferenceFault");
-		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.BackendServiceStub$FaultDetail");
-		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.SendMessageFault");
-		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.SendMessageFault");
-		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.BackendServiceStub$FaultDetail");
-		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.ListPendingMessagesFault");
-		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.ListPendingMessagesFault");
-		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.BackendServiceStub$FaultDetail");
-		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.DownloadMessageFault");
-		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultExceptionClassNameMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.DownloadMessageFault");
-		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend", "FaultDetail"),
+		faultMessageMap.put(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "FaultDetail"),
 				"org.holodeck.backend.client.BackendServiceStub$FaultDetail");
 	}
 
@@ -190,13 +190,13 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 			// create SOAP envelope with that payload
 			org.apache.axiom.soap.SOAPEnvelope env = null;
 			env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), sendRequestURL3,
-					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend",
+					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/",
 							"sendMessageWithReference")));
 			env.build();
 			// add the children only if the parameter is not null
 			if (messaging4 != null) {
 				org.apache.axiom.om.OMElement omElementmessaging4 = toOM(messaging4,
-						optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend",
+						optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/",
 								"sendMessageWithReference")));
 				addHeader(omElementmessaging4, env);
 			}
@@ -284,11 +284,11 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 		final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 		//Style is Doc.
 		env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), sendRequestURL3,
-				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessageWithReference")));
+				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessageWithReference")));
 		// add the soap_headers only if they are not null
 		if (messaging4 != null) {
 			org.apache.axiom.om.OMElement omElementmessaging4 = toOM(messaging4,
-					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend",
+					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/",
 							"sendMessageWithReference")));
 			addHeader(omElementmessaging4, env);
 		}
@@ -333,12 +333,12 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 			// create SOAP envelope with that payload
 			org.apache.axiom.soap.SOAPEnvelope env = null;
 			env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), sendRequest6,
-					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessage")));
+					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessage")));
 			env.build();
 			// add the children only if the parameter is not null
 			if (messaging7 != null) {
 				org.apache.axiom.om.OMElement omElementmessaging7 = toOM(messaging7,
-						optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessage")));
+						optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessage")));
 				addHeader(omElementmessaging7, env);
 			}
 			//adding SOAP soap_headers
@@ -424,11 +424,11 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 		final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 		//Style is Doc.
 		env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), sendRequest6,
-				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessage")));
+				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessage")));
 		// add the soap_headers only if they are not null
 		if (messaging7 != null) {
 			org.apache.axiom.om.OMElement omElementmessaging7 = toOM(messaging7,
-					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "sendMessage")));
+					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "sendMessage")));
 			addHeader(omElementmessaging7, env);
 		}
 		// adding SOAP soap_headers
@@ -473,7 +473,7 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 			org.apache.axiom.soap.SOAPEnvelope env = null;
 			env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
 					listPendingMessagesRequest9, optimizeContent(new javax.xml.namespace.QName(
-							"http://org.ecodex.backend", "listPendingMessages")));
+							"http://org.ecodex.backend/1_0/", "listPendingMessages")));
 			//adding SOAP soap_headers
 			_serviceClient.addHeadersToEnvelope(env);
 			// set the message context with that soap envelope
@@ -562,7 +562,7 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 		final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 		//Style is Doc.
 		env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), listPendingMessagesRequest9,
-				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "listPendingMessages")));
+				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "listPendingMessages")));
 		// adding SOAP soap_headers
 		_serviceClient.addHeadersToEnvelope(env);
 		// create message context with that soap envelope
@@ -689,7 +689,7 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 			// create SOAP envelope with that payload
 			org.apache.axiom.soap.SOAPEnvelope env = null;
 			env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), downloadMessageRequest11,
-					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "downloadMessage")));
+					optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "downloadMessage")));
 			//adding SOAP soap_headers
 			_serviceClient.addHeadersToEnvelope(env);
 			// set the message context with that soap envelope
@@ -778,7 +778,7 @@ public class BackendServiceStub extends org.apache.axis2.client.Stub {
 		final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 		//Style is Doc.
 		env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), downloadMessageRequest11,
-				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend", "downloadMessage")));
+				optimizeContent(new javax.xml.namespace.QName("http://org.ecodex.backend/1_0/", "downloadMessage")));
 		// adding SOAP soap_headers
 		_serviceClient.addHeadersToEnvelope(env);
 		// create message context with that soap envelope
