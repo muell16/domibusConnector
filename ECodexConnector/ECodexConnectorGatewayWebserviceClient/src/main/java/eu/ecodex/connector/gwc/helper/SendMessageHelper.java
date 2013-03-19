@@ -4,7 +4,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
@@ -31,9 +30,6 @@ import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 public class SendMessageHelper {
-
-    private static final String AGREEMENT_REF = "Agr123";
-    private static final String PMODE = "EE_Form_A";
 
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorPersistenceService persistenceService;
@@ -179,11 +175,6 @@ public class SendMessageHelper {
         Service service = new Service();
         service.setValue(messageDetails.getService().toString());
         info.setService(service);
-
-        AgreementRef ref = new AgreementRef();
-        ref.setPmode(PMODE);
-        ref.setValue(AGREEMENT_REF);
-        info.setAgreementRef(ref);
 
         info.setConversationId(messageDetails.getConversationId());
 

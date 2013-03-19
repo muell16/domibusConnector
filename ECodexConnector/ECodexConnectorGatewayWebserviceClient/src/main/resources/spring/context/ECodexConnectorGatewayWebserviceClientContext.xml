@@ -7,7 +7,7 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
 
 	<jaxws:client id="gatewayClient" serviceClass="backend.ecodex.org.BackendInterface"
-		address="${gateway.endpoint.address}BackendPort" />
+		address="${gateway.endpoint.address}" />
 
 	<bean id="gatewayWebServiceClient"
 		class="eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClientImpl">

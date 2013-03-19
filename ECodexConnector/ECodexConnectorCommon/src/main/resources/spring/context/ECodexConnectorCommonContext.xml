@@ -3,8 +3,8 @@
 
 <beans>
 
-	<import resource="dao.xml"/>
-		
+	<import resource="dao.xml" />
+
 	<bean id="connectorProperties" class="eu.ecodex.connector.common.ECodexConnectorProperties">
 		<property name="gatewayEndpointAddress" value="${gateway.endpoint.address}" />
 		<property name="gatewayName" value="${gateway.name}" />
@@ -16,11 +16,16 @@
 		<property name="postalAddressLocality" value="${postal.address.locality}" />
 		<property name="postalAddressPostalCode" value="${postal.address.postal.code}" />
 		<property name="postalAddressCountry" value="${postal.address.country}" />
+		<property name="timeoutRelayREMMD" value="${connector.evidence.relayremmd.timeout.ms}" />
+		<property name="timeoutDelivery" value="${connector.evidence.delivery.timeout.ms}" />
+		<property name="timeoutRetrieval" value="${connector.evidence.retrieval.timeout.ms}" />
+
 	</bean>
-	
-	<bean id="persistenceService" class="eu.ecodex.connector.common.db.service.impl.ECodexConnectorPersistenceServiceImpl">
+
+	<bean id="persistenceService"
+		class="eu.ecodex.connector.common.db.service.impl.ECodexConnectorPersistenceServiceImpl">
 		<property name="messageDao" ref="messageDao" />
 		<property name="evidenceDao" ref="evidenceDao" />
 	</bean>
-	
+
 </beans>
