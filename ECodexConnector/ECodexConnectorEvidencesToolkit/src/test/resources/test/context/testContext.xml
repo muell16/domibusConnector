@@ -15,7 +15,7 @@
 	</bean>
 
 	<bean id="evidenceBuilder" class="eu.ecodex.evidences.ECodexEvidenceBuilder">
-		<constructor-arg value="${user.dir}/src/test/resources/keystore/evidenceBuilderStore.jks" />
+		<constructor-arg value="file:${user.dir}/src/test/resources/keystore/evidenceBuilderStore.jks" />
 		<constructor-arg value="123456" />
 		<constructor-arg value="evidenceBuilderKey" />
 		<constructor-arg value="123456" />
