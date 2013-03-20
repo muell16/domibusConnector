@@ -48,8 +48,8 @@ import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
 public class SubmissionAcceptanceRejectionTest  {
 	
-	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("/home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
-	private static EvidenceUtils utils = new EvidenceUtilsXades("/home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:///home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceUtils utils = new EvidenceUtilsXades("file:///home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
 	
 	
 	private EDeliveryDetails createEntityDetailsObject() {

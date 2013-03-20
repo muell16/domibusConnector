@@ -2,11 +2,12 @@ package eu.ecodex.signature;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
@@ -22,6 +23,7 @@ import java.util.Date;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x509.DigestInfo;
 
 import eu.europa.ec.markt.dss.Digest;
@@ -158,18 +160,22 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	return buf;
     }
 
-    protected synchronized static KeyInfos getKeyInfosFromKeyStore(String store, String storePass, String alias, String keyPass) {
+    protected synchronized static KeyInfos getKeyInfosFromKeyStore(String store, String storePass, String alias, String keyPass) throws MalformedURLException {
 	LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
 	KeyStore ks;
-	FileInputStream kfis;
+	InputStream kfis = null;
 	KeyInfos keyInfos = new KeyInfos();
-
+	
+	
 	Key key = null;
 	PrivateKey privateKey = null;
 	try {
 	    ks = KeyStore.getInstance("JKS");
-	    kfis = new FileInputStream(store);
-	    ks.load(kfis, storePass.toCharArray());
+	    
+	    final URL ksLocation = new URL(store);
+	    
+	    kfis = ksLocation.openStream();
+	    ks.load(kfis, (storePass == null) ? null : storePass.toCharArray() );
 
 	    if (ks.containsAlias(alias)) {
 		key = ks.getKey(alias, keyPass.toCharArray());
@@ -204,6 +210,8 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    e.printStackTrace();
+	} finally {
+	    IOUtils.closeQuietly(kfis);
 	}
 
 	return keyInfos;

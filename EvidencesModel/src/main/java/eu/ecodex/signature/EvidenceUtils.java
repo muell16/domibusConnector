@@ -1,9 +1,10 @@
 package eu.ecodex.signature;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -47,7 +48,7 @@ public abstract class EvidenceUtils {
     protected synchronized static KeyPair getKeyPairFromKeyStore(String store, String storePass, String alias, String keyPass) {
 	LOG.debug("Loading KeyPair from Java KeyStore(" + store + ")");
 	KeyStore ks;
-	FileInputStream kfis;
+	InputStream kfis;
 	KeyPair keyPair = null;
 
 	Key key = null;
@@ -55,8 +56,11 @@ public abstract class EvidenceUtils {
 	PrivateKey privateKey = null;
 	try {
 	    ks = KeyStore.getInstance("JKS");
-	    kfis = new FileInputStream(store);
-	    ks.load(kfis, storePass.toCharArray());
+	    final URL ksLocation = new URL(store);
+	    
+	    kfis = ksLocation.openStream();
+	    ks.load(kfis, (storePass == null) ? null : storePass.toCharArray() );
+	    
 	    if (ks.containsAlias(alias)) {
 		key = ks.getKey(alias, keyPass.toCharArray());
 		if (key instanceof PrivateKey) {

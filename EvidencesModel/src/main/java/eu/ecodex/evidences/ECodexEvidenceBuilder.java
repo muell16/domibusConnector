@@ -2,6 +2,7 @@ package eu.ecodex.evidences;
 
 import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBException;
@@ -44,9 +45,10 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
     }
 
     @Override
-    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException {
-
+    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, ECodexMessageDetails messageDetails)
+	    throws ECodexEvidenceBuilderException {
+	Date start = new Date();
+	
 	// This is the message and all related information
 	REMDispatchType dispatch = new REMDispatchType();
 
@@ -54,10 +56,8 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 	EntityDetailsType recipient = new EntityDetailsType();
 	EntityDetailsType sender = new EntityDetailsType();
 	try {
-	    recipient.getAttributedElectronicAddressOrElectronicAddress().add(
-		    SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
-	    sender.getAttributedElectronicAddressOrElectronicAddress().add(
-		    SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
+	    recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
+	    sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
 	} catch (MalformedURLException e) {
 	    e.printStackTrace();
 	}
@@ -99,13 +99,15 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 	evidence.setHashInformation(messageDetails.getHashValue(), messageDetails.getHashAlgorithm());
 
 	byte[] signedByteArray = signEvidence(evidence, false);
-
+	
+	LOG.info("Creation of SubmissionAcceptanceRejection Evidence finished in " + (System.currentTimeMillis() - start.getTime()) + " ms.");
+	
 	return signedByteArray;
     }
 
     @Override
-    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidenceInByte) throws ECodexEvidenceBuilderException {
+    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+	    throws ECodexEvidenceBuilderException {
 
 	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
@@ -120,8 +122,8 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
     }
 
     @Override
-    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidenceInByte) throws ECodexEvidenceBuilderException {
+    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+	    throws ECodexEvidenceBuilderException {
 
 	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
@@ -136,8 +138,8 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
     }
 
     @Override
-    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidenceInByte) throws ECodexEvidenceBuilderException {
+    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+	    throws ECodexEvidenceBuilderException {
 
 	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
@@ -174,7 +176,5 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 
 	return signedByteArray;
     }
-
-    
 
 }
