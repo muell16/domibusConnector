@@ -4,6 +4,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
@@ -175,9 +176,16 @@ public class SendMessageHelper {
         Service service = new Service();
         service.setValue(messageDetails.getService().toString());
         info.setService(service);
-
+        
         info.setConversationId(messageDetails.getConversationId());
-
+        
+        AgreementRef agref = new AgreementRef();
+        agref.setValue("abc123");
+        agref.setPmode("notspecified");
+        agref.setType("typeofagref");
+        
+        info.setAgreementRef(agref);
+        
         return info;
     }
 
