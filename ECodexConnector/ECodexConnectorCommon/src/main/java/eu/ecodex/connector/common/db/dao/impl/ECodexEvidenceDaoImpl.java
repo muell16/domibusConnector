@@ -17,7 +17,7 @@ import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 @Repository
 public class ECodexEvidenceDaoImpl implements ECodexEvidenceDao {
 
-    @PersistenceContext
+    @PersistenceContext(unitName="ecodex.connector")
     private EntityManager em;
 
     @Override

@@ -17,7 +17,7 @@ import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 @Repository
 public class ECodexMessageDaoImpl implements ECodexMessageDao {
 
-    @PersistenceContext
+    @PersistenceContext(unitName="ecodex.connector")
     private EntityManager em;
 
     @Override
