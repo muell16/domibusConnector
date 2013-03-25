@@ -64,7 +64,7 @@ public class SendMessageHelper {
         ebMSHeaderInfo.getUserMessage().add(userMessage);
     }
 
-    private MessageProperties buildMessageProperties(Message message) {
+    protected MessageProperties buildMessageProperties(Message message) {
         if (message.getMessageDetails().getFinalRecipient() == null
                 && message.getMessageDetails().getOriginalSender() == null) {
             return null;
@@ -89,7 +89,7 @@ public class SendMessageHelper {
         return mp;
     }
 
-    private void buildSendRequestAndPayloadInfo(UserMessage userMessage, SendRequest request, Message message)
+    protected void buildSendRequestAndPayloadInfo(UserMessage userMessage, SendRequest request, Message message)
             throws ECodexConnectorGatewayWebserviceClientException {
         PayloadInfo pli = new PayloadInfo();
 
@@ -125,7 +125,7 @@ public class SendMessageHelper {
         }
     }
 
-    private PartInfo buildPartInfo(String description) {
+    protected PartInfo buildPartInfo(String description) {
         PartInfo pi = new PartInfo();
         Description desc = new Description();
         desc.setValue(description);
@@ -144,7 +144,7 @@ public class SendMessageHelper {
         }
     }
 
-    private PartyInfo buildPartyInfo(MessageDetails messageDetails) {
+    protected PartyInfo buildPartyInfo(MessageDetails messageDetails) {
         PartyInfo partyInfo = new PartyInfo();
 
         From from = new From();
@@ -169,7 +169,7 @@ public class SendMessageHelper {
         return partyInfo;
     }
 
-    private CollaborationInfo buildCollaborationInfo(MessageDetails messageDetails) {
+    protected CollaborationInfo buildCollaborationInfo(MessageDetails messageDetails) {
         CollaborationInfo info = new CollaborationInfo();
 
         info.setAction(messageDetails.getAction().toString());
