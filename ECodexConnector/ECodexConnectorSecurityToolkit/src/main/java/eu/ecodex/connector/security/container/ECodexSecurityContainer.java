@@ -1,15 +1,9 @@
 package eu.ecodex.connector.security.container;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -31,7 +25,6 @@ import eu.ecodex.dss.model.SignatureParameters;
 import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.model.token.TokenIssuer;
-import eu.ecodex.dss.service.ECodexBusinessException;
 import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.util.SignatureParametersFactory;
@@ -49,6 +42,10 @@ public class ECodexSecurityContainer implements InitializingBean {
     private String javaKeyStorePassword;
     private String keyAlias;
     private String keyPassword;
+
+    public ECodexContainerService getContainerService() {
+        return containerService;
+    }
 
     public void setContainerService(ECodexContainerService containerService) {
         this.containerService = containerService;
@@ -88,17 +85,20 @@ public class ECodexSecurityContainer implements InitializingBean {
     }
 
     protected SignatureParameters createSignatureParameters() throws Exception {
-    	
-    	// KlarA: Changed the functionality of this method to use the methods that have been ordered by Austria
-    	// 	 	  and realized by Arhs.
-		
-    	EnvironmentConfiguration.CertificateStoreInfo certStore = new EnvironmentConfiguration.CertificateStoreInfo();
-		certStore.setLocation(this.javaKeyStorePath);
-		certStore.setPassword(this.javaKeyStorePassword);
-		
-    	final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore , this.keyAlias, this.keyPassword, SignatureAlgorithm.RSA, DigestAlgorithm.SHA1);
+
+        // KlarA: Changed the functionality of this method to use the methods
+        // that have been ordered by Austria
+        // and realized by Arhs.
+
+        EnvironmentConfiguration.CertificateStoreInfo certStore = new EnvironmentConfiguration.CertificateStoreInfo();
+        certStore.setLocation(javaKeyStorePath);
+        certStore.setPassword(javaKeyStorePassword);
+
+        final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore, keyAlias,
+                keyPassword, SignatureAlgorithm.RSA, DigestAlgorithm.SHA1);
 
         return mySignatureParameters;
+
     }
 
     private BusinessContent buildBusinessContent(Message message) {
@@ -126,44 +126,45 @@ public class ECodexSecurityContainer implements InitializingBean {
         }
         try {
             ECodexContainer container = containerService.create(businessContent, tokenIssuer);
-            
-            // KlarA: Added check of the container and the respective error-handling
+
+            // KlarA: Added check of the container and the respective
+            // error-handling
             CheckResult results = containerService.check(container);
-            
+
             if (results.isSuccessfull()) {
-	            if (container != null) {
-	                Document asicDocument = container.getAsicDocument();
-	                if (asicDocument != null) {
-	                    try {
-	                        MessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument,
-	                                asicDocument.getName(), asicDocument.getMimeType().getCode());
-	                        message.addAttachment(asicAttachment);
-	                    } catch (IOException e) {
-	                        throw new ECodexConnectorSecurityException(e);
-	                    }
-	                }
-	                Document tokenXML = container.getTokenXML();
-	                if (tokenXML != null) {
-	                    try {
-	                        MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML, "tokenXML",
-	                                MimeType.XML.getCode());
-	                        message.addAttachment(tokenAttachment);
-	                    } catch (IOException e) {
-	                        throw new ECodexConnectorSecurityException(e);
-	                    }
-	                }
-	            }
+                if (container != null) {
+                    Document asicDocument = container.getAsicDocument();
+                    if (asicDocument != null) {
+                        try {
+                            MessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument,
+                                    asicDocument.getName(), asicDocument.getMimeType().getCode());
+                            message.addAttachment(asicAttachment);
+                        } catch (IOException e) {
+                            throw new ECodexConnectorSecurityException(e);
+                        }
+                    }
+                    Document tokenXML = container.getTokenXML();
+                    if (tokenXML != null) {
+                        try {
+                            MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML,
+                                    "tokenXML", MimeType.XML.getCode());
+                            message.addAttachment(tokenAttachment);
+                        } catch (IOException e) {
+                            throw new ECodexConnectorSecurityException(e);
+                        }
+                    }
+                }
             } else {
-            	String errormessage = "\nSeveral problems prevented the container from being created:"; 
-            	List<CheckProblem> problems = results.getProblems();
-            	for (CheckProblem curProblem : problems) {
-					errormessage += "\n-" + curProblem.getMessage();
-				}
-            	throw new ECodexConnectorSecurityException(errormessage);
+                String errormessage = "\nSeveral problems prevented the container from being created:";
+                List<CheckProblem> problems = results.getProblems();
+                for (CheckProblem curProblem : problems) {
+                    errormessage += "\n-" + curProblem.getMessage();
+                }
+                throw new ECodexConnectorSecurityException(errormessage);
             }
         } catch (ECodexException e) {
             throw new ECodexConnectorSecurityException(e);
-        } 
+        }
     }
 
     public void recieveContainerContents(Message message) {
@@ -194,64 +195,66 @@ public class ECodexSecurityContainer implements InitializingBean {
             InputStream tokenStream = new ByteArrayInputStream(tokenXMLAttachment.getAttachment());
             try {
                 ECodexContainer container = containerService.receive(asicInputStream, tokenStream);
-                
-                // KlarA: Added check of the container and the respective error-handling
+
+                // KlarA: Added check of the container and the respective
+                // error-handling
                 CheckResult results = containerService.check(container);
-                
+
                 if (results.isSuccessfull()) {
-	                if (container != null) {
-	                    if (container.getBusinessDocument() != null) {
-	                        try {
-	                            InputStream is = container.getBusinessDocument().openStream();
-	                            byte[] docAsBytes = new byte[is.available()];
-	                            is.read(docAsBytes);
-	                            message.getMessageContent().setPdfDocument(docAsBytes);
-	                        } catch (IOException e) {
-	                            throw new ECodexConnectorSecurityException("Could not read business document!");
-	                        }
-	
-	                    }
-	                    if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
-	                        for (Document businessAttachment : container.getBusinessAttachments()) {
-	                            try {
-	                                MessageAttachment attachment = convertDocumentToMessageAttachment(businessAttachment,
-	                                        businessAttachment.getName(), businessAttachment.getMimeType().getCode());
-	                                message.addAttachment(attachment);
-	                            } catch (IOException e) {
-	                                LOGGER.error("Could not read attachment!", e);
-	                                continue;
-	                            }
-	                        }
-	                    }
-	                    Document tokenPDF = container.getTokenPDF();
-	                    if (tokenPDF != null) {
-	                        try {
-	                            MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, "Token.pdf",
-	                                    MimeType.PDF.getCode());
-	                            message.addAttachment(attachment);
-	                        } catch (IOException e) {
-	                            LOGGER.error("Could not read Token PDF!", e);
-	                        }
-	                    }
-	
-	                    Document tokenXML = container.getTokenXML();
-	                    if (tokenXML != null) {
-	                        try {
-	                            MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, "Token.xml",
-	                                    MimeType.XML.getCode());
-	                            message.addAttachment(attachment);
-	                        } catch (IOException e) {
-	                            LOGGER.error("Could not read Token XML!", e);
-	                        }
-	                    }
-	                }
+                    if (container != null) {
+                        if (container.getBusinessDocument() != null) {
+                            try {
+                                InputStream is = container.getBusinessDocument().openStream();
+                                byte[] docAsBytes = new byte[is.available()];
+                                is.read(docAsBytes);
+                                message.getMessageContent().setPdfDocument(docAsBytes);
+                            } catch (IOException e) {
+                                throw new ECodexConnectorSecurityException("Could not read business document!");
+                            }
+
+                        }
+                        if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
+                            for (Document businessAttachment : container.getBusinessAttachments()) {
+                                try {
+                                    MessageAttachment attachment = convertDocumentToMessageAttachment(
+                                            businessAttachment, businessAttachment.getName(), businessAttachment
+                                                    .getMimeType().getCode());
+                                    message.addAttachment(attachment);
+                                } catch (IOException e) {
+                                    LOGGER.error("Could not read attachment!", e);
+                                    continue;
+                                }
+                            }
+                        }
+                        Document tokenPDF = container.getTokenPDF();
+                        if (tokenPDF != null) {
+                            try {
+                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF,
+                                        "Token.pdf", MimeType.PDF.getCode());
+                                message.addAttachment(attachment);
+                            } catch (IOException e) {
+                                LOGGER.error("Could not read Token PDF!", e);
+                            }
+                        }
+
+                        Document tokenXML = container.getTokenXML();
+                        if (tokenXML != null) {
+                            try {
+                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML,
+                                        "Token.xml", MimeType.XML.getCode());
+                                message.addAttachment(attachment);
+                            } catch (IOException e) {
+                                LOGGER.error("Could not read Token XML!", e);
+                            }
+                        }
+                    }
                 } else {
-                	String errormessage = "\nSeveral problems prevented the container from being created:"; 
-                	List<CheckProblem> problems = results.getProblems();
-                	for (CheckProblem curProblem : problems) {
-    					errormessage += "\n-" + curProblem.getMessage();
-    				}
-                	throw new ECodexConnectorSecurityException(errormessage);
+                    String errormessage = "\nSeveral problems prevented the container from being created:";
+                    List<CheckProblem> problems = results.getProblems();
+                    for (CheckProblem curProblem : problems) {
+                        errormessage += "\n-" + curProblem.getMessage();
+                    }
+                    throw new ECodexConnectorSecurityException(errormessage);
                 }
             } catch (ECodexException e) {
                 throw new ECodexConnectorSecurityException(e);
