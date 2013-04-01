@@ -89,13 +89,13 @@ public class SendMessageValidator {
 			throw sendMessageServiceException;
 		}
 
-		if(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef()==null){
-			log.error("AgreementRef is empty");
-
-			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
-					"AgreementRef is empty", Code.ERROR_GENERAL_002);
-			throw sendMessageServiceException;
-		}		
+//		if(messaging.getMessaging().getUserMessage()[0].getCollaborationInfo().getAgreementRef()==null){
+//			log.error("AgreementRef is empty");
+//
+//			SendMessageServiceException sendMessageServiceException = new SendMessageServiceException(
+//					"AgreementRef is empty", Code.ERROR_GENERAL_002);
+//			throw sendMessageServiceException;
+//		}		
 		
 		if(messaging.getMessaging().getUserMessage()[0].getPartyInfo()==null
 				|| messaging.getMessaging().getUserMessage()[0].getPartyInfo().getTo() == null
