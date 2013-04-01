@@ -34,7 +34,7 @@ Version	|	Date		|	Author			|	Description
 						<!-- Can be removed, because it corresponds to the Service field of ebMS UserMessage/ID 
                <xsd:element name="ID" type="xsd:string"/>-->
 						<!-- Attachments -->
-						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="xsd:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
+						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="xmime:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
@@ -93,7 +93,7 @@ Version	|	Date		|	Author			|	Description
 						<!-- Can be removed, because it corresponds to the Service field of ebMS UserMessage/ID 
                <xsd:element name="ID" type="xsd:string"/>-->
 						<!-- Attachments -->
-						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="xsd:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
+						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="xmime:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
