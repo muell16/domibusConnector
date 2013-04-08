@@ -1,2 +1,5 @@
 /bin
 /.project
+/pom.xml.next
+/pom.xml.releaseBackup
+/release.properties
