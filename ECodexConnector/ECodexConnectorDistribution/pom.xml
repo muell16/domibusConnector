@@ -10,9 +10,11 @@
 
 	<properties>
 		<connector.build.dir>ECodexConnector/</connector.build.dir>
-		<db.scripts.output.dir>${connector.build.dir}db-scripts</db.scripts.output.dir>
+		<documentation.output.dir>${connector.build.dir}documentation/</documentation.output.dir>
+		<db.scripts.output.dir>${documentation.output.dir}db-scripts</db.scripts.output.dir>
 		<modules.output.dir>${connector.build.dir}modules</modules.output.dir>
 		<lib.output.dir>${connector.build.dir}lib</lib.output.dir>
+		<release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
 	</properties>
 
 	<build>
