@@ -35,7 +35,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         if (connectorProperties.isUseContentMapper()) {
             try {
-                contentMapper.mapNationalToInternational(message.getMessageContent());
+                contentMapper.mapNationalToInternational(message);
             } catch (ECodexConnectorContentMapperException cme) {
                 createSubmissionRejectionAndReturnIt(message, hashValue);
                 cme.printStackTrace();

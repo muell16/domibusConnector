@@ -1,6 +1,7 @@
 package eu.ecodex.connector.mapping;
 
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 
@@ -25,7 +26,7 @@ public interface ECodexConnectorContentMapper {
      * @throws ECodexConnectorContentMapperException
      * @throws ImplementationMissingException
      */
-    public void mapInternationalToNational(MessageContent messageContent) throws ECodexConnectorContentMapperException,
+    public void mapInternationalToNational(Message message) throws ECodexConnectorContentMapperException,
             ImplementationMissingException;
 
     /**
@@ -39,7 +40,7 @@ public interface ECodexConnectorContentMapper {
      * @throws ECodexConnectorContentMapperException
      * @throws ImplementationMissingException
      */
-    public void mapNationalToInternational(MessageContent messageContent) throws ECodexConnectorContentMapperException,
+    public void mapNationalToInternational(Message message) throws ECodexConnectorContentMapperException,
             ImplementationMissingException;
 
 }

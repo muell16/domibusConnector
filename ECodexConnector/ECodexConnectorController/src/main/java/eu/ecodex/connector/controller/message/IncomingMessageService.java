@@ -40,7 +40,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
         if (connectorProperties.isUseContentMapper()) {
             try {
-                contentMapper.mapInternationalToNational(message.getMessageContent());
+                contentMapper.mapInternationalToNational(message);
             } catch (ECodexConnectorContentMapperException e) {
                 throw new ECodexConnectorControllerException("Error mapping content of message into national format!",
                         e);
