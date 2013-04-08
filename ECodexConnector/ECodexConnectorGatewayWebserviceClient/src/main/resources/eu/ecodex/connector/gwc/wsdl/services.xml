@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was auto-generated from WSDL -->
+<!-- by the Apache Axis2 version: 1.5.1  Built on : Oct 19, 2009 (10:59:00 EDT) -->
+<serviceGroup>
+    <service name="BackendService">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.holodeck.backend.module.BackendServiceMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">org.holodeck.backend.module.BackendServiceSkeleton</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="sendMessageWithReference" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://org.ecodex.backend/1_0/">
+            <actionMapping>\"\"</actionMapping>
+            <outputActionMapping>http://org.ecodex.backend/BackendInterface/sendMessageWithReferenceResponse</outputActionMapping>
+        </operation>
+        <operation name="sendMessage" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://org.ecodex.backend/1_0/">
+            <actionMapping>\"\"</actionMapping>
+            <outputActionMapping>http://org.ecodex.backend/BackendInterface/sendMessageResponse</outputActionMapping>
+        </operation>
+        <operation name="listPendingMessages" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://org.ecodex.backend/1_0/">
+            <actionMapping>\"\"</actionMapping>
+            <outputActionMapping>http://org.ecodex.backend/BackendInterface/listPendingMessagesResponse</outputActionMapping>
+        </operation>
+        <operation name="downloadMessage" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://org.ecodex.backend/1_0/">
+            <actionMapping>\"\"</actionMapping>
+            <outputActionMapping>http://org.ecodex.backend/BackendInterface/downloadMessageResponse</outputActionMapping>
+        </operation>
+    </service>
+</serviceGroup>

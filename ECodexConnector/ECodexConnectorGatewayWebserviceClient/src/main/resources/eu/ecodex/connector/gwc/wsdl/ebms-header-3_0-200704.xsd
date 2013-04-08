@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:S12="http://www.w3.org/2003/05/soap-envelope" xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<!-- <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types> -->
+    <xsd:schema xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:S12="http://www.w3.org/2003/05/soap-envelope" xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
 	<xsd:annotation>
 		<xsd:appinfo>Schema for ebMS-3 XML Infoset</xsd:appinfo>
 		<xsd:documentation xml:lang="en"> 
@@ -8,9 +10,9 @@
 			message.
 		</xsd:documentation>
 	</xsd:annotation>
-	<xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="envelope.xsd"/>
-	<xsd:import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="soap-envelope.xsd"/>
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+	<xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="schemas_xmlsoap_org_soap_envelope.xsd"/>
+	<xsd:import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="www_w3_org_2003_05_soap-envelope.xsd"/>
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="www_w3_org_2001_03_xml.xsd"/>
 	<xsd:element name="Messaging" type="Messaging"/>
 	<xsd:complexType name="Messaging">
 		<xsd:annotation>
@@ -29,9 +31,9 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="SignalMessage" type="SignalMessage" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="UserMessage" type="UserMessage" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="SignalMessage" type="SignalMessage"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="UserMessage" type="UserMessage"/>
+			<xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
 		</xsd:sequence>
 		<xsd:attributeGroup ref="tns:headerExtension"/>
 	</xsd:complexType>
@@ -48,16 +50,16 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="MessageInfo" type="MessageInfo"/>
-			<xsd:element name="PullRequest" type="PullRequest" minOccurs="0"/>
-			<xsd:element name="Receipt" type="Receipt" minOccurs="0"/>
-			<xsd:element name="Error" type="Error" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element minOccurs="0" name="PullRequest" type="PullRequest"/>
+			<xsd:element minOccurs="0" name="Receipt" type="Receipt"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="Error" type="Error"/>
+			<xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="Error">
 		<xsd:sequence>
-			<xsd:element name="Description" type="tns:Description" minOccurs="0"/>
-			<xsd:element name="ErrorDetail" type="xsd:token" minOccurs="0"/>
+			<xsd:element minOccurs="0" name="Description" type="tns:Description"/>
+			<xsd:element minOccurs="0" name="ErrorDetail" type="xsd:token"/>
 		</xsd:sequence>
 		<xsd:attribute name="category" type="xsd:token" use="optional"/>
 		<xsd:attribute name="refToMessageInError" type="xsd:token" use="optional"/>
@@ -68,13 +70,13 @@
 	</xsd:complexType>
 	<xsd:complexType name="PullRequest">
 		<xsd:sequence>
-			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
 		</xsd:sequence>
 		<xsd:attributeGroup ref="pullAttributes"/>
 	</xsd:complexType>
 	<xsd:complexType name="Receipt">
 		<xsd:sequence>
-			<xsd:any namespace="##other" processContents="lax" maxOccurs="unbounded"/>
+			<xsd:any maxOccurs="unbounded" namespace="##other" processContents="lax"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="UserMessage">
@@ -82,8 +84,8 @@
 			<xsd:element name="MessageInfo" type="MessageInfo"/>
 			<xsd:element name="PartyInfo" type="PartyInfo"/>
 			<xsd:element name="CollaborationInfo" type="CollaborationInfo"/>
-			<xsd:element name="MessageProperties" type="tns:MessageProperties" minOccurs="0"/>
-			<xsd:element name="PayloadInfo" type="tns:PayloadInfo" minOccurs="0"/>
+			<xsd:element minOccurs="0" name="MessageProperties" type="tns:MessageProperties"/>
+			<xsd:element minOccurs="0" name="PayloadInfo" type="tns:PayloadInfo"/>
 		</xsd:sequence>
 		<xsd:attribute name="mpc" type="xsd:anyURI" use="optional"/>
 	</xsd:complexType>
@@ -91,7 +93,7 @@
 		<xsd:sequence>
 			<xsd:element name="Timestamp" type="xsd:dateTime"/>
 			<xsd:element name="MessageId" type="tns:non-empty-string"/>
-			<xsd:element name="RefToMessageId" type="tns:non-empty-string" minOccurs="0"/>
+			<xsd:element minOccurs="0" name="RefToMessageId" type="tns:non-empty-string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="PartyInfo">
@@ -109,19 +111,19 @@
 	</xsd:complexType>
 	<xsd:complexType name="From">
 		<xsd:sequence>
-			<xsd:element name="PartyId" type="tns:PartyId" maxOccurs="unbounded"/>
+			<xsd:element maxOccurs="unbounded" name="PartyId" type="tns:PartyId"/>
 			<xsd:element name="Role" type="tns:non-empty-string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="To">
 		<xsd:sequence>
-			<xsd:element name="PartyId" type="tns:PartyId" maxOccurs="unbounded"/>
+			<xsd:element maxOccurs="unbounded" name="PartyId" type="tns:PartyId"/>
 			<xsd:element name="Role" type="tns:non-empty-string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="CollaborationInfo">
 		<xsd:sequence>
-			<xsd:element name="AgreementRef" type="tns:AgreementRef" minOccurs="0"/>
+			<xsd:element minOccurs="0" name="AgreementRef" type="tns:AgreementRef"/>
 			<xsd:element name="Service" type="tns:Service"/>
 			<xsd:element name="Action" type="xsd:token"/>
 			<xsd:element name="ConversationId" type="xsd:token"/>
@@ -144,14 +146,14 @@
 	</xsd:complexType>
 	<xsd:complexType name="PayloadInfo">
 		<xsd:sequence>
-			<xsd:element name="PartInfo" type="tns:PartInfo" maxOccurs="unbounded"/>
+			<xsd:element maxOccurs="unbounded" name="PartInfo" type="tns:PartInfo"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="PartInfo">
 		<xsd:sequence>
-			<xsd:element name="Schema" type="tns:Schema" minOccurs="0"/>
-			<xsd:element name="Description" type="tns:Description" minOccurs="0"/>
-			<xsd:element name="PartProperties" type="tns:PartProperties" minOccurs="0"/>
+			<xsd:element minOccurs="0" name="Schema" type="tns:Schema"/>
+			<xsd:element minOccurs="0" name="Description" type="tns:Description"/>
+			<xsd:element minOccurs="0" name="PartProperties" type="tns:PartProperties"/>
 		</xsd:sequence>
 		<xsd:attribute name="href" type="xsd:token"/>
 	</xsd:complexType>
@@ -169,23 +171,23 @@
 	</xsd:complexType>
 	<xsd:complexType name="PartProperties">
 		<xsd:sequence>
-			<xsd:element name="Property" type="tns:Property" maxOccurs="unbounded"/>
+			<xsd:element maxOccurs="unbounded" name="Property" type="tns:Property"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="MessageProperties">
 		<xsd:sequence>
-			<xsd:element name="Property" type="Property" maxOccurs="unbounded"/>
+			<xsd:element maxOccurs="unbounded" name="Property" type="Property"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:attributeGroup name="headerExtension">
 		<xsd:attribute name="id" type="xsd:ID" use="optional"/>
-		<!-- <xsd:attribute ref="S11:mustUnderstand" use="optional">
+		<xsd:attribute ref="S11:mustUnderstandS11" use="optional">
 			<xsd:annotation>
 				<xsd:documentation>
 	    if SOAP 1.1 is being used, this attribute is required
 			  </xsd:documentation>
 			</xsd:annotation>
-		</xsd:attribute> -->
+		</xsd:attribute>
 		<xsd:attribute ref="S12:mustUnderstand" use="optional">
 			<xsd:annotation>
 				<xsd:documentation>
@@ -212,3 +214,5 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 </xsd:schema>
+<!-- </wsdl:types>
+</wsdl:definitions> -->

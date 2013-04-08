@@ -72,7 +72,7 @@ The name and trademarks of copyright holders may NOT be used in advertising or p
 
        
   <!-- Global Attributes.  The following attributes are intended to be usable via qualified attribute names on any complex type referencing them.  -->
-  <xs:attribute name="mustUnderstand" >	
+  <xs:attribute name="mustUnderstandS11" >	
      <xs:simpleType>
      <xs:restriction base='xs:boolean'>
 	   <xs:pattern value='0|1' />

@@ -19,8 +19,8 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
-import backend.ecodex.org.SendRequest;
-import backend.ecodex.org.SendResponse;
+import backend.ecodex.org._1_0.SendRequest;
+import backend.ecodex.org._1_0.SendResponse;
 import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;

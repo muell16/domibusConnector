@@ -21,7 +21,7 @@
 		   elementFormDefault="qualified" >
 
   <xs:import namespace="http://www.w3.org/XML/1998/namespace" 
-             schemaLocation="xml.xsd"/>
+             schemaLocation="www_w3_org_2001_03_xml.xsd"/>
 
   <!-- Envelope, header and body -->
   <xs:element name="Envelope" type="tns:Envelope" />
