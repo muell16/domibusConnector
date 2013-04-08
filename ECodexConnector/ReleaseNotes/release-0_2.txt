@@ -1,4 +1,4 @@
-Changes in Release 1.1 in ECodexConnector Framework:
+Changes in Release ECodexConnector-0.2 Framework:
 
 -- in ECodexConnectorContentMapper Interface the method parameter changed from MessageContent to Message as informations out of the
    MessageDetails could be relevant for content mapping.
