@@ -32,6 +32,9 @@ public class Constants {
 
 	/** The Constant PAYLOAD_FILE_NAME_FORMAT. */
 	public static final String PAYLOAD_FILE_NAME_FORMAT = "payload_{0}.bin";
+
+	/** The Constant PAYLOAD_FILE_NAME_FORMAT. */
+	public static final String BODYLOAD_FILE_NAME_FORMAT = "bodyload.bin";
 	
 	/** The Constant MESSAGING_FILE_NAME. */
 	public static final String MESSAGING_FILE_NAME = "messaging.xml";

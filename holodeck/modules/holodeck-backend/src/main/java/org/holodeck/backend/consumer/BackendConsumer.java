@@ -62,7 +62,7 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 
 		MessageContext msgCtx = MessageContext.getCurrentMessageContext();
 		File directory = getSaveLocation(msgInfo.getMpc());
-		writeAttachments(msgCtx, directory);
+		writeAttachments(msgCtx, directory, msgInfo.getParts());
 		writeMessaging(msgCtx, directory);
 
 		Message message = saveMessage(msgInfo, directory);
@@ -196,13 +196,17 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 	 * @param parts the parts
 	 * @param directory the directory
 	 */
-	private void writeAttachments(MessageContext msgCtx, File directory) {
+	private void writeAttachments(MessageContext msgCtx, File directory, List<PartInfo> parts) {
 		if (msgCtx == null)
 			return;
 
 		Attachments atts = msgCtx.getAttachmentMap();
 
 		int counter = 1;
+		
+		if(parts!=null && parts.size()<atts.getAllContentIDs().length){
+			counter = 0;
+		}
 
 		for (String contentID : atts.getAllContentIDs()) {			
 			DataHandler dh = atts.getDataHandler(contentID);
@@ -210,13 +214,21 @@ public class BackendConsumer extends org.holodeck.backend.spring.BackendSpringBe
 			if(dh==null){
 				continue;
 			}
+			
+			if(counter == 0){
+				String payloadFileName = org.holodeck.backend.module.Constants.BODYLOAD_FILE_NAME_FORMAT;
 
-			String payloadFileName = MessageFormat.format(
-					org.holodeck.backend.module.Constants.PAYLOAD_FILE_NAME_FORMAT, counter);
+				File att = new File(directory, payloadFileName);
+				Util.writeDataHandlerToFile(dh, att);
+			}
+			else{
+				String payloadFileName = MessageFormat.format(
+						org.holodeck.backend.module.Constants.PAYLOAD_FILE_NAME_FORMAT, counter);
 
-			File att = new File(directory, payloadFileName);
-			Util.writeDataHandlerToFile(dh, att);
-
+				File att = new File(directory, payloadFileName);
+				Util.writeDataHandlerToFile(dh, att);
+			}
+			
 			counter++;
 		}
 	}
