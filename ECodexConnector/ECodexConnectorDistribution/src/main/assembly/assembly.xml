@@ -1,0 +1,156 @@
+<assembly>
+	<id>ECodexConnector</id>
+	<formats>
+		<format>zip</format>
+		<format>dir</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<!-- ==================== Copying DB Scripts ================= -->
+		<fileSet>
+			<directory>${project.basedir}/../DbScripts</directory>
+			<outputDirectory>${db.scripts.output.dir}</outputDirectory>
+		</fileSet>
+		
+		<!-- ==================== Copying Module's JAR files ================= -->
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorCommon/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorCommon
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorContentMapper/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorContentMapper
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorController/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorController
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorEvidencesToolkit/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorEvidencesToolkit
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorGatewayWebserviceClient/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorGatewayWebserviceClient
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorNationalBackendClient/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorNationalBackendClient
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ECodexConnectorSecurityToolkit/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorSecurityToolkit
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../ReleaseNotes
+			</directory>
+			<outputDirectory>${release.notes.output.dir}
+			</outputDirectory>
+			<includes>
+				<include>*.txt</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+
+	<files>
+		<!-- ==================== Copying Parent POM ================= -->
+		<file>
+			<source>${project.basedir}/../pom.xml</source>
+			<outputDirectory>${connector.build.dir}</outputDirectory>
+		</file>
+
+		<!-- ==================== Copying Module's POM files ================= -->
+
+		<file>
+			<source>${project.basedir}/../ECodexConnectorCommon/pom.xml</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorCommon
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../ECodexConnectorContentMapper/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorContentMapper
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../ECodexConnectorController/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorController
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../ECodexConnectorEvidencesToolkit/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorEvidencesToolkit
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../ECodexConnectorGatewayWebserviceClient/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorGatewayWebserviceClient
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../ECodexConnectorNationalBackendClient/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorNationalBackendClient
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../ECodexConnectorSecurityToolkit/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/ECodexConnectorSecurityToolkit
+			</outputDirectory>
+		</file>
+
+	</files>
+
+	<!-- ==================== Copying Non-Public Dependecies ================= -->
+	
+	<dependencySets>
+		<dependencySet>
+			<scope>runtime</scope>
+			<outputDirectory>${lib.output.dir}</outputDirectory>
+			<includes>
+				<include>*:dss*:*</include>
+				<include>*:ecodex-container:*</include>
+				<include>*:EvidenceBuilder:*</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
+</assembly>

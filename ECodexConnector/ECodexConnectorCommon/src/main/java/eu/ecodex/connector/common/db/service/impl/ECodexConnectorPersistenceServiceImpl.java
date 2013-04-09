@@ -176,6 +176,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
             for (ECodexMessage dbMessage : dbMessages) {
                 unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
             }
+            return unconfirmedMessages;
         }
         return null;
     }

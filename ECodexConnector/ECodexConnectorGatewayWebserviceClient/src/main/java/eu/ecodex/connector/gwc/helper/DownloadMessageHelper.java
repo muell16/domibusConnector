@@ -20,7 +20,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import backend.ecodex.org.DownloadMessageResponse;
+import backend.ecodex.org._1_0.DownloadMessageResponse;
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.PartnerEnum;

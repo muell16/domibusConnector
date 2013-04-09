@@ -7,13 +7,13 @@ import javax.xml.ws.WebServiceException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 
-import backend.ecodex.org.BackendInterface;
-import backend.ecodex.org.DownloadMessageFault;
-import backend.ecodex.org.DownloadMessageRequest;
-import backend.ecodex.org.DownloadMessageResponse;
-import backend.ecodex.org.ListPendingMessagesResponse;
-import backend.ecodex.org.SendRequest;
-import backend.ecodex.org.SendResponse;
+import backend.ecodex.org._1_0.BackendInterface;
+import backend.ecodex.org._1_0.DownloadMessageFault;
+import backend.ecodex.org._1_0.DownloadMessageRequest;
+import backend.ecodex.org._1_0.DownloadMessageResponse;
+import backend.ecodex.org._1_0.ListPendingMessagesResponse;
+import backend.ecodex.org._1_0.SendRequest;
+import backend.ecodex.org._1_0.SendResponse;
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;

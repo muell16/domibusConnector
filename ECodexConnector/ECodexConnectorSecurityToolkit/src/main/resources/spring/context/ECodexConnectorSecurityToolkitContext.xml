@@ -74,7 +74,7 @@
   <bean id="tokenIssuer" class="eu.ecodex.dss.model.token.TokenIssuer">
   	<property name="country" value="${token.issuer.country}" />
   	<property name="serviceProvider" value="${token.issuer.service.provider}" />
-  	<property name="advancedElectronicSystem" value="SIGNATURE_BASED" />
+  	<property name="advancedElectronicSystem" value="${token.issuer.aes.value}" />
   </bean>
   
   <bean id="connectorSecurityToolkitFactory" class="eu.ecodex.connector.security.ECodexConnectorSecurityToolkitFactory">

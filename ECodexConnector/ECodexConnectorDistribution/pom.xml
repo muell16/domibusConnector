@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>eu.ecodex.connector</groupId>
+		<artifactId>ECodexConnector</artifactId>
+		<version>0.2-SNAPSHOT</version>
+	</parent>
+	<artifactId>ECodexConnectorDistribution</artifactId>
+
+	<properties>
+		<connector.build.dir>ECodexConnector/</connector.build.dir>
+		<documentation.output.dir>${connector.build.dir}documentation/</documentation.output.dir>
+		<db.scripts.output.dir>${documentation.output.dir}db-scripts</db.scripts.output.dir>
+		<modules.output.dir>${connector.build.dir}modules</modules.output.dir>
+		<lib.output.dir>${connector.build.dir}lib</lib.output.dir>
+		<release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-distribution-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>eu.ecodex.connector</groupId>
+			<artifactId>ECodexConnectorController</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>
