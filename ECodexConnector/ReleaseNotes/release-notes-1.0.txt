@@ -1,0 +1,4 @@
+Changes in Release 1.0 of the ECodexConnector Framework:
+
+-- in ECodexConnectorGatewayWebserviceClient a hotfix was made in spring config. The classpath in configuration of the jaxws:client was wrong.
+-- in ECodexConnectorSecurityToolkit the Unittest is fixed.
