@@ -50,7 +50,21 @@ public class DownloadMessageHelper {
 
             int index = 0;
             for (DataHandler dh : payload) {
-                PartInfo partInfo = userMessage.getPayloadInfo().getPartInfo().get(index);
+                byte[] dhContent = null;
+                try {
+                    dhContent = convertDataHandlerContentToByteArray(dh);
+                } catch (IOException e) {
+                    throw new ECodexConnectorGatewayWebserviceClientException("Content of DataHandler of payload "
+                            + index + " could not be read out as byte[]!", e);
+                }
+
+                PartInfo partInfo = findPartInfo(userMessage.getPayloadInfo().getPartInfo(), dhContent.length);
+
+                if (partInfo == null) {
+                    throw new ECodexConnectorGatewayWebserviceClientException(
+                            "Could not find matching PartInfo to payload " + index);
+                }
+
                 if (partInfo.getDescription().getValue().equals("ECodexContentXML")) {
                     extractMessageContent(dh, message.getMessageContent());
                 } else if (matchesEvidenceType(partInfo.getDescription().getValue())) {
@@ -66,6 +80,21 @@ public class DownloadMessageHelper {
         }
 
         return message;
+    }
+
+    private PartInfo findPartInfo(List<PartInfo> partInfos, int length) {
+        for (PartInfo info : partInfos) {
+            if (info.getPartProperties() != null) {
+                for (Property p : info.getPartProperties().getProperty()) {
+                    if (p.getName().equals("length")) {
+                        if (Integer.parseInt(p.getValue()) == length) {
+                            return info;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private boolean matchesEvidenceType(String type) {

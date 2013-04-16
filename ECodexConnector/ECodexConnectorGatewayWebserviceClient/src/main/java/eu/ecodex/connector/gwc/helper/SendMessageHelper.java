@@ -11,6 +11,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
@@ -26,11 +27,13 @@ import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 public class SendMessageHelper {
 
+    private static final String XML_MIME_TYPE = "text/xml";
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorPersistenceService persistenceService;
 
@@ -92,19 +95,17 @@ public class SendMessageHelper {
             throws ECodexConnectorGatewayWebserviceClientException {
         PayloadInfo pli = new PayloadInfo();
 
-        if (message.getMessageContent() != null) {
-            DataHandler contentHandler = new DataHandler(new String(message.getMessageContent().getECodexContent()),
-                    "text/xml");
-            request.getPayload().add(contentHandler);
-            pli.getPartInfo().add(buildPartInfo("ECodexContentXML"));
+        MessageContent messageContent = message.getMessageContent();
+        if (messageContent != null) {
+            request.getPayload().add(buildByteArrayDataHandler(messageContent.getECodexContent(), XML_MIME_TYPE));
+            pli.getPartInfo().add(buildPartInfo("ECodexContentXML", messageContent.getECodexContent().length));
         }
 
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                DataSource ds = new ByteArrayDataSource(attachment.getAttachment(), attachment.getMimeType());
-                DataHandler dh = new DataHandler(ds);
-                request.getPayload().add(dh);
-                pli.getPartInfo().add(buildPartInfo(attachment.getName()));
+                request.getPayload().add(
+                        buildByteArrayDataHandler(attachment.getAttachment(), attachment.getMimeType()));
+                pli.getPartInfo().add(buildPartInfo(attachment.getName(), attachment.getAttachment().length));
             }
         }
 
@@ -112,9 +113,10 @@ public class SendMessageHelper {
             // Pick only the last produced evidence
             MessageConfirmation messageConfirmation = message.getConfirmations().get(
                     message.getConfirmations().size() - 1);
-            DataHandler evidenceHandler = new DataHandler(new String(messageConfirmation.getEvidence()), "text/xml");
-            request.getPayload().add(evidenceHandler);
-            pli.getPartInfo().add(buildPartInfo(messageConfirmation.getEvidenceType().toString()));
+            request.getPayload().add(buildByteArrayDataHandler(messageConfirmation.getEvidence(), XML_MIME_TYPE));
+            pli.getPartInfo().add(
+                    buildPartInfo(messageConfirmation.getEvidenceType().toString(),
+                            messageConfirmation.getEvidence().length));
         }
 
         userMessage.setPayloadInfo(pli);
@@ -124,11 +126,32 @@ public class SendMessageHelper {
         }
     }
 
-    private PartInfo buildPartInfo(String description) {
+    private DataHandler buildByteArrayDataHandler(byte[] data, String mimeType) {
+        DataSource ds = new ByteArrayDataSource(data, mimeType);
+        DataHandler dh = new DataHandler(ds);
+
+        return dh;
+    }
+
+    private PartInfo buildPartInfo(String description, int length) {
         PartInfo pi = new PartInfo();
         Description desc = new Description();
         desc.setValue(description);
         pi.setDescription(desc);
+
+        PartProperties properties = new PartProperties();
+
+        Property nameProperty = new Property();
+        nameProperty.setName("name");
+        nameProperty.setValue(description);
+        properties.getProperty().add(nameProperty);
+
+        Property lengthProperty = new Property();
+        lengthProperty.setName("length");
+        lengthProperty.setValue(Integer.toString(length));
+        properties.getProperty().add(lengthProperty);
+
+        pi.setPartProperties(properties);
 
         return pi;
     }
