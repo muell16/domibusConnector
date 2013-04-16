@@ -48,7 +48,7 @@ public class DownloadMessageHelper {
                 && userMessage.getPayloadInfo().getPartInfo() != null
                 && userMessage.getPayloadInfo().getPartInfo().size() == payload.size()) {
 
-            int index = 0;
+            int index = 1;
             for (DataHandler dh : payload) {
                 byte[] dhContent = null;
                 try {
@@ -58,19 +58,19 @@ public class DownloadMessageHelper {
                             + index + " could not be read out as byte[]!", e);
                 }
 
-                PartInfo partInfo = findPartInfo(userMessage.getPayloadInfo().getPartInfo(), dhContent.length);
+                String partInfo = findPartInfo(userMessage.getPayloadInfo().getPartInfo(), dhContent.length);
 
                 if (partInfo == null) {
                     throw new ECodexConnectorGatewayWebserviceClientException(
                             "Could not find matching PartInfo to payload " + index);
                 }
 
-                if (partInfo.getDescription().getValue().equals("ECodexContentXML")) {
+                if (partInfo.equals("ECodexContentXML")) {
                     extractMessageContent(dh, message.getMessageContent());
-                } else if (matchesEvidenceType(partInfo.getDescription().getValue())) {
-                    message.addConfirmation(extractMessageConfirmation(dh, partInfo.getDescription().getValue()));
+                } else if (matchesEvidenceType(partInfo)) {
+                    message.addConfirmation(extractMessageConfirmation(dh, partInfo));
                 } else {
-                    message.addAttachment(extractAttachments(dh, partInfo.getDescription().getValue()));
+                    message.addAttachment(extractAttachments(dh, partInfo));
                 }
                 index++;
             }
@@ -82,16 +82,15 @@ public class DownloadMessageHelper {
         return message;
     }
 
-    private PartInfo findPartInfo(List<PartInfo> partInfos, int length) {
+    private String findPartInfo(List<PartInfo> partInfos, int length) {
         for (PartInfo info : partInfos) {
-            if (info.getPartProperties() != null) {
-                for (Property p : info.getPartProperties().getProperty()) {
-                    if (p.getName().equals("length")) {
-                        if (Integer.parseInt(p.getValue()) == length) {
-                            return info;
-                        }
-                    }
-                }
+            String description = info.getDescription().getValue();
+            if (description.contains("$")) {
+                String[] parts = description.split("$");
+                String name = parts[0];
+                String l = parts[1];
+                if (Integer.parseInt(l) == length)
+                    return name;
             }
         }
         return null;

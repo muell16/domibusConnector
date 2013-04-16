@@ -11,7 +11,6 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
@@ -133,25 +132,30 @@ public class SendMessageHelper {
         return dh;
     }
 
-    private PartInfo buildPartInfo(String description, int length) {
+    private PartInfo buildPartInfo(String name, int length) {
         PartInfo pi = new PartInfo();
+
+        String description = name + "$" + Integer.toString(length);
+
         Description desc = new Description();
+
         desc.setValue(description);
+
         pi.setDescription(desc);
-
-        PartProperties properties = new PartProperties();
-
-        Property nameProperty = new Property();
-        nameProperty.setName("name");
-        nameProperty.setValue(description);
-        properties.getProperty().add(nameProperty);
-
-        Property lengthProperty = new Property();
-        lengthProperty.setName("length");
-        lengthProperty.setValue(Integer.toString(length));
-        properties.getProperty().add(lengthProperty);
-
-        pi.setPartProperties(properties);
+        //
+        // PartProperties properties = new PartProperties();
+        //
+        // Property nameProperty = new Property();
+        // nameProperty.setName("name");
+        // nameProperty.setValue(description);
+        // properties.getProperty().add(nameProperty);
+        //
+        // Property lengthProperty = new Property();
+        // lengthProperty.setName("length");
+        // lengthProperty.setValue(Integer.toString(length));
+        // properties.getProperty().add(lengthProperty);
+        //
+        // pi.setPartProperties(properties);
 
         return pi;
     }
