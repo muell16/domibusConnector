@@ -86,7 +86,7 @@ public class DownloadMessageHelper {
         for (PartInfo info : partInfos) {
             String description = info.getDescription().getValue();
             if (description.contains("$")) {
-                String[] parts = description.split("$");
+                String[] parts = description.split("\\$");
                 String name = parts[0];
                 String l = parts[1];
                 if (Integer.parseInt(l) == length)
