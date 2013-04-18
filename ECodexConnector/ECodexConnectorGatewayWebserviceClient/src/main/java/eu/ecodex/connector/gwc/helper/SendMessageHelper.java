@@ -1,9 +1,17 @@
 package eu.ecodex.connector.gwc.helper;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
@@ -21,6 +29,9 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
 import backend.ecodex.org._1_0.SendRequest;
 import backend.ecodex.org._1_0.SendResponse;
+import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayload;
+import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexPayloadType;
+import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ObjectFactory;
 import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
@@ -32,7 +43,12 @@ import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientE
 
 public class SendMessageHelper {
 
+    org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SendMessageHelper.class);
+
     private static final String XML_MIME_TYPE = "text/xml";
+    private static final String CONTENT_XML_NAME = "ECodexContentXML";
+    private static final ObjectFactory connectorPayloadObjectFactory = new ObjectFactory();
+
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorPersistenceService persistenceService;
 
@@ -96,15 +112,29 @@ public class SendMessageHelper {
 
         MessageContent messageContent = message.getMessageContent();
         if (messageContent != null) {
-            request.getPayload().add(buildByteArrayDataHandler(messageContent.getECodexContent(), XML_MIME_TYPE));
-            pli.getPartInfo().add(buildPartInfo("ECodexContentXML", messageContent.getECodexContent().length));
+            DataHandler payload;
+            try {
+                payload = buildECodexConnectorPayload(messageContent.getECodexContent(), CONTENT_XML_NAME,
+                        XML_MIME_TYPE, ECodexPayloadType.CONTENT_XML);
+            } catch (Exception e) {
+                throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for content XML!", e);
+            }
+            request.getPayload().add(payload);
+            pli.getPartInfo().add(buildPartInfo(CONTENT_XML_NAME));
         }
 
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                request.getPayload().add(
-                        buildByteArrayDataHandler(attachment.getAttachment(), attachment.getMimeType()));
-                pli.getPartInfo().add(buildPartInfo(attachment.getName(), attachment.getAttachment().length));
+                DataHandler payload;
+                try {
+                    payload = buildECodexConnectorPayload(attachment.getAttachment(), attachment.getName(),
+                            attachment.getMimeType(), ECodexPayloadType.ATTACHMENT);
+                } catch (Exception e) {
+                    throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for attachment "
+                            + attachment.getName(), e);
+                }
+                request.getPayload().add(payload);
+                pli.getPartInfo().add(buildPartInfo(attachment.getName()));
             }
         }
 
@@ -112,10 +142,18 @@ public class SendMessageHelper {
             // Pick only the last produced evidence
             MessageConfirmation messageConfirmation = message.getConfirmations().get(
                     message.getConfirmations().size() - 1);
-            request.getPayload().add(buildByteArrayDataHandler(messageConfirmation.getEvidence(), XML_MIME_TYPE));
-            pli.getPartInfo().add(
-                    buildPartInfo(messageConfirmation.getEvidenceType().toString(),
-                            messageConfirmation.getEvidence().length));
+
+            DataHandler payload;
+            try {
+                payload = buildECodexConnectorPayload(messageConfirmation.getEvidence(), messageConfirmation
+                        .getEvidenceType().toString(), XML_MIME_TYPE, ECodexPayloadType.EVIDENCE);
+            } catch (Exception e) {
+                throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for evidence "
+                        + messageConfirmation.getEvidenceType().toString(), e);
+            }
+
+            request.getPayload().add(payload);
+            pli.getPartInfo().add(buildPartInfo(messageConfirmation.getEvidenceType().toString()));
         }
 
         userMessage.setPayloadInfo(pli);
@@ -125,6 +163,39 @@ public class SendMessageHelper {
         }
     }
 
+    private DataHandler buildECodexConnectorPayload(byte[] data, String name, String mimeType,
+            ECodexPayloadType payloadType) throws JAXBException, IOException {
+        ECodexConnectorPayload payload = new ECodexConnectorPayload();
+
+        payload.setName(name);
+        payload.setMimeType(mimeType);
+        payload.setPayloadType(payloadType);
+
+        payload.setPayloadContent(buildByteArrayDataHandler(data, mimeType));
+
+        JAXBElement<ECodexConnectorPayload> payloadElement = connectorPayloadObjectFactory
+                .createEcodexConnectorPayload(payload);
+
+        JAXBContext ctx = JAXBContext.newInstance(ECodexConnectorPayload.class);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        Marshaller marshaller = ctx.createMarshaller();
+
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(payloadElement, byteArrayOutputStream);
+
+        byte[] buffer = byteArrayOutputStream.toByteArray();
+
+        byteArrayOutputStream.flush();
+        byteArrayOutputStream.close();
+
+        DataHandler dh = buildByteArrayDataHandler(buffer, XML_MIME_TYPE);
+
+        return dh;
+    }
+
     private DataHandler buildByteArrayDataHandler(byte[] data, String mimeType) {
         DataSource ds = new ByteArrayDataSource(data, mimeType);
         DataHandler dh = new DataHandler(ds);
@@ -132,30 +203,16 @@ public class SendMessageHelper {
         return dh;
     }
 
-    private PartInfo buildPartInfo(String name, int length) {
+    private PartInfo buildPartInfo(String name) {
         PartInfo pi = new PartInfo();
 
-        String description = name + "$" + Integer.toString(length);
+        LOGGER.debug("PartInfo Description is [{}]", name);
 
         Description desc = new Description();
 
-        desc.setValue(description);
+        desc.setValue(name);
 
         pi.setDescription(desc);
-        //
-        // PartProperties properties = new PartProperties();
-        //
-        // Property nameProperty = new Property();
-        // nameProperty.setName("name");
-        // nameProperty.setValue(description);
-        // properties.getProperty().add(nameProperty);
-        //
-        // Property lengthProperty = new Property();
-        // lengthProperty.setName("length");
-        // lengthProperty.setValue(Integer.toString(length));
-        // properties.getProperty().add(lengthProperty);
-        //
-        // pi.setPartProperties(properties);
 
         return pi;
     }
@@ -204,6 +261,10 @@ public class SendMessageHelper {
         info.setService(service);
 
         info.setConversationId(messageDetails.getConversationId());
+
+        AgreementRef ref = new AgreementRef();
+        ref.setValue("dummy");
+        info.setAgreementRef(ref);
 
         return info;
     }

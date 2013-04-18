@@ -1,1 +1,6 @@
 Changes in Release 1.1 of the ECodexConnector Framework:
+
+-- in ECodexConnectorGatewayWebserviceClient the matching between PayloadInfo in the ebms header and the payloads themselves were extended.
+    Now also the actual size of the payload has to match the size given in the property of the payloadInfo header.
+-- in ECodexConnectorCommon the name of the persistence unit is now explicitly set in the DAOs so a national implementation maybe can use
+   another persistence unit if required.

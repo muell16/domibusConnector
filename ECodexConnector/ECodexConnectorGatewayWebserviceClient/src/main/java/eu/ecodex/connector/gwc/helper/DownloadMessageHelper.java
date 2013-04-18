@@ -2,9 +2,14 @@ package eu.ecodex.connector.gwc.helper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,14 +18,16 @@ import javax.xml.ws.Holder;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import backend.ecodex.org._1_0.DownloadMessageResponse;
+import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayload;
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.PartnerEnum;
@@ -48,31 +55,34 @@ public class DownloadMessageHelper {
                 && userMessage.getPayloadInfo().getPartInfo() != null
                 && userMessage.getPayloadInfo().getPartInfo().size() == payload.size()) {
 
-            int index = 1;
             for (DataHandler dh : payload) {
-                byte[] dhContent = null;
+                String rootElement = null;
                 try {
-                    dhContent = convertDataHandlerContentToByteArray(dh);
-                } catch (IOException e) {
-                    throw new ECodexConnectorGatewayWebserviceClientException("Content of DataHandler of payload "
-                            + index + " could not be read out as byte[]!", e);
+                    rootElement = parseRootElement(dh);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-                String partInfo = findPartInfo(userMessage.getPayloadInfo().getPartInfo(), dhContent.length);
-
-                if (partInfo == null) {
-                    throw new ECodexConnectorGatewayWebserviceClientException(
-                            "Could not find matching PartInfo to payload " + index);
+                if (!rootElement.equals("ecodexConnectorPayload")) {
+                    continue;
                 }
 
-                if (partInfo.equals("ECodexContentXML")) {
-                    extractMessageContent(dh, message.getMessageContent());
-                } else if (matchesEvidenceType(partInfo)) {
-                    message.addConfirmation(extractMessageConfirmation(dh, partInfo));
-                } else {
-                    message.addAttachment(extractAttachments(dh, partInfo));
+                ECodexConnectorPayload payloadType = extractPayload(dh);
+
+                switch (payloadType.getPayloadType()) {
+                case CONTENT_XML:
+                    extractMessageContent(payloadType.getPayloadContent(), message.getMessageContent());
+                    break;
+                case EVIDENCE:
+                    message.addConfirmation(extractMessageConfirmation(payloadType));
+                    break;
+                case ATTACHMENT:
+                    message.addAttachment(extractAttachments(payloadType));
+                    break;
+                default:
+                    throw new ECodexConnectorGatewayWebserviceClientException("Payload type unknown: "
+                            + payloadType.getPayloadType().name());
                 }
-                index++;
             }
         } else {
             throw new ECodexConnectorGatewayWebserviceClientException(
@@ -82,28 +92,46 @@ public class DownloadMessageHelper {
         return message;
     }
 
-    private String findPartInfo(List<PartInfo> partInfos, int length) {
-        for (PartInfo info : partInfos) {
-            String description = info.getDescription().getValue();
-            if (description.contains("$")) {
-                String[] parts = description.split("\\$");
-                String name = parts[0];
-                String l = parts[1];
-                if (Integer.parseInt(l) == length)
-                    return name;
-            }
+    private ECodexConnectorPayload extractPayload(DataHandler dh)
+            throws ECodexConnectorGatewayWebserviceClientException {
+        // byte[] dhContent = null;
+        // try {
+        // dhContent = convertDataHandlerContentToByteArray(dh);
+        // } catch (IOException e) {
+        // throw new ECodexConnectorGatewayWebserviceClientException(
+        // "Content of DataHandler of payload could not be read out as byte[]!",
+        // e);
+        // }
+
+        ECodexConnectorPayload payload;
+        try {
+            payload = byteArrayToECodexConnectorPayload(dh);
+        } catch (Exception e) {
+            throw new ECodexConnectorGatewayWebserviceClientException(
+                    "Could not transform data handler content to connector payload object!", e);
         }
-        return null;
+
+        return payload;
+
     }
 
-    private boolean matchesEvidenceType(String type) {
-        return type.equals(ECodexEvidenceType.SUBMISSION_ACCEPTANCE.toString())
-                || type.equals(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE.toString())
-                || type.equals(ECodexEvidenceType.RELAY_REMMD_REJECTION.toString())
-                || type.equals(ECodexEvidenceType.DELIVERY.toString())
-                || type.equals(ECodexEvidenceType.NON_DELIVERY.toString())
-                || type.equals(ECodexEvidenceType.RETRIEVAL.toString())
-                || type.equals(ECodexEvidenceType.NON_RETRIEVAL.toString());
+    private ECodexConnectorPayload byteArrayToECodexConnectorPayload(DataHandler dh) throws JAXBException,
+            SAXException, IOException, ParserConfigurationException {
+
+        InputStream is = dh.getInputStream();
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        Document document = factory.newDocumentBuilder().parse(is);
+
+        JAXBContext ctx = JAXBContext.newInstance(ECodexConnectorPayload.class);
+
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+        JAXBElement<ECodexConnectorPayload> jaxbElement = unmarshaller
+                .unmarshal(document, ECodexConnectorPayload.class);
+
+        return jaxbElement.getValue();
     }
 
     public Element createEmptyListPendingMessagesRequest() {
@@ -128,12 +156,12 @@ public class DownloadMessageHelper {
         }
     }
 
-    private MessageConfirmation extractMessageConfirmation(DataHandler dh, String type) {
+    private MessageConfirmation extractMessageConfirmation(ECodexConnectorPayload payloadType) {
         MessageConfirmation confirmation = new MessageConfirmation();
-        ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(type);
+        ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(payloadType.getName());
         confirmation.setEvidenceType(evidenceType);
         try {
-            confirmation.setEvidence(convertDataHandlerContentToByteArray(dh));
+            confirmation.setEvidence(convertDataHandlerContentToByteArray(payloadType.getPayloadContent()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,16 +169,14 @@ public class DownloadMessageHelper {
         return confirmation;
     }
 
-    private MessageAttachment extractAttachments(DataHandler dh, String description) {
+    private MessageAttachment extractAttachments(ECodexConnectorPayload payloadType) {
         try {
-            ByteArrayInputStream is = (ByteArrayInputStream) dh.getContent();
-            byte[] b = new byte[is.available()];
-            is.read(b);
+            byte[] b = convertDataHandlerContentToByteArray(payloadType.getPayloadContent());
 
             MessageAttachment attachment = new MessageAttachment();
             attachment.setAttachment(b);
-            attachment.setMimeType(dh.getContentType());
-            attachment.setName(description);
+            attachment.setMimeType(payloadType.getMimeType());
+            attachment.setName(payloadType.getName());
             return attachment;
 
         } catch (IOException e) {
@@ -160,7 +186,7 @@ public class DownloadMessageHelper {
     }
 
     private byte[] convertDataHandlerContentToByteArray(DataHandler dh) throws IOException {
-        ByteArrayInputStream is = (ByteArrayInputStream) dh.getContent();
+        InputStream is = dh.getInputStream();
         byte[] b = new byte[is.available()];
         is.read(b);
         return b;
@@ -213,5 +239,27 @@ public class DownloadMessageHelper {
         }
 
         return details;
+    }
+
+    private final String parseRootElement(DataHandler dh) throws SAXException, IOException,
+            ParserConfigurationException {
+        byte[] data = convertDataHandlerContentToByteArray(dh);
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        Document document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
+
+        return getRootElementName(document);
+    }
+
+    private String getRootElementName(final Object obj) {
+        if (obj == null || !(obj instanceof Node)) {
+            throw new IllegalArgumentException("Argument must be of type Node.");
+        }
+
+        Node node = (Node) obj;
+        // Read just the element name without the namespace prefix
+        String rootElementName = node.getFirstChild().getLocalName();
+        return rootElementName;
     }
 }
