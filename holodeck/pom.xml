@@ -5,7 +5,7 @@
   <groupId>org.holodeck</groupId>
   <artifactId>holodeck</artifactId>
   <packaging>pom</packaging>
-  <version>1.1</version>
+  <version>1.2.1</version>
   <name>Holodeck</name>
   <url>http://holodeck-b2b.sourceforge.net/</url>
   <description>

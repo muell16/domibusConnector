@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.holodeck</groupId>
 		<artifactId>holodeck</artifactId>
-		<version>1.1</version>
+		<version>1.2.1</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -12,7 +12,6 @@
 	<groupId>org.holodeck</groupId>
 	<artifactId>holodeck-reliability</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
 	<name>Holodeck Reliability</name>
 
 	<distributionManagement>
