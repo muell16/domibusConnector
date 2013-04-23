@@ -1,0 +1,2 @@
+Changes in Release 1.2 of the ECodexConnector Framework:
+
