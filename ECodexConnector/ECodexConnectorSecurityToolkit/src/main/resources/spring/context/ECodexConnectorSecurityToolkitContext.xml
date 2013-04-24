@@ -39,8 +39,13 @@
   	<property name="lotlUrl" value="https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml"/>
   </bean>
   
-  <bean id="crlSource" class="eu.europa.ec.markt.dss.validation.crl.OnlineCRLSource">
+  <bean id="onlineCRLSource" class="eu.europa.ec.markt.dss.validation.crl.OnlineCRLSource">
   	<property name="urlDataLoader" ref="httpDataLoader"/>
+  </bean>
+  
+  <bean id="cachedCRLSource" class = "eu.europa.ec.markt.dss.validation.crl.JdbcCacheCRLSource">
+  	<property name="cachedSource" ref="onlineCRLSource"/>
+  	<property name="dataSource" ref="dataSource"/>
   </bean>
   
   <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation.ocsp.OnlineOCSPSource">
@@ -48,7 +53,7 @@
   </bean>
   
   <bean id="certificateVerifier" class="eu.europa.ec.markt.dss.validation.TrustedListCertificateVerifier">
-  	<property name="crlSource" ref="crlSource"/>
+  	<property name="crlSource" ref="onlineCRLSource"/>
   	<property name="ocspSource" ref="ocspSource"/>
   	<property name="trustedListCertificatesSource" ref="trustedListsCertificateSource"/>
   </bean>

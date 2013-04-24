@@ -111,7 +111,8 @@ public class SendMessageHelper {
         PayloadInfo pli = new PayloadInfo();
 
         MessageContent messageContent = message.getMessageContent();
-        if (messageContent != null) {
+        if (messageContent != null && messageContent.getECodexContent() != null
+                && messageContent.getECodexContent().length > 0) {
             DataHandler payload;
             try {
                 payload = buildECodexConnectorPayload(messageContent.getECodexContent(), CONTENT_XML_NAME,
@@ -125,16 +126,18 @@ public class SendMessageHelper {
 
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                DataHandler payload;
-                try {
-                    payload = buildECodexConnectorPayload(attachment.getAttachment(), attachment.getName(),
-                            attachment.getMimeType(), ECodexPayloadType.ATTACHMENT);
-                } catch (Exception e) {
-                    throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for attachment "
-                            + attachment.getName(), e);
+                if (attachment.getAttachment() != null && attachment.getAttachment().length > 0) {
+                    DataHandler payload;
+                    try {
+                        payload = buildECodexConnectorPayload(attachment.getAttachment(), attachment.getName(),
+                                attachment.getMimeType(), ECodexPayloadType.ATTACHMENT);
+                    } catch (Exception e) {
+                        throw new ECodexConnectorGatewayWebserviceClientException(
+                                "Could not build Payload for attachment " + attachment.getName(), e);
+                    }
+                    request.getPayload().add(payload);
+                    pli.getPartInfo().add(buildPartInfo(attachment.getName()));
                 }
-                request.getPayload().add(payload);
-                pli.getPartInfo().add(buildPartInfo(attachment.getName()));
             }
         }
 
@@ -143,17 +146,19 @@ public class SendMessageHelper {
             MessageConfirmation messageConfirmation = message.getConfirmations().get(
                     message.getConfirmations().size() - 1);
 
-            DataHandler payload;
-            try {
-                payload = buildECodexConnectorPayload(messageConfirmation.getEvidence(), messageConfirmation
-                        .getEvidenceType().toString(), XML_MIME_TYPE, ECodexPayloadType.EVIDENCE);
-            } catch (Exception e) {
-                throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for evidence "
-                        + messageConfirmation.getEvidenceType().toString(), e);
-            }
+            if (checkMessageConfirmationValid(messageConfirmation)) {
+                DataHandler payload;
+                try {
+                    payload = buildECodexConnectorPayload(messageConfirmation.getEvidence(), messageConfirmation
+                            .getEvidenceType().toString(), XML_MIME_TYPE, ECodexPayloadType.EVIDENCE);
+                } catch (Exception e) {
+                    throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for evidence "
+                            + messageConfirmation.getEvidenceType().toString(), e);
+                }
 
-            request.getPayload().add(payload);
-            pli.getPartInfo().add(buildPartInfo(messageConfirmation.getEvidenceType().toString()));
+                request.getPayload().add(payload);
+                pli.getPartInfo().add(buildPartInfo(messageConfirmation.getEvidenceType().toString()));
+            }
         }
 
         userMessage.setPayloadInfo(pli);
@@ -161,6 +166,11 @@ public class SendMessageHelper {
         if (request.getPayload().isEmpty()) {
             throw new ECodexConnectorGatewayWebserviceClientException("No payload to send. Message without content?");
         }
+    }
+
+    private boolean checkMessageConfirmationValid(MessageConfirmation messageConfirmation) {
+        return messageConfirmation != null && messageConfirmation.getEvidence() != null
+                && messageConfirmation.getEvidence().length > 0 && messageConfirmation.getEvidenceType() != null;
     }
 
     private DataHandler buildECodexConnectorPayload(byte[] data, String name, String mimeType,

@@ -31,7 +31,6 @@ public class IncomingEvidenceService implements EvidenceService {
         Message originalMessage = persistenceService.findMessageByEbmsId(messageID);
 
         MessageConfirmation confirmation = confirmationMessage.getConfirmations().get(0);
-        originalMessage.addConfirmation(confirmation);
 
         if (isMessageAlreadyRejected(originalMessage)) {
             persistenceService.rejectMessage(originalMessage);
@@ -39,6 +38,8 @@ public class IncomingEvidenceService implements EvidenceService {
                     + confirmation.getEvidenceType().toString() + " for an already rejected Message with ebms ID "
                     + messageID);
         }
+
+        originalMessage.addConfirmation(confirmation);
 
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
                 confirmation.getEvidenceType());
