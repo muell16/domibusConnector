@@ -43,10 +43,10 @@
   	<property name="urlDataLoader" ref="httpDataLoader"/>
   </bean>
   
-  <bean id="cachedCRLSource" class = "eu.europa.ec.markt.dss.validation.crl.JdbcCacheCRLSource">
+  <!-- <bean id="cachedCRLSource" class = "eu.europa.ec.markt.dss.validation.crl.JdbcCacheCRLSource">
   	<property name="cachedSource" ref="onlineCRLSource"/>
   	<property name="dataSource" ref="dataSource"/>
-  </bean>
+  </bean> -->
   
   <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation.ocsp.OnlineOCSPSource">
   	<property name="httpDataLoader" ref="ocspDataLoader"/>
