@@ -3,4 +3,5 @@ Changes in Release 1.2 of the ECodexConnector Framework:
 -- in ECodexConnectorController module a bugfix for the handling of incoming negative evidence was made. 
 -- in ECodexConnectorController the error handling of incoming messages and the returning of evidences for incoming messages was improved.
 -- in ECodexConnectorGatewayWebserviceClient some checks were implemented so that no empty payloads are sent.
+-- in ECodexConnectorGatewayWebserviceClient the dummy AgreementRef is commented out now.
 -- in ECodexConnectorSecurityToolkit the usage of cachedCRLSource was prepared.  

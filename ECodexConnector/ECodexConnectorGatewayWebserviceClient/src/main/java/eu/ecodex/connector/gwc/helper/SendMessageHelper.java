@@ -11,7 +11,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
@@ -272,9 +271,9 @@ public class SendMessageHelper {
 
         info.setConversationId(messageDetails.getConversationId());
 
-        AgreementRef ref = new AgreementRef();
-        ref.setValue("dummy");
-        info.setAgreementRef(ref);
+        // AgreementRef ref = new AgreementRef();
+        // ref.setValue("dummy");
+        // info.setAgreementRef(ref);
 
         return info;
     }
