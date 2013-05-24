@@ -31,17 +31,22 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException(e1);
         }
 
-        String hashValue = buildAndPersistHashValue(message);
+        String hashValue = null;
+        try {
+            hashValue = buildAndPersistHashValue(message);
+        } catch (ECodexConnectorControllerException e) {
+            createSubmissionRejectionAndReturnIt(message, "0");
+        }
 
         if (connectorProperties.isUseContentMapper()) {
             try {
                 contentMapper.mapNationalToInternational(message);
             } catch (ECodexConnectorContentMapperException cme) {
                 createSubmissionRejectionAndReturnIt(message, hashValue);
-                cme.printStackTrace();
+                throw new ECodexConnectorControllerException(cme);
             } catch (ImplementationMissingException ime) {
                 createSubmissionRejectionAndReturnIt(message, hashValue);
-                ime.printStackTrace();
+                throw new ECodexConnectorControllerException(ime);
             }
         }
 
@@ -91,10 +96,18 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
     }
 
-    private String buildAndPersistHashValue(Message message) {
-        // whatever the source for the hash will be - by now it is the pdf
-        // document
-        String hash = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
+    private String buildAndPersistHashValue(Message message) throws ECodexConnectorControllerException {
+
+        String hash = null;
+        if (message.getMessageContent().getPdfDocument() != null
+                && message.getMessageContent().getPdfDocument().length > 0) {
+
+            // whatever the source for the hash will be - by now it is the pdf
+            // document
+            hash = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
+        } else {
+            throw new ECodexConnectorControllerException("The PDF content is null or empty! Message must not be sent!");
+        }
 
         // now persist the hash value into the database entry for the
         // message

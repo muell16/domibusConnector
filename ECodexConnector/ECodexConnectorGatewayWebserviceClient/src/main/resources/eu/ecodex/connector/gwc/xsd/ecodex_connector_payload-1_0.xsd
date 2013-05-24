@@ -24,6 +24,7 @@
 		<restriction base="string">
 			<enumeration value="EVIDENCE"/>
 			<enumeration value="CONTENT_XML"/>
+			<enumeration value="CONTENT_PDF"/>
 			<enumeration value="ATTACHMENT"/>
 		</restriction>
 	</simpleType>

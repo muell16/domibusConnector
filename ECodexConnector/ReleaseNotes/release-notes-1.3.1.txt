@@ -1,0 +1,5 @@
+Changes in Release 1.3.1 of the ECodexConnector Framework:
+
+-- in ECodexConnectorCommon the PartnerEnum was extended with further participants.
+-- in ECodexConnectorGatewayWebserviceClient the payload for the message to the gateway was extended by CONTENT_PDF. This is for participants that do not use the
+   SecurityToolkit and therefore not generate and ASIC-S container.

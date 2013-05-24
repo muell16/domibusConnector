@@ -82,6 +82,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         }
 
         sendEvidenceToBackToGateway(originalMessage, ActionEnum.DeliveryNonDeliveryToRecipient, nonDelivery);
+
+        persistenceService.rejectMessage(originalMessage);
     }
 
     private void createRelayREMMDEvidenceAndSendIt(Message originalMessage, boolean isAcceptance)
@@ -95,6 +97,10 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         }
 
         sendEvidenceToBackToGateway(originalMessage, ActionEnum.RelayREMMDAcceptanceRejection, messageConfirmation);
+
+        if (!isAcceptance) {
+            persistenceService.rejectMessage(originalMessage);
+        }
     }
 
     private void sendEvidenceToBackToGateway(Message originalMessage, ActionEnum action,

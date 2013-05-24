@@ -79,6 +79,9 @@ public class DownloadMessageHelper {
                 case ATTACHMENT:
                     message.addAttachment(extractAttachments(payloadType));
                     break;
+                case CONTENT_PDF:
+                    extractMessageContentPDF(payloadType.getPayloadContent(), message.getMessageContent());
+                    break;
                 default:
                     throw new ECodexConnectorGatewayWebserviceClientException("Payload type unknown: "
                             + payloadType.getPayloadType().name());
@@ -151,6 +154,14 @@ public class DownloadMessageHelper {
     private void extractMessageContent(DataHandler dh, MessageContent content) {
         try {
             content.setECodexContent(convertDataHandlerContentToByteArray(dh));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void extractMessageContentPDF(DataHandler dh, MessageContent content) {
+        try {
+            content.setPdfDocument(convertDataHandlerContentToByteArray(dh));
         } catch (IOException e) {
             e.printStackTrace();
         }

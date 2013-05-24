@@ -45,7 +45,9 @@ public class SendMessageHelper {
     org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SendMessageHelper.class);
 
     private static final String XML_MIME_TYPE = "text/xml";
+    private static final String PDF_MIME_TYPE = "application/octet-stream";
     private static final String CONTENT_XML_NAME = "ECodexContentXML";
+    private static final String CONTENT_PDF_NAME = "ContentPDF";
     private static final ObjectFactory connectorPayloadObjectFactory = new ObjectFactory();
 
     private ECodexConnectorProperties connectorProperties;
@@ -123,6 +125,7 @@ public class SendMessageHelper {
             pli.getPartInfo().add(buildPartInfo(CONTENT_XML_NAME));
         }
 
+        boolean asicsFound = false;
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
                 if (attachment.getAttachment() != null && attachment.getAttachment().length > 0) {
@@ -130,14 +133,32 @@ public class SendMessageHelper {
                     try {
                         payload = buildECodexConnectorPayload(attachment.getAttachment(), attachment.getName(),
                                 attachment.getMimeType(), ECodexPayloadType.ATTACHMENT);
+
                     } catch (Exception e) {
                         throw new ECodexConnectorGatewayWebserviceClientException(
                                 "Could not build Payload for attachment " + attachment.getName(), e);
                     }
                     request.getPayload().add(payload);
                     pli.getPartInfo().add(buildPartInfo(attachment.getName()));
+
+                    if (attachment.getName().endsWith(".asics")) {
+                        asicsFound = true;
+                    }
                 }
             }
+        }
+
+        if (!asicsFound && messageContent != null && messageContent.getPdfDocument() != null
+                && messageContent.getPdfDocument().length > 0) {
+            DataHandler payload;
+            try {
+                payload = buildECodexConnectorPayload(messageContent.getECodexContent(), CONTENT_PDF_NAME,
+                        PDF_MIME_TYPE, ECodexPayloadType.CONTENT_PDF);
+            } catch (Exception e) {
+                throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for content XML!", e);
+            }
+            request.getPayload().add(payload);
+            pli.getPartInfo().add(buildPartInfo(CONTENT_XML_NAME));
         }
 
         if (message.getConfirmations() != null) {
