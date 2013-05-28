@@ -18,6 +18,19 @@
 		<property name="driverClassName" value="${connector.database.driverClassName}" />
 		<property name="url" value="${connector.database.url}" />
 	</bean>
+	
+	<bean id="dataSource" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${connector.database.driverClassName}" />
+        <property name="jdbcUrl" value="${connector.database.url}" />
+        <property name="user" value="${connector.database.username}" />
+        <property name="password" value="${connector.database.password}" /> 
+
+        <!-- these are C3P0 properties -->
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+        <property name="minPoolSize" value="${c3p0.minPoolSize}" />
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+ </bean>
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
