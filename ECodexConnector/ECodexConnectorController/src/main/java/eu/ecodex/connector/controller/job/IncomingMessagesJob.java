@@ -26,7 +26,7 @@ public class IncomingMessagesJob {
         } catch (ECodexConnectorControllerException e) {
             LOGGER.error("Exception while proceeding job handleIncomingMessages: ", e);
         }
-        LOGGER.info("Job for handling incoming messages finished in {} ms.",
+        LOGGER.debug("Job for handling incoming messages finished in {} ms.",
                 (System.currentTimeMillis() - start.getTime()));
     }
 }

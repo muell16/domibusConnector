@@ -1,5 +1,8 @@
 package eu.ecodex.connector.controller.message;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
@@ -14,6 +17,8 @@ import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 public class OutgoingEvidenceService implements EvidenceService {
+
+    static Logger LOGGER = LoggerFactory.getLogger(OutgoingEvidenceService.class);
 
     ECodexConnectorPersistenceService persistenceService;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
@@ -67,6 +72,9 @@ public class OutgoingEvidenceService implements EvidenceService {
         }
 
         persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
+
+        LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(),
+                originalMessage.getDbMessage().getId());
     }
 
     private MessageConfirmation generateEvidence(ECodexEvidenceType type, Message originalMessage)

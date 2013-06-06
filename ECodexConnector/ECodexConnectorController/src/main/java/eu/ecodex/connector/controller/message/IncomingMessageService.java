@@ -70,6 +70,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
         persistenceService.setMessageDeliveredToNationalSystem(message);
 
+        LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessage().getId());
+
     }
 
     private void createNonDeliveryEvidenceAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {

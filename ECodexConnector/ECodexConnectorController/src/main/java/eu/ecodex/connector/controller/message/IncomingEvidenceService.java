@@ -1,5 +1,8 @@
 package eu.ecodex.connector.controller.message;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
@@ -11,6 +14,8 @@ import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 public class IncomingEvidenceService implements EvidenceService {
+
+    static Logger LOGGER = LoggerFactory.getLogger(IncomingEvidenceService.class);
 
     ECodexConnectorPersistenceService persistenceService;
     ECodexConnectorNationalBackendClient nationalBackendClient;
@@ -59,6 +64,9 @@ public class IncomingEvidenceService implements EvidenceService {
                         .getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION))) {
             persistenceService.confirmMessage(originalMessage);
         }
+
+        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
+                originalMessage.getDbMessage().getId());
     }
 
     private boolean isMessageAlreadyRejected(Message message) {

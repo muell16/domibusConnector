@@ -20,7 +20,7 @@ public class CheckEvidencesJob {
 
         checkOutgoing.checkEvidences();
 
-        LOGGER.info("Job for checking evidence timer finished in {} ms.",
+        LOGGER.debug("Job for checking evidence timer finished in {} ms.",
                 (System.currentTimeMillis() - start.getTime()));
     }
 

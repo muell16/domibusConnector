@@ -33,7 +33,7 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
 
     @Override
     public void handleMessages() throws ECodexConnectorControllerException {
-        LOGGER.info("Started handle gateway Messages!");
+        LOGGER.debug("Started handle gateway Messages!");
 
         String[] messageIDs = null;
         try {
@@ -43,6 +43,7 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
         }
 
         if (messageIDs != null && messageIDs.length > 0) {
+            LOGGER.info("Found {} incoming messages on gateway to handle...", messageIDs.length);
             for (String messageId : messageIDs) {
                 try {
                     handleMessage(messageId);
@@ -51,7 +52,7 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
                 }
             }
         } else {
-            LOGGER.info("No pending messages on gateway!");
+            LOGGER.debug("No pending messages on gateway!");
         }
     }
 

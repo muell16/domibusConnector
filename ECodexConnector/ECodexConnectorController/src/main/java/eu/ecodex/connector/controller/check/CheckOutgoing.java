@@ -43,7 +43,7 @@ public class CheckOutgoing {
     }
 
     public void checkEvidences() throws ECodexConnectorControllerException {
-        LOGGER.info("Check outgoing triggered.");
+        LOGGER.debug("Check outgoing triggered.");
         Date start = new Date();
 
         List<Message> unconfirmedOutgoing = persistenceService.findOutgoingUnconfirmedMessages();
@@ -82,7 +82,7 @@ public class CheckOutgoing {
             }
         }
 
-        LOGGER.info("Check outgoing finished in {} ms.", (System.currentTimeMillis() - start.getTime()));
+        LOGGER.debug("Check outgoing finished in {} ms.", (System.currentTimeMillis() - start.getTime()));
     }
 
     private boolean isStillUnconfirmed(Message message) {

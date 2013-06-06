@@ -22,19 +22,19 @@ public class OutgoingMessagesJob {
         LOGGER.info("Job for handling outgoing messages triggered.");
         Date start = new Date();
 
-        LOGGER.info("Handling messages....");
+        LOGGER.debug("Handling messages....");
         try {
             outgoingController.handleMessages();
         } catch (ECodexConnectorControllerException e) {
             LOGGER.error("Exception while proceeding job handleOutgoingMessages: ", e);
         }
-        LOGGER.info("Handling confirmations....");
+        LOGGER.debug("Handling confirmations....");
         try {
             outgoingController.handleEvidences();
         } catch (ECodexConnectorControllerException e) {
             LOGGER.error("Exception while proceeding job handleOutgoingMessages: ", e);
         }
-        LOGGER.info("Job for handling outgoing messages finished in {} ms.",
+        LOGGER.debug("Job for handling outgoing messages finished in {} ms.",
                 (System.currentTimeMillis() - start.getTime()));
     }
 }

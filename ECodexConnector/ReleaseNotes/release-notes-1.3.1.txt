@@ -4,3 +4,4 @@ Changes in Release 1.3.1 of the ECodexConnector Framework:
 -- in ECodexConnectorCommon connection pooling for database connections introduced. This is a performance issue.
 -- in ECodexConnectorGatewayWebserviceClient the payload for the message to the gateway was extended by CONTENT_PDF. This is for participants that do not use the
    SecurityToolkit and therefore not generate and ASIC-S container.
+-- in ECodexConnectorController the logging was improved.

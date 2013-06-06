@@ -94,6 +94,8 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
 
+        LOGGER.info("Successfully sent message with id {} to gateway.", message.getDbMessage().getId());
+
     }
 
     private String buildAndPersistHashValue(Message message) throws ECodexConnectorControllerException {

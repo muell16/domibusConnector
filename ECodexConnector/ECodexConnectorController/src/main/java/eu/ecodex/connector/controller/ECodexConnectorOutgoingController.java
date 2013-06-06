@@ -48,6 +48,8 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
 
         if (messages != null && messages.length > 0) {
 
+            LOGGER.info("Found {} outgoing messages on national system to handle...", messages.length);
+
             for (String messageId : messages) {
 
                 try {
@@ -58,7 +60,7 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
                 }
             }
         } else {
-            LOGGER.info("There are no unsent outgoing messages on national system!");
+            LOGGER.debug("There are no unsent outgoing messages on national system!");
         }
     }
 
@@ -90,7 +92,7 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
 
     @Override
     public void handleEvidences() throws ECodexConnectorControllerException {
-        LOGGER.info("Started to check national implementation for pending confirmations!");
+        LOGGER.debug("Started to check national implementation for pending confirmations!");
 
         Message[] confirmationMessages = null;
         try {
@@ -104,6 +106,8 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
         }
 
         if (confirmationMessages != null && confirmationMessages.length > 0) {
+
+            LOGGER.info("Found {} confirmations on national system to handle...", confirmationMessages.length);
 
             for (Message confirmationMessage : confirmationMessages) {
 
