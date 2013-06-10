@@ -1,4 +1,0 @@
-<swa:upload xmlns:swa="http://service.swa.sample/xsd">
-  <swa:name>Brad-Pit.jpg</swa:name>
-  <picture href="cid:bradPicture" />
-</swa:upload>
