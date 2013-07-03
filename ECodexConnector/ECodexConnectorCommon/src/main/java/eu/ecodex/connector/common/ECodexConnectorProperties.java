@@ -15,6 +15,7 @@ public class ECodexConnectorProperties {
     long timeoutRelayREMMD;
     long timeoutDelivery;
     long timeoutRetrieval;
+    boolean checkEvidences;
 
     public String getGatewayEndpointAddress() {
         return gatewayEndpointAddress;
@@ -118,6 +119,14 @@ public class ECodexConnectorProperties {
 
     public void setTimeoutRetrieval(long timeoutRetrieval) {
         this.timeoutRetrieval = timeoutRetrieval;
+    }
+
+    public boolean isCheckEvidences() {
+        return checkEvidences;
+    }
+
+    public void setCheckEvidences(boolean checkEvidences) {
+        this.checkEvidences = checkEvidences;
     }
 
 }

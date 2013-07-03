@@ -43,46 +43,50 @@ public class CheckOutgoing {
     }
 
     public void checkEvidences() throws ECodexConnectorControllerException {
-        LOGGER.debug("Check outgoing triggered.");
-        Date start = new Date();
+        if (connectorProperties.isCheckEvidences()) {
+            LOGGER.debug("Check outgoing triggered.");
+            Date start = new Date();
 
-        List<Message> unconfirmedOutgoing = persistenceService.findOutgoingUnconfirmedMessages();
-        if (unconfirmedOutgoing != null && !unconfirmedOutgoing.isEmpty()) {
-            for (Message unconfirmed : unconfirmedOutgoing) {
-                Date delivered = unconfirmed.getDbMessage().getDeliveredToGateway();
-                Date now = new Date();
-                long relayRemmdTimout = delivered.getTime() + connectorProperties.getTimeoutRelayREMMD();
-                long deliveryTimeout = delivered.getTime() + connectorProperties.getTimeoutDelivery();
-                long retrievalTimeout = delivered.getTime() + connectorProperties.getTimeoutRetrieval();
+            List<Message> unconfirmedOutgoing = persistenceService.findOutgoingUnconfirmedMessages();
+            if (unconfirmedOutgoing != null && !unconfirmedOutgoing.isEmpty()) {
+                for (Message unconfirmed : unconfirmedOutgoing) {
+                    Date delivered = unconfirmed.getDbMessage().getDeliveredToGateway();
+                    Date now = new Date();
+                    long relayRemmdTimout = delivered.getTime() + connectorProperties.getTimeoutRelayREMMD();
+                    long deliveryTimeout = delivered.getTime() + connectorProperties.getTimeoutDelivery();
+                    long retrievalTimeout = delivered.getTime() + connectorProperties.getTimeoutRetrieval();
 
-                if (now.getTime() > relayRemmdTimout) {
+                    if (connectorProperties.getTimeoutRelayREMMD() > 0 && now.getTime() > relayRemmdTimout) {
 
-                    boolean relayRemmdFound = checkEvidencesForRelayRemmd(unconfirmed);
-                    if (!relayRemmdFound) {
-                        createRelayRemmdRejectionAndSendIt(unconfirmed);
+                        boolean relayRemmdFound = checkEvidencesForRelayRemmd(unconfirmed);
+                        if (!relayRemmdFound) {
+                            createRelayRemmdRejectionAndSendIt(unconfirmed);
+                            continue;
+                        }
+                    }
+
+                    if (connectorProperties.getTimeoutDelivery() > 0 && isStillUnconfirmed(unconfirmed)
+                            && now.getTime() > deliveryTimeout) {
+                        boolean deliveryFound = checkEvidencesForDelivery(unconfirmed);
+                        if (!deliveryFound) {
+                            createNonDeliveryAndSendIt(unconfirmed);
+                            continue;
+                        }
+                    }
+
+                    if (connectorProperties.getTimeoutRetrieval() > 0 && isStillUnconfirmed(unconfirmed)
+                            && now.getTime() > retrievalTimeout) {
+                        boolean retrievalFound = checkEvidencesForRetrieval(unconfirmed);
+                        if (!retrievalFound)
+                            createNonRetrievalAndSendIt(unconfirmed);
                         continue;
                     }
-                }
 
-                if (isStillUnconfirmed(unconfirmed) && now.getTime() > deliveryTimeout) {
-                    boolean deliveryFound = checkEvidencesForDelivery(unconfirmed);
-                    if (!deliveryFound) {
-                        createNonDeliveryAndSendIt(unconfirmed);
-                        continue;
-                    }
                 }
-
-                if (isStillUnconfirmed(unconfirmed) && now.getTime() > retrievalTimeout) {
-                    boolean retrievalFound = checkEvidencesForRetrieval(unconfirmed);
-                    if (!retrievalFound)
-                        createNonRetrievalAndSendIt(unconfirmed);
-                    continue;
-                }
-
             }
-        }
 
-        LOGGER.debug("Check outgoing finished in {} ms.", (System.currentTimeMillis() - start.getTime()));
+            LOGGER.debug("Check outgoing finished in {} ms.", (System.currentTimeMillis() - start.getTime()));
+        }
     }
 
     private boolean isStillUnconfirmed(Message message) {

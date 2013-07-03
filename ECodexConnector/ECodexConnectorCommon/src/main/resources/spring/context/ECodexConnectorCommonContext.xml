@@ -19,7 +19,7 @@
 		<property name="timeoutRelayREMMD" value="${connector.evidence.relayremmd.timeout.ms}" />
 		<property name="timeoutDelivery" value="${connector.evidence.delivery.timeout.ms}" />
 		<property name="timeoutRetrieval" value="${connector.evidence.retrieval.timeout.ms}" />
-
+		<property name="checkEvidences" value="${connector.use.evidences.timeout}" />
 	</bean>
 
 	<bean id="persistenceService"
