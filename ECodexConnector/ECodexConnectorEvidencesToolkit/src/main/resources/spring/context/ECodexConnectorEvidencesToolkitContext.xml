@@ -12,10 +12,10 @@
   </bean>
   
   <bean id="evidenceBuilder" class="eu.ecodex.evidences.ECodexEvidenceBuilder">
-  	<constructor-arg value="${java.keystore.path}"/>
-  	<constructor-arg value="${java.keystore.password}"/>
-  	<constructor-arg value="${key.alias}"/>
-  	<constructor-arg value="${key.password}"/>
+  	<constructor-arg value="${connector.evidences.keystore.path}"/>
+  	<constructor-arg value="${connector.evidences.keystore.password}"/>
+  	<constructor-arg value="${connector.evidences.key.alias}"/>
+  	<constructor-arg value="${connector.evidences.key.password}"/>
   </bean>
   
   <bean id="hashValueBuilder" class="eu.ecodex.connector.evidences.HashValueBuilder">
