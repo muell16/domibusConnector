@@ -262,9 +262,9 @@ public class SendMessageHelper {
 
         From from = new From();
         PartyId partyId = new PartyId();
-        if (messageDetails.getFromPartner() != null) {
-            partyId.setValue(messageDetails.getFromPartner().getName());
-            from.setRole(messageDetails.getFromPartner().getRole());
+        if (messageDetails.getFromParty() != null) {
+            partyId.setValue(messageDetails.getFromParty().getPartyId());
+            from.setRole(messageDetails.getFromParty().getRole());
         } else {
             partyId.setValue(connectorProperties.getGatewayName());
             from.setRole(connectorProperties.getGatewayRole());
@@ -274,9 +274,9 @@ public class SendMessageHelper {
 
         To to = new To();
         PartyId partyId2 = new PartyId();
-        partyId2.setValue(messageDetails.getToPartner().getName());
+        partyId2.setValue(messageDetails.getToParty().getPartyId());
         to.getPartyId().add(partyId2);
-        to.setRole(messageDetails.getToPartner().getRole());
+        to.setRole(messageDetails.getToParty().getRole());
         partyInfo.setTo(to);
 
         return partyInfo;
@@ -285,9 +285,9 @@ public class SendMessageHelper {
     private CollaborationInfo buildCollaborationInfo(MessageDetails messageDetails) {
         CollaborationInfo info = new CollaborationInfo();
 
-        info.setAction(messageDetails.getAction().toString());
+        info.setAction(messageDetails.getAction().getAction());
         Service service = new Service();
-        service.setValue(messageDetails.getService().toString());
+        service.setValue(messageDetails.getService().getService());
         info.setService(service);
 
         info.setConversationId(messageDetails.getConversationId());
@@ -297,6 +297,12 @@ public class SendMessageHelper {
         // info.setAgreementRef(ref);
 
         return info;
+    }
+
+    public boolean isMessageEvidence(Message message) {
+        return message.getMessageDetails().getAction().getAction().equals("RelayREMMDAcceptanceRejection")
+                || message.getMessageDetails().getAction().getAction().equals("DeliveryNonDeliveryToRecipient")
+                || message.getMessageDetails().getAction().getAction().equals("RetrievalNonRetrievalToRecipient");
     }
 
 }

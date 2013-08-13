@@ -3,8 +3,8 @@ package eu.ecodex.connector.controller.message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageConfirmation;
@@ -44,13 +44,13 @@ public class OutgoingEvidenceService implements EvidenceService {
         ECodexEvidenceType evidenceType = confirmationMessage.getConfirmations().get(0).getEvidenceType();
 
         MessageDetails details = new MessageDetails();
-        ActionEnum action = createEvidenceAction(evidenceType);
+        ECodexAction action = createEvidenceAction(evidenceType);
         details.setAction(action);
         details.setService(confirmationMessage.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-        details.setFromPartner(confirmationMessage.getMessageDetails().getFromPartner());
-        details.setToPartner(confirmationMessage.getMessageDetails().getToPartner());
+        details.setFromParty(confirmationMessage.getMessageDetails().getFromParty());
+        details.setToParty(confirmationMessage.getMessageDetails().getToParty());
 
         MessageConfirmation confirmation = null;
         try {
@@ -93,16 +93,16 @@ public class OutgoingEvidenceService implements EvidenceService {
         }
     }
 
-    private ActionEnum createEvidenceAction(ECodexEvidenceType type) throws ECodexConnectorControllerException {
+    private ECodexAction createEvidenceAction(ECodexEvidenceType type) throws ECodexConnectorControllerException {
         switch (type) {
         case DELIVERY:
-            return ActionEnum.DeliveryNonDeliveryToRecipient;
+            return persistenceService.getDeliveryNonDeliveryToRecipientAction();
         case NON_DELIVERY:
-            return ActionEnum.DeliveryNonDeliveryToRecipient;
+            return persistenceService.getDeliveryNonDeliveryToRecipientAction();
         case RETRIEVAL:
-            return ActionEnum.RetrievalNonRetrievalToRecipient;
+            return persistenceService.getRetrievalNonRetrievalToRecipientAction();
         case NON_RETRIEVAL:
-            return ActionEnum.RetrievalNonRetrievalToRecipient;
+            return persistenceService.getRetrievalNonRetrievalToRecipientAction();
         default:
             throw new ECodexConnectorControllerException("Illegal Evidence type! No Action found!");
         }

@@ -28,10 +28,11 @@ import org.xml.sax.SAXException;
 
 import backend.ecodex.org._1_0.DownloadMessageResponse;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayload;
-import eu.ecodex.connector.common.enums.ActionEnum;
+import eu.ecodex.connector.common.db.model.ECodexAction;
+import eu.ecodex.connector.common.db.model.ECodexParty;
+import eu.ecodex.connector.common.db.model.ECodexService;
+import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.enums.PartnerEnum;
-import eu.ecodex.connector.common.enums.ServiceEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
@@ -40,6 +41,12 @@ import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 public class DownloadMessageHelper {
+
+    private ECodexConnectorPersistenceService persistenceService;
+
+    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
 
     public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
             throws ECodexConnectorGatewayWebserviceClientException {
@@ -212,7 +219,7 @@ public class DownloadMessageHelper {
 
         String actionString = userMessage.getCollaborationInfo().getAction();
         try {
-            ActionEnum action = ActionEnum.valueOf(actionString);
+            ECodexAction action = persistenceService.getAction(actionString);
             details.setAction(action);
         } catch (IllegalArgumentException e) {
             // LOGGER.error("No action {} found!", actionString);
@@ -220,19 +227,19 @@ public class DownloadMessageHelper {
 
         String serviceString = userMessage.getCollaborationInfo().getService().getValue();
         try {
-            ServiceEnum service = ServiceEnum.valueOf(serviceString);
+            ECodexService service = persistenceService.getService(serviceString);
             details.setService(service);
         } catch (IllegalArgumentException e) {
             // LOGGER.error("No service {} found!", actionString);
         }
 
         From from = userMessage.getPartyInfo().getFrom();
-        PartnerEnum fromPartner = PartnerEnum.findValue(from.getPartyId().get(0).getValue(), from.getRole());
-        details.setFromPartner(fromPartner);
+        ECodexParty fromPartner = persistenceService.getParty(from.getPartyId().get(0).getValue(), from.getRole());
+        details.setFromParty(fromPartner);
 
         To to = userMessage.getPartyInfo().getTo();
-        PartnerEnum toPartner = PartnerEnum.findValue(to.getPartyId().get(0).getValue(), to.getRole());
-        details.setToPartner(toPartner);
+        ECodexParty toPartner = persistenceService.getParty(to.getPartyId().get(0).getValue(), to.getRole());
+        details.setToParty(toPartner);
 
         MessageProperties mp = userMessage.getMessageProperties();
         if (mp != null) {

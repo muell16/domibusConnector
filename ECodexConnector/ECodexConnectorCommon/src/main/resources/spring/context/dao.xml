@@ -51,5 +51,9 @@
 		class="eu.ecodex.connector.common.db.dao.impl.ECodexEvidenceDaoImpl" />
 		
 	<bean id="messageDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexMessageDaoImpl" />
+	
+	<bean id="actionDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexActionDaoImpl" />
+	<bean id="partyDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexPartyDaoImpl" />
+	<bean id="serviceDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexServiceDaoImpl" />
 
 </beans>

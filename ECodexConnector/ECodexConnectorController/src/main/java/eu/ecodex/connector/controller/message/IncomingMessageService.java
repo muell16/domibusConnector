@@ -3,7 +3,7 @@ package eu.ecodex.connector.controller.message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.enums.ActionEnum;
+import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.exception.PersistenceException;
@@ -83,7 +83,9 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Error creating NonDelivery evidence for message!", e);
         }
 
-        sendEvidenceToBackToGateway(originalMessage, ActionEnum.DeliveryNonDeliveryToRecipient, nonDelivery);
+        ECodexAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+
+        sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
 
         persistenceService.rejectMessage(originalMessage);
     }
@@ -98,14 +100,16 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Error creating RelayREMMD evidence for message!", e);
         }
 
-        sendEvidenceToBackToGateway(originalMessage, ActionEnum.RelayREMMDAcceptanceRejection, messageConfirmation);
+        ECodexAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+
+        sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
         if (!isAcceptance) {
             persistenceService.rejectMessage(originalMessage);
         }
     }
 
-    private void sendEvidenceToBackToGateway(Message originalMessage, ActionEnum action,
+    private void sendEvidenceToBackToGateway(Message originalMessage, ECodexAction action,
             MessageConfirmation messageConfirmation) {
 
         originalMessage.addConfirmation(messageConfirmation);
@@ -117,8 +121,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
         details.setService(originalMessage.getMessageDetails().getService());
         details.setAction(action);
-        details.setFromPartner(originalMessage.getMessageDetails().getToPartner());
-        details.setToPartner(originalMessage.getMessageDetails().getFromPartner());
+        details.setFromParty(originalMessage.getMessageDetails().getToParty());
+        details.setToParty(originalMessage.getMessageDetails().getFromParty());
 
         Message evidenceMessage = new Message(details, messageConfirmation);
 

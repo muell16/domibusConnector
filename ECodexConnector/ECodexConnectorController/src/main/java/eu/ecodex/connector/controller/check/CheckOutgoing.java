@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.ECodexConnectorProperties;
+import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
@@ -134,7 +134,9 @@ public class CheckOutgoing {
             throw new ECodexConnectorControllerException("Error creating RelayREMMDRejection for message!", e);
         }
 
-        sendEvidenceToNationalSystem(originalMessage, relayRemMDRejection, ActionEnum.RelayREMMDAcceptanceRejection);
+        ECodexAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+
+        sendEvidenceToNationalSystem(originalMessage, relayRemMDRejection, action);
     }
 
     private void createNonDeliveryAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
@@ -147,7 +149,9 @@ public class CheckOutgoing {
             throw new ECodexConnectorControllerException("Error creating NonDelivery for message!", e);
         }
 
-        sendEvidenceToNationalSystem(originalMessage, nonDelivery, ActionEnum.DeliveryNonDeliveryToRecipient);
+        ECodexAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+
+        sendEvidenceToNationalSystem(originalMessage, nonDelivery, action);
     }
 
     private void createNonRetrievalAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
@@ -160,11 +164,13 @@ public class CheckOutgoing {
             throw new ECodexConnectorControllerException("Error creating NonRetrieval for message!", e);
         }
 
-        sendEvidenceToNationalSystem(originalMessage, nonRetrieval, ActionEnum.RetrievalNonRetrievalToRecipient);
+        ECodexAction action = persistenceService.getRetrievalNonRetrievalToRecipientAction();
+
+        sendEvidenceToNationalSystem(originalMessage, nonRetrieval, action);
     }
 
     private void sendEvidenceToNationalSystem(Message originalMessage, MessageConfirmation confirmation,
-            ActionEnum evidenceAction) throws ECodexConnectorControllerException {
+            ECodexAction evidenceAction) throws ECodexConnectorControllerException {
 
         originalMessage.addConfirmation(confirmation);
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),

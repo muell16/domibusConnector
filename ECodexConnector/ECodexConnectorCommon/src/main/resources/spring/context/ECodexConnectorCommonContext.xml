@@ -26,6 +26,9 @@
 		class="eu.ecodex.connector.common.db.service.impl.ECodexConnectorPersistenceServiceImpl">
 		<property name="messageDao" ref="messageDao" />
 		<property name="evidenceDao" ref="evidenceDao" />
+		<property name="actionDao" ref="actionDao" />
+		<property name="partyDao" ref="partyDao" />
+		<property name="serviceDao" ref="serviceDao" />
 	</bean>
 
 </beans>

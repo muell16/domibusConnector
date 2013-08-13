@@ -8,10 +8,16 @@ import java.util.List;
 import org.hibernate.lob.ClobImpl;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.ecodex.connector.common.db.dao.ECodexActionDao;
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
 import eu.ecodex.connector.common.db.dao.ECodexMessageDao;
+import eu.ecodex.connector.common.db.dao.ECodexPartyDao;
+import eu.ecodex.connector.common.db.dao.ECodexServiceDao;
+import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
 import eu.ecodex.connector.common.db.model.ECodexMessage;
+import eu.ecodex.connector.common.db.model.ECodexParty;
+import eu.ecodex.connector.common.db.model.ECodexService;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
@@ -24,6 +30,9 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
     private ECodexMessageDao messageDao;
     private ECodexEvidenceDao evidenceDao;
+    private ECodexActionDao actionDao;
+    private ECodexServiceDao serviceDao;
+    private ECodexPartyDao partyDao;
 
     public void setMessageDao(ECodexMessageDao messageDao) {
         this.messageDao = messageDao;
@@ -31,6 +40,18 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
     public void setEvidenceDao(ECodexEvidenceDao evidenceDao) {
         this.evidenceDao = evidenceDao;
+    }
+
+    public void setActionDao(ECodexActionDao actionDao) {
+        this.actionDao = actionDao;
+    }
+
+    public void setServiceDao(ECodexServiceDao serviceDao) {
+        this.serviceDao = serviceDao;
+    }
+
+    public void setPartyDao(ECodexPartyDao partyDao) {
+        this.partyDao = partyDao;
     }
 
     @Override
@@ -235,6 +256,41 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         messageConfirmation.setEvidence(stringClob.getBytes());
 
         return messageConfirmation;
+    }
+
+    @Override
+    public ECodexAction getAction(String action) {
+        return actionDao.getAction(action);
+    }
+
+    @Override
+    public ECodexService getService(String service) {
+        return serviceDao.getService(service);
+    }
+
+    @Override
+    public ECodexParty getParty(String partyId, String role) {
+        return partyDao.getParty(partyId, role);
+    }
+
+    @Override
+    public ECodexParty getPartyByPartyId(String partyId) {
+        return partyDao.getPartyByPartyId(partyId);
+    }
+
+    @Override
+    public ECodexAction getRelayREMMDAcceptanceRejectionAction() {
+        return getAction("RelayREMMDAcceptanceRejection");
+    }
+
+    @Override
+    public ECodexAction getDeliveryNonDeliveryToRecipientAction() {
+        return getAction("DeliveryNonDeliveryToRecipient");
+    }
+
+    @Override
+    public ECodexAction getRetrievalNonRetrievalToRecipientAction() {
+        return getAction("RetrievalNonRetrievalToRecipient");
     }
 
 }

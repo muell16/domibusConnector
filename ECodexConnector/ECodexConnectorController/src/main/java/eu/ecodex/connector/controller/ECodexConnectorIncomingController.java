@@ -3,7 +3,6 @@ package eu.ecodex.connector.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.controller.message.EvidenceService;
@@ -82,9 +81,9 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
     }
 
     private boolean isMessageEvidence(Message message) {
-        return message.getMessageDetails().getAction().equals(ActionEnum.RelayREMMDAcceptanceRejection)
-                || message.getMessageDetails().getAction().equals(ActionEnum.DeliveryNonDeliveryToRecipient)
-                || message.getMessageDetails().getAction().equals(ActionEnum.RetrievalNonRetrievalToRecipient);
+        return message.getMessageDetails().getAction().getAction().equals("RelayREMMDAcceptanceRejection")
+                || message.getMessageDetails().getAction().getAction().equals("DeliveryNonDeliveryToRecipient")
+                || message.getMessageDetails().getAction().getAction().equals("RetrievalNonRetrievalToRecipient");
     }
 
 }
