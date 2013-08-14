@@ -25,6 +25,7 @@ import org.etsi.uri._02640.v2.EntityNameType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
+import org.junit.After;
 import org.junit.Test;
 
 import eu.ecodex.evidences.ECodexEvidenceBuilder;
@@ -44,6 +45,11 @@ public class SubmissionAcceptanceRejectionTest  {
 	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
 	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
 	
+	private static final String PATH_OUTPUT_FILES = "src/test/resources/";
+	private static final String SUBMISSION_ACCEPTANCE_FILE = "submissionAcceptance.xml";
+	private static final String RELAYREMMD_ACCEPTANCE_FILE = "relayremmdAcceptance.xml";
+	private static final String DELIVERY_ACCEPTANCE_FILE = "deliveryAcceptance.xml";
+	private static final String RETRIEVAL_ACCEPTANCE_FILE = "retrievalAcceptance.xml";
 	
 	private EDeliveryDetails createEntityDetailsObject() {
 		
@@ -69,6 +75,7 @@ public class SubmissionAcceptanceRejectionTest  {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private REMDispatchType createRemDispatchTypeObject() throws MalformedURLException, DatatypeConfigurationException {
 		GregorianCalendar cal = new GregorianCalendar();
 		XMLGregorianCalendar testDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
@@ -139,6 +146,8 @@ public class SubmissionAcceptanceRejectionTest  {
 	}
 	
 	
+	
+	
 	@Test
 	public void evidenceChain() throws DatatypeConfigurationException, ECodexEvidenceBuilderException, IOException {
 		
@@ -154,30 +163,46 @@ public class SubmissionAcceptanceRejectionTest  {
 		msgDetails.setSenderAddress("senderAddress");
 		
 		byte[] subm = builder.createSubmissionAcceptanceRejection(true, null, details, msgDetails);
-		writeFile(subm, "src/test/resources/submissionAcceptance.xml");
+		writeFile(subm, PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(subm));
 		
 		byte[] relayrem = builder.createRelayREMMDAcceptanceRejection(false, null, details, subm);
-		writeFile(relayrem, "src/test/resources/relayremmdAcceptance.xml");
+		writeFile(relayrem, PATH_OUTPUT_FILES+RELAYREMMD_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(relayrem));
 		
 		byte[] delivery = builder.createDeliveryNonDeliveryToRecipient(true, null, details, relayrem);
-		writeFile(delivery, "src/test/resources/deliveryAcceptance.xml");
+		writeFile(delivery, PATH_OUTPUT_FILES+DELIVERY_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(delivery));
 		
 		byte[] retrieval = builder.createRetrievalNonRetrievalByRecipient(true, null, details, delivery);
-		writeFile(retrieval, "src/test/resources/retrievalAcceptance.xml");
+		writeFile(retrieval, PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(retrieval));
 		
 				
 		
 	}
-	
+			
 	private void writeFile(byte[] data, String fileName) throws IOException {
 		FileOutputStream fos = new FileOutputStream(new File(fileName));
 		fos.write(data);
 		fos.flush();
 		fos.close();
+	}
+	
+	@After
+	public void deleteOutputFiles() {
+	    File file = new File(PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
+	    file.delete();
+	    
+	    file = new File(PATH_OUTPUT_FILES+RELAYREMMD_ACCEPTANCE_FILE);
+	    file.delete();
+	    
+	    file = new File(PATH_OUTPUT_FILES+DELIVERY_ACCEPTANCE_FILE);
+	    file.delete();
+	    
+	    file = new File(PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
+	    file.delete();
+	    
 	}
 	
 }
