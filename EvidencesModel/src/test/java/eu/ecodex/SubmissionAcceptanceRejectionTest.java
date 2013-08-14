@@ -1,7 +1,6 @@
 package eu.ecodex;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,12 +8,9 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.util.GregorianCalendar;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.etsi.uri._01903.v1_3.AnyType;
 import org.etsi.uri._02640.soapbinding.v1.DeliveryConstraints;
@@ -30,7 +26,6 @@ import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import eu.ecodex.evidences.ECodexEvidenceBuilder;
 import eu.ecodex.evidences.EvidenceBuilder;
@@ -42,14 +37,12 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
-import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
-import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
 public class SubmissionAcceptanceRejectionTest  {
 	
-	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:///home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
-	private static EvidenceUtils utils = new EvidenceUtilsXades("file:///home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
 	
 	
 	private EDeliveryDetails createEntityDetailsObject() {
@@ -155,7 +148,7 @@ public class SubmissionAcceptanceRejectionTest  {
 		ECodexMessageDetails msgDetails = new ECodexMessageDetails();
 		msgDetails.setEbmsMessageId("ebmsMessageId");
 		msgDetails.setHashAlgorithm("hashAlgorithm");
-		msgDetails.setHashValue(new byte[]{127, 0, 127});
+		msgDetails.setHashValue("abc".getBytes());
 		msgDetails.setNationalMessageId("nationalMessageId");
 		msgDetails.setRecipientAddress("recipientAddress");
 		msgDetails.setSenderAddress("senderAddress");
