@@ -29,6 +29,7 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
 import eu.spocseu.edeliverygw.evidences.Evidence;
 import eu.spocseu.edeliverygw.evidences.RelayREMMDAcceptanceRejection;
+import eu.spocseu.edeliverygw.evidences.RelayREMMDFailure;
 import eu.spocseu.edeliverygw.evidences.RetrievalNonRetrievalByRecipient;
 import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
@@ -121,6 +122,23 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 	return signedByteArray;
     }
 
+    
+    @Override
+    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+	    throws ECodexEvidenceBuilderException {
+
+    	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+
+    	RelayREMMDFailure evidence = new RelayREMMDFailure(evidenceIssuerDetails, previousEvidence);
+
+    	if (eventReason != null)
+    	    evidence.setEventReason(eventReason);
+
+    	byte[] signedByteArray = signEvidence(evidence, true);
+
+    	return signedByteArray;
+    }
+    
     @Override
     public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
 	    throws ECodexEvidenceBuilderException {
