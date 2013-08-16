@@ -10,10 +10,12 @@ package org.etsi.uri._02640.v2;
 
 import java.math.BigInteger;
 import java.util.List;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+
 import org.etsi.uri._01903.v1_3.AnyType;
 
 

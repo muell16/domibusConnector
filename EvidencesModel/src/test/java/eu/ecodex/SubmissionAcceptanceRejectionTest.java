@@ -1,7 +1,6 @@
 package eu.ecodex;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,12 +8,9 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.util.GregorianCalendar;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.etsi.uri._01903.v1_3.AnyType;
 import org.etsi.uri._02640.soapbinding.v1.DeliveryConstraints;
@@ -29,8 +25,8 @@ import org.etsi.uri._02640.v2.EntityNameType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
+import org.junit.After;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import eu.ecodex.evidences.ECodexEvidenceBuilder;
 import eu.ecodex.evidences.EvidenceBuilder;
@@ -42,15 +38,18 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
-import eu.spocseu.edeliverygw.evidences.DeliveryNonDeliveryToRecipient;
-import eu.spocseu.edeliverygw.evidences.SubmissionAcceptanceRejection;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
 public class SubmissionAcceptanceRejectionTest  {
 	
-	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:///home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
-	private static EvidenceUtils utils = new EvidenceUtilsXades("file:///home/dev/Data/git/e-CODEX/national_connector_de/National_Connector_DE/src/main/resources/keystore/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
 	
+	private static final String PATH_OUTPUT_FILES = "src/test/resources/";
+	private static final String SUBMISSION_ACCEPTANCE_FILE = "submissionAcceptance.xml";
+	private static final String RELAYREMMD_ACCEPTANCE_FILE = "relayremmdAcceptance.xml";
+	private static final String DELIVERY_ACCEPTANCE_FILE = "deliveryAcceptance.xml";
+	private static final String RETRIEVAL_ACCEPTANCE_FILE = "retrievalAcceptance.xml";
 	
 	private EDeliveryDetails createEntityDetailsObject() {
 		
@@ -76,6 +75,7 @@ public class SubmissionAcceptanceRejectionTest  {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private REMDispatchType createRemDispatchTypeObject() throws MalformedURLException, DatatypeConfigurationException {
 		GregorianCalendar cal = new GregorianCalendar();
 		XMLGregorianCalendar testDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
@@ -146,6 +146,8 @@ public class SubmissionAcceptanceRejectionTest  {
 	}
 	
 	
+	
+	
 	@Test
 	public void evidenceChain() throws DatatypeConfigurationException, ECodexEvidenceBuilderException, IOException {
 		
@@ -155,36 +157,52 @@ public class SubmissionAcceptanceRejectionTest  {
 		ECodexMessageDetails msgDetails = new ECodexMessageDetails();
 		msgDetails.setEbmsMessageId("ebmsMessageId");
 		msgDetails.setHashAlgorithm("hashAlgorithm");
-		msgDetails.setHashValue(new byte[]{127, 0, 127});
+		msgDetails.setHashValue("abc".getBytes());
 		msgDetails.setNationalMessageId("nationalMessageId");
 		msgDetails.setRecipientAddress("recipientAddress");
 		msgDetails.setSenderAddress("senderAddress");
 		
 		byte[] subm = builder.createSubmissionAcceptanceRejection(true, null, details, msgDetails);
-		writeFile(subm, "src/test/resources/submissionAcceptance.xml");
+		writeFile(subm, PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(subm));
 		
 		byte[] relayrem = builder.createRelayREMMDAcceptanceRejection(false, null, details, subm);
-		writeFile(relayrem, "src/test/resources/relayremmdAcceptance.xml");
+		writeFile(relayrem, PATH_OUTPUT_FILES+RELAYREMMD_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(relayrem));
 		
 		byte[] delivery = builder.createDeliveryNonDeliveryToRecipient(true, null, details, relayrem);
-		writeFile(delivery, "src/test/resources/deliveryAcceptance.xml");
+		writeFile(delivery, PATH_OUTPUT_FILES+DELIVERY_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(delivery));
 		
 		byte[] retrieval = builder.createRetrievalNonRetrievalByRecipient(true, null, details, delivery);
-		writeFile(retrieval, "src/test/resources/retrievalAcceptance.xml");
+		writeFile(retrieval, PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(retrieval));
 		
 				
 		
 	}
-	
+			
 	private void writeFile(byte[] data, String fileName) throws IOException {
 		FileOutputStream fos = new FileOutputStream(new File(fileName));
 		fos.write(data);
 		fos.flush();
 		fos.close();
+	}
+	
+	@After
+	public void deleteOutputFiles() {
+	    File file = new File(PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
+	    file.delete();
+	    
+	    file = new File(PATH_OUTPUT_FILES+RELAYREMMD_ACCEPTANCE_FILE);
+	    file.delete();
+	    
+	    file = new File(PATH_OUTPUT_FILES+DELIVERY_ACCEPTANCE_FILE);
+	    file.delete();
+	    
+	    file = new File(PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
+	    file.delete();
+	    
 	}
 	
 }

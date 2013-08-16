@@ -47,13 +47,26 @@ import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
  * @version $Revision: 1.0 $
  */
 public class ECodexEvidenceBuilderTest {
-
+    
+    private static final String PATH_OUTPUT_FILES = "src/test/resources/";
+    
+    private static final String DELIVERY_UNKNOWN_ADDRESS_FILE = "outputfileDeliveryNonDeliveryToRecipientUnknownAdress.xml";
+    private static final String DELIVERY_NO_REASON_FILE = "outputfileDeliveryNonDeliveryToRecipientNoreason.xml";
+    
+    private static final String RETRIEVAL_UNKNOWN_ADDRESS_FILE = "outputfileRetrievalNonRetrievalByRecipientUnkownadress.xml";
+    private static final String RETRIEVAL_NO_REASON_FILE = "outputfileRetrievalNonRetrievalByRecipientNoreason.xml";
+    
+    private static final String SUBMISSION_NO_REJECTION = "outputfileSubmissionAcceptanceNORejection.xml";
+    private static final String SUBMISSION_YES_REJECTION = "outputfileSubmissionAcceptanceYESRejection.xml";
+    
     String javaKeyStorePath = "file:src/main/resources/evidenceBuilderStore.jks";
     String javaKeyStorePassword = "123456";
     String alias = "evidenceBuilderKey";
     String keyPassword = "123456";
     XMLSignatureFactory sigFactory = null;
     DocumentBuilderFactory dbf;
+    
+    
 
     /**
      * Run the ECodexEvidenceBuilder(String,String,String,String) constructor
@@ -131,7 +144,7 @@ public class ECodexEvidenceBuilderTest {
 
 	signedxmlData = ecodexEvidenceBuilder.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason, evidenceIssuerDetails, previousEvidence);
 	// output the signed Xmlfile
-	File xmloutputfile = new File("src/test/resources/outputfileDeliveryNonDeliveryToRecipientUnknownAdress.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES+DELIVERY_UNKNOWN_ADDRESS_FILE);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -171,7 +184,7 @@ public class ECodexEvidenceBuilderTest {
 
 	signedxmlData = ecodexEvidenceBuilder.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason, evidenceIssuerDetails, previousEvidence);
 	// output the signed Xmlfile
-	File xmloutputfile = new File("src/test/resources/outputfileDeliveryNonDeliveryToRecipientNoreason.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES+DELIVERY_NO_REASON_FILE);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -226,7 +239,7 @@ public class ECodexEvidenceBuilderTest {
 
 	signedxmlData = ecodexEvidenceBuilder.createRetrievalNonRetrievalByRecipient(isDelivery, eventReason, evidenceIssuerDetails, previousEvidence);
 	// output the signed Xmlfile
-	File xmloutputfile = new File("src/test/resources/outputfileRetrievalNonRetrievalByRecipientNoreason.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES+RETRIEVAL_NO_REASON_FILE);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -284,7 +297,7 @@ public class ECodexEvidenceBuilderTest {
 
 	signedxmlData = ecodexEvidenceBuilder.createRetrievalNonRetrievalByRecipient(isDelivery, eventReason, evidenceIssuerDetails, previousEvidence);
 	// output the signed Xmlfile
-	File xmloutputfile = new File("src/test/resources/outputfileRetrievalNonRetrievalByRecipientUnkownadress.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES+RETRIEVAL_UNKNOWN_ADDRESS_FILE);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -321,7 +334,7 @@ public class ECodexEvidenceBuilderTest {
 	// run methode createSubmissionAcceptanceRejection
 	signedxmlData = ecodexEvidenceBuilder.createSubmissionAcceptanceRejection(isAcceptance, eventReason, evidenceIssuerDetails, messageDetails);
 	// output the signed Xmlfile
-	File xmloutputfile = new File("src/test/resources/outputfileSubmissionAcceptanceNORejection.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES+SUBMISSION_NO_REJECTION);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -358,7 +371,7 @@ public class ECodexEvidenceBuilderTest {
 	// run methode createSubmissionAcceptanceRejection
 	signedxmlData = ecodexEvidenceBuilder.createSubmissionAcceptanceRejection(isAcceptance, eventReason, evidenceIssuerDetails, messageDetails);
 	// output the signed Xmlfile
-	File xmloutputfile = new File("src/test/resources/outputfileSubmissionAcceptanceYESRejection.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES+SUBMISSION_YES_REJECTION);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -517,7 +530,24 @@ public class ECodexEvidenceBuilderTest {
      */
     @After
     public void tearDown() throws Exception {
-	// Add additional tear down code here
+	File file = new File(PATH_OUTPUT_FILES + DELIVERY_UNKNOWN_ADDRESS_FILE);
+	file.delete();
+	
+	file = new File(PATH_OUTPUT_FILES + DELIVERY_NO_REASON_FILE);
+	file.delete();
+	
+	file = new File(PATH_OUTPUT_FILES + RETRIEVAL_UNKNOWN_ADDRESS_FILE);
+	file.delete();
+	
+	file = new File(PATH_OUTPUT_FILES + RETRIEVAL_NO_REASON_FILE);
+	file.delete();
+	
+	file = new File(PATH_OUTPUT_FILES + SUBMISSION_NO_REJECTION);
+	file.delete();
+	
+	file = new File(PATH_OUTPUT_FILES + SUBMISSION_YES_REJECTION);
+	file.delete();
+	
     }
 
     /**

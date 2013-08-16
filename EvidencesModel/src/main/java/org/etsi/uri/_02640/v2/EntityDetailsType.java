@@ -10,11 +10,13 @@ package org.etsi.uri._02640.v2;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+
 import org.etsi.uri._01903.v1_3.AnyType;
 import org.etsi.uri._02231.v2.ElectronicAddressType;
 

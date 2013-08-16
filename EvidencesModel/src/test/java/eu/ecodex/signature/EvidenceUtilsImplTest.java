@@ -44,7 +44,10 @@ import org.w3c.dom.NodeList;
  * @version $Revision: 1.0 $
  */
 public class EvidenceUtilsImplTest {
-
+    
+    private static final String PATH_OUTPUT_FILES = "src/test/resources/";
+    private static final String SIGN_BYTE_ARRAY_FILE = "SignByteArrayTestoutputFile.xml";
+    
     XMLSignatureFactory signFactory;
 
     String javaKeyStorePath = "file:src/main/resources/evidenceBuilderStore.jks";
@@ -173,7 +176,7 @@ public class EvidenceUtilsImplTest {
 
 	byte[] signedxmlData = fixture.signByteArray(xmlData);
 
-	File xmloutputfile = new File("src/test/resources/SignByteArrayTestoutputFile.xml");
+	File xmloutputfile = new File(PATH_OUTPUT_FILES + SIGN_BYTE_ARRAY_FILE);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
@@ -265,6 +268,8 @@ public class EvidenceUtilsImplTest {
      */
     @After
     public void tearDown() throws Exception {
+	File file = new File(PATH_OUTPUT_FILES + SIGN_BYTE_ARRAY_FILE);
+	file.delete();
     }
 
     /**
