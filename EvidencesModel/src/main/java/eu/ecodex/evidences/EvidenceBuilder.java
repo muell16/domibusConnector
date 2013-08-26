@@ -65,6 +65,22 @@ public interface EvidenceBuilder {
     /**
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
+
+     * @param eventReasons
+     *            List of Reasons for an Error.
+     * @param evidenceIssuerDetails
+     *            Details of the connector creating this evidence
+     * @param previousEvidence
+     *            A SubmissionAcceptanceRejection - Evidence
+     * @return signed RelayREMMDFailure - Evidence as byte array.
+     * @throws ECodexEvidenceBuilderException
+     */
+    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    
+    /**
+     * Method for building the second evidence from the first one and sign it
+     * with an enveloped signature.
      * 
      * @param isDelivery
      *            EventCode ("http:uri.etsi.org/REM/Event#Delivery",

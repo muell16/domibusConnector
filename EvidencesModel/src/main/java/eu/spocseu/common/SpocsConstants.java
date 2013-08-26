@@ -72,7 +72,10 @@ public class SpocsConstants
 				"http:uri.etsi.org/02640/Event#Acceptance",
 				"http:uri.etsi.org/02640/Event#Rejection"),
 
-		RELAY_REM_MD_FAILURE("RelayREMMDFailure", "", ""),
+		RELAY_REM_MD_FAILURE(
+				"RelayREMMDFailure", 
+				"",
+				"http:uri.etsi.org/02640/Event#DeliveryExpiration"),
 
 		DELIVERY_NON_DELIVERY_TO_RECIPIENT(
 				"DeliveryNonDeliveryToRecipient",
@@ -89,7 +92,11 @@ public class SpocsConstants
 				"http:uri.etsi.org/02640/Event#Acceptance",
 				"http:uri.etsi.org/02640/Event#Rejection"),
 
-		RECEIVED_BY_NON_REM_SYSTEM("ReceivedByNonREMSystem", "", "");
+		RECEIVED_BY_NON_REM_SYSTEM(
+				"ReceivedByNonREMSystem", 
+				"", 
+				"");
+		
 		private String name;
 		private String faultEventCode;
 		private String successEventCode;
