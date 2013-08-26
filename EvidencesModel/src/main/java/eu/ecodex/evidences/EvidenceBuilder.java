@@ -67,8 +67,7 @@ public interface EvidenceBuilder {
      * with an enveloped signature.
 
      * @param eventReasons
-     *            List of Reasons for an Error. Ignored when isAcceptance ==
-     *            true
+     *            List of Reasons for an Error.
      * @param evidenceIssuerDetails
      *            Details of the connector creating this evidence
      * @param previousEvidence
