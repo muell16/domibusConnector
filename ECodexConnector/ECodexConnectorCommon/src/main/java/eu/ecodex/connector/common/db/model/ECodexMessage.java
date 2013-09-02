@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -56,6 +57,9 @@ public class ECodexMessage {
 
     @Column(name = "UPDATED", nullable = false)
     private Date updated;
+
+    @OneToOne(mappedBy = "message", fetch = FetchType.EAGER)
+    private ECodexMessageInfo messageInfo;
 
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
     private Set<ECodexEvidence> evidences;
@@ -146,6 +150,14 @@ public class ECodexMessage {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public ECodexMessageInfo getMessageInfo() {
+        return messageInfo;
+    }
+
+    public void setMessageInfo(ECodexMessageInfo messageInfo) {
+        this.messageInfo = messageInfo;
     }
 
     public Set<ECodexEvidence> getEvidences() {

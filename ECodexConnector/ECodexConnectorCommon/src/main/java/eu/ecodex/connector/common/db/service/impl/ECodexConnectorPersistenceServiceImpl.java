@@ -11,11 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.ecodex.connector.common.db.dao.ECodexActionDao;
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
 import eu.ecodex.connector.common.db.dao.ECodexMessageDao;
+import eu.ecodex.connector.common.db.dao.ECodexMessageInfoDao;
 import eu.ecodex.connector.common.db.dao.ECodexPartyDao;
 import eu.ecodex.connector.common.db.dao.ECodexServiceDao;
 import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
 import eu.ecodex.connector.common.db.model.ECodexMessage;
+import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
 import eu.ecodex.connector.common.db.model.ECodexParty;
 import eu.ecodex.connector.common.db.model.ECodexService;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
@@ -33,6 +35,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     private ECodexActionDao actionDao;
     private ECodexServiceDao serviceDao;
     private ECodexPartyDao partyDao;
+    private ECodexMessageInfoDao messageInfoDao;
 
     public void setMessageDao(ECodexMessageDao messageDao) {
         this.messageDao = messageDao;
@@ -54,6 +57,10 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         this.partyDao = partyDao;
     }
 
+    public void setMessageInfoDao(ECodexMessageInfoDao messageInfoDao) {
+        this.messageInfoDao = messageInfoDao;
+    }
+
     @Override
     @Transactional
     public void persistMessageIntoDatabase(Message message, ECodexMessageDirection direction)
@@ -71,6 +78,21 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
             throw new PersistenceException(
                     "Could not persist message into database. Most likely the nationalMessageId or the ebmsMessageId already exist. ",
                     cve);
+        }
+
+        ECodexMessageInfo dbMessageInfo = new ECodexMessageInfo();
+        dbMessageInfo.setMessage(dbMessage);
+        dbMessageInfo.setAction(message.getMessageDetails().getAction());
+        dbMessageInfo.setService(message.getMessageDetails().getService());
+        dbMessageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
+        dbMessageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+        dbMessageInfo.setFrom(message.getMessageDetails().getFromParty());
+        dbMessageInfo.setTo(message.getMessageDetails().getToParty());
+
+        try {
+            messageInfoDao.persistMessageInfo(dbMessageInfo);
+        } catch (Exception e) {
+            throw new PersistenceException("Could not persist message info into database. ", e);
         }
 
         message.setDbMessage(dbMessage);
@@ -222,6 +244,15 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         details.setEbmsMessageId(dbMessage.getEbmsMessageId());
         details.setNationalMessageId(dbMessage.getNationalMessageId());
         details.setConversationId(dbMessage.getConversationId());
+        ECodexMessageInfo messageInfo = dbMessage.getMessageInfo();
+        if (messageInfo != null) {
+            details.setAction(messageInfo.getAction());
+            details.setService(messageInfo.getService());
+            details.setFinalRecipient(messageInfo.getFinalRecipient());
+            details.setOriginalSender(messageInfo.getOriginalSender());
+            details.setFromParty(messageInfo.getFrom());
+            details.setToParty(messageInfo.getTo());
+        }
 
         Message message = new Message(details);
 
