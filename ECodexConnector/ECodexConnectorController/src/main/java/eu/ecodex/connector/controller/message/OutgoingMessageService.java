@@ -48,6 +48,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 createSubmissionRejectionAndReturnIt(message, hashValue);
                 throw new ECodexConnectorControllerException(ime);
             }
+            persistenceService.mergeMessageWithDatabase(message);
         }
 
         if (connectorProperties.isUseSecurityToolkit()) {

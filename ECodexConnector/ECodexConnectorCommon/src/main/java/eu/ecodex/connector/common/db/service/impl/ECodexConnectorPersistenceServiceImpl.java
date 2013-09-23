@@ -95,6 +95,8 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
             throw new PersistenceException("Could not persist message info into database. ", e);
         }
 
+        dbMessage.setMessageInfo(dbMessageInfo);
+
         message.setDbMessage(dbMessage);
         message.getMessageDetails().setDbMessageId(dbMessage.getId());
     }
@@ -105,6 +107,16 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         messageDao.mergeMessage(message.getDbMessage());
 
+        ECodexMessageInfo messageInfo = message.getDbMessage().getMessageInfo();
+
+        messageInfo.setAction(message.getMessageDetails().getAction());
+        messageInfo.setService(message.getMessageDetails().getService());
+        messageInfo.setFrom(message.getMessageDetails().getFromParty());
+        messageInfo.setTo(message.getMessageDetails().getToParty());
+        messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
+        messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+
+        messageInfoDao.mergeMessageInfo(messageInfo);
     }
 
     @Override

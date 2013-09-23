@@ -56,6 +56,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
                 createNonDeliveryEvidenceAndSendIt(message);
                 throw new ECodexConnectorControllerException(e);
             }
+            persistenceService.mergeMessageWithDatabase(message);
         }
 
         try {

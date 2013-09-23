@@ -32,6 +32,7 @@ import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayl
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexPayloadType;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ObjectFactory;
 import eu.ecodex.connector.common.ECodexConnectorProperties;
+import eu.ecodex.connector.common.db.model.ECodexParty;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
@@ -69,7 +70,7 @@ public class SendMessageHelper {
 
         userMessage.setMessageProperties(buildMessageProperties(message));
 
-        userMessage.setPartyInfo(buildPartyInfo(message.getMessageDetails()));
+        userMessage.setPartyInfo(buildPartyInfo(message));
 
         userMessage.setCollaborationInfo(buildCollaborationInfo(message.getMessageDetails()));
 
@@ -257,7 +258,9 @@ public class SendMessageHelper {
         }
     }
 
-    private PartyInfo buildPartyInfo(MessageDetails messageDetails) {
+    private PartyInfo buildPartyInfo(Message message) {
+        MessageDetails messageDetails = message.getMessageDetails();
+
         PartyInfo partyInfo = new PartyInfo();
 
         From from = new From();
@@ -268,6 +271,12 @@ public class SendMessageHelper {
         } else {
             partyId.setValue(connectorProperties.getGatewayName());
             from.setRole(connectorProperties.getGatewayRole());
+            ECodexParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
+                    connectorProperties.getGatewayRole());
+            if (fromParty != null) {
+                messageDetails.setFromParty(fromParty);
+                persistenceService.mergeMessageWithDatabase(message);
+            }
         }
         from.getPartyId().add(partyId);
         partyInfo.setFrom(from);
