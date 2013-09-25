@@ -1,5 +1,7 @@
 package eu.ecodex.evidences;
 
+import org.etsi.uri._02640.v2.EventReasonType;
+
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.spocseu.edeliverygw.REMErrorEvent;
@@ -39,9 +41,12 @@ public interface EvidenceBuilder {
      * @return signed SubmissionAcceptanceRejection - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	// klara
+//    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+//	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException;
+	  public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
 	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException;
-
+	
     /**
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
@@ -59,9 +64,11 @@ public interface EvidenceBuilder {
      * @return signed RelayREMMDAcceptanceRejection - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
-
+//    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
+    	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    
     /**
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
@@ -75,8 +82,10 @@ public interface EvidenceBuilder {
      * @return signed RelayREMMDFailure - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+//    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    public byte[] createRelayREMMDFailure(EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
+    	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
     
     /**
      * Method for building the second evidence from the first one and sign it
@@ -96,8 +105,10 @@ public interface EvidenceBuilder {
      * @return signed DeliveryNonDeliveryToRecipient - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+//    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
+    	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;    
 
     /**
      * Method for building the third evidence from the second one and sign it
@@ -117,7 +128,9 @@ public interface EvidenceBuilder {
      * @return signed RetrievalNonRetrievalByRecipient - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+//    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
+    	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
 
 }

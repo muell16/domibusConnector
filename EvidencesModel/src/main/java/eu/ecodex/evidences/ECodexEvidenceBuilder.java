@@ -18,6 +18,7 @@ import org.etsi.uri._02640.soapbinding.v1.MsgMetaData;
 import org.etsi.uri._02640.soapbinding.v1.Originators;
 import org.etsi.uri._02640.soapbinding.v1.REMDispatchType;
 import org.etsi.uri._02640.v2.EntityDetailsType;
+import org.etsi.uri._02640.v2.EventReasonType;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
@@ -45,8 +46,70 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 	signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
     }
 
+    //klara
+//    @Override
+//    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, ECodexMessageDetails messageDetails)
+//	    throws ECodexEvidenceBuilderException {
+//	Date start = new Date();
+//	
+//	// This is the message and all related information
+//	REMDispatchType dispatch = new REMDispatchType();
+//
+//	MsgMetaData msgMetaData = new MsgMetaData();
+//	EntityDetailsType recipient = new EntityDetailsType();
+//	EntityDetailsType sender = new EntityDetailsType();
+//	try {
+//	    recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
+//	    sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
+//	} catch (MalformedURLException e) {
+//	    e.printStackTrace();
+//	}
+//
+//	Destinations destinations = new Destinations();
+//	destinations.setRecipient(sender);
+//
+//	Originators originators = new Originators();
+//	originators.setFrom(recipient);
+//	originators.setReplyTo(recipient);
+//	originators.setSender(recipient);
+//
+//	MsgIdentification msgIdentification = new MsgIdentification();
+//	msgIdentification.setMessageID(messageDetails.getEbmsMessageId());
+//
+//	msgMetaData.setDestinations(destinations);
+//	msgMetaData.setOriginators(originators);
+//	msgMetaData.setMsgIdentification(msgIdentification);
+//
+//	GregorianCalendar cal = new GregorianCalendar();
+//	XMLGregorianCalendar initialSend = null;
+//	try {
+//	    initialSend = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+//	} catch (DatatypeConfigurationException e1) {
+//	    e1.printStackTrace();
+//	}
+//	DeliveryConstraints deliveryConstraints = new DeliveryConstraints();
+//	deliveryConstraints.setInitialSend(initialSend);
+//
+//	msgMetaData.setDeliveryConstraints(deliveryConstraints);
+//
+//	dispatch.setMsgMetaData(msgMetaData);
+//
+//	SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(evidenceIssuerDetails, dispatch, isAcceptance);
+//	if (eventReason != null)
+//	    evidence.setEventReason(eventReason);
+//
+//	evidence.setUAMessageId(messageDetails.getNationalMessageId());
+//	evidence.setHashInformation(messageDetails.getHashValue(), messageDetails.getHashAlgorithm());
+//
+//	byte[] signedByteArray = signEvidence(evidence, false);
+//	
+//	LOG.info("Creation of SubmissionAcceptanceRejection Evidence finished in " + (System.currentTimeMillis() - start.getTime()) + " ms.");
+//	
+//	return signedByteArray;
+//    }
+
     @Override
-    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, ECodexMessageDetails messageDetails)
+    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, ECodexMessageDetails messageDetails)
 	    throws ECodexEvidenceBuilderException {
 	Date start = new Date();
 	
@@ -105,9 +168,25 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 	
 	return signedByteArray;
     }
-
+    
+//    @Override
+//    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+//	    throws ECodexEvidenceBuilderException {
+//
+//	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+//
+//	RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, previousEvidence, isAcceptance);
+//
+//	if (eventReason != null)
+//	    evidence.setEventReason(eventReason);
+//
+//	byte[] signedByteArray = signEvidence(evidence, true);
+//
+//	return signedByteArray;
+//    }
+    
     @Override
-    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
 	    throws ECodexEvidenceBuilderException {
 
 	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
@@ -121,10 +200,25 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 
 	return signedByteArray;
     }
-
+    
+//    @Override
+//    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+//	    throws ECodexEvidenceBuilderException {
+//
+//    	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+//
+//    	RelayREMMDFailure evidence = new RelayREMMDFailure(evidenceIssuerDetails, previousEvidence);
+//
+//    	if (eventReason != null)
+//    	    evidence.setEventReason(eventReason);
+//
+//    	byte[] signedByteArray = signEvidence(evidence, true);
+//
+//    	return signedByteArray;
+//    }
     
     @Override
-    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+    public byte[] createRelayREMMDFailure(EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
 	    throws ECodexEvidenceBuilderException {
 
     	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
@@ -139,8 +233,24 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
     	return signedByteArray;
     }
     
+//    @Override
+//    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+//	    throws ECodexEvidenceBuilderException {
+//
+//	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+//
+//	DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
+//
+//	if (eventReason != null)
+//	    evidence.setEventReason(eventReason);
+//
+//	byte[] signedByteArray = signEvidence(evidence, true);
+//
+//	return signedByteArray;
+//    }
+    
     @Override
-    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
 	    throws ECodexEvidenceBuilderException {
 
 	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
@@ -155,8 +265,24 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
 	return signedByteArray;
     }
 
+//    @Override
+//    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+//	    throws ECodexEvidenceBuilderException {
+//
+//	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+//
+//	RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
+//
+//	if (eventReason != null)
+//	    evidence.setEventReason(eventReason);
+//
+//	byte[] signedByteArray = signEvidence(evidence, true);
+//
+//	return signedByteArray;
+//    }
+    
     @Override
-    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
+    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
 	    throws ECodexEvidenceBuilderException {
 
 	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
