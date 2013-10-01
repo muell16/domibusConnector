@@ -145,29 +145,7 @@ public abstract class Evidence
 	{
 		return jaxbObj;
 	}
-
-//	public void setEventReason(REMErrorEvent errorEvent)
-//	{
-//		EventReasonsType eventResonsType = new EventReasonsType();
-//		EventReasonType eventResonType = new EventReasonType();
-//
-//		eventResonType.setCode(errorEvent.getEventCode());
-//		eventResonType.setDetails(errorEvent.getEventDetails());
-//
-//		eventResonsType.getEventReason().add(eventResonType);
-//		jaxbObj.setEventReasons(eventResonsType);
-//	}
-//
-//	public REMErrorEvent getEventReson()
-//	{
-//		if (jaxbObj.getEventReasons() == null)
-//			return null;
-//		else
-//			return REMErrorEvent.getRemErrorEventForJaxB(jaxbObj
-//					.getEventReasons());
-//	}
 	
-	// klara: changed attribute of method
 	public void setEventReason(EventReasonType eventReasonType)
 	{
 		EventReasonsType eventResonsType = new EventReasonsType();
@@ -177,7 +155,6 @@ public abstract class Evidence
 		jaxbObj.setEventReasons(eventResonsType);
 	}
 	
-	// klara: changed return value
 	public EventReasonType getEventReson()
 	{
 		if (jaxbObj.getEventReasons() == null)

@@ -16,7 +16,7 @@ import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
  * file before.
  * 
  * @author muell16
- * 
+ *   
  */
 public interface EvidenceBuilder {
 
@@ -30,7 +30,8 @@ public interface EvidenceBuilder {
      *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
      * @param eventReasons
      *            List of Reasons for an Error. Ignored when isAcceptance ==
-     *            true
+     *            true. Allowed eventReasons are predefined by large scale project 
+     *            SPOCS.
      * @param evidenceIssuerDetails
      *            Details of the connector creating this evidence
      * @param messageDetails
@@ -41,12 +42,54 @@ public interface EvidenceBuilder {
      * @return signed SubmissionAcceptanceRejection - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-	// klara
-//    public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-//	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException;
+      public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException;
+
+      /**
+       * 
+       * Method for building the first Evidence and sign it with an enveloped
+       * signature.
+       * 
+       * @param isAcceptance
+       *            EventCode ("http:uri.etsi.org/02640/Event#Acceptance",
+       *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
+       * @param eventReasons
+       *            List of Reasons for an Error. Ignored when isAcceptance ==
+       *            true
+       * @param evidenceIssuerDetails
+       *            Details of the connector creating this evidence
+       * @param messageDetails
+       *            Details of the message (messageId(national), messageId(ebMS),
+       *            Hash of the original message and used hash algorithm) and
+       *            sender + recipient
+       * 
+       * @return signed SubmissionAcceptanceRejection - Evidence as byte array.
+       * @throws ECodexEvidenceBuilderException
+       */
 	  public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
 	    ECodexMessageDetails messageDetails) throws ECodexEvidenceBuilderException;
 	
+    /**
+     * Method for building the second evidence from the first one and sign it
+     * with an enveloped signature.
+     * 
+     * @param isAcceptance
+     *            EventCode ("http:uri.etsi.org/02640/Event#Acceptance",
+     *            "http:uri.etsi.org/02640/Event#Rejection") of the evidence.
+     * @param eventReasons
+     *            List of Reasons for an Error. Ignored when isAcceptance ==
+     *            true. Allowed eventReasons are predefined by large scale project 
+     *            SPOCS.
+     * @param evidenceIssuerDetails
+     *            Details of the connector creating this evidence
+     * @param previousEvidence
+     *            A SubmissionAcceptanceRejection - Evidence
+     * @return signed RelayREMMDAcceptanceRejection - Evidence as byte array.
+     * @throws ECodexEvidenceBuilderException
+     */
+    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    
     /**
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
@@ -63,12 +106,27 @@ public interface EvidenceBuilder {
      *            A SubmissionAcceptanceRejection - Evidence
      * @return signed RelayREMMDAcceptanceRejection - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
-     */
-//    public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+     */    
     public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
     	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
     
+    /**
+     * Method for building the second evidence from the first one and sign it
+     * with an enveloped signature.
+
+     * @param eventReasons
+     *            List of Reasons for an Error. Allowed eventReasons are predefined
+     *            by large scale project SPOCS.
+     * @param evidenceIssuerDetails
+     *            Details of the connector creating this evidence
+     * @param previousEvidence
+     *            A SubmissionAcceptanceRejection - Evidence
+     * @return signed RelayREMMDFailure - Evidence as byte array.
+     * @throws ECodexEvidenceBuilderException
+     */
+    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+
     /**
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
@@ -82,11 +140,31 @@ public interface EvidenceBuilder {
      * @return signed RelayREMMDFailure - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-//    public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
     public byte[] createRelayREMMDFailure(EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
     	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
     
+    /**
+     * Method for building the second evidence from the first one and sign it
+     * with an enveloped signature. 
+     * 
+     * @param isDelivery
+     *            EventCode ("http:uri.etsi.org/REM/Event#Delivery",
+     *            "http:uri.etsi.org/REM/Event#DeliveryExpiration") of the
+     *            evidence.
+     * @param eventReasons
+     *            List of Reasons for an Error. Ignored when isDelivery ==
+     *            true. Allowed eventReasons are predefined by 
+     * 			  large scale project SPOCS.
+     * @param evidenceIssuerDetails
+     *            Details of the connector creating this evidence
+     * @param previousEvidence
+     *            A SubmissionAcceptanceRejection - Evidence
+     * @return signed DeliveryNonDeliveryToRecipient - Evidence as byte array.
+     * @throws ECodexEvidenceBuilderException
+     */
+    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+    		byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+
     /**
      * Method for building the second evidence from the first one and sign it
      * with an enveloped signature.
@@ -105,11 +183,31 @@ public interface EvidenceBuilder {
      * @return signed DeliveryNonDeliveryToRecipient - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-//    public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
     public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
     	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;    
 
+    /**
+     * Method for building the third evidence from the second one and sign it
+     * with an enveloped signature.
+     * 
+     * @param isRetrieval
+     *            EventCode ("http:uri.etsi.org/REM/Event#Retrieval",
+     *            "http:uri.etsi.org/REM/Event#NonRetrievalExpiration") of the
+     *            evidence.
+     * @param eventReasons
+     *            List of Reasons for an Error. Ignored when isAcceptance ==
+     *            true. Allowed eventReasons are predefined by large scale project 
+     *            SPOCS.
+     * @param evidenceIssuerDetails
+     *            Details of the connector creating this evidence
+     * @param previousEvidence
+     *            An already filled REM:Evidence
+     * @return signed RetrievalNonRetrievalByRecipient - Evidence as byte array.
+     * @throws ECodexEvidenceBuilderException
+     */
+    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
+    		byte[] previousEvidence) throws ECodexEvidenceBuilderException;
+    
     /**
      * Method for building the third evidence from the second one and sign it
      * with an enveloped signature.
@@ -128,8 +226,6 @@ public interface EvidenceBuilder {
      * @return signed RetrievalNonRetrievalByRecipient - Evidence as byte array.
      * @throws ECodexEvidenceBuilderException
      */
-//    public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails,
-//	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
     public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails,
     	    byte[] previousEvidence) throws ECodexEvidenceBuilderException;
 
