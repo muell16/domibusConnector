@@ -23,6 +23,7 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.etsi.uri._02640.v2.EventReasonType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -138,7 +139,13 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
+	
+	//klara
+//	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;	
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#R_REMMD_NotIdentified");
+	eventReason.setDetails("Originator not known");
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType1();
 
@@ -178,7 +185,10 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = null;
+	//klara
+//	REMErrorEvent eventReason = null;	
+	EventReasonType eventReason = null;
+
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType1();
 
@@ -205,8 +215,13 @@ public class ECodexEvidenceBuilderTest {
 
 	byte[] evidenceAsByteArray;
 	ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
-
-	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	
+	//klara
+//	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#Other");
+	eventReason.setDetails(null);	
+	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, eventReason, createEntityDetailsObject(), createMessageDetailsObject());
 
 	// EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
 	// javaKeyStorePassword, alias, keyPassword);
@@ -233,7 +248,11 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = null;
+	
+	//klara
+//	REMErrorEvent eventReason = null;
+	EventReasonType eventReason = null;
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType2();
 
@@ -261,11 +280,18 @@ public class ECodexEvidenceBuilderTest {
 	byte[] evidenceAsByteArray1;
 	ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 
-	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	//klara
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#Other");
+	eventReason.setDetails(null);	
+	
+	// evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, eventReason, createEntityDetailsObject(), createMessageDetailsObject());
 	// EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
 	// javaKeyStorePassword, alias, keyPassword);
 
-	evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(true, REMErrorEvent.OTHER, createEntityDetailsObject(), evidenceAsByteArray);
+//	evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(true, REMErrorEvent.OTHER, createEntityDetailsObject(), evidenceAsByteArray);
+	evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(true, eventReason, createEntityDetailsObject(), evidenceAsByteArray);
 
 	// evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray1);
 
@@ -291,7 +317,13 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
+
+	//klara
+//	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;	
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#R_REMMD_NotIdentified");
+	eventReason.setDetails("Originator not known");
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType2();
 
@@ -327,7 +359,11 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isAcceptance = true;
-	REMErrorEvent eventReason = null;
+	
+	//klara
+//	REMErrorEvent eventReason = null;
+	EventReasonType eventReason = null;
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	ECodexMessageDetails messageDetails = createMessageDetailsObject();
 
@@ -364,7 +400,13 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isAcceptance = false;
-	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
+	
+	//klara
+//	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;	
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#R_REMMD_NotIdentified");
+	eventReason.setDetails("Originator not known");
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	ECodexMessageDetails messageDetails = createMessageDetailsObject();
 

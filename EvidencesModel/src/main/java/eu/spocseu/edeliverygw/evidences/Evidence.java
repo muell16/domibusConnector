@@ -25,6 +25,7 @@ package eu.spocseu.edeliverygw.evidences;
 
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
@@ -144,26 +145,29 @@ public abstract class Evidence
 	{
 		return jaxbObj;
 	}
-
-	public void setEventReason(REMErrorEvent errorEvent)
+	
+	public void setEventReason(EventReasonType eventReasonType)
 	{
 		EventReasonsType eventResonsType = new EventReasonsType();
-		EventReasonType eventResonType = new EventReasonType();
 
-		eventResonType.setCode(errorEvent.getEventCode());
-		eventResonType.setDetails(errorEvent.getEventDetails());
-
-		eventResonsType.getEventReason().add(eventResonType);
+		eventResonsType.getEventReason().add(eventReasonType);
+		
 		jaxbObj.setEventReasons(eventResonsType);
 	}
-
-	public REMErrorEvent getEventReson()
+	
+	public EventReasonType getEventReson()
 	{
 		if (jaxbObj.getEventReasons() == null)
 			return null;
 		else
-			return REMErrorEvent.getRemErrorEventForJaxB(jaxbObj
-					.getEventReasons());
+		{
+			List<EventReasonType> reasons = jaxbObj.getEventReasons().getEventReason();
+			
+			if(reasons != null && reasons.size() == 1)
+				return reasons.get(0);
+			else
+				return null;
+		}
 	}
 	
 	public void setUAMessageId(String id) {

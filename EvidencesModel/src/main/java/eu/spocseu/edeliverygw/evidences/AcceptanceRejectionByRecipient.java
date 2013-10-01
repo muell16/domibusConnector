@@ -28,6 +28,7 @@ import java.io.OutputStream;
 
 import javax.xml.bind.JAXBException;
 
+import org.etsi.uri._02640.v2.EventReasonType;
 import org.etsi.uri._02640.v2.ObjectFactory;
 import org.etsi.uri._02640.v2.REMEvidenceType;
 import org.slf4j.Logger;
@@ -96,8 +97,17 @@ public class AcceptanceRejectionByRecipient extends Evidence
 	 *            The previous RelayREMMDAcceptanceRejection evidence message.
 	 */
 
+//	public AcceptanceRejectionByRecipient(EDeliveryDetails details,
+//			Evidence evidence,REMErrorEvent eventReason)
+//	{
+//		super(details);
+//		init(details, evidence, false);
+//		super.setEventReason(eventReason);
+//	}
+	
+	// klara
 	public AcceptanceRejectionByRecipient(EDeliveryDetails details,
-			Evidence evidence,REMErrorEvent eventReason)
+			Evidence evidence,EventReasonType eventReason)
 	{
 		super(details);
 		init(details, evidence, false);

@@ -22,6 +22,7 @@ import org.etsi.uri._02640.soapbinding.v1.Originators;
 import org.etsi.uri._02640.soapbinding.v1.REMDispatchType;
 import org.etsi.uri._02640.v2.EntityDetailsType;
 import org.etsi.uri._02640.v2.EntityNameType;
+import org.etsi.uri._02640.v2.EventReasonType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
@@ -34,6 +35,7 @@ import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.ecodex.signature.EvidenceUtils;
 import eu.ecodex.signature.EvidenceUtilsXades;
+import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
@@ -50,6 +52,7 @@ public class SubmissionAcceptanceRejectionTest  {
 	private static final String RELAYREMMD_ACCEPTANCE_FILE = "relayremmdAcceptance.xml";
 	private static final String DELIVERY_ACCEPTANCE_FILE = "deliveryAcceptance.xml";
 	private static final String RETRIEVAL_ACCEPTANCE_FILE = "retrievalAcceptance.xml";
+	private static final String FAILURE_FILE = "failure.xml";
 	
 	private EDeliveryDetails createEntityDetailsObject() {
 		
@@ -162,24 +165,25 @@ public class SubmissionAcceptanceRejectionTest  {
 		msgDetails.setRecipientAddress("recipientAddress");
 		msgDetails.setSenderAddress("senderAddress");
 		
-		byte[] subm = builder.createSubmissionAcceptanceRejection(true, null, details, msgDetails);
+		byte[] subm = builder.createSubmissionAcceptanceRejection(true, (EventReasonType) null, details, msgDetails);
 		writeFile(subm, PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(subm));
 		
-		byte[] relayrem = builder.createRelayREMMDAcceptanceRejection(false, null, details, subm);
+		byte[] relayrem = builder.createRelayREMMDAcceptanceRejection(false, (EventReasonType) null, details, subm);
 		writeFile(relayrem, PATH_OUTPUT_FILES+RELAYREMMD_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(relayrem));
 		
-		byte[] delivery = builder.createDeliveryNonDeliveryToRecipient(true, null, details, relayrem);
+		byte[] delivery = builder.createDeliveryNonDeliveryToRecipient(true, (EventReasonType) null, details, relayrem);
 		writeFile(delivery, PATH_OUTPUT_FILES+DELIVERY_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(delivery));
 		
-		byte[] retrieval = builder.createRetrievalNonRetrievalByRecipient(true, null, details, delivery);
+		byte[] retrieval = builder.createRetrievalNonRetrievalByRecipient(true, (EventReasonType) null, details, delivery);
 		writeFile(retrieval, PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(retrieval));
 		
-				
-		
+		byte[] failure = builder.createRelayREMMDFailure((EventReasonType) null, details, delivery);
+		writeFile(failure, PATH_OUTPUT_FILES+FAILURE_FILE);
+		assertTrue(utils.verifySignature(retrieval));						
 	}
 			
 	private void writeFile(byte[] data, String fileName) throws IOException {
@@ -203,6 +207,8 @@ public class SubmissionAcceptanceRejectionTest  {
 	    file = new File(PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
 	    file.delete();
 	    
+	    file = new File(PATH_OUTPUT_FILES+FAILURE_FILE);
+	    file.delete();	    
 	}
 	
 }
