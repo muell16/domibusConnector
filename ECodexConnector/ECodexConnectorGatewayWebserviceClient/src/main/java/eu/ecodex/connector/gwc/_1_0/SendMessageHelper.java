@@ -1,4 +1,4 @@
-package eu.ecodex.connector.gwc.helper;
+package eu.ecodex.connector.gwc._1_0;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,19 +11,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
 import backend.ecodex.org._1_0.SendRequest;
@@ -31,43 +19,38 @@ import backend.ecodex.org._1_0.SendResponse;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayload;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexPayloadType;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ObjectFactory;
+<<<<<<< HEAD:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/helper/SendMessageHelper.java
 import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.db.model.ECodexParty;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
+=======
+>>>>>>> d404a13... complete change of the payload structure.:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/_1_0/SendMessageHelper.java
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageContent;
-import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
+import eu.ecodex.connector.gwc.util.CommonMessageHelper;
 
 public class SendMessageHelper {
 
     org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SendMessageHelper.class);
 
-    private static final String XML_MIME_TYPE = "text/xml";
-    private static final String PDF_MIME_TYPE = "application/octet-stream";
-    private static final String CONTENT_XML_NAME = "ECodexContentXML";
-    private static final String CONTENT_PDF_NAME = "ContentPDF";
     private static final ObjectFactory connectorPayloadObjectFactory = new ObjectFactory();
 
-    private ECodexConnectorProperties connectorProperties;
-    private ECodexConnectorPersistenceService persistenceService;
+    private CommonMessageHelper commonMessageHelper;
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
-        this.connectorProperties = connectorProperties;
-    }
-
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
+    public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
+        this.commonMessageHelper = commonMessageHelper;
     }
 
     public void buildMessage(SendRequest request, Messaging ebMSHeaderInfo, Message message)
             throws ECodexConnectorGatewayWebserviceClientException {
-        UserMessage userMessage = new UserMessage();
+        UserMessage userMessage = commonMessageHelper.buildUserMessage(message);
 
         buildSendRequestAndPayloadInfo(userMessage, request, message);
 
+<<<<<<< HEAD:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/helper/SendMessageHelper.java
         userMessage.setMessageProperties(buildMessageProperties(message));
 
         userMessage.setPartyInfo(buildPartyInfo(message));
@@ -80,50 +63,31 @@ public class SendMessageHelper {
 
         userMessage.setMessageInfo(info);
 
+=======
+>>>>>>> d404a13... complete change of the payload structure.:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/_1_0/SendMessageHelper.java
         ebMSHeaderInfo.getUserMessage().add(userMessage);
-    }
-
-    private MessageProperties buildMessageProperties(Message message) {
-        if (message.getMessageDetails().getFinalRecipient() == null
-                && message.getMessageDetails().getOriginalSender() == null) {
-            return null;
-        }
-        MessageProperties mp = new MessageProperties();
-
-        if (message.getMessageDetails().getFinalRecipient() != null) {
-
-            Property finalRecipient = new Property();
-            finalRecipient.setName("finalRecipient");
-            finalRecipient.setValue(message.getMessageDetails().getFinalRecipient());
-            mp.getProperty().add(finalRecipient);
-        }
-
-        if (message.getMessageDetails().getOriginalSender() != null) {
-            Property originalSender = new Property();
-            originalSender.setName("originalSender");
-            originalSender.setValue(message.getMessageDetails().getOriginalSender());
-            mp.getProperty().add(originalSender);
-        }
-
-        return mp;
     }
 
     private void buildSendRequestAndPayloadInfo(UserMessage userMessage, SendRequest request, Message message)
             throws ECodexConnectorGatewayWebserviceClientException {
-        PayloadInfo pli = new PayloadInfo();
+
+        int payloadCounter = 1;
 
         MessageContent messageContent = message.getMessageContent();
         if (messageContent != null && messageContent.getECodexContent() != null
                 && messageContent.getECodexContent().length > 0) {
             DataHandler payload;
             try {
-                payload = buildECodexConnectorPayload(messageContent.getECodexContent(), CONTENT_XML_NAME,
-                        XML_MIME_TYPE, ECodexPayloadType.CONTENT_XML);
+                payload = buildECodexConnectorPayload(messageContent.getECodexContent(),
+                        CommonMessageHelper.CONTENT_XML_NAME, CommonMessageHelper.XML_MIME_TYPE,
+                        ECodexPayloadType.CONTENT_XML);
             } catch (Exception e) {
                 throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for content XML!", e);
             }
             request.getPayload().add(payload);
-            pli.getPartInfo().add(buildPartInfo(CONTENT_XML_NAME));
+            commonMessageHelper.addPartInfoToPayloadInfo(CommonMessageHelper.CONTENT_XML_NAME, userMessage, "payload_"
+                    + payloadCounter);
+            payloadCounter++;
         }
 
         boolean asicsFound = false;
@@ -140,7 +104,9 @@ public class SendMessageHelper {
                                 "Could not build Payload for attachment " + attachment.getName(), e);
                     }
                     request.getPayload().add(payload);
-                    pli.getPartInfo().add(buildPartInfo(attachment.getName()));
+                    commonMessageHelper.addPartInfoToPayloadInfo(attachment.getName(), userMessage, "payload_"
+                            + payloadCounter);
+                    payloadCounter++;
 
                     if (attachment.getName().endsWith(".asics")) {
                         asicsFound = true;
@@ -153,13 +119,16 @@ public class SendMessageHelper {
                 && messageContent.getPdfDocument().length > 0) {
             DataHandler payload;
             try {
-                payload = buildECodexConnectorPayload(messageContent.getECodexContent(), CONTENT_PDF_NAME,
-                        PDF_MIME_TYPE, ECodexPayloadType.CONTENT_PDF);
+                payload = buildECodexConnectorPayload(messageContent.getECodexContent(),
+                        CommonMessageHelper.CONTENT_PDF_NAME, CommonMessageHelper.APPLICATION_MIME_TYPE,
+                        ECodexPayloadType.CONTENT_PDF);
             } catch (Exception e) {
                 throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for content XML!", e);
             }
             request.getPayload().add(payload);
-            pli.getPartInfo().add(buildPartInfo(CONTENT_XML_NAME));
+            commonMessageHelper.addPartInfoToPayloadInfo(CommonMessageHelper.CONTENT_PDF_NAME, userMessage, "payload_"
+                    + payloadCounter);
+            payloadCounter++;
         }
 
         if (message.getConfirmations() != null) {
@@ -171,18 +140,19 @@ public class SendMessageHelper {
                 DataHandler payload;
                 try {
                     payload = buildECodexConnectorPayload(messageConfirmation.getEvidence(), messageConfirmation
-                            .getEvidenceType().toString(), XML_MIME_TYPE, ECodexPayloadType.EVIDENCE);
+                            .getEvidenceType().toString(), CommonMessageHelper.XML_MIME_TYPE,
+                            ECodexPayloadType.EVIDENCE);
                 } catch (Exception e) {
                     throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for evidence "
                             + messageConfirmation.getEvidenceType().toString(), e);
                 }
 
                 request.getPayload().add(payload);
-                pli.getPartInfo().add(buildPartInfo(messageConfirmation.getEvidenceType().toString()));
+                commonMessageHelper.addPartInfoToPayloadInfo(messageConfirmation.getEvidenceType().toString(),
+                        userMessage, "payload_" + payloadCounter);
+                payloadCounter++;
             }
         }
-
-        userMessage.setPayloadInfo(pli);
 
         if (request.getPayload().isEmpty()) {
             throw new ECodexConnectorGatewayWebserviceClientException("No payload to send. Message without content?");
@@ -222,7 +192,7 @@ public class SendMessageHelper {
         byteArrayOutputStream.flush();
         byteArrayOutputStream.close();
 
-        DataHandler dh = buildByteArrayDataHandler(buffer, XML_MIME_TYPE);
+        DataHandler dh = buildByteArrayDataHandler(buffer, CommonMessageHelper.XML_MIME_TYPE);
 
         return dh;
     }
@@ -234,30 +204,14 @@ public class SendMessageHelper {
         return dh;
     }
 
-    private PartInfo buildPartInfo(String name) {
-        PartInfo pi = new PartInfo();
-
-        LOGGER.debug("PartInfo Description is [{}]", name);
-
-        Description desc = new Description();
-
-        desc.setValue(name);
-
-        pi.setDescription(desc);
-
-        return pi;
-    }
-
     public void extractEbmsMessageIdAndPersistIntoDB(SendResponse response, Message message) {
         if (response.getMessageID() != null && !response.getMessageID().isEmpty()) {
             String ebmsMessageId = response.getMessageID().get(0);
-            if (!ebmsMessageId.isEmpty()) {
-                message.getDbMessage().setEbmsMessageId(ebmsMessageId);
-                persistenceService.mergeMessageWithDatabase(message);
-            }
+            commonMessageHelper.persistEbmsMessageIdIntoDatabase(ebmsMessageId, message);
         }
     }
 
+<<<<<<< HEAD:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/helper/SendMessageHelper.java
     private PartyInfo buildPartyInfo(Message message) {
         MessageDetails messageDetails = message.getMessageDetails();
 
@@ -314,4 +268,6 @@ public class SendMessageHelper {
                 || message.getMessageDetails().getAction().getAction().equals("RetrievalNonRetrievalToRecipient");
     }
 
+=======
+>>>>>>> d404a13... complete change of the payload structure.:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/_1_0/SendMessageHelper.java
 }

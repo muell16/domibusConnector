@@ -1,6 +1,5 @@
-package eu.ecodex.connector.gwc.helper;
+package eu.ecodex.connector.gwc._1_0;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -10,7 +9,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.Holder;
@@ -22,8 +20,6 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import backend.ecodex.org._1_0.DownloadMessageResponse;
@@ -39,6 +35,7 @@ import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
+import eu.ecodex.connector.gwc.util.CommonMessageHelper;
 
 public class DownloadMessageHelper {
 
@@ -65,7 +62,8 @@ public class DownloadMessageHelper {
             for (DataHandler dh : payload) {
                 String rootElement = null;
                 try {
-                    rootElement = parseRootElement(dh);
+                    byte[] data = convertDataHandlerContentToByteArray(dh);
+                    rootElement = CommonMessageHelper.parseRootElement(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -142,20 +140,6 @@ public class DownloadMessageHelper {
                 .unmarshal(document, ECodexConnectorPayload.class);
 
         return jaxbElement.getValue();
-    }
-
-    public Element createEmptyListPendingMessagesRequest() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = null;
-        try {
-            db = dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException e1) {
-            e1.printStackTrace();
-        }
-        Document document = db.newDocument();
-        Element request = document.createElement("listPendingMessagesRequest");
-
-        return request;
     }
 
     private void extractMessageContent(DataHandler dh, MessageContent content) {
@@ -259,25 +243,4 @@ public class DownloadMessageHelper {
         return details;
     }
 
-    private final String parseRootElement(DataHandler dh) throws SAXException, IOException,
-            ParserConfigurationException {
-        byte[] data = convertDataHandlerContentToByteArray(dh);
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        Document document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
-
-        return getRootElementName(document);
-    }
-
-    private String getRootElementName(final Object obj) {
-        if (obj == null || !(obj instanceof Node)) {
-            throw new IllegalArgumentException("Argument must be of type Node.");
-        }
-
-        Node node = (Node) obj;
-        // Read just the element name without the namespace prefix
-        String rootElementName = node.getFirstChild().getLocalName();
-        return rootElementName;
-    }
 }
