@@ -13,3 +13,6 @@ Changes in Release 1.3.1 of the ECodexConnector Framework:
 -- in ECodexConnectorSecurityToolkit the parameters to load a truststore the security container can check against are introduced.
 -- in ECodexConnectorController, ECodexConnectorCommon and ECodexConnectorGatewayWebserviceClient changes were made to read out Service, Action and Party from database.
    The corresponing database scripts are also extended.
+-- additional information on the message flow is now persisted into the database. All database scripts are extended.
+-- in ECodexConnectorGatewayWebserviceClient the new structure for handling messages with the gateway webservice (WSDL version 1.1) are implemented. The handling will be triggered by
+   a version number property.
