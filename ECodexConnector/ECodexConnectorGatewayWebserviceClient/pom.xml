@@ -105,7 +105,10 @@
 							<sourceRoot>src/main/java/</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/eu/ecodex/connector/gwc/wsdl/BackendService.wsdl</wsdl>
+									<wsdl>${basedir}/src/main/resources/eu/ecodex/connector/gwc/wsdl/BackendService-1_0.wsdl</wsdl>
+								</wsdlOption>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/eu/ecodex/connector/gwc/wsdl/BackendService-1_1.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>

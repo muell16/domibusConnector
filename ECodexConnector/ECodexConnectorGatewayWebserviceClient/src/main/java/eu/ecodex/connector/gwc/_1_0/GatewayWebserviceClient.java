@@ -14,7 +14,6 @@ import backend.ecodex.org._1_0.DownloadMessageResponse;
 import backend.ecodex.org._1_0.ListPendingMessagesResponse;
 import backend.ecodex.org._1_0.SendRequest;
 import backend.ecodex.org._1_0.SendResponse;
-import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.connector.gwc.util.CommonMessageHelper;
@@ -60,10 +59,7 @@ public class GatewayWebserviceClient {
             LOGGER.error("sendMessage failed: ", e);
             throw new ECodexConnectorGatewayWebserviceClientException(e);
         }
-        if (!(message.getMessageDetails().getAction().equals(ActionEnum.RelayREMMDAcceptanceRejection)
-                || message.getMessageDetails().getAction().equals(ActionEnum.DeliveryNonDeliveryToRecipient) || message
-                .getMessageDetails().getAction().equals(ActionEnum.RetrievalNonRetrievalToRecipient))) {
-
+        if (!commonMessageHelper.isMessageEvidence(message)) {
             sendMessageHelper.extractEbmsMessageIdAndPersistIntoDB(response, message);
         }
     }

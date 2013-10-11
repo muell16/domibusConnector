@@ -43,10 +43,13 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="commonMessageHelper" ref="commonMessageHelper" />
 	</bean>
 	
-	<bean id="downloadMessageHelper" class="eu.ecodex.connector.gwc.helper.DownloadMessageHelper">
-	<bean id="downloadMessageHelper_1_0" class="eu.ecodex.connector.gwc._1_0.DownloadMessageHelper" />
+	<bean id="downloadMessageHelper_1_0" class="eu.ecodex.connector.gwc._1_0.DownloadMessageHelper">
+		<property name="commonMessageHelper" ref="commonMessageHelper" />
+	</bean>
 	
-	<bean id="downloadMessageHelper_1_1" class="eu.ecodex.connector.gwc._1_1.DownloadMessageHelper" />
+	<bean id="downloadMessageHelper_1_1" class="eu.ecodex.connector.gwc._1_1.DownloadMessageHelper">
+		<property name="commonMessageHelper" ref="commonMessageHelper" />
+	</bean>
 	
 	<bean id="commonMessageHelper" class="eu.ecodex.connector.gwc.util.CommonMessageHelper">
 		<property name="connectorProperties" ref="connectorProperties" />

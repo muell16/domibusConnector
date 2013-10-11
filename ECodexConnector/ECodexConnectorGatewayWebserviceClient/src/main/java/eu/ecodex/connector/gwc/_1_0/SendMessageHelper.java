@@ -19,12 +19,6 @@ import backend.ecodex.org._1_0.SendResponse;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayload;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexPayloadType;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ObjectFactory;
-<<<<<<< HEAD:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/helper/SendMessageHelper.java
-import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.db.model.ECodexParty;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-=======
->>>>>>> d404a13... complete change of the payload structure.:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/_1_0/SendMessageHelper.java
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
@@ -50,21 +44,6 @@ public class SendMessageHelper {
 
         buildSendRequestAndPayloadInfo(userMessage, request, message);
 
-<<<<<<< HEAD:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/helper/SendMessageHelper.java
-        userMessage.setMessageProperties(buildMessageProperties(message));
-
-        userMessage.setPartyInfo(buildPartyInfo(message));
-
-        userMessage.setCollaborationInfo(buildCollaborationInfo(message.getMessageDetails()));
-
-        MessageInfo info = new MessageInfo();
-
-        info.setRefToMessageId(message.getMessageDetails().getRefToMessageId());
-
-        userMessage.setMessageInfo(info);
-
-=======
->>>>>>> d404a13... complete change of the payload structure.:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/_1_0/SendMessageHelper.java
         ebMSHeaderInfo.getUserMessage().add(userMessage);
     }
 
@@ -211,63 +190,4 @@ public class SendMessageHelper {
         }
     }
 
-<<<<<<< HEAD:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/helper/SendMessageHelper.java
-    private PartyInfo buildPartyInfo(Message message) {
-        MessageDetails messageDetails = message.getMessageDetails();
-
-        PartyInfo partyInfo = new PartyInfo();
-
-        From from = new From();
-        PartyId partyId = new PartyId();
-        if (messageDetails.getFromParty() != null) {
-            partyId.setValue(messageDetails.getFromParty().getPartyId());
-            from.setRole(messageDetails.getFromParty().getRole());
-        } else {
-            partyId.setValue(connectorProperties.getGatewayName());
-            from.setRole(connectorProperties.getGatewayRole());
-            ECodexParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
-                    connectorProperties.getGatewayRole());
-            if (fromParty != null) {
-                messageDetails.setFromParty(fromParty);
-                persistenceService.mergeMessageWithDatabase(message);
-            }
-        }
-        from.getPartyId().add(partyId);
-        partyInfo.setFrom(from);
-
-        To to = new To();
-        PartyId partyId2 = new PartyId();
-        partyId2.setValue(messageDetails.getToParty().getPartyId());
-        to.getPartyId().add(partyId2);
-        to.setRole(messageDetails.getToParty().getRole());
-        partyInfo.setTo(to);
-
-        return partyInfo;
-    }
-
-    private CollaborationInfo buildCollaborationInfo(MessageDetails messageDetails) {
-        CollaborationInfo info = new CollaborationInfo();
-
-        info.setAction(messageDetails.getAction().getAction());
-        Service service = new Service();
-        service.setValue(messageDetails.getService().getService());
-        info.setService(service);
-
-        info.setConversationId(messageDetails.getConversationId());
-
-        // AgreementRef ref = new AgreementRef();
-        // ref.setValue("dummy");
-        // info.setAgreementRef(ref);
-
-        return info;
-    }
-
-    public boolean isMessageEvidence(Message message) {
-        return message.getMessageDetails().getAction().getAction().equals("RelayREMMDAcceptanceRejection")
-                || message.getMessageDetails().getAction().getAction().equals("DeliveryNonDeliveryToRecipient")
-                || message.getMessageDetails().getAction().getAction().equals("RetrievalNonRetrievalToRecipient");
-    }
-
-=======
->>>>>>> d404a13... complete change of the payload structure.:ECodexConnector/ECodexConnectorGatewayWebserviceClient/src/main/java/eu/ecodex/connector/gwc/_1_0/SendMessageHelper.java
 }

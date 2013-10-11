@@ -4,21 +4,14 @@ import java.util.List;
 
 import javax.xml.ws.Holder;
 
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.PayloadType;
-import eu.ecodex.connector.common.enums.ActionEnum;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.enums.PartnerEnum;
-import eu.ecodex.connector.common.enums.ServiceEnum;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
@@ -29,10 +22,16 @@ import eu.ecodex.connector.gwc.util.CommonMessageHelper;
 
 public class DownloadMessageHelper {
 
+    private CommonMessageHelper commonMessageHelper;
+
+    public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
+        this.commonMessageHelper = commonMessageHelper;
+    }
+
     public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
             throws ECodexConnectorGatewayWebserviceClientException {
         UserMessage userMessage = ebMSHeader.value.getUserMessage().get(0);
-        MessageDetails details = convertUserMessageToMessageDetails(userMessage);
+        MessageDetails details = commonMessageHelper.convertUserMessageToMessageDetails(userMessage);
 
         MessageContent content = new MessageContent();
 
@@ -121,55 +120,6 @@ public class DownloadMessageHelper {
         attachment.setName(attachmentName);
         return attachment;
 
-    }
-
-    private MessageDetails convertUserMessageToMessageDetails(UserMessage userMessage) {
-        MessageDetails details = new MessageDetails();
-
-        details.setEbmsMessageId(userMessage.getMessageInfo().getMessageId());
-        details.setRefToMessageId(userMessage.getMessageInfo().getRefToMessageId());
-        details.setConversationId(userMessage.getCollaborationInfo().getConversationId());
-
-        String actionString = userMessage.getCollaborationInfo().getAction();
-        try {
-            ActionEnum action = ActionEnum.valueOf(actionString);
-            details.setAction(action);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No action {} found!", actionString);
-        }
-
-        String serviceString = userMessage.getCollaborationInfo().getService().getValue();
-        try {
-            ServiceEnum service = ServiceEnum.valueOf(serviceString);
-            details.setService(service);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No service {} found!", actionString);
-        }
-
-        From from = userMessage.getPartyInfo().getFrom();
-        PartnerEnum fromPartner = PartnerEnum.findValue(from.getPartyId().get(0).getValue(), from.getRole());
-        details.setFromPartner(fromPartner);
-
-        To to = userMessage.getPartyInfo().getTo();
-        PartnerEnum toPartner = PartnerEnum.findValue(to.getPartyId().get(0).getValue(), to.getRole());
-        details.setToPartner(toPartner);
-
-        MessageProperties mp = userMessage.getMessageProperties();
-        if (mp != null) {
-            List<Property> properties = mp.getProperty();
-            if (properties != null && !properties.isEmpty()) {
-                for (Property property : properties) {
-                    if (property.getName().equals("finalRecipient")) {
-                        details.setFinalRecipient(property.getValue());
-                    }
-                    if (property.getName().equals("originalSender")) {
-                        details.setOriginalSender(property.getValue());
-                    }
-                }
-            }
-        }
-
-        return details;
     }
 
 }
