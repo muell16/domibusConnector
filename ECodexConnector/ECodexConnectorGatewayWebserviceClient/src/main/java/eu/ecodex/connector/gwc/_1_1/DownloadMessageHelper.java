@@ -40,7 +40,7 @@ public class DownloadMessageHelper {
         Base64Binary bodyload = response.value.getBodyload();
         if (bodyload != null) {
             if (bodyload.getContentType().equals(CommonMessageHelper.XML_MIME_TYPE)) {
-                String elementDescription = findElementDesription(userMessage, "bodyPayload");
+                String elementDescription = findElementDesription(userMessage, "#bodyPayload");
 
                 // is it an Evidence or an eCodex content XML?
 
@@ -62,7 +62,7 @@ public class DownloadMessageHelper {
                 && userMessage.getPayloadInfo().getPartInfo().size() == payloads.size()) {
 
             for (PayloadType payload : payloads) {
-                String elementDescription = findElementDesription(userMessage, payload.getHref());
+                String elementDescription = findElementDesription(userMessage, "cid:" + payload.getHref());
 
                 if (elementDescription == null) {
                     throw new ECodexConnectorGatewayWebserviceClientException(

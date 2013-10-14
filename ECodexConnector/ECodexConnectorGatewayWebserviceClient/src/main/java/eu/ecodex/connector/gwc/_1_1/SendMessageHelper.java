@@ -2,6 +2,7 @@ package eu.ecodex.connector.gwc._1_1;
 
 import javax.activation.DataHandler;
 
+import org.jboss.ws.core.soap.attachment.CIDGenerator;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
@@ -92,15 +93,19 @@ public class SendMessageHelper {
 
     private void buildPayloadAndAddToRequest(SendRequest request, String mimeType, int payloadCounter, byte[] content,
             String name, UserMessage userMessage) {
+        CIDGenerator generator = new CIDGenerator();
+
+        String cid = generator.generateFromName("payload_" + payloadCounter);
+
         PayloadType payload = new PayloadType();
 
         payload.setContentType(mimeType);
-        payload.setHref("payload_" + payloadCounter);
+        payload.setHref(cid);
         payload.setValue(content);
 
         request.getPayload().add(payload);
 
-        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, "payload_" + payloadCounter);
+        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, "cid:" + payloadCounter);
     }
 
     private void buildBodyPayload(byte[] content, SendRequest request, String name, UserMessage userMessage)
@@ -114,7 +119,7 @@ public class SendMessageHelper {
         }
         request.setBodyload(bodyPayload);
 
-        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, "bodyPayload");
+        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, "#bodyPayload");
     }
 
     private boolean checkMessageConfirmationValid(MessageConfirmation messageConfirmation) {
