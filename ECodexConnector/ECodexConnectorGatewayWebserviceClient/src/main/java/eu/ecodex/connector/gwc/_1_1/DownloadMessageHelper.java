@@ -62,12 +62,12 @@ public class DownloadMessageHelper {
                 && userMessage.getPayloadInfo().getPartInfo().size() == payloads.size()) {
 
             for (PayloadType payload : payloads) {
-                String elementDescription = findElementDesription(userMessage, "cid:" + payload.getHref());
+                String elementDescription = findElementDesription(userMessage, "cid:" + payload.getPayloadId());
 
                 if (elementDescription == null) {
                     throw new ECodexConnectorGatewayWebserviceClientException(
                             "No PartInfo of PayloadInfo in ebms header found for actual payloads href "
-                                    + payload.getHref());
+                                    + payload.getPayloadId());
                 }
 
                 if (elementDescription.equals(CommonMessageHelper.CONTENT_PDF_NAME)) {

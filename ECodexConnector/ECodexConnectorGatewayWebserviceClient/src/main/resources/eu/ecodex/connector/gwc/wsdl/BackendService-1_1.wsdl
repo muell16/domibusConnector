@@ -19,7 +19,7 @@ Version	|	Date		|	Author			|	Description
 			<xsd:element name="sendRequest">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element minOccurs="0" maxOccurs="1" name="bodyload" type="xsd:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
+						<xsd:element minOccurs="0" maxOccurs="1" name="bodyload" type="tns:PayloadType" xmime:expectedContentTypes="application/octet-stream"/>
 						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="tns:PayloadType" xmime:expectedContentTypes="application/octet-stream"/>
 					</xsd:sequence>
 				</xsd:complexType>
@@ -27,7 +27,7 @@ Version	|	Date		|	Author			|	Description
 			<xsd:element name="sendRequestURL">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element minOccurs="0" maxOccurs="1" name="bodyload" type="xsd:string"/>
+						<xsd:element minOccurs="0" maxOccurs="1" name="bodyload" type="tns:PayloadURLType"/>
 						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="tns:PayloadURLType"/>
 					</xsd:sequence>
 				</xsd:complexType>
@@ -51,7 +51,7 @@ Version	|	Date		|	Author			|	Description
 				<xsd:complexType>
 					<xsd:sequence>
 						<!-- Attachments -->
-						<xsd:element minOccurs="0" maxOccurs="1" name="bodyload" type="xmime:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
+						<xsd:element minOccurs="0" maxOccurs="1" name="bodyload" type="tns:PayloadType" xmime:expectedContentTypes="application/octet-stream"/>
 						<xsd:element minOccurs="0" maxOccurs="unbounded" name="payload" type="tns:PayloadType" xmime:expectedContentTypes="application/octet-stream"/>
 					</xsd:sequence>
 				</xsd:complexType>
@@ -68,14 +68,14 @@ Version	|	Date		|	Author			|	Description
 			<xsd:complexType name="PayloadType">
 				<xsd:simpleContent>
 					<xsd:extension base="xmime:base64Binary">
-						<xsd:attribute name="href" type="xsd:token" use="required"/>
+						<xsd:attribute name="payloadId" type="xsd:token" use="required"/>
 					</xsd:extension>
 				</xsd:simpleContent>
 			</xsd:complexType>
 			<xsd:complexType name="PayloadURLType">
 				<xsd:simpleContent>
 					<xsd:extension base="xsd:string">
-						<xsd:attribute name="href" type="xsd:token"/>
+						<xsd:attribute name="payloadId" type="xsd:token" use="required"/>
 					</xsd:extension>
 				</xsd:simpleContent>
 			</xsd:complexType>
@@ -257,7 +257,7 @@ Version	|	Date		|	Author			|	Description
 			</wsdl:fault>
 		</wsdl:operation>
 	</wsdl:binding>
-	<wsdl:service name="BackendService">
+	<wsdl:service name="BackendService_1_1">
 		<wsdl:port name="BackendPort" binding="tns:eCODEX">
 			<soap12:address location="http://www.ecodex.org/eCODEX"/>
 		</wsdl:port>

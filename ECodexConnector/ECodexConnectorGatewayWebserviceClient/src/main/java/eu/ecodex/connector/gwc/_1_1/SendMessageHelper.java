@@ -1,7 +1,5 @@
 package eu.ecodex.connector.gwc._1_1;
 
-import javax.activation.DataHandler;
-
 import org.jboss.ws.core.soap.attachment.CIDGenerator;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
@@ -96,30 +94,36 @@ public class SendMessageHelper {
         CIDGenerator generator = new CIDGenerator();
 
         String cid = generator.generateFromName("payload_" + payloadCounter);
+        if (cid != null && !cid.isEmpty() && cid.contains("@"))
+            cid = cid.substring(0, cid.indexOf("@") - 1);
 
-        PayloadType payload = new PayloadType();
-
-        payload.setContentType(mimeType);
-        payload.setHref(cid);
-        payload.setValue(content);
+        PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, mimeType, userMessage, cid, "cid:" + cid);
 
         request.getPayload().add(payload);
 
-        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, "cid:" + payloadCounter);
     }
 
     private void buildBodyPayload(byte[] content, SendRequest request, String name, UserMessage userMessage)
             throws ECodexConnectorGatewayWebserviceClientException {
-        DataHandler bodyPayload;
 
-        try {
-            bodyPayload = commonMessageHelper.buildByteArrayDataHandler(content, CommonMessageHelper.XML_MIME_TYPE);
-        } catch (Exception e) {
-            throw new ECodexConnectorGatewayWebserviceClientException("Could not build BodyPayload!", e);
-        }
-        request.setBodyload(bodyPayload);
+        PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, CommonMessageHelper.XML_MIME_TYPE,
+                userMessage, "#bodyPayload", "#bodyPayload");
 
-        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, "#bodyPayload");
+        request.setBodyload(payload);
+
+    }
+
+    private PayloadType buildPayloadTypeAndAddPartInfo(String name, byte[] content, String mimeType,
+            UserMessage userMessage, String payloadId, String partId) {
+        PayloadType payload = new PayloadType();
+
+        payload.setContentType(mimeType);
+        payload.setPayloadId(payloadId);
+        payload.setValue(content);
+
+        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, partId);
+
+        return payload;
     }
 
     private boolean checkMessageConfirmationValid(MessageConfirmation messageConfirmation) {
