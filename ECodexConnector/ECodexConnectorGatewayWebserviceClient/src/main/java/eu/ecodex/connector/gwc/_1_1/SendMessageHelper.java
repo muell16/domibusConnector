@@ -1,6 +1,5 @@
 package eu.ecodex.connector.gwc._1_1;
 
-import org.jboss.ws.core.soap.attachment.CIDGenerator;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
@@ -91,11 +90,8 @@ public class SendMessageHelper {
 
     private void buildPayloadAndAddToRequest(SendRequest request, String mimeType, int payloadCounter, byte[] content,
             String name, UserMessage userMessage) {
-        CIDGenerator generator = new CIDGenerator();
 
-        String cid = generator.generateFromName("payload_" + payloadCounter);
-        if (cid != null && !cid.isEmpty() && cid.contains("@"))
-            cid = cid.substring(0, cid.indexOf("@") - 1);
+        String cid = commonMessageHelper.generateCID("payload_" + payloadCounter);
 
         PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, mimeType, userMessage, cid, "cid:" + cid);
 

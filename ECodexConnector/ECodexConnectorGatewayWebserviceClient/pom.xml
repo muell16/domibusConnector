@@ -81,12 +81,12 @@
 			<scope>compile</scope>
 			<type>jar</type>
 		</dependency>
-		
+<!-- 		
 		<dependency>
       <groupId>org.jboss.ws.native</groupId>
       <artifactId>jbossws-native-core</artifactId>
       <version>3.4.1.GA</version>
-    </dependency>
+    </dependency> -->
 
 		
 		

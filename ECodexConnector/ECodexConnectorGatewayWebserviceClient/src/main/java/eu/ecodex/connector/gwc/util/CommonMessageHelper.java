@@ -3,6 +3,7 @@ package eu.ecodex.connector.gwc.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -60,6 +61,12 @@ public class CommonMessageHelper {
             message.getDbMessage().setEbmsMessageId(ebmsMessageId);
             persistenceService.mergeMessageWithDatabase(message);
         }
+    }
+
+    public String generateCID(String name) {
+        String cid = name + UUID.randomUUID().toString();
+
+        return cid;
     }
 
     public void addPartInfoToPayloadInfo(String name, UserMessage userMessage, String href) {
