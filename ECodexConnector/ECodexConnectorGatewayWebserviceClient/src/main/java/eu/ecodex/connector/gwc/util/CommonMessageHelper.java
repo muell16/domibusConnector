@@ -1,6 +1,7 @@
 package eu.ecodex.connector.gwc.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -8,6 +9,9 @@ import java.util.UUID;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,6 +22,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
@@ -69,7 +74,25 @@ public class CommonMessageHelper {
         return cid;
     }
 
-    public void addPartInfoToPayloadInfo(String name, UserMessage userMessage, String href) {
+    public void addPartInfoToPayloadInfo(String name, String value, UserMessage userMessage, String href) {
+
+        PartInfo pi = new PartInfo();
+
+        pi.setHref(href);
+
+        PartProperties props = new PartProperties();
+
+        Property prop = new Property();
+        prop.setName(name);
+        prop.setValue(value);
+        props.getProperty().add(prop);
+
+        pi.setPartProperties(props);
+
+        userMessage.getPayloadInfo().getPartInfo().add(pi);
+    }
+
+    public void addPartInfoToPayloadInfo_1_0(String value, UserMessage userMessage, String href) {
 
         PartInfo pi = new PartInfo();
 
@@ -77,7 +100,7 @@ public class CommonMessageHelper {
 
         Description desc = new Description();
 
-        desc.setValue(name);
+        desc.setValue(value);
 
         pi.setDescription(desc);
 
@@ -251,6 +274,26 @@ public class CommonMessageHelper {
         }
 
         return details;
+    }
+
+    public String printXML(final Object object, final Class<?>... initializationClasses) throws JAXBException,
+            IOException {
+        JAXBContext ctx = JAXBContext.newInstance(initializationClasses);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        Marshaller marshaller = ctx.createMarshaller();
+
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(object, byteArrayOutputStream);
+
+        byte[] buffer = byteArrayOutputStream.toByteArray();
+
+        byteArrayOutputStream.flush();
+        byteArrayOutputStream.close();
+
+        return new String(buffer, "UTF-8");
     }
 
     public static final String parseRootElement(byte[] data) throws SAXException, IOException,

@@ -17,6 +17,8 @@ public class SendMessageHelper {
 
     org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SendMessageHelper.class);
 
+    private static final String PARTPROPERTY_NAME = "description";
+
     private CommonMessageHelper commonMessageHelper;
 
     public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
@@ -117,7 +119,7 @@ public class SendMessageHelper {
         payload.setPayloadId(payloadId);
         payload.setValue(content);
 
-        commonMessageHelper.addPartInfoToPayloadInfo(name, userMessage, partId);
+        commonMessageHelper.addPartInfoToPayloadInfo(PARTPROPERTY_NAME, name, userMessage, partId);
 
         return payload;
     }

@@ -64,8 +64,8 @@ public class SendMessageHelper {
                 throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for content XML!", e);
             }
             request.getPayload().add(payload);
-            commonMessageHelper.addPartInfoToPayloadInfo(CommonMessageHelper.CONTENT_XML_NAME, userMessage, "payload_"
-                    + payloadCounter);
+            commonMessageHelper.addPartInfoToPayloadInfo_1_0(CommonMessageHelper.CONTENT_XML_NAME, userMessage,
+                    "payload_" + payloadCounter);
             payloadCounter++;
         }
 
@@ -83,7 +83,7 @@ public class SendMessageHelper {
                                 "Could not build Payload for attachment " + attachment.getName(), e);
                     }
                     request.getPayload().add(payload);
-                    commonMessageHelper.addPartInfoToPayloadInfo(attachment.getName(), userMessage, "payload_"
+                    commonMessageHelper.addPartInfoToPayloadInfo_1_0(attachment.getName(), userMessage, "payload_"
                             + payloadCounter);
                     payloadCounter++;
 
@@ -105,8 +105,8 @@ public class SendMessageHelper {
                 throw new ECodexConnectorGatewayWebserviceClientException("Could not build Payload for content XML!", e);
             }
             request.getPayload().add(payload);
-            commonMessageHelper.addPartInfoToPayloadInfo(CommonMessageHelper.CONTENT_PDF_NAME, userMessage, "payload_"
-                    + payloadCounter);
+            commonMessageHelper.addPartInfoToPayloadInfo_1_0(CommonMessageHelper.CONTENT_PDF_NAME, userMessage,
+                    "payload_" + payloadCounter);
             payloadCounter++;
         }
 
@@ -127,7 +127,7 @@ public class SendMessageHelper {
                 }
 
                 request.getPayload().add(payload);
-                commonMessageHelper.addPartInfoToPayloadInfo(messageConfirmation.getEvidenceType().toString(),
+                commonMessageHelper.addPartInfoToPayloadInfo_1_0(messageConfirmation.getEvidenceType().toString(),
                         userMessage, "payload_" + payloadCounter);
                 payloadCounter++;
             }

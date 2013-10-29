@@ -1,11 +1,14 @@
 package eu.ecodex.connector.gwc._1_1;
 
+import java.io.IOException;
 import java.net.ConnectException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
 import backend.ecodex.org._1_1.BackendInterface;
 import backend.ecodex.org._1_1.DownloadMessageFault;
@@ -50,6 +53,17 @@ public class GatewayWebserviceClient {
             sendMessageHelper.buildMessage(request, ebMSHeaderInfo, message);
         } catch (ECodexConnectorGatewayWebserviceClientException e) {
             throw e;
+        }
+
+        try {
+            String headerString = commonMessageHelper.printXML(ebMSHeaderInfo, UserMessage.class, Messaging.class);
+            LOGGER.debug(headerString);
+            String requestString = commonMessageHelper.printXML(request, SendRequest.class);
+            LOGGER.debug(requestString);
+        } catch (JAXBException e1) {
+            LOGGER.error(e1.getMessage());
+        } catch (IOException e1) {
+            LOGGER.error(e1.getMessage());
         }
 
         SendResponse response = null;
