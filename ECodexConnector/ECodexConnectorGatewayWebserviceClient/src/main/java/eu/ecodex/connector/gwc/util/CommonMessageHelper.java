@@ -49,6 +49,7 @@ public class CommonMessageHelper {
     public static final String APPLICATION_MIME_TYPE = "application/octet-stream";
     public static final String CONTENT_PDF_NAME = "ContentPDF";
     public static final String CONTENT_XML_NAME = "ECodexContentXML";
+    public static final String PARTPROPERTY_NAME = "description";
 
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorPersistenceService persistenceService;

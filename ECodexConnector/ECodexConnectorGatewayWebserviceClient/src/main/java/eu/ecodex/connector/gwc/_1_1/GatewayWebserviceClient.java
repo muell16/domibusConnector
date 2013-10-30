@@ -114,14 +114,26 @@ public class GatewayWebserviceClient {
             LOGGER.error("Could not execute! ", e);
         }
 
-        if (response.value == null || response.value.getPayload() == null || response.value.getPayload().isEmpty()) {
+        if (response.value == null || response.value.getBodyload() == null) {
             LOGGER.info("Message {} contains no payload!", request.getMessageID());
             throw new ECodexConnectorGatewayWebserviceClientException("Message " + request.getMessageID()
-                    + " contains no payload!");
+                    + " contains no bodyload!");
+        }
+
+        try {
+            String headerString = commonMessageHelper.printXML(ebMSHeader.value, UserMessage.class, Messaging.class);
+            LOGGER.debug(headerString);
+            String requestString = commonMessageHelper.printXML(response.value, DownloadMessageResponse.class);
+            LOGGER.debug(requestString);
+        } catch (JAXBException e1) {
+            LOGGER.error(e1.getMessage());
+        } catch (IOException e1) {
+            LOGGER.error(e1.getMessage());
         }
 
         Message message = downloadMessageHelper.convertDownloadIntoMessage(response, ebMSHeader);
 
         return message;
     }
+
 }

@@ -17,8 +17,6 @@ public class SendMessageHelper {
 
     org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SendMessageHelper.class);
 
-    private static final String PARTPROPERTY_NAME = "description";
-
     private CommonMessageHelper commonMessageHelper;
 
     public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
@@ -85,17 +83,17 @@ public class SendMessageHelper {
             }
         }
 
-        if (request.getPayload().isEmpty()) {
-            throw new ECodexConnectorGatewayWebserviceClientException("No payload to send. Message without content?");
+        if (request.getBodyload() == null) {
+            throw new ECodexConnectorGatewayWebserviceClientException("No bodyload to send. Message without content?");
         }
     }
 
     private void buildPayloadAndAddToRequest(SendRequest request, String mimeType, int payloadCounter, byte[] content,
             String name, UserMessage userMessage) {
 
-        String cid = commonMessageHelper.generateCID("payload_" + payloadCounter);
+        String cid = commonMessageHelper.generateCID("payload_");
 
-        PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, mimeType, userMessage, cid, "cid:" + cid);
+        PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, mimeType, userMessage, cid);
 
         request.getPayload().add(payload);
 
@@ -104,22 +102,24 @@ public class SendMessageHelper {
     private void buildBodyPayload(byte[] content, SendRequest request, String name, UserMessage userMessage)
             throws ECodexConnectorGatewayWebserviceClientException {
 
+        String cid = commonMessageHelper.generateCID("#_");
+
         PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, CommonMessageHelper.XML_MIME_TYPE,
-                userMessage, "#bodyPayload", "#bodyPayload");
+                userMessage, cid);
 
         request.setBodyload(payload);
 
     }
 
     private PayloadType buildPayloadTypeAndAddPartInfo(String name, byte[] content, String mimeType,
-            UserMessage userMessage, String payloadId, String partId) {
+            UserMessage userMessage, String partId) {
         PayloadType payload = new PayloadType();
 
         payload.setContentType(mimeType);
-        payload.setPayloadId(payloadId);
+        payload.setPayloadId(partId);
         payload.setValue(content);
 
-        commonMessageHelper.addPartInfoToPayloadInfo(PARTPROPERTY_NAME, name, userMessage, partId);
+        commonMessageHelper.addPartInfoToPayloadInfo(CommonMessageHelper.PARTPROPERTY_NAME, name, userMessage, partId);
 
         return payload;
     }

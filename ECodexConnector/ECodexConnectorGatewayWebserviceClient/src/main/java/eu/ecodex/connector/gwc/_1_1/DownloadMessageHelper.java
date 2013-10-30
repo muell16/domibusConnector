@@ -6,8 +6,8 @@ import javax.xml.ws.Holder;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
-import org.w3._2005._05.xmlmime.Base64Binary;
 
 import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.PayloadType;
@@ -37,55 +37,58 @@ public class DownloadMessageHelper {
 
         Message message = new Message(details, content);
 
-        Base64Binary bodyload = response.value.getBodyload();
+        PayloadType bodyload = response.value.getBodyload();
         if (bodyload != null) {
-            if (bodyload.getContentType().equals(CommonMessageHelper.XML_MIME_TYPE)) {
-                String elementDescription = findElementDesription(userMessage, "#bodyPayload");
+            // if
+            // (bodyload.getContentType().equals(CommonMessageHelper.XML_MIME_TYPE))
+            // {
+            String elementDescription = findElementDesription(userMessage, bodyload.getPayloadId());
 
-                // is it an Evidence or an eCodex content XML?
+            // is it an Evidence or an eCodex content XML?
 
-                if (elementDescription.equals(CommonMessageHelper.CONTENT_XML_NAME)) {
-                    message.getMessageContent().setECodexContent(bodyload.getValue());
-                } else {
-                    MessageConfirmation confirmation = new MessageConfirmation();
-                    ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(elementDescription);
-                    confirmation.setEvidenceType(evidenceType);
-                    confirmation.setEvidence(bodyload.getValue());
-                    message.addConfirmation(confirmation);
-                }
+            if (elementDescription.equals(CommonMessageHelper.CONTENT_XML_NAME)) {
+                message.getMessageContent().setECodexContent(bodyload.getValue());
+            } else {
+                MessageConfirmation confirmation = new MessageConfirmation();
+                ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(elementDescription);
+                confirmation.setEvidenceType(evidenceType);
+                confirmation.setEvidence(bodyload.getValue());
+                message.addConfirmation(confirmation);
             }
+            // }
         }
 
         List<PayloadType> payloads = response.value.getPayload();
-        if (payloads != null && !payloads.isEmpty() && userMessage.getPayloadInfo() != null
-                && userMessage.getPayloadInfo().getPartInfo() != null
-                && userMessage.getPayloadInfo().getPartInfo().size() == payloads.size()) {
+        if (payloads != null && !payloads.isEmpty()) {
+            if (userMessage.getPayloadInfo() != null && userMessage.getPayloadInfo().getPartInfo() != null
+                    && (userMessage.getPayloadInfo().getPartInfo().size() - 1) == payloads.size()) {
 
-            for (PayloadType payload : payloads) {
-                String elementDescription = findElementDesription(userMessage, "cid:" + payload.getPayloadId());
+                for (PayloadType payload : payloads) {
+                    String elementDescription = findElementDesription(userMessage, payload.getPayloadId());
 
-                if (elementDescription == null) {
-                    throw new ECodexConnectorGatewayWebserviceClientException(
-                            "No PartInfo of PayloadInfo in ebms header found for actual payloads href "
-                                    + payload.getPayloadId());
+                    if (elementDescription == null) {
+                        throw new ECodexConnectorGatewayWebserviceClientException(
+                                "No PartInfo of PayloadInfo in ebms header found for actual payloads href "
+                                        + payload.getPayloadId());
+                    }
+
+                    if (elementDescription.equals(CommonMessageHelper.CONTENT_PDF_NAME)) {
+                        message.getMessageContent().setPdfDocument(payload.getValue());
+                    } else if (elementDescription.equals("SUBMISSION_ACCEPTANCE")) {
+                        // only SUBMISSION_ACCEPTANCE allowed with EPO message!
+                        message.addConfirmation(extractMessageConfirmation(payload, elementDescription));
+                    } else if (elementDescription.equals("tokenXML") || elementDescription.endsWith(".asics")) {
+                        message.addAttachment(extractAttachment(payload, elementDescription));
+                    } else {
+                        throw new ECodexConnectorGatewayWebserviceClientException("Unknown description for a payload: "
+                                + elementDescription);
+                    }
+
                 }
-
-                if (elementDescription.equals(CommonMessageHelper.CONTENT_PDF_NAME)) {
-                    message.getMessageContent().setPdfDocument(payload.getValue());
-                } else if (elementDescription.equals("SUBMISSION_ACCEPTANCE")) {
-                    // only SUBMISSION_ACCEPTANCE allowed with EPO message!
-                    message.addConfirmation(extractMessageConfirmation(payload, elementDescription));
-                } else if (elementDescription.equals("tokenXML") || elementDescription.endsWith(".asics")) {
-                    message.addAttachment(extractAttachment(payload, elementDescription));
-                } else {
-                    throw new ECodexConnectorGatewayWebserviceClientException("Unknown description for a payload: "
-                            + elementDescription);
-                }
-
+            } else {
+                throw new ECodexConnectorGatewayWebserviceClientException(
+                        "Payload size does not match PayloadInfo size!");
             }
-        } else {
-            throw new ECodexConnectorGatewayWebserviceClientException(
-                    "Payload is empty or payload size does not match PayloadInfo size!");
         }
 
         return message;
@@ -95,7 +98,14 @@ public class DownloadMessageHelper {
         String elementDescription = null;
         for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
             if (info.getHref().equals(href)) {
-                elementDescription = info.getDescription().getValue();
+                if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
+                        && !info.getPartProperties().getProperty().isEmpty()) {
+                    for (Property property : info.getPartProperties().getProperty()) {
+                        if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
+                            elementDescription = property.getValue();
+                        }
+                    }
+                }
             }
         }
 
