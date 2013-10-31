@@ -81,6 +81,7 @@
   	<property name="certificateVerifier" ref="certificateVerifier"/>
   	<property name="legalValidationService" ref="legalValidationService"/>
   	<property name="technicalValidationService" ref="technicalValidationService"/>
+  	<property name="environmentConfiguration" ref="environmentConfiguration"/>
   </bean>
   
   <bean id="tokenIssuer" class="eu.ecodex.dss.model.token.TokenIssuer">

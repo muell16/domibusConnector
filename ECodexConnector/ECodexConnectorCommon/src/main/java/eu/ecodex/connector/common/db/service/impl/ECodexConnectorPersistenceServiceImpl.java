@@ -11,11 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.ecodex.connector.common.db.dao.ECodexActionDao;
 import eu.ecodex.connector.common.db.dao.ECodexEvidenceDao;
 import eu.ecodex.connector.common.db.dao.ECodexMessageDao;
+import eu.ecodex.connector.common.db.dao.ECodexMessageInfoDao;
 import eu.ecodex.connector.common.db.dao.ECodexPartyDao;
 import eu.ecodex.connector.common.db.dao.ECodexServiceDao;
 import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
 import eu.ecodex.connector.common.db.model.ECodexMessage;
+import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
 import eu.ecodex.connector.common.db.model.ECodexParty;
 import eu.ecodex.connector.common.db.model.ECodexService;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
@@ -33,6 +35,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     private ECodexActionDao actionDao;
     private ECodexServiceDao serviceDao;
     private ECodexPartyDao partyDao;
+    private ECodexMessageInfoDao messageInfoDao;
 
     public void setMessageDao(ECodexMessageDao messageDao) {
         this.messageDao = messageDao;
@@ -54,6 +57,10 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         this.partyDao = partyDao;
     }
 
+    public void setMessageInfoDao(ECodexMessageInfoDao messageInfoDao) {
+        this.messageInfoDao = messageInfoDao;
+    }
+
     @Override
     @Transactional
     public void persistMessageIntoDatabase(Message message, ECodexMessageDirection direction)
@@ -73,6 +80,23 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
                     cve);
         }
 
+        ECodexMessageInfo dbMessageInfo = new ECodexMessageInfo();
+        dbMessageInfo.setMessage(dbMessage);
+        dbMessageInfo.setAction(message.getMessageDetails().getAction());
+        dbMessageInfo.setService(message.getMessageDetails().getService());
+        dbMessageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
+        dbMessageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+        dbMessageInfo.setFrom(message.getMessageDetails().getFromParty());
+        dbMessageInfo.setTo(message.getMessageDetails().getToParty());
+
+        try {
+            messageInfoDao.persistMessageInfo(dbMessageInfo);
+        } catch (Exception e) {
+            throw new PersistenceException("Could not persist message info into database. ", e);
+        }
+
+        dbMessage.setMessageInfo(dbMessageInfo);
+
         message.setDbMessage(dbMessage);
         message.getMessageDetails().setDbMessageId(dbMessage.getId());
     }
@@ -83,6 +107,16 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         messageDao.mergeMessage(message.getDbMessage());
 
+        ECodexMessageInfo messageInfo = message.getDbMessage().getMessageInfo();
+
+        messageInfo.setAction(message.getMessageDetails().getAction());
+        messageInfo.setService(message.getMessageDetails().getService());
+        messageInfo.setFrom(message.getMessageDetails().getFromParty());
+        messageInfo.setTo(message.getMessageDetails().getToParty());
+        messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
+        messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+
+        messageInfoDao.mergeMessageInfo(messageInfo);
     }
 
     @Override
@@ -222,6 +256,15 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         details.setEbmsMessageId(dbMessage.getEbmsMessageId());
         details.setNationalMessageId(dbMessage.getNationalMessageId());
         details.setConversationId(dbMessage.getConversationId());
+        ECodexMessageInfo messageInfo = dbMessage.getMessageInfo();
+        if (messageInfo != null) {
+            details.setAction(messageInfo.getAction());
+            details.setService(messageInfo.getService());
+            details.setFinalRecipient(messageInfo.getFinalRecipient());
+            details.setOriginalSender(messageInfo.getOriginalSender());
+            details.setFromParty(messageInfo.getFrom());
+            details.setToParty(messageInfo.getTo());
+        }
 
         Message message = new Message(details);
 

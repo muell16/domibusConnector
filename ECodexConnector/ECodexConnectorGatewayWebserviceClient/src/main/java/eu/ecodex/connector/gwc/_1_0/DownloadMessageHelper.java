@@ -1,6 +1,5 @@
-package eu.ecodex.connector.gwc.helper;
+package eu.ecodex.connector.gwc._1_0;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -10,28 +9,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.Holder;
 
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import backend.ecodex.org._1_0.DownloadMessageResponse;
 import eu.e_codex.namespace.ecodex.ecodexconnectorpayload.v1.ECodexConnectorPayload;
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.db.model.ECodexParty;
-import eu.ecodex.connector.common.db.model.ECodexService;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
@@ -39,19 +27,20 @@ import eu.ecodex.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
+import eu.ecodex.connector.gwc.util.CommonMessageHelper;
 
 public class DownloadMessageHelper {
 
-    private ECodexConnectorPersistenceService persistenceService;
+    private CommonMessageHelper commonMessageHelper;
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
+    public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
+        this.commonMessageHelper = commonMessageHelper;
     }
 
     public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
             throws ECodexConnectorGatewayWebserviceClientException {
         UserMessage userMessage = ebMSHeader.value.getUserMessage().get(0);
-        MessageDetails details = convertUserMessageToMessageDetails(userMessage);
+        MessageDetails details = commonMessageHelper.convertUserMessageToMessageDetails(userMessage);
 
         MessageContent content = new MessageContent();
 
@@ -65,7 +54,8 @@ public class DownloadMessageHelper {
             for (DataHandler dh : payload) {
                 String rootElement = null;
                 try {
-                    rootElement = parseRootElement(dh);
+                    byte[] data = convertDataHandlerContentToByteArray(dh);
+                    rootElement = CommonMessageHelper.parseRootElement(data);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -144,20 +134,6 @@ public class DownloadMessageHelper {
         return jaxbElement.getValue();
     }
 
-    public Element createEmptyListPendingMessagesRequest() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = null;
-        try {
-            db = dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException e1) {
-            e1.printStackTrace();
-        }
-        Document document = db.newDocument();
-        Element request = document.createElement("listPendingMessagesRequest");
-
-        return request;
-    }
-
     private void extractMessageContent(DataHandler dh, MessageContent content) {
         try {
             content.setECodexContent(convertDataHandlerContentToByteArray(dh));
@@ -210,74 +186,4 @@ public class DownloadMessageHelper {
         return b;
     }
 
-    private MessageDetails convertUserMessageToMessageDetails(UserMessage userMessage) {
-        MessageDetails details = new MessageDetails();
-
-        details.setEbmsMessageId(userMessage.getMessageInfo().getMessageId());
-        details.setRefToMessageId(userMessage.getMessageInfo().getRefToMessageId());
-        details.setConversationId(userMessage.getCollaborationInfo().getConversationId());
-
-        String actionString = userMessage.getCollaborationInfo().getAction();
-        try {
-            ECodexAction action = persistenceService.getAction(actionString);
-            details.setAction(action);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No action {} found!", actionString);
-        }
-
-        String serviceString = userMessage.getCollaborationInfo().getService().getValue();
-        try {
-            ECodexService service = persistenceService.getService(serviceString);
-            details.setService(service);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No service {} found!", actionString);
-        }
-
-        From from = userMessage.getPartyInfo().getFrom();
-        ECodexParty fromPartner = persistenceService.getParty(from.getPartyId().get(0).getValue(), from.getRole());
-        details.setFromParty(fromPartner);
-
-        To to = userMessage.getPartyInfo().getTo();
-        ECodexParty toPartner = persistenceService.getParty(to.getPartyId().get(0).getValue(), to.getRole());
-        details.setToParty(toPartner);
-
-        MessageProperties mp = userMessage.getMessageProperties();
-        if (mp != null) {
-            List<Property> properties = mp.getProperty();
-            if (properties != null && !properties.isEmpty()) {
-                for (Property property : properties) {
-                    if (property.getName().equals("finalRecipient")) {
-                        details.setFinalRecipient(property.getValue());
-                    }
-                    if (property.getName().equals("originalSender")) {
-                        details.setOriginalSender(property.getValue());
-                    }
-                }
-            }
-        }
-
-        return details;
-    }
-
-    private final String parseRootElement(DataHandler dh) throws SAXException, IOException,
-            ParserConfigurationException {
-        byte[] data = convertDataHandlerContentToByteArray(dh);
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        Document document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
-
-        return getRootElementName(document);
-    }
-
-    private String getRootElementName(final Object obj) {
-        if (obj == null || !(obj instanceof Node)) {
-            throw new IllegalArgumentException("Argument must be of type Node.");
-        }
-
-        Node node = (Node) obj;
-        // Read just the element name without the namespace prefix
-        String rootElementName = node.getFirstChild().getLocalName();
-        return rootElementName;
-    }
 }

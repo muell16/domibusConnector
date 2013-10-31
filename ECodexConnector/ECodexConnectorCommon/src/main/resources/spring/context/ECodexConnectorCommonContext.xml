@@ -29,6 +29,7 @@
 		<property name="actionDao" ref="actionDao" />
 		<property name="partyDao" ref="partyDao" />
 		<property name="serviceDao" ref="serviceDao" />
+		<property name="messageInfoDao" ref="messageInfoDao" />
 	</bean>
 
 </beans>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ecodex.connector</groupId>
 	<artifactId>ECodexConnector</artifactId>
-	<version>1.3.1-beta-1</version>
+	<version>1.3.1-RC2</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>ECodexConnectorGatewayWebserviceClient</module>
@@ -26,18 +26,18 @@
 		<developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/ECodexConnector</developerConnection>
 	</scm>
 
-    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
-	
+
 
 
 	<dependencies>
@@ -113,6 +113,29 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>maven-jgitflow-plugin</artifactId>
+				<version>1.0-alpha21.1</version>
+				<configuration>
+					<allowSnapshots>false</allowSnapshots>
+					<allowUntracked>false</allowUntracked>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<flowInitContext>
+						<masterBranchName>master</masterBranchName>
+						<developBranchName>development</developBranchName>
+						<featureBranchPrefix>feature/</featureBranchPrefix>
+						<releaseBranchPrefix>release/</releaseBranchPrefix>
+						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+						<versionTagPrefix></versionTagPrefix>
+					</flowInitContext>
+					<pushFeatures>false</pushFeatures>
+					<pushHotfixes>false</pushHotfixes>
+					<pushReleases>false</pushReleases>
+					<updateDependencies>true</updateDependencies>
+					<keepBranch>true</keepBranch>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
