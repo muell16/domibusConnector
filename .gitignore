@@ -27,6 +27,7 @@ target/
 *.out
 *.tmp
 *.log
+*.tmp
 
 ## Intellij IDEA files 
 *.iml
