@@ -1,1 +1,0 @@
-hanges in Release 1.4 of the ECodexConnector Framework:

@@ -109,6 +109,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         ECodexMessageInfo messageInfo = message.getDbMessage().getMessageInfo();
 
+        if(messageInfo!=null){
         messageInfo.setAction(message.getMessageDetails().getAction());
         messageInfo.setService(message.getMessageDetails().getService());
         messageInfo.setFrom(message.getMessageDetails().getFromParty());
@@ -117,6 +118,7 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
         messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
 
         messageInfoDao.mergeMessageInfo(messageInfo);
+        }
     }
 
     @Override

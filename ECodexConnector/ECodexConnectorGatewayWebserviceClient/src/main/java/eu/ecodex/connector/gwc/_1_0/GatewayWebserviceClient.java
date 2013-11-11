@@ -97,6 +97,8 @@ public class GatewayWebserviceClient {
             LOGGER.debug("Successfully downloaded message with id [{}]", request.getMessageID());
         } catch (DownloadMessageFault e) {
             LOGGER.error("Could not execute! ", e);
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not download message with id ["
+                    + messageId + "] from backend service!");
         }
 
         if (response.value == null || response.value.getPayload() == null || response.value.getPayload().isEmpty()) {
