@@ -73,6 +73,10 @@ public class OutgoingEvidenceService implements EvidenceService {
 
         persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
 
+        if (originalMessage.getDbMessage().getConfirmed() == null) {
+            persistenceService.confirmMessage(originalMessage);
+        }
+
         LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(),
                 originalMessage.getDbMessage().getId());
     }
