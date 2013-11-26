@@ -22,6 +22,9 @@ public interface ECodexConnectorEvidencesToolkit {
 
     MessageConfirmation createRelayREMMDRejection(RejectionReason rejectionReason, Message message)
             throws ECodexConnectorEvidencesToolkitException;
+    
+    MessageConfirmation createRelayREMMDFailure(RejectionReason rejectionReason, Message message)
+    		throws ECodexConnectorEvidencesToolkitException;
 
     MessageConfirmation createDeliveryEvidence(Message message) throws ECodexConnectorEvidencesToolkitException;
 

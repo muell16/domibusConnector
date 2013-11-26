@@ -103,6 +103,33 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     }
 
     @Override
+    public MessageConfirmation createRelayREMMDFailure(RejectionReason rejectionReason, Message message)
+    		throws ECodexConnectorEvidencesToolkitException {
+	
+    	if (rejectionReason == null) {
+    			throw new ECodexConnectorEvidencesToolkitException(
+    					"in case of a failure the rejectionReason may not be null!");
+    	}
+	
+    	REMErrorEvent event = REMErrorEvent.valueOf(rejectionReason.toString());
+    	
+    	MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+
+    	if (prevConfirmation == null) {
+    		throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
+    				+ ECodexEvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
+    				+ ECodexEvidenceType.RELAY_REMMD_FAILURE + " can be created!");
+    	}
+	
+    	byte[] evidence = createRelayREMMDFailure(event, prevConfirmation.getEvidence());
+	
+    	MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),	
+    			ECodexEvidenceType.RELAY_REMMD_FAILURE, evidence);
+	
+    	return confirmation;
+}
+    
+    @Override
     public MessageConfirmation createDeliveryEvidence(Message message) throws ECodexConnectorEvidencesToolkitException {
         MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
@@ -246,6 +273,18 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         }
     }
 
+    private byte[] createRelayREMMDFailure(REMErrorEvent eventReason,
+    		byte[] previousEvidence) throws ECodexConnectorEvidencesToolkitException {
+    	EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
+    	
+    	try {
+    		return evidenceBuilder.createRelayREMMDFailure(eventReason,
+    				evidenceIssuerDetails, previousEvidence);
+    	} catch (ECodexEvidenceBuilderException e) {
+    		 throw new ECodexConnectorEvidencesToolkitException(e);
+    	}
+    }
+    
     private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent reason, Message message,
             String hash) throws ECodexConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();

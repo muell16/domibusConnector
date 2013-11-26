@@ -41,6 +41,8 @@ public interface ECodexConnectorPersistenceService {
     ECodexAction getAction(String action);
 
     ECodexAction getRelayREMMDAcceptanceRejectionAction();
+    
+    ECodexAction getRelayREMMDFailure();
 
     ECodexAction getDeliveryNonDeliveryToRecipientAction();
 

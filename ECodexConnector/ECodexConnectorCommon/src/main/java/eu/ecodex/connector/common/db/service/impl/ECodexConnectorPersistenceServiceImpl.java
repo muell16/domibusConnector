@@ -327,6 +327,12 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
     public ECodexAction getRelayREMMDAcceptanceRejectionAction() {
         return getAction("RelayREMMDAcceptanceRejection");
     }
+    
+	
+    @Override
+    public ECodexAction getRelayREMMDFailure() {
+    	return getAction("RelayREMMDFailure");
+	} 
 
     @Override
     public ECodexAction getDeliveryNonDeliveryToRecipientAction() {
