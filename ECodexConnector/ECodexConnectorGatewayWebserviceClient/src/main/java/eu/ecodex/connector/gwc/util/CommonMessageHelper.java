@@ -42,6 +42,7 @@ import eu.ecodex.connector.common.db.model.ECodexService;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageDetails;
+import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 public class CommonMessageHelper {
 
@@ -129,13 +130,13 @@ public class CommonMessageHelper {
         return dh;
     }
 
-    public UserMessage buildUserMessage(Message message) {
+    public UserMessage buildUserMessage(Message message) throws ECodexConnectorGatewayWebserviceClientException {
 
         UserMessage userMessage = new UserMessage();
 
         userMessage.setMessageProperties(buildMessageProperties(message));
 
-        userMessage.setPartyInfo(buildPartyInfo(message.getMessageDetails()));
+        userMessage.setPartyInfo(buildPartyInfo(message));
 
         userMessage.setCollaborationInfo(buildCollaborationInfo(message.getMessageDetails()));
 
@@ -180,26 +181,35 @@ public class CommonMessageHelper {
         return mp;
     }
 
-    private PartyInfo buildPartyInfo(MessageDetails messageDetails) {
+    private PartyInfo buildPartyInfo(Message message) throws ECodexConnectorGatewayWebserviceClientException {
+        MessageDetails details = message.getMessageDetails();
         PartyInfo partyInfo = new PartyInfo();
 
         From from = new From();
         PartyId partyId = new PartyId();
-        if (messageDetails.getFromParty() != null) {
-            partyId.setValue(messageDetails.getFromParty().getPartyId());
-            from.setRole(messageDetails.getFromParty().getRole());
-        } else {
-            partyId.setValue(connectorProperties.getGatewayName());
-            from.setRole(connectorProperties.getGatewayRole());
+
+        if (details.getFromParty() == null) {
+            ECodexParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
+                    connectorProperties.getGatewayRole());
+            if (fromParty == null) {
+                throw new ECodexConnectorGatewayWebserviceClientException(
+                        "Could not find own configured party in database!");
+            }
+            details.setFromParty(fromParty);
+            persistenceService.mergeMessageWithDatabase(message);
         }
+
+        partyId.setValue(details.getFromParty().getPartyId());
+        from.setRole(details.getFromParty().getRole());
+
         from.getPartyId().add(partyId);
         partyInfo.setFrom(from);
 
         To to = new To();
         PartyId partyId2 = new PartyId();
-        partyId2.setValue(messageDetails.getToParty().getPartyId());
+        partyId2.setValue(details.getToParty().getPartyId());
         to.getPartyId().add(partyId2);
-        to.setRole(messageDetails.getToParty().getRole());
+        to.setRole(details.getToParty().getRole());
         partyInfo.setTo(to);
 
         return partyInfo;
