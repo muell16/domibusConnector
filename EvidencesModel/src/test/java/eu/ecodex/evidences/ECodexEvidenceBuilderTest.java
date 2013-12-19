@@ -23,10 +23,12 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.etsi.uri._02640.v2.EventReasonType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -138,7 +140,13 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
+	
+	//klara
+//	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;	
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#R_REMMD_NotIdentified");
+	eventReason.setDetails("Originator not known");
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType1();
 
@@ -175,14 +183,22 @@ public class ECodexEvidenceBuilderTest {
 
 	byte[] signedxmlData;
 	byte[] previousEvidence;
+	
 	PublicKey publicKey;
+	
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+	
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = null;
+	
+//	REMErrorEvent eventReason = null;	
+	EventReasonType eventReason = null;
+
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType1();
 
 	signedxmlData = ecodexEvidenceBuilder.createDeliveryNonDeliveryToRecipient(isDelivery, eventReason, evidenceIssuerDetails, previousEvidence);
+	
+	
 	// output the signed Xmlfile
 	File xmloutputfile = new File(PATH_OUTPUT_FILES+DELIVERY_NO_REASON_FILE);
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
@@ -205,8 +221,13 @@ public class ECodexEvidenceBuilderTest {
 
 	byte[] evidenceAsByteArray;
 	ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
-
-	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	
+	//klara
+//	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#Other");
+	eventReason.setDetails(null);	
+	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, eventReason, createEntityDetailsObject(), createMessageDetailsObject());
 
 	// EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
 	// javaKeyStorePassword, alias, keyPassword);
@@ -233,7 +254,11 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = null;
+	
+	//klara
+//	REMErrorEvent eventReason = null;
+	EventReasonType eventReason = null;
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType2();
 
@@ -261,11 +286,18 @@ public class ECodexEvidenceBuilderTest {
 	byte[] evidenceAsByteArray1;
 	ECodexEvidenceBuilder builder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 
-	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	//klara
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#Other");
+	eventReason.setDetails(null);	
+	
+	// evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, REMErrorEvent.OTHER, createEntityDetailsObject(), createMessageDetailsObject());
+	evidenceAsByteArray = builder.createSubmissionAcceptanceRejection(true, eventReason, createEntityDetailsObject(), createMessageDetailsObject());
 	// EvidenceUtils utils = new EvidenceUtilsImpl(javaKeyStorePath,
 	// javaKeyStorePassword, alias, keyPassword);
 
-	evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(true, REMErrorEvent.OTHER, createEntityDetailsObject(), evidenceAsByteArray);
+//	evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(true, REMErrorEvent.OTHER, createEntityDetailsObject(), evidenceAsByteArray);
+	evidenceAsByteArray1 = builder.createDeliveryNonDeliveryToRecipient(true, eventReason, createEntityDetailsObject(), evidenceAsByteArray);
 
 	// evidenceType = utils.convertIntoEvidenceType(evidenceAsByteArray1);
 
@@ -291,7 +323,13 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isDelivery = true;
-	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
+
+	//klara
+//	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;	
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#R_REMMD_NotIdentified");
+	eventReason.setDetails("Originator not known");
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	previousEvidence = createREMEvidenceType2();
 
@@ -327,7 +365,11 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isAcceptance = true;
-	REMErrorEvent eventReason = null;
+	
+	//klara
+//	REMErrorEvent eventReason = null;
+	EventReasonType eventReason = null;
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	ECodexMessageDetails messageDetails = createMessageDetailsObject();
 
@@ -338,7 +380,7 @@ public class ECodexEvidenceBuilderTest {
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
-
+	
 	Document document;
 	document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 
@@ -364,7 +406,13 @@ public class ECodexEvidenceBuilderTest {
 	PublicKey publicKey;
 	ECodexEvidenceBuilder ecodexEvidenceBuilder = new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	boolean isAcceptance = false;
-	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;
+	
+	//klara
+//	REMErrorEvent eventReason = REMErrorEvent.UNKNOWN_ORIGINATOR_ADDRESS;	
+	EventReasonType eventReason = new EventReasonType();
+	eventReason.setCode("http:uri.etsi.org/REM/EventReason#R_REMMD_NotIdentified");
+	eventReason.setDetails("Originator not known");
+	
 	EDeliveryDetails evidenceIssuerDetails = createEntityDetailsObject();
 	ECodexMessageDetails messageDetails = createMessageDetailsObject();
 
@@ -390,35 +438,49 @@ public class ECodexEvidenceBuilderTest {
 
     // Signature validation
     private boolean signatureValidate(Document doc, PublicKey publicKey) throws Exception {
-	boolean signStatus = true;
-	NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
-	if (nl.getLength() == 0) {
-	    throw new Exception("Cannot find Signature element");
-	}
-	Node signatureNode = nl.item(0);
-	XMLSignatureFactory factory = getSignatureFactory();
-	// to test: CASE 1
-	// XMLSignature signature = factory
-	// .unmarshalXMLSignature(new DOMStructure(signatureNode));
+    	
+    	boolean signStatus = true;
+	
+    	NodeList signedPropsNL = doc.getElementsByTagName("SignedProperties");
+    	if (signedPropsNL.getLength() != 0) {
+    		Node signedProps = signedPropsNL.item(0);
+    		((Element) signedProps).setIdAttribute("Id", true); 
+    	}
+    	
+    	NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+	
+    	if (nl.getLength() == 0) {
+    		throw new Exception("Cannot find Signature element");
+    	}
+    	
+    	Node signatureNode = nl.item(0);
+    	XMLSignatureFactory factory = getSignatureFactory();
+	
+    	// to test: CASE 1
+    	// XMLSignature signature = factory
+    	// .unmarshalXMLSignature(new DOMStructure(signatureNode));
 
-	// Create ValidateContext
-	DOMValidateContext valContext = new DOMValidateContext(publicKey, signatureNode);
+    	// Create ValidateContext
+    	DOMValidateContext valContext = new DOMValidateContext(publicKey, signatureNode);
 
-	// to test: CASE 2
-	XMLSignature signature = factory.unmarshalXMLSignature(valContext);
+    	// to test: CASE 2
+    	XMLSignature signature = factory.unmarshalXMLSignature(valContext);
 
-	// Validate the XMLSignature
-	signStatus = signStatus && signature.validate(valContext);
-	// check the validation status of each Reference
-	List<?> refs = signature.getSignedInfo().getReferences();
-	for (int i = 0; i < refs.size(); i++) {
-	    Reference ref = (Reference) refs.get(i);
+    	// Validate the XMLSignature
+    	signStatus = signStatus && signature.validate(valContext);
+    	
+    	// check the validation status of each Reference
+    	List<?> refs = signature.getSignedInfo().getReferences();
+    	
+    	for (int i = 0; i < refs.size(); i++) {
+    		Reference ref = (Reference) refs.get(i);
 
-	    // System.out.println("Reference[" + i + "] validity status: "
-	    // + ref.validate(valContext));
-	    signStatus = signStatus && ref.validate(valContext);
-	}
-	return signStatus;
+    		// System.out.println("Reference[" + i + "] validity status: "
+    		// + ref.validate(valContext));
+    		signStatus = signStatus && ref.validate(valContext);
+    	}
+    	
+    	return signStatus;
     }
 
     private XMLSignatureFactory getSignatureFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {

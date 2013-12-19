@@ -48,6 +48,21 @@ public class EventReasonType {
     @XmlElement(name = "Details")
     protected String details;
 
+    public EventReasonType() {
+    	this.setCode(null);
+    	this.setDetails(null);
+	}
+
+    public EventReasonType(String code) {
+    	this.setCode(code);
+    	this.setDetails(null);
+	}
+    
+    public EventReasonType(String code, String details) {
+    	this.setCode(code);
+    	this.setDetails(details);    	
+	}
+
     /**
      * Ruft den Wert der code-Eigenschaft ab.
      * 
