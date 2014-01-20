@@ -16,6 +16,10 @@ public class ECodexConnectorProperties {
     long timeoutDelivery;
     long timeoutRetrieval;
     boolean checkEvidences;
+    boolean useDynamicDiscovery;
+    String dynamicDiscoveryCommunity;
+    String dynamicDiscoveryEnvironment;
+    String dynamicDiscoveryNormalisationAlgorithm;
 
     public String getGatewayEndpointAddress() {
         return gatewayEndpointAddress;
@@ -127,6 +131,38 @@ public class ECodexConnectorProperties {
 
     public void setCheckEvidences(boolean checkEvidences) {
         this.checkEvidences = checkEvidences;
+    }
+
+    public boolean isUseDynamicDiscovery() {
+        return useDynamicDiscovery;
+    }
+
+    public void setUseDynamicDiscovery(boolean useDynamicDiscovery) {
+        this.useDynamicDiscovery = useDynamicDiscovery;
+    }
+
+    public String getDynamicDiscoveryCommunity() {
+        return dynamicDiscoveryCommunity;
+    }
+
+    public void setDynamicDiscoveryCommunity(String dynamicDiscoveryCommunity) {
+        this.dynamicDiscoveryCommunity = dynamicDiscoveryCommunity;
+    }
+
+    public String getDynamicDiscoveryEnvironment() {
+        return dynamicDiscoveryEnvironment;
+    }
+
+    public void setDynamicDiscoveryEnvironment(String dynamicDiscoveryEnvironment) {
+        this.dynamicDiscoveryEnvironment = dynamicDiscoveryEnvironment;
+    }
+
+    public String getDynamicDiscoveryNormalisationAlgorithm() {
+        return dynamicDiscoveryNormalisationAlgorithm;
+    }
+
+    public void setDynamicDiscoveryNormalisationAlgorithm(String dynamicDiscoveryNormalisationAlgorithm) {
+        this.dynamicDiscoveryNormalisationAlgorithm = dynamicDiscoveryNormalisationAlgorithm;
     }
 
 }

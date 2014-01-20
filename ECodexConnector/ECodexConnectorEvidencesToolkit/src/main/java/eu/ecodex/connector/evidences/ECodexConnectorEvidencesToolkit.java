@@ -22,18 +22,33 @@ public interface ECodexConnectorEvidencesToolkit {
 
     MessageConfirmation createRelayREMMDRejection(RejectionReason rejectionReason, Message message)
             throws ECodexConnectorEvidencesToolkitException;
-    
+
     MessageConfirmation createRelayREMMDFailure(RejectionReason rejectionReason, Message message)
-    		throws ECodexConnectorEvidencesToolkitException;
+            throws ECodexConnectorEvidencesToolkitException;
 
     MessageConfirmation createDeliveryEvidence(Message message) throws ECodexConnectorEvidencesToolkitException;
 
     MessageConfirmation createNonDeliveryEvidence(RejectionReason rejectionReason, Message message)
             throws ECodexConnectorEvidencesToolkitException;
 
+    MessageConfirmation createNonDeliveryEvidence(RejectionReason rejectionReason, Message message, String errorDetails)
+            throws ECodexConnectorEvidencesToolkitException;
+
     MessageConfirmation createRetrievalEvidence(Message message) throws ECodexConnectorEvidencesToolkitException;
 
     MessageConfirmation createNonRetrievalEvidence(RejectionReason rejectionReason, Message message)
+            throws ECodexConnectorEvidencesToolkitException;
+
+    MessageConfirmation createNonRetrievalEvidence(RejectionReason rejectionReason, Message message, String errorDetails)
+            throws ECodexConnectorEvidencesToolkitException;
+
+    byte[] createSubmissionRejection(RejectionReason rejectionReason, Message message, String hash, String errorDetails)
+            throws ECodexConnectorEvidencesToolkitException;
+
+    MessageConfirmation createRelayREMMDRejection(RejectionReason rejectionReason, Message message, String errorDetails)
+            throws ECodexConnectorEvidencesToolkitException;
+
+    MessageConfirmation createRelayREMMDFailure(RejectionReason rejectionReason, Message message, String errorDetails)
             throws ECodexConnectorEvidencesToolkitException;
 
 }

@@ -20,6 +20,10 @@
 		<property name="timeoutDelivery" value="${connector.evidence.delivery.timeout.ms}" />
 		<property name="timeoutRetrieval" value="${connector.evidence.retrieval.timeout.ms}" />
 		<property name="checkEvidences" value="${connector.use.evidences.timeout}" />
+		<property name="useDynamicDiscovery" value="${connector.use.dynamic.discovery}" />
+		<property name="dynamicDiscoveryCommunity" value="${dynamic.discovery.community}" />
+		<property name="dynamicDiscoveryEnvironment" value="${dynamic.discovery.environment}" />
+		<property name="dynamicDiscoveryNormalisationAlgorithm" value="${dynamic.discovery.normalisation.algorithm}" />
 	</bean>
 
 	<bean id="persistenceService"
