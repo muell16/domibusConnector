@@ -155,7 +155,9 @@ public class CommonMessageHelper {
 
         MessageInfo info = new MessageInfo();
 
-        info.setRefToMessageId(message.getMessageDetails().getRefToMessageId());
+        if (message.getMessageDetails().getRefToMessageId() != null
+                && !message.getMessageDetails().getRefToMessageId().isEmpty())
+            info.setRefToMessageId(message.getMessageDetails().getRefToMessageId());
 
         userMessage.setMessageInfo(info);
 
