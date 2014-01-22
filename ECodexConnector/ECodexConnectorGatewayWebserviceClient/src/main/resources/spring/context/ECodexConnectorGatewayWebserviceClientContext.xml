@@ -51,9 +51,15 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="commonMessageHelper" ref="commonMessageHelper" />
 	</bean>
 	
+	<bean id="dynamicDiscoveryClient" class= "eu.ecodex.discovery.DiscoveryClient">
+		<constructor-arg value="${dynamic.discovery.sml.resolver.address}" />
+	</bean>
+
 	<bean id="commonMessageHelper" class="eu.ecodex.connector.gwc.util.CommonMessageHelper">
 		<property name="connectorProperties" ref="connectorProperties" />
 		<property name="persistenceService" ref="persistenceService" />
+		<property name="dynamicDiscoveryClient" ref="dynamicDiscoveryClient" />
 	</bean>
+	
 
 </beans>

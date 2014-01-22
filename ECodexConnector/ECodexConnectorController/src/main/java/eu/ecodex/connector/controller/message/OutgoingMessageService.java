@@ -35,17 +35,17 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         try {
             hashValue = buildAndPersistHashValue(message);
         } catch (ECodexConnectorControllerException e) {
-            createSubmissionRejectionAndReturnIt(message, "0");
+            createSubmissionRejectionAndReturnIt(message, "0", e.getMessage());
         }
 
         if (connectorProperties.isUseContentMapper()) {
             try {
                 contentMapper.mapNationalToInternational(message);
             } catch (ECodexConnectorContentMapperException cme) {
-                createSubmissionRejectionAndReturnIt(message, hashValue);
+                createSubmissionRejectionAndReturnIt(message, hashValue, cme.getMessage());
                 throw new ECodexConnectorControllerException(cme);
             } catch (ImplementationMissingException ime) {
-                createSubmissionRejectionAndReturnIt(message, hashValue);
+                createSubmissionRejectionAndReturnIt(message, hashValue, ime.getMessage());
                 throw new ECodexConnectorControllerException(ime);
             }
             persistenceService.mergeMessageWithDatabase(message);
@@ -65,7 +65,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
                 confirmation = new MessageConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, submissionAcceptance);
             } catch (ECodexConnectorEvidencesToolkitException ete) {
-                createSubmissionRejectionAndReturnIt(message, hashValue);
+                createSubmissionRejectionAndReturnIt(message, hashValue, ete.getMessage());
                 throw new ECodexConnectorControllerException("Could not generate evidence for submission acceptance! ",
                         ete);
             }
@@ -75,7 +75,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         try {
             gatewayWebserviceClient.sendMessage(message);
         } catch (ECodexConnectorGatewayWebserviceClientException gwse) {
-            createSubmissionRejectionAndReturnIt(message, hashValue);
+            createSubmissionRejectionAndReturnIt(message, hashValue, gwse.getMessage());
             throw new ECodexConnectorControllerException("Could not send ECodex Message to Gateway! ", gwse);
         }
 
@@ -120,11 +120,11 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         return hash;
     }
 
-    private void createSubmissionRejectionAndReturnIt(Message message, String hashValue)
+    private void createSubmissionRejectionAndReturnIt(Message message, String hashValue, String errorMessage)
             throws ECodexConnectorControllerException {
         try {
             byte[] submissionRejection = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message,
-                    hashValue);
+                    hashValue, errorMessage);
 
             // immediately persist new evidence into database
             persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionRejection,

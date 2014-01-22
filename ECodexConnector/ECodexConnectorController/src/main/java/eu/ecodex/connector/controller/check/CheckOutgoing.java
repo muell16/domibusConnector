@@ -60,7 +60,7 @@ public class CheckOutgoing {
 
                         boolean relayRemmdFound = checkEvidencesForRelayRemmd(unconfirmed);
                         if (!relayRemmdFound) {
-                            createRelayRemmdRejectionAndSendIt(unconfirmed);
+                        	createRelayRemmdFailureAndSendIt(unconfirmed);
                             continue;
                         }
                     }
@@ -139,6 +139,24 @@ public class CheckOutgoing {
         sendEvidenceToNationalSystem(originalMessage, relayRemMDRejection, action);
     }
 
+    private void createRelayRemmdFailureAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
+    	
+    	LOGGER.info("The RelayREMMDAcceptance evidence for message {} timed out. Will send failure!", originalMessage
+    			.getMessageDetails().getEbmsMessageId());
+
+    	MessageConfirmation relayRemMDFailure = null;
+
+    	try {
+    		relayRemMDFailure = evidencesToolkit.createRelayREMMDFailure(RejectionReason.OTHER, originalMessage);
+    	} catch (ECodexConnectorEvidencesToolkitException e) {
+    		throw new ECodexConnectorControllerException("Error creating RelayREMMDFailure for message!", e);
+    	}
+    	
+    	ECodexAction action = persistenceService.getRelayREMMDFailure();
+    	
+    	sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
+    }
+    
     private void createNonDeliveryAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
         LOGGER.info("The Delivery evidence for message {} timed out. Will send NonDelivery!", originalMessage
                 .getMessageDetails().getEbmsMessageId());

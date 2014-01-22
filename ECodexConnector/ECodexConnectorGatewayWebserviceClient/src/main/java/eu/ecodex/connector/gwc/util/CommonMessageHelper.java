@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
@@ -42,9 +44,16 @@ import eu.ecodex.connector.common.db.model.ECodexService;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageDetails;
+import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
+import eu.ecodex.discovery.DiscoveryClient;
+import eu.ecodex.discovery.DiscoveryException;
+import eu.ecodex.discovery.Metadata;
 
 public class CommonMessageHelper {
 
+    private static final String ENDPOINT_ADDRESS_PROPERTY_NAME = "EndpointAddress";
+    private static final String ORIGINAL_SENDER_PROPERTY_NAME = "originalSender";
+    private static final String FINAL_RECIPIENT_PROPERTY_NAME = "finalRecipient";
     public static final String XML_MIME_TYPE = "text/xml";
     public static final String APPLICATION_MIME_TYPE = "application/octet-stream";
     public static final String CONTENT_PDF_NAME = "ContentPDF";
@@ -53,6 +62,7 @@ public class CommonMessageHelper {
 
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorPersistenceService persistenceService;
+    private DiscoveryClient dynamicDiscoveryClient;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -60,6 +70,10 @@ public class CommonMessageHelper {
 
     public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
+    }
+
+    public void setDynamicDiscoveryClient(DiscoveryClient dynamicDiscoveryClient) {
+        this.dynamicDiscoveryClient = dynamicDiscoveryClient;
     }
 
     public void persistEbmsMessageIdIntoDatabase(String ebmsMessageId, Message message) {
@@ -129,19 +143,21 @@ public class CommonMessageHelper {
         return dh;
     }
 
-    public UserMessage buildUserMessage(Message message) {
+    public UserMessage buildUserMessage(Message message) throws ECodexConnectorGatewayWebserviceClientException {
 
         UserMessage userMessage = new UserMessage();
 
         userMessage.setMessageProperties(buildMessageProperties(message));
 
-        userMessage.setPartyInfo(buildPartyInfo(message.getMessageDetails()));
+        userMessage.setPartyInfo(buildPartyInfo(message));
 
         userMessage.setCollaborationInfo(buildCollaborationInfo(message.getMessageDetails()));
 
         MessageInfo info = new MessageInfo();
 
-        info.setRefToMessageId(message.getMessageDetails().getRefToMessageId());
+        if (message.getMessageDetails().getRefToMessageId() != null
+                && !message.getMessageDetails().getRefToMessageId().isEmpty())
+            info.setRefToMessageId(message.getMessageDetails().getRefToMessageId());
 
         userMessage.setMessageInfo(info);
 
@@ -165,41 +181,87 @@ public class CommonMessageHelper {
         if (message.getMessageDetails().getFinalRecipient() != null) {
 
             Property finalRecipient = new Property();
-            finalRecipient.setName("finalRecipient");
+            finalRecipient.setName(FINAL_RECIPIENT_PROPERTY_NAME);
             finalRecipient.setValue(message.getMessageDetails().getFinalRecipient());
             mp.getProperty().add(finalRecipient);
         }
 
         if (message.getMessageDetails().getOriginalSender() != null) {
             Property originalSender = new Property();
-            originalSender.setName("originalSender");
+            originalSender.setName(ORIGINAL_SENDER_PROPERTY_NAME);
             originalSender.setValue(message.getMessageDetails().getOriginalSender());
             mp.getProperty().add(originalSender);
+        }
+
+        if (connectorProperties.isUseDynamicDiscovery()) {
+            String endpointAddress = null;
+            try {
+                endpointAddress = resolveEndpointAddress(message.getMessageDetails());
+            } catch (DiscoveryException e) {
+                e.printStackTrace();
+            }
+            if (endpointAddress != null) {
+                Property ddEndpointAddress = new Property();
+                ddEndpointAddress.setName(ENDPOINT_ADDRESS_PROPERTY_NAME);
+                ddEndpointAddress.setValue(endpointAddress);
+                mp.getProperty().add(ddEndpointAddress);
+            }
         }
 
         return mp;
     }
 
-    private PartyInfo buildPartyInfo(MessageDetails messageDetails) {
+    private String resolveEndpointAddress(MessageDetails messageDetails) throws DiscoveryException {
+
+        final SortedMap<String, Object> metadata = new TreeMap<String, Object>();
+        metadata.put(Metadata.PROCESS_ID, messageDetails.getService().getService());
+        metadata.put(Metadata.DOCUMENT_OR_ACTION_ID, messageDetails.getAction().getAction());
+        metadata.put(Metadata.SENDING_END_ENTITY_ID, messageDetails.getOriginalSender());
+        metadata.put(Metadata.RECEIVING_END_ENTITY_ID, messageDetails.getFinalRecipient());
+        metadata.put(Metadata.COMMUNITY, connectorProperties.getDynamicDiscoveryCommunity());
+        metadata.put(Metadata.ENVIRONMENT, connectorProperties.getDynamicDiscoveryEnvironment());
+        metadata.put(Metadata.COUNTRY_CODE_OR_EU, messageDetails.getToParty().getPartyId());
+        metadata.put(Metadata.NORMALISATION_ALGORITHM, connectorProperties.getDynamicDiscoveryNormalisationAlgorithm()); // use
+                                                                                                                         // hashed
+        // identifiers
+        metadata.put(Metadata.SUFFIX, null);
+
+        dynamicDiscoveryClient.resolveMetadata(metadata);
+
+        final String endpointAddress = (String) metadata.get(Metadata.ENDPOINT_ADDRESS);
+
+        return endpointAddress;
+    }
+
+    private PartyInfo buildPartyInfo(Message message) throws ECodexConnectorGatewayWebserviceClientException {
+        MessageDetails details = message.getMessageDetails();
         PartyInfo partyInfo = new PartyInfo();
 
         From from = new From();
         PartyId partyId = new PartyId();
-        if (messageDetails.getFromParty() != null) {
-            partyId.setValue(messageDetails.getFromParty().getPartyId());
-            from.setRole(messageDetails.getFromParty().getRole());
-        } else {
-            partyId.setValue(connectorProperties.getGatewayName());
-            from.setRole(connectorProperties.getGatewayRole());
+
+        if (details.getFromParty() == null) {
+            ECodexParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
+                    connectorProperties.getGatewayRole());
+            if (fromParty == null) {
+                throw new ECodexConnectorGatewayWebserviceClientException(
+                        "Could not find own configured party in database!");
+            }
+            details.setFromParty(fromParty);
+            persistenceService.mergeMessageWithDatabase(message);
         }
+
+        partyId.setValue(details.getFromParty().getPartyId());
+        from.setRole(details.getFromParty().getRole());
+
         from.getPartyId().add(partyId);
         partyInfo.setFrom(from);
 
         To to = new To();
         PartyId partyId2 = new PartyId();
-        partyId2.setValue(messageDetails.getToParty().getPartyId());
+        partyId2.setValue(details.getToParty().getPartyId());
         to.getPartyId().add(partyId2);
-        to.setRole(messageDetails.getToParty().getRole());
+        to.setRole(details.getToParty().getRole());
         partyInfo.setTo(to);
 
         return partyInfo;
@@ -264,10 +326,10 @@ public class CommonMessageHelper {
             List<Property> properties = mp.getProperty();
             if (properties != null && !properties.isEmpty()) {
                 for (Property property : properties) {
-                    if (property.getName().equals("finalRecipient")) {
+                    if (property.getName().equals(FINAL_RECIPIENT_PROPERTY_NAME)) {
                         details.setFinalRecipient(property.getValue());
                     }
-                    if (property.getName().equals("originalSender")) {
+                    if (property.getName().equals(ORIGINAL_SENDER_PROPERTY_NAME)) {
                         details.setOriginalSender(property.getValue());
                     }
                 }
