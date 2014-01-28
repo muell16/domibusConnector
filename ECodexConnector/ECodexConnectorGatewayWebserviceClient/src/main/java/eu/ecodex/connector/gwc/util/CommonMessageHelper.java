@@ -224,7 +224,7 @@ public class CommonMessageHelper {
         metadata.put(Metadata.NORMALISATION_ALGORITHM, connectorProperties.getDynamicDiscoveryNormalisationAlgorithm()); // use
                                                                                                                          // hashed
         // identifiers
-        metadata.put(Metadata.SUFFIX, null);
+        metadata.put(Metadata.SUFFIX, "bdxl.e-codex.eu");
 
         dynamicDiscoveryClient.resolveMetadata(metadata);
 

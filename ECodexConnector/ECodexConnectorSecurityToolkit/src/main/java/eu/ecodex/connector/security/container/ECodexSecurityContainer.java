@@ -108,6 +108,14 @@ public class ECodexSecurityContainer implements InitializingBean {
                 MimeType.PDF);
         businessContent.setDocument(document);
 
+        if (message.getMessageContent().getDetachedSignature() != null
+                && message.getMessageContent().getDetachedSignatureMimeType() != null) {
+            Document detachedSignature = new MemoryDocument(message.getMessageContent().getDetachedSignature(),
+                    "detachedSignature", MimeType.valueOf(message.getMessageContent().getDetachedSignatureMimeType()
+                            .name()));
+            businessContent.setDetachedSignature(detachedSignature);
+        }
+
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             for (MessageAttachment attachment : message.getAttachments()) {
                 businessContent.addAttachment(new MemoryDocument(attachment.getAttachment(), attachment.getName(),
