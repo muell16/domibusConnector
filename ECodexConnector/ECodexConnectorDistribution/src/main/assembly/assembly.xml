@@ -157,6 +157,7 @@
 				<include>*:dss*:*</include>
 				<include>*:ecodex-container:*</include>
 				<include>*:EvidenceBuilder:*</include>
+				<include>*:discovery-library:*</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>
