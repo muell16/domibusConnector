@@ -23,7 +23,7 @@
     <dependency>
       <groupId>eu.e-codex</groupId>
       <artifactId>discovery-library</artifactId>
-      <version>0.0.2-FINAL</version>
+      <version>0.0.3-FINAL</version>
     </dependency>
 
 		<dependency>
@@ -65,11 +65,6 @@
 			<groupId>commons-io</groupId> 
   			<artifactId>commons-io</artifactId> 
   			<version>2.4</version> 
-		</dependency>
-		<dependency>
-			<groupId>dnsjava</groupId>
-			<artifactId>dnsjava</artifactId>
-			<version>2.1.1</version>
 		</dependency>
 
 	</dependencies>
