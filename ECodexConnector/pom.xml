@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ecodex.connector</groupId>
 	<artifactId>ECodexConnector</artifactId>
-	<version>1.4-BETA-1</version>
+	<version>1.4-BETA-2</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>ECodexConnectorGatewayWebserviceClient</module>

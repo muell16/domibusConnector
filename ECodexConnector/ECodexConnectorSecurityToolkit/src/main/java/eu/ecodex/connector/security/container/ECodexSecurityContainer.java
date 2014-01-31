@@ -16,9 +16,9 @@ import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
+import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.model.Document;
 import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.EnvironmentConfiguration;
 import eu.ecodex.dss.model.MemoryDocument;
 import eu.ecodex.dss.model.MimeType;
 import eu.ecodex.dss.model.SignatureParameters;
@@ -90,7 +90,7 @@ public class ECodexSecurityContainer implements InitializingBean {
         // that have been ordered by Austria
         // and realized by Arhs.
 
-        EnvironmentConfiguration.CertificateStoreInfo certStore = new EnvironmentConfiguration.CertificateStoreInfo();
+        CertificateStoreInfo certStore = new CertificateStoreInfo();
         certStore.setLocation(javaKeyStorePath);
         certStore.setPassword(javaKeyStorePassword);
 
@@ -107,6 +107,14 @@ public class ECodexSecurityContainer implements InitializingBean {
         Document document = new MemoryDocument(message.getMessageContent().getPdfDocument(), "mainDocument",
                 MimeType.PDF);
         businessContent.setDocument(document);
+
+        if (message.getMessageContent().getDetachedSignature() != null
+                && message.getMessageContent().getDetachedSignatureMimeType() != null) {
+            Document detachedSignature = new MemoryDocument(message.getMessageContent().getDetachedSignature(),
+                    "detachedSignature", MimeType.valueOf(message.getMessageContent().getDetachedSignatureMimeType()
+                            .name()));
+            businessContent.setDetachedSignature(detachedSignature);
+        }
 
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             for (MessageAttachment attachment : message.getAttachments()) {
@@ -131,7 +139,7 @@ public class ECodexSecurityContainer implements InitializingBean {
             // error-handling
             CheckResult results = containerService.check(container);
 
-            if (results.isSuccessfull()) {
+            if (results.isSuccessful()) {
                 if (container != null) {
                     Document asicDocument = container.getAsicDocument();
                     if (asicDocument != null) {
@@ -200,7 +208,7 @@ public class ECodexSecurityContainer implements InitializingBean {
                 // error-handling
                 CheckResult results = containerService.check(container);
 
-                if (results.isSuccessfull()) {
+                if (results.isSuccessful()) {
                     if (container != null) {
                         if (container.getBusinessDocument() != null) {
                             try {

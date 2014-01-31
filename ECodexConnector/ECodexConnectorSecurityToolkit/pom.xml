@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.ecodex.connector</groupId>
 		<artifactId>ECodexConnector</artifactId>
-		<version>1.4-BETA-1</version>
+		<version>1.4-BETA-2</version>
 	</parent>
 	<artifactId>ECodexConnectorSecurityToolkit</artifactId>
 	<dependencies>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
 			<artifactId>ecodex-container</artifactId>
-			<version>1.00</version>
+			<version>1.03</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>

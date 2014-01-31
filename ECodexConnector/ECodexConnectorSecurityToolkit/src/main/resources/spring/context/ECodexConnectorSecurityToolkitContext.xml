@@ -58,7 +58,7 @@
   	<property name="trustedListCertificatesSource" ref="trustedListsCertificateSource"/>
   </bean>
   
-  <bean id="trustedCertificates" class="eu.ecodex.dss.model.EnvironmentConfiguration.CertificateStoreInfo" >
+  <bean id="trustedCertificates" class="eu.ecodex.dss.model.CertificateStoreInfo" >
 		<property name="location" value="${java.truststore.path}" />
 		<property name="password" value="${java.truststore.password}" />
 	</bean>

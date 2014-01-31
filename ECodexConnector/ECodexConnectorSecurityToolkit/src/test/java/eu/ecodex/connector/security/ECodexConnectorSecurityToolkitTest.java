@@ -61,7 +61,7 @@ public class ECodexConnectorSecurityToolkitTest {
 
         securityContainer.recieveContainerContents(message);
 
-        String dir = System.getProperty("user.dir") + "/src/test/resources/result/";
+        String dir = System.getProperty("user.dir") + "/src/test/resources/";
         for (MessageAttachment attachment : message.getAttachments()) {
 
             if (attachment.getName().equals("Token.xml")) {
