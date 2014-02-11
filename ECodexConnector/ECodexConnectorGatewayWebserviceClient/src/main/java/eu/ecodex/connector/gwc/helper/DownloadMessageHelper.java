@@ -1,4 +1,4 @@
-package eu.ecodex.connector.gwc._1_1;
+package eu.ecodex.connector.gwc.helper;
 
 import java.util.List;
 

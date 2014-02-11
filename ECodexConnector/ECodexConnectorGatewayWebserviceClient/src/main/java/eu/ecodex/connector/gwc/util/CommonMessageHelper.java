@@ -19,7 +19,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
@@ -107,20 +106,21 @@ public class CommonMessageHelper {
         userMessage.getPayloadInfo().getPartInfo().add(pi);
     }
 
-    public void addPartInfoToPayloadInfo_1_0(String value, UserMessage userMessage, String href) {
-
-        PartInfo pi = new PartInfo();
-
-        pi.setHref(href);
-
-        Description desc = new Description();
-
-        desc.setValue(value);
-
-        pi.setDescription(desc);
-
-        userMessage.getPayloadInfo().getPartInfo().add(pi);
-    }
+    // public void addPartInfoToPayloadInfo_1_0(String value, UserMessage
+    // userMessage, String href) {
+    //
+    // PartInfo pi = new PartInfo();
+    //
+    // pi.setHref(href);
+    //
+    // Description desc = new Description();
+    //
+    // desc.setValue(value);
+    //
+    // pi.setDescription(desc);
+    //
+    // userMessage.getPayloadInfo().getPartInfo().add(pi);
+    // }
 
     public Element createEmptyListPendingMessagesRequest() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

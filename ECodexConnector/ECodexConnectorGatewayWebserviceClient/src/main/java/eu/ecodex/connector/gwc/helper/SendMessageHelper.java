@@ -1,4 +1,4 @@
-package eu.ecodex.connector.gwc._1_1;
+package eu.ecodex.connector.gwc.helper;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
