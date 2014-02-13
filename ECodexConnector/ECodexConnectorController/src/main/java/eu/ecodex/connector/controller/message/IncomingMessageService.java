@@ -111,7 +111,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
     }
 
     private void sendEvidenceToBackToGateway(Message originalMessage, ECodexAction action,
-            MessageConfirmation messageConfirmation) {
+            MessageConfirmation messageConfirmation) throws ECodexConnectorControllerException {
 
         originalMessage.addConfirmation(messageConfirmation);
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation.getEvidence(),
@@ -126,12 +126,18 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         details.setToParty(originalMessage.getMessageDetails().getFromParty());
 
         Message evidenceMessage = new Message(details, messageConfirmation);
+        try {
+            persistenceService.persistMessageIntoDatabase(evidenceMessage, ECodexMessageDirection.NAT_TO_GW);
+        } catch (PersistenceException e1) {
+            throw new ECodexConnectorControllerException("Exception persisting evidence message into database!", e1);
+        }
 
         try {
             gatewayWebserviceClient.sendMessage(evidenceMessage);
         } catch (ECodexConnectorGatewayWebserviceClientException e) {
-            LOGGER.error("Exception sending evidence back to sender gateway of message "
-                    + originalMessage.getMessageDetails().getEbmsMessageId(), e);
+            throw new ECodexConnectorControllerException(
+                    "Exception sending evidence back to sender gateway of message "
+                            + originalMessage.getMessageDetails().getEbmsMessageId(), e);
         }
 
         persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());

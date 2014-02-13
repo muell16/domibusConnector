@@ -19,6 +19,9 @@ public class ECodexParty {
     @Column(name = "ROLE")
     private String role;
 
+    @Column(name = "PARTY_ID_TYPE")
+    private String partyIdType;
+
     public String getPartyId() {
         return partyId;
     }
@@ -33,6 +36,14 @@ public class ECodexParty {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPartyIdType() {
+        return partyIdType;
+    }
+
+    public void setPartyIdType(String partyIdType) {
+        this.partyIdType = partyIdType;
     }
 
 }

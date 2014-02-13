@@ -50,6 +50,8 @@ import eu.ecodex.discovery.Metadata;
 
 public class CommonMessageHelper {
 
+    org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CommonMessageHelper.class);
+
     private static final String ENDPOINT_ADDRESS_PROPERTY_NAME = "EndpointAddress";
     private static final String ORIGINAL_SENDER_PROPERTY_NAME = "originalSender";
     private static final String FINAL_RECIPIENT_PROPERTY_NAME = "finalRecipient";
@@ -105,22 +107,6 @@ public class CommonMessageHelper {
 
         userMessage.getPayloadInfo().getPartInfo().add(pi);
     }
-
-    // public void addPartInfoToPayloadInfo_1_0(String value, UserMessage
-    // userMessage, String href) {
-    //
-    // PartInfo pi = new PartInfo();
-    //
-    // pi.setHref(href);
-    //
-    // Description desc = new Description();
-    //
-    // desc.setValue(value);
-    //
-    // pi.setDescription(desc);
-    //
-    // userMessage.getPayloadInfo().getPartInfo().add(pi);
-    // }
 
     public Element createEmptyListPendingMessagesRequest() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -252,6 +238,7 @@ public class CommonMessageHelper {
         }
 
         partyId.setValue(details.getFromParty().getPartyId());
+        partyId.setType(details.getFromParty().getPartyIdType());
         from.setRole(details.getFromParty().getRole());
 
         from.getPartyId().add(partyId);
@@ -260,6 +247,7 @@ public class CommonMessageHelper {
         To to = new To();
         PartyId partyId2 = new PartyId();
         partyId2.setValue(details.getToParty().getPartyId());
+        partyId2.setType(details.getToParty().getPartyId());
         to.getPartyId().add(partyId2);
         to.setRole(details.getToParty().getRole());
         partyInfo.setTo(to);
@@ -276,10 +264,6 @@ public class CommonMessageHelper {
         info.setService(service);
 
         info.setConversationId(messageDetails.getConversationId());
-
-        // AgreementRef ref = new AgreementRef();
-        // ref.setValue("dummy");
-        // info.setAgreementRef(ref);
 
         return info;
     }
@@ -298,27 +282,34 @@ public class CommonMessageHelper {
         details.setConversationId(userMessage.getCollaborationInfo().getConversationId());
 
         String actionString = userMessage.getCollaborationInfo().getAction();
-        try {
-            ECodexAction action = persistenceService.getAction(actionString);
-            details.setAction(action);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No action {} found!", actionString);
+        ECodexAction action = persistenceService.getAction(actionString);
+        if (action == null) {
+            LOGGER.error("Could not find Action in database for value {}", actionString);
         }
+        details.setAction(action);
 
         String serviceString = userMessage.getCollaborationInfo().getService().getValue();
-        try {
-            ECodexService service = persistenceService.getService(serviceString);
-            details.setService(service);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No service {} found!", actionString);
+        ECodexService service = persistenceService.getService(serviceString);
+        if (service == null) {
+            LOGGER.error("Could not find Service in database for value {}", serviceString);
         }
+        details.setService(service);
 
         From from = userMessage.getPartyInfo().getFrom();
+
         ECodexParty fromPartner = persistenceService.getParty(from.getPartyId().get(0).getValue(), from.getRole());
+        if (fromPartner == null) {
+            LOGGER.error("Could not find Party in database for PartyId {} and Role {} as FromParty", from.getPartyId()
+                    .get(0).getValue(), from.getRole());
+        }
         details.setFromParty(fromPartner);
 
         To to = userMessage.getPartyInfo().getTo();
         ECodexParty toPartner = persistenceService.getParty(to.getPartyId().get(0).getValue(), to.getRole());
+        if (toPartner == null) {
+            LOGGER.error("Could not find Party in database for PartyId {} and Role {} as ToParty",
+                    to.getPartyId().get(0).getValue(), to.getRole());
+        }
         details.setToParty(toPartner);
 
         MessageProperties mp = userMessage.getMessageProperties();
