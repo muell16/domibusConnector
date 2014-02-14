@@ -238,6 +238,9 @@ public class CommonMessageHelper {
         }
 
         partyId.setValue(details.getFromParty().getPartyId());
+        if (details.getFromParty().getPartyIdType()==null)    {
+            details.getFromParty().setPartyIdType("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+        }
         partyId.setType(details.getFromParty().getPartyIdType());
         from.setRole(details.getFromParty().getRole());
 
@@ -247,11 +250,18 @@ public class CommonMessageHelper {
         To to = new To();
         PartyId partyId2 = new PartyId();
         partyId2.setValue(details.getToParty().getPartyId());
-        partyId2.setType(details.getToParty().getPartyId());
+        if (details.getToParty().getPartyIdType()==null)    {
+            details.getToParty().setPartyIdType("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+        }
+        partyId2.setType(details.getToParty().getPartyIdType());
         to.getPartyId().add(partyId2);
         to.setRole(details.getToParty().getRole());
         partyInfo.setTo(to);
 
+        LOGGER.info("--PARTY-- " + "\nFrom PartyId "+partyInfo.getFrom().getPartyId().get(0).getValue()
+                    + "\nFrom PartyIdType "+partyInfo.getFrom().getPartyId().get(0).getType()
+                    + "\nTo PartyId "+partyInfo.getTo().getPartyId().get(0).getValue()
+                    + "\nTo PartyIdType "+partyInfo.getTo().getPartyId().get(0).getType());
         return partyInfo;
     }
 

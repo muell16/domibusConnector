@@ -75,6 +75,10 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
             LOGGER.error(e1.getMessage());
         }
 
+        LOGGER.info("--PARTY-- " + "\nFrom PartyId "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getValue()
+                    + "\nFrom PartyIdType "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getType()
+                    + "\nTo PartyId "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getValue()
+                    + "\nTo PartyIdType "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getType());
         SendResponse response = null;
         try {
             response = gatewayBackendWebservice.sendMessage(request, ebMSHeaderInfo);
