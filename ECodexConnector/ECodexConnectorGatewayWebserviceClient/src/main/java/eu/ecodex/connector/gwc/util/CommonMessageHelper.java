@@ -296,8 +296,11 @@ public class CommonMessageHelper {
         details.setService(service);
 
         From from = userMessage.getPartyInfo().getFrom();
-
-        ECodexParty fromPartner = persistenceService.getParty(from.getPartyId().get(0).getValue(), from.getRole());
+        String fromPartnerId = from.getPartyId().get(0).getValue();
+        if (fromPartnerId.contains(":")) {
+            fromPartnerId = fromPartnerId.substring(fromPartnerId.lastIndexOf(":") + 1);
+        }
+        ECodexParty fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
         if (fromPartner == null) {
             LOGGER.error("Could not find Party in database for PartyId {} and Role {} as FromParty", from.getPartyId()
                     .get(0).getValue(), from.getRole());
@@ -305,7 +308,11 @@ public class CommonMessageHelper {
         details.setFromParty(fromPartner);
 
         To to = userMessage.getPartyInfo().getTo();
-        ECodexParty toPartner = persistenceService.getParty(to.getPartyId().get(0).getValue(), to.getRole());
+        String toPartnerId = to.getPartyId().get(0).getValue();
+        if (toPartnerId.contains(":")) {
+            toPartnerId = toPartnerId.substring(toPartnerId.lastIndexOf(":") + 1);
+        }
+        ECodexParty toPartner = persistenceService.getParty(toPartnerId, to.getRole());
         if (toPartner == null) {
             LOGGER.error("Could not find Party in database for PartyId {} and Role {} as ToParty",
                     to.getPartyId().get(0).getValue(), to.getRole());
