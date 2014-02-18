@@ -64,21 +64,26 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
             throw e;
         }
 
-        try {
-            String headerString = commonMessageHelper.printXML(ebMSHeaderInfo, UserMessage.class, Messaging.class);
-            LOGGER.debug(headerString);
-            String requestString = commonMessageHelper.printXML(request, SendRequest.class);
-            LOGGER.debug(requestString);
-        } catch (JAXBException e1) {
-            LOGGER.error(e1.getMessage());
-        } catch (IOException e1) {
-            LOGGER.error(e1.getMessage());
+        if (LOGGER.isDebugEnabled()) {
+            try {
+                String headerString = commonMessageHelper.printXML(ebMSHeaderInfo, UserMessage.class, Messaging.class);
+                LOGGER.debug(headerString);
+            } catch (JAXBException e1) {
+                LOGGER.error(e1.getMessage());
+            } catch (IOException e1) {
+                LOGGER.error(e1.getMessage());
+            }
+
+            LOGGER.debug("--PARTY-- " + "\nFrom PartyId "
+                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getValue()
+                    + "\nFrom PartyIdType "
+                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getType()
+                    + "\nTo PartyId "
+                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getValue()
+                    + "\nTo PartyIdType "
+                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getType());
         }
 
-        LOGGER.info("--PARTY-- " + "\nFrom PartyId "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getValue()
-                    + "\nFrom PartyIdType "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getType()
-                    + "\nTo PartyId "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getValue()
-                    + "\nTo PartyIdType "+ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getType());
         SendResponse response = null;
         try {
             response = gatewayBackendWebservice.sendMessage(request, ebMSHeaderInfo);
@@ -134,15 +139,16 @@ public class ECodexConnectorGatewayWebserviceClientImpl implements ECodexConnect
                     + " contains no bodyload!");
         }
 
-        try {
-            String headerString = commonMessageHelper.printXML(ebMSHeader.value, UserMessage.class, Messaging.class);
-            LOGGER.debug(headerString);
-            String requestString = commonMessageHelper.printXML(response.value, DownloadMessageResponse.class);
-            LOGGER.debug(requestString);
-        } catch (JAXBException e1) {
-            LOGGER.error(e1.getMessage());
-        } catch (IOException e1) {
-            LOGGER.error(e1.getMessage());
+        if (LOGGER.isDebugEnabled()) {
+            try {
+                String headerString = commonMessageHelper
+                        .printXML(ebMSHeader.value, UserMessage.class, Messaging.class);
+                LOGGER.debug(headerString);
+            } catch (JAXBException e1) {
+                LOGGER.error(e1.getMessage());
+            } catch (IOException e1) {
+                LOGGER.error(e1.getMessage());
+            }
         }
 
         Message message = downloadMessageHelper.convertDownloadIntoMessage(response, ebMSHeader);
