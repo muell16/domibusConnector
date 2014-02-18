@@ -247,7 +247,7 @@ public class CommonMessageHelper {
         To to = new To();
         PartyId partyId2 = new PartyId();
         partyId2.setValue(details.getToParty().getPartyId());
-        partyId2.setType(details.getToParty().getPartyId());
+        partyId2.setType(details.getToParty().getPartyIdType());
         to.getPartyId().add(partyId2);
         to.setRole(details.getToParty().getRole());
         partyInfo.setTo(to);
@@ -282,6 +282,9 @@ public class CommonMessageHelper {
         details.setConversationId(userMessage.getCollaborationInfo().getConversationId());
 
         String actionString = userMessage.getCollaborationInfo().getAction();
+        if (actionString.contains(":")) {
+            actionString = actionString.substring(actionString.lastIndexOf(":") + 1);
+        }
         ECodexAction action = persistenceService.getAction(actionString);
         if (action == null) {
             LOGGER.error("Could not find Action in database for value {}", actionString);
@@ -289,6 +292,9 @@ public class CommonMessageHelper {
         details.setAction(action);
 
         String serviceString = userMessage.getCollaborationInfo().getService().getValue();
+        if (serviceString.contains(":")) {
+            serviceString = serviceString.substring(serviceString.lastIndexOf(":") + 1);
+        }
         ECodexService service = persistenceService.getService(serviceString);
         if (service == null) {
             LOGGER.error("Could not find Service in database for value {}", serviceString);
