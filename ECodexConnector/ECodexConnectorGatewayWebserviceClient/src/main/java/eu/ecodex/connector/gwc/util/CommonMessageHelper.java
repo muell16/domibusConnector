@@ -47,6 +47,7 @@ import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientE
 import eu.ecodex.discovery.DiscoveryClient;
 import eu.ecodex.discovery.DiscoveryException;
 import eu.ecodex.discovery.Metadata;
+import eu.ecodex.discovery.names.ECodexNamingScheme;
 
 public class CommonMessageHelper {
 
@@ -211,10 +212,24 @@ public class CommonMessageHelper {
                                                                                                                          // hashed
         // identifiers
         metadata.put(Metadata.SUFFIX, "bdxl.e-codex.eu");
+        metadata.put(Metadata.NAMING_SCHEME, new ECodexNamingScheme());
+
+        LOGGER.info(
+                "Calling dynamic discovery with parameters processId={}, documentOrActionId={}, sendingEndEntityId={}, receivingEndEntityId={}, "
+                        + "community={}, environment={}, countryCode={}, normalisationAlgorithm={}, suffix={}",
+                new Object[] { metadata.get(Metadata.PROCESS_ID), metadata.get(Metadata.DOCUMENT_OR_ACTION_ID),
+                        metadata.get(Metadata.SENDING_END_ENTITY_ID), metadata.get(Metadata.RECEIVING_END_ENTITY_ID),
+                        metadata.get(Metadata.COMMUNITY), metadata.get(Metadata.ENVIRONMENT),
+                        metadata.get(Metadata.COUNTRY_CODE_OR_EU), metadata.get(Metadata.NORMALISATION_ALGORITHM),
+                        metadata.get(Metadata.SUFFIX) });
 
         dynamicDiscoveryClient.resolveMetadata(metadata);
 
         final String endpointAddress = (String) metadata.get(Metadata.ENDPOINT_ADDRESS);
+
+        if (endpointAddress == null || endpointAddress.isEmpty()) {
+            LOGGER.info("Dynamic discovery could not find an endpoint address!");
+        }
 
         return endpointAddress;
     }
