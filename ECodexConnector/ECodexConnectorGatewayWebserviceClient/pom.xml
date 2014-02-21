@@ -6,7 +6,11 @@
 	<parent>
 		<groupId>eu.ecodex.connector</groupId>
 		<artifactId>ECodexConnector</artifactId>
+<<<<<<< HEAD
 		<version>1.4-BETA-2</version>
+=======
+		<version>1.4-RC-1</version>
+>>>>>>> release-1.4-RC-1
 	</parent>
 	<artifactId>ECodexConnectorGatewayWebserviceClient</artifactId>
 	<name>ECodexConnectorGatewayWebserviceClient</name>
@@ -23,7 +27,7 @@
     <dependency>
       <groupId>eu.e-codex</groupId>
       <artifactId>discovery-library</artifactId>
-      <version>0.0.3-FINAL</version>
+      <version>0.0.4-FINAL</version>
     </dependency>
 
 		<dependency>
@@ -83,38 +87,12 @@
 							<sourceRoot>src/main/java/</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/eu/ecodex/connector/gwc/wsdl/BackendService-1_0.wsdl</wsdl>
-								</wsdlOption>
-								<wsdlOption>
 									<wsdl>${basedir}/src/main/resources/eu/ecodex/connector/gwc/wsdl/BackendService-1_1.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
 						<goals>
 							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.7.5</version>
-				<executions>
-					<execution>
-						<id>ECodexConnectorPayload</id>
-						<configuration>
-							<!-- <generatePackage>eu.ecodex.eupo</generatePackage> -->
-							<schemaDirectory>src/main/resources/eu/ecodex/connector/gwc/xsd</schemaDirectory>
-							<schemaIncludes>
-								<include>ecodex_connector_payload*.xsd</include>
-							</schemaIncludes>
-							<generateDirectory>src/main/java</generateDirectory>
-							<strict>true</strict>
-							<extension>true</extension>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
 						</goals>
 					</execution>
 				</executions>

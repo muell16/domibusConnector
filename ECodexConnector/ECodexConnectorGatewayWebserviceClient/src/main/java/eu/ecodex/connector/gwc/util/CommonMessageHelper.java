@@ -19,7 +19,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
@@ -48,8 +47,11 @@ import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientE
 import eu.ecodex.discovery.DiscoveryClient;
 import eu.ecodex.discovery.DiscoveryException;
 import eu.ecodex.discovery.Metadata;
+import eu.ecodex.discovery.names.ECodexNamingScheme;
 
 public class CommonMessageHelper {
+
+    org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CommonMessageHelper.class);
 
     private static final String ENDPOINT_ADDRESS_PROPERTY_NAME = "EndpointAddress";
     private static final String ORIGINAL_SENDER_PROPERTY_NAME = "originalSender";
@@ -103,21 +105,6 @@ public class CommonMessageHelper {
         props.getProperty().add(prop);
 
         pi.setPartProperties(props);
-
-        userMessage.getPayloadInfo().getPartInfo().add(pi);
-    }
-
-    public void addPartInfoToPayloadInfo_1_0(String value, UserMessage userMessage, String href) {
-
-        PartInfo pi = new PartInfo();
-
-        pi.setHref(href);
-
-        Description desc = new Description();
-
-        desc.setValue(value);
-
-        pi.setDescription(desc);
 
         userMessage.getPayloadInfo().getPartInfo().add(pi);
     }
@@ -225,10 +212,24 @@ public class CommonMessageHelper {
                                                                                                                          // hashed
         // identifiers
         metadata.put(Metadata.SUFFIX, "bdxl.e-codex.eu");
+        metadata.put(Metadata.NAMING_SCHEME, new ECodexNamingScheme());
+
+        LOGGER.info(
+                "Calling dynamic discovery with parameters processId={}, documentOrActionId={}, sendingEndEntityId={}, receivingEndEntityId={}, "
+                        + "community={}, environment={}, countryCode={}, normalisationAlgorithm={}, suffix={}",
+                new Object[] { metadata.get(Metadata.PROCESS_ID), metadata.get(Metadata.DOCUMENT_OR_ACTION_ID),
+                        metadata.get(Metadata.SENDING_END_ENTITY_ID), metadata.get(Metadata.RECEIVING_END_ENTITY_ID),
+                        metadata.get(Metadata.COMMUNITY), metadata.get(Metadata.ENVIRONMENT),
+                        metadata.get(Metadata.COUNTRY_CODE_OR_EU), metadata.get(Metadata.NORMALISATION_ALGORITHM),
+                        metadata.get(Metadata.SUFFIX) });
 
         dynamicDiscoveryClient.resolveMetadata(metadata);
 
         final String endpointAddress = (String) metadata.get(Metadata.ENDPOINT_ADDRESS);
+
+        if (endpointAddress == null || endpointAddress.isEmpty()) {
+            LOGGER.info("Dynamic discovery could not find an endpoint address!");
+        }
 
         return endpointAddress;
     }
@@ -252,6 +253,7 @@ public class CommonMessageHelper {
         }
 
         partyId.setValue(details.getFromParty().getPartyId());
+        partyId.setType(details.getFromParty().getPartyIdType());
         from.setRole(details.getFromParty().getRole());
 
         from.getPartyId().add(partyId);
@@ -260,6 +262,7 @@ public class CommonMessageHelper {
         To to = new To();
         PartyId partyId2 = new PartyId();
         partyId2.setValue(details.getToParty().getPartyId());
+        partyId2.setType(details.getToParty().getPartyIdType());
         to.getPartyId().add(partyId2);
         to.setRole(details.getToParty().getRole());
         partyInfo.setTo(to);
@@ -276,10 +279,6 @@ public class CommonMessageHelper {
         info.setService(service);
 
         info.setConversationId(messageDetails.getConversationId());
-
-        // AgreementRef ref = new AgreementRef();
-        // ref.setValue("dummy");
-        // info.setAgreementRef(ref);
 
         return info;
     }
@@ -298,27 +297,47 @@ public class CommonMessageHelper {
         details.setConversationId(userMessage.getCollaborationInfo().getConversationId());
 
         String actionString = userMessage.getCollaborationInfo().getAction();
-        try {
-            ECodexAction action = persistenceService.getAction(actionString);
-            details.setAction(action);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No action {} found!", actionString);
+        if (actionString.contains(":")) {
+            actionString = actionString.substring(actionString.lastIndexOf(":") + 1);
         }
+        ECodexAction action = persistenceService.getAction(actionString);
+        if (action == null) {
+            LOGGER.error("Could not find Action in database for value {}", actionString);
+        }
+        details.setAction(action);
 
         String serviceString = userMessage.getCollaborationInfo().getService().getValue();
-        try {
-            ECodexService service = persistenceService.getService(serviceString);
-            details.setService(service);
-        } catch (IllegalArgumentException e) {
-            // LOGGER.error("No service {} found!", actionString);
+        if (serviceString.contains(":")) {
+            serviceString = serviceString.substring(serviceString.lastIndexOf(":") + 1);
         }
+        ECodexService service = persistenceService.getService(serviceString);
+        if (service == null) {
+            LOGGER.error("Could not find Service in database for value {}", serviceString);
+        }
+        details.setService(service);
 
         From from = userMessage.getPartyInfo().getFrom();
-        ECodexParty fromPartner = persistenceService.getParty(from.getPartyId().get(0).getValue(), from.getRole());
+        String fromPartnerId = from.getPartyId().get(0).getValue();
+        if (fromPartnerId.contains(":")) {
+            fromPartnerId = fromPartnerId.substring(fromPartnerId.lastIndexOf(":") + 1);
+        }
+        ECodexParty fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
+        if (fromPartner == null) {
+            LOGGER.error("Could not find Party in database for PartyId {} and Role {} as FromParty", from.getPartyId()
+                    .get(0).getValue(), from.getRole());
+        }
         details.setFromParty(fromPartner);
 
         To to = userMessage.getPartyInfo().getTo();
-        ECodexParty toPartner = persistenceService.getParty(to.getPartyId().get(0).getValue(), to.getRole());
+        String toPartnerId = to.getPartyId().get(0).getValue();
+        if (toPartnerId.contains(":")) {
+            toPartnerId = toPartnerId.substring(toPartnerId.lastIndexOf(":") + 1);
+        }
+        ECodexParty toPartner = persistenceService.getParty(toPartnerId, to.getRole());
+        if (toPartner == null) {
+            LOGGER.error("Could not find Party in database for PartyId {} and Role {} as ToParty",
+                    to.getPartyId().get(0).getValue(), to.getRole());
+        }
         details.setToParty(toPartner);
 
         MessageProperties mp = userMessage.getMessageProperties();

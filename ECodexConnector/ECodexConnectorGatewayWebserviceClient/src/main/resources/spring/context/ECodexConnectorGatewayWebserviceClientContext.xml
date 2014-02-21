@@ -5,49 +5,23 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
-
-	<jaxws:client id="gatewayClient_1_0" serviceClass="backend.ecodex.org._1_0.BackendInterface"
-		address="${gateway.endpoint.address}" />
 		
-	<jaxws:client id="gatewayClient_1_1" serviceClass="backend.ecodex.org._1_1.BackendInterface"
+	<jaxws:client id="gatewayClient" serviceClass="backend.ecodex.org._1_1.BackendInterface"
 		address="${gateway.endpoint.address}" />
 
 	<bean id="gatewayWebServiceClient"
 		class="eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClientImpl">
-		<property name="gatewayWebserviceClient_1_0" ref="gatewayWebServiceClient_1_0" />
-		<property name="gatewayWebserviceClient_1_1" ref="gatewayWebServiceClient_1_1" />
-		<property name="gatewayBackendWebserviceVersion" value="${gateway.backend.webservice.version}" />
-	</bean>
-	
-	<bean id="gatewayWebServiceClient_1_0"
-		class="eu.ecodex.connector.gwc._1_0.GatewayWebserviceClient">
-		<property name="gatewayBackendWebservice" ref="gatewayClient_1_0" />
-		<property name="sendMessageHelper" ref="sendMessageHelper_1_0" />
-		<property name="downloadMessageHelper" ref="downloadMessageHelper_1_0" />
+		<property name="gatewayBackendWebservice" ref="gatewayClient" />
+		<property name="sendMessageHelper" ref="sendMessageHelper" />
+		<property name="downloadMessageHelper" ref="downloadMessageHelper" />
 		<property name="commonMessageHelper" ref="commonMessageHelper" />
 	</bean>
 	
-	<bean id="gatewayWebServiceClient_1_1"
-		class="eu.ecodex.connector.gwc._1_1.GatewayWebserviceClient">
-		<property name="gatewayBackendWebservice" ref="gatewayClient_1_1" />
-		<property name="sendMessageHelper" ref="sendMessageHelper_1_1" />
-		<property name="downloadMessageHelper" ref="downloadMessageHelper_1_1" />
+	<bean id="sendMessageHelper" class="eu.ecodex.connector.gwc.helper.SendMessageHelper">
 		<property name="commonMessageHelper" ref="commonMessageHelper" />
 	</bean>
 	
-	<bean id="sendMessageHelper_1_0" class="eu.ecodex.connector.gwc._1_0.SendMessageHelper">
-		<property name="commonMessageHelper" ref="commonMessageHelper" />
-	</bean>
-	
-	<bean id="sendMessageHelper_1_1" class="eu.ecodex.connector.gwc._1_1.SendMessageHelper">
-		<property name="commonMessageHelper" ref="commonMessageHelper" />
-	</bean>
-	
-	<bean id="downloadMessageHelper_1_0" class="eu.ecodex.connector.gwc._1_0.DownloadMessageHelper">
-		<property name="commonMessageHelper" ref="commonMessageHelper" />
-	</bean>
-	
-	<bean id="downloadMessageHelper_1_1" class="eu.ecodex.connector.gwc._1_1.DownloadMessageHelper">
+	<bean id="downloadMessageHelper" class="eu.ecodex.connector.gwc.helper.DownloadMessageHelper">
 		<property name="commonMessageHelper" ref="commonMessageHelper" />
 	</bean>
 	

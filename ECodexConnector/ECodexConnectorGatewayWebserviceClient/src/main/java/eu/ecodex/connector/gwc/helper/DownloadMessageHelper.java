@@ -1,4 +1,4 @@
-package eu.ecodex.connector.gwc._1_1;
+package eu.ecodex.connector.gwc.helper;
 
 import java.util.List;
 
@@ -39,10 +39,11 @@ public class DownloadMessageHelper {
 
         PayloadType bodyload = response.value.getBodyload();
         if (bodyload != null) {
-            // if
-            // (bodyload.getContentType().equals(CommonMessageHelper.XML_MIME_TYPE))
-            // {
             String elementDescription = findElementDesription(userMessage, bodyload.getPayloadId());
+
+            if (elementDescription == null) {
+                elementDescription = findElementDesriptionWithoutHref(userMessage);
+            }
 
             // is it an Evidence or an eCodex content XML?
 
@@ -97,7 +98,25 @@ public class DownloadMessageHelper {
     private String findElementDesription(UserMessage userMessage, String href) {
         String elementDescription = null;
         for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            if (info.getHref().equals(href)) {
+            if (info.getHref() != null && info.getHref().equals(href)) {
+                if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
+                        && !info.getPartProperties().getProperty().isEmpty()) {
+                    for (Property property : info.getPartProperties().getProperty()) {
+                        if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
+                            elementDescription = property.getValue();
+                        }
+                    }
+                }
+            }
+        }
+
+        return elementDescription;
+    }
+
+    private String findElementDesriptionWithoutHref(UserMessage userMessage) {
+        String elementDescription = null;
+        for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
+            if (info.getHref() == null || info.getHref().isEmpty()) {
                 if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
                         && !info.getPartProperties().getProperty().isEmpty()) {
                     for (Property property : info.getPartProperties().getProperty()) {
