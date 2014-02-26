@@ -41,10 +41,6 @@ public class DownloadMessageHelper {
         if (bodyload != null) {
             String elementDescription = findElementDesription(userMessage, bodyload.getPayloadId());
 
-            if (elementDescription == null) {
-                elementDescription = findElementDesriptionWithoutHref(userMessage);
-            }
-
             // is it an Evidence or an eCodex content XML?
 
             if (elementDescription.equals(CommonMessageHelper.CONTENT_XML_NAME)) {
@@ -98,25 +94,7 @@ public class DownloadMessageHelper {
     private String findElementDesription(UserMessage userMessage, String href) {
         String elementDescription = null;
         for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            if (info.getHref() != null && info.getHref().equals(href)) {
-                if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
-                        && !info.getPartProperties().getProperty().isEmpty()) {
-                    for (Property property : info.getPartProperties().getProperty()) {
-                        if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
-                            elementDescription = property.getValue();
-                        }
-                    }
-                }
-            }
-        }
-
-        return elementDescription;
-    }
-
-    private String findElementDesriptionWithoutHref(UserMessage userMessage) {
-        String elementDescription = null;
-        for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            if (info.getHref() == null || info.getHref().isEmpty()) {
+            if ((info.getHref() != null && info.getHref().equals(href)) || info.getHref() == null) {
                 if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
                         && !info.getPartProperties().getProperty().isEmpty()) {
                     for (Property property : info.getPartProperties().getProperty()) {
