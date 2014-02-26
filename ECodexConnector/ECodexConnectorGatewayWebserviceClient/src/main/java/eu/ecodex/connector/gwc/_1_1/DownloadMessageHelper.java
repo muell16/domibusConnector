@@ -39,9 +39,6 @@ public class DownloadMessageHelper {
 
         PayloadType bodyload = response.value.getBodyload();
         if (bodyload != null) {
-            // if
-            // (bodyload.getContentType().equals(CommonMessageHelper.XML_MIME_TYPE))
-            // {
             String elementDescription = findElementDesription(userMessage, bodyload.getPayloadId());
 
             // is it an Evidence or an eCodex content XML?
@@ -97,7 +94,7 @@ public class DownloadMessageHelper {
     private String findElementDesription(UserMessage userMessage, String href) {
         String elementDescription = null;
         for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            if (info.getHref().equals(href)) {
+            if ((info.getHref() != null && info.getHref().equals(href)) || info.getHref() == null) {
                 if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
                         && !info.getPartProperties().getProperty().isEmpty()) {
                     for (Property property : info.getPartProperties().getProperty()) {
