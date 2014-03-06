@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.ecodex.connector</groupId>
 		<artifactId>ECodexConnector</artifactId>
-		<version>1.4-RC-1</version>
+		<version>1.4-FINAL</version>
 	</parent>
 	<artifactId>ECodexConnectorSecurityToolkit</artifactId>
 	<dependencies>
