@@ -16,7 +16,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                 http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-	<import resource="dao.xml" />
+	<import resource="ECodexConnectorCommonContext.xml" />
 
 	<jpa:repositories base-package="eu.ecodex.webadmin.repository" />
 	
@@ -29,6 +29,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath:webadmin.properties</value>
+				<value>classpath:connector.properties</value>
 			</list>
 		</property>
 	</bean>

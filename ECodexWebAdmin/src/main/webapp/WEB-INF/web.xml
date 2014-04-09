@@ -64,7 +64,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
             30
         </session-timeout>
     </session-config>
-    <welcome-file-list>
-        <welcome-file>faces/login.xhtml</welcome-file>
-    </welcome-file-list>
+    <!-- Welcome Page -->
+	   <welcome-file-list>
+	     <welcome-file>/pages/index.xhtml</welcome-file>
+	   </welcome-file-list>
 </web-app>
