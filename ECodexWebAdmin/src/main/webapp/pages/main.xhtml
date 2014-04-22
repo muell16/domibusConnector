@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+      
+<h:head>
+<title>E-Codex WebAdmin</title>
+<link href="../css/master.css" 
+      rel="stylesheet" type="text/css"/> 
+</h:head>
+<h:body> 
+    	<h1 class="title">E-Codex WebAdmin</h1>
+         
+ <h:form> 
+         
+	<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">           
+        <h:outputText class="textArea" value="Category: " />  
+        <h:selectOneMenu value="#{webAdminServiceBean.categoryNumber}">  
+            <f:selectItem itemLabel="Select One" itemValue="" />  
+            <f:selectItem itemLabel="Summary" itemValue="1" />  
+            <f:selectItem itemLabel="Incoming" itemValue="2" />  
+            <f:selectItem itemLabel="Outgoing" itemValue="3" />
+            <f:selectItem itemLabel="Custom" itemValue="4" />   
+        </h:selectOneMenu>
+        <h:commandButton id="start" action="#{webAdminServiceBean.start}" value="Start"/> 
+    </h:panelGrid>
+    <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
+    	<h:outputText class="textArea" value="From: " />  
+    	<p:calendar value="#{webAdminServiceBean.fromDate}" id="fromButtonCal" showOn="button" />  
+    	<h:outputText class="textArea" value="To: " />  
+    	<p:calendar value="#{webAdminServiceBean.toDate}" id="toButtonCal" showOn="button" />    
+    </h:panelGrid>
+
+    <hr />
+    
+    <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">          
+    	<p:pieChart id="messageSummary" value="#{webAdminServiceBean.summaryService.pieModelMessageSummary}" legendPosition="e" fill="false" showDataLabels="true"  
+        title="Incoming/Outgoing" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
+        rendered="#{webAdminServiceBean.summarySelected}"/> 
+        <p:pieChart id="serviceSummary" value="#{webAdminServiceBean.summaryService.pieModelServiceSummary}" legendPosition="e" fill="false" showDataLabels="true"  
+        title="Services" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
+        rendered="#{webAdminServiceBean.summarySelected}"/> 
+    
+    </h:panelGrid>
+
+    
+ </h:form>	
+ 
+</h:body>
+ 
+</html>

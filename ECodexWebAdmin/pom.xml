@@ -17,7 +17,32 @@
 		<org.springframework.version>3.1.4.RELEASE</org.springframework.version>
 		<org.slf4j.version>1.6.6</org.slf4j.version>
 		<ecodex.connector.version>1.3.1-RC2</ecodex.connector.version>
+		<mojarra.version>2.1.6</mojarra.version>
 	</properties>
+
+    <profiles>
+        <profile>
+            <id>mojarra</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun.faces</groupId>
+                    <artifactId>jsf-api</artifactId>
+                    <version>${mojarra.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.sun.faces</groupId>
+                    <artifactId>jsf-impl</artifactId>
+                    <version>${mojarra.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+		
 
 	<dependencies>
 		<dependency>
@@ -164,7 +189,7 @@
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
-			<version>11.2.0.1.0</version>
+			<version>11.1.0.7.0</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
