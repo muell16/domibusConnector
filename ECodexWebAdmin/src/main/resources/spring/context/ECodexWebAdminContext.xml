@@ -35,8 +35,12 @@
 	</bean>
 	
    <bean id="summaryService" 
-      class="eu.ecodex.webadmin.blogic.impl.SummaryServiceImpl">     
-              <property name="eCodexConnectorPersistenceService" ref="persistenceService" /> 
+      class="eu.ecodex.webadmin.blogic.impl.SummaryServiceImpl">      
+              <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
+   </bean>
+   
+      <bean id="customService" 
+      class="eu.ecodex.webadmin.blogic.impl.CustomServiceImpl">     
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
    </bean>
    

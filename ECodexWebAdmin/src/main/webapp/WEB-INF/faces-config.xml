@@ -14,10 +14,14 @@
    <managed-bean>
       <managed-bean-name>webAdminServiceBean</managed-bean-name>
       <managed-bean-class>eu.ecodex.webadmin.jsf.WebAdminServiceBean</managed-bean-class>
-      <managed-bean-scope>request</managed-bean-scope>
+      <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
          <property-name>summaryService</property-name>
          <value>#{summaryService}</value>
+      </managed-property>
+      <managed-property>
+         <property-name>customService</property-name>
+         <value>#{customService}</value>
       </managed-property>
    </managed-bean> 
  

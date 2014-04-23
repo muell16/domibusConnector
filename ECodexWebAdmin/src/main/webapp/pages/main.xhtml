@@ -21,18 +21,60 @@
         <h:selectOneMenu value="#{webAdminServiceBean.categoryNumber}">  
             <f:selectItem itemLabel="Select One" itemValue="" />  
             <f:selectItem itemLabel="Summary" itemValue="1" />  
-            <f:selectItem itemLabel="Incoming" itemValue="2" />  
-            <f:selectItem itemLabel="Outgoing" itemValue="3" />
-            <f:selectItem itemLabel="Custom" itemValue="4" />   
+            <f:selectItem itemLabel="Custom" itemValue="2" />   
         </h:selectOneMenu>
         <h:commandButton id="start" action="#{webAdminServiceBean.start}" value="Start"/> 
     </h:panelGrid>
     <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
-    	<h:outputText class="textArea" value="From: " />  
-    	<p:calendar value="#{webAdminServiceBean.fromDate}" id="fromButtonCal" showOn="button" />  
-    	<h:outputText class="textArea" value="To: " />  
-    	<p:calendar value="#{webAdminServiceBean.toDate}" id="toButtonCal" showOn="button" />    
+    	<h:outputText class="textArea" value="From: "  rendered="#{webAdminServiceBean.customSelected}"/>  
+    	<p:calendar value="#{webAdminServiceBean.customService.fromDate}" id="fromButtonCal" showOn="button"  rendered="#{webAdminServiceBean.customSelected}"/>  
+    	<h:outputText class="textArea" value="To: " rendered="#{webAdminServiceBean.customSelected}" />  
+    	<p:calendar value="#{webAdminServiceBean.customService.toDate}" id="toButtonCal" showOn="button"  rendered="#{webAdminServiceBean.customSelected}"/>    
     </h:panelGrid>
+     <h:panelGrid columns="7" style="margin-bottom:10px" cellpadding="5">           
+    	<h:outputText class="textArea" value="Country: " rendered="#{webAdminServiceBean.customSelected}"/>  
+        <h:selectOneMenu value="#{webAdminServiceBean.customService.country}" rendered="#{webAdminServiceBean.customSelected}">  
+            <f:selectItem itemLabel="All" itemValue="All" />  
+            <f:selectItem itemLabel="Austria" itemValue="AT" />  
+            <f:selectItem itemLabel="Belgium" itemValue="BE" />
+            <f:selectItem itemLabel="Czech Republic" itemValue="CR" />  
+            <f:selectItem itemLabel="Estonia" itemValue="EST" />
+            <f:selectItem itemLabel="France" itemValue="FR" />  
+            <f:selectItem itemLabel="Germany" itemValue="GE" />
+            <f:selectItem itemLabel="Greece" itemValue="GR" />  
+            <f:selectItem itemLabel="Hungary" itemValue="HU" />
+            <f:selectItem itemLabel="Italy" itemValue="IT" />  
+            <f:selectItem itemLabel="Ireland" itemValue="IR" />
+            <f:selectItem itemLabel="Jersey" itemValue="JE" />  
+            <f:selectItem itemLabel="Lithuania" itemValue="LI" />
+            <f:selectItem itemLabel="Malta" itemValue="MA" />  
+            <f:selectItem itemLabel="Netherlands" itemValue="NE" />
+            <f:selectItem itemLabel="Norway" itemValue="NO" />  
+            <f:selectItem itemLabel="Poland" itemValue="POL" />            
+            <f:selectItem itemLabel="Portugal" itemValue="POR" />  
+            <f:selectItem itemLabel="Romania" itemValue="RO" />
+            <f:selectItem itemLabel="Spain" itemValue="ESP" />  
+            <f:selectItem itemLabel="Sweden" itemValue="SW" /> 
+            <f:selectItem itemLabel="Turkey" itemValue="TU" />  
+            <f:selectItem itemLabel="United Kingdom" itemValue="UK" />              
+        </h:selectOneMenu>
+        <h:outputText class="textArea" value="Direction: " rendered="#{webAdminServiceBean.customSelected}"/>  
+        <h:selectOneMenu value="#{webAdminServiceBean.customService.direction}" rendered="#{webAdminServiceBean.customSelected}">  
+        	<f:selectItem itemLabel="All" itemValue="All" />  
+            <f:selectItem itemLabel="Incoming" itemValue="Incoming" />  
+            <f:selectItem itemLabel="Outgoing" itemValue="Outgoing" />
+        </h:selectOneMenu>
+        <h:outputText class="textArea" value="Status: " rendered="#{webAdminServiceBean.customSelected}"/>  
+        <h:selectOneMenu value="#{webAdminServiceBean.customService.status}" rendered="#{webAdminServiceBean.customSelected}">  
+        	<f:selectItem itemLabel="All" itemValue="All" />  
+            <f:selectItem itemLabel="Confirmed" itemValue="Confirmed" />  
+            <f:selectItem itemLabel="Unconfirmed" itemValue="Unconfirmed" />
+        </h:selectOneMenu>
+            <h:commandButton id="generate" action="#{webAdminServiceBean.customService.generateCustomReport}" value="Generate"
+        rendered="#{webAdminServiceBean.customSelected}"/> 
+     
+    </h:panelGrid>
+
 
     <hr />
     
@@ -45,8 +87,72 @@
         rendered="#{webAdminServiceBean.summarySelected}"/> 
     
     </h:panelGrid>
-
     
+    <p:dataTable id="tbl" var="message" value="#{webAdminServiceBean.customService.customResultList}" paginator="true" rows="10"
+    rendered="#{webAdminServiceBean.customSelected}">  
+    <p:column>  
+        <f:facet name="header">  
+            <h:outputText value="EBMS_Message_ID" />  
+        </f:facet>  
+        <h:outputText value="#{message.ebmsMessageId}" />  
+    </p:column>  
+  
+    <p:column>  
+        <f:facet name="header">  
+            <h:outputText value="From_Party" />  
+        </f:facet>  
+        <h:outputText value="#{message.fromParty}"/>  
+    </p:column>
+    
+    <p:column>  
+        <f:facet name="header">  
+            <h:outputText value="To_Party" />  
+        </f:facet>  
+        <h:outputText value="#{message.toParty}"/>  
+    </p:column> 
+    
+    <p:column>  
+        <f:facet name="header">  
+            <h:outputText value="Direction" />  
+        </f:facet>  
+        <h:outputText value="#{message.direction}"/>  
+    </p:column>    
+    
+    <p:column>  
+        <f:facet name="header">  
+            <h:outputText value="Confirmed" />  
+        </f:facet>  
+        <h:outputText value="#{message.confirmed}"/>  
+    </p:column>
+    
+    <p:column>  
+        <f:facet name="header">  
+            <h:outputText value="Rejected" />  
+        </f:facet>  
+        <h:outputText value="#{message.rejected}"/>  
+    </p:column>
+
+	</p:dataTable>  
+	<h:panelGrid columns="1"> 
+     <p:panel header="Export All Data" rendered="#{webAdminServiceBean.customSelected}">  
+  
+        <h:commandLink>  
+            <p:graphicImage value="/images/pdf.png" />  
+            <p:dataExporter type="pdf" target="tbl" fileName="ECodexMessageList"/>  
+        </h:commandLink>  
+          
+        <h:commandLink>  
+            <p:graphicImage value="/images/csv.png" />  
+            <p:dataExporter type="csv" target="tbl" fileName="ECodexMessageList" />  
+        </h:commandLink>  
+          
+        <h:commandLink>  
+            <p:graphicImage value="/images/xml.png" />  
+            <p:dataExporter type="xml" target="tbl" fileName="ECodexMessageList" />  
+        </h:commandLink>  
+    </p:panel> 
+    
+    </h:panelGrid>
  </h:form>	
  
 </h:body>

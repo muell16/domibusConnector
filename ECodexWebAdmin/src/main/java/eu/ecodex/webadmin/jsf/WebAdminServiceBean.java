@@ -3,6 +3,7 @@ package eu.ecodex.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
+import eu.ecodex.webadmin.blogic.ICustomService;
 import eu.ecodex.webadmin.blogic.ISummaryService;
 
 public class WebAdminServiceBean implements Serializable {
@@ -10,11 +11,15 @@ public class WebAdminServiceBean implements Serializable {
     private static final long serialVersionUID = -3920852382271662993L;
 
     private ISummaryService summaryService;
+    private ICustomService customService;
+
     private Integer categoryNumber;
+
     private Date fromDate;
     private Date toDate;
 
     private boolean summarySelected = false;
+    private boolean customSelected = false;
 
     public Integer getCategoryNumber() {
         return categoryNumber;
@@ -25,8 +30,16 @@ public class WebAdminServiceBean implements Serializable {
     }
 
     public String start() {
-        summarySelected = true;
-        summaryService.generateMessageSummary();
+
+        if (categoryNumber != null && categoryNumber.equals(1)) {
+            summarySelected = true;
+            customSelected = false;
+            summaryService.generateMessageSummary();
+        } else if (categoryNumber != null && categoryNumber.equals(2)) {
+            summarySelected = false;
+            customSelected = true;
+        }
+
         return "/pages/main.xhtml";
     }
 
@@ -60,6 +73,22 @@ public class WebAdminServiceBean implements Serializable {
 
     public void setToDate(Date toDate) {
         this.toDate = toDate;
+    }
+
+    public boolean isCustomSelected() {
+        return customSelected;
+    }
+
+    public ICustomService getCustomService() {
+        return customService;
+    }
+
+    public void setCustomService(ICustomService customService) {
+        this.customService = customService;
+    }
+
+    public void setCustomSelected(boolean customSelected) {
+        this.customSelected = customSelected;
     }
 
 }

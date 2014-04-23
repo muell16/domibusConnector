@@ -1,16 +1,17 @@
 package eu.ecodex.webadmin.blogic.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import org.primefaces.model.chart.PieChartModel;
 
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
 import eu.ecodex.webadmin.blogic.ISummaryService;
 import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
 
-public class SummaryServiceImpl implements ISummaryService {
+public class SummaryServiceImpl implements ISummaryService, Serializable {
 
-    private ECodexConnectorPersistenceService eCodexConnectorPersistenceService;
+    private static final long serialVersionUID = 4855196930128932326L;
+
     private String outgoingMessagesCount = "";
     private String incomingMessagesCount = "";
     private PieChartModel pieModelMessageSummary;
@@ -44,14 +45,6 @@ public class SummaryServiceImpl implements ISummaryService {
         pieModelServiceSummary.set("European Payment Order", serviceList.get("EPO"));
         pieModelServiceSummary.set("Undefined", serviceList.get("Undefined"));
 
-    }
-
-    public ECodexConnectorPersistenceService geteCodexConnectorPersistenceService() {
-        return eCodexConnectorPersistenceService;
-    }
-
-    public void seteCodexConnectorPersistenceService(ECodexConnectorPersistenceService eCodexConnectorPersistenceService) {
-        this.eCodexConnectorPersistenceService = eCodexConnectorPersistenceService;
     }
 
     public IECodexMessageWebAdminDao geteCodexMessageWebAdminDao() {
