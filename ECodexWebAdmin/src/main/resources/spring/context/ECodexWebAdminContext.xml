@@ -42,9 +42,13 @@
       <bean id="customService" 
       class="eu.ecodex.webadmin.blogic.impl.CustomServiceImpl">     
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
+              <property name="messageFilter" ref="messageFilter" /> 
    </bean>
    
    	<bean id="eCodexMessageWebAdminDao"
 		class="eu.ecodex.webadmin.dao.impl.ECodexMessageWebAdminDao" />
+		
+	<bean id="messageFilter"
+		class="eu.ecodex.webadmin.blogic.impl.MessageFilter" />
 
 </beans>

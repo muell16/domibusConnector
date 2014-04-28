@@ -1,65 +1,60 @@
 package eu.ecodex.webadmin.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
-public class MessageReportDO implements Serializable {
+import eu.ecodex.connector.common.db.model.ECodexEvidence;
+import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
+
+public class MessageReportDO extends ECodexMessageInfo implements Serializable {
 
     private static final long serialVersionUID = -5053455211577710753L;
 
-    private String ebmsMessageId;
-    private String fromParty;
-    private String toParty;
-    private String direction;
-    private Date confirmed;
-    private Date rejected;
-
-    public String getEbmsMessageId() {
-        return ebmsMessageId;
+    public MessageReportDO() {
+        super();
     }
 
-    public void setEbmsMessageId(String ebmsMessageId) {
-        this.ebmsMessageId = ebmsMessageId;
+    public MessageReportDO(ECodexMessageInfo eCodexMessageInfo) {
+        this.setAction(eCodexMessageInfo.getAction());
+        this.setCreated(eCodexMessageInfo.getCreated());
+        this.setFinalRecipient(eCodexMessageInfo.getFinalRecipient());
+        this.setFrom(eCodexMessageInfo.getFrom());
+        this.setId(eCodexMessageInfo.getId());
+        this.setMessage(eCodexMessageInfo.getMessage());
+        this.setOriginalSender(eCodexMessageInfo.getOriginalSender());
+        this.setService(eCodexMessageInfo.getService());
+        this.setTo(eCodexMessageInfo.getTo());
+        this.setUpdated(eCodexMessageInfo.getUpdated());
     }
 
-    public String getFromParty() {
-        return fromParty;
+    private String lastEvidenceType;
+
+    private String evidenceHistory;
+
+    private List<ECodexEvidence> evidenceList;
+
+    public String getEvidenceHistory() {
+        return evidenceHistory;
     }
 
-    public void setFromParty(String fromParty) {
-        this.fromParty = fromParty;
+    public void setEvidenceHistory(String evidenceHistory) {
+        this.evidenceHistory = evidenceHistory;
     }
 
-    public String getToParty() {
-        return toParty;
+    public List<ECodexEvidence> getEvidenceList() {
+        return evidenceList;
     }
 
-    public void setToParty(String toParty) {
-        this.toParty = toParty;
+    public void setEvidenceList(List<ECodexEvidence> evidenceList) {
+        this.evidenceList = evidenceList;
     }
 
-    public String getDirection() {
-        return direction;
+    public String getLastEvidenceType() {
+        return lastEvidenceType;
     }
 
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
-
-    public Date getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Date confirmed) {
-        this.confirmed = confirmed;
-    }
-
-    public Date getRejected() {
-        return rejected;
-    }
-
-    public void setRejected(Date rejected) {
-        this.rejected = rejected;
+    public void setLastEvidenceType(String lastEvidenceType) {
+        this.lastEvidenceType = lastEvidenceType;
     }
 
 }
