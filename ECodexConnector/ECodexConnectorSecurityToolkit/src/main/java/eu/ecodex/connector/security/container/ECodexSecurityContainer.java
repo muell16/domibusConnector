@@ -17,7 +17,6 @@ import eu.ecodex.connector.common.ECodexConnectorGlobalConstants;
 import eu.ecodex.connector.common.enums.DetachedSignatureMimeType;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
-import eu.ecodex.connector.security.document.ExtendedMemoryDocument;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;
@@ -138,8 +137,8 @@ public class ECodexSecurityContainer implements InitializingBean {
 
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                businessContent.addAttachment(new ExtendedMemoryDocument(attachment.getAttachment(), attachment
-                        .getName(), MimeType.fromFileName(attachment.getName()), attachment.getDescription()));
+                businessContent.addAttachment(new MemoryDocument(attachment.getAttachment(), attachment.getName(),
+                        MimeType.fromFileName(attachment.getName())));
             }
         }
 
