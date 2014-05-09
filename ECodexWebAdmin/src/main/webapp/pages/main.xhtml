@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"   
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
-      
-<h:head>
-<title>E-Codex WebAdmin</title>
-<link href="../css/stylesheet.css" 
-      rel="stylesheet" type="text/css"/> 
-</h:head>
-<h:body>
-
-		<div id="topbar">
-			<div id="topbar-content"></div>
-		</div>
-    	<div id="header-space">
-			<img src="../images/header.jpg" alt="Header image" />
-		</div> 
-    	<h1 class="title">E-Codex WebAdmin</h1>
+<ui:composition template="/META-INF/templates/menuTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+      			xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+                
+                
+   <ui:param name="title" value="E-Codex WebAdmin - Statistics"/>
+    <ui:define name="content">
 
          
  <h:form  id="form"> 
@@ -241,7 +230,7 @@
 	
 	
 	<p:dialog header="Evidence Detail" widgetVar="evidenceDialog" resizable="false" id="evidenceDialog"  
-                showEffect="fade" modal="true">  
+                showEffect="fade" modal="false">  
   
         <h:panelGrid id="display" columns="1" cellpadding="4" style="margin:0 auto;">  
     
@@ -274,8 +263,6 @@
     </p:panel> 
     
     </h:panelGrid>
- </h:form>	
- 
-</h:body>
- 
-</html>
+</h:form>
+</ui:define>
+</ui:composition>
