@@ -369,7 +369,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         ECodexMessageDetails messageDetails = new ECodexMessageDetails();
 
         messageDetails.setHashAlgorithm(hashValueBuilder.getAlgorithm().toString());
-        messageDetails.setHashValue(Hex.decode(hash));
+        hash != null ? messageDetails.setHashValue(Hex.decode(hash)):messageDetails.setHashValue(null);
 
         if (nationalMessageId == null || nationalMessageId.isEmpty()) {
             throw new ECodexConnectorEvidencesToolkitException(

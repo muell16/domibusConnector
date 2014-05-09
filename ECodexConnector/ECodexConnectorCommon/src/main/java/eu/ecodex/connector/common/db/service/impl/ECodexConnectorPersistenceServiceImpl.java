@@ -30,6 +30,11 @@ import eu.ecodex.connector.common.message.MessageDetails;
 
 public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPersistenceService {
 
+    private static final String RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT = "RetrievalNonRetrievalToRecipient";
+    private static final String DELIVERY_NON_DELIVERY_TO_RECIPIENT = "DeliveryNonDeliveryToRecipient";
+    private static final String RELAY_REMMD_FAILURE = "RelayREMMDFailure";
+    private static final String RELAY_REMMD_ACCEPTANCE_REJECTION = "RelayREMMDAcceptanceRejection";
+
     private ECodexMessageDao messageDao;
     private ECodexEvidenceDao evidenceDao;
     private ECodexActionDao actionDao;
@@ -109,15 +114,15 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
         ECodexMessageInfo messageInfo = message.getDbMessage().getMessageInfo();
 
-        if(messageInfo!=null){
-        messageInfo.setAction(message.getMessageDetails().getAction());
-        messageInfo.setService(message.getMessageDetails().getService());
-        messageInfo.setFrom(message.getMessageDetails().getFromParty());
-        messageInfo.setTo(message.getMessageDetails().getToParty());
-        messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
-        messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+        if (messageInfo != null) {
+            messageInfo.setAction(message.getMessageDetails().getAction());
+            messageInfo.setService(message.getMessageDetails().getService());
+            messageInfo.setFrom(message.getMessageDetails().getFromParty());
+            messageInfo.setTo(message.getMessageDetails().getToParty());
+            messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
+            messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
 
-        messageInfoDao.mergeMessageInfo(messageInfo);
+            messageInfoDao.mergeMessageInfo(messageInfo);
         }
     }
 
@@ -325,23 +330,22 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
     @Override
     public ECodexAction getRelayREMMDAcceptanceRejectionAction() {
-        return getAction("RelayREMMDAcceptanceRejection");
+        return getAction(RELAY_REMMD_ACCEPTANCE_REJECTION);
     }
-    
-	
+
     @Override
     public ECodexAction getRelayREMMDFailure() {
-    	return getAction("RelayREMMDFailure");
-	} 
+        return getAction(RELAY_REMMD_FAILURE);
+    }
 
     @Override
     public ECodexAction getDeliveryNonDeliveryToRecipientAction() {
-        return getAction("DeliveryNonDeliveryToRecipient");
+        return getAction(DELIVERY_NON_DELIVERY_TO_RECIPIENT);
     }
 
     @Override
     public ECodexAction getRetrievalNonRetrievalToRecipientAction() {
-        return getAction("RetrievalNonRetrievalToRecipient");
+        return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
     }
 
 }

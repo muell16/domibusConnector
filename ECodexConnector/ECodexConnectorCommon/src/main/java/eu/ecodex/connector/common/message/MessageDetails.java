@@ -17,10 +17,6 @@ public class MessageDetails {
     private String ebmsMessageId;
     private String refToMessageId;
     private String conversationId;
-    // private ServiceEnum service;
-    // private ActionEnum action;
-    // private PartnerEnum fromPartner;
-    // private PartnerEnum toPartner;
     private String originalSender;
     private String finalRecipient;
     private Long dbMessageId;
@@ -28,6 +24,7 @@ public class MessageDetails {
     private ECodexService service;
     private ECodexParty fromParty;
     private ECodexParty toParty;
+    private boolean validWithoutPDF;
 
     public String getNationalMessageId() {
         return nationalMessageId;
@@ -60,38 +57,6 @@ public class MessageDetails {
     public void setConversationId(String conversationId) {
         this.conversationId = conversationId;
     }
-
-    // public ServiceEnum getService() {
-    // return service;
-    // }
-    //
-    // public void setService(ServiceEnum service) {
-    // this.service = service;
-    // }
-    //
-    // public ActionEnum getAction() {
-    // return action;
-    // }
-    //
-    // public void setAction(ActionEnum action) {
-    // this.action = action;
-    // }
-    //
-    // public PartnerEnum getFromPartner() {
-    // return fromPartner;
-    // }
-    //
-    // public void setFromPartner(PartnerEnum fromPartner) {
-    // this.fromPartner = fromPartner;
-    // }
-    //
-    // public PartnerEnum getToPartner() {
-    // return toPartner;
-    // }
-    //
-    // public void setToPartner(PartnerEnum toPartner) {
-    // this.toPartner = toPartner;
-    // }
 
     public String getOriginalSender() {
         return originalSender;
@@ -147,6 +112,14 @@ public class MessageDetails {
 
     public void setToParty(ECodexParty toParty) {
         this.toParty = toParty;
+    }
+
+    public boolean isValidWithoutPDF() {
+        return validWithoutPDF;
+    }
+
+    public void setValidWithoutPDF(boolean validWithoutPDF) {
+        this.validWithoutPDF = validWithoutPDF;
     }
 
 }

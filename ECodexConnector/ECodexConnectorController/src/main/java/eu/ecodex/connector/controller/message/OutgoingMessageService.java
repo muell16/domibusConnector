@@ -1,8 +1,11 @@
 package eu.ecodex.connector.controller.message;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.ecodex.connector.common.db.model.ECodexAction;
 import eu.ecodex.connector.common.enums.ECodexEvidenceType;
 import eu.ecodex.connector.common.enums.ECodexMessageDirection;
 import eu.ecodex.connector.common.exception.ImplementationMissingException;
@@ -32,11 +35,6 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         String hashValue = null;
-        try {
-            hashValue = buildAndPersistHashValue(message);
-        } catch (ECodexConnectorControllerException e) {
-            createSubmissionRejectionAndReturnIt(message, "0", e.getMessage());
-        }
 
         if (connectorProperties.isUseContentMapper()) {
             try {
@@ -49,6 +47,13 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 throw new ECodexConnectorControllerException(ime);
             }
             persistenceService.mergeMessageWithDatabase(message);
+        }
+
+        try {
+            hashValue = checkPDFandBuildHashValue(message, hashValue);
+        } catch (ECodexConnectorControllerException e) {
+            createSubmissionRejectionAndReturnIt(message, hashValue, e.getMessage());
+            throw e;
         }
 
         if (connectorProperties.isUseSecurityToolkit()) {
@@ -99,25 +104,35 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
     }
 
-    private String buildAndPersistHashValue(Message message) throws ECodexConnectorControllerException {
+    private String checkPDFandBuildHashValue(Message message, String hashValue)
+            throws ECodexConnectorControllerException {
+        if (ArrayUtils.isEmpty(message.getMessageContent().getPdfDocument())) {
+            ECodexAction action = message.getMessageDetails().getAction();
+            if (action == null) {
+                throw new ECodexConnectorControllerException("ECodex Action still null after mapping!");
+            }
+            if (action.isPdfRequired()) {
+                throw new ECodexConnectorControllerException(
+                        "There is no PDF document in the message though the Ecodex Action " + action.getAction()
+                                + " requires one!");
+            } else {
+                message.getMessageDetails().setValidWithoutPDF(true);
+            }
 
-        String hash = null;
-        if (message.getMessageContent().getPdfDocument() != null
-                && message.getMessageContent().getPdfDocument().length > 0) {
-
-            // whatever the source for the hash will be - by now it is the pdf
-            // document
-            hash = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
         } else {
-            throw new ECodexConnectorControllerException("The PDF content is null or empty! Message must not be sent!");
+            try {
+                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
+
+                if (StringUtils.isNotEmpty(hashValue)) {
+                    message.getDbMessage().setHashValue(hashValue);
+                    persistenceService.mergeMessageWithDatabase(message);
+                }
+            } catch (Exception e) {
+                throw new ECodexConnectorControllerException("Could not build hash code though the PDF is not empty!",
+                        e);
+            }
         }
-
-        // now persist the hash value into the database entry for the
-        // message
-        message.getDbMessage().setHashValue(hash);
-        persistenceService.mergeMessageWithDatabase(message);
-
-        return hash;
+        return hashValue;
     }
 
     private void createSubmissionRejectionAndReturnIt(Message message, String hashValue, String errorMessage)

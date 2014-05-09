@@ -7,13 +7,17 @@ import java.security.Security;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+import eu.ecodex.connector.common.ECodexConnectorGlobalConstants;
+import eu.ecodex.connector.common.enums.DetachedSignatureMimeType;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
+import eu.ecodex.connector.security.document.ExtendedMemoryDocument;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;
@@ -32,6 +36,14 @@ import eu.europa.ec.markt.dss.DigestAlgorithm;
 import eu.europa.ec.markt.dss.SignatureAlgorithm;
 
 public class ECodexSecurityContainer implements InitializingBean {
+
+    private static final String TOKEN_XML_FILE_NAME = "Token.xml";
+
+    private static final String TOKEN_PDF_FILE_NAME = "Token.pdf";
+
+    private static final String TOKEN_XML_DOCUMENT_NAME = "tokenXML";
+
+    private static final String DETACHED_SIGNATURE_DOCUMENT_NAME = "detachedSignature";
 
     static Logger LOGGER = LoggerFactory.getLogger(ECodexSecurityContainer.class);
 
@@ -104,22 +116,30 @@ public class ECodexSecurityContainer implements InitializingBean {
     private BusinessContent buildBusinessContent(Message message) {
         BusinessContent businessContent = new BusinessContent();
 
-        Document document = new MemoryDocument(message.getMessageContent().getPdfDocument(), "mainDocument",
-                MimeType.PDF);
+        Document document = null;
+        if (ArrayUtils.isNotEmpty(message.getMessageContent().getPdfDocument())) {
+            document = new MemoryDocument(message.getMessageContent().getPdfDocument(),
+                    ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.PDF);
+        } else if (message.getMessageDetails().isValidWithoutPDF()) {
+            document = new MemoryDocument(message.getMessageContent().getECodexContent(),
+                    ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.XML);
+        } else
+            LOGGER.error("No content found for container!");
+
         businessContent.setDocument(document);
 
         if (message.getMessageContent().getDetachedSignature() != null
                 && message.getMessageContent().getDetachedSignatureMimeType() != null) {
             Document detachedSignature = new MemoryDocument(message.getMessageContent().getDetachedSignature(),
-                    "detachedSignature", MimeType.valueOf(message.getMessageContent().getDetachedSignatureMimeType()
-                            .name()));
+                    DETACHED_SIGNATURE_DOCUMENT_NAME, MimeType.valueOf(message.getMessageContent()
+                            .getDetachedSignatureMimeType().name()));
             businessContent.setDetachedSignature(detachedSignature);
         }
 
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                businessContent.addAttachment(new MemoryDocument(attachment.getAttachment(), attachment.getName(),
-                        MimeType.fromFileName(attachment.getName())));
+                businessContent.addAttachment(new ExtendedMemoryDocument(attachment.getAttachment(), attachment
+                        .getName(), MimeType.fromFileName(attachment.getName()), attachment.getDescription()));
             }
         }
 
@@ -155,7 +175,7 @@ public class ECodexSecurityContainer implements InitializingBean {
                     if (tokenXML != null) {
                         try {
                             MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML,
-                                    "tokenXML", MimeType.XML.getCode());
+                                    TOKEN_XML_DOCUMENT_NAME, MimeType.XML.getCode());
                             message.addAttachment(tokenAttachment);
                         } catch (IOException e) {
                             throw new ECodexConnectorSecurityException(e);
@@ -186,7 +206,7 @@ public class ECodexSecurityContainer implements InitializingBean {
                     asicsAttachment = attachment;
                 } else if (
                 // attachment.getMimeType().equals(MimeType.XML.getCode()) &&
-                attachment.getName().equals("tokenXML")) {
+                attachment.getName().equals(TOKEN_XML_DOCUMENT_NAME)) {
                     tokenXMLAttachment = attachment;
                 }
             }
@@ -210,7 +230,8 @@ public class ECodexSecurityContainer implements InitializingBean {
 
                 if (results.isSuccessful()) {
                     if (container != null) {
-                        if (container.getBusinessDocument() != null) {
+                        if (container.getBusinessDocument() != null
+                                && container.getBusinessDocument().getMimeType() == MimeType.PDF) {
                             try {
                                 InputStream is = container.getBusinessDocument().openStream();
                                 byte[] docAsBytes = new byte[is.available()];
@@ -221,12 +242,28 @@ public class ECodexSecurityContainer implements InitializingBean {
                             }
 
                         }
+
+                        if (container.getBusinessContent().getDetachedSignature() != null) {
+                            try {
+                                InputStream is = container.getBusinessContent().getDetachedSignature().openStream();
+                                byte[] docAsBytes = new byte[is.available()];
+                                is.read(docAsBytes);
+                                message.getMessageContent().setDetachedSignature(docAsBytes);
+                            } catch (IOException e) {
+                                throw new ECodexConnectorSecurityException("Could not read detached signature!");
+                            }
+                            message.getMessageContent().setDetachedSignatureMimeType(
+                                    DetachedSignatureMimeType.valueOf(container.getBusinessContent()
+                                            .getDetachedSignature().getMimeType().name()));
+                        }
+
                         if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
                             for (Document businessAttachment : container.getBusinessAttachments()) {
                                 try {
                                     MessageAttachment attachment = convertDocumentToMessageAttachment(
                                             businessAttachment, businessAttachment.getName(), businessAttachment
                                                     .getMimeType().getCode());
+
                                     message.addAttachment(attachment);
                                 } catch (IOException e) {
                                     LOGGER.error("Could not read attachment!", e);
@@ -238,7 +275,7 @@ public class ECodexSecurityContainer implements InitializingBean {
                         if (tokenPDF != null) {
                             try {
                                 MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF,
-                                        "Token.pdf", MimeType.PDF.getCode());
+                                        TOKEN_PDF_FILE_NAME, MimeType.PDF.getCode());
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
                                 LOGGER.error("Could not read Token PDF!", e);
@@ -249,7 +286,7 @@ public class ECodexSecurityContainer implements InitializingBean {
                         if (tokenXML != null) {
                             try {
                                 MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML,
-                                        "Token.xml", MimeType.XML.getCode());
+                                        TOKEN_XML_FILE_NAME, MimeType.XML.getCode());
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
                                 LOGGER.error("Could not read Token XML!", e);
