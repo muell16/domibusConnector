@@ -63,6 +63,6 @@
        try index.jsf first, welcome.jsf next, and so forth.
    -->
   <welcome-file-list>
-    <welcome-file>pages/index.xhtml</welcome-file>
+    <welcome-file>pages/login.xhtml</welcome-file>
   </welcome-file-list>
 </web-app>
