@@ -25,6 +25,12 @@ div#headerTop {
 	margin: 0 auto;
 }
 
+div#monitoring {	
+	text-align: center !important;
+		margin: 0 auto !important;
+}
+
+
 #loginForm {
 	width:400px;
 	margin:0px auto;

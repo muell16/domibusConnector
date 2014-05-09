@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ui:composition template="/META-INF/templates/menuTemplate.xhtml"
+<ui:composition template="/templates/menuTemplate.xhtml"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
@@ -138,7 +138,9 @@
 
     <hr />
     
-    <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">          
+
+    
+    <h:panelGrid columns="2" style="text-align: center; margin: 0 auto;" cellpadding="5">          
     	<p:pieChart id="messageSummary" value="#{webAdminServiceBean.summaryService.pieModelMessageSummary}" legendPosition="e" fill="false" showDataLabels="true"  
         title="Incoming/Outgoing" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
         rendered="#{webAdminServiceBean.summarySelected}"/> 
@@ -147,6 +149,8 @@
         rendered="#{webAdminServiceBean.summarySelected}"/> 
     
     </h:panelGrid>
+
+    
     
      <p:growl id="msgs" showDetail="true" /> 
     
