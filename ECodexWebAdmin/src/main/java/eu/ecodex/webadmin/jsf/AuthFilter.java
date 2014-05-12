@@ -12,7 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class AuthFilter implements Filter {
+
+    protected final Log logger = LogFactory.getLog(getClass());
 
     public AuthFilter() {
     }
@@ -47,7 +52,7 @@ public class AuthFilter implements Filter {
             // login
             // page
         } catch (Throwable t) {
-            System.out.println(t.getMessage());
+            logger.error(t.getMessage(), t);
         }
     } // doFilter
 

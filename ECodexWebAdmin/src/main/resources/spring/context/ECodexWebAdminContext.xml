@@ -46,7 +46,13 @@
    </bean>
    
    	<bean id="eCodexMessageWebAdminDao"
-		class="eu.ecodex.webadmin.dao.impl.ECodexMessageWebAdminDao" />
+		class="eu.ecodex.webadmin.dao.impl.ECodexMessageWebAdminDao">
+	</bean>
+		
+	<bean id="eCodexWebAdminUserDao"
+		class="eu.ecodex.webadmin.dao.impl.ECodexWebAdminUserDao">
+		<property name="dataSource" ref="dataSource" /> 
+		</bean>
 		
 	<bean id="messageFilter"
 		class="eu.ecodex.webadmin.blogic.impl.MessageFilter" />

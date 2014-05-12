@@ -29,6 +29,10 @@
       <managed-bean-name>loginBean</managed-bean-name>
       <managed-bean-class>eu.ecodex.webadmin.blogic.impl.LoginBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+         <property-name>eCodexWebAdminUserDao</property-name>
+         <value>#{eCodexWebAdminUserDao}</value>
+      </managed-property>
    </managed-bean>
 
 	<navigation-rule>
