@@ -7,6 +7,9 @@ package eu.ecodex.connector.common.message;
  * there is the document itself as a byte[], a name for the attachment and a
  * mimeType.
  * 
+ * Since 2.0: Additional attributes description and identifier for additional
+ * data transmitted for attachments.
+ * 
  * @author riederb
  * 
  */
@@ -15,12 +18,20 @@ public class MessageAttachment {
     private byte[] attachment;
     private String name;
     private String mimeType;
+    private String description;
+    private String identifier;
 
     public MessageAttachment(byte[] attachment, String name, String mimeType) {
         super();
         this.attachment = attachment;
         this.name = name;
         this.mimeType = mimeType;
+    }
+
+    public MessageAttachment(byte[] attachment, String name, String mimeType, String description, String identifier) {
+        this(attachment, name, mimeType);
+        this.description = description;
+        this.identifier = identifier;
     }
 
     public MessageAttachment() {
@@ -48,6 +59,22 @@ public class MessageAttachment {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
 }
