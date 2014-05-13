@@ -7,20 +7,27 @@ import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.controller.ECodexConnectorController;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
+import eu.ecodex.connector.controller.jmx.ECodexConnectorJMXMonitor;
 
 public class IncomingMessagesJob {
 
     static Logger LOGGER = LoggerFactory.getLogger(IncomingMessagesJob.class);
 
     private ECodexConnectorController incomingController;
+    private ECodexConnectorJMXMonitor jmxMonitor;
+
+    public void setJmxMonitor(ECodexConnectorJMXMonitor jmxMonitor) {
+        this.jmxMonitor = jmxMonitor;
+    }
 
     public void setIncomingController(ECodexConnectorController incomingController) {
         this.incomingController = incomingController;
     }
 
     public void handleIncomingMessages() {
-        LOGGER.info("Job for handling incoming messages triggered.");
+        LOGGER.debug("Job for handling incoming messages triggered.");
         Date start = new Date();
+        jmxMonitor.setLastCalledIncomingMessagesPending(start);
         try {
             incomingController.handleMessages();
         } catch (ECodexConnectorControllerException e) {

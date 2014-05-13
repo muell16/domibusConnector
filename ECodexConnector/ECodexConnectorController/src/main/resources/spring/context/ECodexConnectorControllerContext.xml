@@ -16,6 +16,7 @@
 		resource="classpath:/spring/context/ECodexConnectorNationalBackendClientContext.xml" />
 
 	<import resource="quartz-context.xml" />
+	<import resource="jmx-context.xml" />
 
 	<bean id="outgoingController"
 		class="eu.ecodex.connector.controller.ECodexConnectorOutgoingController">
