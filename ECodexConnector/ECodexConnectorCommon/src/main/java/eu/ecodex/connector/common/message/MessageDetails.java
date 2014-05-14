@@ -24,7 +24,6 @@ public class MessageDetails {
     private ECodexService service;
     private ECodexParty fromParty;
     private ECodexParty toParty;
-    private boolean validWithoutPDF;
 
     public String getNationalMessageId() {
         return nationalMessageId;
@@ -115,11 +114,10 @@ public class MessageDetails {
     }
 
     public boolean isValidWithoutPDF() {
-        return validWithoutPDF;
-    }
-
-    public void setValidWithoutPDF(boolean validWithoutPDF) {
-        this.validWithoutPDF = validWithoutPDF;
+        if (action != null && !action.isPdfRequired()) {
+            return true;
+        }
+        return false;
     }
 
 }

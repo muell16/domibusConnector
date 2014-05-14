@@ -115,10 +115,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 throw new ECodexConnectorControllerException(
                         "There is no PDF document in the message though the Ecodex Action " + action.getAction()
                                 + " requires one!");
-            } else {
-                message.getMessageDetails().setValidWithoutPDF(true);
             }
-
         } else {
             try {
                 hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());

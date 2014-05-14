@@ -229,13 +229,16 @@ public class ECodexSecurityContainer implements InitializingBean {
 
                 if (results.isSuccessful()) {
                     if (container != null) {
-                        if (container.getBusinessDocument() != null
-                                && container.getBusinessDocument().getMimeType() == MimeType.PDF) {
+                        if (container.getBusinessDocument() != null) {
                             try {
                                 InputStream is = container.getBusinessDocument().openStream();
                                 byte[] docAsBytes = new byte[is.available()];
                                 is.read(docAsBytes);
-                                message.getMessageContent().setPdfDocument(docAsBytes);
+                                if (container.getBusinessDocument().getMimeType() == MimeType.PDF)
+                                    message.getMessageContent().setPdfDocument(docAsBytes);
+                                if (container.getBusinessDocument().getMimeType() == MimeType.XML
+                                        && message.getMessageDetails().isValidWithoutPDF())
+                                    message.getMessageContent().setECodexContent(docAsBytes);
                             } catch (IOException e) {
                                 throw new ECodexConnectorSecurityException("Could not read business document!");
                             }
