@@ -12,8 +12,8 @@
     </application>
     
    <managed-bean>
-      <managed-bean-name>webAdminServiceBean</managed-bean-name>
-      <managed-bean-class>eu.ecodex.webadmin.jsf.WebAdminServiceBean</managed-bean-class>
+      <managed-bean-name>connectorBean</managed-bean-name>
+      <managed-bean-class>eu.ecodex.webadmin.jsf.ConnectorBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
          <property-name>summaryService</property-name>
@@ -27,7 +27,7 @@
    
    <managed-bean>
       <managed-bean-name>loginBean</managed-bean-name>
-      <managed-bean-class>eu.ecodex.webadmin.blogic.impl.LoginBean</managed-bean-class>
+      <managed-bean-class>eu.ecodex.webadmin.blogic.general.LoginBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
          <property-name>eCodexWebAdminUserDao</property-name>
@@ -39,7 +39,7 @@
 		<from-view-id>viewMenu</from-view-id>
 		<navigation-case>
 			<from-outcome>statistics</from-outcome>
-			<to-view-id>/main.xhtml</to-view-id>
+			<to-view-id>/pages/connector-statistics.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

@@ -1,4 +1,4 @@
-package eu.ecodex.webadmin.blogic.impl;
+package eu.ecodex.webadmin.blogic.connector.statistics.impl;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -12,8 +12,8 @@ import java.util.Set;
 
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
 import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
-import eu.ecodex.webadmin.blogic.ICustomService;
-import eu.ecodex.webadmin.blogic.IMessageFilter;
+import eu.ecodex.webadmin.blogic.connector.statistics.ICustomService;
+import eu.ecodex.webadmin.blogic.connector.statistics.IMessageFilter;
 import eu.ecodex.webadmin.commons.BLConstants;
 import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
 import eu.ecodex.webadmin.model.MessageReportDO;
@@ -36,8 +36,10 @@ public class CustomServiceImpl implements ICustomService, Serializable {
     private Date toDate;
     private Integer countResult;
 
+    // The List, which is displayed as result table in main.xhtml
     private List<MessageReportDO> customResultList;
 
+    // Selected entry in result table, necessary for evidence history
     private MessageReportDO selectedMessageReportDO;
 
     /*
@@ -89,9 +91,15 @@ public class CustomServiceImpl implements ICustomService, Serializable {
 
         }
 
-        return "/pages/main.xhtml";
+        return "/pages/connector-statistics.xhtml";
     }
 
+    /**
+     * The history of Evidences taken from ECODEX_EVIDENCES are conditioned to a
+     * date sorted String representation
+     * 
+     * @param messageReportDO
+     */
     private void generateEvidenceHistory(MessageReportDO messageReportDO) {
 
         List<ECodexEvidence> evidenceList = new ArrayList<ECodexEvidence>();

@@ -43,8 +43,6 @@ public class Util {
         PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 64 * 8);
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] hash = skf.generateSecret(spec).getEncoded();
-        System.out.println(toHex(salt));
-        System.out.println("\n" + toHex(hash));
         return toHex(salt) + toHex(hash);
     }
 

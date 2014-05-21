@@ -35,15 +35,18 @@
 	</bean>
 	
    <bean id="summaryService" 
-      class="eu.ecodex.webadmin.blogic.impl.SummaryServiceImpl">      
+      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.SummaryServiceImpl">      
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
    </bean>
    
       <bean id="customService" 
-      class="eu.ecodex.webadmin.blogic.impl.CustomServiceImpl">     
+      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.CustomServiceImpl">     
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
               <property name="messageFilter" ref="messageFilter" /> 
    </bean>
+   
+   	<bean id="messageFilter"
+		class="eu.ecodex.webadmin.blogic.connector.statistics.impl.MessageFilter" />
    
    	<bean id="eCodexMessageWebAdminDao"
 		class="eu.ecodex.webadmin.dao.impl.ECodexMessageWebAdminDao">
@@ -54,7 +57,4 @@
 		<property name="dataSource" ref="dataSource" /> 
 		</bean>
 		
-	<bean id="messageFilter"
-		class="eu.ecodex.webadmin.blogic.impl.MessageFilter" />
-
 </beans>

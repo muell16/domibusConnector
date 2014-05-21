@@ -1,11 +1,11 @@
-package eu.ecodex.webadmin.blogic.impl;
+package eu.ecodex.webadmin.blogic.connector.statistics.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
 import org.primefaces.model.chart.PieChartModel;
 
-import eu.ecodex.webadmin.blogic.ISummaryService;
+import eu.ecodex.webadmin.blogic.connector.statistics.ISummaryService;
 import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
 
 public class SummaryServiceImpl implements ISummaryService, Serializable {

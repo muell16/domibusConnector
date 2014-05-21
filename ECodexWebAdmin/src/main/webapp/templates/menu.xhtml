@@ -10,8 +10,20 @@
 	<h:form>
 		<p:outputPanel id="menuPanel" layout="block">
 			<p:menu>
-				<p:submenu label="Web-Admin">
-					<p:menuitem value="Statistics" url="/pages/main.xhtml" 
+			<p:submenu label="General">
+					<p:menuitem value="Summary" url="/pages/connector-statistics.xhtml" 
+						icon="ui-icon-document" />
+					<p:menuitem value="Configuration" url="/pages/connector-statistics.xhtml" 
+						icon="ui-icon-wrench" />
+				</p:submenu>
+				<p:submenu label="Connector">
+					<p:menuitem value="Statistics" url="/pages/connector-statistics.xhtml" 
+						icon="ui-icon-home" />
+					<p:menuitem value="Monitoring" url="/pages/monitoring.xhtml" 
+						icon="ui-icon-search" />
+				</p:submenu>
+				<p:submenu label="Gateway">
+					<p:menuitem value="Statistics" url="/pages/connector-statistics.xhtml" 
 						icon="ui-icon-home" />
 					<p:menuitem value="Monitoring" url="/pages/monitoring.xhtml" 
 						icon="ui-icon-search" />

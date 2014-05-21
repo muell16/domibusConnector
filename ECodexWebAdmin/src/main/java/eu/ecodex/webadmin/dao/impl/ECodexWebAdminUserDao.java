@@ -27,8 +27,6 @@ public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao {
     public boolean login(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException,
             SQLException {
         Connection con = dataSource.getConnection();
-        String passwordTest = Util.generatePasswordHash(password);
-        System.out.println(passwordTest);
         PreparedStatement ps = con.prepareStatement("select * from ECODEX_WEBADMIN_USER where username= ?");
         ps.setString(1, username);
 

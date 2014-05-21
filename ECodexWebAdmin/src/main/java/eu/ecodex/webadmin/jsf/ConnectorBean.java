@@ -3,10 +3,18 @@ package eu.ecodex.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
-import eu.ecodex.webadmin.blogic.ICustomService;
-import eu.ecodex.webadmin.blogic.ISummaryService;
+import eu.ecodex.webadmin.blogic.connector.statistics.ICustomService;
+import eu.ecodex.webadmin.blogic.connector.statistics.ISummaryService;
 
-public class WebAdminServiceBean implements Serializable {
+/**
+ * Main Class for the National Connector, which includes the different statistic
+ * and monitoring services. Contains the conditions for rendering the different
+ * sections in the jsf pages.
+ * 
+ * @author michalim
+ * 
+ */
+public class ConnectorBean implements Serializable {
 
     private static final long serialVersionUID = -3920852382271662993L;
 
@@ -40,7 +48,7 @@ public class WebAdminServiceBean implements Serializable {
             customSelected = true;
         }
 
-        return "/pages/main.xhtml";
+        return "/pages/connector-statistics.xhtml";
     }
 
     public ISummaryService getSummaryService() {

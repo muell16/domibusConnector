@@ -1,4 +1,4 @@
-package eu.ecodex.webadmin.blogic;
+package eu.ecodex.webadmin.blogic.connector.statistics;
 
 import java.util.List;
 

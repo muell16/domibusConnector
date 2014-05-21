@@ -1,4 +1,4 @@
-package eu.ecodex.webadmin.blogic.impl;
+package eu.ecodex.webadmin.blogic.general;
 
 import java.io.Serializable;
 
