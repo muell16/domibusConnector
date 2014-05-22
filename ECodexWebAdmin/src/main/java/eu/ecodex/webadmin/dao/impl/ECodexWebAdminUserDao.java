@@ -1,5 +1,6 @@
 package eu.ecodex.webadmin.dao.impl;
 
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
@@ -12,7 +13,9 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import eu.ecodex.webadmin.commons.Util;
 import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 
-public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao {
+public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao, Serializable {
+
+    private static final long serialVersionUID = -8330659798855359673L;
 
     private ComboPooledDataSource dataSource;
 

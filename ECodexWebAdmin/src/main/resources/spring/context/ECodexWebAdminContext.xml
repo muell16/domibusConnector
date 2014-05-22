@@ -34,6 +34,12 @@
 		</property>
 	</bean>
 	
+	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties">
+		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
+		<property name="jmxServerAddress" value="${jmx.server.address}" />
+		<property name="jmxServerPort" value="${jmx.server.port}" />
+	</bean>
+	
    <bean id="summaryService" 
       class="eu.ecodex.webadmin.blogic.connector.statistics.impl.SummaryServiceImpl">      
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
@@ -43,6 +49,10 @@
       class="eu.ecodex.webadmin.blogic.connector.statistics.impl.CustomServiceImpl">     
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
               <property name="messageFilter" ref="messageFilter" /> 
+   </bean>
+   
+   <bean id="monitoringService" 
+      class="eu.ecodex.webadmin.blogic.connector.monitoring.impl.MonitoringService">    
    </bean>
    
    	<bean id="messageFilter"

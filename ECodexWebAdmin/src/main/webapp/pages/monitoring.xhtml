@@ -7,9 +7,32 @@
 	<ui:define name="metadata">
 	</ui:define>
 	<ui:define name="content">
-	<div id="monitoring">
-		Monitoring
+	<div id="centerHeader">
+		<h1>Monitoring</h1>
 	</div>
-		 	 
+	<br/>
+	<h:body>
+		#{monitoringService.generateMonitoringReport()}
+	</h:body>
+	 
+	
+	<h:panelGrid columns="3" style="text-align: center; margin: 0 auto;"
+					cellpadding="10" border="1">
+					<h:outputLabel style="font-weight:bold;">LastCalledEvidenceTimeoutCheck</h:outputLabel>
+					<h:outputText class="textArea"
+						value="#{monitoringService.lastCalledEvidenceTimeoutCheckDate}" />
+					<h:outputText style="font-weight:bold;" class="textArea"
+						value="#{monitoringService.lastCalledEvidenceTimeoutCheckMessage}" />
+					<h:outputLabel style="font-weight:bold;">lastCalledIncomingMessagesPending</h:outputLabel>
+					<h:outputText class="textArea"
+						value="#{connectorBean.monitoringService.lastCalledIncomingMessagesPendingDate}" />
+					<h:outputText style="font-weight:bold;" class="textArea"
+						value="#{connectorBean.monitoringService.lastCalledIncomingMessagesPendingMessage}" />		
+					<h:outputLabel style="font-weight:bold;">lastCalledOutgoingMessagesPending</h:outputLabel>
+					<h:outputText class="textArea"
+						value="#{connectorBean.monitoringService.lastCalledOutgoingMessagesPendingDate}" />
+					<h:outputText style="font-weight:bold;" class="textArea"
+						value="#{connectorBean.monitoringService.lastCalledOutgoingMessagesPendingMessage}" />				
+				</h:panelGrid>
 	</ui:define>
 </ui:composition>

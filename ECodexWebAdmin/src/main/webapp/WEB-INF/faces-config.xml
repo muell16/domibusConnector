@@ -23,17 +23,27 @@
          <property-name>customService</property-name>
          <value>#{customService}</value>
       </managed-property>
-   </managed-bean>
-   
-   <managed-bean>
-      <managed-bean-name>loginBean</managed-bean-name>
-      <managed-bean-class>eu.ecodex.webadmin.blogic.general.LoginBean</managed-bean-class>
-      <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
-         <property-name>eCodexWebAdminUserDao</property-name>
-         <value>#{eCodexWebAdminUserDao}</value>
+         <property-name>monitoringService</property-name>
+         <value>#{monitoringService}</value>
       </managed-property>
    </managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>loginBean</managed-bean-name>
+		<managed-bean-class>eu.ecodex.webadmin.jsf.LoginBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>eCodexWebAdminUserDao</property-name>
+			<value>#{eCodexWebAdminUserDao}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>webAdminProperties</property-name>
+			<value>#{webAdminProperties}</value>
+		</managed-property>
+	</managed-bean>
+   
+
 
 	<navigation-rule>
 		<from-view-id>viewMenu</from-view-id>
@@ -46,8 +56,8 @@
 	<navigation-rule>
         <from-view-id>/pages/login.xhtml</from-view-id>
         <navigation-case>
-            <from-outcome>home</from-outcome>
-            <to-view-id>/pages/monitoring.xhtml</to-view-id>
+            <from-outcome>main</from-outcome>
+            <to-view-id>/pages/main.xhtml</to-view-id>
         <redirect>    
         </redirect>
         </navigation-case>

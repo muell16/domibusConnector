@@ -32,7 +32,6 @@ public class SummaryServiceImpl implements ISummaryService, Serializable {
 
         Long resultIncoming = eCodexMessageWebAdminDao.countIncomingMessages();
         incomingMessagesCount = resultIncoming.toString();
-
         pieModelMessageSummary = new PieChartModel();
 
         pieModelMessageSummary.set("Incoming Messages", resultIncoming);

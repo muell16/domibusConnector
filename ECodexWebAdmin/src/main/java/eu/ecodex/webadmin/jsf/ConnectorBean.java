@@ -3,6 +3,7 @@ package eu.ecodex.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
+import eu.ecodex.webadmin.blogic.connector.monitoring.IMonitoringService;
 import eu.ecodex.webadmin.blogic.connector.statistics.ICustomService;
 import eu.ecodex.webadmin.blogic.connector.statistics.ISummaryService;
 
@@ -20,6 +21,7 @@ public class ConnectorBean implements Serializable {
 
     private ISummaryService summaryService;
     private ICustomService customService;
+    private IMonitoringService monitoringService;
 
     private Integer categoryNumber;
 
@@ -97,6 +99,14 @@ public class ConnectorBean implements Serializable {
 
     public void setCustomSelected(boolean customSelected) {
         this.customSelected = customSelected;
+    }
+
+    public IMonitoringService getMonitoringService() {
+        return monitoringService;
+    }
+
+    public void setMonitoringService(IMonitoringService monitoringService) {
+        this.monitoringService = monitoringService;
     }
 
 }
