@@ -18,7 +18,7 @@
 
 	<import resource="ECodexConnectorCommonContext.xml" />
 
-	<jpa:repositories base-package="eu.ecodex.webadmin.repository" />
+
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 	
@@ -33,30 +33,62 @@
 			</list>
 		</property>
 	</bean>
+
+	<bean id="entityManagerFactoryWebAdmin"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="ecodex.webadmin" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="${connector.database.dialect}" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="transactionManagerWebAdmin" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdmin" />
+	</bean>
+	
 	
 	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
 		<property name="jmxServerAddress" value="${jmx.server.address}" />
 		<property name="jmxServerPort" value="${jmx.server.port}" />
 	</bean>
+		
+	<!-- Connector Beans -->
 	
-   <bean id="summaryService" 
-      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.SummaryServiceImpl">      
+	<bean id="connectorSummaryService" 
+      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl">      
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
    </bean>
    
-      <bean id="customService" 
-      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.CustomServiceImpl">     
+	
+	<bean id="connectorCustomService" 
+      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl">     
               <property name="eCodexMessageWebAdminDao" ref="eCodexMessageWebAdminDao" /> 
-              <property name="messageFilter" ref="messageFilter" /> 
+              <property name="connectorMessageFilter" ref="connectorMessageFilter" /> 
    </bean>
    
-   <bean id="monitoringService" 
-      class="eu.ecodex.webadmin.blogic.connector.monitoring.impl.MonitoringService">    
+   <bean id="connectorMonitoringService" 
+      class="eu.ecodex.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService">    
    </bean>
    
-   	<bean id="messageFilter"
-		class="eu.ecodex.webadmin.blogic.connector.statistics.impl.MessageFilter" />
+   	<bean id="connectorMessageFilter"
+		class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
+	
+	<!-- Gateway Beans -->
+	
+   <bean id="gatewayCustomService" 
+      class="eu.ecodex.webadmin.blogic.gateway.statistics.impl.GatewayCustomServiceImpl">     
+              <property name="gatewayMessageDao" ref="gatewayMessageDao" />
+              <property name="gatewayMessageFilter" ref="gatewayMessageFilter" />  
+   </bean>	
+   
+   	<bean id="gatewayMessageFilter"
+		class="eu.ecodex.webadmin.blogic.gateway.statistics.impl.GatewayMessageFilterImpl" />
+		
+	<!-- DAO's -->
    
    	<bean id="eCodexMessageWebAdminDao"
 		class="eu.ecodex.webadmin.dao.impl.ECodexMessageWebAdminDao">
@@ -64,7 +96,11 @@
 		
 	<bean id="eCodexWebAdminUserDao"
 		class="eu.ecodex.webadmin.dao.impl.ECodexWebAdminUserDao">
-		<property name="dataSource" ref="dataSource" /> 
 		</bean>
+		
+	<bean id="gatewayMessageDao"
+		class="eu.ecodex.webadmin.dao.impl.GatewayMessageDao">
+	</bean>
+
 		
 </beans>

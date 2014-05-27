@@ -3,11 +3,11 @@ package eu.ecodex.webadmin.blogic.connector.statistics.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.ecodex.webadmin.blogic.connector.statistics.IMessageFilter;
+import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.ecodex.webadmin.commons.BLConstants;
-import eu.ecodex.webadmin.model.MessageReportDO;
+import eu.ecodex.webadmin.model.connector.MessageReportDO;
 
-public class MessageFilter implements IMessageFilter {
+public class ConnectorMessageFilter implements IConnectorMessageFilter {
 
     /*
      * (non-Javadoc)

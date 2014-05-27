@@ -3,9 +3,9 @@ package eu.ecodex.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
-import eu.ecodex.webadmin.blogic.connector.monitoring.IMonitoringService;
-import eu.ecodex.webadmin.blogic.connector.statistics.ICustomService;
-import eu.ecodex.webadmin.blogic.connector.statistics.ISummaryService;
+import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
+import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorCustomService;
+import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 
 /**
  * Main Class for the National Connector, which includes the different statistic
@@ -19,9 +19,9 @@ public class ConnectorBean implements Serializable {
 
     private static final long serialVersionUID = -3920852382271662993L;
 
-    private ISummaryService summaryService;
-    private ICustomService customService;
-    private IMonitoringService monitoringService;
+    private IConnectorSummaryService connectorSummaryService;
+    private IConnectorCustomService connectorCustomService;
+    private IConnectorMonitoringService connectorMonitoringService;
 
     private Integer categoryNumber;
 
@@ -40,25 +40,16 @@ public class ConnectorBean implements Serializable {
     }
 
     public String start() {
-
         if (categoryNumber != null && categoryNumber.equals(1)) {
             summarySelected = true;
             customSelected = false;
-            summaryService.generateMessageSummary();
+            connectorSummaryService.generateMessageSummary();
         } else if (categoryNumber != null && categoryNumber.equals(2)) {
             summarySelected = false;
             customSelected = true;
         }
 
         return "/pages/connector-statistics.xhtml";
-    }
-
-    public ISummaryService getSummaryService() {
-        return summaryService;
-    }
-
-    public void setSummaryService(ISummaryService summaryService) {
-        this.summaryService = summaryService;
     }
 
     public boolean isSummarySelected() {
@@ -89,24 +80,32 @@ public class ConnectorBean implements Serializable {
         return customSelected;
     }
 
-    public ICustomService getCustomService() {
-        return customService;
-    }
-
-    public void setCustomService(ICustomService customService) {
-        this.customService = customService;
-    }
-
     public void setCustomSelected(boolean customSelected) {
         this.customSelected = customSelected;
     }
 
-    public IMonitoringService getMonitoringService() {
-        return monitoringService;
+    public IConnectorSummaryService getConnectorSummaryService() {
+        return connectorSummaryService;
     }
 
-    public void setMonitoringService(IMonitoringService monitoringService) {
-        this.monitoringService = monitoringService;
+    public void setConnectorSummaryService(IConnectorSummaryService connectorSummaryService) {
+        this.connectorSummaryService = connectorSummaryService;
+    }
+
+    public IConnectorCustomService getConnectorCustomService() {
+        return connectorCustomService;
+    }
+
+    public void setConnectorCustomService(IConnectorCustomService connectorCustomService) {
+        this.connectorCustomService = connectorCustomService;
+    }
+
+    public IConnectorMonitoringService getConnectorMonitoringService() {
+        return connectorMonitoringService;
+    }
+
+    public void setConnectorMonitoringService(IConnectorMonitoringService connectorMonitoringService) {
+        this.connectorMonitoringService = connectorMonitoringService;
     }
 
 }

@@ -1,6 +1,10 @@
 package eu.ecodex.webadmin.commons;
 
-public class WebAdminProperties {
+import java.io.Serializable;
+
+public class WebAdminProperties implements Serializable {
+
+    private static final long serialVersionUID = -1113080729567255182L;
 
     private String connectorDatabaseUrl;
     private String jmxServerAddress;

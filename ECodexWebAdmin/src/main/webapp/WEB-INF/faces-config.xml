@@ -16,16 +16,26 @@
       <managed-bean-class>eu.ecodex.webadmin.jsf.ConnectorBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
-         <property-name>summaryService</property-name>
-         <value>#{summaryService}</value>
+         <property-name>connectorSummaryService</property-name>
+         <value>#{connectorSummaryService}</value>
       </managed-property>
       <managed-property>
-         <property-name>customService</property-name>
-         <value>#{customService}</value>
+         <property-name>connectorCustomService</property-name>
+         <value>#{connectorCustomService}</value>
       </managed-property>
       <managed-property>
-         <property-name>monitoringService</property-name>
-         <value>#{monitoringService}</value>
+         <property-name>connectorMonitoringService</property-name>
+         <value>#{connectorMonitoringService}</value>
+      </managed-property>
+   </managed-bean>
+   
+      <managed-bean>
+      <managed-bean-name>gatewayBean</managed-bean-name>
+      <managed-bean-class>eu.ecodex.webadmin.jsf.GatewayBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+         <property-name>gatewayCustomService</property-name>
+         <value>#{gatewayCustomService}</value>
       </managed-property>
    </managed-bean>
 

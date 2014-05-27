@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import eu.ecodex.webadmin.commons.JmxConnector;
 import eu.ecodex.webadmin.commons.Util;
 import eu.ecodex.webadmin.commons.WebAdminProperties;
-import eu.ecodex.webadmin.dao.impl.ECodexWebAdminUserDao;
+import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 
 public class LoginBean implements Serializable {
 
@@ -23,7 +23,7 @@ public class LoginBean implements Serializable {
     private String password;
     private String message, uname;
     private boolean loggedIn = false;
-    private ECodexWebAdminUserDao eCodexWebAdminUserDao;
+    private IECodexWebAdminUserDao eCodexWebAdminUserDao;
     private MBeanServerConnection mbsc;
     private String connectionStatusJmx;
     private String connectionMessageJmx;
@@ -131,14 +131,6 @@ public class LoginBean implements Serializable {
         this.loggedIn = loggedIn;
     }
 
-    public ECodexWebAdminUserDao geteCodexWebAdminUserDao() {
-        return eCodexWebAdminUserDao;
-    }
-
-    public void seteCodexWebAdminUserDao(ECodexWebAdminUserDao eCodexWebAdminUserDao) {
-        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
-    }
-
     public MBeanServerConnection getMbsc() {
         return mbsc;
     }
@@ -181,6 +173,14 @@ public class LoginBean implements Serializable {
 
     public void setConnectionStatusJmx(String connectionStatusJmx) {
         this.connectionStatusJmx = connectionStatusJmx;
+    }
+
+    public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
+        return eCodexWebAdminUserDao;
+    }
+
+    public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
+        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
     }
 
 }

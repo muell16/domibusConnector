@@ -3,21 +3,24 @@ package eu.ecodex.webadmin.dao.impl;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.springframework.stereotype.Repository;
 
 import eu.ecodex.webadmin.commons.Util;
 import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
+import eu.ecodex.webadmin.model.connector.ECodexWebAdminUser;
 
+@Repository
 public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao, Serializable {
 
     private static final long serialVersionUID = -8330659798855359673L;
 
-    private ComboPooledDataSource dataSource;
+    @PersistenceContext(unitName = "ecodex.webadmin")
+    private EntityManager em;
 
     /*
      * (non-Javadoc)
@@ -27,38 +30,29 @@ public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao, Serializab
      * , java.lang.String)
      */
     @Override
-    public boolean login(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException,
-            SQLException {
-        Connection con = dataSource.getConnection();
-        PreparedStatement ps = con.prepareStatement("select * from ECODEX_WEBADMIN_USER where username= ?");
-        ps.setString(1, username);
+    public boolean login(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        ResultSet rs = ps.executeQuery();
+        Query q = em.createQuery("from ECodexWebAdminUser m where m.username=:username");
+        q.setParameter("username", username);
+        ECodexWebAdminUser eCodexWebAdminUser = (ECodexWebAdminUser) q.getSingleResult();
+        String passwordDB = eCodexWebAdminUser.getPassword();
+        String saltDB = eCodexWebAdminUser.getSalt();
+        String saltedPasswordDB = saltDB + passwordDB;
+        String passwordParamHashed = Util.generatePasswordHashWithSalt(password, saltDB);
 
-        if (rs.next()) {
-            String passwordDB = rs.getString("PASSWORD");
-            String saltDB = rs.getString("SALT");
-            String saltedPasswordDB = saltDB + passwordDB;
-            String passwordParamHashed = Util.generatePasswordHashWithSalt(password, saltDB);
-
-            if (passwordParamHashed.equals(saltedPasswordDB)) {
-                return true;
-            } else {
-                return false;
-            }
-
+        if (passwordParamHashed.equals(saltedPasswordDB)) {
+            return true;
         } else {
             return false;
         }
-
     }
 
-    public ComboPooledDataSource getDataSource() {
-        return dataSource;
+    public EntityManager getEm() {
+        return em;
     }
 
-    public void setDataSource(ComboPooledDataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setEm(EntityManager em) {
+        this.em = em;
     }
 
 }

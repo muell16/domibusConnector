@@ -21,15 +21,15 @@
         <h:commandButton id="start" action="#{connectorBean.start}" value="Start"/> 
     </h:panelGrid>
     <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
-    	<h:outputText class="textArea" value="From: "  rendered="#{connectorBean.customSelected}"/>  
-    	<p:calendar value="#{connectorBean.customService.fromDate}" id="fromButtonCal" showOn="button"  rendered="#{connectorBean.customSelected}"/>  
+    	<h:outputText class="textArea" value="From: "  rendered="#{connectorBean.customSelected}"/> 
+    	<p:calendar value="#{connectorBean.connectorCustomService.fromDate}" id="fromButtonCal" showOn="button"  rendered="#{connectorBean.customSelected}"/>  
     	<h:outputText class="textArea" value="To: " rendered="#{connectorBean.customSelected}" />  
-    	<p:calendar value="#{connectorBean.customService.toDate}" id="toButtonCal" showOn="button"  rendered="#{connectorBean.customSelected}"/>    
+    	<p:calendar value="#{connectorBean.connectorCustomService.toDate}" id="toButtonCal" showOn="button"  rendered="#{connectorBean.customSelected}"/>    
     </h:panelGrid>
 
      <h:panelGrid columns="8" style="margin-bottom:10px" cellpadding="5">           
     	<h:outputText class="textArea" value="From Party: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.fromParty}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.fromParty}" rendered="#{connectorBean.customSelected}">  
             <f:selectItem itemLabel="All" itemValue="All" />  
             <f:selectItem itemLabel="Austria" itemValue="AT" />  
             <f:selectItem itemLabel="Belgium" itemValue="BE" />
@@ -55,7 +55,7 @@
             <f:selectItem itemLabel="United Kingdom" itemValue="UK" />              
         </h:selectOneMenu>
         <h:outputText class="textArea" value="To Party: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.toParty}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.toParty}" rendered="#{connectorBean.customSelected}">  
             <f:selectItem itemLabel="All" itemValue="All" />  
             <f:selectItem itemLabel="Austria" itemValue="AT" />  
             <f:selectItem itemLabel="Belgium" itemValue="BE" />
@@ -81,28 +81,28 @@
             <f:selectItem itemLabel="United Kingdom" itemValue="UK" />              
         </h:selectOneMenu>
         <h:outputText class="textArea" value="Direction: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.direction}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.direction}" rendered="#{connectorBean.customSelected}">  
         	<f:selectItem itemLabel="All" itemValue="All" />  
             <f:selectItem itemLabel="Incoming" itemValue="GW_TO_NAT" />  
             <f:selectItem itemLabel="Outgoing" itemValue="NAT_TO_GW" />
         </h:selectOneMenu>
         <h:outputText class="textArea" value="Status: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.status}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.status}" rendered="#{connectorBean.customSelected}">  
         	<f:selectItem itemLabel="All" itemValue="All" />  
             <f:selectItem itemLabel="Confirmed" itemValue="Confirmed" />  
             <f:selectItem itemLabel="Rejected" itemValue="Rejected" />
         </h:selectOneMenu>
         
         <h:outputText class="textArea" value="Service: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.service}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.service}" rendered="#{connectorBean.customSelected}">  
             <f:selectItem itemLabel="All" itemValue="All" />
             <f:selectItem itemLabel="EPO" itemValue="EPO" />               
         </h:selectOneMenu>
         
         <h:outputText class="textArea" value="Action: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.action}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.action}" rendered="#{connectorBean.customSelected}">  
             <f:selectItem itemLabel="All" itemValue="All" />
-            <f:selectItem itemLabel="Form_A" itemValue="Form_B" />
+            <f:selectItem itemLabel="Form_A" itemValue="Form_A" />
             <f:selectItem itemLabel="Form_B" itemValue="Form_B" />
             <f:selectItem itemLabel="Form_C" itemValue="Form_C" />
             <f:selectItem itemLabel="Form_D" itemValue="Form_D" />
@@ -118,7 +118,7 @@
         </h:selectOneMenu>
         
         <h:outputText class="textArea" value="Last Evidence: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.customService.evidence}" rendered="#{connectorBean.customSelected}">  
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.evidence}" rendered="#{connectorBean.customSelected}">  
             <f:selectItem itemLabel="All" itemValue="All" />
             <f:selectItem itemLabel="DELIVERY" itemValue="DELIVERY" />
             <f:selectItem itemLabel="NON_DELIVERY" itemValue="NON_DELIVERY" />
@@ -128,7 +128,7 @@
             <f:selectItem itemLabel="SUBMISSION_REJECTION" itemValue="SUBMISSION_ACCEPTANCE" />      
         </h:selectOneMenu>
         
-            <h:commandButton id="generate" action="#{connectorBean.customService.generateCustomReport}" value="Generate"
+            <h:commandButton id="generate" action="#{connectorBean.connectorCustomService.generateCustomReport}" value="Generate"
         rendered="#{connectorBean.customSelected}"/> 
      
     </h:panelGrid>
@@ -139,10 +139,10 @@
 
     
     <h:panelGrid columns="2" style="text-align: center; margin: 0 auto;" cellpadding="5">          
-    	<p:pieChart id="messageSummary" value="#{connectorBean.summaryService.pieModelMessageSummary}" legendPosition="e" fill="false" showDataLabels="true"  
+    	<p:pieChart id="messageSummary" value="#{connectorBean.connectorSummaryService.pieModelMessageSummary}" legendPosition="e" fill="false" showDataLabels="true"  
         title="Incoming/Outgoing" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
         rendered="#{connectorBean.summarySelected}"/> 
-        <p:pieChart id="serviceSummary" value="#{connectorBean.summaryService.pieModelServiceSummary}" legendPosition="e" fill="false" showDataLabels="true"  
+        <p:pieChart id="serviceSummary" value="#{connectorBean.connectorSummaryService.pieModelServiceSummary}" legendPosition="e" fill="false" showDataLabels="true"  
         title="Services" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
         rendered="#{connectorBean.summarySelected}"/> 
     
@@ -152,10 +152,10 @@
     
      <p:growl id="msgs" showDetail="true" /> 
     
-    <p:dataTable id="tbl" var="messageReportDO" value="#{connectorBean.customService.customResultList}" paginator="true" rows="10"
+    <p:dataTable id="tbl" var="messageReportDO" value="#{connectorBean.connectorCustomService.customResultList}" paginator="true" rows="10"
     rendered="#{connectorBean.customSelected}">  
     <f:facet name="header">  
-            #{connectorBean.customService.countResult} Entries
+            #{connectorBean.connectorCustomService.countResult} Entries
     </f:facet>  
     <p:column>  
         <f:facet name="header">  
@@ -222,7 +222,7 @@
          
         <p:column style="width:4%" exportable = "false">  
                 <p:commandButton id="selectButton" update=":form:display" oncomplete="evidenceDialog.show()" icon="ui-icon-search" title="View">  
-                <f:setPropertyActionListener value="#{messageReportDO}" target="#{connectorBean.customService.selectedMessageReportDO}" />  
+                <f:setPropertyActionListener value="#{messageReportDO}" target="#{connectorBean.connectorCustomService.selectedMessageReportDO}" />  
             </p:commandButton>  
         </p:column>  
           
@@ -236,7 +236,7 @@
   
         <h:panelGrid id="display" columns="1" cellpadding="4" style="margin:0 auto;">  
     
-            <h:outputText value="#{connectorBean.customService.selectedMessageReportDO.evidenceHistory}" escape="false" style="font-weight:bold"/>  
+            <h:outputText value="#{connectorBean.connectorCustomService.selectedMessageReportDO.evidenceHistory}" escape="false" style="font-weight:bold"/>  
     
   
         </h:panelGrid>  

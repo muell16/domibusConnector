@@ -14,10 +14,10 @@ import javax.management.ObjectName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import eu.ecodex.webadmin.blogic.connector.monitoring.IMonitoringService;
+import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.ecodex.webadmin.commons.JmxConnector;
 
-public class MonitoringService implements IMonitoringService, Serializable {
+public class ConnectorMonitoringService implements IConnectorMonitoringService, Serializable {
 
     private static final long serialVersionUID = 6778604093699596922L;
 
@@ -82,7 +82,7 @@ public class MonitoringService implements IMonitoringService, Serializable {
         } catch (Exception e) {
             logger.error(e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error!", "See Log!"));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Connection Error!", "See Log!"));
 
             // return "pages/monitoring.xhtml";
         }

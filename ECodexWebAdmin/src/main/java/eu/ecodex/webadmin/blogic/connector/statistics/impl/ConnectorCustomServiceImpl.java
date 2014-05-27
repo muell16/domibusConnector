@@ -12,18 +12,18 @@ import java.util.Set;
 
 import eu.ecodex.connector.common.db.model.ECodexEvidence;
 import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
-import eu.ecodex.webadmin.blogic.connector.statistics.ICustomService;
-import eu.ecodex.webadmin.blogic.connector.statistics.IMessageFilter;
+import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorCustomService;
+import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.ecodex.webadmin.commons.BLConstants;
 import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
-import eu.ecodex.webadmin.model.MessageReportDO;
+import eu.ecodex.webadmin.model.connector.MessageReportDO;
 
-public class CustomServiceImpl implements ICustomService, Serializable {
+public class ConnectorCustomServiceImpl implements IConnectorCustomService, Serializable {
 
     private static final long serialVersionUID = 5288892319790964868L;
 
     private IECodexMessageWebAdminDao eCodexMessageWebAdminDao;
-    private IMessageFilter messageFilter;
+    private IConnectorMessageFilter connectorMessageFilter;
 
     private String fromParty;
     private String toParty;
@@ -66,25 +66,25 @@ public class CustomServiceImpl implements ICustomService, Serializable {
         if (!customResultList.isEmpty()) {
 
             if (!BLConstants.selectorAll.equals(fromParty)) {
-                customResultList = messageFilter.filterByFromParty(fromParty, customResultList);
+                customResultList = connectorMessageFilter.filterByFromParty(fromParty, customResultList);
             }
             if (!BLConstants.selectorAll.equals(toParty)) {
-                customResultList = messageFilter.filterByToParty(toParty, customResultList);
+                customResultList = connectorMessageFilter.filterByToParty(toParty, customResultList);
             }
             if (!BLConstants.selectorAll.equals(direction)) {
-                customResultList = messageFilter.filterByDirection(direction, customResultList);
+                customResultList = connectorMessageFilter.filterByDirection(direction, customResultList);
             }
             if (!BLConstants.selectorAll.equals(status)) {
-                customResultList = messageFilter.filterByStatus(status, customResultList);
+                customResultList = connectorMessageFilter.filterByStatus(status, customResultList);
             }
             if (!BLConstants.selectorAll.equals(service)) {
-                customResultList = messageFilter.filterByService(service, customResultList);
+                customResultList = connectorMessageFilter.filterByService(service, customResultList);
             }
             if (!BLConstants.selectorAll.equals(action)) {
-                customResultList = messageFilter.filterByAction(action, customResultList);
+                customResultList = connectorMessageFilter.filterByAction(action, customResultList);
             }
             if (!BLConstants.selectorAll.equals(evidence)) {
-                customResultList = messageFilter.filterByLastEvidence(evidence, customResultList);
+                customResultList = connectorMessageFilter.filterByLastEvidence(evidence, customResultList);
             }
 
             countResult = customResultList.size();
@@ -238,12 +238,12 @@ public class CustomServiceImpl implements ICustomService, Serializable {
         this.selectedMessageReportDO = selectedMessageReportDO;
     }
 
-    public IMessageFilter getMessageFilter() {
-        return messageFilter;
+    public IConnectorMessageFilter getConnectorMessageFilter() {
+        return connectorMessageFilter;
     }
 
-    public void setMessageFilter(IMessageFilter messageFilter) {
-        this.messageFilter = messageFilter;
+    public void setConnectorMessageFilter(IConnectorMessageFilter connectorMessageFilter) {
+        this.connectorMessageFilter = connectorMessageFilter;
     }
 
 }

@@ -2,9 +2,9 @@ package eu.ecodex.webadmin.blogic.connector.statistics;
 
 import java.util.List;
 
-import eu.ecodex.webadmin.model.MessageReportDO;
+import eu.ecodex.webadmin.model.connector.MessageReportDO;
 
-public interface IMessageFilter {
+public interface IConnectorMessageFilter {
 
     public List<MessageReportDO> filterByFromParty(String fromParty, List<MessageReportDO> customResultList);
 

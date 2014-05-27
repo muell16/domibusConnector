@@ -5,10 +5,11 @@ import java.util.HashMap;
 
 import org.primefaces.model.chart.PieChartModel;
 
-import eu.ecodex.webadmin.blogic.connector.statistics.ISummaryService;
+import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
+import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 
-public class SummaryServiceImpl implements ISummaryService, Serializable {
+public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Serializable {
 
     private static final long serialVersionUID = 4855196930128932326L;
 
@@ -17,6 +18,7 @@ public class SummaryServiceImpl implements ISummaryService, Serializable {
     private PieChartModel pieModelMessageSummary;
     private PieChartModel pieModelServiceSummary;
     private IECodexMessageWebAdminDao eCodexMessageWebAdminDao;
+    private IECodexWebAdminUserDao eCodexWebAdminUserDao;
 
     /*
      * (non-Javadoc)
@@ -84,6 +86,14 @@ public class SummaryServiceImpl implements ISummaryService, Serializable {
 
     public void setPieModelServiceSummary(PieChartModel pieModelServiceSummary) {
         this.pieModelServiceSummary = pieModelServiceSummary;
+    }
+
+    public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
+        return eCodexWebAdminUserDao;
+    }
+
+    public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
+        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
     }
 
 }

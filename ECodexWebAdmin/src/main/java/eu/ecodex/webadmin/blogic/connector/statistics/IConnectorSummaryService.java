@@ -1,6 +1,6 @@
 package eu.ecodex.webadmin.blogic.connector.statistics;
 
-public interface ISummaryService {
+public interface IConnectorSummaryService {
 
     public void generateMessageSummary();
 

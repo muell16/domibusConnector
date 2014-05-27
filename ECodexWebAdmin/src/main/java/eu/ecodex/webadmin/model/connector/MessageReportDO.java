@@ -1,4 +1,4 @@
-package eu.ecodex.webadmin.model;
+package eu.ecodex.webadmin.model.connector;
 
 import java.io.Serializable;
 import java.util.List;

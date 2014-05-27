@@ -30,6 +30,9 @@ div#centerHeader {
 		margin: 0 auto !important;
 }
 
+.ui-selectonemenu-item.ui-state-highlight {
+    background-color: #a9c6c9;
+}
 
 #loginForm {
 	width:400px;

@@ -8,7 +8,7 @@
 	</ui:define>
 	<ui:define name="content">
 
-	<div id="main">
+		<div id="main">
 			<h:form id="form">
 				<h:panelGrid columns="3" style="text-align: center; margin: 0 auto;"
 					cellpadding="10" border="1">
@@ -21,14 +21,16 @@
 					<h:outputText class="textArea" value="#{loginBean.connectedToDb}" />
 					<h:outputLabel style="font-weight:bold;">OK</h:outputLabel>
 				</h:panelGrid>
-				<br/>
+				<br />
 				<h:panelGrid columns="1" style="text-align: center; margin: 0 auto;">
-				<h:commandButton id="reconnect" action="#{loginBean.reconnectJmxServerConnection}" value="Reconnect"/>
+					<h:commandButton id="reconnect"
+						action="#{loginBean.reconnectJmxServerConnection}"
+						value="Reconnect" />
 				</h:panelGrid>
-				 
+
 			</h:form>
 
 		</div>
-		 	 
+
 	</ui:define>
 </ui:composition>

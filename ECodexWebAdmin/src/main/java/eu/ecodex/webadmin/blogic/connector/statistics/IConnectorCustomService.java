@@ -1,6 +1,6 @@
 package eu.ecodex.webadmin.blogic.connector.statistics;
 
-public interface ICustomService {
+public interface IConnectorCustomService {
 
     /**
      * Statistics - Custom Report Given the selected Mask values, this method
