@@ -27,6 +27,7 @@
 			</includes>
 		</fileSet>
 		
+		
 		<!-- ==================== Copying Module's JAR files ================= -->
 		<fileSet>
 			<directory>${project.basedir}/../ECodexConnectorCommon/target/
@@ -145,6 +146,13 @@
 			</outputDirectory>
 		</file>
 
+		<!-- ==================== Copying example properties ================= -->
+		
+		<file>
+			<source>${project.basedir}/../ECodexConnectorCommon/src/main/resources/eu/ecodex/connector/common/exampleConnectorProperties.properties</source>
+			<outputDirectory>${properties.output.dir}
+			</outputDirectory>
+		</file>
 	</files>
 
 	<!-- ==================== Copying Non-Public Dependecies ================= -->
