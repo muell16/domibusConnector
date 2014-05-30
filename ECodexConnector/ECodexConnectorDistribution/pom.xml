@@ -15,6 +15,7 @@
 		<modules.output.dir>${connector.build.dir}modules</modules.output.dir>
 		<lib.output.dir>${connector.build.dir}lib</lib.output.dir>
 		<release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
+		<properties.output.dir>${documentation.output.dir}properties</properties.output.dir>
 	</properties>
 
 	<build>
