@@ -14,6 +14,7 @@
 		<module>ECodexConnectorController</module>
 		<module>ECodexConnectorCommon</module>
 		<module>ECodexConnectorDistribution</module>
+		<module>ECodexConnectorMonitoring</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>

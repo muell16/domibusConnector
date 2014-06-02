@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller.jmx;
+package eu.ecodex.connector.monitoring.jmx;
 
 import java.util.Date;
 

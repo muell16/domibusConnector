@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.controller.check.CheckOutgoing;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
-import eu.ecodex.connector.controller.jmx.ECodexConnectorJMXMonitor;
+import eu.ecodex.connector.monitoring.jmx.ECodexConnectorJMXMonitor;
 
 public class CheckEvidencesJob {
 
