@@ -29,7 +29,7 @@
         <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
 
-    <bean id="connectorMonitor" class="eu.ecodex.connector.controller.jmx.ECodexConnectorJMXMonitor">
-    	<property name="timerPeriod" value="${connector.check.messages.period.ms}"/>
+    <bean id="connectorJMXMonitor" class="eu.ecodex.connector.controller.jmx.ECodexConnectorJMXMonitor">
+    	<property name="ecodexMonitor" ref="ecodexConnectorMonitor"/>
     </bean>
 </beans>

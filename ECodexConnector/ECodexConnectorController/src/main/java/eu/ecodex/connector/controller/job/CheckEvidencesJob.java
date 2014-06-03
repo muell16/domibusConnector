@@ -7,23 +7,23 @@ import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.controller.check.CheckOutgoing;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
-import eu.ecodex.connector.monitoring.jmx.ECodexConnectorJMXMonitor;
+import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
 
 public class CheckEvidencesJob {
 
     static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesJob.class);
 
     private CheckOutgoing checkOutgoing;
-    private ECodexConnectorJMXMonitor jmxMonitor;
+    private ECodexConnectorMonitor connectorMonitor;
 
-    public void setJmxMonitor(ECodexConnectorJMXMonitor jmxMonitor) {
-        this.jmxMonitor = jmxMonitor;
+    public void setConnectorMonitor(ECodexConnectorMonitor connectorMonitor) {
+        this.connectorMonitor = connectorMonitor;
     }
 
     public void checkEvidences() throws ECodexConnectorControllerException {
         LOGGER.debug("Job for checking evidence timer triggered.");
         Date start = new Date();
-        jmxMonitor.setLastCalledEvidenceTimeoutCheck(start);
+        connectorMonitor.setLastCalledEvidenceTimeoutCheck(start);
         checkOutgoing.checkEvidences();
 
         LOGGER.debug("Job for checking evidence timer finished in {} ms.",

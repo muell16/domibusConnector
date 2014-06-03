@@ -5,5 +5,8 @@
 
 	<import resource="jmx-context.xml" />
 
+	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
+		<property name="timerPeriod" value="${connector.check.messages.period.ms}"/>
+	</bean>
 
 </beans>

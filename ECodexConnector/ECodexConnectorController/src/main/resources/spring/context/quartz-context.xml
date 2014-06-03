@@ -5,17 +5,17 @@
 
 <bean id="incomingMessagesJob" class="eu.ecodex.connector.controller.job.IncomingMessagesJob">
 	<property name="incomingController" ref="incomingController" />
-	<property name="jmxMonitor" ref="connectorMonitor" />
+	<property name="connectorMonitor" ref="ecodexConnectorMonitor" />
 </bean>
 
 <bean id="outgoingMessagesJob" class="eu.ecodex.connector.controller.job.OutgoingMessagesJob">
 	<property name="outgoingController" ref="outgoingController" />
-	<property name="jmxMonitor" ref="connectorMonitor" />
+	<property name="connectorMonitor" ref="ecodexConnectorMonitor" />
 </bean>
 
 <bean id="checkEvidencesJob" class="eu.ecodex.connector.controller.job.CheckEvidencesJob">
 	<property name="checkOutgoing" ref="checkOutgoing" />
-	<property name="jmxMonitor" ref="connectorMonitor" />
+	<property name="connectorMonitor" ref="ecodexConnectorMonitor" />
 </bean>
 
 <bean id="handleOutgoingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
