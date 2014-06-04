@@ -29,7 +29,7 @@
         <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
 
-    <bean id="connectorJMXMonitor" class="eu.ecodex.connector.controller.jmx.ECodexConnectorJMXMonitor">
+    <bean id="connectorJMXMonitor" class="eu.ecodex.connector.monitoring.jmx.ECodexConnectorJMXMonitor">
     	<property name="ecodexMonitor" ref="ecodexConnectorMonitor"/>
     </bean>
 </beans>
