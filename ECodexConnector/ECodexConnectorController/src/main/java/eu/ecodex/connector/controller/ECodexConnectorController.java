@@ -11,23 +11,13 @@ import eu.ecodex.connector.controller.exception.ECodexConnectorControllerExcepti
 public interface ECodexConnectorController {
 
     /**
-     * Method which handles messages all the way through the connector.
-     * Triggered by a timer job executed every configured time-period it checks
-     * (depending on the implementation) pending messages on one side and
-     * handles all messages way through to the other side.
-     * 
-     * @throws ECodexConnectorControllerException
-     */
-    public void handleMessages() throws ECodexConnectorControllerException;
-
-    /**
      * Method which handles evidences all the way through the connector.
      * Triggered by a timer job executed every configured time-period it checks
-     * (depending on the implementation) pending confirmations on one side and
-     * routes them to the other side.
+     * (depending on the implementation) pending messages/confirmations on one
+     * side and routes them to the other side.
      * 
      * @throws ECodexConnectorControllerException
      */
-    public void handleEvidences() throws ECodexConnectorControllerException;
+    public void execute() throws ECodexConnectorControllerException;
 
 }

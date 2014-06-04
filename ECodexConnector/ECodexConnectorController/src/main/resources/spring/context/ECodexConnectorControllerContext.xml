@@ -24,6 +24,7 @@
 		<property name="nationalBackendClient" ref="nationalBackendClient" />
 		<property name="outgoingMessageService" ref="outgoingMessageService" />
 		<property name="outgoingEvidenceService" ref="outgoingEvidenceService" />
+		<property name="connectorMonitor" ref="ecodexConnectorMonitor" />
 	</bean>
 
 	<bean id="incomingController"
@@ -31,10 +32,19 @@
 		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
 		<property name="incomingMessageService" ref="incomingMessageService" />
 		<property name="incomingEvidenceService" ref="incomingEvidenceService" />
+		<property name="connectorMonitor" ref="ecodexConnectorMonitor" />
+	</bean>
+	
+	<bean id="evidencesTimeoutController" class="eu.ecodex.connector.controller.ECodexConnectorCheckEvidencesTimeoutController">
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="connectorProperties" ref="connectorProperties" />
+		<property name="nationalBackendClient" ref="nationalBackendClient" />
+		<property name="evidencesToolkit" ref="evidencesToolkit" />
+		<property name="connectorMonitor" ref="ecodexConnectorMonitor" />
 	</bean>
 
 	<bean id="outgoingMessageService"
-		class="eu.ecodex.connector.controller.message.OutgoingMessageService">
+		class="eu.ecodex.connector.controller.service.OutgoingMessageService">
 		<property name="connectorProperties" ref="connectorProperties" />
 		<property name="contentMapper" ref="contentMapper" />
 		<property name="nationalBackendClient" ref="nationalBackendClient" />
@@ -46,7 +56,7 @@
 	</bean>
 
 	<bean id="incomingMessageService"
-		class="eu.ecodex.connector.controller.message.IncomingMessageService">
+		class="eu.ecodex.connector.controller.service.IncomingMessageService">
 		<property name="connectorProperties" ref="connectorProperties" />
 		<property name="contentMapper" ref="contentMapper" />
 		<property name="nationalBackendClient" ref="nationalBackendClient" />
@@ -57,22 +67,17 @@
 	</bean>
 
 	<bean id="outgoingEvidenceService"
-		class="eu.ecodex.connector.controller.message.OutgoingEvidenceService">
+		class="eu.ecodex.connector.controller.service.OutgoingEvidenceService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
 		<property name="evidencesToolkit" ref="evidencesToolkit" />
 	</bean>
 
 	<bean id="incomingEvidenceService"
-		class="eu.ecodex.connector.controller.message.IncomingEvidenceService">
+		class="eu.ecodex.connector.controller.service.IncomingEvidenceService">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="nationalBackendClient" ref="nationalBackendClient" />
 	</bean>
-
-	<bean id="checkOutgoing" class="eu.ecodex.connector.controller.check.CheckOutgoing">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="connectorProperties" ref="connectorProperties" />
-		<property name="nationalBackendClient" ref="nationalBackendClient" />
-		<property name="evidencesToolkit" ref="evidencesToolkit" />
-	</bean>
+	
+	<bean id="applicationContextProvider" class="eu.ecodex.connector.controller.context.ApplicationContextProvider"></bean>
 </beans>

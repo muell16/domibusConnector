@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller.message;
+package eu.ecodex.connector.controller.service;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;

@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller.check;
+package eu.ecodex.connector.controller;
 
 import java.util.Date;
 import java.util.List;
@@ -18,17 +18,23 @@ import eu.ecodex.connector.controller.exception.ECodexConnectorControllerExcepti
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
+import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
-public class CheckOutgoing {
+public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexConnectorController {
 
-    static Logger LOGGER = LoggerFactory.getLogger(CheckOutgoing.class);
+    static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorCheckEvidencesTimeoutController.class);
 
     private ECodexConnectorNationalBackendClient nationalBackendClient;
     private ECodexConnectorPersistenceService persistenceService;
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorEvidencesToolkit evidencesToolkit;
+    private ECodexConnectorMonitor connectorMonitor;
+
+    public void setConnectorMonitor(ECodexConnectorMonitor connectorMonitor) {
+        this.connectorMonitor = connectorMonitor;
+    }
 
     public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
@@ -42,10 +48,12 @@ public class CheckOutgoing {
         this.evidencesToolkit = evidencesToolkit;
     }
 
-    public void checkEvidences() throws ECodexConnectorControllerException {
+    @Override
+    public void execute() throws ECodexConnectorControllerException {
         if (connectorProperties.isCheckEvidences()) {
-            LOGGER.debug("Check outgoing triggered.");
+            LOGGER.debug("Job for checking evidence timeouts triggered.");
             Date start = new Date();
+            connectorMonitor.setLastCalledEvidenceTimeoutCheck(start);
 
             List<Message> unconfirmedOutgoing = persistenceService.findOutgoingUnconfirmedMessages();
             if (unconfirmedOutgoing != null && !unconfirmedOutgoing.isEmpty()) {
@@ -60,7 +68,7 @@ public class CheckOutgoing {
 
                         boolean relayRemmdFound = checkEvidencesForRelayRemmd(unconfirmed);
                         if (!relayRemmdFound) {
-                        	createRelayRemmdFailureAndSendIt(unconfirmed);
+                            createRelayRemmdFailureAndSendIt(unconfirmed);
                             continue;
                         }
                     }
@@ -85,7 +93,10 @@ public class CheckOutgoing {
                 }
             }
 
-            LOGGER.debug("Check outgoing finished in {} ms.", (System.currentTimeMillis() - start.getTime()));
+            LOGGER.debug("Job for checking evidence timeouts finished in {} ms.",
+                    (System.currentTimeMillis() - start.getTime()));
+        } else {
+            LOGGER.debug("Property connector.use.evidences.timeout set to false.");
         }
     }
 
@@ -124,39 +135,47 @@ public class CheckOutgoing {
         return false;
     }
 
-    private void createRelayRemmdRejectionAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
-        LOGGER.info("The RelayREMMDAcceptance evidence for message {} timed out. Will send rejection!", originalMessage
-                .getMessageDetails().getEbmsMessageId());
-        MessageConfirmation relayRemMDRejection = null;
-        try {
-            relayRemMDRejection = evidencesToolkit.createRelayREMMDRejection(RejectionReason.OTHER, originalMessage);
-        } catch (ECodexConnectorEvidencesToolkitException e) {
-            throw new ECodexConnectorControllerException("Error creating RelayREMMDRejection for message!", e);
-        }
-
-        ECodexAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
-
-        sendEvidenceToNationalSystem(originalMessage, relayRemMDRejection, action);
-    }
+    // private void createRelayRemmdRejectionAndSendIt(Message originalMessage)
+    // throws ECodexConnectorControllerException {
+    // LOGGER.info("The RelayREMMDAcceptance evidence for message {} timed out. Will send rejection!",
+    // originalMessage
+    // .getMessageDetails().getEbmsMessageId());
+    // MessageConfirmation relayRemMDRejection = null;
+    // try {
+    // relayRemMDRejection =
+    // evidencesToolkit.createRelayREMMDRejection(RejectionReason.OTHER,
+    // originalMessage);
+    // } catch (ECodexConnectorEvidencesToolkitException e) {
+    // throw new
+    // ECodexConnectorControllerException("Error creating RelayREMMDRejection for message!",
+    // e);
+    // }
+    //
+    // ECodexAction action =
+    // persistenceService.getRelayREMMDAcceptanceRejectionAction();
+    //
+    // sendEvidenceToNationalSystem(originalMessage, relayRemMDRejection,
+    // action);
+    // }
 
     private void createRelayRemmdFailureAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
-    	
-    	LOGGER.info("The RelayREMMDAcceptance evidence for message {} timed out. Will send failure!", originalMessage
-    			.getMessageDetails().getEbmsMessageId());
 
-    	MessageConfirmation relayRemMDFailure = null;
+        LOGGER.info("The RelayREMMDAcceptance evidence for message {} timed out. Will send failure!", originalMessage
+                .getMessageDetails().getEbmsMessageId());
 
-    	try {
-    		relayRemMDFailure = evidencesToolkit.createRelayREMMDFailure(RejectionReason.OTHER, originalMessage);
-    	} catch (ECodexConnectorEvidencesToolkitException e) {
-    		throw new ECodexConnectorControllerException("Error creating RelayREMMDFailure for message!", e);
-    	}
-    	
-    	ECodexAction action = persistenceService.getRelayREMMDFailure();
-    	
-    	sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
+        MessageConfirmation relayRemMDFailure = null;
+
+        try {
+            relayRemMDFailure = evidencesToolkit.createRelayREMMDFailure(RejectionReason.OTHER, originalMessage);
+        } catch (ECodexConnectorEvidencesToolkitException e) {
+            throw new ECodexConnectorControllerException("Error creating RelayREMMDFailure for message!", e);
+        }
+
+        ECodexAction action = persistenceService.getRelayREMMDFailure();
+
+        sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
     }
-    
+
     private void createNonDeliveryAndSendIt(Message originalMessage) throws ECodexConnectorControllerException {
         LOGGER.info("The Delivery evidence for message {} timed out. Will send NonDelivery!", originalMessage
                 .getMessageDetails().getEbmsMessageId());

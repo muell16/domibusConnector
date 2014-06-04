@@ -1,5 +1,8 @@
 package eu.ecodex.connector.controller;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,18 +11,29 @@ import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
-import eu.ecodex.connector.controller.message.EvidenceService;
-import eu.ecodex.connector.controller.message.MessageService;
+import eu.ecodex.connector.controller.service.EvidenceService;
+import eu.ecodex.connector.controller.service.MessageService;
+import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
-public class ECodexConnectorOutgoingController implements ECodexConnectorController {
+public class ECodexConnectorOutgoingController implements ECodexConnectorController, Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6828785110582970077L;
 
     static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorOutgoingController.class);
 
     private ECodexConnectorNationalBackendClient nationalBackendClient;
     private MessageService outgoingMessageService;
     private EvidenceService outgoingEvidenceService;
+    private ECodexConnectorMonitor connectorMonitor;
+
+    public void setConnectorMonitor(ECodexConnectorMonitor connectorMonitor) {
+        this.connectorMonitor = connectorMonitor;
+    }
 
     public void setNationalBackendClient(ECodexConnectorNationalBackendClient nationalBackendClient) {
         this.nationalBackendClient = nationalBackendClient;
@@ -34,7 +48,28 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
     }
 
     @Override
-    public void handleMessages() throws ECodexConnectorControllerException {
+    public void execute() throws ECodexConnectorControllerException {
+        LOGGER.debug("Job for handling outgoing messages triggered.");
+        Date start = new Date();
+        connectorMonitor.setLastCalledOutgoingMessagesPending(start);
+
+        LOGGER.debug("Handling messages....");
+        try {
+            handleMessages();
+        } catch (ECodexConnectorControllerException e) {
+            throw new ECodexConnectorControllerException("Exception while proceeding job handleOutgoingMessages: ", e);
+        }
+        LOGGER.debug("Handling confirmations....");
+        try {
+            handleEvidences();
+        } catch (ECodexConnectorControllerException e) {
+            throw new ECodexConnectorControllerException("Exception while proceeding job handleOutgoingMessages: ", e);
+        }
+        LOGGER.debug("Job for handling outgoing messages finished in {} ms.",
+                (System.currentTimeMillis() - start.getTime()));
+    }
+
+    private void handleMessages() throws ECodexConnectorControllerException {
         String[] messages = null;
         try {
             messages = nationalBackendClient.requestMessagesUnsent();
@@ -44,6 +79,9 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
         } catch (ImplementationMissingException ime) {
             throw new ECodexConnectorControllerException(
                     "Exception while trying to get messages list from national system. ", ime);
+        } catch (Exception e) {
+            throw new ECodexConnectorControllerException(
+                    "Exception while trying to get messages list from national system. ", e);
         }
 
         if (messages != null && messages.length > 0) {
@@ -90,8 +128,7 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
         }
     }
 
-    @Override
-    public void handleEvidences() throws ECodexConnectorControllerException {
+    private void handleEvidences() throws ECodexConnectorControllerException {
         LOGGER.debug("Started to check national implementation for pending confirmations!");
 
         Message[] confirmationMessages = null;
