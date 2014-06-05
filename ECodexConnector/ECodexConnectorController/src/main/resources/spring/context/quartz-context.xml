@@ -85,10 +85,10 @@
 				<prop key="org.quartz.jobStore.misfireThreshold">6000000</prop>
 				<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
 
-				<prop key="org.quartz.jobStore.isClustered">true</prop>
+				<prop key="org.quartz.jobStore.isClustered">${connector.clustered}</prop>
 				<prop key="org.quartz.jobStore.clusterCheckinInterval">20000</prop>
 
-				<prop key="org.quartz.jobStore.useProperties">${connector.clustered}</prop>
+				<prop key="org.quartz.jobStore.useProperties">true</prop>
 
 				<prop key="org.quartz.jobStore.tablePrefix">ECON_QRTZ_</prop>
 
