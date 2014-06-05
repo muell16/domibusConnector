@@ -1,0 +1,33 @@
+DROP TABLE ECODEX_EVIDENCES;
+DROP TABLE ECODEX_MESSAGE_INFO;
+DROP TABLE ECODEX_MESSAGES;
+DROP TABLE ECODEX_SEQ_STORE;
+DROP TABLE ECODEX_PARTY;
+DROP TABLE ECODEX_ACTION;
+DROP TABLE ECODEX_SERVICE;
+
+delete from ECON_QRTZ_job_listeners;
+delete from ECON_QRTZ_trigger_listeners;
+delete from ECON_QRTZ_fired_triggers;
+delete from ECON_QRTZ_simple_triggers;
+delete from ECON_QRTZ_cron_triggers;
+delete from ECON_QRTZ_blob_triggers;
+delete from ECON_QRTZ_triggers;
+delete from ECON_QRTZ_job_details;
+delete from ECON_QRTZ_calendars;
+delete from ECON_QRTZ_paused_trigger_grps;
+delete from ECON_QRTZ_locks;
+delete from ECON_QRTZ_scheduler_state;
+
+drop table ECON_QRTZ_calendars;
+drop table ECON_QRTZ_fired_triggers;
+drop table ECON_QRTZ_trigger_listeners;
+drop table ECON_QRTZ_blob_triggers;
+drop table ECON_QRTZ_cron_triggers;
+drop table ECON_QRTZ_simple_triggers;
+drop table ECON_QRTZ_triggers;
+drop table ECON_QRTZ_job_listeners;
+drop table ECON_QRTZ_job_details;
+drop table ECON_QRTZ_paused_trigger_grps;
+drop table ECON_QRTZ_locks;
+drop table ECON_QRTZ_scheduler_state;
