@@ -12,24 +12,24 @@ public class ECodexConnectorJMXMonitor {
 
     private ECodexConnectorMonitor ecodexMonitor;
 
-    @ManagedAttribute(description = "The time period between the calls of the timer jobs in MS")
-    public Long getTimerPeriod() {
-        return ecodexMonitor.getTimerPeriod();
+    @ManagedAttribute(description = "The time period between two calls of the timer job CheckOutgoing")
+    public Long getCheckOutgoingRepeatInterval() {
+        return ecodexMonitor.getCheckOutgoingRepeatInterval();
     }
 
     @ManagedAttribute(description = "timestamp when the last call of the timer job for check the national backend for pending outgoing messages happened")
     public Date getLastCalledOutgoingMessagesPending() {
-        return ecodexMonitor.getLastCalledOutgoingMessagesPending();
+        return null;
     }
 
     @ManagedAttribute(description = "timestamp when the last call of the timer job for check the gateway backend for pending incoming messages happened")
     public Date getLastCalledIncomingMessagesPending() {
-        return ecodexMonitor.getLastCalledIncomingMessagesPending();
+        return null;
     }
 
     @ManagedAttribute(description = "timestamp when the last call of the timer job for check messages without response when the timeout is active and set happened")
     public Date getLastCalledEvidenceTimeoutCheck() {
-        return ecodexMonitor.getLastCalledEvidenceTimeoutCheck();
+        return null;
     }
 
     public void setEcodexMonitor(ECodexConnectorMonitor ecodexMonitor) {

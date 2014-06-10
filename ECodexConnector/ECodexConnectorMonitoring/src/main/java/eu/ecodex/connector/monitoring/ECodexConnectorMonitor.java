@@ -1,43 +1,20 @@
 package eu.ecodex.connector.monitoring;
 
-import java.util.Date;
+import eu.ecodex.connector.monitoring.db.ECodexConnectorMonitoringDao;
 
 public class ECodexConnectorMonitor {
 
-    private Long timerPeriod;
-    private Date lastCalledOutgoingMessagesPending;
-    private Date lastCalledIncomingMessagesPending;
-    private Date lastCalledEvidenceTimeoutCheck;
+    private static final String CHECK_OUTGOING_TRIGGER_NAME = "checkOutgoingTrigger";
+    private static final String CHECK_INCOMING_TRIGGER_NAME = "checkIncomingTrigger";
+    private static final String CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME = "checkEvidencesTimeoutTrigger";
 
-    public Long getTimerPeriod() {
-        return timerPeriod;
+    private ECodexConnectorMonitoringDao monitoringDao;
+
+    public long getCheckOutgoingRepeatInterval() {
+        return monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
     }
 
-    public void setTimerPeriod(Long timerPeriod) {
-        this.timerPeriod = timerPeriod;
-    }
-
-    public Date getLastCalledOutgoingMessagesPending() {
-        return lastCalledOutgoingMessagesPending;
-    }
-
-    public void setLastCalledOutgoingMessagesPending(Date lastCalledOutgoingMessagesPending) {
-        this.lastCalledOutgoingMessagesPending = lastCalledOutgoingMessagesPending;
-    }
-
-    public Date getLastCalledIncomingMessagesPending() {
-        return lastCalledIncomingMessagesPending;
-    }
-
-    public void setLastCalledIncomingMessagesPending(Date lastCalledIncomingMessagesPending) {
-        this.lastCalledIncomingMessagesPending = lastCalledIncomingMessagesPending;
-    }
-
-    public Date getLastCalledEvidenceTimeoutCheck() {
-        return lastCalledEvidenceTimeoutCheck;
-    }
-
-    public void setLastCalledEvidenceTimeoutCheck(Date lastCalledEvidenceTimeoutCheck) {
-        this.lastCalledEvidenceTimeoutCheck = lastCalledEvidenceTimeoutCheck;
+    public void setMonitoringDao(ECodexConnectorMonitoringDao monitoringDao) {
+        this.monitoringDao = monitoringDao;
     }
 }

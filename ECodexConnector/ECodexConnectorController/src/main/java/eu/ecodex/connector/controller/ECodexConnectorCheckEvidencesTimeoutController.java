@@ -18,7 +18,6 @@ import eu.ecodex.connector.controller.exception.ECodexConnectorControllerExcepti
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
-import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
@@ -30,11 +29,6 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
     private ECodexConnectorPersistenceService persistenceService;
     private ECodexConnectorProperties connectorProperties;
     private ECodexConnectorEvidencesToolkit evidencesToolkit;
-    private ECodexConnectorMonitor connectorMonitor;
-
-    public void setConnectorMonitor(ECodexConnectorMonitor connectorMonitor) {
-        this.connectorMonitor = connectorMonitor;
-    }
 
     public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
@@ -53,7 +47,6 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
         if (connectorProperties.isCheckEvidences()) {
             LOGGER.debug("Job for checking evidence timeouts triggered.");
             Date start = new Date();
-            connectorMonitor.setLastCalledEvidenceTimeoutCheck(start);
 
             List<Message> unconfirmedOutgoing = persistenceService.findOutgoingUnconfirmedMessages();
             if (unconfirmedOutgoing != null && !unconfirmedOutgoing.isEmpty()) {

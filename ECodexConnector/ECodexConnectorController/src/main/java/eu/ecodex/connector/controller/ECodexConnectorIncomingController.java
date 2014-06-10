@@ -11,7 +11,6 @@ import eu.ecodex.connector.controller.service.EvidenceService;
 import eu.ecodex.connector.controller.service.MessageService;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
-import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
 
 public class ECodexConnectorIncomingController implements ECodexConnectorController {
 
@@ -20,11 +19,6 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
     private ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
     private MessageService incomingMessageService;
     private EvidenceService incomingEvidenceService;
-    private ECodexConnectorMonitor connectorMonitor;
-
-    public void setConnectorMonitor(ECodexConnectorMonitor connectorMonitor) {
-        this.connectorMonitor = connectorMonitor;
-    }
 
     public void setGatewayWebserviceClient(ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient) {
         this.gatewayWebserviceClient = gatewayWebserviceClient;
@@ -42,7 +36,6 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
     public void execute() throws ECodexConnectorControllerException {
         LOGGER.debug("Job for handling incoming messages triggered.");
         Date start = new Date();
-        connectorMonitor.setLastCalledIncomingMessagesPending(start);
 
         String[] messageIDs = null;
         try {

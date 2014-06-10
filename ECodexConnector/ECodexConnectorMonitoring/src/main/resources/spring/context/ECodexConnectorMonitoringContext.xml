@@ -4,9 +4,14 @@
 <beans>
 
 	<import resource="jmx-context.xml" />
+	<import resource="rest-context.xml" />
 
 	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
-		<property name="timerPeriod" value="${connector.check.messages.period.ms}"/>
+		<property name="monitoringDao" ref="monitoringDao"/>
+	</bean>
+	
+	<bean id="monitoringDao" class="eu.ecodex.connector.monitoring.db.ECodexConnectorMonitoringDao">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 </beans>

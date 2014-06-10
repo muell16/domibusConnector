@@ -13,7 +13,6 @@ import eu.ecodex.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.controller.service.EvidenceService;
 import eu.ecodex.connector.controller.service.MessageService;
-import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
@@ -29,11 +28,6 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
     private ECodexConnectorNationalBackendClient nationalBackendClient;
     private MessageService outgoingMessageService;
     private EvidenceService outgoingEvidenceService;
-    private ECodexConnectorMonitor connectorMonitor;
-
-    public void setConnectorMonitor(ECodexConnectorMonitor connectorMonitor) {
-        this.connectorMonitor = connectorMonitor;
-    }
 
     public void setNationalBackendClient(ECodexConnectorNationalBackendClient nationalBackendClient) {
         this.nationalBackendClient = nationalBackendClient;
@@ -51,7 +45,6 @@ public class ECodexConnectorOutgoingController implements ECodexConnectorControl
     public void execute() throws ECodexConnectorControllerException {
         LOGGER.debug("Job for handling outgoing messages triggered.");
         Date start = new Date();
-        connectorMonitor.setLastCalledOutgoingMessagesPending(start);
 
         LOGGER.debug("Handling messages....");
         try {
