@@ -1,7 +1,5 @@
 package eu.ecodex.connector.monitoring.jmx;
 
-import java.util.Date;
-
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -19,19 +17,52 @@ public class ECodexConnectorMonitorJMX implements IECodexConnectorMonitor {
         return ecodexConnectorMonitor.getCheckOutgoingRepeatInterval();
     }
 
-    @ManagedAttribute(description = "timestamp when the last call of the timer job for check the national backend for pending outgoing messages happened")
-    public Date getLastCalledOutgoingMessagesPending() {
-        return null;
+    @Override
+    @ManagedAttribute(description = "The last time the job checkIncomingTrigger was called")
+    public Long getLastCalledIncoming() {
+        return ecodexConnectorMonitor.getLastCalledIncoming();
     }
 
-    @ManagedAttribute(description = "timestamp when the last call of the timer job for check the gateway backend for pending incoming messages happened")
-    public Date getLastCalledIncomingMessagesPending() {
-        return null;
+    @Override
+    @ManagedAttribute(description = "The last time the job checkOutgoingTrigger was called")
+    public Long getLastCalledOutgoing() {
+        return ecodexConnectorMonitor.getLastCalledOutgoing();
     }
 
-    @ManagedAttribute(description = "timestamp when the last call of the timer job for check messages without response when the timeout is active and set happened")
-    public Date getLastCalledEvidenceTimeoutCheck() {
-        return null;
+    @Override
+    @ManagedAttribute(description = "The last time the job checkEvidencesTimeoutTrigger was called")
+    public Long getLastCalledCheckEvidencesTimeout() {
+        return ecodexConnectorMonitor.getLastCalledCheckEvidencesTimeout();
+    }
+
+    @Override
+    @ManagedAttribute(description = "The status of the job checkIncomingTrigger")
+    public String getJobStatusIncoming() {
+        return ecodexConnectorMonitor.getStatusIncoming();
+    }
+
+    @Override
+    @ManagedAttribute(description = "The status of the job checkOutgoingTrigger")
+    public String getJobStatusOutgoing() {
+        return ecodexConnectorMonitor.getStatusOutgoing();
+    }
+
+    @Override
+    @ManagedAttribute(description = "The status of the job checkEvidencesTimeoutTrigger")
+    public String getJobStatusEvidencesTimeout() {
+        return ecodexConnectorMonitor.getStatusEvidencesTimeout();
+    }
+
+    @Override
+    @ManagedAttribute(description = "Count of rejected Connector messages")
+    public Integer getRejectedConnectorMessagesCount() {
+        return ecodexConnectorMonitor.getRejectedConnectorMessagesCount();
+    }
+
+    @Override
+    @ManagedAttribute(description = "Count of gateway messages in state NO_RECEIPT")
+    public Integer getNoReceiptMessagesGateway() {
+        return ecodexConnectorMonitor.getNoReceiptMessagesGateway();
     }
 
     public ECodexConnectorMonitor getEcodexConnectorMonitor() {

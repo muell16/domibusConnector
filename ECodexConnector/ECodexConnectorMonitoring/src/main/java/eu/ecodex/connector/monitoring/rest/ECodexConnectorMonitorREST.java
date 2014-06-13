@@ -16,9 +16,65 @@ public class ECodexConnectorMonitorREST implements IECodexConnectorMonitor {
 
     @Override
     @POST
-    @Path("/checkOutgoingRepeatInterval/")
+    @Path("/getOutgoingRepeatInterval/")
     public Long getCheckOutgoingRepeatInterval() {
         return ecodexConnectorMonitor.getCheckOutgoingRepeatInterval();
+    }
+
+    @Override
+    @POST
+    @Path("/getLastCalledIncoming/")
+    public Long getLastCalledIncoming() {
+        return ecodexConnectorMonitor.getLastCalledIncoming();
+    }
+
+    @Override
+    @POST
+    @Path("/getLastCalledOutgoing/")
+    public Long getLastCalledOutgoing() {
+        return ecodexConnectorMonitor.getLastCalledOutgoing();
+    }
+
+    @Override
+    @POST
+    @Path("/getLastCalledCheckEvidencesTimeout/")
+    public Long getLastCalledCheckEvidencesTimeout() {
+        return ecodexConnectorMonitor.getLastCalledCheckEvidencesTimeout();
+    }
+
+    @Override
+    @POST
+    @Path("/getJobStatusIncoming/")
+    public String getJobStatusIncoming() {
+        return ecodexConnectorMonitor.getStatusIncoming();
+    }
+
+    @Override
+    @POST
+    @Path("/getJobStatusOutgoing/")
+    public String getJobStatusOutgoing() {
+        return ecodexConnectorMonitor.getStatusOutgoing();
+    }
+
+    @Override
+    @POST
+    @Path("/getJobStatusEvidencesTimeout/")
+    public String getJobStatusEvidencesTimeout() {
+        return ecodexConnectorMonitor.getStatusEvidencesTimeout();
+    }
+
+    @Override
+    @POST
+    @Path("/getRejectedConnectorMessagesCount/")
+    public Integer getRejectedConnectorMessagesCount() {
+        return ecodexConnectorMonitor.getRejectedConnectorMessagesCount();
+    }
+
+    @Override
+    @POST
+    @Path("/getNoReceiptMessagesGateway/")
+    public Integer getNoReceiptMessagesGateway() {
+        return ecodexConnectorMonitor.getNoReceiptMessagesGateway();
     }
 
     public ECodexConnectorMonitor getEcodexConnectorMonitor() {
@@ -28,29 +84,5 @@ public class ECodexConnectorMonitorREST implements IECodexConnectorMonitor {
     public void setEcodexConnectorMonitor(ECodexConnectorMonitor ecodexConnectorMonitor) {
         this.ecodexConnectorMonitor = ecodexConnectorMonitor;
     }
-
-    // @POST
-    // @Path("/getTimerPeriod/")
-    // public Long getTimerPeriod() {
-    // return ecodexMonitor.getTimerPeriod();
-    // }
-    //
-    // @POST
-    // @Path("/getLastCalledOutgoingMessagesPending/")
-    // public Date getLastCalledOutgoingMessagesPending() {
-    // return ecodexMonitor.getLastCalledOutgoingMessagesPending();
-    // }
-    //
-    // @POST
-    // @Path("/getLastCalledIncomingMessagesPending/")
-    // public Date getLastCalledIncomingMessagesPending() {
-    // return ecodexMonitor.getLastCalledIncomingMessagesPending();
-    // }
-    //
-    // @POST
-    // @Path("/getLastCalledEvidenceTimeoutCheck/")
-    // public Date getLastCalledEvidenceTimeoutCheck() {
-    // return ecodexMonitor.getLastCalledEvidenceTimeoutCheck();
-    // }
 
 }
