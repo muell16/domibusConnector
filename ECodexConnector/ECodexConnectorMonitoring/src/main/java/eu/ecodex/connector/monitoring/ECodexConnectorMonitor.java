@@ -10,7 +10,8 @@ public class ECodexConnectorMonitor {
 
     private ECodexConnectorMonitoringDao monitoringDao;
 
-    public long getCheckOutgoingRepeatInterval() {
+    public Long getCheckOutgoingRepeatInterval() {
+        // return System.currentTimeMillis();
         return monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
     }
 

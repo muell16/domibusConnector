@@ -20,6 +20,7 @@ public class ECodexConnectorProperties {
     String dynamicDiscoveryCommunity;
     String dynamicDiscoveryEnvironment;
     String dynamicDiscoveryNormalisationAlgorithm;
+    String monitoringType;
 
     public String getGatewayEndpointAddress() {
         return gatewayEndpointAddress;
@@ -163,6 +164,14 @@ public class ECodexConnectorProperties {
 
     public void setDynamicDiscoveryNormalisationAlgorithm(String dynamicDiscoveryNormalisationAlgorithm) {
         this.dynamicDiscoveryNormalisationAlgorithm = dynamicDiscoveryNormalisationAlgorithm;
+    }
+
+    public String getMonitoringType() {
+        return monitoringType;
+    }
+
+    public void setMonitoringType(String monitoringType) {
+        this.monitoringType = monitoringType;
     }
 
 }

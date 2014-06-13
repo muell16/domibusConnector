@@ -2,6 +2,17 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
+	
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:connector.properties</value>
+			</list>
+		</property>
+	</bean>
 
 	 <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
 	 	<property name="locateExistingServerIfPossible" value="true"/>
@@ -28,8 +39,17 @@
           class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
         <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
+    
+    	
+	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
+		<property name="monitoringDao" ref="monitoringDao"/>
+	</bean>	
+    
+    
+    <bean id="ecodexConnectorMonitorJMX" class="eu.ecodex.connector.monitoring.jmx.ECodexConnectorMonitorJMX">
+		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
+	</bean>
+	
 
-    <bean id="connectorJMXMonitor" class="eu.ecodex.connector.monitoring.jmx.ECodexConnectorJMXMonitor">
-    	<property name="ecodexMonitor" ref="ecodexConnectorMonitor"/>
-    </bean>
+
 </beans>

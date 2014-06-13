@@ -10,35 +10,14 @@
 			http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
 			http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-	<import resource="classpath:META-INF/cxf/cxf.xml"/>
-	<import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-    <cxf:bus>
-        <cxf:features>
-            <cxf:logging/>
-        </cxf:features>
-    </cxf:bus>
-    
-    	
+    <bean id="ecodexConnectorMonitorDB" class="eu.ecodex.connector.monitoring.db.ECodexConnectorMonitorDB">
+		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
+	</bean>
+	
 	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
 		<property name="monitoringDao" ref="monitoringDao"/>
 	</bean>	
     
-
-    <bean id="ecodexConnectorMonitorREST" class="eu.ecodex.connector.monitoring.rest.ECodexConnectorMonitorREST">
-    		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
-    </bean>
-
-
-	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-	
-  	<jaxrs:server id="monitoringREST" address="/rest/monitor">
-  		<jaxrs:serviceBeans>
-  			<ref bean="ecodexConnectorMonitorREST"/>
-  		</jaxrs:serviceBeans>
-  		<jaxrs:providers>
-			<ref bean='jsonProvider' />
-		</jaxrs:providers>
-  	</jaxrs:server>
 
 </beans>

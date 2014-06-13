@@ -15,6 +15,13 @@
 	</properties>
 
 	<dependencies>
+	
+		<dependency>
+			<groupId>eu.ecodex.connector</groupId>
+			<artifactId>ECodexConnectorCommon</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>

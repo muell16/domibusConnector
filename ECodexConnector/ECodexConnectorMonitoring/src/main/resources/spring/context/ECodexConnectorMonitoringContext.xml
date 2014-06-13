@@ -3,12 +3,11 @@
 
 <beans>
 
-	<import resource="jmx-context.xml" />
-	<import resource="rest-context.xml" />
 
-	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
-		<property name="monitoringDao" ref="monitoringDao"/>
+	<bean id="ecodexConnectorMonitorController" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitorController">
+	<property name="connectorProperties" ref="connectorProperties"/>		
 	</bean>
+
 	
 	<bean id="monitoringDao" class="eu.ecodex.connector.monitoring.db.ECodexConnectorMonitoringDao">
 		<property name="dataSource" ref="dataSource" />

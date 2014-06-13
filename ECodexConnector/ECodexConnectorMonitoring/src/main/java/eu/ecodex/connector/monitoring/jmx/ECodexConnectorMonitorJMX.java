@@ -6,15 +6,17 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import eu.ecodex.connector.monitoring.ECodexConnectorMonitor;
+import eu.ecodex.connector.monitoring.IECodexConnectorMonitor;
 
 @ManagedResource(objectName = "ECodexConnector:name=ECodexConnectorJMXMonitor", description = "MBean for monitoring the ECodexConnector")
-public class ECodexConnectorJMXMonitor {
+public class ECodexConnectorMonitorJMX implements IECodexConnectorMonitor {
 
-    private ECodexConnectorMonitor ecodexMonitor;
+    private ECodexConnectorMonitor ecodexConnectorMonitor;
 
+    @Override
     @ManagedAttribute(description = "The time period between two calls of the timer job CheckOutgoing")
     public Long getCheckOutgoingRepeatInterval() {
-        return ecodexMonitor.getCheckOutgoingRepeatInterval();
+        return ecodexConnectorMonitor.getCheckOutgoingRepeatInterval();
     }
 
     @ManagedAttribute(description = "timestamp when the last call of the timer job for check the national backend for pending outgoing messages happened")
@@ -32,8 +34,11 @@ public class ECodexConnectorJMXMonitor {
         return null;
     }
 
-    public void setEcodexMonitor(ECodexConnectorMonitor ecodexMonitor) {
-        this.ecodexMonitor = ecodexMonitor;
+    public ECodexConnectorMonitor getEcodexConnectorMonitor() {
+        return ecodexConnectorMonitor;
     }
 
+    public void setEcodexConnectorMonitor(ECodexConnectorMonitor ecodexConnectorMonitor) {
+        this.ecodexConnectorMonitor = ecodexConnectorMonitor;
+    }
 }
