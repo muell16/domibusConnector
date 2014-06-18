@@ -19,6 +19,7 @@ import eu.ecodex.connector.evidences.type.RejectionReason;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
+import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 
 public class OutgoingMessageService extends AbstractMessageService implements MessageService {
 
@@ -57,7 +58,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         if (connectorProperties.isUseSecurityToolkit()) {
-            securityToolkit.buildContainer(message);
+            try {
+                securityToolkit.buildContainer(message);
+            } catch (ECodexConnectorSecurityException se) {
+                createSubmissionRejectionAndReturnIt(message, hashValue, se.getMessage());
+                throw new ECodexConnectorControllerException(se);
+            }
         }
 
         MessageConfirmation confirmation = null;
