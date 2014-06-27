@@ -1,6 +1,6 @@
 package eu.ecodex.connector.monitoring;
 
-import eu.ecodex.connector.monitoring.db.ECodexConnectorMonitoringDao;
+import eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao;
 
 public class ECodexConnectorMonitor {
 

@@ -1,4 +1,4 @@
-package eu.ecodex.connector.monitoring.db;
+package eu.ecodex.connector.common.db.dao.impl;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
