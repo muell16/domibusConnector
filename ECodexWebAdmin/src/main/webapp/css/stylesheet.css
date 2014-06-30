@@ -17,8 +17,6 @@ html, body{
 	background: #F4F4F4;
 }
 
-
-
 div#headerTop {
 	background-color:#FFFFFF;
 	text-align: center;
@@ -47,6 +45,11 @@ div.ui-layout-unit-content.ui-widget-content{
 
 #j_idt8 > div:nth-child(1){
 	/* dunkelgrau */
+	background: #7B7C76 !important;
+}
+
+#form:configuration_content{
+	color: #7B7C76 !important;
 	background: #7B7C76 !important;
 }
 
@@ -155,6 +158,13 @@ div#header-space img {
     min-width: 1000px;
     padding-top: 1em;
     text-align: center;
+}
+
+div#tables table td {
+	border:1px solid black;
+	margin: 0 auto;
+	padding:10px;
+	text-align: center;
 }
 
 

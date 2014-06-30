@@ -5,15 +5,13 @@ import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import eu.ecodex.webadmin.commons.JmxConnector;
+import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.ecodex.webadmin.commons.Util;
-import eu.ecodex.webadmin.commons.WebAdminProperties;
 import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 
 public class LoginBean implements Serializable {
@@ -25,10 +23,8 @@ public class LoginBean implements Serializable {
     private boolean loggedIn = false;
     private IECodexWebAdminUserDao eCodexWebAdminUserDao;
     private MBeanServerConnection mbsc;
-    private String connectionStatusJmx;
-    private String connectionMessageJmx;
     private String connectedToDb;
-    private WebAdminProperties webAdminProperties;
+    private IConnectorMonitoringService connectorMonitoringService;
 
     public String loginProject() {
         boolean result;
@@ -37,12 +33,11 @@ public class LoginBean implements Serializable {
 
             if (result) {
 
-                connectJmxServerConnection(false);
+                connectorMonitoringService.generateMonitoringReport(true);
                 // get Http Session and store username
                 HttpSession session = Util.getSession();
                 session.setAttribute("username", uname);
                 loggedIn = true;
-                connectedToDb = "Connected to: " + webAdminProperties.getConnectorDatabaseUrl();
                 return "main";
             } else {
 
@@ -69,34 +64,6 @@ public class LoginBean implements Serializable {
         HttpSession session = Util.getSession();
         session.invalidate();
         return "login";
-    }
-
-    public String reconnectJmxServerConnection() {
-        return connectJmxServerConnection(true);
-    }
-
-    public String connectJmxServerConnection(boolean reconnect) {
-
-        try {
-            mbsc = JmxConnector.getJmxServerConnection(webAdminProperties.getJmxServerAddress(),
-                    webAdminProperties.getJmxServerPort(), false);
-            // Query for the EcodexConnector to check if there are the required
-            // mbeans
-            ObjectName jmxMonitor = new ObjectName("ECodexConnector:name=ECodexConnectorJMXMonitor");
-            mbsc.getAttribute(jmxMonitor, "LastCalledEvidenceTimeoutCheck");
-            connectionMessageJmx = "Connected to: " + "service:jmx:rmi:///jndi/rmi:/"
-                    + webAdminProperties.getJmxServerAddress() + "/:" + webAdminProperties.getJmxServerPort()
-                    + "/jmxrmi";
-            connectionStatusJmx = "OK";
-            return "/pages/main.xhtml";
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            connectionMessageJmx = "Error while connecting to: " + webAdminProperties.getJmxServerAddress() + ":"
-                    + webAdminProperties.getJmxServerPort() + " " + e.getMessage();
-            connectionStatusJmx = "ERROR";
-            return "/pages/main.xhtml";
-        }
-
     }
 
     public String getMessage() {
@@ -139,14 +106,6 @@ public class LoginBean implements Serializable {
         this.mbsc = mbsc;
     }
 
-    public WebAdminProperties getWebAdminProperties() {
-        return webAdminProperties;
-    }
-
-    public void setWebAdminProperties(WebAdminProperties webAdminProperties) {
-        this.webAdminProperties = webAdminProperties;
-    }
-
     public Log getLogger() {
         return logger;
     }
@@ -159,28 +118,20 @@ public class LoginBean implements Serializable {
         this.connectedToDb = connectedToDb;
     }
 
-    public String getConnectionMessageJmx() {
-        return connectionMessageJmx;
-    }
-
-    public void setConnectionMessageJmx(String connectionMessageJmx) {
-        this.connectionMessageJmx = connectionMessageJmx;
-    }
-
-    public String getConnectionStatusJmx() {
-        return connectionStatusJmx;
-    }
-
-    public void setConnectionStatusJmx(String connectionStatusJmx) {
-        this.connectionStatusJmx = connectionStatusJmx;
-    }
-
     public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
         return eCodexWebAdminUserDao;
     }
 
     public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
         this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
+    }
+
+    public IConnectorMonitoringService getConnectorMonitoringService() {
+        return connectorMonitoringService;
+    }
+
+    public void setConnectorMonitoringService(IConnectorMonitoringService connectorMonitoringService) {
+        this.connectorMonitoringService = connectorMonitoringService;
     }
 
 }

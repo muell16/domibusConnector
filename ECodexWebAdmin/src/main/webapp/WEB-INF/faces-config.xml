@@ -29,7 +29,17 @@
       </managed-property>
    </managed-bean>
    
-      <managed-bean>
+  <managed-bean>
+      <managed-bean-name>configurationBean</managed-bean-name>
+      <managed-bean-class>eu.ecodex.webadmin.jsf.ConfigurationBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+         <property-name>webAdminProperties</property-name>
+         <value>#{webAdminProperties}</value>
+      </managed-property>
+   </managed-bean>
+   
+   <managed-bean>
       <managed-bean-name>gatewayBean</managed-bean-name>
       <managed-bean-class>eu.ecodex.webadmin.jsf.GatewayBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
@@ -48,9 +58,9 @@
 			<value>#{eCodexWebAdminUserDao}</value>
 		</managed-property>
 		<managed-property>
-			<property-name>webAdminProperties</property-name>
-			<value>#{webAdminProperties}</value>
-		</managed-property>
+         	<property-name>connectorMonitoringService</property-name>
+         	<value>#{connectorMonitoringService}</value>
+      </managed-property>
 	</managed-bean>
    
 

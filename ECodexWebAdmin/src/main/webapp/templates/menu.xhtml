@@ -13,20 +13,16 @@
 			<p:submenu label="General">
 					<p:menuitem value="Home" url="/pages/main.xhtml" 
 						icon="ui-icon-home" />
-					<p:menuitem value="Configuration" url="/pages/connector-statistics.xhtml" 
+					<p:menuitem value="Configuration" url="/pages/configuration.xhtml" 
 						icon="ui-icon-wrench" />
 				</p:submenu>
 				<p:submenu label="Connector">
 					<p:menuitem value="Statistics" url="/pages/connector-statistics.xhtml" 
 						icon="ui-icon-document" />
-					<p:menuitem value="Monitoring" actionListener="#{connectorBean.generateMonitoringReport}" url="/pages/monitoring.xhtml" 
-						icon="ui-icon-search" />
 				</p:submenu>
 				<p:submenu label="Gateway">
 					<p:menuitem value="Statistics" url="/pages/gateway-statistics.xhtml" 
 						icon="ui-icon-document" />
-					<p:menuitem value="Monitoring" url="/pages/monitoring.xhtml" 
-						icon="ui-icon-search" />
 				</p:submenu>
 			</p:menu>
 		</p:outputPanel>		

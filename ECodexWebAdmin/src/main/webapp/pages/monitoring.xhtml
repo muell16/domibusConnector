@@ -7,32 +7,71 @@
 	<ui:define name="metadata">
 	</ui:define>
 	<ui:define name="content">
-	<div id="centerHeader">
-		<h1>Monitoring</h1>
-	</div>
-	<br/>
-	<h:body>
-		#{connectorBean.connectorMonitoringService.generateMonitoringReport()}
-	</h:body>
-	 
-	
-	<h:panelGrid columns="3" style="text-align: center; margin: 0 auto;"
-					cellpadding="10" border="1">
-					<h:outputLabel style="font-weight:bold;">LastCalledEvidenceTimeoutCheck</h:outputLabel>
-					<h:outputText class="textArea"
-						value="#{connectorBean.connectorMonitoringService.lastCalledEvidenceTimeoutCheckDate}" />
-					<h:outputText style="font-weight:bold;" class="textArea"
-						value="#{connectorBean.connectorMonitoringService.lastCalledEvidenceTimeoutCheckMessage}" />
-					<h:outputLabel style="font-weight:bold;">lastCalledIncomingMessagesPending</h:outputLabel>
-					<h:outputText class="textArea"
-						value="#{connectorBean.connectorMonitoringService.lastCalledIncomingMessagesPendingDate}" />
-					<h:outputText style="font-weight:bold;" class="textArea"
-						value="#{connectorBean.connectorMonitoringService.lastCalledIncomingMessagesPendingMessage}" />		
-					<h:outputLabel style="font-weight:bold;">lastCalledOutgoingMessagesPending</h:outputLabel>
-					<h:outputText class="textArea"
-						value="#{connectorBean.connectorMonitoringService.lastCalledOutgoingMessagesPendingDate}" />
-					<h:outputText style="font-weight:bold;" class="textArea"
-						value="#{connectorBean.connectorMonitoringService.lastCalledOutgoingMessagesPendingMessage}" />				
-				</h:panelGrid>
+		<div id="centerHeader">
+			<h1>Jobs</h1>
+		</div>
+		<br />
+
+		<h:panelGrid columns="3" style="text-align: center; margin: 0 auto;"
+			cellpadding="10" border="1">
+
+			<h:outputLabel style="font-weight:bold;">Job</h:outputLabel>
+
+			<h:outputLabel style="font-weight:bold;">LastCalled</h:outputLabel>
+
+			<h:outputLabel style="font-weight:bold;">Status</h:outputLabel>
+
+
+
+			<h:outputLabel>lastCalledCheckEvidencesTimeout</h:outputLabel>
+			<h:outputText class="textArea"
+				value="#{connectorBean.connectorMonitoringService.lastCalledCheckEvidencesTimeout}" />
+			<h:outputText style="font-weight:bold;" class="textArea"
+				value="#{connectorBean.connectorMonitoringService.jobStatusEvidencesTimeout}" />
+
+			<h:outputLabel>lastCalledIncoming</h:outputLabel>
+			<h:outputText class="textArea"
+				value="#{connectorBean.connectorMonitoringService.lastCalledIncoming}" />
+			<h:outputText style="font-weight:bold;" class="textArea"
+				value="#{connectorBean.connectorMonitoringService.jobStatusIncoming}" />
+
+			<h:outputLabel>lastCalledOutgoing</h:outputLabel>
+			<h:outputText class="textArea"
+				value="#{connectorBean.connectorMonitoringService.lastCalledOutgoing}" />
+			<h:outputText style="font-weight:bold;" class="textArea"
+				value="#{connectorBean.connectorMonitoringService.jobStatusOutgoing}" />
+		</h:panelGrid>
+		<br />
+		<div id="centerHeader">
+			<h1>Messages</h1>
+		</div>
+		<h:panelGrid columns="3" style="text-align: center; margin: 0 auto;"
+			cellpadding="10" border="1">
+
+			<h:outputLabel style="font-weight:bold;">Messages</h:outputLabel>
+
+			<h:outputLabel style="font-weight:bold;">Count</h:outputLabel>
+
+			<h:outputLabel style="font-weight:bold;">Status</h:outputLabel>
+
+
+			<h:outputLabel>rejectedConnectorMessagesCount</h:outputLabel>
+			<h:outputText class="textArea"
+				value="#{connectorBean.connectorMonitoringService.rejectedConnectorMessagesCount}" />
+			<h:outputText style="font-weight:bold;" class="textArea"
+				value="#{connectorBean.connectorMonitoringService.rejectedConnectorMessagesCountStatus}" />
+
+			<h:outputLabel>noReceiptMessagesGateway</h:outputLabel>
+			<h:outputText class="textArea"
+				value="#{connectorBean.connectorMonitoringService.noReceiptMessagesGateway}" />
+			<h:outputText style="font-weight:bold;" class="textArea"
+				value="#{connectorBean.connectorMonitoringService.noReceiptMessagesGatewayStatus}" />
+		</h:panelGrid>
+		<br />
+		<h:panelGrid columns="1" style="text-align: center; margin: 0 auto;">
+			<h:commandButton id="refresh"
+				action="#{loginBean.connectorMonitoringService.refreshMonitoringServer}"
+				value="Refresh" />
+		</h:panelGrid>
 	</ui:define>
 </ui:composition>

@@ -18,7 +18,6 @@
 
 	<import resource="ECodexConnectorCommonContext.xml" />
 
-
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 	
@@ -50,10 +49,9 @@
 	</bean>
 	
 	
-	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties">
+	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties" init-method="loadProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
-		<property name="jmxServerAddress" value="${jmx.server.address}" />
-		<property name="jmxServerPort" value="${jmx.server.port}" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 		
 	<!-- Connector Beans -->
@@ -72,6 +70,9 @@
    
    <bean id="connectorMonitoringService" 
       class="eu.ecodex.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService">    
+       		  <property name="webAdminProperties" ref="webAdminProperties" /> 
+       		  <property name="monitoringDao" ref="monitoringDao" />
+       		  
    </bean>
    
    	<bean id="connectorMessageFilter"
@@ -100,6 +101,10 @@
 		
 	<bean id="gatewayMessageDao"
 		class="eu.ecodex.webadmin.dao.impl.GatewayMessageDao">
+	</bean>
+	
+	<bean id="monitoringDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 		
