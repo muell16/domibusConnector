@@ -39,7 +39,7 @@ public class ECodexConnectorProxyDao implements ProxyDao {
 
         if (values.containsKey(id)) {
             ProxyPreference proxyPreference = new ProxyPreference();
-            proxyPreference.setKey(id.toString());
+            proxyPreference.setProxyKey(id.toString());
             proxyPreference.setValue(values.get(id));
             return proxyPreference;
         }
@@ -58,7 +58,7 @@ public class ECodexConnectorProxyDao implements ProxyDao {
 
         for (ProxyKey proxyKey : values.keySet()) {
             ProxyPreference proxyPreference = new ProxyPreference();
-            proxyPreference.setKey(proxyKey.toString());
+            proxyPreference.setProxyKey(proxyKey.toString());
             proxyPreference.setValue(values.get(proxyKey));
 
             preferences.add(proxyPreference);
@@ -76,7 +76,7 @@ public class ECodexConnectorProxyDao implements ProxyDao {
      */
     @Override
     public void update(ProxyPreference entity) {
-        ProxyKey proxyKey = ProxyKey.fromKey(entity.getKey());
+        ProxyKey proxyKey = ProxyKey.fromKey(entity.getProxyKey().getKeyName());
         values.put(proxyKey, entity.getValue());
     }
 

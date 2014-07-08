@@ -16,7 +16,17 @@
 		<dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
 			<artifactId>ecodex-container</artifactId>
-			<version>1.03</version>
+			<version>1.08</version>
+		</dependency>
+  		<dependency>
+			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
+			<artifactId>dss-document</artifactId>
+			<version>4.0.6</version>
+     	</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
@@ -27,23 +37,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.8</version>
-				<configuration>
-					<configLocation>${basedir}/Checkstyle_Checks_v3.xml</configLocation>
-					<!-- <excludes>**/at/gv/brz/judok/**/*,**/at/gv/e_government/**/*,**/org/w3/**/*,**/org/e_government/**/*,**/at/gv/brz/bjujq/kopplung/gateway/ierv/**/*,**/at/gv/brz/bjujq/kopplung/gateway/juzu/**/*</excludes> -->
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<excludeFilterFile>${basedir}/excludes_findbugs_generated.xml</excludeFilterFile>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>

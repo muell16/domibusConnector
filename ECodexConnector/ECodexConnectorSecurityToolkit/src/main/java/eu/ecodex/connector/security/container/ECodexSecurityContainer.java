@@ -32,7 +32,7 @@ import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.util.SignatureParametersFactory;
 import eu.europa.ec.markt.dss.DigestAlgorithm;
-import eu.europa.ec.markt.dss.SignatureAlgorithm;
+import eu.europa.ec.markt.dss.EncryptionAlgorithm;
 
 public class ECodexSecurityContainer implements InitializingBean {
 
@@ -106,7 +106,7 @@ public class ECodexSecurityContainer implements InitializingBean {
         certStore.setPassword(javaKeyStorePassword);
 
         final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore, keyAlias,
-                keyPassword, SignatureAlgorithm.RSA, DigestAlgorithm.SHA1);
+                keyPassword, EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
 
         return mySignatureParameters;
 

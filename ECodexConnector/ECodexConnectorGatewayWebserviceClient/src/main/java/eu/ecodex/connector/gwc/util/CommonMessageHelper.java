@@ -289,7 +289,8 @@ public class CommonMessageHelper {
                 || message.getMessageDetails().getAction().getAction().equals("RetrievalNonRetrievalToRecipient");
     }
 
-    public MessageDetails convertUserMessageToMessageDetails(UserMessage userMessage) {
+    public MessageDetails convertUserMessageToMessageDetails(UserMessage userMessage)
+            throws ECodexConnectorGatewayWebserviceClientException {
         MessageDetails details = new MessageDetails();
 
         details.setEbmsMessageId(userMessage.getMessageInfo().getMessageId());
@@ -302,7 +303,8 @@ public class CommonMessageHelper {
         }
         ECodexAction action = persistenceService.getAction(actionString);
         if (action == null) {
-            LOGGER.error("Could not find Action in database for value {}", actionString);
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not find Action in database for value "
+                    + actionString);
         }
         details.setAction(action);
 
@@ -312,7 +314,8 @@ public class CommonMessageHelper {
         }
         ECodexService service = persistenceService.getService(serviceString);
         if (service == null) {
-            LOGGER.error("Could not find Service in database for value {}", serviceString);
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not find Service in database for value "
+                    + serviceString);
         }
         details.setService(service);
 
@@ -323,8 +326,8 @@ public class CommonMessageHelper {
         }
         ECodexParty fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
         if (fromPartner == null) {
-            LOGGER.error("Could not find Party in database for PartyId {} and Role {} as FromParty", from.getPartyId()
-                    .get(0).getValue(), from.getRole());
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not find Party in database for PartyId "
+                    + from.getPartyId().get(0).getValue() + " and Role " + from.getRole() + " as FromParty");
         }
         details.setFromParty(fromPartner);
 
@@ -335,8 +338,8 @@ public class CommonMessageHelper {
         }
         ECodexParty toPartner = persistenceService.getParty(toPartnerId, to.getRole());
         if (toPartner == null) {
-            LOGGER.error("Could not find Party in database for PartyId {} and Role {} as ToParty",
-                    to.getPartyId().get(0).getValue(), to.getRole());
+            throw new ECodexConnectorGatewayWebserviceClientException("Could not find Party in database for PartyId "
+                    + to.getPartyId().get(0).getValue() + " and Role " + to.getRole() + " as ToParty");
         }
         details.setToParty(toPartner);
 
