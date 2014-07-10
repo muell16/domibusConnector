@@ -60,6 +60,9 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     @Override
     public void generateMonitoringReport(boolean reconnect) {
+        if (reconnect) {
+            webAdminProperties.loadProperties();
+        }
         monitoringType = checkMonitoringType(webAdminProperties.getMonitoringType());
         if (monitoringType.equals(monitoring.JMX.toString())) {
             connectionMessage = "Connected to: " + "service:jmx:rmi:///jndi/rmi:/"
@@ -76,6 +79,10 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         } else {
             queryDB();
             useMonitorServer = false;
+        }
+
+        if ("ERROR".equals(connectionStatus)) {
+            queryDB();
         }
 
         if ("WAITING".equals(jobStatusEvidencesTimeout)) {

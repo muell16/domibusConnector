@@ -10,53 +10,114 @@
    <ui:param name="title" value="E-Codex WebAdmin - Statistics"/>
     <ui:define name="content">
          
- <h:form  id="form"> 
-	<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">           
-        <h:outputText class="textArea" value="Monitoring type: " />  
-        <h:selectOneMenu value="#{configurationBean.monitoringType}">  
-            <f:selectItem itemLabel="DB" itemValue="DB" />  
-            <f:selectItem itemLabel="JMX" itemValue="JMX" />  
-            <f:selectItem itemLabel="Rest" itemValue="REST" />   
-        </h:selectOneMenu>
-        <h:commandButton id="configure" action="#{configurationBean.configure}" value="Show configuration"/> 
-    </h:panelGrid>
-    <hr />
-    <h:outputText class="textArea" style="margin: 0 auto;" value="Connected to: #{configurationBean.webAdminProperties.connectorDatabaseUrl}" rendered="#{configurationBean.dbSelected}"/>     
-    <h:outputText class="textArea" style="margin: 0 auto;" value="Note that the jmx port has to be enabled on your webserver!" rendered="#{configurationBean.jmxSelected}"/>     
-    <h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">        
-        	<h:outputText class="textArea" value="JMX Server address: " rendered="#{configurationBean.jmxSelected}"/>    
-        	<p:inputText id="jmxServerAddress" value="#{configurationBean.webAdminProperties.jmxServerAddress}"  rendered="#{configurationBean.jmxSelected}"/>     
-        	<h:outputText class="textArea" value="JMX Server port: " rendered="#{configurationBean.jmxSelected}"/>    
-        	<p:inputText id="jmxServerPort" value="#{configurationBean.webAdminProperties.jmxServerPort}"  rendered="#{configurationBean.jmxSelected}"/>     
-    </h:panelGrid>
-         
-    <h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">        
-        	<h:outputText class="textArea" value="Rest Server address: " rendered="#{configurationBean.restSelected}"/>    
-        	<p:inputText id="restServerAddress" value="#{configurationBean.webAdminProperties.restServerAddress}"  rendered="#{configurationBean.restSelected}"/>     
-        	<h:outputText class="textArea" value="Rest Server port: " rendered="#{configurationBean.restSelected}"/>    
-        	<p:inputText id="restServerPort" value="#{configurationBean.webAdminProperties.restServerPort}"  rendered="#{configurationBean.restSelected}"/>  
-        	<h:outputText class="textArea" value="Rest Webcontext: " rendered="#{configurationBean.restSelected}"/>    
-        	<p:inputText id="restWebContext" value="#{configurationBean.webAdminProperties.restWebContext}"  rendered="#{configurationBean.restSelected}"/>        
-    </h:panelGrid>
-    <hr />     
-     <h:panelGrid columns="3"
-						style="margin: 0 auto;" cellpadding="10"
-						border="1"  rendered="#{configurationBean.testDisplay}">
-						<h:outputText class="textArea" style="font-weight:bold;"
-							value="#{configurationBean.monitoringType}"/>
-						<h:outputText class="textArea"
-							value="#{configurationBean.monitoringTestMessage}"/>
-						<h:outputText style="font-weight:bold;" class="textArea"
-							value="#{configurationBean.monitoringTestStatus}" />
-	</h:panelGrid>
-	<h:outputText class="textArea" style="margin: 0 auto;" value="Properties erfolgreich gespeichert!" rendered="#{configurationBean.saveDisplay}"/>
-    <h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
-    
- 	   <h:commandButton id="testConnection" action="#{configurationBean.test}" value="Test"/> 
- 	   <h:commandButton id="save" action="#{configurationBean.save}" value="Save"/>      
- 	   <h:commandButton id="mail" action="#{configurationBean.mail}" value="Mail Test"/> 
-    </h:panelGrid>
+ <h:form  id="form">
 
-</h:form>
+			<p:panel id="monitoringPanel" header="Monitoring"
+				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
+				toggleable="true" toggleOrientation="horizontal">
+
+
+
+				<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">
+					<h:outputText class="textArea" value="Monitoring type: " />
+					<h:selectOneMenu value="#{configurationBean.monitoringType}">
+						<f:selectItem itemLabel="DB" itemValue="DB" />
+						<f:selectItem itemLabel="JMX" itemValue="JMX" />
+						<f:selectItem itemLabel="Rest" itemValue="REST" />
+					</h:selectOneMenu>
+					<h:commandButton id="configure"
+						action="#{configurationBean.configure}" value="Show configuration" />
+				</h:panelGrid>
+				<hr />
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Connected to: #{configurationBean.webAdminProperties.connectorDatabaseUrl}"
+					rendered="#{configurationBean.dbSelected}" />
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Note that the jmx port has to be enabled on your webserver!"
+					rendered="#{configurationBean.jmxSelected}" />
+				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
+					<h:outputText class="textArea" value="JMX Server address: "
+						rendered="#{configurationBean.jmxSelected}" />
+					<p:inputText id="jmxServerAddress"
+						value="#{configurationBean.webAdminProperties.jmxServerAddress}"
+						rendered="#{configurationBean.jmxSelected}" />
+					<h:outputText class="textArea" value="JMX Server port: "
+						rendered="#{configurationBean.jmxSelected}" />
+					<p:inputText id="jmxServerPort"
+						value="#{configurationBean.webAdminProperties.jmxServerPort}"
+						rendered="#{configurationBean.jmxSelected}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
+					<h:outputText class="textArea" value="Rest Server address: "
+						rendered="#{configurationBean.restSelected}" />
+					<p:inputText id="restServerAddress"
+						value="#{configurationBean.webAdminProperties.restServerAddress}"
+						rendered="#{configurationBean.restSelected}" />
+					<h:outputText class="textArea" value="Rest Server port: "
+						rendered="#{configurationBean.restSelected}" />
+					<p:inputText id="restServerPort"
+						value="#{configurationBean.webAdminProperties.restServerPort}"
+						rendered="#{configurationBean.restSelected}" />
+					<h:outputText class="textArea" value="Rest Webcontext: "
+						rendered="#{configurationBean.restSelected}" />
+					<p:inputText id="restWebContext"
+						value="#{configurationBean.webAdminProperties.restWebContext}"
+						rendered="#{configurationBean.restSelected}" />
+				</h:panelGrid>
+				<hr />
+				<h:panelGrid columns="3" style="margin: 0 auto;" cellpadding="10"
+					border="1" rendered="#{configurationBean.testDisplay}">
+					<h:outputText class="textArea" style="font-weight:bold;"
+						value="#{configurationBean.monitoringType}" />
+					<h:outputText class="textArea"
+						value="#{configurationBean.monitoringTestMessage}" />
+					<h:outputText style="font-weight:bold;" class="textArea"
+						value="#{configurationBean.monitoringTestStatus}" />
+				</h:panelGrid>
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Properties erfolgreich gespeichert!"
+					rendered="#{configurationBean.saveMonitoringDisplay}" />
+				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
+
+					<h:commandButton id="testConnection"
+						action="#{configurationBean.test}" value="Test" />
+					<h:commandButton id="saveMonitoring" action="#{configurationBean.saveMonitoringConfiguration}"
+						value="Save" />
+				</h:panelGrid>
+			</p:panel>
+
+
+			<p:panel id="jobPanel" header="Job configuration"
+				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
+				toggleable="true" toggleOrientation="horizontal">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+					<h:selectBooleanCheckbox value="#{configurationBean.webAdminProperties.mailNotification}"
+						id="mailNotification" />
+					<h:outputText class="textArea" value="Mail notification in case of Warning/Error: " />
+				</h:panelGrid>
+				<hr />
+				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
+					<h:outputText class="textArea" value="Mail receiver list (separated by ';'): " />
+					<p:inputText id="mailNotificationList"
+						value="#{configurationBean.webAdminProperties.mailNotificationList}"/>
+
+					<h:outputText class="textArea" value="Monitoring timer interval (ms): " />
+					<p:inputText id="monitoringtimerInterval"
+						value="#{configurationBean.webAdminProperties.monitoringTimerInterval}"/>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Properties erfolgreich gespeichert!"
+					rendered="#{configurationBean.saveJobDisplay}" />
+					<h:commandButton id="saveJob" action="#{configurationBean.saveJobConfiguration}"
+						value="Save" />
+				</h:panelGrid>
+				
+				<hr />
+			</p:panel>
+
+		</h:form>
 </ui:define>
 </ui:composition>

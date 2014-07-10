@@ -19,6 +19,9 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
     private String restServerPort;
     private String restWebContext;
     private String loadError;
+    private boolean mailNotification;
+    private String mailNotificationList;
+    private Long monitoringTimerInterval;
 
     public void loadProperties() {
         String sql = "select * from ECODEX_WEBADMIN_PROPERTIES";
@@ -40,6 +43,12 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
                     restServerPort = value;
                 } else if ("rest.webcontext".equals(key)) {
                     restWebContext = value;
+                } else if ("mail.notification".equals(key)) {
+                    mailNotification = Boolean.parseBoolean(value);
+                } else if ("mail.notification.receivers".equals(key)) {
+                    mailNotificationList = value;
+                } else if ("monitoring.timer.interval".equals(key)) {
+                    monitoringTimerInterval = Long.valueOf(value);
                 }
 
             }
@@ -51,8 +60,24 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
     }
 
     public void saveProperty(String key, String value) {
-        String sql = "update ECODEX_WEBADMIN_PROPERTIES SET PROPERTIES_VALUE = ? WHERE PROPERTIES_KEY = ?";
-        getJdbcTemplate().update(sql, value, key);
+
+        String sql = "select PROPERTIES_KEY as result from ECODEX_WEBADMIN_PROPERTIES where PROPERTIES_KEY = ?";
+        String[] parameter = new String[1];
+        parameter[0] = key;
+        List<String> result = getJdbcTemplate().queryForList(sql, parameter, String.class);
+
+        // property found -> update
+        if (!result.isEmpty()) {
+            String sqlUpdate = "update ECODEX_WEBADMIN_PROPERTIES SET PROPERTIES_VALUE = ? WHERE PROPERTIES_KEY = ?";
+            getJdbcTemplate().update(sqlUpdate, value, key);
+        } else {
+            // property not found -> insert
+
+            getJdbcTemplate().update(
+                    "insert into ECODEX_WEBADMIN_PROPERTIES (PROPERTIES_KEY, PROPERTIES_VALUE) values (?, ?)",
+                    new Object[] { key, value });
+        }
+
     }
 
     public String getJmxServerAddress() {
@@ -129,6 +154,30 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
 
     public void setLoadError(String loadError) {
         this.loadError = loadError;
+    }
+
+    public boolean isMailNotification() {
+        return mailNotification;
+    }
+
+    public void setMailNotification(boolean mailNotification) {
+        this.mailNotification = mailNotification;
+    }
+
+    public Long getMonitoringTimerInterval() {
+        return monitoringTimerInterval;
+    }
+
+    public void setMonitoringTimerInterval(Long monitoringTimerInterval) {
+        this.monitoringTimerInterval = monitoringTimerInterval;
+    }
+
+    public String getMailNotificationList() {
+        return mailNotificationList;
+    }
+
+    public void setMailNotificationList(String mailNotificationList) {
+        this.mailNotificationList = mailNotificationList;
     }
 
 }

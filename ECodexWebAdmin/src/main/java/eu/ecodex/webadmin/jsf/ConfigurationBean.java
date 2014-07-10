@@ -17,7 +17,8 @@ public class ConfigurationBean {
     private boolean restSelected;
 
     private boolean testDisplay;
-    private boolean saveDisplay;
+    private boolean saveMonitoringDisplay;
+    private boolean saveJobDisplay;
 
     private String monitoringTestMessage;
     private String monitoringTestStatus;
@@ -26,7 +27,8 @@ public class ConfigurationBean {
 
     public String configure() {
         testDisplay = false;
-        saveDisplay = false;
+        saveMonitoringDisplay = false;
+        saveJobDisplay = false;
         if (monitoringType != null && monitoringType.equals("DB")) {
             dbSelected = true;
             jmxSelected = false;
@@ -47,7 +49,8 @@ public class ConfigurationBean {
 
     public String test() {
         testDisplay = true;
-        saveDisplay = false;
+        saveMonitoringDisplay = false;
+        saveJobDisplay = false;
         try {
             if (jmxSelected) {
 
@@ -93,9 +96,10 @@ public class ConfigurationBean {
         return "/pages/configuration.xhtml";
     }
 
-    public String save() {
+    public String saveMonitoringConfiguration() {
 
-        saveDisplay = true;
+        saveMonitoringDisplay = true;
+        saveJobDisplay = false;
 
         if (jmxSelected) {
             webAdminProperties.saveProperty("monitoring.type", monitoringType);
@@ -106,12 +110,22 @@ public class ConfigurationBean {
             webAdminProperties.saveProperty("rest.server.address", webAdminProperties.getRestServerAddress());
             webAdminProperties.saveProperty("rest.server.port", webAdminProperties.getRestServerPort());
             webAdminProperties.saveProperty("rest.webcontext", webAdminProperties.getRestWebContext());
+        } else if (dbSelected) {
+            webAdminProperties.saveProperty("monitoring.type", monitoringType);
         }
 
         return "/pages/configuration.xhtml";
     }
 
-    public String mail() {
+    public String saveJobConfiguration() {
+
+        saveMonitoringDisplay = false;
+        saveJobDisplay = true;
+
+        webAdminProperties.saveProperty("mail.notification", String.valueOf(webAdminProperties.isMailNotification()));
+        webAdminProperties.saveProperty("mail.notification.receivers", webAdminProperties.getMailNotificationList());
+        webAdminProperties.saveProperty("monitoring.timer.interval",
+                String.valueOf(webAdminProperties.getMonitoringTimerInterval()));
 
         return "/pages/configuration.xhtml";
     }
@@ -180,12 +194,20 @@ public class ConfigurationBean {
         this.testDisplay = testDisplay;
     }
 
-    public boolean isSaveDisplay() {
-        return saveDisplay;
+    public boolean isSaveMonitoringDisplay() {
+        return saveMonitoringDisplay;
     }
 
-    public void setSaveDisplay(boolean saveDisplay) {
-        this.saveDisplay = saveDisplay;
+    public void setSaveMonitoringDisplay(boolean saveMonitoringDisplay) {
+        this.saveMonitoringDisplay = saveMonitoringDisplay;
+    }
+
+    public boolean isSaveJobDisplay() {
+        return saveJobDisplay;
+    }
+
+    public void setSaveJobDisplay(boolean saveJobDisplay) {
+        this.saveJobDisplay = saveJobDisplay;
     }
 
 }

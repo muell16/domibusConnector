@@ -17,6 +17,7 @@
                 http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 	<import resource="ECodexConnectorCommonContext.xml" />
+	<import resource="quartz-context.xml" />
 
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
