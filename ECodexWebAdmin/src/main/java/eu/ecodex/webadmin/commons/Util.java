@@ -57,11 +57,29 @@ public class Util {
         return toHex(salt) + toHex(hash);
     }
 
+    public static String generatePasswordHashWithSaltOnlyPW(String password, String saltParam)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        int iterations = 1000;
+        char[] chars = password.toCharArray();
+        byte[] salt = DatatypeConverter.parseHexBinary(saltParam);
+        PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 64 * 8);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] hash = skf.generateSecret(spec).getEncoded();
+        return toHex(hash);
+    }
+
     public static String getSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         sr.nextBytes(salt);
         return salt.toString();
+    }
+
+    public static String getHexSalt() throws NoSuchAlgorithmException {
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+        byte[] salt = new byte[16];
+        sr.nextBytes(salt);
+        return toHex(salt);
     }
 
     public static String toHex(byte[] array) throws NoSuchAlgorithmException {

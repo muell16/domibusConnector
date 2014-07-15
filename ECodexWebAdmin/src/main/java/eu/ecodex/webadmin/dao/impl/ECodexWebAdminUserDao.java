@@ -3,24 +3,18 @@ package eu.ecodex.webadmin.dao.impl;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import eu.ecodex.webadmin.commons.Util;
 import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 import eu.ecodex.webadmin.model.connector.ECodexWebAdminUser;
 
-@Repository
-public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao, Serializable {
+public class ECodexWebAdminUserDao extends JdbcDaoSupport implements IECodexWebAdminUserDao, Serializable {
 
     private static final long serialVersionUID = -8330659798855359673L;
-
-    @PersistenceContext(unitName = "ecodex.webadmin")
-    private EntityManager em;
 
     /*
      * (non-Javadoc)
@@ -31,10 +25,15 @@ public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao, Serializab
      */
     @Override
     public boolean login(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String sql = "select * from ECODEX_WEBADMIN_USER where USERNAME = ?";
+        String[] parameter = new String[1];
+        parameter[0] = username;
+        // Map<String, Object> map = getJdbcTemplate().queryForMap(sql,
+        // parameter);
 
-        Query q = em.createQuery("from ECodexWebAdminUser m where m.username=:username");
-        q.setParameter("username", username);
-        ECodexWebAdminUser eCodexWebAdminUser = (ECodexWebAdminUser) q.getSingleResult();
+        ECodexWebAdminUser eCodexWebAdminUser = getJdbcTemplate().queryForObject(sql, new Object[] { username },
+                new BeanPropertyRowMapper<ECodexWebAdminUser>(ECodexWebAdminUser.class));
+
         String passwordDB = eCodexWebAdminUser.getPassword();
         String saltDB = eCodexWebAdminUser.getSalt();
         String saltedPasswordDB = saltDB + passwordDB;
@@ -47,12 +46,34 @@ public class ECodexWebAdminUserDao implements IECodexWebAdminUserDao, Serializab
         }
     }
 
-    public EntityManager getEm() {
-        return em;
+    @Override
+    public void insertUser(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String salt = Util.getHexSalt();
+        String passwordDB = Util.generatePasswordHashWithSaltOnlyPW(password, salt);
+
+        getJdbcTemplate().update(
+                "insert into ECODEX_WEBADMIN_USER (USERNAME, PASSWORD, SALT, ROLE) values (?, ?, ?, ?)",
+                new Object[] { username, passwordDB, salt, "admin" });
+
     }
 
-    public void setEm(EntityManager em) {
-        this.em = em;
+    @Override
+    public void deleteUser(String username) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        getJdbcTemplate().update("delete from ECODEX_WEBADMIN_USER where USERNAME = ?", new Object[] { username });
+    }
+
+    public boolean checkIfUserExists(String username) {
+        String sql = "select * from ECODEX_WEBADMIN_USER where USERNAME = ?";
+        String[] parameter = new String[1];
+        parameter[0] = username;
+        List<String> result = getJdbcTemplate().queryForList(sql, parameter, String.class);
+
+        if (!result.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 }

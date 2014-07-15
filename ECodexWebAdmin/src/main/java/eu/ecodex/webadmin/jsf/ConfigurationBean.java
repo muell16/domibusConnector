@@ -7,6 +7,7 @@ import java.net.URL;
 
 import eu.ecodex.webadmin.commons.JmxConnector;
 import eu.ecodex.webadmin.commons.WebAdminProperties;
+import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 
 public class ConfigurationBean {
 
@@ -19,16 +20,24 @@ public class ConfigurationBean {
     private boolean testDisplay;
     private boolean saveMonitoringDisplay;
     private boolean saveJobDisplay;
+    private boolean saveUserDisplay;
 
     private String monitoringTestMessage;
     private String monitoringTestStatus;
 
+    private String user;
+    private String password;
+    private String userAction;
+
     private WebAdminProperties webAdminProperties;
+
+    private IECodexWebAdminUserDao eCodexWebAdminUserDao;
 
     public String configure() {
         testDisplay = false;
         saveMonitoringDisplay = false;
         saveJobDisplay = false;
+        saveUserDisplay = false;
         if (monitoringType != null && monitoringType.equals("DB")) {
             dbSelected = true;
             jmxSelected = false;
@@ -50,6 +59,7 @@ public class ConfigurationBean {
     public String test() {
         testDisplay = true;
         saveMonitoringDisplay = false;
+        saveUserDisplay = false;
         saveJobDisplay = false;
         try {
             if (jmxSelected) {
@@ -99,6 +109,7 @@ public class ConfigurationBean {
     public String saveMonitoringConfiguration() {
 
         saveMonitoringDisplay = true;
+        saveUserDisplay = false;
         saveJobDisplay = false;
 
         if (jmxSelected) {
@@ -120,6 +131,7 @@ public class ConfigurationBean {
     public String saveJobConfiguration() {
 
         saveMonitoringDisplay = false;
+        saveUserDisplay = false;
         saveJobDisplay = true;
 
         webAdminProperties.saveProperty("mail.notification", String.valueOf(webAdminProperties.isMailNotification()));
@@ -128,6 +140,43 @@ public class ConfigurationBean {
                 String.valueOf(webAdminProperties.getMonitoringTimerInterval()));
 
         return "/pages/configuration.xhtml";
+    }
+
+    public String addUser() {
+        try {
+            eCodexWebAdminUserDao.insertUser(user, password);
+            userAction = "User successfully added!";
+            saveUserDisplay = true;
+            return "/pages/configuration.xhtml";
+
+        } catch (Exception e) {
+            saveUserDisplay = true;
+            userAction = "Error while inserting user: " + e;
+            return "/pages/configuration.xhtml";
+        }
+
+    }
+
+    public String deleteUser() {
+        try {
+
+            if (!eCodexWebAdminUserDao.checkIfUserExists(user)) {
+                userAction = "User does not exist!";
+                saveUserDisplay = true;
+                return "/pages/configuration.xhtml";
+            }
+
+            eCodexWebAdminUserDao.deleteUser(user);
+            userAction = "User successfully deleted!";
+            saveUserDisplay = true;
+            return "/pages/configuration.xhtml";
+
+        } catch (Exception e) {
+            saveUserDisplay = true;
+            userAction = "Error while deleting user: " + e;
+            return "/pages/configuration.xhtml";
+        }
+
     }
 
     public boolean isDbSelected() {
@@ -208,6 +257,46 @@ public class ConfigurationBean {
 
     public void setSaveJobDisplay(boolean saveJobDisplay) {
         this.saveJobDisplay = saveJobDisplay;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isSaveUserDisplay() {
+        return saveUserDisplay;
+    }
+
+    public void setSaveUserDisplay(boolean saveUserDisplay) {
+        this.saveUserDisplay = saveUserDisplay;
+    }
+
+    public String getUserAction() {
+        return userAction;
+    }
+
+    public void setUserAction(String userAction) {
+        this.userAction = userAction;
+    }
+
+    public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
+        return eCodexWebAdminUserDao;
+    }
+
+    public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
+        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
     }
 
 }

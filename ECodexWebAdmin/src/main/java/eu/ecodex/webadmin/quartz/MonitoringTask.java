@@ -19,34 +19,42 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
     private XmlWebApplicationContext ctx;
     private IConnectorMonitoringService connectorMonitoringService;
     private WebAdminProperties webAdminProperties;
+    private boolean errorFound = false;
 
     public void monitoring() {
         connectorMonitoringService.generateMonitoringReport(false);
-
+        errorFound = false;
         String mailReport = "Summary of monitored items in status WARNING/ERROR: \n\n";
 
         if (!"OK".equals(connectorMonitoringService.getConnectionStatus())) {
             mailReport += "Connections status: " + connectorMonitoringService.getConnectionStatus() + "\n";
             mailReport += "Connection error message: " + connectorMonitoringService.getConnectionMessage() + "\n";
+            errorFound = true;
         }
 
         if (!"OK".equals(connectorMonitoringService.getJobStatusIncoming())) {
             mailReport += "Check incoming jobs: " + connectorMonitoringService.getJobStatusIncoming() + "\n";
+            errorFound = true;
         }
         if (!"OK".equals(connectorMonitoringService.getJobStatusOutgoing())) {
             mailReport += "Check outgoing jobs: " + connectorMonitoringService.getJobStatusOutgoing() + "\n";
+            errorFound = true;
         }
 
         if (!"OK".equals(connectorMonitoringService.getNoReceiptMessagesGatewayStatus())) {
             mailReport += "Check AS4 messages pending: " + connectorMonitoringService.getNoReceiptMessagesGateway()
                     + "\n";
+            errorFound = true;
         }
 
-        logger.error(mailReport);
+        if (errorFound) {
+            logger.error(mailReport);
 
-        if (webAdminProperties.isMailNotification()) {
-            mail(mailReport);
+            if (webAdminProperties.isMailNotification()) {
+                mail(mailReport);
+            }
         }
+
     }
 
     public String mail(String text) {
@@ -55,8 +63,8 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
         sendmail.setEmailFromAddress("betrieb-ecodex@brz.gv.at");
         String[] emailList = webAdminProperties.getMailNotificationList().split(";");
         sendmail.setEmailList(emailList);
-        sendmail.setNameFrom("Testmail");
-        sendmail.setSmtpHostName("172.18.8.30");
+        sendmail.setNameFrom("Betrieb ECodex");
+        sendmail.setSmtpHostName(webAdminProperties.getSmtpHostName());
         // try {
         // sendmail.postMail(text, "ECodex monitoring warning");
         // } catch (MessagingException e) {

@@ -37,6 +37,10 @@
          <property-name>webAdminProperties</property-name>
          <value>#{webAdminProperties}</value>
       </managed-property>
+		<managed-property>
+			<property-name>eCodexWebAdminUserDao</property-name>
+			<value>#{eCodexWebAdminUserDao}</value>
+		</managed-property>
    </managed-bean>
    
    <managed-bean>

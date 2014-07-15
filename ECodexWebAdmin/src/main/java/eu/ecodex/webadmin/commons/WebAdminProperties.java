@@ -21,6 +21,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
     private String loadError;
     private boolean mailNotification;
     private String mailNotificationList;
+    private String smtpHostName;
     private Long monitoringTimerInterval;
 
     public void loadProperties() {
@@ -49,6 +50,8 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
                     mailNotificationList = value;
                 } else if ("monitoring.timer.interval".equals(key)) {
                     monitoringTimerInterval = Long.valueOf(value);
+                } else if ("smtp.hostname".equals(key)) {
+                    smtpHostName = value;
                 }
 
             }
@@ -178,6 +181,14 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
 
     public void setMailNotificationList(String mailNotificationList) {
         this.mailNotificationList = mailNotificationList;
+    }
+
+    public String getSmtpHostName() {
+        return smtpHostName;
+    }
+
+    public void setSmtpHostName(String smtpHostName) {
+        this.smtpHostName = smtpHostName;
     }
 
 }

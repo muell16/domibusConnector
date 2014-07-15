@@ -7,4 +7,10 @@ public interface IECodexWebAdminUserDao {
 
     public boolean login(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
+    public void insertUser(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+    public void deleteUser(String username) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+    public boolean checkIfUserExists(String username);
+
 }

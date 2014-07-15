@@ -91,17 +91,7 @@
 			<p:panel id="jobPanel" header="Job configuration"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
 				toggleable="true" toggleOrientation="horizontal">
-				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
-					<h:selectBooleanCheckbox value="#{configurationBean.webAdminProperties.mailNotification}"
-						id="mailNotification" />
-					<h:outputText class="textArea" value="Mail notification in case of Warning/Error: " />
-				</h:panelGrid>
-				<hr />
 				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
-					<h:outputText class="textArea" value="Mail receiver list (separated by ';'): " />
-					<p:inputText id="mailNotificationList"
-						value="#{configurationBean.webAdminProperties.mailNotificationList}"/>
-
 					<h:outputText class="textArea" value="Monitoring timer interval (ms): " />
 					<p:inputText id="monitoringtimerInterval"
 						value="#{configurationBean.webAdminProperties.monitoringTimerInterval}"/>
@@ -119,5 +109,46 @@
 			</p:panel>
 
 		</h:form>
+		<h:form>
+		
+			<p:panel id="userPanel" header="User configuration"
+				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
+				toggleable="true" toggleOrientation="horizontal">
+				
+				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
+					<h:outputText class="textArea" value="User: " />
+					<p:inputText id="UserId"
+						value="#{configurationBean.user}"/>
+
+					<h:outputText class="textArea" value="Password: " />
+					<p:password id="passwordId"  match="pwd2" required="true"
+						value="#{configurationBean.password}"/>
+						
+					<h:outputLabel for="pwd2" value="Password confirm: " />
+        			<p:password id="pwd2" value="#configurationBean.password}" label="Password 2" required="true" />
+					
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">					
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="#{configurationBean.userAction}"
+					rendered="#{configurationBean.saveUserDisplay}" />
+				</h:panelGrid>
+
+				
+				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
+					<h:commandButton id="addUser" action="#{configurationBean.addUser}"
+						value="Add user" />
+					<h:commandButton id="deleteUser" action="#{configurationBean.deleteUser}"
+						value="Delete user" />				
+				</h:panelGrid>					
+
+
+
+
+			</p:panel>
+
+</h:form>
+
 </ui:define>
 </ui:composition>
