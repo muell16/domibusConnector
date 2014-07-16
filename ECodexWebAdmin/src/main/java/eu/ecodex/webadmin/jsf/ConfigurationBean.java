@@ -24,16 +24,19 @@ public class ConfigurationBean {
 
     private String monitoringTestMessage;
     private String monitoringTestStatus;
+    private boolean chooseMonitoringType = false;
 
-    private String user;
-    private String password;
-    private String userAction;
+    private String user = "";
+    private String password = "";
+    private String passwordConfirm = "";
+    private String userAction = "";
 
     private WebAdminProperties webAdminProperties;
 
     private IECodexWebAdminUserDao eCodexWebAdminUserDao;
 
     public String configure() {
+        chooseMonitoringType = false;
         testDisplay = false;
         saveMonitoringDisplay = false;
         saveJobDisplay = false;
@@ -51,6 +54,8 @@ public class ConfigurationBean {
             restSelected = true;
             dbSelected = false;
             jmxSelected = false;
+        } else {
+            chooseMonitoringType = false;
         }
 
         return "/pages/configuration.xhtml";
@@ -58,6 +63,7 @@ public class ConfigurationBean {
 
     public String test() {
         testDisplay = true;
+        chooseMonitoringType = false;
         saveMonitoringDisplay = false;
         saveUserDisplay = false;
         saveJobDisplay = false;
@@ -96,6 +102,9 @@ public class ConfigurationBean {
             else if (dbSelected) {
                 monitoringTestMessage = "OK";
                 monitoringTestStatus = "Connected to: " + webAdminProperties.getConnectorDatabaseUrl();
+            } else {
+                chooseMonitoringType = true;
+                testDisplay = false;
             }
 
         } catch (IOException e) {
@@ -109,6 +118,7 @@ public class ConfigurationBean {
     public String saveMonitoringConfiguration() {
 
         saveMonitoringDisplay = true;
+        chooseMonitoringType = false;
         saveUserDisplay = false;
         saveJobDisplay = false;
 
@@ -123,6 +133,9 @@ public class ConfigurationBean {
             webAdminProperties.saveProperty("rest.webcontext", webAdminProperties.getRestWebContext());
         } else if (dbSelected) {
             webAdminProperties.saveProperty("monitoring.type", monitoringType);
+        } else {
+            saveMonitoringDisplay = false;
+            chooseMonitoringType = true;
         }
 
         return "/pages/configuration.xhtml";
@@ -144,6 +157,13 @@ public class ConfigurationBean {
 
     public String addUser() {
         try {
+
+            if (eCodexWebAdminUserDao.checkIfUserExists(user)) {
+                userAction = "User already exists!";
+                saveUserDisplay = true;
+                return "/pages/configuration.xhtml";
+            }
+
             eCodexWebAdminUserDao.insertUser(user, password);
             userAction = "User successfully added!";
             saveUserDisplay = true;
@@ -297,6 +317,22 @@ public class ConfigurationBean {
 
     public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
         this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
+    }
+
+    public boolean isChooseMonitoringType() {
+        return chooseMonitoringType;
+    }
+
+    public void setChooseMonitoringType(boolean chooseMonitoringType) {
+        this.chooseMonitoringType = chooseMonitoringType;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
 }

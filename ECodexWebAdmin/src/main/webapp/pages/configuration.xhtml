@@ -10,7 +10,7 @@
    <ui:param name="title" value="E-Codex WebAdmin - Statistics"/>
     <ui:define name="content">
          
- <h:form  id="form">
+ <h:form  id="configuration">
 
 			<p:panel id="monitoringPanel" header="Monitoring"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
@@ -76,8 +76,11 @@
 						value="#{configurationBean.monitoringTestStatus}" />
 				</h:panelGrid>
 				<h:outputText class="textArea" style="margin: 0 auto;"
-					value="Properties erfolgreich gespeichert!"
+					value="Properties saved!"
 					rendered="#{configurationBean.saveMonitoringDisplay}" />
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Choose a monitoring type!"
+					rendered="#{configurationBean.chooseMonitoringType}" />
 				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
 
 					<h:commandButton id="testConnection"
@@ -99,7 +102,7 @@
 				
 				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">
 				<h:outputText class="textArea" style="margin: 0 auto;"
-					value="Properties erfolgreich gespeichert!"
+					value="Properties saved!"
 					rendered="#{configurationBean.saveJobDisplay}" />
 					<h:commandButton id="saveJob" action="#{configurationBean.saveJobConfiguration}"
 						value="Save" />
@@ -109,38 +112,39 @@
 			</p:panel>
 
 		</h:form>
-		<h:form>
+		<h:form id="userConfiguration">
 		
 			<p:panel id="userPanel" header="User configuration"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
 				toggleable="true" toggleOrientation="horizontal">
-				
+
 				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
 					<h:outputText class="textArea" value="User: " />
-					<p:inputText id="UserId"
-						value="#{configurationBean.user}"/>
+					<p:inputText id="UserId" value="#{configurationBean.user}" />
 
-					<h:outputText class="textArea" value="Password: " />
-					<p:password id="passwordId"  match="pwd2" required="true"
-						value="#{configurationBean.password}"/>
-						
-					<h:outputLabel for="pwd2" value="Password confirm: " />
-        			<p:password id="pwd2" value="#configurationBean.password}" label="Password 2" required="true" />
-					
+					<h:outputLabel for="pwd1" value="Password: *" />
+					<p:password id="pwd1" value="#{configurationBean.password}"
+						match="pwd2" label="Password" required="true" />
+
+					<h:outputLabel for="pwd2" value="Password confirm: *" />
+					<p:password id="pwd2" value="#{configurationBean.password}"
+						label="Password confirm" required="true" />
+
+				</h:panelGrid>
+  				<p:messages id="messages" showDetail="true" autoUpdate="true" />
+				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">
+					<h:outputText class="textArea" style="margin: 0 auto;"
+						value="#{configurationBean.userAction}"
+						rendered="#{configurationBean.saveUserDisplay}" />
 				</h:panelGrid>
 
-				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">					
-				<h:outputText class="textArea" style="margin: 0 auto;"
-					value="#{configurationBean.userAction}"
-					rendered="#{configurationBean.saveUserDisplay}" />
-				</h:panelGrid>
 
-				
 				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
 					<h:commandButton id="addUser" action="#{configurationBean.addUser}"
 						value="Add user" />
 					<h:commandButton id="deleteUser" action="#{configurationBean.deleteUser}"
-						value="Delete user" />				
+						value="Delete user" />
+
 				</h:panelGrid>					
 
 

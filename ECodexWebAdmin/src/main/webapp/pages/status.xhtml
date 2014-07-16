@@ -7,11 +7,11 @@
 	<h:head>
         <title>E-Codex WebAdmin</title>
     </h:head>
-    <h:body>
+
         <h:form rendered="#{loginBean.loggedIn}">      
             <p>Logged in as: #{loginBean.uname}</p>
         <p:commandButton action="#{loginBean.logout}" value="Logout"  ajax="false"></p:commandButton>
     </h:form>
-    </h:body>	 
+	 
 
 </ui:composition>

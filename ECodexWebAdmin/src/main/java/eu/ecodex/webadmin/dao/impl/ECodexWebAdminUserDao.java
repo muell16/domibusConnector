@@ -3,8 +3,8 @@ package eu.ecodex.webadmin.dao.impl;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -62,15 +62,20 @@ public class ECodexWebAdminUserDao extends JdbcDaoSupport implements IECodexWebA
         getJdbcTemplate().update("delete from ECODEX_WEBADMIN_USER where USERNAME = ?", new Object[] { username });
     }
 
+    @Override
     public boolean checkIfUserExists(String username) {
-        String sql = "select * from ECODEX_WEBADMIN_USER where USERNAME = ?";
-        String[] parameter = new String[1];
-        parameter[0] = username;
-        List<String> result = getJdbcTemplate().queryForList(sql, parameter, String.class);
 
-        if (!result.isEmpty()) {
+        try {
+            String sql = "select * from ECODEX_WEBADMIN_USER where USERNAME = ?";
+            String[] parameter = new String[1];
+            parameter[0] = username;
+
+            getJdbcTemplate().queryForObject(sql, new Object[] { username },
+                    new BeanPropertyRowMapper<ECodexWebAdminUser>(ECodexWebAdminUser.class));
+
             return true;
-        } else {
+
+        } catch (EmptyResultDataAccessException e) {
             return false;
         }
 
