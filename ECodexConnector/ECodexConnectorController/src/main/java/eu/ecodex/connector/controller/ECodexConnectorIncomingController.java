@@ -1,12 +1,14 @@
 package eu.ecodex.connector.controller;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
-import eu.ecodex.connector.controller.message.EvidenceService;
-import eu.ecodex.connector.controller.message.MessageService;
+import eu.ecodex.connector.controller.service.EvidenceService;
+import eu.ecodex.connector.controller.service.MessageService;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
@@ -31,8 +33,9 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
     }
 
     @Override
-    public void handleMessages() throws ECodexConnectorControllerException {
-        LOGGER.debug("Started handle gateway Messages!");
+    public void execute() throws ECodexConnectorControllerException {
+        LOGGER.debug("Job for handling incoming messages triggered.");
+        Date start = new Date();
 
         String[] messageIDs = null;
         try {
@@ -53,6 +56,9 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
         } else {
             LOGGER.debug("No pending messages on gateway!");
         }
+
+        LOGGER.debug("Job for handling incoming messages finished in {} ms.",
+                (System.currentTimeMillis() - start.getTime()));
     }
 
     private void handleMessage(String messageId) throws ECodexConnectorControllerException {
@@ -72,12 +78,6 @@ public class ECodexConnectorIncomingController implements ECodexConnectorControl
                 LOGGER.error("Error handling message with id " + messageId, e);
             }
         }
-    }
-
-    @Override
-    public void handleEvidences() throws ECodexConnectorControllerException {
-        // TODO Auto-generated method stub
-
     }
 
     private boolean isMessageEvidence(Message message) {

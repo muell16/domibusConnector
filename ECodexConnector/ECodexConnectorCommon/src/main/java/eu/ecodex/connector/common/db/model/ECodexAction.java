@@ -13,12 +13,23 @@ public class ECodexAction {
     @Column(name = "ECDX_ACTION")
     private String action;
 
+    @Column(name = "PDF_REQUIRED")
+    private boolean pdfRequired;
+
     public String getAction() {
         return action;
     }
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public boolean isPdfRequired() {
+        return pdfRequired;
+    }
+
+    public void setPdfRequired(boolean pdfRequired) {
+        this.pdfRequired = pdfRequired;
     }
 
 }

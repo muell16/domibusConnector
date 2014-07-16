@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller;
+package eu.ecodex.connector.controller.service;
 
 import eu.ecodex.connector.common.ECodexConnectorProperties;
 import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
@@ -7,16 +7,18 @@ import eu.ecodex.connector.evidences.HashValueBuilder;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
 import eu.ecodex.connector.mapping.ECodexConnectorContentMapper;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
+import eu.ecodex.connector.security.ECodexConnectorSecurityToolkit;
 
-public abstract class ECodexConnectorControllerImpl implements ECodexConnectorController {
+public class AbstractMessageService {
 
     ECodexConnectorProperties connectorProperties;
     ECodexConnectorContentMapper contentMapper;
     ECodexConnectorNationalBackendClient nationalBackendClient;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
     ECodexConnectorEvidencesToolkit evidencesToolkit;
+    ECodexConnectorSecurityToolkit securityToolkit;
     HashValueBuilder hashValueBuilder;
-    ECodexConnectorPersistenceService dbMessageService;
+    ECodexConnectorPersistenceService persistenceService;
 
     public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
@@ -38,12 +40,15 @@ public abstract class ECodexConnectorControllerImpl implements ECodexConnectorCo
         this.evidencesToolkit = evidencesToolkit;
     }
 
-    protected void setHashValueBuilder(HashValueBuilder hashValueBuilder) {
+    public void setSecurityToolkit(ECodexConnectorSecurityToolkit securityToolkit) {
+        this.securityToolkit = securityToolkit;
+    }
+
+    public void setHashValueBuilder(HashValueBuilder hashValueBuilder) {
         this.hashValueBuilder = hashValueBuilder;
     }
 
-    protected void setDbMessageService(ECodexConnectorPersistenceService dbMessageService) {
-        this.dbMessageService = dbMessageService;
+    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
-
 }

@@ -1,4 +1,4 @@
-package eu.ecodex.connector.controller.message;
+package eu.ecodex.connector.controller.service;
 
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;

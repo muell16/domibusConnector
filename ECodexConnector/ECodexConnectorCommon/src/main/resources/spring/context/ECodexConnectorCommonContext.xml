@@ -24,6 +24,7 @@
 		<property name="dynamicDiscoveryCommunity" value="${dynamic.discovery.community}" />
 		<property name="dynamicDiscoveryEnvironment" value="${dynamic.discovery.environment}" />
 		<property name="dynamicDiscoveryNormalisationAlgorithm" value="${dynamic.discovery.normalisation.algorithm}" />
+		<property name="monitoringType" value="${monitoring.type}" />
 	</bean>
 
 	<bean id="persistenceService"
