@@ -65,6 +65,10 @@
          	<property-name>connectorMonitoringService</property-name>
          	<value>#{connectorMonitoringService}</value>
       </managed-property>
+      <managed-property>
+         	<property-name>configurationBean</property-name>
+         	<value>#{configurationBean}</value>
+      </managed-property>
 	</managed-bean>
    
 

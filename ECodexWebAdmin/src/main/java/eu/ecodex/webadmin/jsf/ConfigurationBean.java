@@ -31,6 +31,8 @@ public class ConfigurationBean {
     private String passwordConfirm = "";
     private String userAction = "";
 
+    private String loggedInUser;
+
     private WebAdminProperties webAdminProperties;
 
     private IECodexWebAdminUserDao eCodexWebAdminUserDao;
@@ -179,6 +181,12 @@ public class ConfigurationBean {
 
     public String deleteUser() {
         try {
+
+            if (loggedInUser.equals(user)) {
+                userAction = "Cannot delete logged in user!";
+                saveUserDisplay = true;
+                return "/pages/configuration.xhtml";
+            }
 
             if (!eCodexWebAdminUserDao.checkIfUserExists(user)) {
                 userAction = "User does not exist!";
@@ -333,6 +341,14 @@ public class ConfigurationBean {
 
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
+    }
+
+    public String getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public void setLoggedInUser(String loggedInUser) {
+        this.loggedInUser = loggedInUser;
     }
 
 }

@@ -25,6 +25,7 @@ public class LoginBean implements Serializable {
     private MBeanServerConnection mbsc;
     private String connectedToDb;
     private IConnectorMonitoringService connectorMonitoringService;
+    private ConfigurationBean configurationBean;
 
     public String loginProject() {
         boolean result;
@@ -37,6 +38,7 @@ public class LoginBean implements Serializable {
                 // get Http Session and store username
                 HttpSession session = Util.getSession();
                 session.setAttribute("username", uname);
+                configurationBean.setLoggedInUser(uname);
                 loggedIn = true;
                 return "main";
             } else {
@@ -132,6 +134,14 @@ public class LoginBean implements Serializable {
 
     public void setConnectorMonitoringService(IConnectorMonitoringService connectorMonitoringService) {
         this.connectorMonitoringService = connectorMonitoringService;
+    }
+
+    public ConfigurationBean getConfigurationBean() {
+        return configurationBean;
+    }
+
+    public void setConfigurationBean(ConfigurationBean configurationBean) {
+        this.configurationBean = configurationBean;
     }
 
 }
