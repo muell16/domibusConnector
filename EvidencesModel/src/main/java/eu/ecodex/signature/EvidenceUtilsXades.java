@@ -12,6 +12,7 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
@@ -23,21 +24,24 @@ import java.util.Date;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x509.DigestInfo;
 
+import eu.europa.ec.markt.dss.DSSUtils;
 import eu.europa.ec.markt.dss.Digest;
 import eu.europa.ec.markt.dss.DigestAlgorithm;
+import eu.europa.ec.markt.dss.parameter.SignatureParameters;
 import eu.europa.ec.markt.dss.signature.InMemoryDocument;
-import eu.europa.ec.markt.dss.signature.SignatureFormat;
+import eu.europa.ec.markt.dss.signature.SignatureLevel;
 import eu.europa.ec.markt.dss.signature.SignaturePackaging;
-import eu.europa.ec.markt.dss.signature.SignatureParameters;
 import eu.europa.ec.markt.dss.signature.token.KSPrivateKeyEntry;
 import eu.europa.ec.markt.dss.signature.xades.XAdESService;
-import eu.europa.ec.markt.dss.validation.SignedDocumentValidator;
-import eu.europa.ec.markt.dss.validation.TrustedListCertificateVerifier;
-import eu.europa.ec.markt.dss.validation.report.Result.ResultStatus;
-import eu.europa.ec.markt.dss.validation.report.ValidationReport;
+import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
+import eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier;
+import eu.europa.ec.markt.dss.validation102853.report.Conclusion;
+import eu.europa.ec.markt.dss.validation102853.report.DetailedReport;
+import eu.europa.ec.markt.dss.validation102853.report.SimpleReport;
 
 public class EvidenceUtilsXades extends EvidenceUtils {
 
@@ -63,52 +67,48 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	//
 	KeyInfos keyInfos = getKeyInfosFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 
-	// PrivateKey privKey = (PrivateKey) ks.getKey("myKeyName",
-	// "123456".toCharArray());
 	PrivateKey privKey = keyInfos.getPrivKey();
 
-	// java.security.cert.X509Certificate cert =
-	// (java.security.cert.X509Certificate) ks.getCertificate("myKeyName");
 	java.security.cert.X509Certificate cert = keyInfos.getCert();
+
+	java.security.cert.Certificate[] certArray = { cert };
+	
+	PrivateKeyEntry privKeyEntry = new PrivateKeyEntry(privKey, certArray);
+	KSPrivateKeyEntry pke = new KSPrivateKeyEntry(privKeyEntry);
 	
 	// Signature creation
 	// Create and configure the signature creation service
-	XAdESService service = new XAdESService();
+	XAdESService service = new XAdESService(new CommonCertificateVerifier(true));
 
 	SignatureParameters sigParam = new SignatureParameters();
-	sigParam.setSignatureFormat(SignatureFormat.XAdES_BES);
+	sigParam.setSignatureLevel(SignatureLevel.XAdES_BASELINE_B);
 	sigParam.setSignaturePackaging(SignaturePackaging.ENVELOPED);
-	sigParam.setSigningDate(new Date());
 	sigParam.setSigningCertificate(cert);
 	sigParam.setCertificateChain(keyInfos.getCertChain());
+	sigParam.setDigestAlgorithm(DigestAlgorithm.SHA1);
+	sigParam.setEncryptionAlgorithm(pke.getEncryptionAlgorithm());
 	
 	InMemoryDocument docum = new InMemoryDocument(xmlData);
-	// Create the digest of the data to be signed
-	Digest dgst = service.digest(docum, sigParam);
 
-	// Sign the digest
-	java.security.cert.Certificate[] certArray = { cert };
-
-	PrivateKeyEntry privKeyEntry = new PrivateKeyEntry(privKey, certArray);
-	KSPrivateKeyEntry pke = new KSPrivateKeyEntry(privKeyEntry);
-
-	DigestInfo digestInfo = new DigestInfo(DigestAlgorithm.SHA1.getAlgorithmIdentifier(), dgst.getValue());
-
-	Cipher cipher = Cipher.getInstance(pke.getSignatureAlgorithm().getPadding());
-	cipher.init(Cipher.ENCRYPT_MODE, pke.getPrivateKey());
-
-	byte[] signature = cipher.doFinal(digestInfo.getDEREncoded());
-
+	byte[] bytesToSign = service.getDataToSign(docum, sigParam);
+	
+	final String jceSignatureAlgorithm = sigParam.getSignatureAlgorithm().getJCEId();
+	
+	final byte[] signature = DSSUtils.encrypt(jceSignatureAlgorithm, pke.getPrivateKey(), bytesToSign);
+	
 	InMemoryDocument signedDocument = (InMemoryDocument) service.signDocument(docum, sigParam, signature);
 
 	// Verification
 	SignedDocumentValidator val = SignedDocumentValidator.fromDocument(signedDocument);
-	TrustedListCertificateVerifier certVeri = new TrustedListCertificateVerifier();
+	CommonCertificateVerifier certVeri = new CommonCertificateVerifier();
 	val.setCertificateVerifier(certVeri);
 
-	ValidationReport valRep = val.validateDocument();
-	LOG.info("Signature applied to document. Validationresult: "
-		+ valRep.getSignatureInformationList().get(0).getSignatureVerification().getSignatureVerificationResult());
+	val.validateDocument();
+	
+	LOG.info("Signature applied to document. Validationresult: Signature Valid: "
+		+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureValid()
+		+ " / Signature Intact: " 
+		+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureIntact());
 
 	return getBytes(signedDocument.openStream());
     }
@@ -118,23 +118,23 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	InMemoryDocument signedDocument = new InMemoryDocument(xmlData);
 	String validationResult = "false";
 	SignedDocumentValidator val;
-	try {
-	    val = SignedDocumentValidator.fromDocument(signedDocument);
-	    TrustedListCertificateVerifier certVeri = new TrustedListCertificateVerifier();
-	    val.setCertificateVerifier(certVeri);
-	    ValidationReport valRep = val.validateDocument();
-	    validationResult = valRep.getSignatureInformationList().get(0).getSignatureVerification().getSignatureVerificationResult().getStatus().toString();
-	    LOG.info("Verify Signature, Result: " + validationResult);
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+	
+    val = SignedDocumentValidator.fromDocument(signedDocument);
+    CommonCertificateVerifier certVeri = new CommonCertificateVerifier(true);
+    val.setCertificateVerifier(certVeri);
+    val.validateDocument();
+    
+	LOG.info("Signature applied to document. Validationresult: Signature Valid: "
+			+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureValid()
+			+ " / Signature Intact: " 
+			+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureIntact());
 
 	return isValid(validationResult);
     }
 
     private boolean isValid(String validationResult) {
 
-	if (ResultStatus.valueOf(validationResult) == ResultStatus.VALID)
+	if (validationResult == Conclusion.VALID)
 	    return true;
 
 	return false;
@@ -278,6 +278,31 @@ class KeyInfos {
 	}
 
 	return convertedObjects;
+    }
+
+}
+
+class DigestUtil {
+
+    private DigestUtil() {
+    }
+
+    public static byte[] digestSHA256(final byte[] bytes) {
+        return digest(bytes, DigestAlgorithm.SHA256);
+    }
+
+    public static byte[] digest(final byte[] bytes, final DigestAlgorithm algorithm) {
+        return digest(bytes, algorithm == null ? null : algorithm.getName());
+    }
+
+    public static byte[] digest(final byte[] bytes, final String algorithm) {
+        try {
+            final MessageDigest digest = MessageDigest.getInstance(algorithm);
+            final byte[] digestValue = digest.digest(bytes);
+            return Base64.encodeBase64(digestValue);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
