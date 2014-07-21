@@ -4,7 +4,7 @@
 	<groupId>eu.ecodex.evidences</groupId>
 	<artifactId>EvidenceBuilder</artifactId>
 	<name>EvidencesModel</name>
-	<version>1.0.5.5-SNAPSHOT</version>
+	<version>1.0.5.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>EvidenceBuilder helps creating Evidences in the e-CODEX context.</description>
 	<url>http://www.e-codex.eu</url>
@@ -214,7 +214,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
 			<artifactId>dss-document</artifactId>
-			<version>2.5.0.2</version>
+			<version>4.0.6</version>
 		</dependency>
 	</dependencies>
 
