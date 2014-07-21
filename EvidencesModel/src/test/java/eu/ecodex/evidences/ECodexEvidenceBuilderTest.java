@@ -423,8 +423,8 @@ public class ECodexEvidenceBuilderTest {
 	FileOutputStream fileoutXML = new FileOutputStream(xmloutputfile);
 	fileoutXML.write(signedxmlData);
 	fileoutXML.close();
-	// to test: if file A.xml is changed.
-	signedxmlData = getBytesFromFile("src/test/resources/signatureTestbysourceInfochange.xml");
+//	// to test: if file A.xml is changed.
+//	signedxmlData = getBytesFromFile("src/test/resources/signatureTestbysourceInfochange.xml");
 	Document document;
 	document = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signedxmlData));
 	// KeyPair keypair= generateNewRandomKeyPair();

@@ -89,7 +89,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	sigParam.setEncryptionAlgorithm(pke.getEncryptionAlgorithm());
 	
 	InMemoryDocument docum = new InMemoryDocument(xmlData);
-
+	
 	byte[] bytesToSign = service.getDataToSign(docum, sigParam);
 	
 	final String jceSignatureAlgorithm = sigParam.getSignatureAlgorithm().getJCEId();
@@ -116,7 +116,7 @@ public class EvidenceUtilsXades extends EvidenceUtils {
     @Override
     public boolean verifySignature(byte[] xmlData) {
 	InMemoryDocument signedDocument = new InMemoryDocument(xmlData);
-	String validationResult = "false";
+	
 	SignedDocumentValidator val;
 	
     val = SignedDocumentValidator.fromDocument(signedDocument);
@@ -124,20 +124,18 @@ public class EvidenceUtilsXades extends EvidenceUtils {
     val.setCertificateVerifier(certVeri);
     val.validateDocument();
     
+    boolean sigValid = val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureValid();
+    boolean sigIntact = val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureIntact();
+    
 	LOG.info("Signature applied to document. Validationresult: Signature Valid: "
-			+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureValid()
+			+ sigValid
 			+ " / Signature Intact: " 
-			+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureIntact());
+			+ sigIntact);
 
-	return isValid(validationResult);
-    }
-
-    private boolean isValid(String validationResult) {
-
-	if (validationResult == Conclusion.VALID)
-	    return true;
-
-	return false;
+	if(sigValid && sigIntact)
+		return true;
+	else
+		return false;
     }
 
     private synchronized static byte[] getBytes(InputStream is) throws IOException {
