@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.ecodex.connector</groupId>
 		<artifactId>ECodexConnector</artifactId>
-		<version>2.0-BETA-1</version>
+		<version>2.0-BETA-2</version>
 	</parent>
 	<artifactId>ECodexConnectorSecurityToolkit</artifactId>
 	<dependencies>
@@ -18,11 +18,49 @@
 			<artifactId>ecodex-container</artifactId>
 			<version>1.08</version>
 		</dependency>
-  		<dependency>
+		<dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
 			<artifactId>dss-document</artifactId>
 			<version>4.0.6</version>
-     	</dependency>
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+            		<artifactId>bcprov-ext-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+            		<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+            		<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+            		<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+            		<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<!-- <exclusion>
+					<groupId>bouncycastle</groupId>
+            		<artifactId>bctsp-jdk14</artifactId>
+				</exclusion> -->
+			</exclusions>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bctsp-jdk15on</artifactId>
+			<version>1.49</version>
+		</dependency> -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

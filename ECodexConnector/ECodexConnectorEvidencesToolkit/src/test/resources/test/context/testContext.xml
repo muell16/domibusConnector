@@ -15,10 +15,10 @@
 	</bean>
 
 	<bean id="evidenceBuilder" class="eu.ecodex.evidences.ECodexEvidenceBuilder">
-		<constructor-arg value="file:${user.dir}/src/test/resources/keystore/evidenceBuilderStore.jks" />
-		<constructor-arg value="123456" />
-		<constructor-arg value="evidenceBuilderKey" />
-		<constructor-arg value="123456" />
+		<constructor-arg value="file:${user.dir}/src/test/resources/keystore/evidence_test.jks" />
+		<constructor-arg value="test1234" />
+		<constructor-arg value="test" />
+		<constructor-arg value="test1234" />
 	</bean>
 
 	<bean id="hashValueBuilder" class="eu.ecodex.connector.evidences.HashValueBuilder">
