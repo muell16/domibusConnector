@@ -24,23 +24,23 @@
   	<property name="proxyDao" ref="connectorProxyDao"/>
   </bean>
   
-  <bean id="httpDataLoader" class="eu.europa.ec.markt.dss.validation.https.CommonsHttpDataLoader" singleton="false">
+  <bean id="httpDataLoader" class="eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader" singleton="false">
   	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
   </bean>
   
-  <bean id="ocspDataLoader" class="eu.europa.ec.markt.dss.validation.https.CommonsHttpDataLoader" singleton="false">
+  <bean id="ocspDataLoader" class="eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader" singleton="false">
   	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
   	<property name="contentType" value="application/ocsp-request"/>
   </bean>
   
-  <bean id="trustedListsCertificateSource" class="eu.europa.ec.markt.dss.validation.tsl.TrustedListsCertificateSource" init-method="init">
-  	<property name="tslLoader" ref="httpDataLoader"/>
+  <bean id="trustedListsCertificateSource" class="eu.europa.ec.markt.dss.validation102853.tsl.TrustedListsCertificateSource" init-method="init">
+  	<property name="dataLoader" ref="httpDataLoader"/>
   	<property name="checkSignature" value="false"/>
   	<property name="lotlUrl" value="https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml"/>
   </bean>
   
-  <bean id="onlineCRLSource" class="eu.europa.ec.markt.dss.validation.crl.OnlineCRLSource">
-  	<property name="urlDataLoader" ref="httpDataLoader"/>
+  <bean id="onlineCRLSource" class="eu.europa.ec.markt.dss.validation102853.crl.OnlineCRLSource">
+  	<property name="dataLoader" ref="httpDataLoader"/>
   </bean>
   
   <!-- <bean id="cachedCRLSource" class = "eu.europa.ec.markt.dss.validation.crl.JdbcCacheCRLSource">
@@ -48,14 +48,14 @@
   	<property name="dataSource" ref="dataSource"/>
   </bean> -->
   
-  <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation.ocsp.OnlineOCSPSource">
-  	<property name="httpDataLoader" ref="ocspDataLoader"/>
+  <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation102853.ocsp.OnlineOCSPSource">
+  	<property name="dataLoader" ref="ocspDataLoader"/>
   </bean>
   
-  <bean id="certificateVerifier" class="eu.europa.ec.markt.dss.validation.TrustedListCertificateVerifier">
+  <bean id="certificateVerifier" class="eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier">
   	<property name="crlSource" ref="onlineCRLSource"/>
   	<property name="ocspSource" ref="ocspSource"/>
-  	<property name="trustedListCertificatesSource" ref="trustedListsCertificateSource"/>
+  	<property name="trustedCertSource" ref="trustedListsCertificateSource"/>
   </bean>
   
   <bean id="trustedCertificates" class="eu.ecodex.dss.model.CertificateStoreInfo" >
@@ -64,7 +64,7 @@
 	</bean>
 
 	<bean id="environmentConfiguration" class="eu.ecodex.dss.model.EnvironmentConfiguration" >
-		<property name="connnectorCertificates" ref="trustedCertificates" />
+		<property name="connectorCertificates" ref="trustedCertificates" />
 	</bean>
 	
   <bean id="legalValidationService" class="eu.ecodex.dss.service.impl.dss.DSSECodexLegalValidationService">
