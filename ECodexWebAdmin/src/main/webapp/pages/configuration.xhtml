@@ -113,7 +113,7 @@
 
 		</h:form>
 		<h:form id="userConfiguration">
-		
+
 			<p:panel id="userPanel" header="User configuration"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
 				toggleable="true" toggleOrientation="horizontal">
@@ -131,7 +131,7 @@
 						label="Password confirm" required="true" />
 
 				</h:panelGrid>
-  				<p:messages id="messages" showDetail="true" autoUpdate="true" />
+				<p:messages id="messages" showDetail="true" autoUpdate="true" />
 				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">
 					<h:outputText class="textArea" style="margin: 0 auto;"
 						value="#{configurationBean.userAction}"
@@ -142,17 +142,26 @@
 				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="5">
 					<h:commandButton id="addUser" action="#{configurationBean.addUser}"
 						value="Add user" />
-					<h:commandButton id="deleteUser" action="#{configurationBean.deleteUser}"
-						value="Delete user" />
+					<h:commandButton id="deleteUser"
+						action="#{configurationBean.deleteUser}" value="Delete user" />
 
-				</h:panelGrid>					
+				</h:panelGrid>
 
 
 
 
 			</p:panel>
 
-</h:form>
+			<hr />
 
-</ui:define>
+		</h:form>
+		<h:form id="formRestart">
+			<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="5">
+				<h:commandButton id="testConnection" style="margin: 0 auto;"
+					action="#{configurationBean.restart}" value="Restart WebAdmin" />
+
+			</h:panelGrid>
+		</h:form>
+
+	</ui:define>
 </ui:composition>

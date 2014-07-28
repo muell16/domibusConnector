@@ -207,6 +207,11 @@ public class ConfigurationBean {
 
     }
 
+    public String restart() {
+        webAdminProperties.getCtx().refresh();
+        return "/pages/configuration.xhtml";
+    }
+
     public boolean isDbSelected() {
         return dbSelected;
     }

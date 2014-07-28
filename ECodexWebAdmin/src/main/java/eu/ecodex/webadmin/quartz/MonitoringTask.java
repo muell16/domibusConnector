@@ -1,5 +1,7 @@
 package eu.ecodex.webadmin.quartz;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -65,11 +67,11 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
         sendmail.setEmailList(emailList);
         sendmail.setNameFrom("Betrieb ECodex");
         sendmail.setSmtpHostName(webAdminProperties.getSmtpHostName());
-        // try {
-        // sendmail.postMail(text, "ECodex monitoring warning");
-        // } catch (MessagingException e) {
-        // logger.error(e);
-        // }
+        try {
+            sendmail.postMail(text, "ECodex monitoring warning");
+        } catch (MessagingException e) {
+            logger.error(e);
+        }
 
         return "/pages/configuration.xhtml";
     }

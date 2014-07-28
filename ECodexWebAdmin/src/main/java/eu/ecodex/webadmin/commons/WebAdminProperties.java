@@ -4,10 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
-public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
+public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
 
     private static final long serialVersionUID = -1113080729567255182L;
 
@@ -23,6 +27,8 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
     private String mailNotificationList;
     private String smtpHostName;
     private Long monitoringTimerInterval;
+
+    private XmlWebApplicationContext ctx;
 
     public void loadProperties() {
         String sql = "select * from ECODEX_WEBADMIN_PROPERTIES";
@@ -189,6 +195,19 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
 
     public void setSmtpHostName(String smtpHostName) {
         this.smtpHostName = smtpHostName;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        ctx = (XmlWebApplicationContext) context;
+    }
+
+    public XmlWebApplicationContext getCtx() {
+        return ctx;
+    }
+
+    public void setCtx(XmlWebApplicationContext ctx) {
+        this.ctx = ctx;
     }
 
 }
