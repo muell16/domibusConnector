@@ -145,8 +145,11 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     }
 
     public String getRestConnectorString() {
-        return "http://" + getRestServerAddress() + ":" + getRestServerPort() + "/" + restWebContext
-                + "/services/rest/monitor/";
+        String restUrl = "http://" + getRestServerAddress() + ":" + getRestServerPort() + "/" + restWebContext;
+        if (!restUrl.endsWith("/")) {
+            restUrl += "/";
+        }
+        return restUrl;
     }
 
     public String getRestWebContext() {

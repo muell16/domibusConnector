@@ -28,8 +28,18 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
- 				<value>file:/conf/connector/connector.properties</value>
-<!-- 				<value>classpath:connector.properties</value>   -->
+    			<value>file:conf/connector/connector.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="log4jInitializer" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod">
+			<value>org.springframework.util.Log4jConfigurer.initLogging</value>
+		</property>
+		<property name="arguments">
+			<list>
+ 				<value>file:conf/connector/log4j.properties</value>
 			</list>
 		</property>
 	</bean>
