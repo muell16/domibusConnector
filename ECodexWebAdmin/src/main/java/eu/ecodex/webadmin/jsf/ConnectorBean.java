@@ -3,6 +3,8 @@ package eu.ecodex.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.faces.event.AjaxBehaviorEvent;
+
 import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorCustomService;
 import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorSummaryService;
@@ -39,7 +41,7 @@ public class ConnectorBean implements Serializable {
         this.categoryNumber = categoryNumber;
     }
 
-    public String start() {
+    public String start(AjaxBehaviorEvent abe) {
         if (categoryNumber != null && categoryNumber.equals(1)) {
             summarySelected = true;
             customSelected = false;

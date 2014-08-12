@@ -19,6 +19,14 @@
 		<ecodex.connector.version>2.0-SNAPSHOT</ecodex.connector.version>
 		<ecodex.monitoring.version>2.0-SNAPSHOT</ecodex.monitoring.version>
 		<mojarra.version>2.1.6</mojarra.version>
+		
+		<webadmin.build.dir>ECodexWebAdmin/</webadmin.build.dir>
+		<documentation.output.dir>${webadmin.build.dir}documentation/</documentation.output.dir>
+		<db.scripts.output.dir>${documentation.output.dir}db-scripts</db.scripts.output.dir>
+		<modules.output.dir>${webadmin.build.dir}modules</modules.output.dir>
+		<lib.output.dir>${webadmin.build.dir}lib</lib.output.dir>
+		<release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
+		<properties.output.dir>${documentation.output.dir}properties</properties.output.dir>
 	</properties>
 
     <profiles>
@@ -243,6 +251,24 @@
 					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
 
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-distribution-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		

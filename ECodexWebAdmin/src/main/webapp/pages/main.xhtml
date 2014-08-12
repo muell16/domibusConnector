@@ -63,7 +63,16 @@
 							<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='ERROR'}">
 								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
             				</c:if>
-							<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='OK'}">
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='BLOCKED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='PAUSED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='ACQUIRED'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='OK'}">
 								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
             				</c:if>
 						</tr>
@@ -74,7 +83,16 @@
 							<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='ERROR'}">
 								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
             				</c:if>
-							<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='OK'}">
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='BLOCKED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='PAUSED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='ACQUIRED'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='OK'}">
 								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
             				</c:if>
 						</tr>
@@ -85,7 +103,16 @@
 							<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='ERROR'}">
 								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
             				</c:if>
-							<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='OK'}">
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='BLOCKED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='PAUSED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='ACQUIRED'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='OK'}">
 								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
             				</c:if>
 						</tr>
@@ -110,15 +137,15 @@
 					
 						<tr style="border:1">
 							<td  style="border:1;">AS4 receipt pending</td>
-							<td style="border:1">#{connectorBean.connectorMonitoringService.noReceiptMessagesGateway}</td>
-							<c:if test="#{loginBean.connectorMonitoringService.noReceiptMessagesGatewayStatus=='ERROR'}">
-								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.noReceiptMessagesGatewayStatus}</td>
+							<td style="border:1">#{connectorBean.connectorMonitoringService.pendingMessagesGateway}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
             				</c:if>
-							<c:if test="#{loginBean.connectorMonitoringService.noReceiptMessagesGatewayStatus=='OK'}">
-								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.noReceiptMessagesGatewayStatus}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
             				</c:if>
-            				<c:if test="#{loginBean.connectorMonitoringService.noReceiptMessagesGatewayStatus=='WARNING'}">
-								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.noReceiptMessagesGatewayStatus}</td>
+            				<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='WARNING'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
             				</c:if>
 						</tr>
 						

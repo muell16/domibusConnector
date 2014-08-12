@@ -41,6 +41,8 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private String noReceiptMessagesGatewayStatus;
     private Integer rejectedConnectorMessagesCount;
     private String rejectedConnectorMessagesCountStatus;
+    private Integer pendingMessagesGateway;
+    private String pendingMessagesGatewayStatus;
     private boolean useMonitorServer = false;
     private ECodexConnectorMonitoringDao monitoringDao;
 
@@ -119,16 +121,11 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             Long lastCalledOutgoingMillis = (Long) mbsc.getAttribute(jmxMonitor, "LastCalledOutgoing");
             lastCalledOutgoing = new Date(lastCalledOutgoingMillis);
             noReceiptMessagesGateway = (Integer) mbsc.getAttribute(jmxMonitor, "NoReceiptMessagesGateway");
-            if (noReceiptMessagesGateway > 0) {
-                noReceiptMessagesGatewayStatus = "WARNING";
+            pendingMessagesGateway = (Integer) mbsc.getAttribute(jmxMonitor, "PendingMessagesGateway");
+            if (pendingMessagesGateway > 0) {
+                pendingMessagesGatewayStatus = "WARNING";
             } else {
-                noReceiptMessagesGatewayStatus = "OK";
-            }
-            rejectedConnectorMessagesCount = (Integer) mbsc.getAttribute(jmxMonitor, "RejectedConnectorMessagesCount");
-            if (rejectedConnectorMessagesCount > 0) {
-                rejectedConnectorMessagesCountStatus = "WARNING";
-            } else {
-                rejectedConnectorMessagesCountStatus = "OK";
+                pendingMessagesGatewayStatus = "OK";
             }
 
         } catch (Exception e) {
@@ -154,17 +151,11 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             lastCalledIncoming = new Date(Long.valueOf(queryRestWebService(restUrl + "getLastCalledIncoming/")));
             lastCalledOutgoing = new Date(Long.valueOf(queryRestWebService(restUrl + "getLastCalledOutgoing/")));
             noReceiptMessagesGateway = Integer.valueOf(queryRestWebService(restUrl + "getNoReceiptMessagesGateway/"));
-            if (noReceiptMessagesGateway > 0) {
-                noReceiptMessagesGatewayStatus = "WARNING";
+            pendingMessagesGateway = Integer.valueOf(queryRestWebService(restUrl + "getPendingGatewayMessagesCount/"));
+            if (pendingMessagesGateway > 0) {
+                pendingMessagesGatewayStatus = "WARNING";
             } else {
-                noReceiptMessagesGatewayStatus = "OK";
-            }
-            rejectedConnectorMessagesCount = Integer.valueOf(queryRestWebService(restUrl
-                    + "getRejectedConnectorMessagesCount/"));
-            if (rejectedConnectorMessagesCount > 0) {
-                rejectedConnectorMessagesCountStatus = "WARNING";
-            } else {
-                rejectedConnectorMessagesCountStatus = "OK";
+                pendingMessagesGatewayStatus = "OK";
             }
 
         } catch (IOException e) {
@@ -220,16 +211,11 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
         lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
         noReceiptMessagesGateway = Integer.valueOf(monitoringDao.countNoReceiptMessagesGateway());
-        if (noReceiptMessagesGateway > 0) {
-            noReceiptMessagesGatewayStatus = "WARNING";
+        pendingMessagesGateway = Integer.valueOf(monitoringDao.countPendingMessagesGateway());
+        if (pendingMessagesGateway > 0) {
+            pendingMessagesGatewayStatus = "WARNING";
         } else {
-            noReceiptMessagesGatewayStatus = "OK";
-        }
-        rejectedConnectorMessagesCount = Integer.valueOf(monitoringDao.countRejectedMessagesConnector());
-        if (rejectedConnectorMessagesCount > 0) {
-            rejectedConnectorMessagesCountStatus = "WARNING";
-        } else {
-            rejectedConnectorMessagesCountStatus = "OK";
+            pendingMessagesGatewayStatus = "OK";
         }
 
     }
@@ -272,6 +258,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.jobStatusEvidencesTimeout = jobStatusEvidencesTimeout;
     }
 
+    @Override
     public String getJobStatusIncoming() {
         return jobStatusIncoming;
     }
@@ -280,6 +267,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.jobStatusIncoming = jobStatusIncoming;
     }
 
+    @Override
     public String getJobStatusOutgoing() {
         return jobStatusOutgoing;
     }
@@ -288,6 +276,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.jobStatusOutgoing = jobStatusOutgoing;
     }
 
+    @Override
     public Integer getNoReceiptMessagesGateway() {
         return noReceiptMessagesGateway;
     }
@@ -304,6 +293,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.rejectedConnectorMessagesCount = rejectedConnectorMessagesCount;
     }
 
+    @Override
     public String getConnectionMessage() {
         return connectionMessage;
     }
@@ -312,6 +302,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.connectionMessage = connectionMessage;
     }
 
+    @Override
     public String getConnectionStatus() {
         return connectionStatus;
     }
@@ -368,6 +359,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.useMonitorServer = useMonitorServer;
     }
 
+    @Override
     public String getNoReceiptMessagesGatewayStatus() {
         return noReceiptMessagesGatewayStatus;
     }
@@ -390,6 +382,22 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     public void setMonitoringDao(ECodexConnectorMonitoringDao monitoringDao) {
         this.monitoringDao = monitoringDao;
+    }
+
+    public Integer getPendingMessagesGateway() {
+        return pendingMessagesGateway;
+    }
+
+    public void setPendingMessagesGateway(Integer pendingMessagesGateway) {
+        this.pendingMessagesGateway = pendingMessagesGateway;
+    }
+
+    public String getPendingMessagesGatewayStatus() {
+        return pendingMessagesGatewayStatus;
+    }
+
+    public void setPendingMessagesGatewayStatus(String pendingMessagesGatewayStatus) {
+        this.pendingMessagesGatewayStatus = pendingMessagesGatewayStatus;
     }
 
 }

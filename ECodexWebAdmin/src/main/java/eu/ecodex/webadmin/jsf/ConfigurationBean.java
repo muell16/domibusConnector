@@ -5,7 +5,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.servlet.http.HttpSession;
+
 import eu.ecodex.webadmin.commons.JmxConnector;
+import eu.ecodex.webadmin.commons.Util;
 import eu.ecodex.webadmin.commons.WebAdminProperties;
 import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
 
@@ -148,9 +151,12 @@ public class ConfigurationBean {
         saveMonitoringDisplay = false;
         saveUserDisplay = false;
         saveJobDisplay = true;
-
-        webAdminProperties.saveProperty("mail.notification", String.valueOf(webAdminProperties.isMailNotification()));
-        webAdminProperties.saveProperty("mail.notification.receivers", webAdminProperties.getMailNotificationList());
+        webAdminProperties.saveProperty("monitoring.log.write",
+                String.valueOf(webAdminProperties.isMonitoringLogWrite()));
+        // webAdminProperties.saveProperty("mail.notification",
+        // String.valueOf(webAdminProperties.isMailNotification()));
+        // webAdminProperties.saveProperty("mail.notification.receivers",
+        // webAdminProperties.getMailNotificationList());
         webAdminProperties.saveProperty("monitoring.timer.interval",
                 String.valueOf(webAdminProperties.getMonitoringTimerInterval()));
 
@@ -209,7 +215,9 @@ public class ConfigurationBean {
 
     public String restart() {
         webAdminProperties.getCtx().refresh();
-        return "/pages/configuration.xhtml";
+        HttpSession session = Util.getSession();
+        session.invalidate();
+        return "login";
     }
 
     public boolean isDbSelected() {

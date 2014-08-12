@@ -13,12 +13,14 @@
  <h:form  id="form"> 
 	<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">           
         <h:outputText class="textArea" value="Category: " />  
-        <h:selectOneMenu value="#{connectorBean.categoryNumber}">  
+        <h:selectOneMenu value="#{connectorBean.categoryNumber}" >
+             <p:ajax listener="#{connectorBean.start}" update="form"/>
             <f:selectItem itemLabel="Select One" itemValue="" />  
             <f:selectItem itemLabel="Summary" itemValue="1" />  
-            <f:selectItem itemLabel="Custom" itemValue="2" />   
+            <f:selectItem itemLabel="Custom" itemValue="2" />  
+            
         </h:selectOneMenu>
-        <h:commandButton id="start" action="#{connectorBean.start}" value="Start"/> 
+
     </h:panelGrid>
     <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
     	<h:outputText class="textArea" value="From: "  rendered="#{connectorBean.customSelected}"/> 
@@ -125,7 +127,7 @@
             <f:selectItem itemLabel="RELAY_REMMD_ACCEPTANCE" itemValue="RELAY_REMMD_ACCEPTANCE" />
             <f:selectItem itemLabel="RETRIEVAL" itemValue="RETRIEVAL" />
             <f:selectItem itemLabel="SUBMISSION_ACCEPTANCE" itemValue="SUBMISSION_ACCEPTANCE" />
-            <f:selectItem itemLabel="SUBMISSION_REJECTION" itemValue="SUBMISSION_ACCEPTANCE" />      
+            <f:selectItem itemLabel="SUBMISSION_REJECTION" itemValue="SUBMISSION_REJECTION" />      
         </h:selectOneMenu>
         
             <h:commandButton id="generate" action="#{connectorBean.connectorCustomService.generateCustomReport}" value="Generate"

@@ -28,7 +28,9 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-    			<value>file:conf/connector/connector.properties</value>
+    			<value>file:conf/webadmin/connector.properties</value>
+<!--    				<value>classpath:webadmin.properties</value>    -->
+   				<value>classpath:connector.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -40,6 +42,7 @@
 		<property name="arguments">
 			<list>
  				<value>file:conf/connector/log4j.properties</value>
+<!-- 				<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>
 	</bean>

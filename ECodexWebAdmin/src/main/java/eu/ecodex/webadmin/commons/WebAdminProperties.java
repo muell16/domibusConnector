@@ -27,6 +27,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private String mailNotificationList;
     private String smtpHostName;
     private Long monitoringTimerInterval;
+    private boolean monitoringLogWrite;
 
     private XmlWebApplicationContext ctx;
 
@@ -58,6 +59,8 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
                     monitoringTimerInterval = Long.valueOf(value);
                 } else if ("smtp.hostname".equals(key)) {
                     smtpHostName = value;
+                } else if ("monitoring.log.write".equals(key)) {
+                    monitoringLogWrite = Boolean.parseBoolean(value);
                 }
 
             }
@@ -211,6 +214,14 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
 
     public void setCtx(XmlWebApplicationContext ctx) {
         this.ctx = ctx;
+    }
+
+    public boolean isMonitoringLogWrite() {
+        return monitoringLogWrite;
+    }
+
+    public void setMonitoringLogWrite(boolean monitoringLogWrite) {
+        this.monitoringLogWrite = monitoringLogWrite;
     }
 
 }

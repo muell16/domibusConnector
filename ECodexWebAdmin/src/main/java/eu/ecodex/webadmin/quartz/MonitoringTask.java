@@ -34,27 +34,31 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
             errorFound = true;
         }
 
-        if (!"OK".equals(connectorMonitoringService.getJobStatusIncoming())) {
+        if ("ERROR".equals(connectorMonitoringService.getJobStatusIncoming())) {
             mailReport += "Check incoming jobs: " + connectorMonitoringService.getJobStatusIncoming() + "\n";
             errorFound = true;
         }
-        if (!"OK".equals(connectorMonitoringService.getJobStatusOutgoing())) {
+        if ("ERROR".equals(connectorMonitoringService.getJobStatusOutgoing())) {
             mailReport += "Check outgoing jobs: " + connectorMonitoringService.getJobStatusOutgoing() + "\n";
             errorFound = true;
         }
 
-        if (!"OK".equals(connectorMonitoringService.getNoReceiptMessagesGatewayStatus())) {
+        if ("ERROR".equals(connectorMonitoringService.getNoReceiptMessagesGatewayStatus())) {
             mailReport += "Check AS4 messages pending: " + connectorMonitoringService.getNoReceiptMessagesGateway()
                     + "\n";
             errorFound = true;
         }
 
         if (errorFound) {
-            logger.error(mailReport);
 
-            if (webAdminProperties.isMailNotification()) {
-                mail(mailReport);
+            if (webAdminProperties.isMonitoringLogWrite()) {
+                logger.error(mailReport);
+
+                if (webAdminProperties.isMailNotification()) {
+                    mail(mailReport);
+                }
             }
+
         }
 
     }
