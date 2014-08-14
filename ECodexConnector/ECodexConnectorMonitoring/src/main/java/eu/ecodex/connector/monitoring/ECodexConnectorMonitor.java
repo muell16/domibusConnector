@@ -46,6 +46,10 @@ public class ECodexConnectorMonitor {
         return monitoringDao.countNoReceiptMessagesGateway();
     }
 
+    public Integer getPendingMessagesGateway() {
+        return monitoringDao.countPendingMessagesGateway();
+    }
+
     public void setMonitoringDao(ECodexConnectorMonitoringDao monitoringDao) {
         this.monitoringDao = monitoringDao;
     }
