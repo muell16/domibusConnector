@@ -77,6 +77,13 @@ public class ECodexConnectorMonitorREST implements IECodexConnectorMonitor {
         return ecodexConnectorMonitor.getNoReceiptMessagesGateway();
     }
 
+    @Override
+    @POST
+    @Path("/getPendingGatewayMessagesCount/")
+    public Integer getPendingMessagesGateway() {
+        return ecodexConnectorMonitor.getPendingMessagesGateway();
+    }
+
     public ECodexConnectorMonitor getEcodexConnectorMonitor() {
         return ecodexConnectorMonitor;
     }

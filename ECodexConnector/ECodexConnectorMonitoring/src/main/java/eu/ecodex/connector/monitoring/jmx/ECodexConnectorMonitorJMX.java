@@ -65,6 +65,12 @@ public class ECodexConnectorMonitorJMX implements IECodexConnectorMonitor {
         return ecodexConnectorMonitor.getNoReceiptMessagesGateway();
     }
 
+    @Override
+    @ManagedAttribute(description = "Count of pending gateway messages")
+    public Integer getPendingMessagesGateway() {
+        return ecodexConnectorMonitor.getPendingMessagesGateway();
+    }
+
     public ECodexConnectorMonitor getEcodexConnectorMonitor() {
         return ecodexConnectorMonitor;
     }

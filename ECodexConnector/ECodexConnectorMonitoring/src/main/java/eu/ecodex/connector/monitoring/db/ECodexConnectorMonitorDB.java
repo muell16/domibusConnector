@@ -52,6 +52,11 @@ public class ECodexConnectorMonitorDB implements IECodexConnectorMonitor {
         return ecodexConnectorMonitor.getNoReceiptMessagesGateway();
     }
 
+    @Override
+    public Integer getPendingMessagesGateway() {
+        return ecodexConnectorMonitor.getPendingMessagesGateway();
+    }
+
     public void setEcodexConnectorMonitor(ECodexConnectorMonitor ecodexConnectorMonitor) {
         this.ecodexConnectorMonitor = ecodexConnectorMonitor;
     }

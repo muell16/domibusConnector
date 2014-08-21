@@ -20,4 +20,6 @@ public interface IECodexConnectorMonitor {
 
     public Integer getNoReceiptMessagesGateway();
 
+    public Integer getPendingMessagesGateway();
+
 }
