@@ -35,4 +35,16 @@ public class ECodexConnectorMonitoringDao extends JdbcDaoSupport {
         return getJdbcTemplate().queryForInt(sql);
     }
 
+    public Integer countPendingMessagesGateway() {
+        String sql = "select count(*) from TB_RECEIPT_TRACKING where status = 'IN_PROCESS'";
+
+        return getJdbcTemplate().queryForInt(sql);
+    }
+
+    public Integer countPendingMessagesConnector() {
+        String sql = "select count(*) from ECODEX_MESSAGES where confirmed is null and rejected is null";
+
+        return getJdbcTemplate().queryForInt(sql);
+    }
+
 }

@@ -230,19 +230,23 @@ public class ECodexSecurityContainer implements InitializingBean {
                 if (results.isSuccessful()) {
                     if (container != null) {
                         if (container.getBusinessDocument() != null) {
+                            LOGGER.debug("The business document received from the container is of Mime Type {}",
+                                    container.getBusinessDocument().getMimeType());
                             try {
                                 InputStream is = container.getBusinessDocument().openStream();
                                 byte[] docAsBytes = new byte[is.available()];
                                 is.read(docAsBytes);
-                                if (container.getBusinessDocument().getMimeType() == MimeType.PDF)
+                                if (container.getToken().getDocumentType().equals(MimeType.PDF.name()))
                                     message.getMessageContent().setPdfDocument(docAsBytes);
-                                if (container.getBusinessDocument().getMimeType() == MimeType.XML
+                                if (container.getToken().getDocumentType().equals(MimeType.XML.name())
                                         && message.getMessageDetails().isValidWithoutPDF())
                                     message.getMessageContent().setECodexContent(docAsBytes);
                             } catch (IOException e) {
                                 throw new ECodexConnectorSecurityException("Could not read business document!");
                             }
 
+                        } else {
+                            LOGGER.debug("The business document received from the container is null!");
                         }
 
                         if (container.getBusinessContent().getDetachedSignature() != null) {
@@ -294,6 +298,8 @@ public class ECodexSecurityContainer implements InitializingBean {
                                 LOGGER.error("Could not read Token XML!", e);
                             }
                         }
+                    } else {
+                        throw new ECodexConnectorSecurityException("The resolved business container is null!");
                     }
                 } else {
                     String errormessage = "\nSeveral problems prevented the container from being created:";
