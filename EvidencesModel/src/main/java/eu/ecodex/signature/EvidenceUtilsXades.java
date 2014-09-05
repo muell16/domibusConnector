@@ -106,9 +106,9 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	val.validateDocument();
 	
 	LOG.info("Signature applied to document. Validationresult: Signature Valid: "
-		+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureValid()
+		+ val.getSignatures().get(0).checkSignatureIntegrity().isSignatureValid()
 		+ " / Signature Intact: " 
-		+ val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureIntact());
+		+ val.getSignatures().get(0).checkSignatureIntegrity().isSignatureIntact());
 
 	return getBytes(signedDocument.openStream());
     }
@@ -124,8 +124,8 @@ public class EvidenceUtilsXades extends EvidenceUtils {
     val.setCertificateVerifier(certVeri);
     val.validateDocument();
     
-    boolean sigValid = val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureValid();
-    boolean sigIntact = val.getSignatures().get(0).checkIntegrity(signedDocument).isSignatureIntact();
+    boolean sigValid = val.getSignatures().get(0).checkSignatureIntegrity().isSignatureValid();
+    boolean sigIntact = val.getSignatures().get(0).checkSignatureIntegrity().isSignatureIntact();
     
 	LOG.info("Signature applied to document. Validationresult: Signature Valid: "
 			+ sigValid
