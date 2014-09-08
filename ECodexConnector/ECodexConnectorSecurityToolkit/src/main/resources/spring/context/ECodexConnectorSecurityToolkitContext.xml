@@ -55,6 +55,7 @@
   <bean id="certificateVerifier" class="eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier">
   	<property name="crlSource" ref="onlineCRLSource"/>
   	<property name="ocspSource" ref="ocspSource"/>
+  	<property name="dataLoader" ref="httpDataLoader"/>
   	<property name="trustedCertSource" ref="trustedListsCertificateSource"/>
   </bean>
   
