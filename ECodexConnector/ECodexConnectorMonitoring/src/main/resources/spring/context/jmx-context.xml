@@ -29,12 +29,6 @@
         <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
     
-    	
-	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
-		<property name="monitoringDao" ref="monitoringDao"/>
-	</bean>	
-    
-    
     <bean id="ecodexConnectorMonitorJMX" class="eu.ecodex.connector.monitoring.jmx.ECodexConnectorMonitorJMX">
 		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
 	</bean>
