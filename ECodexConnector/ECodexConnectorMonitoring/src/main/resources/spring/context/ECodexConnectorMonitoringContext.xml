@@ -2,14 +2,17 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-
-	<bean id="ecodexConnectorMonitorController" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitorController">
-	<property name="connectorProperties" ref="connectorProperties"/>		
-	</bean>
-
 	
 	<bean id="monitoringDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
+	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
+		<property name="monitoringDao" ref="monitoringDao"/>
+	</bean>
+
+	<bean id="ecodexConnectorMonitorController" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitorController">
+		<property name="connectorProperties" ref="connectorProperties"/>		
+	</bean> 
+	
 </beans>

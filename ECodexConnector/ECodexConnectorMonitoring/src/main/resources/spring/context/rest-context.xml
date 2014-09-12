@@ -19,12 +19,6 @@
         </cxf:features>
     </cxf:bus>
     
-    	
-	<bean id="ecodexConnectorMonitor" class="eu.ecodex.connector.monitoring.ECodexConnectorMonitor">
-		<property name="monitoringDao" ref="monitoringDao"/>
-	</bean>	
-    
-
     <bean id="ecodexConnectorMonitorREST" class="eu.ecodex.connector.monitoring.rest.ECodexConnectorMonitorREST">
     		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
     </bean>
