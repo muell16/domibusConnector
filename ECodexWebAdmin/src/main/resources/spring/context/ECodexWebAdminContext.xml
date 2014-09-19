@@ -57,14 +57,43 @@
 			</bean>
 		</property>
 	</bean>
+	
+	<bean id="entityManagerFactoryWebAdminGateway"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="ecodex.gateway" />
+		<property name="dataSource" ref="dataSourceGateway" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="databasePlatform" value="${connector.database.dialect}" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="dataSourceGateway" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${gateway.database.driverClassName}" />
+        <property name="jdbcUrl" value="${gateway.database.url}" />
+        <property name="user" value="${gateway.database.username}" />
+        <property name="password" value="${gateway.database.password}" /> 
+
+        <!-- these are C3P0 properties -->
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+        <property name="minPoolSize" value="${c3p0.minPoolSize}" />
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+ </bean>
 
 	<bean id="transactionManagerWebAdmin" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdmin" />
 	</bean>
 	
+	<bean id="transactionManagerWebAdminGateway" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdminGateway" />
+	</bean>
+	
 	
 	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties" init-method="loadProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
+		<property name="gatewayDatabaseUrl" value="${gateway.database.url}" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 		
@@ -86,6 +115,7 @@
       class="eu.ecodex.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService">    
        		  <property name="webAdminProperties" ref="webAdminProperties" /> 
        		  <property name="monitoringDao" ref="monitoringDao" />
+       		  <property name="dbUtil" ref="dbUtil" />
        		  
    </bean>
    
@@ -121,6 +151,10 @@
 	<bean id="monitoringDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	
+	<bean id="dbUtil" class="eu.ecodex.webadmin.commons.DBUtil">
+		<property name="connectorDatasource" ref="dataSource" />
+		<property name="gatewayDatasource" ref="dataSourceGateway" />
+	</bean>
 		
 </beans>

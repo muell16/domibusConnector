@@ -36,10 +36,30 @@
 					toggleOrientation="horizontal">
 				
 					<table style="margin: 0 auto;" border="1">
+						<tr>
+							<td style="border:1;font-weight:bold;">DB</td>
+							<td style="border:1;font-weight:bold;">Connection URL</td>
+							<td style="border:1;font-weight:bold;">Status</td>
+						</tr>
 						<tr style="border:1">
-							<td  style="border:1;font-weight:bold;">DB</td>
-							<td style="border:1">#{loginBean.connectorMonitoringService.connectionDB}"</td>
-							<td style="border:1;background-color:GREEN;color:BLACK;font-weight:bold;">OK</td>
+							<td  style="border:1;">Connector</td>
+							<td style="border:1">#{loginBean.connectorMonitoringService.connectionConnectorDB}"</td>
+							<c:if test="#{loginBean.connectorMonitoringService.connectionStatusConnectorDB=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.connectionStatusConnectorDB}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.connectionStatusConnectorDB=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatusConnectorDB}</td>
+            				</c:if>
+						</tr>
+						<tr style="border:1">
+							<td  style="border:1;">Gateway</td>
+							<td style="border:1">#{loginBean.connectorMonitoringService.connectionGatewayDB}"</td>
+							<c:if test="#{loginBean.connectorMonitoringService.connectionStatusGatewayDB=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.connectionStatusGatewayDB}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.connectionStatusGatewayDB=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatusGatewayDB}</td>
+            				</c:if>
 						</tr>
 					</table>
 					

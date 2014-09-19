@@ -8,5 +8,11 @@
 		
 		 <class>eu.ecodex.webadmin.model.connector.ECodexWebAdminUser</class>
 	</persistence-unit>
+	
+	<persistence-unit name="ecodex.gateway"
+		transaction-type="RESOURCE_LOCAL">
+		
+		 <class>eu.ecodex.webadmin.model.gateway.TbReceiptTracking</class>
+	</persistence-unit>
 
 </persistence>

@@ -13,7 +13,7 @@ import eu.ecodex.webadmin.model.gateway.TbReceiptTracking;
 
 public class GatewayMessageDao implements IGatewayMessageDao {
 
-    @PersistenceContext(unitName = "ecodex.webadmin")
+    @PersistenceContext(unitName = "ecodex.gateway")
     private EntityManager em;
 
     /*
@@ -25,6 +25,7 @@ public class GatewayMessageDao implements IGatewayMessageDao {
      */
     @Override
     public List<TbReceiptTracking> findMessagesByDate(Date fromDate, Date toDate) {
+
         Query q;
         if (fromDate == null && toDate == null) {
             // Search without parameter is limited to a year!
@@ -39,12 +40,20 @@ public class GatewayMessageDao implements IGatewayMessageDao {
             q.setParameter("fromDate", dFrom);
             q.setParameter("toDate", dTo);
         } else if (fromDate == null && toDate != null) {
+            Calendar cTo = Calendar.getInstance();
+            cTo.setTime(toDate);
+            cTo.add(Calendar.DAY_OF_MONTH, 1);
+            toDate = cTo.getTime();
             q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION <:toDate");
             q.setParameter("toDate", toDate);
         } else if (fromDate != null && toDate == null) {
             q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION >:fromDate");
             q.setParameter("fromDate", fromDate);
         } else {
+            Calendar cTo = Calendar.getInstance();
+            cTo.setTime(toDate);
+            cTo.add(Calendar.DAY_OF_MONTH, 1);
+            toDate = cTo.getTime();
             q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION >:fromDate and m.LAST_TRANSMISSION <:toDate");
             q.setParameter("fromDate", fromDate);
             q.setParameter("toDate", toDate);

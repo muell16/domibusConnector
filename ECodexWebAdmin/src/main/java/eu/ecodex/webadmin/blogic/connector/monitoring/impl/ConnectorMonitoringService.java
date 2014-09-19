@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 import eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao;
 import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
+import eu.ecodex.webadmin.commons.DBUtil;
 import eu.ecodex.webadmin.commons.JmxConnector;
 import eu.ecodex.webadmin.commons.WebAdminProperties;
 
@@ -28,7 +29,10 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private MBeanServerConnection mbsc;
     private String connectionMessage;
     private String connectionStatus;
-    private String connectionDB;
+    private String connectionConnectorDB;
+    private String connectionGatewayDB;
+    private String connectionStatusConnectorDB;
+    private String connectionStatusGatewayDB;
     private String monitoringType;
     private Long checkOutgoingRepeatInterval;
     private String jobStatusEvidencesTimeout;
@@ -45,6 +49,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private String pendingMessagesGatewayStatus;
     private boolean useMonitorServer = false;
     private ECodexConnectorMonitoringDao monitoringDao;
+    private DBUtil dbUtil;
 
     private WebAdminProperties webAdminProperties;
 
@@ -97,7 +102,19 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             jobStatusOutgoing = "OK";
         }
 
-        connectionDB = "Connected to: " + webAdminProperties.getConnectorDatabaseUrl();
+        connectionStatusConnectorDB = "OK";
+        connectionStatusGatewayDB = "OK";
+        connectionConnectorDB = webAdminProperties.getConnectorDatabaseUrl();
+        connectionGatewayDB = webAdminProperties.getGatewayDatabaseUrl();
+        if (!dbUtil.testConnectorDbConnection()) {
+            connectionConnectorDB = dbUtil.getConnectorErrorMessage();
+            connectionStatusConnectorDB = "ERROR";
+        }
+        if (!dbUtil.testGatewayDbConnection()) {
+            connectionGatewayDB = dbUtil.getGatewayErrorMessage();
+            connectionStatusGatewayDB = "ERROR";
+        }
+
     }
 
     private void queryJMXServer(boolean reconnect) {
@@ -343,14 +360,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.monitoringType = monitoringType;
     }
 
-    public String getConnectionDB() {
-        return connectionDB;
-    }
-
-    public void setConnectionDB(String connectionDB) {
-        this.connectionDB = connectionDB;
-    }
-
     public boolean isUseMonitorServer() {
         return useMonitorServer;
     }
@@ -398,6 +407,46 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     public void setPendingMessagesGatewayStatus(String pendingMessagesGatewayStatus) {
         this.pendingMessagesGatewayStatus = pendingMessagesGatewayStatus;
+    }
+
+    public DBUtil getDbUtil() {
+        return dbUtil;
+    }
+
+    public void setDbUtil(DBUtil dbUtil) {
+        this.dbUtil = dbUtil;
+    }
+
+    public String getConnectionStatusConnectorDB() {
+        return connectionStatusConnectorDB;
+    }
+
+    public void setConnectionStatusConnectorDB(String connectionStatusConnectorDB) {
+        this.connectionStatusConnectorDB = connectionStatusConnectorDB;
+    }
+
+    public String getConnectionStatusGatewayDB() {
+        return connectionStatusGatewayDB;
+    }
+
+    public void setConnectionStatusGatewayDB(String connectionStatusGatewayDB) {
+        this.connectionStatusGatewayDB = connectionStatusGatewayDB;
+    }
+
+    public String getConnectionConnectorDB() {
+        return connectionConnectorDB;
+    }
+
+    public void setConnectionConnectorDB(String connectionConnectorDB) {
+        this.connectionConnectorDB = connectionConnectorDB;
+    }
+
+    public String getConnectionGatewayDB() {
+        return connectionGatewayDB;
+    }
+
+    public void setConnectionGatewayDB(String connectionGatewayDB) {
+        this.connectionGatewayDB = connectionGatewayDB;
     }
 
 }

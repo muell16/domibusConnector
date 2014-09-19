@@ -28,7 +28,11 @@
 				</h:panelGrid>
 
 				<h:outputText class="textArea" style="margin: 0 auto;"
-					value="Connected to: #{configurationBean.webAdminProperties.connectorDatabaseUrl}"
+					value="Connector: #{configurationBean.webAdminProperties.connectorDatabaseUrl}"
+					rendered="#{configurationBean.dbSelected}" />
+					<br></br>
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Gateway: #{configurationBean.webAdminProperties.gatewayDatabaseUrl}"
 					rendered="#{configurationBean.dbSelected}" />
 				<h:outputText class="textArea" style="margin: 0 auto;"
 					value="Note that the jmx port has to be enabled on your webserver!"

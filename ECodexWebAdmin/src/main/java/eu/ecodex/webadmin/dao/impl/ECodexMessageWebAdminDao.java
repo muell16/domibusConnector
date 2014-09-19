@@ -69,17 +69,25 @@ public class ECodexMessageWebAdminDao implements IECodexMessageWebAdminDao, Seri
             Calendar cTo = Calendar.getInstance();
             cTo = Calendar.getInstance();
             Date dTo = cTo.getTime();
-            q = em.createQuery("from ECodexMessageInfo m where m.created >:fromDate and m.created <:toDate");
+            q = em.createQuery("from ECodexMessageInfo m where m.created >=:fromDate and m.created <=:toDate");
             q.setParameter("fromDate", dFrom);
             q.setParameter("toDate", dTo);
         } else if (fromDate == null && toDate != null) {
-            q = em.createQuery("from ECodexMessageInfo m where m.created <:toDate");
+            Calendar cTo = Calendar.getInstance();
+            cTo.setTime(toDate);
+            cTo.add(Calendar.DAY_OF_MONTH, 1);
+            toDate = cTo.getTime();
+            q = em.createQuery("from ECodexMessageInfo m where m.created <=:toDate");
             q.setParameter("toDate", toDate);
         } else if (fromDate != null && toDate == null) {
-            q = em.createQuery("from ECodexMessageInfo m where m.created >:fromDate");
+            q = em.createQuery("from ECodexMessageInfo m where m.created >=:fromDate");
             q.setParameter("fromDate", fromDate);
         } else {
-            q = em.createQuery("from ECodexMessageInfo m where m.created >:fromDate and m.created <:toDate");
+            Calendar cTo = Calendar.getInstance();
+            cTo.setTime(toDate);
+            cTo.add(Calendar.DAY_OF_MONTH, 1);
+            toDate = cTo.getTime();
+            q = em.createQuery("from ECodexMessageInfo m where m.created >=:fromDate and m.created <=:toDate");
             q.setParameter("fromDate", fromDate);
             q.setParameter("toDate", toDate);
         }

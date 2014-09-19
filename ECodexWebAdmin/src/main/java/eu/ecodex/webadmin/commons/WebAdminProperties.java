@@ -16,6 +16,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private static final long serialVersionUID = -1113080729567255182L;
 
     private String connectorDatabaseUrl;
+    private String gatewayDatabaseUrl;
     private String monitoringType;
     private String jmxServerAddress;
     private String jmxServerPort;
@@ -222,6 +223,14 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
 
     public void setMonitoringLogWrite(boolean monitoringLogWrite) {
         this.monitoringLogWrite = monitoringLogWrite;
+    }
+
+    public String getGatewayDatabaseUrl() {
+        return gatewayDatabaseUrl;
+    }
+
+    public void setGatewayDatabaseUrl(String gatewayDatabaseUrl) {
+        this.gatewayDatabaseUrl = gatewayDatabaseUrl;
     }
 
 }

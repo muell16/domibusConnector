@@ -4,7 +4,7 @@
 
 	<groupId>eu.ecodex.webadmin</groupId>
 	<artifactId>ECodexWebAdmin</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>war</packaging>
 
 	<name>ECodexWebAdmin</name>
