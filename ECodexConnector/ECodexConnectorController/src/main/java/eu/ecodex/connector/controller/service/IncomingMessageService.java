@@ -126,11 +126,15 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         details.setToParty(originalMessage.getMessageDetails().getFromParty());
 
         Message evidenceMessage = new Message(details, messageConfirmation);
-        try {
-            persistenceService.persistMessageIntoDatabase(evidenceMessage, ECodexMessageDirection.NAT_TO_GW);
-        } catch (PersistenceException e1) {
-            throw new ECodexConnectorControllerException("Exception persisting evidence message into database!", e1);
-        }
+
+        // try {
+        // persistenceService.persistMessageIntoDatabase(evidenceMessage,
+        // ECodexMessageDirection.NAT_TO_GW);
+        // } catch (PersistenceException e1) {
+        // throw new
+        // ECodexConnectorControllerException("Exception persisting evidence message into database!",
+        // e1);
+        // }
 
         try {
             gatewayWebserviceClient.sendMessage(evidenceMessage);
