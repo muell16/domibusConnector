@@ -4,7 +4,11 @@
 	<parent>
 		<groupId>eu.ecodex.connector</groupId>
 		<artifactId>ECodexConnector</artifactId>
+<<<<<<< HEAD
 		<version>2.0-BETA-6</version>
+=======
+		<version>2.0-FINAL</version>
+>>>>>>> release-2.0-FINAL
 	</parent>
 	<artifactId>ECodexConnectorNationalBackendClient</artifactId>
 	<dependencies>

@@ -170,6 +170,10 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     private Message buildEvidenceMessage(MessageConfirmation confirmation, Message originalMessage) {
         MessageDetails details = new MessageDetails();
         details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
+        details.setService(originalMessage.getMessageDetails().getService());
+
+        ECodexAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
+        details.setAction(action);
 
         Message returnMessage = new Message(details, confirmation);
 
