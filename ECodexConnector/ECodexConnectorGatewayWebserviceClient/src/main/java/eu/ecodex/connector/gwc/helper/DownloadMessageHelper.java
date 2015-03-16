@@ -8,6 +8,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.springframework.util.StringUtils;
 
 import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.PayloadType;
@@ -39,7 +40,13 @@ public class DownloadMessageHelper {
 
         PayloadType bodyload = response.value.getBodyload();
         if (bodyload != null) {
-            String elementDescription = findElementDesription(userMessage, bodyload.getPayloadId());
+            // bodyload dereferencing: The possible constellations are:
+            // -- The header contains an href like "#id" and the bodyload a
+            // PayloadId like "id"
+            // -- The header contains no href and the bodyload the id "id"
+            // -- The header contains an href like "#id" and the bodyload no
+            // PayloadId
+            String elementDescription = findBodyloadDescription(userMessage);
 
             // is it an Evidence or an eCodex content XML?
 
@@ -92,21 +99,38 @@ public class DownloadMessageHelper {
     }
 
     private String findElementDesription(UserMessage userMessage, String href) {
-        String elementDescription = null;
         for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            if ((info.getHref() != null && info.getHref().equals(href)) || info.getHref() == null) {
-                if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
-                        && !info.getPartProperties().getProperty().isEmpty()) {
-                    for (Property property : info.getPartProperties().getProperty()) {
-                        if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
-                            elementDescription = property.getValue();
-                        }
-                    }
-                }
+            if (info.getHref() != null && info.getHref().equals(href)) {
+                return findPartPropertyDescription(info);
             }
         }
 
-        return elementDescription;
+        return null;
+    }
+
+    private String findBodyloadDescription(UserMessage userMessage) {
+        for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
+            // if the PartInfo Href begins with "#" or is empty(null)
+            if ((StringUtils.hasText(info.getHref()) && info.getHref().startsWith(
+                    CommonMessageHelper.BODYLOAD_HREF_PREFIX))
+                    || !StringUtils.hasText(info.getHref())) {
+                return findPartPropertyDescription(info);
+            }
+        }
+
+        return null;
+    }
+
+    private String findPartPropertyDescription(PartInfo info) {
+        if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
+                && !info.getPartProperties().getProperty().isEmpty()) {
+            for (Property property : info.getPartProperties().getProperty()) {
+                if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
+                    return property.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     private MessageConfirmation extractMessageConfirmation(PayloadType payload, String evidenceTypeString) {
