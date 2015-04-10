@@ -24,11 +24,13 @@
   	<property name="proxyDao" ref="connectorProxyDao"/>
   </bean>
   
-  <bean id="httpDataLoader" class="eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader" singleton="false">
+  <bean id="httpDataLoader" class="eu.ecodex.dss.util.ECodexDataLoader" singleton="false">
+  	<property name="allowLDAP" value="${connector.security.allow.ldap:false}" />
   	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
   </bean>
   
-  <bean id="ocspDataLoader" class="eu.europa.ec.markt.dss.validation102853.https.CommonsDataLoader" singleton="false">
+  <bean id="ocspDataLoader" class="eu.ecodex.dss.util.ECodexDataLoader" singleton="false">
+  	<property name="allowLDAP" value="${connector.security.allow.ldap:false}" />
   	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
   	<property name="contentType" value="application/ocsp-request"/>
   </bean>
@@ -42,11 +44,6 @@
   <bean id="onlineCRLSource" class="eu.europa.ec.markt.dss.validation102853.crl.OnlineCRLSource">
   	<property name="dataLoader" ref="httpDataLoader"/>
   </bean>
-  
-  <!-- <bean id="cachedCRLSource" class = "eu.europa.ec.markt.dss.validation.crl.JdbcCacheCRLSource">
-  	<property name="cachedSource" ref="onlineCRLSource"/>
-  	<property name="dataSource" ref="dataSource"/>
-  </bean> -->
   
   <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation102853.ocsp.OnlineOCSPSource">
   	<property name="dataLoader" ref="ocspDataLoader"/>
