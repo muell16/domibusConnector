@@ -217,6 +217,20 @@ public class ECodexConnectorPersistenceServiceImpl implements ECodexConnectorPer
 
     @Override
     @Transactional(readOnly = true)
+    public List<Message> findMessagesByConversationId(String conversationId) {
+        List<ECodexMessage> dbMessages = messageDao.findMessagesByConversationId(conversationId);
+        if (dbMessages != null && !dbMessages.isEmpty()) {
+            List<Message> messages = new ArrayList<Message>(dbMessages.size());
+            for (ECodexMessage dbMessage : dbMessages) {
+                messages.add(mapDbMessageToMessage(dbMessage));
+            }
+            return messages;
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Message> findOutgoingUnconfirmedMessages() {
         List<ECodexMessage> dbMessages = messageDao.findOutgoingUnconfirmedMessages();
         if (dbMessages != null && !dbMessages.isEmpty()) {

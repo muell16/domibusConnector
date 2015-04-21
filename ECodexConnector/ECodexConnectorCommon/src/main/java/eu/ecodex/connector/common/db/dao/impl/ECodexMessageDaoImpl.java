@@ -68,6 +68,15 @@ public class ECodexMessageDaoImpl implements ECodexMessageDao {
 
     @SuppressWarnings("unchecked")
     @Override
+    public List<ECodexMessage> findMessagesByConversationId(String conversationId) {
+        Query q = em.createQuery("from ECodexMessage m where m.conversationId=?");
+        q.setParameter(1, conversationId);
+
+        return q.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public List<ECodexMessage> findOutgoingUnconfirmedMessages() {
         Query q = em
                 .createQuery("from ECodexMessage m where m.confirmed is null and m.rejected is null and m.direction = ? and m.deliveredToGateway is not null ");
