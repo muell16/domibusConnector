@@ -120,8 +120,9 @@ public class ECodexSecurityContainer implements InitializingBean {
             document = new MemoryDocument(message.getMessageContent().getPdfDocument(),
                     ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.PDF);
         } else if (message.getMessageDetails().isValidWithoutPDF()) {
-            document = new MemoryDocument(message.getMessageContent().getECodexContent(),
-                    ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.XML);
+            byte[] content = message.getMessageContent().getECodexContent() != null ? message.getMessageContent()
+                    .getECodexContent() : message.getMessageContent().getNationalXmlContent();
+            document = new MemoryDocument(content, ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.XML);
         } else
             LOGGER.error("No content found for container!");
 
@@ -258,9 +259,16 @@ public class ECodexSecurityContainer implements InitializingBean {
                             } catch (IOException e) {
                                 throw new ECodexConnectorSecurityException("Could not read detached signature!");
                             }
-                            message.getMessageContent().setDetachedSignatureMimeType(
-                                    DetachedSignatureMimeType.valueOf(container.getBusinessContent()
-                                            .getDetachedSignature().getMimeType().name()));
+                            try {
+                                message.getMessageContent().setDetachedSignatureMimeType(
+                                        DetachedSignatureMimeType.valueOf(container.getBusinessContent()
+                                                .getDetachedSignature().getMimeType().name()));
+                            } catch (IllegalArgumentException e) {
+                                LOGGER.error("No DetachedSignatureMimeType could be resolved of MimeType {}", container
+                                        .getBusinessContent().getDetachedSignature().getMimeType().name());
+                                message.getMessageContent().setDetachedSignatureMimeType(
+                                        DetachedSignatureMimeType.BINARY);
+                            }
                         }
 
                         if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
@@ -320,7 +328,8 @@ public class ECodexSecurityContainer implements InitializingBean {
         MessageAttachment attachment = new MessageAttachment();
         attachment.setAttachment(IOUtils.toByteArray(document.openStream()));
         attachment.setName(name);
-        attachment.setMimeType(document.getMimeType().toString());
+        // attachment.setMimeType(document.getMimeType().toString());
+        attachment.setMimeType(mimeType);
 
         return attachment;
     }

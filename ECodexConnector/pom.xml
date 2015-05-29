@@ -15,6 +15,7 @@
 		<module>ECodexConnectorCommon</module>
 		<module>ECodexConnectorDistribution</module>
 		<module>ECodexConnectorMonitoring</module>
+		<module>ECodexConnectorRunnable</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>

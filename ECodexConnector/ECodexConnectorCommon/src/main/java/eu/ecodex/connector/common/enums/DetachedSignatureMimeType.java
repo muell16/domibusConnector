@@ -2,6 +2,10 @@ package eu.ecodex.connector.common.enums;
 
 public enum DetachedSignatureMimeType {
     /**
+     * application/octet-stream
+     */
+    BINARY("application/octet-stream"),
+    /**
      * text/xml
      */
     XML("text/xml"),

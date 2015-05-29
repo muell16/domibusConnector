@@ -1,5 +1,6 @@
 package eu.ecodex.connector.gwc.helper;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 
@@ -37,10 +38,10 @@ public class SendMessageHelper {
 
         MessageContent messageContent = message.getMessageContent();
 
-        if (messageContent != null && messageContent.getECodexContent() != null
-                && messageContent.getECodexContent().length > 0) {
-            buildBodyPayload(messageContent.getECodexContent(), request, CommonMessageHelper.CONTENT_XML_NAME,
-                    userMessage);
+        if (messageContent != null) {
+            byte[] content = message.getMessageContent().getECodexContent() != null ? message.getMessageContent()
+                    .getECodexContent() : message.getMessageContent().getNationalXmlContent();
+            buildBodyPayload(content, request, CommonMessageHelper.CONTENT_XML_NAME, userMessage);
         }
 
         int payloadCounter = 0;
@@ -49,8 +50,10 @@ public class SendMessageHelper {
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
                 if (attachment.getAttachment() != null && attachment.getAttachment().length > 0) {
-                    buildPayloadAndAddToRequest(request, CommonMessageHelper.APPLICATION_MIME_TYPE, ++payloadCounter,
-                            attachment.getAttachment(), attachment.getName(), userMessage);
+                    String mimeType = StringUtils.isEmpty(attachment.getMimeType()) ? CommonMessageHelper.APPLICATION_MIME_TYPE
+                            : attachment.getMimeType();
+                    buildPayloadAndAddToRequest(request, mimeType, ++payloadCounter, attachment.getAttachment(),
+                            attachment.getName(), userMessage);
 
                     if (attachment.getName().endsWith(".asics")) {
                         asicsFound = true;
