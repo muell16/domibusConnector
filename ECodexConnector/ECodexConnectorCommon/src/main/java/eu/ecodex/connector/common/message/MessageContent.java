@@ -15,8 +15,10 @@ public class MessageContent {
     private byte[] nationalXmlContent;
     private byte[] eCodexContent;
     private byte[] pdfDocument;
+    private String pdfDocumentName;
     private byte[] detachedSignature;
     private DetachedSignatureMimeType detachedSignatureMimeType;
+    private String detachedSignatureName;
 
     public byte[] getNationalXmlContent() {
         return nationalXmlContent;
@@ -42,6 +44,14 @@ public class MessageContent {
         this.pdfDocument = pdfDocument;
     }
 
+    public String getPdfDocumentName() {
+        return pdfDocumentName;
+    }
+
+    public void setPdfDocumentName(String pdfDocumentName) {
+        this.pdfDocumentName = pdfDocumentName;
+    }
+
     public byte[] getDetachedSignature() {
         return detachedSignature;
     }
@@ -56,6 +66,14 @@ public class MessageContent {
 
     public void setDetachedSignatureMimeType(DetachedSignatureMimeType detachedSignatureMimeType) {
         this.detachedSignatureMimeType = detachedSignatureMimeType;
+    }
+
+    public String getDetachedSignatureName() {
+        return detachedSignatureName;
+    }
+
+    public void setDetachedSignatureName(String detachedSignatureName) {
+        this.detachedSignatureName = detachedSignatureName;
     }
 
 }

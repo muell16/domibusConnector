@@ -128,15 +128,8 @@ public class ECodexConnectorRunnableUtil {
 
     }
 
-    public static void convertMessageDetailsToMessagePropertiesAndStore(File messagePropertiesFile,
+    public static ECodexConnectorMessageProperties convertMessageDetailsToMessageProperties(
             MessageDetails messageDetails) {
-        if (!messagePropertiesFile.exists()) {
-            try {
-                messagePropertiesFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         ECodexConnectorMessageProperties messageProperties = new ECodexConnectorMessageProperties();
         if (StringUtils.hasText(messageDetails.getEbmsMessageId())) {
@@ -154,8 +147,20 @@ public class ECodexConnectorRunnableUtil {
         messageProperties.setAction(messageDetails.getAction().getAction());
         messageProperties.setService(messageDetails.getService().getService());
 
-        messageProperties.storePropertiesToFile(messagePropertiesFile);
+        return messageProperties;
+    }
 
+    public static void storeMessagePropertiesToFile(ECodexConnectorMessageProperties messageProperties,
+            File messagePropertiesFile) {
+        if (!messagePropertiesFile.exists()) {
+            try {
+                messagePropertiesFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        messageProperties.storePropertiesToFile(messagePropertiesFile);
     }
 
     public static void createFile(File messageFolder, String fileName, byte[] content)

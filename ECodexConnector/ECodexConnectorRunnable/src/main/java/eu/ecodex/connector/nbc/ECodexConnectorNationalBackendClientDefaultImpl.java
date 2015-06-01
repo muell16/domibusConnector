@@ -19,6 +19,7 @@ import eu.ecodex.connector.common.exception.ImplementationMissingException;
 import eu.ecodex.connector.common.message.Message;
 import eu.ecodex.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.ecodex.connector.common.message.MessageContent;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 import eu.ecodex.connector.runnable.exception.ECodexConnectorRunnableException;
 import eu.ecodex.connector.runnable.util.ECodexConnectorMessageProperties;
@@ -178,48 +179,62 @@ public class ECodexConnectorNationalBackendClientDefaultImpl implements ECodexCo
             messageFolder.mkdir();
         }
 
+        ECodexConnectorMessageProperties msgProps = null;
+        File messagePropertiesFile = null;
         String action = null;
         if (message.getMessageDetails() != null) {
             if (message.getMessageDetails().getAction() != null)
                 action = message.getMessageDetails().getAction().getAction();
-            String messageDetailsPath = messageFolder.getAbsolutePath() + File.separator + messagePropertiesFileName;
-            LOGGER.debug("Create message details file {}", messageDetailsPath);
-            File messageDetails = new File(messageDetailsPath);
-            ECodexConnectorRunnableUtil.convertMessageDetailsToMessagePropertiesAndStore(messageDetails,
-                    message.getMessageDetails());
+            String messagePropertiesPath = messageFolder.getAbsolutePath() + File.separator + messagePropertiesFileName;
+
+            messagePropertiesFile = new File(messagePropertiesPath);
+            msgProps = ECodexConnectorRunnableUtil
+                    .convertMessageDetailsToMessageProperties(message.getMessageDetails());
         }
 
-        if (message.getMessageContent() != null) {
-            if (message.getMessageContent().getPdfDocument() != null
-                    && message.getMessageContent().getPdfDocument().length > 0) {
-                String fileName = action != null ? action + ECodexConnectorRunnableConstants.PDF_FILE_EXTENSION
-                        : ECodexConnectorRunnableConstants.DEFAULT_PDF_FILE_NAME;
-                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, message.getMessageContent()
-                        .getPdfDocument());
+        MessageContent messageContent = message.getMessageContent();
+        if (messageContent != null) {
+            if (messageContent.getPdfDocument() != null && messageContent.getPdfDocument().length > 0) {
+                String fileName = null;
+                if (StringUtils.hasText(messageContent.getPdfDocumentName())) {
+                    fileName = messageContent.getPdfDocumentName();
+                } else {
+                    fileName = action != null ? action + ECodexConnectorRunnableConstants.PDF_FILE_EXTENSION
+                            : ECodexConnectorRunnableConstants.DEFAULT_PDF_FILE_NAME;
+
+                }
+                msgProps.setContentPdfFileName(fileName);
+                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, messageContent.getPdfDocument());
             }
-            if ((message.getMessageContent().getNationalXmlContent() != null && message.getMessageContent()
-                    .getNationalXmlContent().length > 0)
-                    || (message.getMessageContent().getECodexContent() != null && message.getMessageContent()
-                            .getECodexContent().length > 0)) {
-                byte[] content = message.getMessageContent().getNationalXmlContent() != null ? message
-                        .getMessageContent().getNationalXmlContent() : message.getMessageContent().getECodexContent();
+            if ((messageContent.getNationalXmlContent() != null && messageContent.getNationalXmlContent().length > 0)
+                    || (messageContent.getECodexContent() != null && messageContent.getECodexContent().length > 0)) {
+                byte[] content = messageContent.getNationalXmlContent() != null ? messageContent
+                        .getNationalXmlContent() : messageContent.getECodexContent();
                 String fileName = action != null ? action + ECodexConnectorRunnableConstants.XML_FILE_EXTENSION
                         : ECodexConnectorRunnableConstants.DEFAULT_XML_FILE_NAME;
+                msgProps.setContentXmlFileName(fileName);
                 ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, content);
             }
-            if (message.getMessageContent().getDetachedSignature() != null
-                    && message.getMessageContent().getDetachedSignature().length > 0
-                    && message.getMessageContent().getDetachedSignatureMimeType() != null) {
-                String fileName = ECodexConnectorRunnableConstants.DETACHED_SIGNATURE_FILE_NAME;
-                if (message.getMessageContent().getDetachedSignatureMimeType().equals(DetachedSignatureMimeType.XML))
-                    fileName += ECodexConnectorRunnableConstants.XML_FILE_EXTENSION;
-                else if (message.getMessageContent().getDetachedSignatureMimeType()
-                        .equals(DetachedSignatureMimeType.PKCS7))
-                    fileName += ECodexConnectorRunnableConstants.PKCS7_FILE_EXTENSION;
-                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, message.getMessageContent()
-                        .getDetachedSignature());
+            if (messageContent.getDetachedSignature() != null && messageContent.getDetachedSignature().length > 0
+                    && messageContent.getDetachedSignatureMimeType() != null) {
+                String fileName = null;
+                if (StringUtils.hasText(messageContent.getDetachedSignatureName())
+                        && !messageContent.getDetachedSignatureName().equals(
+                                ECodexConnectorRunnableConstants.DETACHED_SIGNATURE_FILE_NAME)) {
+                    fileName = messageContent.getDetachedSignatureName();
+                } else {
+                    fileName = ECodexConnectorRunnableConstants.DETACHED_SIGNATURE_FILE_NAME;
+                    if (messageContent.getDetachedSignatureMimeType().equals(DetachedSignatureMimeType.XML))
+                        fileName += ECodexConnectorRunnableConstants.XML_FILE_EXTENSION;
+                    else if (messageContent.getDetachedSignatureMimeType().equals(DetachedSignatureMimeType.PKCS7))
+                        fileName += ECodexConnectorRunnableConstants.PKCS7_FILE_EXTENSION;
+                }
+                msgProps.setDetachedSignatureFileName(fileName);
+                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, messageContent.getDetachedSignature());
             }
         }
+        LOGGER.debug("Store message properties to file {}", messagePropertiesFile.getAbsolutePath());
+        ECodexConnectorRunnableUtil.storeMessagePropertiesToFile(msgProps, messagePropertiesFile);
 
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
@@ -403,60 +418,66 @@ public class ECodexConnectorNationalBackendClientDefaultImpl implements ECodexCo
         for (File sub : workMessageFolder.listFiles()) {
             if (sub.getName().equals(messagePropertiesFileName)) {
                 continue;
-            } else if (sub.getName().equals(contentXmlFileName)) {
-                LOGGER.debug("Found content xml file with name {}", contentXmlFileName);
-                try {
-                    message.getMessageContent().setNationalXmlContent(ECodexConnectorRunnableUtil.fileToByteArray(sub));
-                } catch (IOException e) {
-                    throw new ECodexConnectorNationalBackendClientException(
-                            "Exception loading content xml into byte array from file " + sub.getName());
-                }
-                continue;
-            } else if (sub.getName().equals(contentPdfFileName)) {
-                LOGGER.debug("Found content pdf file with name {}", contentPdfFileName);
-                try {
-                    message.getMessageContent().setPdfDocument(ECodexConnectorRunnableUtil.fileToByteArray(sub));
-                } catch (IOException e) {
-                    throw new ECodexConnectorNationalBackendClientException(
-                            "Exception loading content pdf into byte array from file " + sub.getName());
-                }
-                continue;
-            } else if (detachedSignatureExists && sub.getName().equals(detachedSignatureFileName)) {
-                LOGGER.debug("Found detached signature file with name {}", detachedSignatureFileName);
-                try {
-                    message.getMessageContent().setDetachedSignature(ECodexConnectorRunnableUtil.fileToByteArray(sub));
-                } catch (IOException e) {
-                    throw new ECodexConnectorNationalBackendClientException(
-                            "Exception loading detached signature into byte array from file " + sub.getName());
-                }
-                if (detachedSignatureFileName.endsWith(ECodexConnectorRunnableConstants.XML_FILE_EXTENSION)) {
-                    message.getMessageContent().setDetachedSignatureMimeType(DetachedSignatureMimeType.XML);
-                } else if (detachedSignatureFileName.endsWith(ECodexConnectorRunnableConstants.PKCS7_FILE_EXTENSION)) {
-                    message.getMessageContent().setDetachedSignatureMimeType(DetachedSignatureMimeType.PKCS7);
-                } else {
-                    throw new ECodexConnectorNationalBackendClientException(
-                            "The detached signature file has an invalid extension! " + sub.getName());
-                }
-                continue;
             } else {
-                LOGGER.debug("Processing attachment File {}", sub.getName());
-                MessageAttachment attachment = new MessageAttachment();
+                MessageContent messageContent = message.getMessageContent();
+                if (sub.getName().equals(contentXmlFileName)) {
+                    LOGGER.debug("Found content xml file with name {}", contentXmlFileName);
+                    try {
+                        messageContent.setNationalXmlContent(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading content xml into byte array from file " + sub.getName());
+                    }
+                    continue;
+                } else if (sub.getName().equals(contentPdfFileName)) {
+                    LOGGER.debug("Found content pdf file with name {}", contentPdfFileName);
+                    try {
+                        messageContent.setPdfDocument(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                        messageContent.setPdfDocumentName(sub.getName());
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading content pdf into byte array from file " + sub.getName());
+                    }
+                    continue;
+                } else if (detachedSignatureExists && sub.getName().equals(detachedSignatureFileName)) {
+                    LOGGER.debug("Found detached signature file with name {}", detachedSignatureFileName);
+                    try {
+                        messageContent.setDetachedSignature(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                        messageContent.setDetachedSignatureName(sub.getName());
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading detached signature into byte array from file " + sub.getName());
+                    }
+                    if (detachedSignatureFileName.endsWith(ECodexConnectorRunnableConstants.XML_FILE_EXTENSION)) {
+                        messageContent.setDetachedSignatureMimeType(DetachedSignatureMimeType.XML);
+                    } else if (detachedSignatureFileName
+                            .endsWith(ECodexConnectorRunnableConstants.PKCS7_FILE_EXTENSION)) {
+                        messageContent.setDetachedSignatureMimeType(DetachedSignatureMimeType.PKCS7);
+                    } else {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "The detached signature file has an invalid extension! " + sub.getName());
+                    }
+                    continue;
+                } else {
+                    LOGGER.debug("Processing attachment File {}", sub.getName());
+                    MessageAttachment attachment = new MessageAttachment();
 
-                attachment.setName(sub.getName());
-                String attachmentId = ECodexConnectorRunnableConstants.ATTACHMENT_ID_PREFIX + attachmentCount;
-                attachmentCount++;
-                attachment.setIdentifier(attachmentId);
-                attachment.setMimeType(ECodexConnectorRunnableUtil.getMimeTypeFromFileName(sub));
+                    attachment.setName(sub.getName());
+                    String attachmentId = ECodexConnectorRunnableConstants.ATTACHMENT_ID_PREFIX + attachmentCount;
+                    attachmentCount++;
+                    attachment.setIdentifier(attachmentId);
+                    attachment.setMimeType(ECodexConnectorRunnableUtil.getMimeTypeFromFileName(sub));
 
-                try {
-                    attachment.setAttachment(ECodexConnectorRunnableUtil.fileToByteArray(sub));
-                } catch (IOException e) {
-                    throw new ECodexConnectorNationalBackendClientException(
-                            "Exception loading attachment into byte array from file " + sub.getName());
+                    try {
+                        attachment.setAttachment(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading attachment into byte array from file " + sub.getName());
+                    }
+
+                    LOGGER.debug("Add attachment {}", attachment.toString());
+                    message.addAttachment(attachment);
                 }
-
-                LOGGER.debug("Add attachment {}", attachment.toString());
-                message.addAttachment(attachment);
             }
         }
     }

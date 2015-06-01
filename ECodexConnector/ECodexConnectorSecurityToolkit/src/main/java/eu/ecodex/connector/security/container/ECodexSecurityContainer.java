@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,12 +118,15 @@ public class ECodexSecurityContainer implements InitializingBean {
 
         Document document = null;
         if (ArrayUtils.isNotEmpty(message.getMessageContent().getPdfDocument())) {
-            document = new MemoryDocument(message.getMessageContent().getPdfDocument(),
-                    ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.PDF);
+            String pdfName = StringUtils.isEmpty(message.getMessageContent().getPdfDocumentName()) ? ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME
+                    + ".pdf"
+                    : message.getMessageContent().getPdfDocumentName();
+            document = new MemoryDocument(message.getMessageContent().getPdfDocument(), pdfName, MimeType.PDF);
         } else if (message.getMessageDetails().isValidWithoutPDF()) {
             byte[] content = message.getMessageContent().getECodexContent() != null ? message.getMessageContent()
                     .getECodexContent() : message.getMessageContent().getNationalXmlContent();
-            document = new MemoryDocument(content, ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME, MimeType.XML);
+            document = new MemoryDocument(content, ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".xml",
+                    MimeType.XML);
         } else
             LOGGER.error("No content found for container!");
 
@@ -130,9 +134,11 @@ public class ECodexSecurityContainer implements InitializingBean {
 
         if (message.getMessageContent().getDetachedSignature() != null
                 && message.getMessageContent().getDetachedSignatureMimeType() != null) {
+            String detachedSignatureName = message.getMessageContent().getDetachedSignatureName() != null ? message
+                    .getMessageContent().getDetachedSignatureName() : DETACHED_SIGNATURE_DOCUMENT_NAME;
             Document detachedSignature = new MemoryDocument(message.getMessageContent().getDetachedSignature(),
-                    DETACHED_SIGNATURE_DOCUMENT_NAME, MimeType.valueOf(message.getMessageContent()
-                            .getDetachedSignatureMimeType().name()));
+                    detachedSignatureName, MimeType.valueOf(message.getMessageContent().getDetachedSignatureMimeType()
+                            .name()));
             businessContent.setDetachedSignature(detachedSignature);
         }
 
@@ -237,8 +243,17 @@ public class ECodexSecurityContainer implements InitializingBean {
                                 InputStream is = container.getBusinessDocument().openStream();
                                 byte[] docAsBytes = new byte[is.available()];
                                 is.read(docAsBytes);
-                                if (container.getToken().getDocumentType().equals(MimeType.PDF.name()))
+                                if (container.getToken().getDocumentType().equals(MimeType.PDF.name())) {
                                     message.getMessageContent().setPdfDocument(docAsBytes);
+                                    if (!StringUtils.isEmpty(container.getBusinessDocument().getName())
+                                            && !container.getBusinessDocument().getName()
+                                                    .equals(ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME)
+                                            && !container.getBusinessDocument().getName()
+                                                    .equals(ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".pdf")) {
+                                        message.getMessageContent().setPdfDocumentName(
+                                                container.getBusinessDocument().getName());
+                                    }
+                                }
                                 if (container.getToken().getDocumentType().equals(MimeType.XML.name())
                                         && message.getMessageDetails().isValidWithoutPDF())
                                     message.getMessageContent().setECodexContent(docAsBytes);
@@ -259,6 +274,9 @@ public class ECodexSecurityContainer implements InitializingBean {
                             } catch (IOException e) {
                                 throw new ECodexConnectorSecurityException("Could not read detached signature!");
                             }
+                            if (!StringUtils.isEmpty(container.getBusinessContent().getDetachedSignature().getName()))
+                                message.getMessageContent().setDetachedSignatureName(
+                                        container.getBusinessContent().getDetachedSignature().getName());
                             try {
                                 message.getMessageContent().setDetachedSignatureMimeType(
                                         DetachedSignatureMimeType.valueOf(container.getBusinessContent()
