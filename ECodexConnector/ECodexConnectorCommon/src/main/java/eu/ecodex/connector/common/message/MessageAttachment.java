@@ -77,4 +77,10 @@ public class MessageAttachment {
         this.identifier = identifier;
     }
 
+    @Override
+    public String toString() {
+        return "MessageAttachment [name=" + name + ", mimeType=" + mimeType + ", description=" + description
+                + ", identifier=" + identifier + "]";
+    }
+
 }

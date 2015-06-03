@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
@@ -56,6 +57,7 @@ public class CommonMessageHelper {
     private static final String ENDPOINT_ADDRESS_PROPERTY_NAME = "EndpointAddress";
     private static final String ORIGINAL_SENDER_PROPERTY_NAME = "originalSender";
     private static final String FINAL_RECIPIENT_PROPERTY_NAME = "finalRecipient";
+    private static final String ORIGINAL_MESSAGE_ID = "originalMessageId";
     public static final String XML_MIME_TYPE = "text/xml";
     public static final String APPLICATION_MIME_TYPE = "application/octet-stream";
     public static final String CONTENT_PDF_NAME = "ContentPDF";
@@ -354,6 +356,11 @@ public class CommonMessageHelper {
                     }
                     if (property.getName().equals(ORIGINAL_SENDER_PROPERTY_NAME)) {
                         details.setOriginalSender(property.getValue());
+                    }
+                    if (property.getName().equals(ORIGINAL_MESSAGE_ID)
+                            && StringUtils.isEmpty(details.getRefToMessageId())
+                            && !StringUtils.isEmpty(property.getValue())) {
+                        details.setRefToMessageId(property.getValue());
                     }
                 }
             }

@@ -41,7 +41,7 @@ public interface ECodexConnectorPersistenceService {
     ECodexAction getAction(String action);
 
     ECodexAction getRelayREMMDAcceptanceRejectionAction();
-    
+
     ECodexAction getRelayREMMDFailure();
 
     ECodexAction getDeliveryNonDeliveryToRecipientAction();
@@ -53,4 +53,6 @@ public interface ECodexConnectorPersistenceService {
     ECodexParty getParty(String partyId, String role);
 
     ECodexParty getPartyByPartyId(String partyId);
+
+    List<Message> findMessagesByConversationId(String conversationId);
 }

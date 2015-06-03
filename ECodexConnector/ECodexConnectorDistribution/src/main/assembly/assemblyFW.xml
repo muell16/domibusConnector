@@ -1,5 +1,5 @@
 <assembly>
-	<id>ECodexConnector-${project.version}</id>
+	<id>Framework</id>
 	<formats>
 		<format>zip</format>
 		<format>dir</format>

@@ -21,4 +21,6 @@ public interface ECodexMessageDao {
     ECodexMessage confirmMessage(ECodexMessage message);
 
     ECodexMessage rejectMessage(ECodexMessage message);
+
+    List<ECodexMessage> findMessagesByConversationId(String conversationId);
 }
