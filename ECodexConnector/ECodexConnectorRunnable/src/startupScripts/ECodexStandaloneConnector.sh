@@ -2,47 +2,25 @@
 
 # browse given parameters
 
-Usage="SYNOPSIS
-    template.sh [-hv] [-o[file]] args ...
-
-    DESCRIPTION
-    This is a script template
-    to start any good shell script.
-
-    OPTIONS
-    -o [file], --output=[file]    Set log file (default=/dev/null)
-                                  use DEFAULT keyword to autoname file
-                                  The default value is /dev/null.
-    -t, --timelog                 Add timestamp to log ("+%y/%m/%d@%H:%M:%S")
-    -x, --ignorelock              Ignore if lock file exists
-    -h, --help                    Print this help
-    -v, --version                 Print script information
-
-    EXAMPLES
-    template.sh -o DEFAULT arg1 arg2"
-
 if [ "$1" == "--help" ]
 then
 # usage:
 echo"     SYNOPSIS
-     template.sh [-hv] [-o[file]] args ...
+     ECodexStandaloneConnector.sh [-h] [-j=[path]] [-c=[file]] [-l=[file]]
      
  
      DESCRIPTION
-     This is a script template
-     to start any good shell script.
+     This script start the ECodex standalone connector.
  
      OPTIONS
-     -o [file], --output=[file]    Set log file (default=/dev/null)
-                                   use DEFAULT keyword to autoname file
-                                   The default value is /dev/null.
-     -t, --timelog                 Add timestamp to log ("+%y/%m/%d@%H:%M:%S")
-     -x, --ignorelock              Ignore if lock file exists
-     -h, --help                    Print this help
-     -v, --version                 Print script information
- 
+     -j=[path], --javaPath=[path]    			Set the path to the installed java. Replaces JAVA_HOME
+     											environment variable. So if JAVA_HOME is set, this does not need to be set.
+     -c=[file], --connectorProperties=[file]    Set connector properties file (default=conf/connector.properties)
+     -l=[file], --loggingProperties=[file]   	Set log4j.properties file (default=conf/log4j.properties)
+     -h, --help                    				Print this help
+     
      EXAMPLES
-     template.sh -o DEFAULT arg1 arg2"
+     ECodexStandaloneConnector.sh -j=/usr/bin/java7"
 	exit 0
 fi
 
