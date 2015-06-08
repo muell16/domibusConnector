@@ -48,5 +48,10 @@
 			<artifactId>ECodexConnectorController</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>eu.ecodex.connector</groupId>
+			<artifactId>ECodexConnectorRunnable</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
