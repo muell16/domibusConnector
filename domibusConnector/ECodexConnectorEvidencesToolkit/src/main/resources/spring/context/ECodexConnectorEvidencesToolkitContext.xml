@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<import resource="classpath:/spring/context/ECodexConnectorCommonContext.xml"/>
+  
+  <bean id="evidencesToolkit" class="eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkitImpl">
+  	<property name="evidenceBuilder" ref="evidenceBuilder"/>
+  	<property name="hashValueBuilder" ref="hashValueBuilder"/>
+  	<property name="connectorProperties" ref="connectorProperties" />
+  </bean>
+  
+  <bean id="evidenceBuilder" class="eu.ecodex.evidences.ECodexEvidenceBuilder">
+  	<constructor-arg value="${connector.evidences.keystore.path}"/>
+  	<constructor-arg value="${connector.evidences.keystore.password}"/>
+  	<constructor-arg value="${connector.evidences.key.alias}"/>
+  	<constructor-arg value="${connector.evidences.key.password}"/>
+  </bean>
+  
+  <bean id="hashValueBuilder" class="eu.ecodex.connector.evidences.HashValueBuilder">
+  	<constructor-arg value="${hash.algorithm}"/>
+  </bean>
+  
+</beans>

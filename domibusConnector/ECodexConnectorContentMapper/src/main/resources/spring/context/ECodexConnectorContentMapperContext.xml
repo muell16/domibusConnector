@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  
+  <bean id="contentMapperFactory" class="eu.ecodex.connector.mapping.ECodexConnectorContentMapperFactory">
+  	<property name="implementationClassName" value="${connector.content.mapper.implementation.class.name}" />
+  	<property name="connectorProperties" ref="connectorProperties" />
+  </bean>
+
+  <bean id="contentMapper" factory-bean="contentMapperFactory" factory-method="createECodexConnectorContentMapper">
+  </bean>
+  
+</beans>

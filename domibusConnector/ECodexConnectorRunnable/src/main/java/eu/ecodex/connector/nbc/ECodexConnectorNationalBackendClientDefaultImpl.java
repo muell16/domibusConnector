@@ -1,0 +1,485 @@
+package eu.ecodex.connector.nbc;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import eu.ecodex.connector.common.enums.DetachedSignatureMimeType;
+import eu.ecodex.connector.common.enums.ECodexEvidenceType;
+import eu.ecodex.connector.common.enums.ECodexMessageDirection;
+import eu.ecodex.connector.common.exception.ImplementationMissingException;
+import eu.ecodex.connector.common.message.Message;
+import eu.ecodex.connector.common.message.MessageAttachment;
+import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.ecodex.connector.common.message.MessageContent;
+import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
+import eu.ecodex.connector.runnable.exception.ECodexConnectorRunnableException;
+import eu.ecodex.connector.runnable.util.ECodexConnectorMessageProperties;
+import eu.ecodex.connector.runnable.util.ECodexConnectorRunnableConstants;
+import eu.ecodex.connector.runnable.util.ECodexConnectorRunnableUtil;
+
+public class ECodexConnectorNationalBackendClientDefaultImpl implements ECodexConnectorNationalBackendClient,
+        InitializingBean {
+
+    org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ECodexConnectorNationalBackendClientDefaultImpl.class);
+
+    private File incomingMessagesDir;
+
+    private File outgoingMessagesDir;
+
+    @Value("${incoming.messages.directory:}")
+    private String incomingMessagesDirectory;
+
+    @Value("${outgoing.messages.directory:}")
+    private String outgoingMessagesDirectory;
+
+    @Value("${message.properties.file.name:}")
+    private String messagePropertiesFileName;
+
+    @Autowired
+    private ECodexConnectorRunnableUtil util;
+
+    @Override
+    public String[] requestMessagesUnsent() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
+
+        LOGGER.debug("Start searching dir {} for folder with ending {}", outgoingMessagesDir.getAbsolutePath(),
+                ECodexConnectorRunnableConstants.NEW_MESSAGE_FOLDER_POSTFIX);
+        List<File> messagesUnsent = new ArrayList<File>();
+
+        if (outgoingMessagesDir.listFiles().length > 0) {
+            for (File sub : outgoingMessagesDir.listFiles()) {
+                if (sub.isDirectory()
+                        && sub.getName().endsWith(ECodexConnectorRunnableConstants.NEW_MESSAGE_FOLDER_POSTFIX)) {
+                    messagesUnsent.add(sub);
+                }
+            }
+        }
+
+        List<String> messageIds = new ArrayList<String>();
+        if (!messagesUnsent.isEmpty()) {
+            LOGGER.info("Found {} new outgoing messages to process!", messagesUnsent.size());
+            for (File messageFolder : messagesUnsent) {
+                LOGGER.debug("Processing new message folder {}", messageFolder.getAbsolutePath());
+                if (messageFolder.listFiles().length > 0) {
+                    String nationalMessageId = null;
+                    ECodexConnectorMessageProperties messageProperties = ECodexConnectorRunnableUtil
+                            .loadMessageProperties(messageFolder, messagePropertiesFileName);
+                    if (messageProperties != null) {
+                        nationalMessageId = messageProperties.getNationalMessageId();
+                        LOGGER.debug("Found nationalMessageId in Properties: {}", nationalMessageId);
+                    }
+                    if (!StringUtils.hasText(nationalMessageId)) {
+                        nationalMessageId = ECodexConnectorRunnableUtil.generateNationalMessageId(messageProperties
+                                .getOriginalSender());
+                        LOGGER.debug("No national message ID resolved. Generated " + nationalMessageId);
+                    }
+
+                    String newMessageFolderPath = messageFolder.getAbsolutePath().substring(0,
+                            messageFolder.getAbsolutePath().lastIndexOf(File.separator))
+                            + File.separator + nationalMessageId;
+
+                    File workMessageFolder = new File(newMessageFolderPath);
+
+                    LOGGER.debug("Try to rename message folder {} to {}", messageFolder.getAbsolutePath(),
+                            newMessageFolderPath);
+                    try {
+                        FileUtils.moveDirectory(messageFolder, workMessageFolder);
+                    } catch (IOException e1) {
+                        throw new ECodexConnectorNationalBackendClientException("Could not rename message folder "
+                                + messageFolder.getAbsolutePath() + " to " + workMessageFolder.getAbsolutePath());
+                    }
+
+                    messageIds.add(nationalMessageId);
+                }
+            }
+        } else {
+            LOGGER.debug("No new messages found!");
+        }
+
+        return messageIds.toArray(new String[messageIds.size()]);
+    }
+
+    @Override
+    public void requestMessage(Message message) throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
+
+        String nationalMessageId = message.getMessageDetails().getNationalMessageId();
+
+        LOGGER.info("Start processing outgoing message with national ID {}", nationalMessageId);
+        File messageFolder = new File(outgoingMessagesDir + File.separator + nationalMessageId);
+
+        if (messageFolder.exists() && messageFolder.isDirectory() && messageFolder.listFiles().length > 0) {
+            String oldMessageFolderName = messageFolder.getAbsolutePath();
+
+            File workMessageFolder = new File(oldMessageFolderName
+                    + ECodexConnectorRunnableConstants.MESSAGE_PROCESSING_FOLDER_POSTFIX);
+            LOGGER.debug("Try to rename message folder {} to {}", messageFolder.getAbsolutePath(),
+                    workMessageFolder.getAbsolutePath());
+            try {
+                FileUtils.moveDirectory(messageFolder, workMessageFolder);
+            } catch (IOException e1) {
+                throw new ECodexConnectorNationalBackendClientException("Could not rename message folder "
+                        + messageFolder.getAbsolutePath() + " to " + workMessageFolder.getAbsolutePath());
+            }
+
+            try {
+                processMessageFolderFiles(message, workMessageFolder);
+            } catch (Exception e) {
+                File failedMessageFolder = new File(oldMessageFolderName
+                        + ECodexConnectorRunnableConstants.MESSAGE_FAILED_FOLDER_POSTFIX);
+                LOGGER.debug("Try to rename message folder {} to {}", workMessageFolder.getAbsolutePath(),
+                        failedMessageFolder.getAbsolutePath());
+                try {
+                    FileUtils.moveDirectory(workMessageFolder, failedMessageFolder);
+                } catch (IOException e1) {
+                    throw new ECodexConnectorNationalBackendClientException("Could not rename message folder "
+                            + workMessageFolder.getAbsolutePath() + " to " + failedMessageFolder.getAbsolutePath());
+                }
+                throw e;
+            }
+
+            File doneMessageFolder = new File(oldMessageFolderName
+                    + ECodexConnectorRunnableConstants.MESSAGE_SENT_FOLDER_POSTFIX);
+            LOGGER.debug("Try to rename message folder {} to {}", workMessageFolder.getAbsolutePath(),
+                    doneMessageFolder.getAbsolutePath());
+            try {
+                FileUtils.moveDirectory(workMessageFolder, doneMessageFolder);
+            } catch (IOException e1) {
+                LOGGER.error("Could not rename message folder {} to {}", messageFolder.getAbsolutePath(),
+                        doneMessageFolder.getAbsolutePath());
+            }
+
+        }
+    }
+
+    @Override
+    public void deliverMessage(Message message) throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
+        String natMessageId = message.getMessageDetails().getNationalMessageId();
+        if (!StringUtils.hasText(natMessageId)) {
+            natMessageId = ECodexConnectorRunnableUtil.generateNationalMessageId(message.getMessageDetails()
+                    .getFromParty().getPartyId());
+            LOGGER.debug("Generated national message ID for incoming message {}", natMessageId);
+            message.getMessageDetails().setNationalMessageId(natMessageId);
+            util.mergeMessage(message);
+        }
+        String pathname = incomingMessagesDir.getAbsolutePath() + File.separator + natMessageId;
+        LOGGER.debug("Deliver new message into folder {}", pathname);
+        File messageFolder = new File(pathname);
+        if (!messageFolder.exists()) {
+            messageFolder.mkdir();
+        }
+
+        ECodexConnectorMessageProperties msgProps = null;
+        File messagePropertiesFile = null;
+        String action = null;
+        if (message.getMessageDetails() != null) {
+            if (message.getMessageDetails().getAction() != null)
+                action = message.getMessageDetails().getAction().getAction();
+            String messagePropertiesPath = messageFolder.getAbsolutePath() + File.separator + messagePropertiesFileName;
+
+            messagePropertiesFile = new File(messagePropertiesPath);
+            msgProps = ECodexConnectorRunnableUtil
+                    .convertMessageDetailsToMessageProperties(message.getMessageDetails());
+        }
+
+        MessageContent messageContent = message.getMessageContent();
+        if (messageContent != null) {
+            if (messageContent.getPdfDocument() != null && messageContent.getPdfDocument().length > 0) {
+                String fileName = null;
+                if (StringUtils.hasText(messageContent.getPdfDocumentName())) {
+                    fileName = messageContent.getPdfDocumentName();
+                } else {
+                    fileName = action != null ? action + ECodexConnectorRunnableConstants.PDF_FILE_EXTENSION
+                            : ECodexConnectorRunnableConstants.DEFAULT_PDF_FILE_NAME;
+
+                }
+                msgProps.setContentPdfFileName(fileName);
+                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, messageContent.getPdfDocument());
+            }
+            if ((messageContent.getNationalXmlContent() != null && messageContent.getNationalXmlContent().length > 0)
+                    || (messageContent.getECodexContent() != null && messageContent.getECodexContent().length > 0)) {
+                byte[] content = messageContent.getNationalXmlContent() != null ? messageContent
+                        .getNationalXmlContent() : messageContent.getECodexContent();
+                String fileName = action != null ? action + ECodexConnectorRunnableConstants.XML_FILE_EXTENSION
+                        : ECodexConnectorRunnableConstants.DEFAULT_XML_FILE_NAME;
+                msgProps.setContentXmlFileName(fileName);
+                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, content);
+            }
+            if (messageContent.getDetachedSignature() != null && messageContent.getDetachedSignature().length > 0
+                    && messageContent.getDetachedSignatureMimeType() != null) {
+                String fileName = null;
+                if (StringUtils.hasText(messageContent.getDetachedSignatureName())
+                        && !messageContent.getDetachedSignatureName().equals(
+                                ECodexConnectorRunnableConstants.DETACHED_SIGNATURE_FILE_NAME)) {
+                    fileName = messageContent.getDetachedSignatureName();
+                } else {
+                    fileName = ECodexConnectorRunnableConstants.DETACHED_SIGNATURE_FILE_NAME;
+                    if (messageContent.getDetachedSignatureMimeType().equals(DetachedSignatureMimeType.XML))
+                        fileName += ECodexConnectorRunnableConstants.XML_FILE_EXTENSION;
+                    else if (messageContent.getDetachedSignatureMimeType().equals(DetachedSignatureMimeType.PKCS7))
+                        fileName += ECodexConnectorRunnableConstants.PKCS7_FILE_EXTENSION;
+                }
+                msgProps.setDetachedSignatureFileName(fileName);
+                ECodexConnectorRunnableUtil.createFile(messageFolder, fileName, messageContent.getDetachedSignature());
+            }
+        }
+        LOGGER.debug("Store message properties to file {}", messagePropertiesFile.getAbsolutePath());
+        ECodexConnectorRunnableUtil.storeMessagePropertiesToFile(msgProps, messagePropertiesFile);
+
+        if (message.getAttachments() != null) {
+            for (MessageAttachment attachment : message.getAttachments()) {
+                ECodexConnectorRunnableUtil.createFile(messageFolder, attachment.getName(), attachment.getAttachment());
+            }
+        }
+
+        if (message.getConfirmations() != null) {
+            for (MessageConfirmation confirmation : message.getConfirmations()) {
+                ECodexConnectorRunnableUtil.createFile(messageFolder, confirmation.getEvidenceType().name()
+                        + ECodexConnectorRunnableConstants.XML_FILE_EXTENSION, confirmation.getEvidence());
+            }
+        }
+
+    }
+
+    @Override
+    public Message[] requestConfirmations() throws ECodexConnectorNationalBackendClientException,
+            ImplementationMissingException {
+        List<Message> unconfirmed = util.findUnconfirmedMessages();
+        if (!CollectionUtils.isEmpty(unconfirmed)) {
+            LOGGER.info("Found {} unconfirmed incoming messages.", unconfirmed.size());
+            List<Message> confirmationMessages = new ArrayList<Message>();
+            for (Message originalMessage : unconfirmed) {
+                Message deliveryMessage = ECodexConnectorRunnableUtil.createConfirmationMessage(
+                        ECodexEvidenceType.DELIVERY, originalMessage);
+                confirmationMessages.add(deliveryMessage);
+
+                Message retrievalMessage = ECodexConnectorRunnableUtil.createConfirmationMessage(
+                        ECodexEvidenceType.RETRIEVAL, originalMessage);
+                confirmationMessages.add(retrievalMessage);
+
+            }
+
+            return confirmationMessages.toArray(new Message[confirmationMessages.size()]);
+        }
+        return null;
+    }
+
+    @Override
+    public void deliverLastEvidenceForMessage(Message confirmationMessage)
+            throws ECodexConnectorNationalBackendClientException, ImplementationMissingException {
+        Message originalMessage = util.findOriginalMessage(confirmationMessage.getMessageDetails().getRefToMessageId());
+
+        if (originalMessage == null) {
+            throw new ECodexConnectorNationalBackendClientException(
+                    "Cannot find the original message for ID in database: "
+                            + confirmationMessage.getMessageDetails().getRefToMessageId());
+        }
+
+        MessageConfirmation confirmation = confirmationMessage.getConfirmations().get(0);
+        if (confirmation.getEvidence() != null && confirmation.getEvidence().length > 0) {
+            String type = confirmation.getEvidenceType().name();
+
+            File messageFolder = null;
+            if (isOutgoingMessage(originalMessage)) {
+                messageFolder = new File(outgoingMessagesDir + File.separator
+                        + originalMessage.getMessageDetails().getNationalMessageId()
+                        + ECodexConnectorRunnableConstants.MESSAGE_SENT_FOLDER_POSTFIX);
+                if (!messageFolder.exists() || !messageFolder.isDirectory()) {
+                    LOGGER.error("Message folder {} for outgoing message does not exist anymore. Create again!",
+                            messageFolder.getAbsolutePath());
+                    if (!messageFolder.mkdir()) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Outgoing message folder cannot be created!");
+                    }
+                }
+            } else {
+
+                String natMessageId = originalMessage.getMessageDetails().getNationalMessageId();
+                if (!StringUtils.hasText(natMessageId)) {
+                    natMessageId = ECodexConnectorRunnableUtil.generateNationalMessageId(originalMessage
+                            .getMessageDetails().getFromParty().getPartyId());
+                    LOGGER.debug("Generated national message ID for incoming message {}", natMessageId);
+                    originalMessage.getMessageDetails().setNationalMessageId(natMessageId);
+                    util.mergeMessage(originalMessage);
+                }
+                String pathname = incomingMessagesDir.getAbsolutePath() + File.separator + natMessageId;
+                messageFolder = new File(pathname);
+                if (!messageFolder.exists() || !messageFolder.isDirectory()) {
+                    LOGGER.error("Message folder {} for incoming message does not exist. Create folder!",
+                            messageFolder.getAbsolutePath());
+                    if (!messageFolder.mkdir()) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Incoming message folder cannot be created!");
+                    }
+                }
+            }
+
+            String path = messageFolder.getAbsolutePath() + File.separator + type
+                    + ECodexConnectorRunnableConstants.XML_FILE_EXTENSION;
+            LOGGER.debug("Create evidence xml file {}", path);
+            File evidenceXml = new File(path);
+            try {
+                ECodexConnectorRunnableUtil.byteArrayToFile(confirmation.getEvidence(), evidenceXml);
+            } catch (IOException e) {
+                throw new ECodexConnectorNationalBackendClientException("Could not create file "
+                        + evidenceXml.getAbsolutePath(), e);
+            }
+        }
+
+    }
+
+    private boolean isOutgoingMessage(Message originalMessage) {
+        return originalMessage.getDbMessage() != null && originalMessage.getDbMessage().getDirection() != null
+                && originalMessage.getDbMessage().getDirection().equals(ECodexMessageDirection.NAT_TO_GW);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String path = System.getProperty("user.dir");
+
+        if (!StringUtils.hasText(incomingMessagesDirectory)) {
+            incomingMessagesDirectory = path + File.separator
+                    + ECodexConnectorRunnableConstants.INCOMING_MESSAGES_DEFAULT_DIR;
+            LOGGER.debug("The property 'incoming.messages.directory' is not set properly as it is null or empty! Default value set!");
+        }
+        LOGGER.debug("Initializing set incoming messages directory {}", incomingMessagesDirectory);
+        incomingMessagesDir = new File(incomingMessagesDirectory);
+
+        if (!incomingMessagesDir.exists()) {
+            throw new ECodexConnectorRunnableException("Directory '" + incomingMessagesDirectory + "' does not exist!");
+        }
+
+        if (!incomingMessagesDir.isDirectory()) {
+            throw new ECodexConnectorRunnableException("'" + incomingMessagesDirectory + "' is not a directory!");
+        }
+
+        if (!StringUtils.hasText(outgoingMessagesDirectory)) {
+            outgoingMessagesDirectory = path + File.separator
+                    + ECodexConnectorRunnableConstants.OUTGOING_MESSAGES_DEFAULT_DIR;
+            LOGGER.debug("The property 'outgoing.messages.directory' is not set properly as it is null or empty! Default value set!");
+        }
+        LOGGER.debug("Initializing set outgoing messages directory {}", outgoingMessagesDirectory);
+        outgoingMessagesDir = new File(outgoingMessagesDirectory);
+
+        if (!outgoingMessagesDir.exists()) {
+            throw new ECodexConnectorRunnableException("Directory '" + outgoingMessagesDirectory + "' does not exist!");
+        }
+
+        if (!outgoingMessagesDir.isDirectory()) {
+            throw new ECodexConnectorRunnableException("'" + outgoingMessagesDirectory + "' is not a directory!");
+        }
+
+        if (!StringUtils.hasText(messagePropertiesFileName))
+            messagePropertiesFileName = ECodexConnectorRunnableConstants.MESSAGE_PROPERTIES_DEFAULT_FILE_NAME;
+
+    }
+
+    private void processMessageFolderFiles(Message message, File workMessageFolder)
+            throws ECodexConnectorNationalBackendClientException {
+        ECodexConnectorMessageProperties messageProperties = ECodexConnectorRunnableUtil.loadMessageProperties(
+                workMessageFolder, messagePropertiesFileName);
+        try {
+            util.convertMessagePropertiesToMessageDetails(messageProperties, message.getMessageDetails());
+        } catch (ECodexConnectorRunnableException e) {
+            throw new ECodexConnectorNationalBackendClientException(
+                    "Error converting message details from message properties!", e);
+        }
+
+        String contentXmlFileName = messageProperties.getContentXmlFileName();
+        if (!StringUtils.hasText(contentXmlFileName)) {
+            throw new ECodexConnectorNationalBackendClientException(
+                    "Property for contentXmlFileName not set properly! Message cannot be processed!");
+        }
+
+        String contentPdfFileName = messageProperties.getContentPdfFileName();
+        if (!StringUtils.hasText(contentPdfFileName)) {
+            throw new ECodexConnectorNationalBackendClientException(
+                    "Property for contentPdfFileName not set properly! Message cannot be processed!");
+        }
+
+        boolean detachedSignatureExists = false;
+        String detachedSignatureFileName = messageProperties.getDetachedSignatureFileName();
+        if (StringUtils.hasText(detachedSignatureFileName)) {
+            detachedSignatureExists = true;
+        }
+
+        int attachmentCount = 1;
+
+        for (File sub : workMessageFolder.listFiles()) {
+            if (sub.getName().equals(messagePropertiesFileName)) {
+                continue;
+            } else {
+                MessageContent messageContent = message.getMessageContent();
+                if (sub.getName().equals(contentXmlFileName)) {
+                    LOGGER.debug("Found content xml file with name {}", contentXmlFileName);
+                    try {
+                        messageContent.setNationalXmlContent(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading content xml into byte array from file " + sub.getName());
+                    }
+                    continue;
+                } else if (sub.getName().equals(contentPdfFileName)) {
+                    LOGGER.debug("Found content pdf file with name {}", contentPdfFileName);
+                    try {
+                        messageContent.setPdfDocument(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                        messageContent.setPdfDocumentName(sub.getName());
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading content pdf into byte array from file " + sub.getName());
+                    }
+                    continue;
+                } else if (detachedSignatureExists && sub.getName().equals(detachedSignatureFileName)) {
+                    LOGGER.debug("Found detached signature file with name {}", detachedSignatureFileName);
+                    try {
+                        messageContent.setDetachedSignature(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                        messageContent.setDetachedSignatureName(sub.getName());
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading detached signature into byte array from file " + sub.getName());
+                    }
+                    if (detachedSignatureFileName.endsWith(ECodexConnectorRunnableConstants.XML_FILE_EXTENSION)) {
+                        messageContent.setDetachedSignatureMimeType(DetachedSignatureMimeType.XML);
+                    } else if (detachedSignatureFileName
+                            .endsWith(ECodexConnectorRunnableConstants.PKCS7_FILE_EXTENSION)) {
+                        messageContent.setDetachedSignatureMimeType(DetachedSignatureMimeType.PKCS7);
+                    } else {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "The detached signature file has an invalid extension! " + sub.getName());
+                    }
+                    continue;
+                } else {
+                    LOGGER.debug("Processing attachment File {}", sub.getName());
+                    MessageAttachment attachment = new MessageAttachment();
+
+                    attachment.setName(sub.getName());
+                    String attachmentId = ECodexConnectorRunnableConstants.ATTACHMENT_ID_PREFIX + attachmentCount;
+                    attachmentCount++;
+                    attachment.setIdentifier(attachmentId);
+                    attachment.setMimeType(ECodexConnectorRunnableUtil.getMimeTypeFromFileName(sub));
+
+                    try {
+                        attachment.setAttachment(ECodexConnectorRunnableUtil.fileToByteArray(sub));
+                    } catch (IOException e) {
+                        throw new ECodexConnectorNationalBackendClientException(
+                                "Exception loading attachment into byte array from file " + sub.getName());
+                    }
+
+                    LOGGER.debug("Add attachment {}", attachment.toString());
+                    message.addAttachment(attachment);
+                }
+            }
+        }
+    }
+
+}
