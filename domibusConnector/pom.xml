@@ -6,16 +6,16 @@
 	<version>3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>ECodexConnectorGatewayWebserviceClient</module>
-		<module>ECodexConnectorContentMapper</module>
-		<module>ECodexConnectorNationalBackendClient</module>
-		<module>ECodexConnectorEvidencesToolkit</module>
-		<module>ECodexConnectorSecurityToolkit</module>
-		<module>ECodexConnectorController</module>
-		<module>ECodexConnectorCommon</module>
-		<module>ECodexConnectorDistribution</module>
-		<module>ECodexConnectorMonitoring</module>
-		<module>ECodexConnectorRunnable</module>
+		<module>domibusConnectorGatewayWebserviceClient</module>
+		<module>domibusConnectorContentMapper</module>
+		<module>domibusConnectorNationalBackendClient</module>
+		<module>domibusConnectorEvidencesToolkit</module>
+		<module>domibusConnectorSecurityToolkit</module>
+		<module>domibusConnectorController</module>
+		<module>domibusConnectorCommon</module>
+		<module>domibusConnectorDistribution</module>
+		<module>domibusConnectorMonitoring</module>
+		<module>domibusConnectorRunnable</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
@@ -28,7 +28,7 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/ECodexConnector</developerConnection>
+		<developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
 	</scm>
 
 	<distributionManagement>

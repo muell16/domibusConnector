@@ -1,8 +1,0 @@
-Changes in Release 1.4 of the ECodexConnector Framework:
-
--- ECodexConnectorEvidencesToolkit and Controller: A new evidence type RelayREMMDFailure is introduced.
--- ECodexConnectorGatewayWebserviceClient: The call of the dynamic discovery client and submission of the endpoint address introduced.
--- ECodexConnectorSecurityToolkit: The possibility to send documents via detached signature is implemented.
--- ECodexConnectorGatewayWebserviceClient: PartyIdType added to the PartyInfo to be 1.4 gateway compliant.
--- ECodexConnectorGatewayWebserviceClient: proceeding empty or null href attribute in PartInfo element implemented.
--- ECodexConnectorGatewayWebserviceClient: no more backendWS 1.0 support.
