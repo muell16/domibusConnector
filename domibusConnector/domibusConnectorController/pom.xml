@@ -2,45 +2,45 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>eu.ecodex.connector</groupId>
-		<artifactId>ECodexConnector</artifactId>
-		<version>2.1-SNAPSHOT</version>
+		<groupId>eu.domibus.connector</groupId>
+		<artifactId>domibusConnector</artifactId>
+		<version>3.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>ECodexConnectorController</artifactId>
+	<artifactId>domibusConnectorController</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorCommon</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorContentMapper</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorContentMapper</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorNationalBackendClient</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorNationalBackendClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorGatewayWebserviceClient</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorGatewayWebserviceClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorSecurityToolkit</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorSecurityToolkit</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorEvidencesToolkit</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorEvidencesToolkit</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorMonitoring</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorMonitoring</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

@@ -2,15 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>eu.ecodex.connector</groupId>
-		<artifactId>ECodexConnector</artifactId>
-		<version>2.1-SNAPSHOT</version>
+		<groupId>eu.domibus.connector</groupId>
+		<artifactId>domibusConnector</artifactId>
+		<version>3.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>ECodexConnectorEvidencesToolkit</artifactId>
+	<artifactId>domibusConnectorEvidencesToolkit</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>eu.ecodex.connector</groupId>
-			<artifactId>ECodexConnectorCommon</artifactId>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

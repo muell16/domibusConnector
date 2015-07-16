@@ -30,63 +30,63 @@
 		
 		<!-- ==================== Copying Module's JAR files ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorCommon/target/
+			<directory>${project.basedir}/../domibusConnectorCommon/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorCommon
+			<outputDirectory>${modules.output.dir}/domibusConnectorCommon
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorContentMapper/target/
+			<directory>${project.basedir}/../domibusConnectorContentMapper/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorContentMapper
+			<outputDirectory>${modules.output.dir}/domibusConnectorContentMapper
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorController/target/
+			<directory>${project.basedir}/../domibusConnectorController/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorController
+			<outputDirectory>${modules.output.dir}/domibusConnectorController
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorEvidencesToolkit/target/
+			<directory>${project.basedir}/../domibusConnectorEvidencesToolkit/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorEvidencesToolkit
+			<outputDirectory>${modules.output.dir}/domibusConnectorEvidencesToolkit
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorGatewayWebserviceClient/target/
+			<directory>${project.basedir}/../domibusConnectorGatewayWebserviceClient/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorGatewayWebserviceClient
+			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayWebserviceClient
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorNationalBackendClient/target/
+			<directory>${project.basedir}/../domibusConnectorNationalBackendClient/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorNationalBackendClient
+			<outputDirectory>${modules.output.dir}/domibusConnectorNationalBackendClient
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorSecurityToolkit/target/
+			<directory>${project.basedir}/../domibusConnectorSecurityToolkit/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorSecurityToolkit
+			<outputDirectory>${modules.output.dir}/domibusConnectorSecurityToolkit
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
@@ -105,51 +105,51 @@
 		<!-- ==================== Copying Module's POM files ================= -->
 
 		<file>
-			<source>${project.basedir}/../ECodexConnectorCommon/pom.xml</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorCommon
+			<source>${project.basedir}/../domibusConnectorCommon/pom.xml</source>
+			<outputDirectory>${modules.output.dir}/domibusConnectorCommon
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../ECodexConnectorContentMapper/pom.xml
+			<source>${project.basedir}/../domibusConnectorContentMapper/pom.xml
 			</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorContentMapper
+			<outputDirectory>${modules.output.dir}/domibusConnectorContentMapper
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../ECodexConnectorController/pom.xml
+			<source>${project.basedir}/../domibusConnectorController/pom.xml
 			</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorController
+			<outputDirectory>${modules.output.dir}/domibusConnectorController
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../ECodexConnectorEvidencesToolkit/pom.xml
+			<source>${project.basedir}/../domibusConnectorEvidencesToolkit/pom.xml
 			</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorEvidencesToolkit
+			<outputDirectory>${modules.output.dir}/domibusConnectorEvidencesToolkit
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../ECodexConnectorGatewayWebserviceClient/pom.xml
+			<source>${project.basedir}/../domibusConnectorGatewayWebserviceClient/pom.xml
 			</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorGatewayWebserviceClient
+			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayWebserviceClient
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../ECodexConnectorNationalBackendClient/pom.xml
+			<source>${project.basedir}/../domibusConnectorNationalBackendClient/pom.xml
 			</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorNationalBackendClient
+			<outputDirectory>${modules.output.dir}/domibusConnectorNationalBackendClient
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../ECodexConnectorSecurityToolkit/pom.xml
+			<source>${project.basedir}/../domibusConnectorSecurityToolkit/pom.xml
 			</source>
-			<outputDirectory>${modules.output.dir}/ECodexConnectorSecurityToolkit
+			<outputDirectory>${modules.output.dir}/domibusConnectorSecurityToolkit
 			</outputDirectory>
 		</file>
 
 		<!-- ==================== Copying example properties ================= -->
 		
 		<file>
-			<source>${project.basedir}/../ECodexConnectorCommon/src/main/resources/eu/ecodex/connector/common/exampleConnectorProperties.properties</source>
+			<source>${project.basedir}/../domibusConnectorCommon/src/main/resources/eu/ecodex/connector/common/exampleConnectorProperties.properties</source>
 			<outputDirectory>${properties.output.dir}
 			</outputDirectory>
 		</file>

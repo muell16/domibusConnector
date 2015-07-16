@@ -14,13 +14,13 @@
 		
 		<!-- ==================== Copying Docs ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorRunnable/src/doc</directory>
+			<directory>${project.basedir}/../domibusConnectorRunnable/src/doc</directory>
 			<outputDirectory>${documentation.output.dir}</outputDirectory>
 		</fileSet>
 		
 		<!-- ==================== Copying JAR files ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorRunnable/target/
+			<directory>${project.basedir}/../domibusConnectorRunnable/target/
 			</directory>
 			<outputDirectory>${connector.build.dir}bin
 			</outputDirectory>
@@ -31,7 +31,7 @@
 		
 		<!-- ==================== Copying dependency libraries ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorRunnable/target/lib/
+			<directory>${project.basedir}/../domibusConnectorRunnable/target/lib/
 			</directory>
 			<outputDirectory>${lib.output.dir}
 			</outputDirectory>
@@ -42,7 +42,7 @@
 		
 		<!-- ==================== Copying startup scripts ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorRunnable/src/startupScripts
+			<directory>${project.basedir}/../domibusConnectorRunnable/src/startupScripts
 			</directory>
 			<outputDirectory>${connector.build.dir}
 			</outputDirectory>
@@ -50,7 +50,7 @@
 		
 		<!-- ==================== Copying example properties ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../ECodexConnectorRunnable/src/main/resources
+			<directory>${project.basedir}/../domibusConnectorRunnable/src/main/resources
 			</directory>
 			<outputDirectory>${connector.build.dir}conf
 			</outputDirectory>
