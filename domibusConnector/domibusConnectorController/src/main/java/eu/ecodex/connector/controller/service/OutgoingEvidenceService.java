@@ -3,12 +3,12 @@ package eu.ecodex.connector.controller.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
@@ -20,11 +20,11 @@ public class OutgoingEvidenceService implements EvidenceService {
 
     static Logger LOGGER = LoggerFactory.getLogger(OutgoingEvidenceService.class);
 
-    ECodexConnectorPersistenceService persistenceService;
+    DomibusConnectorPersistenceService persistenceService;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
     ECodexConnectorEvidencesToolkit evidencesToolkit;
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
@@ -41,10 +41,10 @@ public class OutgoingEvidenceService implements EvidenceService {
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
         Message originalMessage = persistenceService.findMessageByEbmsId(messageID);
-        ECodexEvidenceType evidenceType = confirmationMessage.getConfirmations().get(0).getEvidenceType();
+        EvidenceType evidenceType = confirmationMessage.getConfirmations().get(0).getEvidenceType();
 
         MessageDetails details = new MessageDetails();
-        ECodexAction action = createEvidenceAction(evidenceType);
+        DomibusConnectorAction action = createEvidenceAction(evidenceType);
         details.setAction(action);
         details.setService(confirmationMessage.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
@@ -81,7 +81,7 @@ public class OutgoingEvidenceService implements EvidenceService {
                 originalMessage.getDbMessage().getId());
     }
 
-    private MessageConfirmation generateEvidence(ECodexEvidenceType type, Message originalMessage)
+    private MessageConfirmation generateEvidence(EvidenceType type, Message originalMessage)
             throws ECodexConnectorEvidencesToolkitException, ECodexConnectorControllerException {
         switch (type) {
         case DELIVERY:
@@ -97,7 +97,7 @@ public class OutgoingEvidenceService implements EvidenceService {
         }
     }
 
-    private ECodexAction createEvidenceAction(ECodexEvidenceType type) throws ECodexConnectorControllerException {
+    private DomibusConnectorAction createEvidenceAction(EvidenceType type) throws ECodexConnectorControllerException {
         switch (type) {
         case DELIVERY:
             return persistenceService.getDeliveryNonDeliveryToRecipientAction();

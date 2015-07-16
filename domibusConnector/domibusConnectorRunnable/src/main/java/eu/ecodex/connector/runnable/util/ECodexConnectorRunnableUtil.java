@@ -14,14 +14,14 @@ import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.db.model.ECodexParty;
-import eu.ecodex.connector.common.db.model.ECodexService;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.model.DomibusConnectorParty;
+import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 import eu.ecodex.connector.runnable.exception.ECodexConnectorRunnableException;
 
@@ -39,9 +39,9 @@ public class ECodexConnectorRunnableUtil {
     @Value("${gateway.role}")
     private String gatewayRole;
 
-    private ECodexConnectorPersistenceService persistenceService;
+    private DomibusConnectorPersistenceService persistenceService;
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
@@ -78,7 +78,7 @@ public class ECodexConnectorRunnableUtil {
             fromPartyRole = gatewayRole;
         }
         if (fromPartyId != null && fromPartyRole != null) {
-            ECodexParty fromParty = persistenceService.getParty(fromPartyId, fromPartyRole);
+            DomibusConnectorParty fromParty = persistenceService.getParty(fromPartyId, fromPartyRole);
             if (fromParty == null) {
                 throw new ECodexConnectorRunnableException("Could not find Party with id '" + fromPartyId
                         + "' and role '" + fromPartyRole + "'!");
@@ -91,7 +91,7 @@ public class ECodexConnectorRunnableUtil {
         String toPartyId = properties.getToPartyId();
         String toPartyRole = properties.getToPartyRole();
         if (toPartyId != null && toPartyRole != null) {
-            ECodexParty toParty = persistenceService.getParty(toPartyId, toPartyRole);
+            DomibusConnectorParty toParty = persistenceService.getParty(toPartyId, toPartyRole);
             if (toParty == null) {
                 throw new ECodexConnectorRunnableException("Could not find Party with id '" + toPartyId
                         + "' and role '" + toPartyRole + "'!");
@@ -104,7 +104,7 @@ public class ECodexConnectorRunnableUtil {
 
         String action = properties.getAction();
         if (StringUtils.hasText(action)) {
-            ECodexAction dbAction = persistenceService.getAction(action);
+            DomibusConnectorAction dbAction = persistenceService.getAction(action);
             if (dbAction == null) {
                 throw new ECodexConnectorRunnableException("Could not find Action in database by set action '" + action
                         + "'!");
@@ -116,7 +116,7 @@ public class ECodexConnectorRunnableUtil {
 
         String service = properties.getService();
         if (StringUtils.hasText(service)) {
-            ECodexService dbService = persistenceService.getService(service);
+            DomibusConnectorService dbService = persistenceService.getService(service);
             if (dbService == null) {
                 throw new ECodexConnectorRunnableException("Could not find Service in database by set service '"
                         + service + "'!");
@@ -190,7 +190,7 @@ public class ECodexConnectorRunnableUtil {
         return details;
     }
 
-    public static Message createConfirmationMessage(ECodexEvidenceType evidenceType, Message originalMessage) {
+    public static Message createConfirmationMessage(EvidenceType evidenceType, Message originalMessage) {
         MessageDetails details = new MessageDetails();
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setService(originalMessage.getMessageDetails().getService());

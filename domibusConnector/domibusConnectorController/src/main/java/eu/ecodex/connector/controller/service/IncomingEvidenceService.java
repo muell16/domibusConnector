@@ -3,12 +3,12 @@ package eu.ecodex.connector.controller.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.enums.ECodexMessageDirection;
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.nbc.ECodexConnectorNationalBackendClient;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
@@ -17,10 +17,10 @@ public class IncomingEvidenceService implements EvidenceService {
 
     static Logger LOGGER = LoggerFactory.getLogger(IncomingEvidenceService.class);
 
-    ECodexConnectorPersistenceService persistenceService;
+    DomibusConnectorPersistenceService persistenceService;
     ECodexConnectorNationalBackendClient nationalBackendClient;
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
@@ -59,9 +59,9 @@ public class IncomingEvidenceService implements EvidenceService {
 
         persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
 
-        if (originalMessage.getDbMessage().getDirection().equals(ECodexMessageDirection.NAT_TO_GW)
-                && (confirmation.getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE) || confirmation
-                        .getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION))) {
+        if (originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW)
+                && (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_ACCEPTANCE) || confirmation
+                        .getEvidenceType().equals(EvidenceType.RELAY_REMMD_REJECTION))) {
             persistenceService.confirmMessage(originalMessage);
         }
 
@@ -75,9 +75,9 @@ public class IncomingEvidenceService implements EvidenceService {
         }
         if (message.getConfirmations() != null) {
             for (MessageConfirmation confirmation : message.getConfirmations()) {
-                if (confirmation.getEvidenceType().equals(ECodexEvidenceType.RELAY_REMMD_REJECTION)
-                        || confirmation.getEvidenceType().equals(ECodexEvidenceType.NON_DELIVERY)
-                        || confirmation.getEvidenceType().equals(ECodexEvidenceType.NON_RETRIEVAL)) {
+                if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_REJECTION)
+                        || confirmation.getEvidenceType().equals(EvidenceType.NON_DELIVERY)
+                        || confirmation.getEvidenceType().equals(EvidenceType.NON_RETRIEVAL)) {
                     return true;
                 }
             }

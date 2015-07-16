@@ -3,10 +3,10 @@ package eu.ecodex.connector.evidences;
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
 
-import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.CommonConnectorProperties;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
 import eu.ecodex.evidences.EvidenceBuilder;
@@ -19,7 +19,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
     private EvidenceBuilder evidenceBuilder;
     private HashValueBuilder hashValueBuilder;
-    private ECodexConnectorProperties connectorProperties;
+    private CommonConnectorProperties connectorProperties;
 
     @Override
     public byte[] createSubmissionAcceptance(Message message, String hash)
@@ -28,7 +28,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         byte[] evidence = createSubmissionAcceptanceRejection(true, null, message, hash);
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.SUBMISSION_ACCEPTANCE, evidence);
+                EvidenceType.SUBMISSION_ACCEPTANCE, evidence);
 
         message.addConfirmation(confirmation);
 
@@ -56,7 +56,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         byte[] evidence = createSubmissionAcceptanceRejection(false, event, message, hash);
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.SUBMISSION_REJECTION, evidence);
+                EvidenceType.SUBMISSION_REJECTION, evidence);
 
         message.addConfirmation(confirmation);
 
@@ -66,18 +66,18 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
     @Override
     public MessageConfirmation createRelayREMMDAcceptance(Message message)
             throws ECodexConnectorEvidencesToolkitException {
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
-                    + ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE + " can be created!");
+                    + EvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
+                    + EvidenceType.RELAY_REMMD_ACCEPTANCE + " can be created!");
         }
 
         byte[] evidence = createRelayREMMDAcceptanceRejection(true, null, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, evidence);
+                EvidenceType.RELAY_REMMD_ACCEPTANCE, evidence);
 
         return confirmation;
 
@@ -100,18 +100,18 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
-                    + ECodexEvidenceType.RELAY_REMMD_REJECTION + " can be created!");
+                    + EvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
+                    + EvidenceType.RELAY_REMMD_REJECTION + " can be created!");
         }
 
         byte[] evidence = createRelayREMMDAcceptanceRejection(false, event, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.RELAY_REMMD_REJECTION, evidence);
+                EvidenceType.RELAY_REMMD_REJECTION, evidence);
 
         return confirmation;
     }
@@ -134,36 +134,36 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
-                    + ECodexEvidenceType.RELAY_REMMD_FAILURE + " can be created!");
+                    + EvidenceType.SUBMISSION_ACCEPTANCE.name() + "! No evidence of type "
+                    + EvidenceType.RELAY_REMMD_FAILURE + " can be created!");
         }
 
         byte[] evidence = createRelayREMMDFailure(event, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.RELAY_REMMD_FAILURE, evidence);
+                EvidenceType.RELAY_REMMD_FAILURE, evidence);
 
         return confirmation;
     }
 
     @Override
     public MessageConfirmation createDeliveryEvidence(Message message) throws ECodexConnectorEvidencesToolkitException {
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE.name() + "! No evidence of type "
-                    + ECodexEvidenceType.DELIVERY + " can be created!");
+                    + EvidenceType.RELAY_REMMD_ACCEPTANCE.name() + "! No evidence of type "
+                    + EvidenceType.DELIVERY + " can be created!");
         }
 
         byte[] evidence = createDeliveryNonDeliveryEvidence(true, null, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.DELIVERY, evidence);
+                EvidenceType.DELIVERY, evidence);
 
         return confirmation;
     }
@@ -187,36 +187,36 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE.name() + "! No evidence of type "
-                    + ECodexEvidenceType.NON_DELIVERY + " can be created!");
+                    + EvidenceType.RELAY_REMMD_ACCEPTANCE.name() + "! No evidence of type "
+                    + EvidenceType.NON_DELIVERY + " can be created!");
         }
 
         byte[] evidence = createDeliveryNonDeliveryEvidence(false, event, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.NON_DELIVERY, evidence);
+                EvidenceType.NON_DELIVERY, evidence);
 
         return confirmation;
     }
 
     @Override
     public MessageConfirmation createRetrievalEvidence(Message message) throws ECodexConnectorEvidencesToolkitException {
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.DELIVERY, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.DELIVERY, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.DELIVERY.name() + "! No evidence of type " + ECodexEvidenceType.RETRIEVAL
+                    + EvidenceType.DELIVERY.name() + "! No evidence of type " + EvidenceType.RETRIEVAL
                     + " can be created!");
         }
 
         byte[] evidence = createRetrievalNonRetrievalEvidence(true, null, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.RETRIEVAL, evidence);
+                EvidenceType.RETRIEVAL, evidence);
 
         return confirmation;
     }
@@ -239,23 +239,23 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(ECodexEvidenceType.DELIVERY, message);
+        MessageConfirmation prevConfirmation = findConfirmation(EvidenceType.DELIVERY, message);
 
         if (prevConfirmation == null) {
             throw new ECodexConnectorEvidencesToolkitException("Message contains no evidence of type "
-                    + ECodexEvidenceType.DELIVERY.name() + "! No evidence of type " + ECodexEvidenceType.NON_RETRIEVAL
+                    + EvidenceType.DELIVERY.name() + "! No evidence of type " + EvidenceType.NON_RETRIEVAL
                     + " can be created!");
         }
 
         byte[] evidence = createRetrievalNonRetrievalEvidence(false, event, prevConfirmation.getEvidence());
 
         MessageConfirmation confirmation = buildConfirmation(message.getMessageDetails().getNationalMessageId(),
-                ECodexEvidenceType.NON_RETRIEVAL, evidence);
+                EvidenceType.NON_RETRIEVAL, evidence);
 
         return confirmation;
     }
 
-    private MessageConfirmation findConfirmation(ECodexEvidenceType evidenctType, Message message) {
+    private MessageConfirmation findConfirmation(EvidenceType evidenctType, Message message) {
         if (message.getConfirmations() != null) {
             for (MessageConfirmation confirmation : message.getConfirmations()) {
                 if (confirmation.getEvidenceType().equals(evidenctType)) {
@@ -266,7 +266,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         return null;
     }
 
-    private MessageConfirmation buildConfirmation(String messageId, ECodexEvidenceType evidenceType, byte[] evidence) {
+    private MessageConfirmation buildConfirmation(String messageId, EvidenceType evidenceType, byte[] evidence) {
         MessageConfirmation confirmation = new MessageConfirmation();
         confirmation.setEvidenceType(evidenceType);
         confirmation.setEvidence(evidence);
@@ -398,7 +398,7 @@ public class ECodexConnectorEvidencesToolkitImpl implements ECodexConnectorEvide
         this.hashValueBuilder = hashValueBuilder;
     }
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
+    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 

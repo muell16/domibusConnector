@@ -1,6 +1,6 @@
 package eu.ecodex.connector.nbc;
 
-import eu.ecodex.connector.common.NationalImplementationFactory;
+import eu.domibus.connector.common.NationalImplementationFactory;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 public class ECodexConnectorNationalBackendClientFactory extends NationalImplementationFactory {

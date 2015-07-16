@@ -6,10 +6,10 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageContent;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.controller.service.EvidenceService;
 import eu.ecodex.connector.controller.service.MessageService;

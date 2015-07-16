@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageContent;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
 

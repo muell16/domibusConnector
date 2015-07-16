@@ -5,7 +5,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.message.Message;
+import eu.domibus.connector.common.message.Message;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.controller.service.EvidenceService;
 import eu.ecodex.connector.controller.service.MessageService;

@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.Assert;
 
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageAttachment;
-import eu.ecodex.connector.common.message.MessageContent;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageAttachment;
+import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.security.container.ECodexSecurityContainer;
 
 // @RunWith(SpringJUnit4ClassRunner.class)

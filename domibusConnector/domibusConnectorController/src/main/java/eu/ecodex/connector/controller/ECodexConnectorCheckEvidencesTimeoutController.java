@@ -6,14 +6,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.CommonConnectorProperties;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
@@ -26,15 +26,15 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
     static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorCheckEvidencesTimeoutController.class);
 
     private ECodexConnectorNationalBackendClient nationalBackendClient;
-    private ECodexConnectorPersistenceService persistenceService;
-    private ECodexConnectorProperties connectorProperties;
+    private DomibusConnectorPersistenceService persistenceService;
+    private CommonConnectorProperties connectorProperties;
     private ECodexConnectorEvidencesToolkit evidencesToolkit;
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
+    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
@@ -98,9 +98,9 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
     }
 
     private boolean checkEvidencesForRelayRemmd(Message message) {
-        if (checkEvidencesForType(message, ECodexEvidenceType.RELAY_REMMD_ACCEPTANCE)) {
+        if (checkEvidencesForType(message, EvidenceType.RELAY_REMMD_ACCEPTANCE)) {
             return true;
-        } else if (checkEvidencesForType(message, ECodexEvidenceType.RELAY_REMMD_REJECTION)) {
+        } else if (checkEvidencesForType(message, EvidenceType.RELAY_REMMD_REJECTION)) {
             persistenceService.rejectMessage(message);
             return true;
         }
@@ -108,9 +108,9 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
     }
 
     private boolean checkEvidencesForDelivery(Message message) {
-        if (checkEvidencesForType(message, ECodexEvidenceType.DELIVERY)) {
+        if (checkEvidencesForType(message, EvidenceType.DELIVERY)) {
             return true;
-        } else if (checkEvidencesForType(message, ECodexEvidenceType.NON_DELIVERY)) {
+        } else if (checkEvidencesForType(message, EvidenceType.NON_DELIVERY)) {
             persistenceService.rejectMessage(message);
             return true;
         }
@@ -118,10 +118,10 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
     }
 
     private boolean checkEvidencesForRetrieval(Message message) {
-        if (checkEvidencesForType(message, ECodexEvidenceType.RETRIEVAL)) {
+        if (checkEvidencesForType(message, EvidenceType.RETRIEVAL)) {
             persistenceService.confirmMessage(message);
             return true;
-        } else if (checkEvidencesForType(message, ECodexEvidenceType.NON_RETRIEVAL)) {
+        } else if (checkEvidencesForType(message, EvidenceType.NON_RETRIEVAL)) {
             persistenceService.rejectMessage(message);
             return true;
         }
@@ -164,7 +164,7 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
             throw new ECodexConnectorControllerException("Error creating RelayREMMDFailure for message!", e);
         }
 
-        ECodexAction action = persistenceService.getRelayREMMDFailure();
+        DomibusConnectorAction action = persistenceService.getRelayREMMDFailure();
 
         sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
     }
@@ -179,7 +179,7 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
             throw new ECodexConnectorControllerException("Error creating NonDelivery for message!", e);
         }
 
-        ECodexAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+        DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
         sendEvidenceToNationalSystem(originalMessage, nonDelivery, action);
     }
@@ -194,13 +194,13 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
             throw new ECodexConnectorControllerException("Error creating NonRetrieval for message!", e);
         }
 
-        ECodexAction action = persistenceService.getRetrievalNonRetrievalToRecipientAction();
+        DomibusConnectorAction action = persistenceService.getRetrievalNonRetrievalToRecipientAction();
 
         sendEvidenceToNationalSystem(originalMessage, nonRetrieval, action);
     }
 
     private void sendEvidenceToNationalSystem(Message originalMessage, MessageConfirmation confirmation,
-            ECodexAction evidenceAction) throws ECodexConnectorControllerException {
+            DomibusConnectorAction evidenceAction) throws ECodexConnectorControllerException {
 
         originalMessage.addConfirmation(confirmation);
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
@@ -228,7 +228,7 @@ public class ECodexConnectorCheckEvidencesTimeoutController implements ECodexCon
         persistenceService.rejectMessage(originalMessage);
     }
 
-    private boolean checkEvidencesForType(Message message, ECodexEvidenceType type) {
+    private boolean checkEvidencesForType(Message message, EvidenceType type) {
         if (message.getConfirmations() != null) {
             for (MessageConfirmation confirmation : message.getConfirmations()) {
                 if (confirmation.getEvidenceType().equals(type)) {

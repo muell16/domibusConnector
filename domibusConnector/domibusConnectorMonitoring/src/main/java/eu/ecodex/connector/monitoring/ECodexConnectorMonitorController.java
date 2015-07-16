@@ -15,13 +15,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
-import eu.ecodex.connector.common.ECodexConnectorProperties;
+import eu.domibus.connector.common.CommonConnectorProperties;
 import eu.ecodex.connector.monitoring.db.ECodexConnectorMonitorDB;
 
 public class ECodexConnectorMonitorController implements ApplicationContextAware, InitializingBean {
 
     private ApplicationContext ctx;
-    private ECodexConnectorProperties connectorProperties;
+    private CommonConnectorProperties connectorProperties;
 
     static Logger LOGGER = LoggerFactory.getLogger(ECodexConnectorMonitorController.class);
 
@@ -101,11 +101,11 @@ public class ECodexConnectorMonitorController implements ApplicationContextAware
         }
     }
 
-    public ECodexConnectorProperties getConnectorProperties() {
+    public CommonConnectorProperties getConnectorProperties() {
         return connectorProperties;
     }
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
+    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 

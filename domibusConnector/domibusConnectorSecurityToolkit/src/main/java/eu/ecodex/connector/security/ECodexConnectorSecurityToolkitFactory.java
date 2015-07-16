@@ -3,7 +3,7 @@ package eu.ecodex.connector.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.NationalImplementationFactory;
+import eu.domibus.connector.common.NationalImplementationFactory;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 
 public class ECodexConnectorSecurityToolkitFactory extends NationalImplementationFactory {

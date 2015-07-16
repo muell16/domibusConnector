@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import eu.ecodex.connector.common.ECodexConnectorGlobalConstants;
-import eu.ecodex.connector.common.enums.DetachedSignatureMimeType;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageAttachment;
+import eu.domibus.connector.common.CommonConnectorGlobalConstants;
+import eu.domibus.connector.common.enums.DetachedSignatureMimeType;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageAttachment;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;
@@ -118,14 +118,14 @@ public class ECodexSecurityContainer implements InitializingBean {
 
         Document document = null;
         if (ArrayUtils.isNotEmpty(message.getMessageContent().getPdfDocument())) {
-            String pdfName = StringUtils.isEmpty(message.getMessageContent().getPdfDocumentName()) ? ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME
+            String pdfName = StringUtils.isEmpty(message.getMessageContent().getPdfDocumentName()) ? CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME
                     + ".pdf"
                     : message.getMessageContent().getPdfDocumentName();
             document = new MemoryDocument(message.getMessageContent().getPdfDocument(), pdfName, MimeType.PDF);
         } else if (message.getMessageDetails().isValidWithoutPDF()) {
             byte[] content = message.getMessageContent().getECodexContent() != null ? message.getMessageContent()
                     .getECodexContent() : message.getMessageContent().getNationalXmlContent();
-            document = new MemoryDocument(content, ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".xml",
+            document = new MemoryDocument(content, CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".xml",
                     MimeType.XML);
         } else
             LOGGER.error("No content found for container!");
@@ -247,9 +247,9 @@ public class ECodexSecurityContainer implements InitializingBean {
                                     message.getMessageContent().setPdfDocument(docAsBytes);
                                     if (!StringUtils.isEmpty(container.getBusinessDocument().getName())
                                             && !container.getBusinessDocument().getName()
-                                                    .equals(ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME)
+                                                    .equals(CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME)
                                             && !container.getBusinessDocument().getName()
-                                                    .equals(ECodexConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".pdf")) {
+                                                    .equals(CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".pdf")) {
                                         message.getMessageContent().setPdfDocumentName(
                                                 container.getBusinessDocument().getName());
                                     }

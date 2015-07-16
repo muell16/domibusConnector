@@ -1,6 +1,6 @@
 package eu.ecodex.connector.monitoring;
 
-import eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao;
+import eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao;
 
 public class ECodexConnectorMonitor {
 
@@ -8,7 +8,7 @@ public class ECodexConnectorMonitor {
     private static final String CHECK_INCOMING_TRIGGER_NAME = "checkIncomingTrigger";
     private static final String CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME = "checkEvidencesTimeoutTrigger";
 
-    private ECodexConnectorMonitoringDao monitoringDao;
+    private DomibusConnectorConnectorMonitoringDao monitoringDao;
 
     public Long getCheckOutgoingRepeatInterval() {
         return monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
@@ -50,7 +50,7 @@ public class ECodexConnectorMonitor {
         return monitoringDao.countPendingMessagesGateway();
     }
 
-    public void setMonitoringDao(ECodexConnectorMonitoringDao monitoringDao) {
+    public void setMonitoringDao(DomibusConnectorConnectorMonitoringDao monitoringDao) {
         this.monitoringDao = monitoringDao;
     }
 

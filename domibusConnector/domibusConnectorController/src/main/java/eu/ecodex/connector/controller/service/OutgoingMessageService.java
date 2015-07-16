@@ -5,14 +5,14 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.enums.ECodexMessageDirection;
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.exception.PersistenceException;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.exception.PersistenceException;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
@@ -29,7 +29,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     public void handleMessage(Message message) throws ECodexConnectorControllerException {
 
         try {
-            persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.NAT_TO_GW);
+            persistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW);
         } catch (PersistenceException e1) {
             // createSubmissionRejectionAndReturnIt(message, hashValue);
             throw new ECodexConnectorControllerException(e1);
@@ -72,9 +72,9 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 byte[] submissionAcceptance = evidencesToolkit.createSubmissionAcceptance(message, hashValue);
                 // immediately persist new evidence into database
                 persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionAcceptance,
-                        ECodexEvidenceType.SUBMISSION_ACCEPTANCE);
+                        EvidenceType.SUBMISSION_ACCEPTANCE);
 
-                confirmation = new MessageConfirmation(ECodexEvidenceType.SUBMISSION_ACCEPTANCE, submissionAcceptance);
+                confirmation = new MessageConfirmation(EvidenceType.SUBMISSION_ACCEPTANCE, submissionAcceptance);
             } catch (ECodexConnectorEvidencesToolkitException ete) {
                 createSubmissionRejectionAndReturnIt(message, hashValue, ete.getMessage());
                 throw new ECodexConnectorControllerException("Could not generate evidence for submission acceptance! ",
@@ -113,7 +113,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     private String checkPDFandBuildHashValue(Message message, String hashValue)
             throws ECodexConnectorControllerException {
         if (ArrayUtils.isEmpty(message.getMessageContent().getPdfDocument())) {
-            ECodexAction action = message.getMessageDetails().getAction();
+            DomibusConnectorAction action = message.getMessageDetails().getAction();
             if (action == null) {
                 throw new ECodexConnectorControllerException("ECodex Action still null after mapping!");
             }
@@ -146,9 +146,9 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
             // immediately persist new evidence into database
             persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionRejection,
-                    ECodexEvidenceType.SUBMISSION_REJECTION);
+                    EvidenceType.SUBMISSION_REJECTION);
 
-            MessageConfirmation confirmation = new MessageConfirmation(ECodexEvidenceType.SUBMISSION_REJECTION,
+            MessageConfirmation confirmation = new MessageConfirmation(EvidenceType.SUBMISSION_REJECTION,
                     submissionRejection);
 
             Message returnMessage = buildEvidenceMessage(confirmation, message);
@@ -172,7 +172,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
         details.setService(originalMessage.getMessageDetails().getService());
 
-        ECodexAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
+        DomibusConnectorAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
         details.setAction(action);
 
         Message returnMessage = new Message(details, confirmation);

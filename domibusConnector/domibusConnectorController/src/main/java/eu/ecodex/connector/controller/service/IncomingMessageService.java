@@ -3,13 +3,13 @@ package eu.ecodex.connector.controller.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.enums.ECodexMessageDirection;
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.exception.PersistenceException;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.exception.PersistenceException;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.controller.exception.ECodexConnectorControllerException;
 import eu.ecodex.connector.evidences.exception.ECodexConnectorEvidencesToolkitException;
 import eu.ecodex.connector.evidences.type.RejectionReason;
@@ -26,7 +26,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
     public void handleMessage(Message message) throws ECodexConnectorControllerException {
 
         try {
-            persistenceService.persistMessageIntoDatabase(message, ECodexMessageDirection.GW_TO_NAT);
+            persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
         } catch (PersistenceException e1) {
             createRelayREMMDEvidenceAndSendIt(message, false);
             throw new ECodexConnectorControllerException(e1);
@@ -84,7 +84,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Error creating NonDelivery evidence for message!", e);
         }
 
-        ECodexAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+        DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
         sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
 
@@ -101,7 +101,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
             throw new ECodexConnectorControllerException("Error creating RelayREMMD evidence for message!", e);
         }
 
-        ECodexAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+        DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
 
         sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
@@ -110,7 +110,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
         }
     }
 
-    private void sendEvidenceToBackToGateway(Message originalMessage, ECodexAction action,
+    private void sendEvidenceToBackToGateway(Message originalMessage, DomibusConnectorAction action,
             MessageConfirmation messageConfirmation) throws ECodexConnectorControllerException {
 
         originalMessage.addConfirmation(messageConfirmation);

@@ -12,12 +12,12 @@ import org.springframework.util.StringUtils;
 
 import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.PayloadType;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageAttachment;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageContent;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageAttachment;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.connector.gwc.util.CommonMessageHelper;
 
@@ -54,7 +54,7 @@ public class DownloadMessageHelper {
                 message.getMessageContent().setECodexContent(bodyload.getValue());
             } else {
                 MessageConfirmation confirmation = new MessageConfirmation();
-                ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(elementDescription);
+                EvidenceType evidenceType = EvidenceType.valueOf(elementDescription);
                 confirmation.setEvidenceType(evidenceType);
                 confirmation.setEvidence(bodyload.getValue());
                 message.addConfirmation(confirmation);
@@ -135,7 +135,7 @@ public class DownloadMessageHelper {
 
     private MessageConfirmation extractMessageConfirmation(PayloadType payload, String evidenceTypeString) {
         MessageConfirmation confirmation = new MessageConfirmation();
-        ECodexEvidenceType evidenceType = ECodexEvidenceType.valueOf(evidenceTypeString);
+        EvidenceType evidenceType = EvidenceType.valueOf(evidenceTypeString);
         confirmation.setEvidenceType(evidenceType);
 
         confirmation.setEvidence(payload.getValue());

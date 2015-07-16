@@ -1,6 +1,6 @@
 package eu.ecodex.connector.gwc;
 
-import eu.ecodex.connector.common.message.Message;
+import eu.domibus.connector.common.message.Message;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 
 /**

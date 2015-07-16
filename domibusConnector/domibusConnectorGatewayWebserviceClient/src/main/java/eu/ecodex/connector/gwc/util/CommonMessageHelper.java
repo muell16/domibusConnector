@@ -37,13 +37,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.db.model.ECodexAction;
-import eu.ecodex.connector.common.db.model.ECodexParty;
-import eu.ecodex.connector.common.db.model.ECodexService;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.CommonConnectorProperties;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.model.DomibusConnectorParty;
+import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.discovery.DiscoveryClient;
 import eu.ecodex.discovery.DiscoveryException;
@@ -65,15 +65,15 @@ public class CommonMessageHelper {
     public static final String PARTPROPERTY_NAME = "description";
     public static final String BODYLOAD_HREF_PREFIX = "#";
 
-    private ECodexConnectorProperties connectorProperties;
-    private ECodexConnectorPersistenceService persistenceService;
+    private CommonConnectorProperties connectorProperties;
+    private DomibusConnectorPersistenceService persistenceService;
     private DiscoveryClient dynamicDiscoveryClient;
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
+    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
@@ -245,7 +245,7 @@ public class CommonMessageHelper {
         PartyId partyId = new PartyId();
 
         if (details.getFromParty() == null) {
-            ECodexParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
+            DomibusConnectorParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
                     connectorProperties.getGatewayRole());
             if (fromParty == null) {
                 throw new ECodexConnectorGatewayWebserviceClientException(
@@ -304,7 +304,7 @@ public class CommonMessageHelper {
         if (actionString.contains(":")) {
             actionString = actionString.substring(actionString.lastIndexOf(":") + 1);
         }
-        ECodexAction action = persistenceService.getAction(actionString);
+        DomibusConnectorAction action = persistenceService.getAction(actionString);
         if (action == null) {
             throw new ECodexConnectorGatewayWebserviceClientException("Could not find Action in database for value "
                     + actionString);
@@ -315,7 +315,7 @@ public class CommonMessageHelper {
         if (serviceString.contains(":")) {
             serviceString = serviceString.substring(serviceString.lastIndexOf(":") + 1);
         }
-        ECodexService service = persistenceService.getService(serviceString);
+        DomibusConnectorService service = persistenceService.getService(serviceString);
         if (service == null) {
             throw new ECodexConnectorGatewayWebserviceClientException("Could not find Service in database for value "
                     + serviceString);
@@ -327,7 +327,7 @@ public class CommonMessageHelper {
         if (fromPartnerId.contains(":")) {
             fromPartnerId = fromPartnerId.substring(fromPartnerId.lastIndexOf(":") + 1);
         }
-        ECodexParty fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
+        DomibusConnectorParty fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
         if (fromPartner == null) {
             throw new ECodexConnectorGatewayWebserviceClientException("Could not find Party in database for PartyId "
                     + from.getPartyId().get(0).getValue() + " and Role " + from.getRole() + " as FromParty");
@@ -339,7 +339,7 @@ public class CommonMessageHelper {
         if (toPartnerId.contains(":")) {
             toPartnerId = toPartnerId.substring(toPartnerId.lastIndexOf(":") + 1);
         }
-        ECodexParty toPartner = persistenceService.getParty(toPartnerId, to.getRole());
+        DomibusConnectorParty toPartner = persistenceService.getParty(toPartnerId, to.getRole());
         if (toPartner == null) {
             throw new ECodexConnectorGatewayWebserviceClientException("Could not find Party in database for PartyId "
                     + to.getPartyId().get(0).getValue() + " and Role " + to.getRole() + " as ToParty");

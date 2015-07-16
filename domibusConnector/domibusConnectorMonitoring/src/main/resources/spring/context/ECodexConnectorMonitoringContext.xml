@@ -3,7 +3,7 @@
 
 <beans>
 	
-	<bean id="monitoringDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao">
+	<bean id="monitoringDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 

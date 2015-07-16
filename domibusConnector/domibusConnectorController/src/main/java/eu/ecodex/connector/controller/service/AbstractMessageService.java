@@ -1,7 +1,7 @@
 package eu.ecodex.connector.controller.service;
 
-import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.db.service.ECodexConnectorPersistenceService;
+import eu.domibus.connector.common.CommonConnectorProperties;
+import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
 import eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkit;
 import eu.ecodex.connector.evidences.HashValueBuilder;
 import eu.ecodex.connector.gwc.ECodexConnectorGatewayWebserviceClient;
@@ -11,16 +11,16 @@ import eu.ecodex.connector.security.ECodexConnectorSecurityToolkit;
 
 public class AbstractMessageService {
 
-    ECodexConnectorProperties connectorProperties;
+    CommonConnectorProperties connectorProperties;
     ECodexConnectorContentMapper contentMapper;
     ECodexConnectorNationalBackendClient nationalBackendClient;
     ECodexConnectorGatewayWebserviceClient gatewayWebserviceClient;
     ECodexConnectorEvidencesToolkit evidencesToolkit;
     ECodexConnectorSecurityToolkit securityToolkit;
     HashValueBuilder hashValueBuilder;
-    ECodexConnectorPersistenceService persistenceService;
+    DomibusConnectorPersistenceService persistenceService;
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
+    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
@@ -48,7 +48,7 @@ public class AbstractMessageService {
         this.hashValueBuilder = hashValueBuilder;
     }
 
-    public void setPersistenceService(ECodexConnectorPersistenceService persistenceService) {
+    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 }

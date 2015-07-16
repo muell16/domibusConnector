@@ -1,7 +1,7 @@
 package eu.ecodex.connector.nbc;
 
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.Message;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.message.Message;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 
 public class ECodexConnectorNationalBackendClientImpl implements ECodexConnectorNationalBackendClient {

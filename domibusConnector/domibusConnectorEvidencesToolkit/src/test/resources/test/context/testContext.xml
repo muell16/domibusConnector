@@ -25,7 +25,7 @@
 		<constructor-arg value="MD5" />
 	</bean>
 
-	<bean id="connectorProperties" class="eu.ecodex.connector.common.ECodexConnectorProperties">
+	<bean id="connectorProperties" class="eu.domibus.connector.common.CommonConnectorProperties">
 		<property name="gatewayEndpointAddress" value="someGatewayEndpointAddress" />
 		<property name="gatewayName" value="someGatewayName" />
 		<property name="postalAddressStreet" value="Teststreet" />

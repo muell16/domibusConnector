@@ -17,7 +17,7 @@ import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.ListPendingMessagesResponse;
 import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendResponse;
-import eu.ecodex.connector.common.message.Message;
+import eu.domibus.connector.common.message.Message;
 import eu.ecodex.connector.gwc.exception.ECodexConnectorGatewayWebserviceClientException;
 import eu.ecodex.connector.gwc.helper.DownloadMessageHelper;
 import eu.ecodex.connector.gwc.helper.SendMessageHelper;

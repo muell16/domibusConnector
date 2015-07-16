@@ -1,7 +1,7 @@
 package eu.ecodex.connector.mapping;
 
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.Message;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.message.Message;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 
 public class ECodexConnectorContentMapperImpl implements ECodexConnectorContentMapper {

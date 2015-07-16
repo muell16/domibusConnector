@@ -12,14 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import eu.ecodex.connector.common.enums.DetachedSignatureMimeType;
-import eu.ecodex.connector.common.enums.ECodexEvidenceType;
-import eu.ecodex.connector.common.enums.ECodexMessageDirection;
-import eu.ecodex.connector.common.exception.ImplementationMissingException;
-import eu.ecodex.connector.common.message.Message;
-import eu.ecodex.connector.common.message.MessageAttachment;
-import eu.ecodex.connector.common.message.MessageConfirmation;
-import eu.ecodex.connector.common.message.MessageContent;
+import eu.domibus.connector.common.enums.DetachedSignatureMimeType;
+import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.common.exception.ImplementationMissingException;
+import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageAttachment;
+import eu.domibus.connector.common.message.MessageConfirmation;
+import eu.domibus.connector.common.message.MessageContent;
 import eu.ecodex.connector.nbc.exception.ECodexConnectorNationalBackendClientException;
 import eu.ecodex.connector.runnable.exception.ECodexConnectorRunnableException;
 import eu.ecodex.connector.runnable.util.ECodexConnectorMessageProperties;
@@ -260,11 +260,11 @@ public class ECodexConnectorNationalBackendClientDefaultImpl implements ECodexCo
             List<Message> confirmationMessages = new ArrayList<Message>();
             for (Message originalMessage : unconfirmed) {
                 Message deliveryMessage = ECodexConnectorRunnableUtil.createConfirmationMessage(
-                        ECodexEvidenceType.DELIVERY, originalMessage);
+                        EvidenceType.DELIVERY, originalMessage);
                 confirmationMessages.add(deliveryMessage);
 
                 Message retrievalMessage = ECodexConnectorRunnableUtil.createConfirmationMessage(
-                        ECodexEvidenceType.RETRIEVAL, originalMessage);
+                        EvidenceType.RETRIEVAL, originalMessage);
                 confirmationMessages.add(retrievalMessage);
 
             }
@@ -340,7 +340,7 @@ public class ECodexConnectorNationalBackendClientDefaultImpl implements ECodexCo
 
     private boolean isOutgoingMessage(Message originalMessage) {
         return originalMessage.getDbMessage() != null && originalMessage.getDbMessage().getDirection() != null
-                && originalMessage.getDbMessage().getDirection().equals(ECodexMessageDirection.NAT_TO_GW);
+                && originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW);
     }
 
     @Override

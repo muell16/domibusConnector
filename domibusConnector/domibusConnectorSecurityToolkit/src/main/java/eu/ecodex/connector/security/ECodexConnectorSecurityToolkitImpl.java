@@ -3,7 +3,7 @@ package eu.ecodex.connector.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.ecodex.connector.common.message.Message;
+import eu.domibus.connector.common.message.Message;
 import eu.ecodex.connector.security.container.ECodexSecurityContainer;
 import eu.ecodex.connector.security.exception.ECodexConnectorSecurityException;
 

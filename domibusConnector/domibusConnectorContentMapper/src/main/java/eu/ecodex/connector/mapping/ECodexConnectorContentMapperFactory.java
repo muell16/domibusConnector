@@ -1,14 +1,14 @@
 package eu.ecodex.connector.mapping;
 
-import eu.ecodex.connector.common.ECodexConnectorProperties;
-import eu.ecodex.connector.common.NationalImplementationFactory;
+import eu.domibus.connector.common.CommonConnectorProperties;
+import eu.domibus.connector.common.NationalImplementationFactory;
 import eu.ecodex.connector.mapping.exception.ECodexConnectorContentMapperException;
 
 public class ECodexConnectorContentMapperFactory extends NationalImplementationFactory {
 
-    ECodexConnectorProperties connectorProperties;
+    CommonConnectorProperties connectorProperties;
 
-    public void setConnectorProperties(ECodexConnectorProperties connectorProperties) {
+    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
