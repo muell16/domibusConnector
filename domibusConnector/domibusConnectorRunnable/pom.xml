@@ -87,7 +87,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>../lib/</classpathPrefix>
-							<mainClass>eu.ecodex.connector.runnable.ECodexConnector</mainClass>
+							<mainClass>eu.domibus.connector.runnable.DomibusConnector</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

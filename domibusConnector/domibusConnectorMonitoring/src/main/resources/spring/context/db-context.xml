@@ -11,8 +11,8 @@
 			http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 
-    <bean id="ecodexConnectorMonitorDB" class="eu.ecodex.connector.monitoring.db.ECodexConnectorMonitorDB">
-		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
+    <bean id="domibusConnectorMonitorDB" class="eu.domibus.connector.monitoring.db.DomibusConnectorMonitorDB">
+		<property name="domibusConnectorMonitor" ref="domibusConnectorMonitor"/>
 	</bean>
 	
 </beans>

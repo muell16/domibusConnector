@@ -29,8 +29,8 @@
         <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
     
-    <bean id="ecodexConnectorMonitorJMX" class="eu.ecodex.connector.monitoring.jmx.ECodexConnectorMonitorJMX">
-		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
+    <bean id="domibusConnectorMonitorJMX" class="eu.domibus.connector.monitoring.jmx.DomibusConnectorMonitorJMX">
+		<property name="domibusConnectorMonitor" ref="domibusConnectorMonitor"/>
 	</bean>
 	
 

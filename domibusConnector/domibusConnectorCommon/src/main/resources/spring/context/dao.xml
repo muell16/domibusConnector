@@ -25,7 +25,7 @@
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceUnitName" value="ecodex.connector" />
+		<property name="persistenceUnitName" value="domibus.connector" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="databasePlatform" value="${connector.database.dialect}" />
@@ -48,13 +48,13 @@
 	<context:annotation-config />
 
 	<bean id="evidenceDao"
-		class="eu.ecodex.connector.common.db.dao.impl.ECodexEvidenceDaoImpl" />
+		class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorEvidenceDaoImpl" />
 		
-	<bean id="messageDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexMessageDaoImpl" />
+	<bean id="messageDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorMessageDaoImpl" />
 	
-	<bean id="messageInfoDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexMessageInfoDaoImpl" />
-	<bean id="actionDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexActionDaoImpl" />
-	<bean id="partyDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexPartyDaoImpl" />
-	<bean id="serviceDao" class="eu.ecodex.connector.common.db.dao.impl.ECodexServiceDaoImpl" />
+	<bean id="messageInfoDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorMessageInfoDaoImpl" />
+	<bean id="actionDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorActionDaoImpl" />
+	<bean id="partyDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorPartyDaoImpl" />
+	<bean id="serviceDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorServiceDaoImpl" />
 
 </beans>

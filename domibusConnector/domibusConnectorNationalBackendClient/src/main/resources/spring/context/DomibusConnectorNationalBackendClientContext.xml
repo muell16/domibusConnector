@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  
+  <bean id="nationalBackendClientFactory" class="eu.domibus.connector.nbc.DomibusConnectorNationalBackendClientFactory">
+  	<property name="implementationClassName" value="${connector.national.backend.client.implementation.class.name}" />
+  </bean>
+
+  <bean id="nationalBackendClient" factory-bean="nationalBackendClientFactory" factory-method="createDomibusConnectorNationalBackendClient">
+  </bean>
+  
+</beans>

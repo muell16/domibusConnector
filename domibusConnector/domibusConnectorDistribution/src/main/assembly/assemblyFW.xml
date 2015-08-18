@@ -149,7 +149,7 @@
 		<!-- ==================== Copying example properties ================= -->
 		
 		<file>
-			<source>${project.basedir}/../domibusConnectorCommon/src/main/resources/eu/ecodex/connector/common/exampleConnectorProperties.properties</source>
+			<source>${project.basedir}/../domibusConnectorCommon/src/main/resources/eu/domibus/connector/common/exampleConnectorProperties.properties</source>
 			<outputDirectory>${properties.output.dir}
 			</outputDirectory>
 		</file>

@@ -3,27 +3,9 @@
 
 <beans>
 
-	<!-- <bean id="incomingMessagesJob" class="eu.ecodex.connector.controller.job.IncomingMessagesJob"> 
-		<property name="incomingController" ref="incomingController" /> <property 
-		name="connectorMonitor" ref="ecodexConnectorMonitor" /> </bean> <bean id="outgoingMessagesJob" 
-		class="eu.ecodex.connector.controller.job.OutgoingMessagesJob"> <property 
-		name="outgoingController" ref="outgoingController" /> <property name="connectorMonitor" 
-		ref="ecodexConnectorMonitor" /> </bean> <bean id="checkEvidencesJob" class="eu.ecodex.connector.controller.job.CheckEvidencesJob"> 
-		<property name="checkOutgoing" ref="checkOutgoing" /> <property name="connectorMonitor" 
-		ref="ecodexConnectorMonitor" /> </bean> -->
-	<!-- <bean id="handleOutgoingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
-		<property name="targetObject" ref="outgoingMessagesJob"/> <property name="targetMethod" 
-		value="handleOutgoingMessages"/> <property name="concurrent" value="false"/> 
-		</bean> <bean id="handleIncomingMessages" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
-		<property name="targetObject" ref="incomingMessagesJob"/> <property name="targetMethod" 
-		value="handleIncomingMessages"/> <property name="concurrent" value="false"/> 
-		</bean> <bean id="checkEvidences" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
-		<property name="targetObject" ref="checkEvidencesJob"/> <property name="targetMethod" 
-		value="checkEvidences"/> <property name="concurrent" value="false"/> </bean> -->
-
 	<bean name="checkOutgoing" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"
-			value="eu.ecodex.connector.controller.scheduler.job.ConnectorJobDetail" />
+			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="jobBeanName" value="outgoingController" />
@@ -33,7 +15,7 @@
 
 	<bean name="checkIncoming" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"
-			value="eu.ecodex.connector.controller.scheduler.job.ConnectorJobDetail" />
+			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="jobBeanName" value="incomingController" />
@@ -43,7 +25,7 @@
 
 	<bean name="checkEvidencesTimeout" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"
-			value="eu.ecodex.connector.controller.scheduler.job.ConnectorJobDetail" />
+			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="jobBeanName" value="evidencesTimeoutController" />

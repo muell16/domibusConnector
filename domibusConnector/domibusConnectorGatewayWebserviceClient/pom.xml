@@ -83,7 +83,7 @@
 							<sourceRoot>src/main/java/</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>${basedir}/src/main/resources/eu/ecodex/connector/gwc/wsdl/BackendService-1_1.wsdl</wsdl>
+									<wsdl>${basedir}/src/main/resources/eu/domibus/connector/gwc/wsdl/BackendService-1_1.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>

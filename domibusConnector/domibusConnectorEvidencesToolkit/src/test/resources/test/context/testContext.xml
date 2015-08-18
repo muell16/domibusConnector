@@ -8,7 +8,7 @@
   </bean>
   
 	<bean id="evidencesToolkit"
-		class="eu.ecodex.connector.evidences.ECodexConnectorEvidencesToolkitImpl">
+		class="eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkitImpl">
 		<property name="evidenceBuilder" ref="evidenceBuilder" />
 		<property name="hashValueBuilder" ref="hashValueBuilder" />
 		<property name="connectorProperties" ref="connectorProperties" />
@@ -21,11 +21,11 @@
 		<constructor-arg value="test1234" />
 	</bean>
 
-	<bean id="hashValueBuilder" class="eu.ecodex.connector.evidences.HashValueBuilder">
+	<bean id="hashValueBuilder" class="eu.domibus.connector.evidences.HashValueBuilder">
 		<constructor-arg value="MD5" />
 	</bean>
 
-	<bean id="connectorProperties" class="eu.ecodex.connector.common.ECodexConnectorProperties">
+	<bean id="connectorProperties" class="eu.domibus.connector.common.CommonConnectorProperties">
 		<property name="gatewayEndpointAddress" value="someGatewayEndpointAddress" />
 		<property name="gatewayName" value="someGatewayName" />
 		<property name="postalAddressStreet" value="Teststreet" />

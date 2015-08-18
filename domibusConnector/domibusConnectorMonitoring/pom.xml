@@ -49,5 +49,5 @@
 	</dependencies>
   
   
-  <description>Module to hold all monitoring interfaces for the ECodex Connector</description>
+  <description>Module to hold all monitoring interfaces for the domibus Connector</description>
 </project>

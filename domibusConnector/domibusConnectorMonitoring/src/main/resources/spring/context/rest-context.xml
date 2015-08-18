@@ -19,8 +19,8 @@
         </cxf:features>
     </cxf:bus>
     
-    <bean id="ecodexConnectorMonitorREST" class="eu.ecodex.connector.monitoring.rest.ECodexConnectorMonitorREST">
-    		<property name="ecodexConnectorMonitor" ref="ecodexConnectorMonitor"/>
+    <bean id="domibusConnectorMonitorREST" class="eu.domibus.connector.monitoring.rest.DomibusConnectorMonitorREST">
+    		<property name="domibusConnectorMonitor" ref="domibusConnectorMonitor"/>
     </bean>
 
 
@@ -28,7 +28,7 @@
 	
   	<jaxrs:server id="monitoringREST" address="/rest/monitor">
   		<jaxrs:serviceBeans>
-  			<ref bean="ecodexConnectorMonitorREST"/>
+  			<ref bean="domibusConnectorMonitorREST"/>
   		</jaxrs:serviceBeans>
   		<jaxrs:providers>
 			<ref bean='jsonProvider' />
