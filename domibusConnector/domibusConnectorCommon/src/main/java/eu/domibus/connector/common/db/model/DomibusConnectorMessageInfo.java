@@ -44,11 +44,11 @@ public class DomibusConnectorMessageInfo {
     private String finalRecipient;
 
     @ManyToOne
-    @JoinColumn(name = "ECDX_SERVICE")
+    @JoinColumn(name = "SERVICE")
     private DomibusConnectorService service;
 
     @ManyToOne
-    @JoinColumn(name = "ECDX_ACTION")
+    @JoinColumn(name = "ACTION")
     private DomibusConnectorAction action;
 
     @Column(name = "CREATED", nullable = false)

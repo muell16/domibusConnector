@@ -72,7 +72,7 @@
 
 				<prop key="org.quartz.jobStore.useProperties">true</prop>
 
-				<prop key="org.quartz.jobStore.tablePrefix">ECON_QRTZ_</prop>
+				<prop key="org.quartz.jobStore.tablePrefix">DCON_QRTZ_</prop>
 
 				<prop key="org.quartz.scheduler.instanceName">SgsClusteredScheduler</prop>
 				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
