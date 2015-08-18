@@ -19,7 +19,11 @@ public class NationalImplementationFactory {
             return impl;
         } catch (Exception e) {
             throw new Exception(
+<<<<<<< HEAD
                     "Could not create an instance for DomibusConnectorContentMapper implementation with full qualified class name "
+=======
+                    "Could not create an instance for ECodexContentMapper implementation with full qualified class name "
+>>>>>>> branch 'development' of https://riederb@secure.e-codex.eu/gitblit/git/e-CODEX/WP5/connector.git
                             + implementationClassName, e);
         }
     }
