@@ -31,7 +31,7 @@ public class DownloadMessageHelper {
 
     public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
             throws DomibusConnectorGatewayWebserviceClientException {
-        UserMessage userMessage = ebMSHeader.value.getUserMessage().get(0);
+        UserMessage userMessage = ebMSHeader.value.getUserMessage();
         MessageDetails details = commonMessageHelper.convertUserMessageToMessageDetails(userMessage);
 
         MessageContent content = new MessageContent();
@@ -84,8 +84,8 @@ public class DownloadMessageHelper {
                     } else if (elementDescription.equals("tokenXML") || elementDescription.endsWith(".asics")) {
                         message.addAttachment(extractAttachment(payload, elementDescription));
                     } else {
-                        throw new DomibusConnectorGatewayWebserviceClientException("Unknown description for a payload: "
-                                + elementDescription);
+                        throw new DomibusConnectorGatewayWebserviceClientException(
+                                "Unknown description for a payload: " + elementDescription);
                     }
 
                 }

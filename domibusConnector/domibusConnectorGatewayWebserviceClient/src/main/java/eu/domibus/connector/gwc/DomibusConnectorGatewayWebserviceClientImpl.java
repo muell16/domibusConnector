@@ -49,12 +49,6 @@ public class DomibusConnectorGatewayWebserviceClientImpl implements DomibusConne
     }
 
     @Override
-    public void sendMessageWithReference(Message message) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void sendMessage(Message message) throws DomibusConnectorGatewayWebserviceClientException {
         SendRequest request = new SendRequest();
         Messaging ebMSHeaderInfo = new Messaging();
@@ -75,13 +69,13 @@ public class DomibusConnectorGatewayWebserviceClientImpl implements DomibusConne
             }
 
             LOGGER.debug("--PARTY-- " + "\nFrom PartyId "
-                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getValue()
+                    + ebMSHeaderInfo.getUserMessage().getPartyInfo().getFrom().getPartyId().get(0).getValue()
                     + "\nFrom PartyIdType "
-                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getFrom().getPartyId().get(0).getType()
+                    + ebMSHeaderInfo.getUserMessage().getPartyInfo().getFrom().getPartyId().get(0).getType()
                     + "\nTo PartyId "
-                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getValue()
+                    + ebMSHeaderInfo.getUserMessage().getPartyInfo().getTo().getPartyId().get(0).getValue()
                     + "\nTo PartyIdType "
-                    + ebMSHeaderInfo.getUserMessage().get(0).getPartyInfo().getTo().getPartyId().get(0).getType());
+                    + ebMSHeaderInfo.getUserMessage().getPartyInfo().getTo().getPartyId().get(0).getType());
         }
 
         SendResponse response = null;

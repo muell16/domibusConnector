@@ -30,7 +30,7 @@ public class SendMessageHelper {
 
         buildSendRequestAndPayloadInfo(userMessage, request, message);
 
-        ebMSHeaderInfo.getUserMessage().add(userMessage);
+        ebMSHeaderInfo.setUserMessage(userMessage);
     }
 
     private void buildSendRequestAndPayloadInfo(UserMessage userMessage, SendRequest request, Message message)

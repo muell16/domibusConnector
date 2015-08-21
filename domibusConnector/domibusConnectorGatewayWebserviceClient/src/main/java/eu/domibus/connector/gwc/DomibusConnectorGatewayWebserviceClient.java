@@ -12,15 +12,6 @@ import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClien
 public interface DomibusConnectorGatewayWebserviceClient {
 
     /**
-     * WebService method to send XML content to gateway. Payload of eCodex
-     * Message will be passed as a URI Reference.
-     * 
-     * @param The
-     *            message containing the URI where the message can be found.
-     */
-    public void sendMessageWithReference(Message message) throws DomibusConnectorGatewayWebserviceClientException;
-
-    /**
      * WebService method to send XML content to gateway. Should contain eCodex
      * Message as well.
      * 
