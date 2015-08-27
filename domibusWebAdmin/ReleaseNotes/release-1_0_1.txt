@@ -1,0 +1,5 @@
+Release 1.0.1
+
+- The gateway database can now be separetely configured from the connector database
+- Search by Date works correctly now - the search did not include the actual selected day
+  

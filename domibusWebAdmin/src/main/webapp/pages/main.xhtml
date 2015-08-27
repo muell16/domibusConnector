@@ -1,0 +1,189 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/templates/menuTemplate.xhtml">
+	<ui:define name="metadata">
+	</ui:define>
+	<ui:define name="content">
+
+		<div id="main">
+			<h:form id="form">
+
+				<div id="tables">
+				<p:panel id="monitoringPanel" header="Monitoring" style="text-align: center; margin: 0 auto;background-color:#F4F4F4;" toggleable="true"
+					toggleOrientation="horizontal" rendered="#{loginBean.connectorMonitoringService.useMonitorServer}" >
+
+					<table style="margin: 0 auto;" border="1">
+						<tr style="border:1">
+							<td style="font-weight:bold">#{loginBean.connectorMonitoringService.monitoringType}</td>
+							<td>#{loginBean.connectorMonitoringService.connectionMessage}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.connectionStatus=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.connectionStatus}</td>
+            				</c:if>
+							<c:if test="#{loginBean.connectorMonitoringService.connectionStatus=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatus}</td>
+            				</c:if>
+							
+						</tr>
+					</table>
+
+				</p:panel>
+
+				<p:panel id="connectionPanel" header="Connection" style="text-align: center; margin: 0 auto;background-color:#F4F4F4;" toggleable="true"
+					toggleOrientation="horizontal">
+				
+					<table style="margin: 0 auto;" border="1">
+						<tr>
+							<td style="border:1;font-weight:bold;">DB</td>
+							<td style="border:1;font-weight:bold;">Connection URL</td>
+							<td style="border:1;font-weight:bold;">Status</td>
+						</tr>
+						<tr style="border:1">
+							<td  style="border:1;">Connector</td>
+							<td style="border:1">#{loginBean.connectorMonitoringService.connectionConnectorDB}"</td>
+							<c:if test="#{loginBean.connectorMonitoringService.connectionStatusConnectorDB=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.connectionStatusConnectorDB}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.connectionStatusConnectorDB=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatusConnectorDB}</td>
+            				</c:if>
+						</tr>
+						<tr style="border:1">
+							<td  style="border:1;">Gateway</td>
+							<td style="border:1">#{loginBean.connectorMonitoringService.connectionGatewayDB}"</td>
+							<c:if test="#{loginBean.connectorMonitoringService.connectionStatusGatewayDB=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.connectionStatusGatewayDB}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.connectionStatusGatewayDB=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatusGatewayDB}</td>
+            				</c:if>
+						</tr>
+					</table>
+					
+					
+				</p:panel>
+				<p:panel id="jobs" header="Jobs" toggleable="true" style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
+					toggleOrientation="horizontal">
+					
+					
+					<table style="margin: 0 auto;" border="1">
+					
+						<tr>
+							<td style="border:1;font-weight:bold;">Job</td>
+							<td style="border:1;font-weight:bold;">Last called</td>
+							<td style="border:1;font-weight:bold;">Status</td>
+						</tr>
+					
+						<tr style="border:1">
+							<td  style="border:1;">Checking evidences timeout</td>
+							<td style="border:1">#{connectorBean.connectorMonitoringService.lastCalledCheckEvidencesTimeout}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='BLOCKED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='PAUSED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='ACQUIRED'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusEvidencesTimeout}</td>
+            				</c:if>
+						</tr>
+						
+						<tr style="border:1">
+							<td  style="border:1;">Checking incoming</td>
+							<td style="border:1">#{connectorBean.connectorMonitoringService.lastCalledIncoming}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='BLOCKED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='PAUSED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='ACQUIRED'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusIncoming=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusIncoming}</td>
+            				</c:if>
+						</tr>
+						
+						<tr style="border:1">
+							<td  style="border:1;">Checking outgoing</td>
+							<td style="border:1">#{connectorBean.connectorMonitoringService.lastCalledOutgoing}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+							<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='BLOCKED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='PAUSED'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='ACQUIRED'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.jobStatusOutgoing=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.jobStatusOutgoing}</td>
+            				</c:if>
+						</tr>
+						
+					</table>
+					
+
+				</p:panel>
+
+
+				<p:panel id="messages" header="Messages" toggleable="true" style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
+					toggleOrientation="horizontal">
+					
+					
+					<table style="margin: 0 auto;" border="1">
+					
+						<tr>
+							<td style="border:1;font-weight:bold;">Messages</td>
+							<td style="border:1;font-weight:bold;">Count</td>
+							<td style="border:1;font-weight:bold;">Status</td>
+						</tr>
+					
+						<tr style="border:1">
+							<td  style="border:1;">AS4 receipt pending</td>
+							<td style="border:1">#{connectorBean.connectorMonitoringService.pendingMessagesGateway}</td>
+							<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='ERROR'}">
+								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
+            				</c:if>
+							<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='OK'}">
+								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
+            				</c:if>
+            				<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='WARNING'}">
+								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
+            				</c:if>
+						</tr>
+						
+					</table>
+
+				</p:panel>
+				</div>
+				<br />
+				<hr />
+				<h:panelGrid columns="1" style="text-align: center; margin: 0 auto;">
+					<h:commandButton id="reconnect"
+						action="#{loginBean.connectorMonitoringService.refreshMonitoringServer}"
+						value="Refresh" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</div>
+
+	</ui:define>
+</ui:composition>
