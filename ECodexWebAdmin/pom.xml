@@ -16,8 +16,8 @@
 		<jsf.version>2.1.6</jsf.version>
 		<org.springframework.version>3.1.4.RELEASE</org.springframework.version>
 		<org.slf4j.version>1.6.6</org.slf4j.version>
-		<ecodex.connector.version>2.0-SNAPSHOT</ecodex.connector.version>
-		<ecodex.monitoring.version>2.0-SNAPSHOT</ecodex.monitoring.version>
+		<ecodex.connector.version>2.1</ecodex.connector.version>
+		<ecodex.monitoring.version>2.1</ecodex.monitoring.version>
 		<mojarra.version>2.1.6</mojarra.version>
 		
 		<webadmin.build.dir>ECodexWebAdmin/</webadmin.build.dir>
