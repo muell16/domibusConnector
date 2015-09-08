@@ -4,7 +4,7 @@ import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 
-public class DomibusConnectorContentMapperImpl implements DomibusConnectorContentMapper {
+public class DomibusConnectorContentMapperDefaultImpl implements DomibusConnectorContentMapper {
 
     @Override
     public void mapInternationalToNational(Message message) throws DomibusConnectorContentMapperException,

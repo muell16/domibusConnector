@@ -4,7 +4,7 @@ import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 
-public class DomibusConnectorNationalBackendClientImpl implements DomibusConnectorNationalBackendClient {
+public class DomibusConnectorNationalBackendClientDefaultImpl implements DomibusConnectorNationalBackendClient {
 
     @Override
     public void deliverMessage(Message message) throws DomibusConnectorNationalBackendClientException,

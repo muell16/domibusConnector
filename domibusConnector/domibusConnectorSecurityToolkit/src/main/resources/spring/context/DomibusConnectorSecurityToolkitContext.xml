@@ -88,11 +88,22 @@
   	<property name="advancedElectronicSystem" value="${token.issuer.aes.value}" />
   </bean>
   
-  <bean id="connectorSecurityToolkitFactory" class="eu.domibus.connector.security.DomibusConnectorSecurityToolkitFactory">
+  <!-- <bean id="connectorSecurityToolkitFactory" class="eu.domibus.connector.security.DomibusConnectorSecurityToolkitFactory">
   	<property name="implementationClassName" value="${connector.security.toolkit.implementation.class.name}" />
+  </bean> -->
+  
+  <bean id="connectorSecurityToolkitFactory" class="eu.domibus.connector.common.NationalImplementationFactory">
+  	<property name="implementationClassName" value="${connector.security.toolkit.implementation.class.name}" />
+  	<property name="implClassPropertyName" value="connector.security.toolkit.implementation.class.name" />
+  	<property name="defaultImplementationClassName" value="eu.domibus.connector.security.DomibusConnectorSecurityToolkitDefaultImpl" />
+  	<property name="preConditions">
+		<map>
+			<entry key="connector.use.security.toolkit" value="${connector.use.security.toolkit}" />
+		</map>
+	</property>
   </bean>
 
-  <bean id="connectorSecurityToolkit" factory-bean="connectorSecurityToolkitFactory" factory-method="createDomibusConnectorSecurityToolkit">
+  <bean id="connectorSecurityToolkit" factory-bean="connectorSecurityToolkitFactory" factory-method="createImplementation">
   	<property name="securityContainer" ref="securityContainer" />
   </bean>
   

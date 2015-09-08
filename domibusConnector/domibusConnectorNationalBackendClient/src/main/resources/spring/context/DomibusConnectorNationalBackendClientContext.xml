@@ -3,11 +3,17 @@
 
 <beans>
   
-  <bean id="nationalBackendClientFactory" class="eu.domibus.connector.nbc.DomibusConnectorNationalBackendClientFactory">
+  <!-- <bean id="nationalBackendClientFactory" class="eu.domibus.connector.nbc.DomibusConnectorNationalBackendClientFactory">
   	<property name="implementationClassName" value="${connector.national.backend.client.implementation.class.name}" />
+  </bean> -->
+  
+  <bean id="nationalBackendClientFactory" class="eu.domibus.connector.common.NationalImplementationFactory">
+  	<property name="implementationClassName" value="${connector.national.backend.client.implementation.class.name}" />
+  	<property name="implClassPropertyName" value="connector.national.backend.client.implementation.class.name" />
+  	<property name="defaultImplementationClassName" value="eu.domibus.connector.nbc.DomibusConnectorNationalBackendClientDefaultImpl" />
   </bean>
 
-  <bean id="nationalBackendClient" factory-bean="nationalBackendClientFactory" factory-method="createDomibusConnectorNationalBackendClient">
+  <bean id="nationalBackendClient" factory-bean="nationalBackendClientFactory" factory-method="createImplementation">
   </bean>
   
 </beans>

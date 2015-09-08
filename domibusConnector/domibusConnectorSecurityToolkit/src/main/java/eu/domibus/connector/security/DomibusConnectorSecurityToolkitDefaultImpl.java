@@ -7,9 +7,9 @@ import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
-public class DomibusConnectorSecurityToolkitImpl implements DomibusConnectorSecurityToolkit {
+public class DomibusConnectorSecurityToolkitDefaultImpl implements DomibusConnectorSecurityToolkit {
 
-    static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityToolkitImpl.class);
+    static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityToolkitDefaultImpl.class);
 
     DomibusSecurityContainer securityContainer;
 
