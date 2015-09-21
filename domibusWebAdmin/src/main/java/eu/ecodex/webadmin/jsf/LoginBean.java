@@ -9,10 +9,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.ecodex.webadmin.commons.Util;
-import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
+import eu.ecodex.webadmin.dao.IDomibusWebAdminUserDao;
 
 public class LoginBean implements Serializable {
 
@@ -21,7 +22,7 @@ public class LoginBean implements Serializable {
     private String password;
     private String message, uname;
     private boolean loggedIn = false;
-    private IECodexWebAdminUserDao eCodexWebAdminUserDao;
+    private IDomibusWebAdminUserDao domibusWebAdminUserDao;
     private MBeanServerConnection mbsc;
     private String connectedToDb;
     private IConnectorMonitoringService connectorMonitoringService;
@@ -30,7 +31,7 @@ public class LoginBean implements Serializable {
     public String loginProject() {
         boolean result;
         try {
-            result = eCodexWebAdminUserDao.login(uname, password);
+            result = domibusWebAdminUserDao.login(uname, password);
 
             if (result) {
 
@@ -50,7 +51,7 @@ public class LoginBean implements Serializable {
 
                 // message = "Invalid Login. Please Try Again!";
                 loggedIn = false;
-                return "login";
+                return "/pages/login.xhtml";
             }
 
         } catch (Exception e) {
@@ -58,7 +59,7 @@ public class LoginBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error!", "See Log!"));
             loggedIn = false;
-            return "login";
+            return "/pages/login.xhtml";
         }
     }
 
@@ -119,16 +120,17 @@ public class LoginBean implements Serializable {
     public void setConnectedToDb(String connectedToDb) {
         this.connectedToDb = connectedToDb;
     }
+    
+	public IDomibusWebAdminUserDao getDomibusWebAdminUserDao() {
+		return domibusWebAdminUserDao;
+	}
 
-    public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
-        return eCodexWebAdminUserDao;
-    }
+	public void setDomibusWebAdminUserDao(
+			IDomibusWebAdminUserDao domibusWebAdminUserDao) {
+		this.domibusWebAdminUserDao = domibusWebAdminUserDao;
+	}
 
-    public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
-        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
-    }
-
-    public IConnectorMonitoringService getConnectorMonitoringService() {
+	public IConnectorMonitoringService getConnectorMonitoringService() {
         return connectorMonitoringService;
     }
 

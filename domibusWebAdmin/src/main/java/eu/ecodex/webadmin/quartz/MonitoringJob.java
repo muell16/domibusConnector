@@ -9,9 +9,7 @@ public class MonitoringJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-
         monitoringTask.monitoring();
-
     }
 
     public void setMonitoringTask(MonitoringTask monitoringTask) {

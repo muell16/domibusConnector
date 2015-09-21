@@ -1,6 +1,7 @@
 package eu.ecodex.webadmin.commons;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -9,9 +10,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
-public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
+public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware{
 
     private static final long serialVersionUID = -1113080729567255182L;
 
@@ -33,11 +35,11 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private XmlWebApplicationContext ctx;
 
     public void loadProperties() {
-        String sql = "select * from ECODEX_WEBADMIN_PROPERTIES";
+        String sql = "select * from DOMIBUS_WEBADMIN_PROPERTIES";
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
             for (Map row : rows) {
-
+            	
                 String key = ((String) (row.get("PROPERTIES_KEY")));
                 String value = ((String) (row.get("PROPERTIES_VALUE")));
                 if ("monitoring.type".equals(key)) {
@@ -65,10 +67,14 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
                 }
 
             }
+            getJdbcTemplate().getDataSource().getConnection().close();
         } catch (DataAccessException e) {
             logger.error("Unable to load Webadmin Properties: " + e.getStackTrace());
             loadError = e.getMessage();
-        }
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 
@@ -203,7 +209,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     public void setSmtpHostName(String smtpHostName) {
         this.smtpHostName = smtpHostName;
     }
-
+    
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         ctx = (XmlWebApplicationContext) context;
@@ -216,6 +222,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     public void setCtx(XmlWebApplicationContext ctx) {
         this.ctx = ctx;
     }
+
 
     public boolean isMonitoringLogWrite() {
         return monitoringLogWrite;

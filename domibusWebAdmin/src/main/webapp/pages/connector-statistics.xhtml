@@ -10,11 +10,11 @@
    <ui:param name="title" value="E-Codex WebAdmin - Statistics"/>
     <ui:define name="content">
          
- <h:form  id="form"> 
+ <h:form  id="formConnector"> 
 	<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">           
         <h:outputText class="textArea" value="Category: " />  
         <h:selectOneMenu value="#{connectorBean.categoryNumber}" >
-             <p:ajax listener="#{connectorBean.start}" update="form"/>
+             <p:ajax listener="#{connectorBean.start}" update="formConnector"/>
             <f:selectItem itemLabel="Select One" itemValue="" />  
             <f:selectItem itemLabel="Summary" itemValue="1" />  
             <f:selectItem itemLabel="Custom" itemValue="2" />  

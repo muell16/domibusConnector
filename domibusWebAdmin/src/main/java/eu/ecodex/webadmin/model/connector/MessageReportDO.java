@@ -3,10 +3,10 @@ package eu.ecodex.webadmin.model.connector;
 import java.io.Serializable;
 import java.util.List;
 
-import eu.ecodex.connector.common.db.model.ECodexEvidence;
-import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
+import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
+import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
 
-public class MessageReportDO extends ECodexMessageInfo implements Serializable {
+public class MessageReportDO extends DomibusConnectorMessageInfo implements Serializable {
 
     private static final long serialVersionUID = -5053455211577710753L;
 
@@ -14,7 +14,7 @@ public class MessageReportDO extends ECodexMessageInfo implements Serializable {
         super();
     }
 
-    public MessageReportDO(ECodexMessageInfo eCodexMessageInfo) {
+    public MessageReportDO(DomibusConnectorMessageInfo eCodexMessageInfo) {
         this.setAction(eCodexMessageInfo.getAction());
         this.setCreated(eCodexMessageInfo.getCreated());
         this.setFinalRecipient(eCodexMessageInfo.getFinalRecipient());
@@ -31,7 +31,7 @@ public class MessageReportDO extends ECodexMessageInfo implements Serializable {
 
     private String evidenceHistory;
 
-    private List<ECodexEvidence> evidenceList;
+    private List<DomibusConnectorEvidence> evidenceList;
 
     public String getEvidenceHistory() {
         return evidenceHistory;
@@ -41,11 +41,11 @@ public class MessageReportDO extends ECodexMessageInfo implements Serializable {
         this.evidenceHistory = evidenceHistory;
     }
 
-    public List<ECodexEvidence> getEvidenceList() {
+    public List<DomibusConnectorEvidence> getEvidenceList() {
         return evidenceList;
     }
 
-    public void setEvidenceList(List<ECodexEvidence> evidenceList) {
+    public void setEvidenceList(List<DomibusConnectorEvidence> evidenceList) {
         this.evidenceList = evidenceList;
     }
 

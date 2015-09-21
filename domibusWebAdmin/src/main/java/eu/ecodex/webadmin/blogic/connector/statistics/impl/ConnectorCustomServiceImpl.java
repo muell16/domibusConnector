@@ -10,19 +10,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import eu.ecodex.connector.common.db.model.ECodexEvidence;
-import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
+import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
+import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
 import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorCustomService;
 import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.ecodex.webadmin.commons.BLConstants;
-import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
+import eu.ecodex.webadmin.dao.IDomibusMessageWebAdminDao;
 import eu.ecodex.webadmin.model.connector.MessageReportDO;
 
 public class ConnectorCustomServiceImpl implements IConnectorCustomService, Serializable {
 
     private static final long serialVersionUID = 5288892319790964868L;
 
-    private IECodexMessageWebAdminDao eCodexMessageWebAdminDao;
+    private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
     private IConnectorMessageFilter connectorMessageFilter;
 
     private String fromParty;
@@ -51,13 +51,13 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     @Override
     public String generateCustomReport() {
 
-        List<ECodexMessageInfo> resultList = eCodexMessageWebAdminDao.findMessageByDate(fromDate, toDate);
+        List<DomibusConnectorMessageInfo> resultList = domibusMessageWebAdminDao.findMessageByDate(fromDate, toDate);
 
         customResultList = new ArrayList<MessageReportDO>();
 
         // Convert to MessageReportDO and generate Evidence History
-        for (ECodexMessageInfo eCodexMessageInfo : resultList) {
-            MessageReportDO messageReportDO = new MessageReportDO(eCodexMessageInfo);
+        for (DomibusConnectorMessageInfo domibusConnectorMessageInfo : resultList) {
+            MessageReportDO messageReportDO = new MessageReportDO(domibusConnectorMessageInfo);
             generateEvidenceHistory(messageReportDO);
             customResultList.add(messageReportDO);
         }
@@ -102,18 +102,18 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
      */
     private void generateEvidenceHistory(MessageReportDO messageReportDO) {
 
-        List<ECodexEvidence> evidenceList = new ArrayList<ECodexEvidence>();
+        List<DomibusConnectorEvidence> evidenceList = new ArrayList<DomibusConnectorEvidence>();
 
-        Set<ECodexEvidence> evidences = messageReportDO.getMessage().getEvidences();
+        Set<DomibusConnectorEvidence> evidences = messageReportDO.getMessage().getEvidences();
 
-        for (ECodexEvidence eCodexEvidence : evidences) {
+        for (DomibusConnectorEvidence eCodexEvidence : evidences) {
             evidenceList.add(eCodexEvidence);
         }
 
         if (!evidenceList.isEmpty()) {
-            Comparator<ECodexEvidence> comp = new Comparator<ECodexEvidence>() {
+            Comparator<DomibusConnectorEvidence> comp = new Comparator<DomibusConnectorEvidence>() {
                 @Override
-                public int compare(ECodexEvidence e1, ECodexEvidence e2) {
+                public int compare(DomibusConnectorEvidence e1, DomibusConnectorEvidence e2) {
                     return e1.getUpdated().compareTo(e2.getUpdated());
                 }
             };
@@ -121,10 +121,10 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
             Collections.sort(evidenceList, comp);
             messageReportDO.setEvidenceList(evidenceList);
             // Set Last Evidence
-            ECodexEvidence lastEvidence = evidenceList.get(evidenceList.size() - 1);
+            DomibusConnectorEvidence lastEvidence = evidenceList.get(evidenceList.size() - 1);
             messageReportDO.setLastEvidenceType(lastEvidence.getType().toString());
             String history = "";
-            for (ECodexEvidence eCodexEvidence : evidenceList) {
+            for (DomibusConnectorEvidence eCodexEvidence : evidenceList) {
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 history += df.format(eCodexEvidence.getUpdated()) + " - " + eCodexEvidence.getType() + "<br/>";
             }
@@ -134,15 +134,16 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
 
     }
 
-    public IECodexMessageWebAdminDao geteCodexMessageWebAdminDao() {
-        return eCodexMessageWebAdminDao;
-    }
+    public IDomibusMessageWebAdminDao getDomibusMessageWebAdminDao() {
+		return domibusMessageWebAdminDao;
+	}
 
-    public void seteCodexMessageWebAdminDao(IECodexMessageWebAdminDao eCodexMessageWebAdminDao) {
-        this.eCodexMessageWebAdminDao = eCodexMessageWebAdminDao;
-    }
+	public void setDomibusMessageWebAdminDao(
+			IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
+		this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
+	}
 
-    public String getDirection() {
+	public String getDirection() {
         return direction;
     }
 

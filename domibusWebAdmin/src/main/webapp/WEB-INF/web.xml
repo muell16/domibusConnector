@@ -27,10 +27,6 @@
   <filter>
 		<filter-name>AuthFilter</filter-name>
 		<filter-class>eu.ecodex.webadmin.jsf.AuthFilter</filter-class>
-		<init-param>
-			<param-name>my-param</param-name>
-			<param-value>my-param-value</param-value>
-		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>AuthFilter</filter-name>
@@ -57,7 +53,7 @@
   <context-param>
     <description>State saving method: 'client' or 'server' (default). See JSF Specification section 2.5.2</description>
     <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-    <param-value>client</param-value>
+    <param-value>server</param-value>
   </context-param>
   <!-- If you go to http://host/project/ (with no file name), it will
        try index.jsf first, welcome.jsf next, and so forth.

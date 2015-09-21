@@ -2,6 +2,7 @@ package eu.ecodex.webadmin.jsf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -10,11 +11,13 @@ import javax.servlet.http.HttpSession;
 import eu.ecodex.webadmin.commons.JmxConnector;
 import eu.ecodex.webadmin.commons.Util;
 import eu.ecodex.webadmin.commons.WebAdminProperties;
-import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
+import eu.ecodex.webadmin.dao.IDomibusWebAdminUserDao;
 
-public class ConfigurationBean {
+public class ConfigurationBean implements Serializable{
+	
+	private static final long serialVersionUID = -6978169110805373376L;
 
-    private String monitoringType;
+	private String monitoringType;
 
     private boolean dbSelected;
     private boolean jmxSelected;
@@ -38,7 +41,7 @@ public class ConfigurationBean {
 
     private WebAdminProperties webAdminProperties;
 
-    private IECodexWebAdminUserDao eCodexWebAdminUserDao;
+    private IDomibusWebAdminUserDao domibusWebAdminUserDao;
 
     public String configure() {
         chooseMonitoringType = false;
@@ -166,13 +169,13 @@ public class ConfigurationBean {
     public String addUser() {
         try {
 
-            if (eCodexWebAdminUserDao.checkIfUserExists(user)) {
+            if (domibusWebAdminUserDao.checkIfUserExists(user)) {
                 userAction = "User already exists!";
                 saveUserDisplay = true;
                 return "/pages/configuration.xhtml";
             }
 
-            eCodexWebAdminUserDao.insertUser(user, password);
+            domibusWebAdminUserDao.insertUser(user, password);
             userAction = "User successfully added!";
             saveUserDisplay = true;
             return "/pages/configuration.xhtml";
@@ -194,13 +197,13 @@ public class ConfigurationBean {
                 return "/pages/configuration.xhtml";
             }
 
-            if (!eCodexWebAdminUserDao.checkIfUserExists(user)) {
+            if (!domibusWebAdminUserDao.checkIfUserExists(user)) {
                 userAction = "User does not exist!";
                 saveUserDisplay = true;
                 return "/pages/configuration.xhtml";
             }
 
-            eCodexWebAdminUserDao.deleteUser(user);
+            domibusWebAdminUserDao.deleteUser(user);
             userAction = "User successfully deleted!";
             saveUserDisplay = true;
             return "/pages/configuration.xhtml";
@@ -331,16 +334,17 @@ public class ConfigurationBean {
     public void setUserAction(String userAction) {
         this.userAction = userAction;
     }
+    
+    public IDomibusWebAdminUserDao getDomibusWebAdminUserDao() {
+		return domibusWebAdminUserDao;
+	}
 
-    public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
-        return eCodexWebAdminUserDao;
-    }
+	public void setDomibusWebAdminUserDao(
+			IDomibusWebAdminUserDao domibusWebAdminUserDao) {
+		this.domibusWebAdminUserDao = domibusWebAdminUserDao;
+	}
 
-    public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
-        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
-    }
-
-    public boolean isChooseMonitoringType() {
+	public boolean isChooseMonitoringType() {
         return chooseMonitoringType;
     }
 

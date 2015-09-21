@@ -3,13 +3,13 @@
 	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
 
-	<persistence-unit name="ecodex.webadmin"
+	<persistence-unit name="domibus.webadmin"
 		transaction-type="RESOURCE_LOCAL">
 		
-		 <class>eu.ecodex.webadmin.model.connector.ECodexWebAdminUser</class>
+		 <class>eu.ecodex.webadmin.model.connector.DomibusWebAdminUser</class>
 	</persistence-unit>
 	
-	<persistence-unit name="ecodex.gateway"
+	<persistence-unit name="domibus.gateway"
 		transaction-type="RESOURCE_LOCAL">
 		
 		 <class>eu.ecodex.webadmin.model.gateway.TbReceiptTracking</class>

@@ -8,12 +8,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import eu.ecodex.webadmin.dao.IGatewayMessageDao;
 import eu.ecodex.webadmin.model.gateway.TbReceiptTracking;
 
+@Transactional(readOnly=true, value="transactionManagerGateway")
 public class GatewayMessageDao implements IGatewayMessageDao {
 
-    @PersistenceContext(unitName = "ecodex.gateway")
+    @PersistenceContext(unitName = "domibus.gateway")
     private EntityManager em;
 
     /*
@@ -36,7 +39,7 @@ public class GatewayMessageDao implements IGatewayMessageDao {
             Calendar cTo = Calendar.getInstance();
             cTo = Calendar.getInstance();
             Date dTo = cTo.getTime();
-            q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION >:fromDate and m.LAST_TRANSMISSION <:toDate");
+            q = em.createQuery("from TB_MESSAGE_LOG m where m.RECEIVED >:fromDate and m.RECEIVED <:toDate");
             q.setParameter("fromDate", dFrom);
             q.setParameter("toDate", dTo);
         } else if (fromDate == null && toDate != null) {
@@ -44,17 +47,17 @@ public class GatewayMessageDao implements IGatewayMessageDao {
             cTo.setTime(toDate);
             cTo.add(Calendar.DAY_OF_MONTH, 1);
             toDate = cTo.getTime();
-            q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION <:toDate");
+            q = em.createQuery("from TB_MESSAGE_LOG m where m.RECEIVED <:toDate");
             q.setParameter("toDate", toDate);
         } else if (fromDate != null && toDate == null) {
-            q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION >:fromDate");
+            q = em.createQuery("from TB_MESSAGE_LOG m where m.RECEIVED >:fromDate");
             q.setParameter("fromDate", fromDate);
         } else {
             Calendar cTo = Calendar.getInstance();
             cTo.setTime(toDate);
             cTo.add(Calendar.DAY_OF_MONTH, 1);
             toDate = cTo.getTime();
-            q = em.createQuery("from TbReceiptTracking m where m.LAST_TRANSMISSION >:fromDate and m.LAST_TRANSMISSION <:toDate");
+            q = em.createQuery("from TB_MESSAGE_LOG m where m.RECEIVED >:fromDate and m.RECEIVED <:toDate");
             q.setParameter("fromDate", fromDate);
             q.setParameter("toDate", toDate);
         }

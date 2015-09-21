@@ -14,8 +14,9 @@ import javax.management.ObjectName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import eu.ecodex.connector.common.db.dao.impl.ECodexConnectorMonitoringDao;
+import eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao;
 import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.ecodex.webadmin.commons.DBUtil;
 import eu.ecodex.webadmin.commons.JmxConnector;
@@ -48,7 +49,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private Integer pendingMessagesGateway;
     private String pendingMessagesGatewayStatus;
     private boolean useMonitorServer = false;
-    private ECodexConnectorMonitoringDao monitoringDao;
+    private DomibusConnectorConnectorMonitoringDao monitoringDao;
     private DBUtil dbUtil;
 
     private WebAdminProperties webAdminProperties;
@@ -68,7 +69,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     @Override
     public void generateMonitoringReport(boolean reconnect) {
         if (reconnect) {
-            webAdminProperties.loadProperties();
+           webAdminProperties.loadProperties();
         }
         monitoringType = checkMonitoringType(webAdminProperties.getMonitoringType());
         if (monitoringType.equals(monitoring.JMX.toString())) {
@@ -106,14 +107,14 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         connectionStatusGatewayDB = "OK";
         connectionConnectorDB = webAdminProperties.getConnectorDatabaseUrl();
         connectionGatewayDB = webAdminProperties.getGatewayDatabaseUrl();
-        if (!dbUtil.testConnectorDbConnection()) {
-            connectionConnectorDB = dbUtil.getConnectorErrorMessage();
-            connectionStatusConnectorDB = "ERROR";
-        }
-        if (!dbUtil.testGatewayDbConnection()) {
-            connectionGatewayDB = dbUtil.getGatewayErrorMessage();
-            connectionStatusGatewayDB = "ERROR";
-        }
+//        if (!dbUtil.testConnectorDbConnection()) {
+//            connectionConnectorDB = dbUtil.getConnectorErrorMessage();
+//            connectionStatusConnectorDB = "ERROR";
+//        }
+//        if (!dbUtil.testGatewayDbConnection()) {
+//            connectionGatewayDB = dbUtil.getGatewayErrorMessage();
+//            connectionStatusGatewayDB = "ERROR";
+//        }
 
     }
 
@@ -217,6 +218,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     }
 
+    @Transactional(readOnly=true, value="transactionManager")
     private void queryDB() {
 
         checkOutgoingRepeatInterval = monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
@@ -385,14 +387,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.rejectedConnectorMessagesCountStatus = rejectedConnectorMessagesCountStatus;
     }
 
-    public ECodexConnectorMonitoringDao getMonitoringDao() {
-        return monitoringDao;
-    }
-
-    public void setMonitoringDao(ECodexConnectorMonitoringDao monitoringDao) {
-        this.monitoringDao = monitoringDao;
-    }
-
     public Integer getPendingMessagesGateway() {
         return pendingMessagesGateway;
     }
@@ -447,6 +441,14 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     public void setConnectionGatewayDB(String connectionGatewayDB) {
         this.connectionGatewayDB = connectionGatewayDB;
+    }
+
+    public DomibusConnectorConnectorMonitoringDao getMonitoringDao() {
+        return monitoringDao;
+    }
+
+    public void setMonitoringDao(DomibusConnectorConnectorMonitoringDao monitoringDao) {
+        this.monitoringDao = monitoringDao;
     }
 
 }

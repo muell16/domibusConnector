@@ -6,8 +6,8 @@ import java.util.HashMap;
 import org.primefaces.model.chart.PieChartModel;
 
 import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorSummaryService;
-import eu.ecodex.webadmin.dao.IECodexMessageWebAdminDao;
-import eu.ecodex.webadmin.dao.IECodexWebAdminUserDao;
+import eu.ecodex.webadmin.dao.IDomibusMessageWebAdminDao;
+import eu.ecodex.webadmin.dao.IDomibusWebAdminUserDao;
 
 public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Serializable {
 
@@ -17,8 +17,7 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
     private String incomingMessagesCount = "";
     private PieChartModel pieModelMessageSummary;
     private PieChartModel pieModelServiceSummary;
-    private IECodexMessageWebAdminDao eCodexMessageWebAdminDao;
-    private IECodexWebAdminUserDao eCodexWebAdminUserDao;
+    private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
 
     /*
      * (non-Javadoc)
@@ -29,31 +28,23 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
 
     @Override
     public void generateMessageSummary() {
-        Long resultOutgoing = eCodexMessageWebAdminDao.countOutgoingMessages();
+        Long resultOutgoing = domibusMessageWebAdminDao.countOutgoingMessages();
         outgoingMessagesCount = resultOutgoing.toString();
 
-        Long resultIncoming = eCodexMessageWebAdminDao.countIncomingMessages();
+        Long resultIncoming = domibusMessageWebAdminDao.countIncomingMessages();
         incomingMessagesCount = resultIncoming.toString();
         pieModelMessageSummary = new PieChartModel();
 
         pieModelMessageSummary.set("Incoming Messages", resultIncoming);
         pieModelMessageSummary.set("Outgoing Messages", resultOutgoing);
 
-        HashMap<String, Long> serviceList = eCodexMessageWebAdminDao.countService();
+        HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countService();
 
         pieModelServiceSummary = new PieChartModel();
 
         pieModelServiceSummary.set("European Payment Order", serviceList.get("EPO"));
         pieModelServiceSummary.set("Undefined", serviceList.get("Undefined"));
 
-    }
-
-    public IECodexMessageWebAdminDao geteCodexMessageWebAdminDao() {
-        return eCodexMessageWebAdminDao;
-    }
-
-    public void seteCodexMessageWebAdminDao(IECodexMessageWebAdminDao eCodexMessageWebAdminDao) {
-        this.eCodexMessageWebAdminDao = eCodexMessageWebAdminDao;
     }
 
     public String getOutgoingMessagesCount() {
@@ -88,12 +79,13 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
         this.pieModelServiceSummary = pieModelServiceSummary;
     }
 
-    public IECodexWebAdminUserDao geteCodexWebAdminUserDao() {
-        return eCodexWebAdminUserDao;
-    }
+	public IDomibusMessageWebAdminDao getDomibusMessageWebAdminDao() {
+		return domibusMessageWebAdminDao;
+	}
 
-    public void seteCodexWebAdminUserDao(IECodexWebAdminUserDao eCodexWebAdminUserDao) {
-        this.eCodexWebAdminUserDao = eCodexWebAdminUserDao;
-    }
+	public void setDomibusMessageWebAdminDao(
+			IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
+		this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
+	}
 
 }

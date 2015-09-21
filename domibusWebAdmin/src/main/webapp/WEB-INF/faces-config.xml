@@ -7,7 +7,6 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
     <application>
- <!--        <variable-resolver>org.springframework.web.jsf.DelegatingVariableResolver</variable-resolver>    -->
         <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>       
     </application>
     
@@ -38,8 +37,8 @@
          <value>#{webAdminProperties}</value>
       </managed-property>
 		<managed-property>
-			<property-name>eCodexWebAdminUserDao</property-name>
-			<value>#{eCodexWebAdminUserDao}</value>
+			<property-name>domibusWebAdminUserDao</property-name>
+			<value>#{domibusWebAdminUserDao}</value>
 		</managed-property>
    </managed-bean>
    
@@ -58,8 +57,8 @@
 		<managed-bean-class>eu.ecodex.webadmin.jsf.LoginBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>eCodexWebAdminUserDao</property-name>
-			<value>#{eCodexWebAdminUserDao}</value>
+			<property-name>domibusWebAdminUserDao</property-name>
+			<value>#{domibusWebAdminUserDao}</value>
 		</managed-property>
 		<managed-property>
          	<property-name>connectorMonitoringService</property-name>

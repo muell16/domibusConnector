@@ -18,8 +18,9 @@ public class DBUtil {
         try {
             Connection conn = connectorDatasource.getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select count(*) from ECODEX_WEBADMIN_USER");
+            ResultSet rs = statement.executeQuery("select count(*) from DOMIBUS_WEBADMIN_USER");
             rs.next();
+            conn.close();
             return true;
         } catch (SQLException e) {
             connectorErrorMessage = e.getMessage();
@@ -33,6 +34,7 @@ public class DBUtil {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("select count(*) from TB_RECEIPT_TRACKING");
             rs.next();
+            conn.close();
             return true;
         } catch (SQLException e) {
             gatewayErrorMessage = e.getMessage();

@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import eu.ecodex.connector.common.db.model.ECodexMessageInfo;
+import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
 
-public interface IECodexMessageWebAdminDao {
+public interface IDomibusMessageWebAdminDao {
 
     public Long countOutgoingMessages();
 
@@ -14,6 +14,6 @@ public interface IECodexMessageWebAdminDao {
 
     public HashMap<String, Long> countService();
 
-    public List<ECodexMessageInfo> findMessageByDate(Date fromDate, Date toDate);
+    public List<DomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate);
 
 }

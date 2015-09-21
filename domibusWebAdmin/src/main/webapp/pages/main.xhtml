@@ -10,7 +10,7 @@
 	<ui:define name="content">
 
 		<div id="main">
-			<h:form id="form">
+			<h:form id="mainForm">
 
 				<div id="tables">
 				<p:panel id="monitoringPanel" header="Monitoring" style="text-align: center; margin: 0 auto;background-color:#F4F4F4;" toggleable="true"
@@ -178,7 +178,7 @@
 				<h:panelGrid columns="1" style="text-align: center; margin: 0 auto;">
 					<h:commandButton id="reconnect"
 						action="#{loginBean.connectorMonitoringService.refreshMonitoringServer}"
-						value="Refresh" />
+						value="Refresh"/>
 				</h:panelGrid>
 
 			</h:form>

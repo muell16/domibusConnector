@@ -1,12 +1,22 @@
 package eu.ecodex.webadmin.model.connector;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-public class ECodexWebAdminUser {
+@Entity
+@Table(name = "DOMIBUS_WEBADMIN_USER")
+public class DomibusWebAdminUser {
 
 
+	@Id
     private String username;
+	@Column
     private String password;
+	@Column
     private String role;
+    @Column
     private String salt;
 
     public String getUsername() {
