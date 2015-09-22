@@ -18,7 +18,6 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private static final long serialVersionUID = -1113080729567255182L;
 
     private String connectorDatabaseUrl;
-    private String gatewayDatabaseUrl;
     private String monitoringType;
     private String jmxServerAddress;
     private String jmxServerPort;
@@ -80,20 +79,20 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
 
     public void saveProperty(String key, String value) {
 
-        String sql = "select PROPERTIES_KEY as result from ECODEX_WEBADMIN_PROPERTIES where PROPERTIES_KEY = ?";
+        String sql = "select PROPERTIES_KEY as result from DOMIBUS_WEBADMIN_PROPERTIES where PROPERTIES_KEY = ?";
         String[] parameter = new String[1];
         parameter[0] = key;
         List<String> result = getJdbcTemplate().queryForList(sql, parameter, String.class);
 
         // property found -> update
         if (!result.isEmpty()) {
-            String sqlUpdate = "update ECODEX_WEBADMIN_PROPERTIES SET PROPERTIES_VALUE = ? WHERE PROPERTIES_KEY = ?";
+            String sqlUpdate = "update DOMIBUS_WEBADMIN_PROPERTIES SET PROPERTIES_VALUE = ? WHERE PROPERTIES_KEY = ?";
             getJdbcTemplate().update(sqlUpdate, value, key);
         } else {
             // property not found -> insert
 
             getJdbcTemplate().update(
-                    "insert into ECODEX_WEBADMIN_PROPERTIES (PROPERTIES_KEY, PROPERTIES_VALUE) values (?, ?)",
+                    "insert into DOMIBUS_WEBADMIN_PROPERTIES (PROPERTIES_KEY, PROPERTIES_VALUE) values (?, ?)",
                     new Object[] { key, value });
         }
 
@@ -230,14 +229,6 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
 
     public void setMonitoringLogWrite(boolean monitoringLogWrite) {
         this.monitoringLogWrite = monitoringLogWrite;
-    }
-
-    public String getGatewayDatabaseUrl() {
-        return gatewayDatabaseUrl;
-    }
-
-    public void setGatewayDatabaseUrl(String gatewayDatabaseUrl) {
-        this.gatewayDatabaseUrl = gatewayDatabaseUrl;
     }
 
 }

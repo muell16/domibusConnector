@@ -12,8 +12,10 @@ public interface IDomibusMessageWebAdminDao {
 
     public Long countIncomingMessages();
 
-    public HashMap<String, Long> countService();
+    public HashMap<String, Long> countService(String service);
 
     public List<DomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate);
+    
+    public HashMap<String, Long> countUndefinedService();
 
 }

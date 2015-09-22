@@ -27,8 +27,8 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-<!--     			<value>file:conf/webadmin/webadmin.properties</value>   -->
-    				<value>classpath:webadmin.properties</value>
+     			<value>file:conf/webadmin/webadmin.properties</value>
+    	<!-- 		<value>classpath:webadmin.properties</value>   -->
    				<value>classpath:connector.properties</value>
 			</list>
 		</property>
@@ -40,8 +40,8 @@
 		</property>
 		<property name="arguments">
 			<list>
-<!--   				<value>file:conf/webadmin/log4j.properties</value>  -->
- 				<value>classpath:log4j.properties</value>
+   				<value>file:conf/webadmin/log4j.properties</value>
+ 		<!-- 		<value>classpath:log4j.properties</value>     -->
 			</list>
 		</property>
 	</bean>
@@ -50,17 +50,6 @@
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="domibus.webadmin" />
 		<property name="dataSource" ref="dataSourceWebAdmin" />
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="databasePlatform" value="${connector.database.dialect}" />
-			</bean>
-		</property>
-	</bean>
-	
-	<bean id="entityManagerFactoryWebAdminGateway"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceUnitName" value="domibus.gateway" />
-		<property name="dataSource" ref="dataSourceGateway" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="databasePlatform" value="${connector.database.dialect}" />
@@ -77,29 +66,13 @@
         <property name="maxPoolSize" value="3" />
         
 	 </bean>
-	 
-	 <bean id="dataSourceGateway" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${connector.database.driverClassName}" />
-        <property name="jdbcUrl" value="${connector.database.url}" />
-        <property name="user" value="${connector.database.username}" />
-        <property name="password" value="${connector.database.password}" /> 
-
-        <property name="maxPoolSize" value="3" />
-
-	 </bean>
 
 	<bean id="transactionManagerWebAdmin" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdmin" />
 	</bean>
 	
-	<bean id="transactionManagerWebAdminGateway" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdminGateway" />
-	</bean>
-	
-	
 	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties" init-method="loadProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
-		<property name="gatewayDatabaseUrl" value="${gateway.database.url}" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 		
@@ -108,6 +81,7 @@
 	<bean id="connectorSummaryService" 
       class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl">      
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
+              <property name="domibusWebAdminConnectorServiceDao" ref="domibusWebAdminConnectorServiceDao" />
    </bean>
    
 	
@@ -115,6 +89,9 @@
       class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl">     
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="connectorMessageFilter" ref="connectorMessageFilter" /> 
+              <property name="domibusWebAdminConnectorPartyDao" ref="domibusWebAdminConnectorPartyDao" /> 
+              <property name="domibusWebAdminConnectorServiceDao" ref="domibusWebAdminConnectorServiceDao" /> 
+              <property name="domibusWebAdminConnectorActionDao" ref="domibusWebAdminConnectorActionDao" /> 
    </bean>
    
    <bean id="connectorMonitoringService" 
@@ -128,17 +105,7 @@
    	<bean id="connectorMessageFilter"
 		class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
 	
-	<!-- Gateway Beans -->
-	
-   <bean id="gatewayCustomService" 
-      class="eu.ecodex.webadmin.blogic.gateway.statistics.impl.GatewayCustomServiceImpl">     
-              <property name="gatewayMessageDao" ref="gatewayMessageDao" />
-              <property name="gatewayMessageFilter" ref="gatewayMessageFilter" />  
-   </bean>	
-   
-   	<bean id="gatewayMessageFilter"
-		class="eu.ecodex.webadmin.blogic.gateway.statistics.impl.GatewayMessageFilterImpl" />
-		
+
 	<!-- DAO's -->
    
    	<bean id="domibusMessageWebAdminDao"
@@ -148,18 +115,25 @@
 	<bean id="domibusWebAdminUserDao"
 		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminUserDao">
 	</bean>
-		
-	<bean id="gatewayMessageDao"
-		class="eu.ecodex.webadmin.dao.impl.GatewayMessageDao">
-	</bean>
 	
 	<bean id="monitoringDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao">
 		<property name="dataSource" ref="dataSourceWebAdmin" />
 	</bean>
 	
+	<bean id="domibusWebAdminConnectorPartyDao"
+		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminConnectorPartyDao">
+	</bean>
+	
+	<bean id="domibusWebAdminConnectorServiceDao"
+		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminConnectorServiceDao">
+	</bean>
+	
+	<bean id="domibusWebAdminConnectorActionDao"
+		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminConnectorActionDao">
+	</bean>
+	
 	<bean id="dbUtil" class="eu.ecodex.webadmin.commons.DBUtil">
 		<property name="connectorDatasource" ref="dataSourceWebAdmin" />
-		<property name="gatewayDatasource" ref="dataSourceGateway" />
 	</bean>
 		
 </beans>

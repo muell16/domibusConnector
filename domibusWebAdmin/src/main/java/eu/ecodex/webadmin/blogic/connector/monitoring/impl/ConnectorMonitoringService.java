@@ -106,7 +106,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         connectionStatusConnectorDB = "OK";
         connectionStatusGatewayDB = "OK";
         connectionConnectorDB = webAdminProperties.getConnectorDatabaseUrl();
-        connectionGatewayDB = webAdminProperties.getGatewayDatabaseUrl();
 //        if (!dbUtil.testConnectorDbConnection()) {
 //            connectionConnectorDB = dbUtil.getConnectorErrorMessage();
 //            connectionStatusConnectorDB = "ERROR";

@@ -7,7 +7,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets">
                 
                 
-   <ui:param name="title" value="E-Codex WebAdmin - Statistics"/>
+   <ui:param name="title" value="WebAdmin - Statistics"/>
     <ui:define name="content">
          
  <h:form  id="formConnector"> 
@@ -31,56 +31,13 @@
 
      <h:panelGrid columns="8" style="margin-bottom:10px" cellpadding="5">           
     	<h:outputText class="textArea" value="From Party: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.connectorCustomService.fromParty}" rendered="#{connectorBean.customSelected}">  
-            <f:selectItem itemLabel="All" itemValue="All" />  
-            <f:selectItem itemLabel="Austria" itemValue="AT" />  
-            <f:selectItem itemLabel="Belgium" itemValue="BE" />
-            <f:selectItem itemLabel="Czech Republic" itemValue="CR" />  
-            <f:selectItem itemLabel="Estonia" itemValue="EST" />
-            <f:selectItem itemLabel="France" itemValue="FR" />  
-            <f:selectItem itemLabel="Germany" itemValue="DE" />
-            <f:selectItem itemLabel="Greece" itemValue="GR" />  
-            <f:selectItem itemLabel="Hungary" itemValue="HU" />
-            <f:selectItem itemLabel="Italy" itemValue="IT" />  
-            <f:selectItem itemLabel="Ireland" itemValue="IR" />
-            <f:selectItem itemLabel="Jersey" itemValue="JE" />  
-            <f:selectItem itemLabel="Lithuania" itemValue="LI" />
-            <f:selectItem itemLabel="Malta" itemValue="MA" />  
-            <f:selectItem itemLabel="Netherlands" itemValue="NE" />
-            <f:selectItem itemLabel="Norway" itemValue="NO" />  
-            <f:selectItem itemLabel="Poland" itemValue="PL" />            
-            <f:selectItem itemLabel="Portugal" itemValue="POR" />  
-            <f:selectItem itemLabel="Romania" itemValue="RO" />
-            <f:selectItem itemLabel="Spain" itemValue="ESP" />  
-            <f:selectItem itemLabel="Sweden" itemValue="SW" /> 
-            <f:selectItem itemLabel="Turkey" itemValue="TU" />  
-            <f:selectItem itemLabel="United Kingdom" itemValue="UK" />              
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.selectedFromParty}" rendered="#{connectorBean.customSelected}">
+        	<f:selectItems value="#{connectorBean.connectorCustomService.fromPartyList}" /> 
+               
         </h:selectOneMenu>
         <h:outputText class="textArea" value="To Party: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.connectorCustomService.toParty}" rendered="#{connectorBean.customSelected}">  
-            <f:selectItem itemLabel="All" itemValue="All" />  
-            <f:selectItem itemLabel="Austria" itemValue="AT" />  
-            <f:selectItem itemLabel="Belgium" itemValue="BE" />
-            <f:selectItem itemLabel="Czech Republic" itemValue="CR" />  
-            <f:selectItem itemLabel="Estonia" itemValue="EST" />
-            <f:selectItem itemLabel="France" itemValue="FR" />  
-            <f:selectItem itemLabel="Germany" itemValue="DE" />
-            <f:selectItem itemLabel="Greece" itemValue="GR" />  
-            <f:selectItem itemLabel="Hungary" itemValue="HU" />
-            <f:selectItem itemLabel="Italy" itemValue="IT" />  
-            <f:selectItem itemLabel="Ireland" itemValue="IR" />
-            <f:selectItem itemLabel="Jersey" itemValue="JE" />  
-            <f:selectItem itemLabel="Lithuania" itemValue="LI" />
-            <f:selectItem itemLabel="Malta" itemValue="MA" />  
-            <f:selectItem itemLabel="Netherlands" itemValue="NE" />
-            <f:selectItem itemLabel="Norway" itemValue="NO" />  
-            <f:selectItem itemLabel="Poland" itemValue="PL" />            
-            <f:selectItem itemLabel="Portugal" itemValue="POR" />  
-            <f:selectItem itemLabel="Romania" itemValue="RO" />
-            <f:selectItem itemLabel="Spain" itemValue="ESP" />  
-            <f:selectItem itemLabel="Sweden" itemValue="SW" /> 
-            <f:selectItem itemLabel="Turkey" itemValue="TU" />  
-            <f:selectItem itemLabel="United Kingdom" itemValue="UK" />              
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.selectedToParty}" rendered="#{connectorBean.customSelected}">  
+             <f:selectItems value="#{connectorBean.connectorCustomService.toPartyList}" /> 
         </h:selectOneMenu>
         <h:outputText class="textArea" value="Direction: " rendered="#{connectorBean.customSelected}"/>  
         <h:selectOneMenu value="#{connectorBean.connectorCustomService.direction}" rendered="#{connectorBean.customSelected}">  
@@ -96,27 +53,13 @@
         </h:selectOneMenu>
         
         <h:outputText class="textArea" value="Service: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.connectorCustomService.service}" rendered="#{connectorBean.customSelected}">  
-            <f:selectItem itemLabel="All" itemValue="All" />
-            <f:selectItem itemLabel="EPO" itemValue="EPO" />               
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.selectedService}" rendered="#{connectorBean.customSelected}">  
+            <f:selectItems value="#{connectorBean.connectorCustomService.serviceList}" />               
         </h:selectOneMenu>
         
         <h:outputText class="textArea" value="Action: " rendered="#{connectorBean.customSelected}"/>  
-        <h:selectOneMenu value="#{connectorBean.connectorCustomService.action}" rendered="#{connectorBean.customSelected}">  
-            <f:selectItem itemLabel="All" itemValue="All" />
-            <f:selectItem itemLabel="Form_A" itemValue="Form_A" />
-            <f:selectItem itemLabel="Form_B" itemValue="Form_B" />
-            <f:selectItem itemLabel="Form_C" itemValue="Form_C" />
-            <f:selectItem itemLabel="Form_D" itemValue="Form_D" />
-            <f:selectItem itemLabel="Form_E" itemValue="Form_E" />
-            <f:selectItem itemLabel="Form_F" itemValue="Form_F" />
-            <f:selectItem itemLabel="Form_G" itemValue="Form_G" />
-            <f:selectItem itemLabel="SubmissionAcceptanceRejection" itemValue="SubmissionAcceptanceRejection" />
-            <f:selectItem itemLabel="RelayREMMDAcceptanceRejection" itemValue="RelayREMMDAcceptanceRejection" />
-            <f:selectItem itemLabel="DeliveryNonDeliveryToRecipient" itemValue="DeliveryNonDeliveryToRecipient" />
-            <f:selectItem itemLabel="SubmissionAcceptanceRejection" itemValue="SubmissionAcceptanceRejection" />
-            <f:selectItem itemLabel="RetrievalNonRetrievalToRecipient" itemValue="RelayREMMDAcceptanceRejection" />
-            <f:selectItem itemLabel="FreeFormLetter" itemValue="DeliveryNonDeliveryToRecipient" />             
+        <h:selectOneMenu value="#{connectorBean.connectorCustomService.selectedAction}" rendered="#{connectorBean.customSelected}">  
+       		<f:selectItems value="#{connectorBean.connectorCustomService.actionList}" />   
         </h:selectOneMenu>
         
         <h:outputText class="textArea" value="Last Evidence: " rendered="#{connectorBean.customSelected}"/>  
@@ -223,7 +166,7 @@
       </p:column> 
          
         <p:column style="width:4%" exportable = "false">  
-                <p:commandButton id="selectButton" update=":form:display" oncomplete="evidenceDialog.show()" icon="ui-icon-search" title="View">  
+                <p:commandButton id="selectButton" update=":formConnector:display" oncomplete="evidenceDialog.show()" icon="ui-icon-search" title="View">  
                 <f:setPropertyActionListener value="#{messageReportDO}" target="#{connectorBean.connectorCustomService.selectedMessageReportDO}" />  
             </p:commandButton>  
         </p:column>  

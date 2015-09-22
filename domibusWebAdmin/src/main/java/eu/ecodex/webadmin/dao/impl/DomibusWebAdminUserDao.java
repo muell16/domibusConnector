@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -56,6 +57,7 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
         domibusWebAdminUser.setUsername(username);
         domibusWebAdminUser.setPassword(passwordDB);
         domibusWebAdminUser.setSalt(salt);
+        domibusWebAdminUser.setRole("admin");
         em.persist(domibusWebAdminUser);
 
 
@@ -64,8 +66,9 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
     @Override
     @Transactional(readOnly=false, value="transactionManagerWebAdmin")
     public void deleteUser(String username) throws NoSuchAlgorithmException, InvalidKeySpecException {
-    	DomibusWebAdminUser domibusWebAdminUser = new DomibusWebAdminUser();
-        domibusWebAdminUser.setUsername(username);
+    	Query q = em.createQuery("from DomibusWebAdminUser m where m.username =:username");
+        q.setParameter("username", username);
+        DomibusWebAdminUser domibusWebAdminUser = (DomibusWebAdminUser) q.getSingleResult();	
         em.remove(domibusWebAdminUser);
     }
 
@@ -81,6 +84,8 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
             return true;
 
         } catch (EmptyResultDataAccessException e) {
+            return false;
+        }catch (NoResultException e) {
             return false;
         }
 

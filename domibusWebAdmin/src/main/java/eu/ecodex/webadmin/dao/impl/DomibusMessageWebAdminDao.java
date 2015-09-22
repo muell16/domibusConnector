@@ -45,17 +45,25 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     }
 
     @Override
-    public HashMap<String, Long> countService() {
+    public HashMap<String, Long> countService(String service) {
         HashMap<String, Long> serviceMap = new HashMap<String, Long>();
         Query query = em.createQuery("select count(*) from DomibusConnectorMessageInfo m where m.service=:service");
         DomibusConnectorService eCodexService = new DomibusConnectorService();
-        eCodexService.setService("EPO");
+        eCodexService.setService(service);
         query.setParameter("service", eCodexService);
-        serviceMap.put("EPO", (Long) query.getSingleResult());
-        query = em.createQuery("select count(*) from DomibusConnectorMessageInfo m where m.service is null");
+        serviceMap.put(service, (Long) query.getSingleResult());
+        return serviceMap;
+    }
+    
+    @Override
+    public HashMap<String, Long> countUndefinedService() {
+        HashMap<String, Long> serviceMap = new HashMap<String, Long>();
+        Query query = em.createQuery("select count(*) from DomibusConnectorMessageInfo m where m.service is null");
         serviceMap.put("Undefined", (Long) query.getSingleResult());
         return serviceMap;
     }
+    
+
 
     @SuppressWarnings("unchecked")
     @Override

@@ -3,6 +3,7 @@ package eu.ecodex.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;

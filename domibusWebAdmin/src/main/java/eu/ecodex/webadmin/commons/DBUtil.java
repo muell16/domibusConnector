@@ -10,9 +10,7 @@ import javax.sql.DataSource;
 public class DBUtil {
 
     private DataSource connectorDatasource;
-    private DataSource gatewayDatasource;
     private String connectorErrorMessage;
-    private String gatewayErrorMessage;
 
     public boolean testConnectorDbConnection() {
         try {
@@ -28,19 +26,7 @@ public class DBUtil {
         }
     }
 
-    public boolean testGatewayDbConnection() {
-        try {
-            Connection conn = gatewayDatasource.getConnection();
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select count(*) from TB_RECEIPT_TRACKING");
-            rs.next();
-            conn.close();
-            return true;
-        } catch (SQLException e) {
-            gatewayErrorMessage = e.getMessage();
-            return false;
-        }
-    }
+
 
     public DataSource getConnectorDatasource() {
         return connectorDatasource;
@@ -50,13 +36,6 @@ public class DBUtil {
         this.connectorDatasource = connectorDatasource;
     }
 
-    public DataSource getGatewayDatasource() {
-        return gatewayDatasource;
-    }
-
-    public void setGatewayDatasource(DataSource gatewayDatasource) {
-        this.gatewayDatasource = gatewayDatasource;
-    }
 
     public String getConnectorErrorMessage() {
         return connectorErrorMessage;
@@ -66,12 +45,5 @@ public class DBUtil {
         this.connectorErrorMessage = connectorErrorMessage;
     }
 
-    public String getGatewayErrorMessage() {
-        return gatewayErrorMessage;
-    }
-
-    public void setGatewayErrorMessage(String gatewayErrorMessage) {
-        this.gatewayErrorMessage = gatewayErrorMessage;
-    }
 
 }

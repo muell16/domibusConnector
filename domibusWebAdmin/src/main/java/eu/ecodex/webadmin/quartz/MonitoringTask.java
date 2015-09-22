@@ -28,22 +28,22 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
         errorFound = false;
         String mailReport = "Summary of monitored items in status WARNING/ERROR: \n\n";
 
-        if (!"OK".equals(connectorMonitoringService.getConnectionStatus())) {
+        if (connectorMonitoringService.getConnectionStatus() != null && !"OK".equals(connectorMonitoringService.getConnectionStatus())) {
             mailReport += "Connections status: " + connectorMonitoringService.getConnectionStatus() + "\n";
             mailReport += "Connection error message: " + connectorMonitoringService.getConnectionMessage() + "\n";
             errorFound = true;
         }
 
-        if ("ERROR".equals(connectorMonitoringService.getJobStatusIncoming())) {
+        if (connectorMonitoringService.getJobStatusIncoming() != null && "ERROR".equals(connectorMonitoringService.getJobStatusIncoming())) {
             mailReport += "Check incoming jobs: " + connectorMonitoringService.getJobStatusIncoming() + "\n";
             errorFound = true;
         }
-        if ("ERROR".equals(connectorMonitoringService.getJobStatusOutgoing())) {
+        if (connectorMonitoringService.getJobStatusOutgoing() != null && "ERROR".equals(connectorMonitoringService.getJobStatusOutgoing())) {
             mailReport += "Check outgoing jobs: " + connectorMonitoringService.getJobStatusOutgoing() + "\n";
             errorFound = true;
         }
 
-        if ("ERROR".equals(connectorMonitoringService.getNoReceiptMessagesGatewayStatus())) {
+        if (connectorMonitoringService.getNoReceiptMessagesGatewayStatus() != null && "ERROR".equals(connectorMonitoringService.getNoReceiptMessagesGatewayStatus())) {
             mailReport += "Check AS4 messages pending: " + connectorMonitoringService.getNoReceiptMessagesGateway()
                     + "\n";
             errorFound = true;

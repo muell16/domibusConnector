@@ -9,10 +9,5 @@
 		 <class>eu.ecodex.webadmin.model.connector.DomibusWebAdminUser</class>
 	</persistence-unit>
 	
-	<persistence-unit name="domibus.gateway"
-		transaction-type="RESOURCE_LOCAL">
-		
-		 <class>eu.ecodex.webadmin.model.gateway.TbReceiptTracking</class>
-	</persistence-unit>
 
 </persistence>

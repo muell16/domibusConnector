@@ -51,16 +51,7 @@
 								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatusConnectorDB}</td>
             				</c:if>
 						</tr>
-						<tr style="border:1">
-							<td  style="border:1;">Gateway</td>
-							<td style="border:1">#{loginBean.connectorMonitoringService.connectionGatewayDB}"</td>
-							<c:if test="#{loginBean.connectorMonitoringService.connectionStatusGatewayDB=='ERROR'}">
-								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.connectionStatusGatewayDB}</td>
-            				</c:if>
-            				<c:if test="#{loginBean.connectorMonitoringService.connectionStatusGatewayDB=='OK'}">
-								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.connectionStatusGatewayDB}</td>
-            				</c:if>
-						</tr>
+
 					</table>
 					
 					
@@ -142,36 +133,6 @@
 
 				</p:panel>
 
-
-				<p:panel id="messages" header="Messages" toggleable="true" style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
-					toggleOrientation="horizontal">
-					
-					
-					<table style="margin: 0 auto;" border="1">
-					
-						<tr>
-							<td style="border:1;font-weight:bold;">Messages</td>
-							<td style="border:1;font-weight:bold;">Count</td>
-							<td style="border:1;font-weight:bold;">Status</td>
-						</tr>
-					
-						<tr style="border:1">
-							<td  style="border:1;">AS4 receipt pending</td>
-							<td style="border:1">#{connectorBean.connectorMonitoringService.pendingMessagesGateway}</td>
-							<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='ERROR'}">
-								<td style="background-color:RED;color:BLACK;font-weight: bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
-            				</c:if>
-							<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='OK'}">
-								<td style="background-color:GREEN;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
-            				</c:if>
-            				<c:if test="#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus=='WARNING'}">
-								<td style="background-color:YELLOW;color:BLACK;font-weight:bold">#{loginBean.connectorMonitoringService.pendingMessagesGatewayStatus}</td>
-            				</c:if>
-						</tr>
-						
-					</table>
-
-				</p:panel>
 				</div>
 				<br />
 				<hr />

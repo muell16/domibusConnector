@@ -20,7 +20,7 @@
     <context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-            classpath:spring/context/ECodexWebAdminContext.xml
+            classpath:spring/context/WebAdminContext.xml
         </param-value>
 	</context-param>
   

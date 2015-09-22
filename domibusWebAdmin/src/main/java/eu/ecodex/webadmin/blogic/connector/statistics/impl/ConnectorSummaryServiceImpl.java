@@ -1,12 +1,19 @@
 package eu.ecodex.webadmin.blogic.connector.statistics.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.primefaces.model.chart.PieChartModel;
 
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.ecodex.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 import eu.ecodex.webadmin.dao.IDomibusMessageWebAdminDao;
+import eu.ecodex.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 import eu.ecodex.webadmin.dao.IDomibusWebAdminUserDao;
 
 public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Serializable {
@@ -15,9 +22,20 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
 
     private String outgoingMessagesCount = "";
     private String incomingMessagesCount = "";
+    private List<String> serviceList;
     private PieChartModel pieModelMessageSummary;
     private PieChartModel pieModelServiceSummary;
     private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
+    private IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao;
+    
+    @PostConstruct
+    public void init(){
+    	serviceList = new ArrayList<String>();
+    	List<DomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
+    	for (DomibusConnectorService domibusConnectorService : resultList) {
+			serviceList.add(domibusConnectorService.getService());
+		}
+    }
 
     /*
      * (non-Javadoc)
@@ -25,7 +43,6 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
      * @see eu.ecodex.webadmin.blogic.impl.IReportingServiceManager#
      * getNationalMessageCount()
      */
-
     @Override
     public void generateMessageSummary() {
         Long resultOutgoing = domibusMessageWebAdminDao.countOutgoingMessages();
@@ -37,13 +54,23 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
 
         pieModelMessageSummary.set("Incoming Messages", resultIncoming);
         pieModelMessageSummary.set("Outgoing Messages", resultOutgoing);
-
-        HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countService();
-
         pieModelServiceSummary = new PieChartModel();
+        for (String service : serviceList) {
+        	 HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countService(service);
 
-        pieModelServiceSummary.set("European Payment Order", serviceList.get("EPO"));
-        pieModelServiceSummary.set("Undefined", serviceList.get("Undefined"));
+
+             
+             pieModelServiceSummary.set(service, serviceList.get(service));
+             
+		}
+        
+        HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countUndefinedService();
+        if (serviceList.containsKey("Undefined")){
+        	pieModelServiceSummary.set("Undefined", serviceList.get("Undefined"));	
+        }
+        
+
+       
 
     }
 
@@ -86,6 +113,15 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
 	public void setDomibusMessageWebAdminDao(
 			IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
 		this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
+	}
+
+	public IDomibusWebAdminConnectorServiceDao getDomibusWebAdminConnectorServiceDao() {
+		return domibusWebAdminConnectorServiceDao;
+	}
+
+	public void setDomibusWebAdminConnectorServiceDao(
+			IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao) {
+		this.domibusWebAdminConnectorServiceDao = domibusWebAdminConnectorServiceDao;
 	}
 
 }

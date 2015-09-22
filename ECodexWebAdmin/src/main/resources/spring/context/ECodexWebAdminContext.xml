@@ -28,8 +28,8 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-    			<value>file:conf/webadmin/webadmin.properties</value>
-<!--    				<value>classpath:webadmin.properties</value>    -->
+<!--     			<value>file:conf/webadmin/webadmin.properties</value>  -->
+    				<value>classpath:webadmin.properties</value>
    				<value>classpath:connector.properties</value>
 			</list>
 		</property>
