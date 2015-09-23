@@ -42,13 +42,14 @@ public class DomibusConnectorMonitor {
         return monitoringDao.countRejectedMessagesConnector();
     }
 
-    public Integer getNoReceiptMessagesGateway() {
-        return monitoringDao.countNoReceiptMessagesGateway();
-    }
-
-    public Integer getPendingMessagesGateway() {
-        return monitoringDao.countPendingMessagesGateway();
-    }
+    //
+    // public Integer getNoReceiptMessagesGateway() {
+    // return monitoringDao.countNoReceiptMessagesGateway();
+    // }
+    //
+    // public Integer getPendingMessagesGateway() {
+    // return monitoringDao.countPendingMessagesGateway();
+    // }
 
     public void setMonitoringDao(DomibusConnectorConnectorMonitoringDao monitoringDao) {
         this.monitoringDao = monitoringDao;

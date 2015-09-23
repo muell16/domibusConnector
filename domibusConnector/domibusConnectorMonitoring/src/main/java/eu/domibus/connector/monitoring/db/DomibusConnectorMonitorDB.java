@@ -47,15 +47,16 @@ public class DomibusConnectorMonitorDB implements IDomibusConnectorMonitor {
         return domibusConnectorMonitor.getRejectedConnectorMessagesCount();
     }
 
-    @Override
-    public Integer getNoReceiptMessagesGateway() {
-        return domibusConnectorMonitor.getNoReceiptMessagesGateway();
-    }
-
-    @Override
-    public Integer getPendingMessagesGateway() {
-        return domibusConnectorMonitor.getPendingMessagesGateway();
-    }
+    //
+    // @Override
+    // public Integer getNoReceiptMessagesGateway() {
+    // return domibusConnectorMonitor.getNoReceiptMessagesGateway();
+    // }
+    //
+    // @Override
+    // public Integer getPendingMessagesGateway() {
+    // return domibusConnectorMonitor.getPendingMessagesGateway();
+    // }
 
     public DomibusConnectorMonitor getDomibusConnectorMonitor() {
         return domibusConnectorMonitor;

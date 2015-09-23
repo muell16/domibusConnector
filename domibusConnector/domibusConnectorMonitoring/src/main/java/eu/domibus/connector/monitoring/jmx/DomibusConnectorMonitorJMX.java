@@ -59,17 +59,19 @@ public class DomibusConnectorMonitorJMX implements IDomibusConnectorMonitor {
         return domibusConnectorMonitor.getRejectedConnectorMessagesCount();
     }
 
-    @Override
-    @ManagedAttribute(description = "Count of gateway messages in state NO_RECEIPT")
-    public Integer getNoReceiptMessagesGateway() {
-        return domibusConnectorMonitor.getNoReceiptMessagesGateway();
-    }
-
-    @Override
-    @ManagedAttribute(description = "Count of pending gateway messages")
-    public Integer getPendingMessagesGateway() {
-        return domibusConnectorMonitor.getPendingMessagesGateway();
-    }
+    //
+    // @Override
+    // @ManagedAttribute(description =
+    // "Count of gateway messages in state NO_RECEIPT")
+    // public Integer getNoReceiptMessagesGateway() {
+    // return domibusConnectorMonitor.getNoReceiptMessagesGateway();
+    // }
+    //
+    // @Override
+    // @ManagedAttribute(description = "Count of pending gateway messages")
+    // public Integer getPendingMessagesGateway() {
+    // return domibusConnectorMonitor.getPendingMessagesGateway();
+    // }
 
     public DomibusConnectorMonitor getDomibusConnectorMonitor() {
         return domibusConnectorMonitor;

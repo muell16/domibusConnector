@@ -70,19 +70,20 @@ public class DomibusConnectorMonitorREST implements IDomibusConnectorMonitor {
         return domibusConnectorMonitor.getRejectedConnectorMessagesCount();
     }
 
-    @Override
-    @POST
-    @Path("/getNoReceiptMessagesGateway/")
-    public Integer getNoReceiptMessagesGateway() {
-        return domibusConnectorMonitor.getNoReceiptMessagesGateway();
-    }
-
-    @Override
-    @POST
-    @Path("/getPendingGatewayMessagesCount/")
-    public Integer getPendingMessagesGateway() {
-        return domibusConnectorMonitor.getPendingMessagesGateway();
-    }
+    //
+    // @Override
+    // @POST
+    // @Path("/getNoReceiptMessagesGateway/")
+    // public Integer getNoReceiptMessagesGateway() {
+    // return domibusConnectorMonitor.getNoReceiptMessagesGateway();
+    // }
+    //
+    // @Override
+    // @POST
+    // @Path("/getPendingGatewayMessagesCount/")
+    // public Integer getPendingMessagesGateway() {
+    // return domibusConnectorMonitor.getPendingMessagesGateway();
+    // }
 
     public DomibusConnectorMonitor getDomibusConnectorMonitor() {
         return domibusConnectorMonitor;

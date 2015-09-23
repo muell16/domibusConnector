@@ -17,9 +17,9 @@ public interface IDomibusConnectorMonitor {
     public String getJobStatusEvidencesTimeout();
 
     public Integer getRejectedConnectorMessagesCount();
-
-    public Integer getNoReceiptMessagesGateway();
-
-    public Integer getPendingMessagesGateway();
+    //
+    // public Integer getNoReceiptMessagesGateway();
+    //
+    // public Integer getPendingMessagesGateway();
 
 }
