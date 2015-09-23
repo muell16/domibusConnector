@@ -1,6 +1,6 @@
 package eu.domibus.connector.monitoring;
 
-import eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao;
+import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
 
 public class DomibusConnectorMonitor {
 
