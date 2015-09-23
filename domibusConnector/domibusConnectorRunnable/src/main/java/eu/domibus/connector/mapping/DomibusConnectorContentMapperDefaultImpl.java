@@ -17,8 +17,9 @@ public class DomibusConnectorContentMapperDefaultImpl implements DomibusConnecto
     /**
      * This implementation of the interface method
      * {@link DomibusConnectorContentMapper#mapInternationalToNational(Message)}
-     * only copies the contents of {@link MessageContent#getInternationalContent()} and
-     * stores them into {@link MessageContent#setNationalXmlContent(byte[])}.
+     * only copies the contents of
+     * {@link MessageContent#getInternationalContent()} and stores them into
+     * {@link MessageContent#setNationalXmlContent(byte[])}.
      * 
      */
     @Override

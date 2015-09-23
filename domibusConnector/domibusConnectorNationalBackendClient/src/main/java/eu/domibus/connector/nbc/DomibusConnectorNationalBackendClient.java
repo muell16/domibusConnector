@@ -1,5 +1,7 @@
 package eu.domibus.connector.nbc;
 
+import java.util.List;
+
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
@@ -124,6 +126,6 @@ public interface DomibusConnectorNationalBackendClient {
      * @throws DomibusConnectorNationalBackendClientException
      * @throws ImplementationMissingException
      */
-    public String requestMessageErrors(Message message) throws DomibusConnectorNationalBackendClientException,
-            ImplementationMissingException;
+    public List<MessageError> requestMessageErrors(Message message)
+            throws DomibusConnectorNationalBackendClientException, ImplementationMissingException;
 }

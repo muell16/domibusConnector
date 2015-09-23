@@ -1,7 +1,10 @@
 package eu.domibus.connector.nbc;
 
+import java.util.List;
+
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageError;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 
 public class DomibusConnectorNationalBackendClientDefaultImpl implements DomibusConnectorNationalBackendClient {
@@ -46,8 +49,8 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
     }
 
     @Override
-    public String requestMessageErrors(Message message) throws DomibusConnectorNationalBackendClientException,
-            ImplementationMissingException {
+    public List<MessageError> requestMessageErrors(Message message)
+            throws DomibusConnectorNationalBackendClientException, ImplementationMissingException {
         throw new ImplementationMissingException("DomibusConnectorNationalBackendClient", "requestMessageErrors");
     }
 

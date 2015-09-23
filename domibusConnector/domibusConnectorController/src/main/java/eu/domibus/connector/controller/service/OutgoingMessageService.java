@@ -44,7 +44,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 contentMapper.mapNationalToInternational(message);
             } catch (DomibusConnectorContentMapperException | ImplementationMissingException cme) {
                 createSubmissionRejectionAndReturnIt(message, hashValue, cme.getMessage());
-                throw new DomibusConnectorMessageException(message, cme, this.getClass());
+                throw new DomibusConnectorMessageException(message, cme.getMessage(), cme, this.getClass());
             }
             persistenceService.mergeMessageWithDatabase(message);
         }
@@ -53,7 +53,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             hashValue = checkPDFandBuildHashValue(message, hashValue);
         } catch (DomibusConnectorControllerException e) {
             createSubmissionRejectionAndReturnIt(message, hashValue, e.getMessage());
-            throw new DomibusConnectorMessageException(message, e, this.getClass());
+            throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
         }
 
         if (connectorProperties.isUseSecurityToolkit()) {
@@ -61,7 +61,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 securityToolkit.buildContainer(message);
             } catch (DomibusConnectorSecurityException se) {
                 createSubmissionRejectionAndReturnIt(message, hashValue, se.getMessage());
-                throw new DomibusConnectorMessageException(message, se, this.getClass());
+                throw new DomibusConnectorMessageException(message, se.getMessage(), se, this.getClass());
             }
         }
 

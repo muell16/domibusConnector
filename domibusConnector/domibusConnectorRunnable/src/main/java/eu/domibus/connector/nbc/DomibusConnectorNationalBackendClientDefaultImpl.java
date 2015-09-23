@@ -20,6 +20,7 @@ import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageAttachment;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.common.message.MessageError;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
@@ -490,8 +491,8 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
     }
 
     @Override
-    public String requestMessageErrors(Message message) throws DomibusConnectorNationalBackendClientException,
-            ImplementationMissingException {
+    public List<MessageError> requestMessageErrors(Message message)
+            throws DomibusConnectorNationalBackendClientException, ImplementationMissingException {
         return null;
     }
 

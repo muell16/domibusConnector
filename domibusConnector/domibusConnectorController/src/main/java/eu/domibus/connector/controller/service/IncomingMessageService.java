@@ -57,7 +57,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
                         "Error mapping content of message into national format!", e, this.getClass());
             } catch (ImplementationMissingException e) {
                 createNonDeliveryEvidenceAndSendIt(message);
-                throw new DomibusConnectorMessageException(message, e, this.getClass());
+                throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
             }
             persistenceService.mergeMessageWithDatabase(message);
         }
@@ -70,7 +70,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
                     e, this.getClass());
         } catch (ImplementationMissingException e) {
             createNonDeliveryEvidenceAndSendIt(message);
-            throw new DomibusConnectorMessageException(message, e, this.getClass());
+            throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
         }
 
         persistenceService.setMessageDeliveredToNationalSystem(message);
