@@ -38,4 +38,17 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                 "deliverLastEvidenceForMessage");
     }
 
+    @Override
+    public String requestMessageStatusFromGateway(Message message)
+            throws DomibusConnectorNationalBackendClientException, ImplementationMissingException {
+        throw new ImplementationMissingException("DomibusConnectorNationalBackendClient",
+                "requestMessageStatusFromGateway");
+    }
+
+    @Override
+    public String requestMessageErrors(Message message) throws DomibusConnectorNationalBackendClientException,
+            ImplementationMissingException {
+        throw new ImplementationMissingException("DomibusConnectorNationalBackendClient", "requestMessageErrors");
+    }
+
 }

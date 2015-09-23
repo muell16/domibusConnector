@@ -44,6 +44,7 @@ import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.message.MessageError;
 import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClientException;
 import eu.ecodex.discovery.DiscoveryClient;
 import eu.ecodex.discovery.DiscoveryException;
@@ -64,6 +65,7 @@ public class CommonMessageHelper {
     public static final String CONTENT_XML_NAME = "ECodexContentXML";
     public static final String PARTPROPERTY_NAME = "description";
     public static final String BODYLOAD_HREF_PREFIX = "#";
+    public static final String DOMIBUS_MESSAGE_ERROR = "Error to message on domibus gateway side!";
 
     private CommonConnectorProperties connectorProperties;
     private DomibusConnectorPersistenceService persistenceService;
@@ -86,6 +88,18 @@ public class CommonMessageHelper {
             message.getDbMessage().setEbmsMessageId(ebmsMessageId);
             persistenceService.mergeMessageWithDatabase(message);
         }
+    }
+
+    public void persistMessageError(Message message, String text, String details, String source) {
+
+        MessageError messageError = new MessageError();
+
+        messageError.setMessage(message);
+        messageError.setText(text);
+        messageError.setDetails(details);
+        messageError.setSource(source);
+
+        persistenceService.persistMessageError(messageError);
     }
 
     public String generateCID(String name) {

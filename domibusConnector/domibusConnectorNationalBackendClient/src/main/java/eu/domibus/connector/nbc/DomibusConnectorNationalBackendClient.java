@@ -4,6 +4,7 @@ import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.message.MessageError;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 
 /**
@@ -85,5 +86,44 @@ public interface DomibusConnectorNationalBackendClient {
      * @throws ImplementationMissingException
      */
     public Message[] requestConfirmations() throws DomibusConnectorNationalBackendClientException,
+            ImplementationMissingException;
+
+    /**
+     * This method calls the getMessageStatus method on the gateway backend
+     * service directly. It returns, if provided, the message status on the
+     * gateway. To implement this method {@link MessageStatusService} must be
+     * injected. This method is not triggered by a timer configured job!
+     * 
+     * @param message
+     *            A {@link Message} object that must contain either the
+     *            ebmsMessageId or the nationalMessageId in the
+     *            {@link MessageDetails} of the message which status is
+     *            requested.
+     * @return A simple String represantation of the message status provided by
+     *         the gateway.
+     * @throws DomibusConnectorNationalBackendClientException
+     * @throws ImplementationMissingException
+     */
+    public String requestMessageStatusFromGateway(Message message)
+            throws DomibusConnectorNationalBackendClientException, ImplementationMissingException;
+
+    /**
+     * This method collects all persisted errors from the connector database. It
+     * also calls a backend webservice method to the gateway to request message
+     * errors from the gateway, if provided. To implement this method
+     * {@link MessageStatusService} must be injected. This method is not
+     * triggered by a timer configured job!
+     * 
+     * @param message
+     *            A {@link Message} object that must contain either the
+     *            ebmsMessageId or the nationalMessageId in the
+     *            {@link MessageDetails} of the message which status is
+     *            requested.
+     * @return A List of {@link MessageError} objects containing all
+     *         informations on persisted errors to the given message.
+     * @throws DomibusConnectorNationalBackendClientException
+     * @throws ImplementationMissingException
+     */
+    public String requestMessageErrors(Message message) throws DomibusConnectorNationalBackendClientException,
             ImplementationMissingException;
 }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
@@ -29,7 +30,8 @@ public class IncomingEvidenceService implements EvidenceService {
     }
 
     @Override
-    public void handleEvidence(Message confirmationMessage) throws DomibusConnectorControllerException {
+    public void handleEvidence(Message confirmationMessage) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
 
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
@@ -39,9 +41,9 @@ public class IncomingEvidenceService implements EvidenceService {
 
         if (isMessageAlreadyRejected(originalMessage)) {
             persistenceService.rejectMessage(originalMessage);
-            throw new DomibusConnectorControllerException("Received evidence of type "
+            throw new DomibusConnectorMessageException(originalMessage, "Received evidence of type "
                     + confirmation.getEvidenceType().toString() + " for an already rejected Message with ebms ID "
-                    + messageID);
+                    + messageID, this.getClass());
         }
 
         originalMessage.addConfirmation(confirmation);
@@ -52,7 +54,8 @@ public class IncomingEvidenceService implements EvidenceService {
         try {
             nationalBackendClient.deliverLastEvidenceForMessage(confirmationMessage);
         } catch (DomibusConnectorNationalBackendClientException e) {
-            throw new DomibusConnectorControllerException("Could not deliver Evidence to national backend system! ", e);
+            throw new DomibusConnectorMessageException(originalMessage,
+                    "Could not deliver Evidence to national backend system! ", e, this.getClass());
         } catch (ImplementationMissingException e) {
             throw new DomibusConnectorControllerException(e);
         }

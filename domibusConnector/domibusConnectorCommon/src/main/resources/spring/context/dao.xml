@@ -56,5 +56,6 @@
 	<bean id="actionDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorActionDaoImpl" />
 	<bean id="partyDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorPartyDaoImpl" />
 	<bean id="serviceDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorServiceDaoImpl" />
+	<bean id="messageErrorDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorMessageErrorDaoImpl" />
 
 </beans>

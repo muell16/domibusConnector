@@ -188,8 +188,8 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
             String messagePropertiesPath = messageFolder.getAbsolutePath() + File.separator + messagePropertiesFileName;
 
             messagePropertiesFile = new File(messagePropertiesPath);
-            msgProps = DomibusConnectorRunnableUtil
-                    .convertMessageDetailsToMessageProperties(message.getMessageDetails());
+            msgProps = DomibusConnectorRunnableUtil.convertMessageDetailsToMessageProperties(message
+                    .getMessageDetails());
         }
 
         MessageContent messageContent = message.getMessageContent();
@@ -238,7 +238,8 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
 
         if (message.getAttachments() != null) {
             for (MessageAttachment attachment : message.getAttachments()) {
-                DomibusConnectorRunnableUtil.createFile(messageFolder, attachment.getName(), attachment.getAttachment());
+                DomibusConnectorRunnableUtil
+                        .createFile(messageFolder, attachment.getName(), attachment.getAttachment());
             }
         }
 
@@ -480,6 +481,18 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                 }
             }
         }
+    }
+
+    @Override
+    public String requestMessageStatusFromGateway(Message message)
+            throws DomibusConnectorNationalBackendClientException, ImplementationMissingException {
+        return null;
+    }
+
+    @Override
+    public String requestMessageErrors(Message message) throws DomibusConnectorNationalBackendClientException,
+            ImplementationMissingException {
+        return null;
     }
 
 }

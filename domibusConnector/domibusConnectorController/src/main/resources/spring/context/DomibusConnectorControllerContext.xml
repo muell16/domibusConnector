@@ -76,5 +76,10 @@
 		<property name="nationalBackendClient" ref="nationalBackendClient" />
 	</bean>
 	
+	<bean id="messageStatusService" class="eu.domibus.connector.controller.service.MessageStatusService">
+		<property name="gatewayWebserviceClient" ref="gatewayWebServiceClient" />
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	
 	<bean id="applicationContextProvider" class="eu.domibus.connector.controller.context.ApplicationContextProvider"></bean>
 </beans>

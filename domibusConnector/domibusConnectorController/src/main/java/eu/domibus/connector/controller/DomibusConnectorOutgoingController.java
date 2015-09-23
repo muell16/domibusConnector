@@ -6,6 +6,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageContent;
@@ -85,9 +86,8 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
 
                 try {
                     handleMessage(messageId);
-                } catch (DomibusConnectorControllerException ce) {
-                    LOGGER.error(ce.getMessage());
-                    throw ce;
+                } catch (DomibusConnectorMessageException | DomibusConnectorControllerException e) {
+                    LOGGER.error("Error handling message with id " + messageId, e);
                 }
             }
         } else {
@@ -95,7 +95,8 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
         }
     }
 
-    private void handleMessage(String messageId) throws DomibusConnectorControllerException {
+    private void handleMessage(String messageId) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
         MessageDetails details = new MessageDetails();
         details.setNationalMessageId(messageId);
 
@@ -105,12 +106,9 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
 
         try {
             nationalBackendClient.requestMessage(message);
-        } catch (DomibusConnectorNationalBackendClientException e1) {
-            throw new DomibusConnectorControllerException(
-                    "Exception while trying to receive message from national system. ", e1);
-        } catch (ImplementationMissingException ime) {
-            throw new DomibusConnectorControllerException(
-                    "Exception while trying to receive message from national system. ", ime);
+        } catch (Exception e1) {
+            throw new DomibusConnectorControllerException("Exception while trying to receive message with id "
+                    + messageId + " from national system. ", e1);
         }
 
         try {
@@ -127,10 +125,7 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
         Message[] confirmationMessages = null;
         try {
             confirmationMessages = nationalBackendClient.requestConfirmations();
-        } catch (DomibusConnectorNationalBackendClientException e) {
-            throw new DomibusConnectorControllerException(
-                    "Exception while trying to get confirmations from national system. ", e);
-        } catch (ImplementationMissingException e) {
+        } catch (Exception e) {
             throw new DomibusConnectorControllerException(
                     "Exception while trying to get confirmations from national system. ", e);
         }
@@ -143,9 +138,8 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
 
                 try {
                     outgoingEvidenceService.handleEvidence(confirmationMessage);
-                } catch (DomibusConnectorControllerException ce) {
+                } catch (DomibusConnectorMessageException | DomibusConnectorControllerException ce) {
                     LOGGER.error(ce.getMessage());
-                    throw ce;
                 }
             }
         }

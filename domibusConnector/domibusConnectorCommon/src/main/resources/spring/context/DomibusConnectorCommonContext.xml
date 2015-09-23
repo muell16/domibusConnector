@@ -35,6 +35,9 @@
 		<property name="partyDao" ref="partyDao" />
 		<property name="serviceDao" ref="serviceDao" />
 		<property name="messageInfoDao" ref="messageInfoDao" />
+		<property name="messageErrorDao" ref="messageErrorDao" />
 	</bean>
+	
+	<bean class="eu.domibus.connector.common.DomibusApplicationContextManager" />
 
 </beans>

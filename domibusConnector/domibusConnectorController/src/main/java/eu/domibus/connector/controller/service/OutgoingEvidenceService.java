@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageDetails;
@@ -37,7 +38,8 @@ public class OutgoingEvidenceService implements EvidenceService {
     }
 
     @Override
-    public void handleEvidence(Message confirmationMessage) throws DomibusConnectorControllerException {
+    public void handleEvidence(Message confirmationMessage) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
         Message originalMessage = persistenceService.findMessageByEbmsId(messageID);
@@ -56,7 +58,8 @@ public class OutgoingEvidenceService implements EvidenceService {
         try {
             confirmation = generateEvidence(evidenceType, originalMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorControllerException("Could not handle Evidence to Message " + messageID, e);
+            throw new DomibusConnectorMessageException(originalMessage, "Could not handle Evidence to Message "
+                    + messageID, e, this.getClass());
         }
 
         originalMessage.addConfirmation(confirmation);
@@ -68,7 +71,8 @@ public class OutgoingEvidenceService implements EvidenceService {
         try {
             gatewayWebserviceClient.sendMessage(evidenceMessage);
         } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
-            throw new DomibusConnectorControllerException("Could not send Evidence Message to Gateway! ", gwse);
+            throw new DomibusConnectorMessageException(originalMessage, "Could not send Evidence Message to Gateway! ",
+                    gwse, this.getClass());
         }
 
         persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
@@ -82,7 +86,7 @@ public class OutgoingEvidenceService implements EvidenceService {
     }
 
     private MessageConfirmation generateEvidence(EvidenceType type, Message originalMessage)
-            throws DomibusConnectorEvidencesToolkitException, DomibusConnectorControllerException {
+            throws DomibusConnectorEvidencesToolkitException, DomibusConnectorMessageException {
         switch (type) {
         case DELIVERY:
             return evidencesToolkit.createDeliveryEvidence(originalMessage);
@@ -93,7 +97,8 @@ public class OutgoingEvidenceService implements EvidenceService {
         case NON_RETRIEVAL:
             return evidencesToolkit.createNonRetrievalEvidence(RejectionReason.OTHER, originalMessage);
         default:
-            throw new DomibusConnectorControllerException("Illegal Evidence type to be generated!");
+            throw new DomibusConnectorMessageException(originalMessage, "Illegal Evidence type " + type
+                    + " to be generated!", this.getClass());
         }
     }
 
@@ -108,7 +113,7 @@ public class OutgoingEvidenceService implements EvidenceService {
         case NON_RETRIEVAL:
             return persistenceService.getRetrievalNonRetrievalToRecipientAction();
         default:
-            throw new DomibusConnectorControllerException("Illegal Evidence type! No Action found!");
+            throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
         }
     }
 

@@ -5,18 +5,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.exception.ExceptionUtils;
 import org.hibernate.lob.ClobImpl;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorMessageDao;
+import eu.domibus.connector.common.db.dao.DomibusConnectorMessageErrorDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
 import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
+import eu.domibus.connector.common.db.model.DomibusConnectorMessageError;
 import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
@@ -27,6 +31,7 @@ import eu.domibus.connector.common.exception.PersistenceException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.common.message.MessageError;
 
 public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorPersistenceService {
 
@@ -41,6 +46,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     private DomibusConnectorServiceDao serviceDao;
     private DomibusConnectorPartyDao partyDao;
     private DomibusConnectorMessageInfoDao messageInfoDao;
+    private DomibusConnectorMessageErrorDao messageErrorDao;
 
     public void setMessageDao(DomibusConnectorMessageDao messageDao) {
         this.messageDao = messageDao;
@@ -66,10 +72,13 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         this.messageInfoDao = messageInfoDao;
     }
 
+    public void setMessageErrorDao(DomibusConnectorMessageErrorDao messageErrorDao) {
+        this.messageErrorDao = messageErrorDao;
+    }
+
     @Override
     @Transactional
-    public void persistMessageIntoDatabase(Message message, MessageDirection direction)
-            throws PersistenceException {
+    public void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException {
         DomibusConnectorMessage dbMessage = new DomibusConnectorMessage();
 
         dbMessage.setDirection(direction);
@@ -304,22 +313,88 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         return message;
     }
 
-    private MessageConfirmation mapDbEvidenceToMessageConfirmation(DomibusConnectorEvidence dbEvidence) throws Exception {
+    private MessageConfirmation mapDbEvidenceToMessageConfirmation(DomibusConnectorEvidence dbEvidence)
+            throws Exception {
         MessageConfirmation messageConfirmation = new MessageConfirmation();
         messageConfirmation.setEvidenceType(dbEvidence.getType());
 
-        String stringClob = null;
-        try {
-            long i = 1;
-            int clobLength = (int) dbEvidence.getEvidence().length();
-            stringClob = dbEvidence.getEvidence().getSubString(i, clobLength);
-        } catch (Exception e) {
-            throw new Exception("Could not parse evidence from database!", e);
-        }
+        Clob evidence = dbEvidence.getEvidence();
+        String stringClob = convertClobToString(evidence);
 
         messageConfirmation.setEvidence(stringClob.getBytes());
 
         return messageConfirmation;
+    }
+
+    private String convertClobToString(Clob clob) throws Exception {
+        String stringClob = null;
+        try {
+            long i = 1;
+            int clobLength = (int) clob.length();
+            stringClob = clob.getSubString(i, clobLength);
+        } catch (Exception e) {
+            throw new Exception("Could not parse clob from database!", e);
+        }
+        return stringClob;
+    }
+
+    @Override
+    @Transactional
+    public void persistMessageError(MessageError messageError) {
+        DomibusConnectorMessageError dbError = new DomibusConnectorMessageError();
+        dbError.setMessage(messageError.getMessage().getDbMessage());
+        dbError.setErrorMessage(messageError.getText());
+        dbError.setDetailedText(new ClobImpl(messageError.getDetails()));
+        dbError.setErrorSource(messageError.getSource());
+
+        this.messageErrorDao.persistMessageError(dbError);
+    }
+
+    @Override
+    @Transactional
+    public void persistMessageErrorFromException(Message message, Throwable ex, Class source)
+            throws PersistenceException {
+        if (message == null || message.getDbMessage() == null) {
+            throw new PersistenceException(
+                    "Message Error cannot be stored as the message object, or its database reference is null!");
+        }
+        if (ex == null) {
+            throw new PersistenceException("Message Error cannot be stored as there is no exception given!");
+        }
+        if (source == null) {
+            throw new PersistenceException(
+                    "Message Error cannot be stored as the Class object given as source is null!");
+        }
+        DomibusConnectorMessageError error = new DomibusConnectorMessageError();
+        error.setErrorMessage(ex.getMessage());
+        error.setDetailedText(new ClobImpl(ExceptionUtils.getStackTrace(ex)));
+        error.setErrorSource(source.getName());
+        error.setMessage(message.getDbMessage());
+
+        this.messageErrorDao.persistMessageError(error);
+    }
+
+    @Override
+    public List<MessageError> getMessageErrors(Message message) throws Exception {
+        List<DomibusConnectorMessageError> dbErrorsForMessage = this.messageErrorDao.getErrorsForMessage(message
+                .getDbMessage());
+        if (!CollectionUtils.isEmpty(dbErrorsForMessage)) {
+            List<MessageError> messageErrors = new ArrayList<MessageError>(dbErrorsForMessage.size());
+
+            for (DomibusConnectorMessageError dbMsgError : dbErrorsForMessage) {
+                MessageError msgError = new MessageError();
+                msgError.setMessage(message);
+                msgError.setText(dbMsgError.getErrorMessage());
+                if (dbMsgError.getDetailedText() != null)
+                    msgError.setDetails(convertClobToString(dbMsgError.getDetailedText()));
+                msgError.setSource(dbMsgError.getErrorSource());
+
+                messageErrors.add(msgError);
+            }
+
+            return messageErrors;
+        }
+        return null;
     }
 
     @Override

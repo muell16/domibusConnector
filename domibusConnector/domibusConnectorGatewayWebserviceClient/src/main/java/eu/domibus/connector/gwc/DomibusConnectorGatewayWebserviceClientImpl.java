@@ -9,12 +9,19 @@ import javax.xml.ws.WebServiceException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.CollectionUtils;
 
 import backend.ecodex.org._1_1.BackendInterface;
 import backend.ecodex.org._1_1.DownloadMessageFault;
 import backend.ecodex.org._1_1.DownloadMessageRequest;
 import backend.ecodex.org._1_1.DownloadMessageResponse;
+import backend.ecodex.org._1_1.ErrorLogEntry;
+import backend.ecodex.org._1_1.ErrorLogEntryArray;
+import backend.ecodex.org._1_1.GetErrorsRequest;
+import backend.ecodex.org._1_1.GetStatusRequest;
 import backend.ecodex.org._1_1.ListPendingMessagesResponse;
+import backend.ecodex.org._1_1.MessageStatus;
 import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendResponse;
 import eu.domibus.connector.common.message.Message;
@@ -150,4 +157,52 @@ public class DomibusConnectorGatewayWebserviceClientImpl implements DomibusConne
         return message;
     }
 
+    @Override
+    public void getMessageErrorsFromGateway(Message message) throws DomibusConnectorGatewayWebserviceClientException {
+
+        GetErrorsRequest getErrorsRequest = new GetErrorsRequest();
+        getErrorsRequest.setMessageID(message.getMessageDetails().getEbmsMessageId());
+        ErrorLogEntryArray messageErrors = null;
+
+        try {
+            messageErrors = gatewayBackendWebservice.getMessageErrors(getErrorsRequest);
+        } catch (Exception e) {
+            LOGGER.error("getMessageErrorsFromGateway failed: ", e);
+            throw new DomibusConnectorGatewayWebserviceClientException(e);
+        }
+
+        if (messageErrors != null && !CollectionUtils.isEmpty(messageErrors.getItem())) {
+            String source = null;
+            try {
+                source = ClassUtils
+                        .getQualifiedMethodName(this.getClass().getMethod("getMessageErrors", Message.class));
+            } catch (Exception e) {
+                LOGGER.error("Exception trying to get Method name.", e);
+                source = "DomibusConnectorGatewayWebserviceClientImpl";
+            }
+
+            for (ErrorLogEntry messageError : messageErrors.getItem()) {
+                commonMessageHelper.persistMessageError(message, CommonMessageHelper.DOMIBUS_MESSAGE_ERROR,
+                        messageError.getErrorDetail(), source);
+            }
+        }
+    }
+
+    @Override
+    public String getMessageStatusOnGateway(Message message) throws DomibusConnectorGatewayWebserviceClientException {
+
+        GetStatusRequest getStatusRequest = new GetStatusRequest();
+        getStatusRequest.setMessageID(message.getMessageDetails().getEbmsMessageId());
+        try {
+            MessageStatus messageStatus = gatewayBackendWebservice.getMessageStatus(getStatusRequest);
+            if (messageStatus != null) {
+                return messageStatus.value();
+            }
+        } catch (Exception e) {
+            LOGGER.error("getMessageStatusOnGateway failed: ", e);
+            throw new DomibusConnectorGatewayWebserviceClientException(e);
+        }
+
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 package eu.domibus.connector.gwc;
 
 import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageDetails;
 import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClientException;
 
 /**
@@ -36,5 +37,29 @@ public interface DomibusConnectorGatewayWebserviceClient {
      * @return The {@link Message} from the gateway.
      */
     public Message downloadMessage(String messageId) throws DomibusConnectorGatewayWebserviceClientException;
+
+    /**
+     * WebService method to receive the errors of a certain message on gateway.
+     * 
+     * @param message
+     *            A {@link Message} object that must contain the ebms message id
+     *            in the {@link MessageDetails} of the message which errors are
+     *            requested.
+     * @throws DomibusConnectorGatewayWebserviceClientException
+     */
+    void getMessageErrorsFromGateway(Message message) throws DomibusConnectorGatewayWebserviceClientException;
+
+    /**
+     * WebService method to receive the status of a certain message on gateway.
+     * 
+     * @param message
+     *            A {@link Message} object that must contain the ebms message id
+     *            in the {@link MessageDetails} of the message which status is
+     *            requested.
+     * @return A simple String represantation of the message status provided by
+     *         the gateway.
+     * @throws DomibusConnectorGatewayWebserviceClientException
+     */
+    String getMessageStatusOnGateway(Message message) throws DomibusConnectorGatewayWebserviceClientException;
 
 }

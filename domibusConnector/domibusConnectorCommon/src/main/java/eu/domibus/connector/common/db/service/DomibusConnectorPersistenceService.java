@@ -9,6 +9,7 @@ import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.connector.common.exception.PersistenceException;
 import eu.domibus.connector.common.message.Message;
+import eu.domibus.connector.common.message.MessageError;
 
 public interface DomibusConnectorPersistenceService {
 
@@ -55,4 +56,10 @@ public interface DomibusConnectorPersistenceService {
     DomibusConnectorParty getPartyByPartyId(String partyId);
 
     List<Message> findMessagesByConversationId(String conversationId);
+
+    void persistMessageError(MessageError messageError);
+
+    List<MessageError> getMessageErrors(Message message) throws Exception;
+
+    void persistMessageErrorFromException(Message message, Throwable ex, Class source) throws PersistenceException;
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.EvidenceService;
@@ -66,15 +67,20 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
         try {
             message = gatewayWebserviceClient.downloadMessage(messageId);
         } catch (DomibusConnectorGatewayWebserviceClientException e) {
-            throw new DomibusConnectorControllerException("Error downloading message from the gateway!", e);
+            throw new DomibusConnectorControllerException("Error downloading message with id " + messageId
+                    + " from the gateway!", e);
         }
 
         if (isMessageEvidence(message)) {
-            incomingEvidenceService.handleEvidence(message);
+            try {
+                incomingEvidenceService.handleEvidence(message);
+            } catch (DomibusConnectorMessageException | DomibusConnectorControllerException e) {
+                LOGGER.error("Error handling message with id " + messageId, e);
+            }
         } else {
             try {
                 incomingMessageService.handleMessage(message);
-            } catch (DomibusConnectorControllerException e) {
+            } catch (DomibusConnectorControllerException | DomibusConnectorMessageException e) {
                 LOGGER.error("Error handling message with id " + messageId, e);
             }
         }

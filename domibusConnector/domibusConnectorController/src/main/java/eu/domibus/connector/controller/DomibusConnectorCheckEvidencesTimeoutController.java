@@ -10,6 +10,7 @@ import eu.domibus.connector.common.CommonConnectorProperties;
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
@@ -61,7 +62,11 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 
                         boolean relayRemmdFound = checkEvidencesForRelayRemmd(unconfirmed);
                         if (!relayRemmdFound) {
-                            createRelayRemmdFailureAndSendIt(unconfirmed);
+                            try {
+                                createRelayRemmdFailureAndSendIt(unconfirmed);
+                            } catch (DomibusConnectorMessageException e) {
+                                throw new DomibusConnectorControllerException(e);
+                            }
                             continue;
                         }
                     }
@@ -70,7 +75,11 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
                             && now.getTime() > deliveryTimeout) {
                         boolean deliveryFound = checkEvidencesForDelivery(unconfirmed);
                         if (!deliveryFound) {
-                            createNonDeliveryAndSendIt(unconfirmed);
+                            try {
+                                createNonDeliveryAndSendIt(unconfirmed);
+                            } catch (DomibusConnectorMessageException e) {
+                                throw new DomibusConnectorControllerException(e);
+                            }
                             continue;
                         }
                     }
@@ -79,7 +88,11 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
                             && now.getTime() > retrievalTimeout) {
                         boolean retrievalFound = checkEvidencesForRetrieval(unconfirmed);
                         if (!retrievalFound)
-                            createNonRetrievalAndSendIt(unconfirmed);
+                            try {
+                                createNonRetrievalAndSendIt(unconfirmed);
+                            } catch (DomibusConnectorMessageException e) {
+                                throw new DomibusConnectorControllerException(e);
+                            }
                         continue;
                     }
 
@@ -128,7 +141,8 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
         return false;
     }
 
-    private void createRelayRemmdFailureAndSendIt(Message originalMessage) throws DomibusConnectorControllerException {
+    private void createRelayRemmdFailureAndSendIt(Message originalMessage) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
 
         LOGGER.info("The RelayREMMDAcceptance evidence for message {} timed out. Will send failure!", originalMessage
                 .getMessageDetails().getEbmsMessageId());
@@ -138,7 +152,8 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
         try {
             relayRemMDFailure = evidencesToolkit.createRelayREMMDFailure(RejectionReason.OTHER, originalMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorControllerException("Error creating RelayREMMDFailure for message!", e);
+            throw new DomibusConnectorMessageException(originalMessage,
+                    "Error creating RelayREMMDFailure for message!", e, this.getClass());
         }
 
         DomibusConnectorAction action = persistenceService.getRelayREMMDFailure();
@@ -146,14 +161,16 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
         sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
     }
 
-    private void createNonDeliveryAndSendIt(Message originalMessage) throws DomibusConnectorControllerException {
+    private void createNonDeliveryAndSendIt(Message originalMessage) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
         LOGGER.info("The Delivery evidence for message {} timed out. Will send NonDelivery!", originalMessage
                 .getMessageDetails().getEbmsMessageId());
         MessageConfirmation nonDelivery = null;
         try {
             nonDelivery = evidencesToolkit.createNonDeliveryEvidence(RejectionReason.OTHER, originalMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorControllerException("Error creating NonDelivery for message!", e);
+            throw new DomibusConnectorMessageException(originalMessage, "Error creating NonDelivery for message!", e,
+                    this.getClass());
         }
 
         DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
@@ -161,14 +178,16 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
         sendEvidenceToNationalSystem(originalMessage, nonDelivery, action);
     }
 
-    private void createNonRetrievalAndSendIt(Message originalMessage) throws DomibusConnectorControllerException {
+    private void createNonRetrievalAndSendIt(Message originalMessage) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
         LOGGER.info("The Retrieval evidence for message {} timed out. Will send NonRetrieval!", originalMessage
                 .getMessageDetails().getEbmsMessageId());
         MessageConfirmation nonRetrieval = null;
         try {
             nonRetrieval = evidencesToolkit.createNonRetrievalEvidence(RejectionReason.OTHER, originalMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorControllerException("Error creating NonRetrieval for message!", e);
+            throw new DomibusConnectorMessageException(originalMessage, "Error creating NonRetrieval for message!", e,
+                    this.getClass());
         }
 
         DomibusConnectorAction action = persistenceService.getRetrievalNonRetrievalToRecipientAction();
@@ -177,7 +196,8 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
     }
 
     private void sendEvidenceToNationalSystem(Message originalMessage, MessageConfirmation confirmation,
-            DomibusConnectorAction evidenceAction) throws DomibusConnectorControllerException {
+            DomibusConnectorAction evidenceAction) throws DomibusConnectorControllerException,
+            DomibusConnectorMessageException {
 
         originalMessage.addConfirmation(confirmation);
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
@@ -194,9 +214,9 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
         try {
             nationalBackendClient.deliverLastEvidenceForMessage(evidenceMessage);
         } catch (DomibusConnectorNationalBackendClientException e) {
-            throw new DomibusConnectorControllerException("Exception sending "
-                    + confirmation.getEvidenceType().toString() + " evidence back to national system of message "
-                    + originalMessage.getMessageDetails().getNationalMessageId(), e);
+            throw new DomibusConnectorMessageException(originalMessage, "Exception sending "
+                    + confirmation.getEvidenceType().toString() + " evidence back to national system for message "
+                    + originalMessage.getMessageDetails().getNationalMessageId(), e, this.getClass());
         } catch (ImplementationMissingException e) {
             throw new DomibusConnectorControllerException(e);
         }
