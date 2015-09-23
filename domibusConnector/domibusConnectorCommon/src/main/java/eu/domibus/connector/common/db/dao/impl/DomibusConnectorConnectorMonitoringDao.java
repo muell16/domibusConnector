@@ -29,17 +29,20 @@ public class DomibusConnectorConnectorMonitoringDao extends JdbcDaoSupport {
         return getJdbcTemplate().queryForInt(sql);
     }
 
-    public Integer countNoReceiptMessagesGateway() {
-        String sql = "select count(*) from TB_RECEIPT_TRACKING where status = 'NO_RECEIPT'";
-
-        return getJdbcTemplate().queryForInt(sql);
-    }
-
-    public Integer countPendingMessagesGateway() {
-        String sql = "select count(*) from TB_RECEIPT_TRACKING where status = 'IN_PROCESS'";
-
-        return getJdbcTemplate().queryForInt(sql);
-    }
+    //
+    // public Integer countNoReceiptMessagesGateway() {
+    // String sql =
+    // "select count(*) from TB_RECEIPT_TRACKING where status = 'NO_RECEIPT'";
+    //
+    // return getJdbcTemplate().queryForInt(sql);
+    // }
+    //
+    // public Integer countPendingMessagesGateway() {
+    // String sql =
+    // "select count(*) from TB_RECEIPT_TRACKING where status = 'IN_PROCESS'";
+    //
+    // return getJdbcTemplate().queryForInt(sql);
+    // }
 
     public Integer countPendingMessagesConnector() {
         String sql = "select count(*) from DOMIBUS_CONNECTOR_MESSAGES where confirmed is null and rejected is null";
