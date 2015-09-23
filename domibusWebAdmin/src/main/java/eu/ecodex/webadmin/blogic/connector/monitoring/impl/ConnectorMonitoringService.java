@@ -16,7 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao;
+import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
 import eu.ecodex.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.ecodex.webadmin.commons.DBUtil;
 import eu.ecodex.webadmin.commons.JmxConnector;
@@ -137,13 +137,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             lastCalledIncoming = new Date(lastCalledIncomingMillis);
             Long lastCalledOutgoingMillis = (Long) mbsc.getAttribute(jmxMonitor, "LastCalledOutgoing");
             lastCalledOutgoing = new Date(lastCalledOutgoingMillis);
-            noReceiptMessagesGateway = (Integer) mbsc.getAttribute(jmxMonitor, "NoReceiptMessagesGateway");
-            pendingMessagesGateway = (Integer) mbsc.getAttribute(jmxMonitor, "PendingMessagesGateway");
-            if (pendingMessagesGateway > 0) {
-                pendingMessagesGatewayStatus = "WARNING";
-            } else {
-                pendingMessagesGatewayStatus = "OK";
-            }
 
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -167,13 +160,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
                     + "getLastCalledCheckEvidencesTimeout/")));
             lastCalledIncoming = new Date(Long.valueOf(queryRestWebService(restUrl + "getLastCalledIncoming/")));
             lastCalledOutgoing = new Date(Long.valueOf(queryRestWebService(restUrl + "getLastCalledOutgoing/")));
-            noReceiptMessagesGateway = Integer.valueOf(queryRestWebService(restUrl + "getNoReceiptMessagesGateway/"));
-            pendingMessagesGateway = Integer.valueOf(queryRestWebService(restUrl + "getPendingGatewayMessagesCount/"));
-            if (pendingMessagesGateway > 0) {
-                pendingMessagesGatewayStatus = "WARNING";
-            } else {
-                pendingMessagesGatewayStatus = "OK";
-            }
 
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -228,14 +214,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
                 monitoringDao.selectLastCalledTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME));
         lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
         lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
-        noReceiptMessagesGateway = Integer.valueOf(monitoringDao.countNoReceiptMessagesGateway());
-        pendingMessagesGateway = Integer.valueOf(monitoringDao.countPendingMessagesGateway());
-        if (pendingMessagesGateway > 0) {
-            pendingMessagesGatewayStatus = "WARNING";
-        } else {
-            pendingMessagesGatewayStatus = "OK";
-        }
-
+       
     }
 
     public WebAdminProperties getWebAdminProperties() {

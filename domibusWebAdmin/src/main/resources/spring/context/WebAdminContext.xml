@@ -27,8 +27,8 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-     			<value>file:conf/webadmin/webadmin.properties</value>
-    	<!-- 		<value>classpath:webadmin.properties</value>   -->
+     	 	 	<value>file:conf/webadmin/webadmin.properties</value>
+    	  	<!-- 	<value>classpath:webadmin.properties</value>   -->
    				<value>classpath:connector.properties</value>
 			</list>
 		</property>
@@ -40,8 +40,8 @@
 		</property>
 		<property name="arguments">
 			<list>
-   				<value>file:conf/webadmin/log4j.properties</value>
- 		<!-- 		<value>classpath:log4j.properties</value>     -->
+   			  	<value>file:conf/webadmin/log4j.properties</value>
+ 		  	<!-- 	<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>
 	</bean>
@@ -116,7 +116,7 @@
 		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminUserDao">
 	</bean>
 	
-	<bean id="monitoringDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao">
+	<bean id="monitoringDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDaoImpl">
 		<property name="dataSource" ref="dataSourceWebAdmin" />
 	</bean>
 	
