@@ -42,12 +42,8 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private Date lastCalledCheckEvidencesTimeout;
     private Date lastCalledIncoming;
     private Date lastCalledOutgoing;
-    private Integer noReceiptMessagesGateway;
-    private String noReceiptMessagesGatewayStatus;
     private Integer rejectedConnectorMessagesCount;
     private String rejectedConnectorMessagesCountStatus;
-    private Integer pendingMessagesGateway;
-    private String pendingMessagesGatewayStatus;
     private boolean useMonitorServer = false;
     private DomibusConnectorConnectorMonitoringDao monitoringDao;
     private DBUtil dbUtil;
@@ -273,15 +269,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.jobStatusOutgoing = jobStatusOutgoing;
     }
 
-    @Override
-    public Integer getNoReceiptMessagesGateway() {
-        return noReceiptMessagesGateway;
-    }
-
-    public void setNoReceiptMessagesGateway(Integer noReceiptMessagesGateway) {
-        this.noReceiptMessagesGateway = noReceiptMessagesGateway;
-    }
-
     public Integer getRejectedConnectorMessagesCount() {
         return rejectedConnectorMessagesCount;
     }
@@ -348,14 +335,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.useMonitorServer = useMonitorServer;
     }
 
-    @Override
-    public String getNoReceiptMessagesGatewayStatus() {
-        return noReceiptMessagesGatewayStatus;
-    }
-
-    public void setNoReceiptMessagesGatewayStatus(String noReceiptMessagesGatewayStatus) {
-        this.noReceiptMessagesGatewayStatus = noReceiptMessagesGatewayStatus;
-    }
 
     public String getRejectedConnectorMessagesCountStatus() {
         return rejectedConnectorMessagesCountStatus;
@@ -363,22 +342,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     public void setRejectedConnectorMessagesCountStatus(String rejectedConnectorMessagesCountStatus) {
         this.rejectedConnectorMessagesCountStatus = rejectedConnectorMessagesCountStatus;
-    }
-
-    public Integer getPendingMessagesGateway() {
-        return pendingMessagesGateway;
-    }
-
-    public void setPendingMessagesGateway(Integer pendingMessagesGateway) {
-        this.pendingMessagesGateway = pendingMessagesGateway;
-    }
-
-    public String getPendingMessagesGatewayStatus() {
-        return pendingMessagesGatewayStatus;
-    }
-
-    public void setPendingMessagesGatewayStatus(String pendingMessagesGatewayStatus) {
-        this.pendingMessagesGatewayStatus = pendingMessagesGatewayStatus;
     }
 
     public DBUtil getDbUtil() {

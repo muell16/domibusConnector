@@ -43,12 +43,6 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
             errorFound = true;
         }
 
-        if (connectorMonitoringService.getNoReceiptMessagesGatewayStatus() != null && "ERROR".equals(connectorMonitoringService.getNoReceiptMessagesGatewayStatus())) {
-            mailReport += "Check AS4 messages pending: " + connectorMonitoringService.getNoReceiptMessagesGateway()
-                    + "\n";
-            errorFound = true;
-        }
-
         if (errorFound) {
 
             if (webAdminProperties.isMonitoringLogWrite()) {

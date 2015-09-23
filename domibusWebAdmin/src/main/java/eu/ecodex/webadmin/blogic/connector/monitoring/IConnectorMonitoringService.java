@@ -12,8 +12,4 @@ public interface IConnectorMonitoringService {
 
     public String getJobStatusOutgoing();
 
-    public String getNoReceiptMessagesGatewayStatus();
-
-    public Integer getNoReceiptMessagesGateway();
-
 }
