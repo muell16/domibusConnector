@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+<bean id="propertyPlaceholderConfigurer" 
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  </bean>
+  
+	<bean id="evidencesToolkit"
+		class="eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkitImpl">
+		<property name="evidenceBuilder" ref="evidenceBuilder" />
+		<property name="hashValueBuilder" ref="hashValueBuilder" />
+		<property name="connectorProperties" ref="connectorProperties" />
+	</bean>
+
+	<bean id="evidenceBuilder" class="eu.ecodex.evidences.ECodexEvidenceBuilder">
+		<constructor-arg value="file:${user.dir}/src/test/resources/keystore/evidence_test.jks" />
+		<constructor-arg value="test1234" />
+		<constructor-arg value="test" />
+		<constructor-arg value="test1234" />
+	</bean>
+
+	<bean id="hashValueBuilder" class="eu.domibus.connector.evidences.HashValueBuilder">
+		<constructor-arg value="MD5" />
+	</bean>
+
+	<bean id="connectorProperties" class="eu.domibus.connector.common.CommonConnectorProperties">
+		<property name="gatewayEndpointAddress" value="someGatewayEndpointAddress" />
+		<property name="gatewayName" value="someGatewayName" />
+		<property name="postalAddressStreet" value="Teststreet" />
+		<property name="postalAddressLocality" value="Testlocality" />
+		<property name="postalAddressPostalCode" value="12345" />
+		<property name="postalAddressCountry" value="Testcountry" />
+	</bean>
+
+</beans>

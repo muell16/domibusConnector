@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean name="checkOutgoing" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobBeanName" value="outgoingController" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="checkIncoming" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobBeanName" value="incomingController" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="checkEvidencesTimeout" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobBeanName" value="evidencesTimeoutController" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="checkOutgoingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="checkOutgoing" />
+		<property name="startDelay" value="1000" />
+		<property name="repeatInterval" value="${connector.check.messages.period.ms}" />
+	</bean>
+
+	<bean id="checkIncomingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="checkIncoming" />
+		<property name="startDelay" value="11000" />
+		<property name="repeatInterval" value="${connector.check.messages.period.ms}" />
+	</bean>
+
+	<bean id="checkEvidencesTimeoutTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="checkEvidencesTimeout" />
+		<property name="startDelay" value="21000" />
+		<property name="repeatInterval" value="${connector.check.messages.period.ms}" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="autoStartup" value="true" />
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+		<property name="waitForJobsToCompleteOnShutdown" value="true" />
+		<property name="overwriteExistingJobs" value="true" />
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="quartzProperties">
+			<props>
+				<prop key="org.quartz.jobStore.misfireThreshold">6000000</prop>
+				<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+
+				<prop key="org.quartz.jobStore.isClustered">${connector.clustered}</prop>
+				<prop key="org.quartz.jobStore.clusterCheckinInterval">20000</prop>
+
+				<prop key="org.quartz.jobStore.useProperties">true</prop>
+
+				<prop key="org.quartz.jobStore.tablePrefix">DCON_QRTZ_</prop>
+
+				<prop key="org.quartz.scheduler.instanceName">SgsClusteredScheduler</prop>
+				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+				<prop key="org.quartz.scheduler.jmx.export">true</prop>
+			</props>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="checkOutgoingTrigger" />
+				<ref bean="checkIncomingTrigger" />
+				<ref bean="checkEvidencesTimeoutTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,34 @@
+DROP TABLE DOMIBUS_CONNECTOR_EVIDENCES;
+DROP TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO;
+DROP TABLE DOMIBUS_CONNECTOR_MSG_ERROR;
+DROP TABLE DOMIBUS_CONNECTOR_MESSAGES;
+DROP TABLE DOMIBUS_CONNECTOR_SEQ_STORE;
+DROP TABLE DOMIBUS_CONNECTOR_PARTY;
+DROP TABLE DOMIBUS_CONNECTOR_ACTION;
+DROP TABLE DOMIBUS_CONNECTOR_SERVICE;
+
+delete from DCON_QRTZ_job_listeners;
+delete from DCON_QRTZ_trigger_listeners;
+delete from DCON_QRTZ_fired_triggers;
+delete from DCON_QRTZ_simple_triggers;
+delete from DCON_QRTZ_cron_triggers;
+delete from DCON_QRTZ_blob_triggers;
+delete from DCON_QRTZ_triggers;
+delete from DCON_QRTZ_job_details;
+delete from DCON_QRTZ_calendars;
+delete from DCON_QRTZ_paused_trigger_grps;
+delete from DCON_QRTZ_locks;
+delete from DCON_QRTZ_scheduler_state;
+
+drop table DCON_QRTZ_calendars;
+drop table DCON_QRTZ_fired_triggers;
+drop table DCON_QRTZ_trigger_listeners;
+drop table DCON_QRTZ_blob_triggers;
+drop table DCON_QRTZ_cron_triggers;
+drop table DCON_QRTZ_simple_triggers;
+drop table DCON_QRTZ_triggers;
+drop table DCON_QRTZ_job_listeners;
+drop table DCON_QRTZ_job_details;
+drop table DCON_QRTZ_paused_trigger_grps;
+drop table DCON_QRTZ_locks;
+drop table DCON_QRTZ_scheduler_state;
