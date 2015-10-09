@@ -27,7 +27,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-     	 	 	<value>file:conf/webadmin/webadmin.properties</value>
+     	 	 	<value>file:${TOMCAT_ROOT}/conf/webadmin/webadmin.properties</value>
     	  	<!-- 	<value>classpath:webadmin.properties</value>   -->
    				<value>classpath:connector.properties</value>
 			</list>
@@ -40,7 +40,7 @@
 		</property>
 		<property name="arguments">
 			<list>
-   			  	<value>file:conf/webadmin/log4j.properties</value>
+   			  	<value>file:${TOMCAT_ROOT}/conf/webadmin/log4j.properties</value>
  		  	<!-- 	<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>
