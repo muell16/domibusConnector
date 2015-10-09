@@ -58,7 +58,7 @@
 
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
-			<artifactId>DomibusConnectorCommon</artifactId>
+			<artifactId>domibusConnectorCommon</artifactId>
 			<version>${domibus.connector.version}</version>
 		</dependency>
 
