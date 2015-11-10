@@ -212,6 +212,13 @@ public class CommonMessageHelper {
             }
         }
 
+        if (message.getMessageDetails().getRefToMessageId() != null) {
+            Property originalMessageId = new Property();
+            originalMessageId.setName(ORIGINAL_MESSAGE_ID);
+            originalMessageId.setValue(message.getMessageDetails().getRefToMessageId());
+            mp.getProperty().add(originalMessageId);
+        }
+
         return mp;
     }
 
@@ -293,6 +300,7 @@ public class CommonMessageHelper {
         info.setAction(messageDetails.getAction().getAction());
         Service service = new Service();
         service.setValue(messageDetails.getService().getService());
+        service.setType(messageDetails.getService().getServiceType());
         info.setService(service);
 
         info.setConversationId(messageDetails.getConversationId());

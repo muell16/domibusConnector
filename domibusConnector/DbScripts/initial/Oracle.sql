@@ -48,12 +48,15 @@ INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('AT', 'GW', 'urn:oasis:names:tc:ebco
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('DE', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('EE', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('ES', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
-INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('EU', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('EC', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('IT', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('GR', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('NL', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('PL', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('CZ', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('ITIC', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('ATOS', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
+INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('IE', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 
 CREATE TABLE DOMIBUS_CONNECTOR_ACTION (
 	ACTION VARCHAR2(50) NOT NULL,
@@ -79,12 +82,13 @@ INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('RetrievalNonRetrievalToRecipient',
 
 CREATE TABLE DOMIBUS_CONNECTOR_SERVICE (
 	SERVICE VARCHAR2(50) NOT NULL,
+	SERVICE_TYPE VARCHAR2(255) NOT NULL,
 	PRIMARY KEY (SERVICE)
 );
 
-INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('EPO');
-INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('BR');
-INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('SmallClaims');
+INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('EPO', 'urn:e-codex:services:');
+INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('BR', 'urn:e-codex:services:');
+INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('SmallClaims', 'urn:e-codex:services:');
 
 CREATE TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO (
 	ID  NUMBER(10) NOT NULL,
