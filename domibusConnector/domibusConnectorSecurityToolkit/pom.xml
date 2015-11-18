@@ -50,17 +50,8 @@
 					<groupId>bouncycastle</groupId>
             		<artifactId>bcmail-jdk14</artifactId>
 				</exclusion>
-				<exclusion>
-					<artifactId>bctsp-jdk14</artifactId>
-					<groupId>org.bouncycastle</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-  			<artifactId>bctsp-jdk15on</artifactId>
-  			<version>1.49</version>
-  		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
