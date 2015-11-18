@@ -1,12 +1,10 @@
 package eu.domibus.connector.common.db.service.impl;
 
-import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.exception.ExceptionUtils;
-import org.hibernate.lob.ClobImpl;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -194,8 +192,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         DomibusConnectorEvidence dbEvidence = new DomibusConnectorEvidence();
 
         dbEvidence.setMessage(message.getDbMessage());
-        Clob cEvidence = new ClobImpl(new String(evidence));
-        dbEvidence.setEvidence(cEvidence);
+        dbEvidence.setEvidence(new String(evidence));
         dbEvidence.setType(evidenceType);
         dbEvidence.setDeliveredToGateway(null);
         dbEvidence.setDeliveredToNationalSystem(null);
@@ -317,25 +314,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
             throws Exception {
         MessageConfirmation messageConfirmation = new MessageConfirmation();
         messageConfirmation.setEvidenceType(dbEvidence.getType());
-
-        Clob evidence = dbEvidence.getEvidence();
-        String stringClob = convertClobToString(evidence);
-
-        messageConfirmation.setEvidence(stringClob.getBytes());
+        messageConfirmation.setEvidence(dbEvidence.getEvidence().getBytes());
 
         return messageConfirmation;
-    }
-
-    private String convertClobToString(Clob clob) throws Exception {
-        String stringClob = null;
-        try {
-            long i = 1;
-            int clobLength = (int) clob.length();
-            stringClob = clob.getSubString(i, clobLength);
-        } catch (Exception e) {
-            throw new Exception("Could not parse clob from database!", e);
-        }
-        return stringClob;
     }
 
     @Override
@@ -344,7 +325,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         DomibusConnectorMessageError dbError = new DomibusConnectorMessageError();
         dbError.setMessage(messageError.getMessage().getDbMessage());
         dbError.setErrorMessage(messageError.getText());
-        dbError.setDetailedText(new ClobImpl(messageError.getDetails()));
+        dbError.setDetailedText(messageError.getDetails());
         dbError.setErrorSource(messageError.getSource());
 
         this.messageErrorDao.persistMessageError(dbError);
@@ -352,7 +333,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void persistMessageErrorFromException(Message message, Throwable ex, Class source)
+    public void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source)
             throws PersistenceException {
         if (message == null || message.getDbMessage() == null) {
             throw new PersistenceException(
@@ -367,7 +348,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         DomibusConnectorMessageError error = new DomibusConnectorMessageError();
         error.setErrorMessage(ex.getMessage());
-        error.setDetailedText(new ClobImpl(ExceptionUtils.getStackTrace(ex)));
+        error.setDetailedText(ExceptionUtils.getStackTrace(ex));
         error.setErrorSource(source.getName());
         error.setMessage(message.getDbMessage());
 
@@ -386,7 +367,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
                 msgError.setMessage(message);
                 msgError.setText(dbMsgError.getErrorMessage());
                 if (dbMsgError.getDetailedText() != null)
-                    msgError.setDetails(convertClobToString(dbMsgError.getDetailedText()));
+                    msgError.setDetails(dbMsgError.getDetailedText());
                 msgError.setSource(dbMsgError.getErrorSource());
 
                 messageErrors.add(msgError);

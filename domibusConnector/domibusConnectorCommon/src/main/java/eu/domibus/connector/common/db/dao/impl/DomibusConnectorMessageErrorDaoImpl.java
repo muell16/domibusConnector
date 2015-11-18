@@ -32,8 +32,8 @@ public class DomibusConnectorMessageErrorDaoImpl implements DomibusConnectorMess
     @SuppressWarnings("unchecked")
     @Override
     public List<DomibusConnectorMessageError> getErrorsForMessage(DomibusConnectorMessage message) {
-        Query q = em.createQuery("from DomibusConnectorMessageError e where e.message = ?");
-        q.setParameter(1, message.getId());
+        Query q = em.createQuery("from DomibusConnectorMessageError e where e.message = :msgId");
+        q.setParameter("msgId", message.getId());
 
         return q.getResultList();
     }

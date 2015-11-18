@@ -50,28 +50,17 @@
 					<groupId>bouncycastle</groupId>
             		<artifactId>bcmail-jdk14</artifactId>
 				</exclusion>
-				<!-- <exclusion>
-					<groupId>bouncycastle</groupId>
-            		<artifactId>bctsp-jdk14</artifactId>
-				</exclusion> -->
+				<exclusion>
+					<artifactId>bctsp-jdk14</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bctsp-jdk15on</artifactId>
-			<version>1.49</version>
-		</dependency> -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>batik-ext</artifactId>
-			<version>1.7</version>
-		</dependency>
-
+  			<artifactId>bctsp-jdk15on</artifactId>
+  			<version>1.49</version>
+  		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

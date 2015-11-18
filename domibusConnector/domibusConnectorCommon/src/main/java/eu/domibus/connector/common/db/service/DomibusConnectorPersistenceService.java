@@ -61,5 +61,5 @@ public interface DomibusConnectorPersistenceService {
 
     List<MessageError> getMessageErrors(Message message) throws Exception;
 
-    void persistMessageErrorFromException(Message message, Throwable ex, Class source) throws PersistenceException;
+    void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) throws PersistenceException;
 }

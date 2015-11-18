@@ -16,12 +16,16 @@
 		<module>domibusConnectorDistribution</module>
 		<module>domibusConnectorMonitoring</module>
 		<module>domibusConnectorRunnable</module>
+		<module>domibusConnectorContentValidation</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
-		<org.springframework.version>3.0.6.RELEASE</org.springframework.version>
-		<org.apache.cxf.version>2.6.1</org.apache.cxf.version>
-		<org.slf4j.version>1.6.6</org.slf4j.version>
+		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
+		<org.apache.cxf.version>3.1.3</org.apache.cxf.version>
+		<org.slf4j.version>1.7.11</org.slf4j.version>
+		<hibernate.version>5.0.2.Final</hibernate.version>
+		<javax.ws.rs>1.1.1</javax.ws.rs>
+		<org.codehaus.jackson>1.9.12</org.codehaus.jackson>
 		<test.http.proxy.enabled>false</test.http.proxy.enabled>
 		<test.http.proxy.port>3128</test.http.proxy.port>
 		<test.http.proxy.host>localhost</test.http.proxy.host>
@@ -42,10 +46,10 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-
-
-
 	<dependencies>
+	
+		<!-- Spring dependencies -->
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -81,17 +85,25 @@
 			<artifactId>spring-oxm</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
+		<!-- <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${org.springframework.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		
+		<!-- slf4j dependencies -->
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -107,6 +119,37 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${org.slf4j.version}</version>
 		</dependency>
+		
+		<!-- Apache CXF dependencies -->
+		
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${org.apache.cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${org.apache.cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-bindings-soap</artifactId>
+			<version>${org.apache.cxf.version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-codegen-plugin</artifactId>
+			<version>${org.apache.cxf.version}</version>
+		</dependency> -->
+		<!-- <dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-extension-providers</artifactId>
+			<version>${org.apache.cxf.version}</version>
+		</dependency> -->
+		
+		<!-- Other dependencies -->
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -114,6 +157,63 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency><dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.1.4</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>${javax.ws.rs}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+		</dependency>
+
+		
+
+		<!-- <dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>${org.codehaus.jackson}</version>
+		</dependency> -->
+
+		
+
+		<!-- <dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-ext</artifactId>
+			<version>1.7</version>
+		</dependency> -->
 	</dependencies>
 	<build>
 		<plugins>

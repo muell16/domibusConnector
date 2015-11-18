@@ -20,51 +20,10 @@
 			<artifactId>domibusConnectorCommon</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-    <dependency>
-      <groupId>eu.e-codex</groupId>
-      <artifactId>discovery-library</artifactId>
-      <version>0.0.5-FINAL</version>
-    </dependency>
-
 		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-core</artifactId>
-			<version>${org.apache.cxf.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${org.apache.cxf.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${org.apache.cxf.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-bindings-soap</artifactId>
-			<version>${org.apache.cxf.version}</version>
-			<scope>compile</scope>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-api</artifactId>
-			<version>${org.apache.cxf.version}</version>
-			<scope>compile</scope>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId> 
-  			<artifactId>commons-io</artifactId> 
-  			<version>2.4</version> 
+			<groupId>eu.e-codex</groupId>
+			<artifactId>discovery-library</artifactId>
+			<version>0.0.5-FINAL</version>
 		</dependency>
 
 	</dependencies>
@@ -155,44 +114,44 @@
 					<configuration>
 						<lifecycleMappingMetadata>
 
-						<pluginExecutions>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>org.apache.cxf</groupId>
-									<artifactId>
-										cxf-codegen-plugin
-									</artifactId>
-									<versionRange>
-										[${cxf.version},)
-									</versionRange>
-									<goals>
-										<goal>wsdl2java</goal>
-									</goals>
-								</pluginExecutionFilter>
-								<action>
-									<ignore></ignore>
-								</action>
-							</pluginExecution>
-							<pluginExecution>
-								<pluginExecutionFilter>
-									<groupId>
-										org.jvnet.jaxb2.maven2
-									</groupId>
-									<artifactId>
-										maven-jaxb2-plugin
-									</artifactId>
-									<versionRange>
-										[0.7.5,)
-									</versionRange>
-									<goals>
-										<goal>generate</goal>
-									</goals>
-								</pluginExecutionFilter>
-								<action>
-									<ignore></ignore>
-								</action>
-							</pluginExecution>
-						</pluginExecutions>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.cxf</groupId>
+										<artifactId>
+											cxf-codegen-plugin
+										</artifactId>
+										<versionRange>
+											[${cxf.version},)
+										</versionRange>
+										<goals>
+											<goal>wsdl2java</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.jvnet.jaxb2.maven2
+										</groupId>
+										<artifactId>
+											maven-jaxb2-plugin
+										</artifactId>
+										<versionRange>
+											[0.7.5,)
+										</versionRange>
+										<goals>
+											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>

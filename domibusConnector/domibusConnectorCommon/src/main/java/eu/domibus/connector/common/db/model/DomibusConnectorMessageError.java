@@ -1,6 +1,5 @@
 package eu.domibus.connector.common.db.model;
 
-import java.sql.Clob;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -36,7 +35,7 @@ public class DomibusConnectorMessageError {
      * contains the stack trace, if given
      */
     @Column(name = "DETAILED_TEXT")
-    private Clob detailedText;
+    private String detailedText;
 
     /**
      * usually contains the full qualified class name where error happened
@@ -71,11 +70,11 @@ public class DomibusConnectorMessageError {
         this.errorMessage = errorMessage;
     }
 
-    public Clob getDetailedText() {
+    public String getDetailedText() {
         return detailedText;
     }
 
-    public void setDetailedText(Clob detailedText) {
+    public void setDetailedText(String detailedText) {
         this.detailedText = detailedText;
     }
 
