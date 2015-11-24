@@ -1,6 +1,5 @@
 package eu.domibus.connector.common.db.model;
 
-import java.sql.Clob;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -35,7 +34,7 @@ public class DomibusConnectorEvidence {
     private EvidenceType type;
 
     @Column(name = "EVIDENCE")
-    private Clob evidence;
+    private String evidence;
 
     @Column(name = "DELIVERED_NAT")
     private Date deliveredToNationalSystem;
@@ -74,11 +73,11 @@ public class DomibusConnectorEvidence {
         this.type = type;
     }
 
-    public Clob getEvidence() {
+    public String getEvidence() {
         return evidence;
     }
 
-    public void setEvidence(Clob evidence) {
+    public void setEvidence(String evidence) {
         this.evidence = evidence;
     }
 

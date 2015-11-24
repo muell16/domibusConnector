@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -18,6 +17,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.cxf.attachment.ByteDataSource;
 import org.apache.cxf.common.util.StringUtils;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
@@ -141,7 +141,7 @@ public class CommonMessageHelper {
     }
 
     public DataHandler buildByteArrayDataHandler(byte[] data, String mimeType) {
-        DataSource ds = new ByteArrayDataSource(data, mimeType);
+        DataSource ds = new ByteDataSource(data, mimeType);
         DataHandler dh = new DataHandler(ds);
 
         return dh;
@@ -210,6 +210,13 @@ public class CommonMessageHelper {
                 ddEndpointAddress.setValue(endpointAddress);
                 mp.getProperty().add(ddEndpointAddress);
             }
+        }
+
+        if (message.getMessageDetails().getRefToMessageId() != null) {
+            Property originalMessageId = new Property();
+            originalMessageId.setName(ORIGINAL_MESSAGE_ID);
+            originalMessageId.setValue(message.getMessageDetails().getRefToMessageId());
+            mp.getProperty().add(originalMessageId);
         }
 
         return mp;
@@ -293,6 +300,7 @@ public class CommonMessageHelper {
         info.setAction(messageDetails.getAction().getAction());
         Service service = new Service();
         service.setValue(messageDetails.getService().getService());
+        service.setType(messageDetails.getService().getServiceType());
         info.setService(service);
 
         info.setConversationId(messageDetails.getConversationId());

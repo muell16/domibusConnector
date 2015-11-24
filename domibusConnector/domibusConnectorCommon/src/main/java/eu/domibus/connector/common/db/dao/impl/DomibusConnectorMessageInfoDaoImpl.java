@@ -37,8 +37,8 @@ public class DomibusConnectorMessageInfoDaoImpl implements DomibusConnectorMessa
     @Override
     public DomibusConnectorMessageInfo getMessageInfoForMessage(DomibusConnectorMessage message)
             throws PersistenceException {
-        Query q = em.createQuery("from DomibusConnectorMessageInfo i where i.message = ?");
-        q.setParameter(1, message.getId());
+        Query q = em.createQuery("from DomibusConnectorMessageInfo i where i.message = :msgId");
+        q.setParameter("msgId", message.getId());
 
         DomibusConnectorMessageInfo messageInfo = null;
         try {

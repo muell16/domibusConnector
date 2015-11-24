@@ -38,8 +38,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
 
     @Override
     public DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
-        Query q = em.createQuery("from DomibusConnectorMessage m where m.nationalMessageId=?");
-        q.setParameter(1, nationalMessageId);
+        Query q = em.createQuery("from DomibusConnectorMessage m where m.nationalMessageId=:msgId");
+        q.setParameter("msgId", nationalMessageId);
 
         return (DomibusConnectorMessage) q.getSingleResult();
     }
@@ -60,8 +60,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
 
     @Override
     public DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
-        Query q = em.createQuery("from DomibusConnectorMessage m where m.ebmsMessageId=?");
-        q.setParameter(1, ebmsMessageId);
+        Query q = em.createQuery("from DomibusConnectorMessage m where m.ebmsMessageId=:msgId");
+        q.setParameter("msgId", ebmsMessageId);
 
         return (DomibusConnectorMessage) q.getSingleResult();
     }
@@ -69,8 +69,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
     @SuppressWarnings("unchecked")
     @Override
     public List<DomibusConnectorMessage> findMessagesByConversationId(String conversationId) {
-        Query q = em.createQuery("from DomibusConnectorMessage m where m.conversationId=?");
-        q.setParameter(1, conversationId);
+        Query q = em.createQuery("from DomibusConnectorMessage m where m.conversationId=:convId");
+        q.setParameter("convId", conversationId);
 
         return q.getResultList();
     }
@@ -79,8 +79,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
     @Override
     public List<DomibusConnectorMessage> findOutgoingUnconfirmedMessages() {
         Query q = em
-                .createQuery("from DomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = ? and m.deliveredToGateway is not null ");
-        q.setParameter(1, MessageDirection.NAT_TO_GW);
+                .createQuery("from DomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = :dir and m.deliveredToGateway is not null ");
+        q.setParameter("dir", MessageDirection.NAT_TO_GW);
 
         return q.getResultList();
     }
@@ -89,8 +89,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
     @Override
     public List<DomibusConnectorMessage> findIncomingUnconfirmedMessages() {
         Query q = em
-                .createQuery("from DomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = ? and m.deliveredToNationalSystem is not null ");
-        q.setParameter(1, MessageDirection.GW_TO_NAT);
+                .createQuery("from DomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = :dir and m.deliveredToNationalSystem is not null ");
+        q.setParameter("dir", MessageDirection.GW_TO_NAT);
 
         return q.getResultList();
     }

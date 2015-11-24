@@ -135,16 +135,17 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         return hashValue;
     }
 
-    private void createSubmissionRejectionAndReturnIt(Message message, String hashValue, String errorMessage)
-            throws DomibusConnectorControllerException, DomibusConnectorMessageException {
+    private void createSubmissionRejectionAndReturnIt(Message message, String hashValue, String errorMessage){
 
         byte[] submissionRejection = null;
         try {
             submissionRejection = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message, hashValue,
                     errorMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorMessageException(message, "Could not even generate submission rejection! ", e,
+            new DomibusConnectorMessageException(message, "Could not even generate submission rejection! ", e,
                     this.getClass());
+            LOGGER.error("Could not even generate submission rejection! ", e);
+            return;
         }
 
         try {
@@ -152,8 +153,10 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionRejection,
                     EvidenceType.SUBMISSION_REJECTION);
         } catch (Exception e) {
-            throw new DomibusConnectorMessageException(message,
-                    "Could not persist evidence of type SUBMISSION_REJECTION! ", e, this.getClass());
+            new DomibusConnectorMessageException(message, "Could not persist evidence of type SUBMISSION_REJECTION! ",
+                    e, this.getClass());
+            LOGGER.error("Could not persist evidence of type SUBMISSION_REJECTION! ", e);
+            return;
         }
 
         MessageConfirmation confirmation = new MessageConfirmation(EvidenceType.SUBMISSION_REJECTION,
@@ -166,8 +169,10 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
             persistenceService.rejectMessage(message);
         } catch (DomibusConnectorNationalBackendClientException | ImplementationMissingException e) {
-            throw new DomibusConnectorMessageException(message,
-                    "Exception while trying to send submission rejection. ", e, this.getClass());
+            new DomibusConnectorMessageException(message, "Exception while trying to send submission rejection. ", e,
+                    this.getClass());
+            LOGGER.error("Exception while trying to send submission rejection. ", e);
+            return;
         }
 
     }

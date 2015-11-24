@@ -28,16 +28,16 @@ public class DomibusConnectorEvidenceDaoImpl implements DomibusConnectorEvidence
 
     public DomibusConnectorEvidence getDeliveredNonDeliveredForMessage(String ebmsMessageId) {
         Query q = createEvidenceQueryForMessage(ebmsMessageId);
-        q.setParameter(2, EvidenceType.DELIVERY.name());
-        q.setParameter(3, EvidenceType.NON_DELIVERY.name());
+        q.setParameter("type1", EvidenceType.DELIVERY.name());
+        q.setParameter("type2", EvidenceType.NON_DELIVERY.name());
 
         return (DomibusConnectorEvidence) q.getSingleResult();
     }
 
     private Query createEvidenceQueryForMessage(String ebmsMessageId) {
         Query q = em
-                .createQuery("from DomibusConnectorEvidence e where e.message.ebmsMessageId = ? and (e.type = ? of e.type = ?)");
-        q.setParameter(1, ebmsMessageId);
+                .createQuery("from DomibusConnectorEvidence e where e.message.ebmsMessageId = :msgId and (e.type = :type1 of e.type = :type2)");
+        q.setParameter("msgId", ebmsMessageId);
 
         return q;
     }
@@ -52,8 +52,8 @@ public class DomibusConnectorEvidenceDaoImpl implements DomibusConnectorEvidence
     @SuppressWarnings("unchecked")
     @Override
     public List<DomibusConnectorEvidence> findEvidencesForMessage(DomibusConnectorMessage message) {
-        Query q = em.createQuery("from DomibusConnectorEvidence e where e.message.id=?");
-        q.setParameter(1, message.getId());
+        Query q = em.createQuery("from DomibusConnectorEvidence e where e.message.id=:msgId");
+        q.setParameter("msgId", message.getId());
 
         return q.getResultList();
     }

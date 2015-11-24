@@ -13,7 +13,7 @@ public class DomibusConnectorConnectorMonitoringDaoImpl extends JdbcDaoSupport i
     public long selectTimerIntervalForJob(String jobName) {
         String sql = "select repeat_interval from dcon_qrtz_simple_triggers where trigger_name = ?";
 
-        return getJdbcTemplate().queryForLong(sql, jobName);
+        return getJdbcTemplate().queryForObject(sql, Long.class, jobName);
     }
 
     /* (non-Javadoc)
@@ -23,7 +23,7 @@ public class DomibusConnectorConnectorMonitoringDaoImpl extends JdbcDaoSupport i
     public long selectLastCalledTrigger(String jobName) {
         String sql = "select PREV_FIRE_TIME from DCON_QRTZ_TRIGGERS where trigger_name = ?";
 
-        return getJdbcTemplate().queryForLong(sql, jobName);
+        return getJdbcTemplate().queryForObject(sql, Long.class, jobName);
     }
 
     /* (non-Javadoc)
@@ -44,7 +44,7 @@ public class DomibusConnectorConnectorMonitoringDaoImpl extends JdbcDaoSupport i
     public Integer countRejectedMessagesConnector() {
         String sql = "select count(*) from DOMIBUS_CONNECTOR_MESSAGES where rejected != null";
 
-        return getJdbcTemplate().queryForInt(sql);
+        return getJdbcTemplate().queryForObject(sql, Integer.class);
     }
 
     //
@@ -69,7 +69,7 @@ public class DomibusConnectorConnectorMonitoringDaoImpl extends JdbcDaoSupport i
     public Integer countPendingMessagesConnector() {
         String sql = "select count(*) from DOMIBUS_CONNECTOR_MESSAGES where confirmed is null and rejected is null";
 
-        return getJdbcTemplate().queryForInt(sql);
+        return getJdbcTemplate().queryForObject(sql, Integer.class);
     }
 
 }

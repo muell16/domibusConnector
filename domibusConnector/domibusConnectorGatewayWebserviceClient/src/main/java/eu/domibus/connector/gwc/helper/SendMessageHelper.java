@@ -95,7 +95,7 @@ public class SendMessageHelper {
     private void buildPayloadAndAddToRequest(SendRequest request, String mimeType, int payloadCounter, byte[] content,
             String name, UserMessage userMessage) {
 
-        String cid = commonMessageHelper.generateCID("payload_");
+        String cid = commonMessageHelper.generateCID("cid:payload_");
 
         PayloadType payload = buildPayloadTypeAndAddPartInfo(name, content, mimeType, userMessage, cid);
 

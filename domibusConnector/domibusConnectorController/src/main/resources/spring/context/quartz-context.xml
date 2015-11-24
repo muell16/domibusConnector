@@ -3,7 +3,7 @@
 
 <beans>
 
-	<bean name="checkOutgoing" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="checkOutgoing" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
 		<property name="jobDataAsMap">
@@ -13,7 +13,7 @@
 		</property>
 	</bean>
 
-	<bean name="checkIncoming" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="checkIncoming" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
 		<property name="jobDataAsMap">
@@ -23,7 +23,7 @@
 		</property>
 	</bean>
 
-	<bean name="checkEvidencesTimeout" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="checkEvidencesTimeout" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="eu.domibus.connector.controller.scheduler.job.ConnectorJobDetail" />
 		<property name="jobDataAsMap">
@@ -33,19 +33,19 @@
 		</property>
 	</bean>
 
-	<bean id="checkOutgoingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	<bean id="checkOutgoingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="checkOutgoing" />
 		<property name="startDelay" value="1000" />
 		<property name="repeatInterval" value="${connector.check.messages.period.ms}" />
 	</bean>
 
-	<bean id="checkIncomingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	<bean id="checkIncomingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="checkIncoming" />
 		<property name="startDelay" value="11000" />
 		<property name="repeatInterval" value="${connector.check.messages.period.ms}" />
 	</bean>
 
-	<bean id="checkEvidencesTimeoutTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	<bean id="checkEvidencesTimeoutTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
 		<property name="jobDetail" ref="checkEvidencesTimeout" />
 		<property name="startDelay" value="21000" />
 		<property name="repeatInterval" value="${connector.check.messages.period.ms}" />

@@ -22,9 +22,9 @@ public class DomibusConnectorPartyDaoImpl implements DomibusConnectorPartyDao {
 
     @Override
     public DomibusConnectorParty getPartyByPartyId(String partyId) {
-        Query q = em.createQuery("from DomibusConnectorParty p where p.partyId = ?");
+        Query q = em.createQuery("from DomibusConnectorParty p where p.partyId = :partyId");
 
-        q.setParameter(1, partyId);
+        q.setParameter("partyId", partyId);
 
         return (DomibusConnectorParty) q.getSingleResult();
     }

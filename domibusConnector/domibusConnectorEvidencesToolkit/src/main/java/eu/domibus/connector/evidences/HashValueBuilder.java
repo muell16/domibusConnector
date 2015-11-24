@@ -3,7 +3,7 @@ package eu.domibus.connector.evidences;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.springframework.security.core.codec.Hex;
+import org.apache.commons.codec.binary.Hex;
 
 public class HashValueBuilder {
 
@@ -47,7 +47,7 @@ public class HashValueBuilder {
 
     public String buildHashValueAsString(byte[] originalMessage) {
         final byte[] resultByte = buildHashValue(originalMessage);
-        final String result = new String(Hex.encode(resultByte));
+        final String result = new String(Hex.encodeHexString(resultByte));
         return result;
     }
 
