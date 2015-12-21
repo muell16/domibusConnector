@@ -16,6 +16,9 @@
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorRunnable/src/doc</directory>
 			<outputDirectory>${documentation.output.dir}</outputDirectory>
+			<includes>
+				<include>*.pdf</include>
+			</includes>
 		</fileSet>
 		
 		<!-- ==================== Copying JAR files ================= -->
