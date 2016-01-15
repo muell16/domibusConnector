@@ -26,7 +26,7 @@
   
   <filter>
 		<filter-name>AuthFilter</filter-name>
-		<filter-class>eu.ecodex.webadmin.jsf.AuthFilter</filter-class>
+		<filter-class>eu.domibus.webadmin.jsf.AuthFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>AuthFilter</filter-name>

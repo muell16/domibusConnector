@@ -6,7 +6,7 @@
 	<persistence-unit name="domibus.webadmin"
 		transaction-type="RESOURCE_LOCAL">
 		
-		 <class>eu.ecodex.webadmin.model.connector.DomibusWebAdminUser</class>
+		 <class>eu.domibus.webadmin.model.connector.DomibusWebAdminUser</class>
 	</persistence-unit>
 	
 

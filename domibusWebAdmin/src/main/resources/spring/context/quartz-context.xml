@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
  
-	<bean id="monitoringTask" class="eu.ecodex.webadmin.quartz.MonitoringTask">
+	<bean id="monitoringTask" class="eu.domibus.webadmin.quartz.MonitoringTask">
 		<property name="connectorMonitoringService" ref="connectorMonitoringService" />
       	<property name="webAdminProperties" ref="webAdminProperties" />
 	</bean>
@@ -11,7 +11,7 @@
 	<!-- Spring Quartz -->
 	<bean name="monitoringJob" class="org.springframework.scheduling.quartz.JobDetailBean">
  
-		<property name="jobClass" value="eu.ecodex.webadmin.quartz.MonitoringJob" />
+		<property name="jobClass" value="eu.domibus.webadmin.quartz.MonitoringJob" />
  
 		<property name="jobDataAsMap">
 		  <map>

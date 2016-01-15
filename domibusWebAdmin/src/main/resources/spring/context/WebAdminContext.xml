@@ -71,7 +71,7 @@
 		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdmin" />
 	</bean>
 	
-	<bean id="webAdminProperties" class="eu.ecodex.webadmin.commons.WebAdminProperties" init-method="loadProperties">
+	<bean id="webAdminProperties" class="eu.domibus.webadmin.commons.WebAdminProperties" init-method="loadProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -79,14 +79,14 @@
 	<!-- Connector Beans -->
 	
 	<bean id="connectorSummaryService" 
-      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl">      
+      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl">      
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="domibusWebAdminConnectorServiceDao" ref="domibusWebAdminConnectorServiceDao" />
    </bean>
    
 	
 	<bean id="connectorCustomService" 
-      class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl">     
+      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl">     
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="connectorMessageFilter" ref="connectorMessageFilter" /> 
               <property name="domibusWebAdminConnectorPartyDao" ref="domibusWebAdminConnectorPartyDao" /> 
@@ -95,7 +95,7 @@
    </bean>
    
    <bean id="connectorMonitoringService" 
-      class="eu.ecodex.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService">    
+      class="eu.domibus.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService">    
        		  <property name="webAdminProperties" ref="webAdminProperties" /> 
        		  <property name="monitoringDao" ref="monitoringDao" />
        		  <property name="dbUtil" ref="dbUtil" />
@@ -103,17 +103,17 @@
    </bean>
    
    	<bean id="connectorMessageFilter"
-		class="eu.ecodex.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
+		class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
 	
 
 	<!-- DAO's -->
    
    	<bean id="domibusMessageWebAdminDao"
-		class="eu.ecodex.webadmin.dao.impl.DomibusMessageWebAdminDao">
+		class="eu.domibus.webadmin.dao.impl.DomibusMessageWebAdminDao">
 	</bean>
 		
 	<bean id="domibusWebAdminUserDao"
-		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminUserDao">
+		class="eu.domibus.webadmin.dao.impl.DomibusWebAdminUserDao">
 	</bean>
 	
 	<bean id="monitoringDao" class="eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDaoImpl">
@@ -121,18 +121,18 @@
 	</bean>
 	
 	<bean id="domibusWebAdminConnectorPartyDao"
-		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminConnectorPartyDao">
+		class="eu.domibus.webadmin.dao.impl.DomibusWebAdminConnectorPartyDao">
 	</bean>
 	
 	<bean id="domibusWebAdminConnectorServiceDao"
-		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminConnectorServiceDao">
+		class="eu.domibus.webadmin.dao.impl.DomibusWebAdminConnectorServiceDao">
 	</bean>
 	
 	<bean id="domibusWebAdminConnectorActionDao"
-		class="eu.ecodex.webadmin.dao.impl.DomibusWebAdminConnectorActionDao">
+		class="eu.domibus.webadmin.dao.impl.DomibusWebAdminConnectorActionDao">
 	</bean>
 	
-	<bean id="dbUtil" class="eu.ecodex.webadmin.commons.DBUtil">
+	<bean id="dbUtil" class="eu.domibus.webadmin.commons.DBUtil">
 		<property name="connectorDatasource" ref="dataSourceWebAdmin" />
 	</bean>
 		
