@@ -159,12 +159,13 @@
 				</h:panelGrid>
 
 
-				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="2">
+				<h:panelGrid columns="3" style="margin: 0 auto;" cellpadding="2">
 					<h:commandButton id="addUser" action="#{configurationBean.addUser}"
 						value="Add user" />
 					<h:commandButton id="deleteUser"
 						action="#{configurationBean.deleteUser}" value="Delete user" />
-
+					<h:commandButton id="changePassword"
+						action="#{configurationBean.updateUserPassword}" value="Change password" />
 				</h:panelGrid>
 
 			</p:panel>

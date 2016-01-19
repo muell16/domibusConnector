@@ -62,6 +62,22 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
 
 
     }
+    
+    @Override
+    @Transactional(readOnly=false, value="transactionManagerWebAdmin")
+    public void updateUserPassword(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException{
+    	Query q = em.createQuery("from DomibusWebAdminUser m where m.username =:username");
+        q.setParameter("username", username);
+        DomibusWebAdminUser domibusWebAdminUser = (DomibusWebAdminUser) q.getSingleResult();	
+        
+    	String salt = Util.getHexSalt();
+        String passwordDB = Util.generatePasswordHashWithSaltOnlyPW(password, salt);
+
+        domibusWebAdminUser.setPassword(passwordDB);
+        domibusWebAdminUser.setSalt(salt);
+        
+        em.merge(domibusWebAdminUser);
+    }
 
     @Override
     @Transactional(readOnly=false, value="transactionManagerWebAdmin")

@@ -13,4 +13,6 @@ public interface IDomibusWebAdminUserDao {
 
     public boolean checkIfUserExists(String username);
 
+	public void updateUserPassword(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
 }

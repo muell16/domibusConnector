@@ -215,6 +215,25 @@ public class ConfigurationBean implements Serializable{
         }
 
     }
+    
+    public String updateUserPassword() {
+    	try{
+    		if (!loggedInUser.equals(user)) {
+                userAction = "You can only change the logged in user's password!";
+                saveUserDisplay = true;
+                return "/pages/configuration.xhtml";
+            }
+    		
+    		domibusWebAdminUserDao.updateUserPassword(user, password);
+    		userAction = "Password successfully changed!";
+    		saveUserDisplay = true;
+    		return "/pages/configuration.xhtml";
+    	}catch (Exception e) {
+            saveUserDisplay = true;
+            userAction = "Error while deleting user: " + e;
+            return "/pages/configuration.xhtml";
+        }
+    }
 
     public String restart() {
         webAdminProperties.getCtx().refresh();
