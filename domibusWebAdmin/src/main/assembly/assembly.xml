@@ -16,6 +16,9 @@
 		<fileSet>
 			<directory>${webadmin.resources.dir}/Docs</directory>
 			<outputDirectory>${documentation.output.dir}/guides</outputDirectory>
+			<includes>
+				<include>*.pdf</include>
+			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>${webadmin.resources.dir}/ExampleProperties</directory>
