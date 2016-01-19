@@ -9,6 +9,7 @@
                 
    <ui:param name="title" value="WebAdmin - Statistics"/>
     <ui:define name="content">
+    <f:event type="preRenderView" listener="#{connectorBean.init()}" />
          
  <h:form  id="formConnector"> 
 	<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">           
@@ -73,7 +74,7 @@
             <f:selectItem itemLabel="SUBMISSION_REJECTION" itemValue="SUBMISSION_REJECTION" />      
         </h:selectOneMenu>
         
-            <h:commandButton id="generate" action="#{connectorBean.connectorCustomService.generateCustomReport}" value="Generate"
+            <h:commandButton id="generate" action="#{connectorBean.generateCustomReport}" value="Generate"
         rendered="#{connectorBean.customSelected}"/> 
      
     </h:panelGrid>

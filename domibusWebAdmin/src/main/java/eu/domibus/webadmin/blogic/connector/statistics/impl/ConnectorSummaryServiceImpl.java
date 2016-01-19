@@ -90,6 +90,7 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
         this.incomingMessagesCount = incomingMessagesCount;
     }
 
+    @Override
     public PieChartModel getPieModelMessageSummary() {
         return pieModelMessageSummary;
     }
@@ -98,6 +99,7 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
         this.pieModelMessageSummary = pieModelMessageSummary;
     }
 
+    @Override
     public PieChartModel getPieModelServiceSummary() {
         return pieModelServiceSummary;
     }

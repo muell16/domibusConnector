@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.StringUtils;
+
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
 import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
@@ -108,25 +110,25 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
         // Apply selected Filter from View
         if (!customResultList.isEmpty()) {
 
-            if (!BLConstants.selectorAll.equals(selectedFromParty)) {
+            if (!StringUtils.isEmpty(selectedFromParty)&&!BLConstants.selectorAll.equals(selectedFromParty)) {
                 customResultList = connectorMessageFilter.filterByFromParty(selectedFromParty, customResultList);
             }
-            if (!BLConstants.selectorAll.equals(selectedToParty)) {
+            if (!StringUtils.isEmpty(selectedToParty)&&!BLConstants.selectorAll.equals(selectedToParty)) {
                 customResultList = connectorMessageFilter.filterByToParty(selectedToParty, customResultList);
             }
-            if (!BLConstants.selectorAll.equals(direction)) {
+            if (!StringUtils.isEmpty(direction)&&!BLConstants.selectorAll.equals(direction)) {
                 customResultList = connectorMessageFilter.filterByDirection(direction, customResultList);
             }
-            if (!BLConstants.selectorAll.equals(status)) {
+            if (!StringUtils.isEmpty(status)&&!BLConstants.selectorAll.equals(status)) {
                 customResultList = connectorMessageFilter.filterByStatus(status, customResultList);
             }
-            if (!BLConstants.selectorAll.equals(selectedService)) {
+            if (!StringUtils.isEmpty(selectedService)&&!BLConstants.selectorAll.equals(selectedService)) {
                 customResultList = connectorMessageFilter.filterByService(selectedService, customResultList);
             }
-            if (!BLConstants.selectorAll.equals(selectedAction)) {
+            if (!StringUtils.isEmpty(selectedAction)&&!BLConstants.selectorAll.equals(selectedAction)) {
                 customResultList = connectorMessageFilter.filterByAction(selectedAction, customResultList);
             }
-            if (!BLConstants.selectorAll.equals(evidence)) {
+            if (!StringUtils.isEmpty(evidence)&&!BLConstants.selectorAll.equals(evidence)) {
                 customResultList = connectorMessageFilter.filterByLastEvidence(evidence, customResultList);
             }
 
@@ -243,6 +245,7 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
 		this.selectedAction = selectedAction;
 	}
 	
+	@Override
 	public List<MessageReportDO> getCustomResultList() {
         return customResultList;
     }

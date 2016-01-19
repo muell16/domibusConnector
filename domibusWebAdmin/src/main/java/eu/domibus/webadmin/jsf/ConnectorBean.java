@@ -31,8 +31,8 @@ public class ConnectorBean implements Serializable {
     private Date fromDate;
     private Date toDate;
 
-    private boolean summarySelected = false;
-    private boolean customSelected = false;
+    private boolean summarySelected = true;
+    private boolean customSelected = true;
 
     public Integer getCategoryNumber() {
         return categoryNumber;
@@ -53,6 +53,22 @@ public class ConnectorBean implements Serializable {
         }
 
         return "/pages/connector-statistics.xhtml";
+    }
+    
+    public void init(){
+//    	summarySelected = true;
+//    	customSelected = true;
+    	if(connectorSummaryService.getPieModelMessageSummary()==null || connectorSummaryService.getPieModelServiceSummary()==null)
+    		connectorSummaryService.generateMessageSummary();
+    	if(connectorCustomService.getCustomResultList()==null)
+    		connectorCustomService.generateCustomReport();
+    }
+    
+    public String generateCustomReport(){
+    	summarySelected = false;
+    	connectorCustomService.generateCustomReport();
+    	
+    	return "/pages/connector-statistics.xhtml";
     }
 
     public boolean isSummarySelected() {
