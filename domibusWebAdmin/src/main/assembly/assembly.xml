@@ -18,15 +18,6 @@
 			<outputDirectory>${documentation.output.dir}/guides</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${webadmin.resources.dir}/ReleaseNotes
-			</directory>
-			<outputDirectory>${release.notes.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*.txt</include>
-			</includes>
-		</fileSet>
-		<fileSet>
 			<directory>${webadmin.resources.dir}/ExampleProperties</directory>
 			<outputDirectory>${documentation.output.dir}/properties</outputDirectory>
 		</fileSet>
@@ -45,14 +36,18 @@
 			<source>${project.build.directory}/domibusWebAdmin.war</source>
 			<outputDirectory>${webadmin.build.dir}</outputDirectory>
 		</file>
-		
-		<file>
-			<source>${webadmin.resources.dir}/libs/ECodexConnectorCommon-2.0-SNAPSHOT.jar</source>
-			<outputDirectory>${webadmin.build.dir}/libs</outputDirectory>
-		</file>
-
-
 	</files>
 
+	<!-- ==================== Copying Non-Public Dependecies ================= -->
+
+	<dependencySets>
+		<dependencySet>
+			<scope>runtime</scope>
+			<outputDirectory>${webadmin.build.dir}/libs</outputDirectory>
+			<includes>
+				<include>*:domibusConnectorCommon*:*</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
 
 </assembly>
