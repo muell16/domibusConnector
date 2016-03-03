@@ -21,6 +21,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.crypto.Cipher;
 
@@ -31,12 +32,14 @@ import org.bouncycastle.asn1.x509.DigestInfo;
 import eu.europa.ec.markt.dss.DSSUtils;
 import eu.europa.ec.markt.dss.Digest;
 import eu.europa.ec.markt.dss.DigestAlgorithm;
+import eu.europa.ec.markt.dss.parameter.ChainCertificate;
 import eu.europa.ec.markt.dss.parameter.SignatureParameters;
 import eu.europa.ec.markt.dss.signature.InMemoryDocument;
 import eu.europa.ec.markt.dss.signature.SignatureLevel;
 import eu.europa.ec.markt.dss.signature.SignaturePackaging;
 import eu.europa.ec.markt.dss.signature.token.KSPrivateKeyEntry;
 import eu.europa.ec.markt.dss.signature.xades.XAdESService;
+import eu.europa.ec.markt.dss.validation102853.CertificateToken;
 import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
 import eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier;
 import eu.europa.ec.markt.dss.validation102853.report.Conclusion;
@@ -83,8 +86,22 @@ public class EvidenceUtilsXades extends EvidenceUtils {
 	SignatureParameters sigParam = new SignatureParameters();
 	sigParam.setSignatureLevel(SignatureLevel.XAdES_BASELINE_B);
 	sigParam.setSignaturePackaging(SignaturePackaging.ENVELOPED);
-	sigParam.setSigningCertificate(cert);
-	sigParam.setCertificateChain(keyInfos.getCertChain());
+
+	CertificateToken tkn = new CertificateToken(cert);
+	sigParam.setSigningCertificate(tkn);
+
+	final List<ChainCertificate> x509Certs = new ArrayList<ChainCertificate>();
+	final List<X509Certificate> certs = keyInfos.getCertChain();
+	for (final Certificate certificate : certs) {
+		if (certificate instanceof X509Certificate) {
+			ChainCertificate chainCert = new ChainCertificate(new CertificateToken((X509Certificate) certificate));
+			x509Certs.add(chainCert);
+		} else {
+			LOG.warn("the alias {} has a certificate chain item that does not represent an X509Certificate; it is ignored");
+		}
+	}
+	sigParam.setCertificateChain(x509Certs);
+	
 	sigParam.setDigestAlgorithm(DigestAlgorithm.SHA1);
 	sigParam.setEncryptionAlgorithm(pke.getEncryptionAlgorithm());
 	

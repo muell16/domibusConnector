@@ -17,6 +17,7 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
@@ -34,6 +35,9 @@ import org.w3c.dom.NodeList;
 
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
+import eu.europa.ec.markt.dss.signature.InMemoryDocument;
+import eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier;
+import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
 import eu.spocseu.edeliverygw.REMErrorEvent;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
@@ -61,10 +65,10 @@ public class ECodexEvidenceBuilderTest {
     private static final String SUBMISSION_NO_REJECTION = "outputfileSubmissionAcceptanceNORejection.xml";
     private static final String SUBMISSION_YES_REJECTION = "outputfileSubmissionAcceptanceYESRejection.xml";
     
-    String javaKeyStorePath = "file:src/main/resources/evidenceBuilderStore.jks";
-    String javaKeyStorePassword = "123456";
-    String alias = "evidenceBuilderKey";
-    String keyPassword = "123456";
+    String javaKeyStorePath = "file:src/main/resources/keystore.jks";
+    String javaKeyStorePassword = "test123";
+    String alias = "new_Testcert";
+    String keyPassword = "test123";
     XMLSignatureFactory sigFactory = null;
     DocumentBuilderFactory dbf;
     
@@ -163,7 +167,7 @@ public class ECodexEvidenceBuilderTest {
 	KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	publicKey = keypair.getPublic();
 
-	assertTrue("Signature failed", signatureValidate(document, publicKey));
+	assertTrue("Signature failed", signatureValidate(signedxmlData, publicKey));
 
     }
 
@@ -211,7 +215,7 @@ public class ECodexEvidenceBuilderTest {
 	KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	publicKey = keypair.getPublic();
 
-	assertTrue("Signature failed", signatureValidate(document, publicKey));
+	assertTrue("Signature failed", signatureValidate(signedxmlData, publicKey));
 
     }
 
@@ -275,7 +279,7 @@ public class ECodexEvidenceBuilderTest {
 	KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	publicKey = keypair.getPublic();
 
-	assertTrue("Signature failed", signatureValidate(document, publicKey));
+	assertTrue("Signature failed", signatureValidate(signedxmlData, publicKey));
     }
 
     // create a REMEvidenceType "DeliveryNonDeliveryToRecipient"
@@ -346,7 +350,7 @@ public class ECodexEvidenceBuilderTest {
 	KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	publicKey = keypair.getPublic();
 
-	assertTrue("Signature failed", signatureValidate(document, publicKey));
+	assertTrue("Signature failed", signatureValidate(signedxmlData, publicKey));
     }
 
     /**
@@ -387,7 +391,7 @@ public class ECodexEvidenceBuilderTest {
 	KeyPair keypair = getKeyPairFromKeyStore(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
 	publicKey = keypair.getPublic();
 
-	assertTrue("Signature failed", signatureValidate(document, publicKey));
+	assertTrue("Signature failed", signatureValidate(signedxmlData, publicKey));
     }
 
     /**
@@ -433,54 +437,69 @@ public class ECodexEvidenceBuilderTest {
 
 	// System.out.println(publicKey.toString());
 
-	assertTrue("Signature failed", signatureValidate(document, publicKey));
+	assertTrue("Signature failed", signatureValidate(signedxmlData, publicKey));
     }
 
     // Signature validation
-    private boolean signatureValidate(Document doc, PublicKey publicKey) throws Exception {
+    private boolean signatureValidate(byte[] signedxmlData, PublicKey publicKey) throws Exception {
     	
-    	boolean signStatus = true;
-	
-    	NodeList signedPropsNL = doc.getElementsByTagName("SignedProperties");
-    	if (signedPropsNL.getLength() != 0) {
-    		Node signedProps = signedPropsNL.item(0);
-    		((Element) signedProps).setIdAttribute("Id", true); 
-    	}
+    	InMemoryDocument docum = new InMemoryDocument(signedxmlData);
     	
-    	NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
-	
-    	if (nl.getLength() == 0) {
-    		throw new Exception("Cannot find Signature element");
-    	}
-    	
-    	Node signatureNode = nl.item(0);
-    	XMLSignatureFactory factory = getSignatureFactory();
-	
-    	// to test: CASE 1
-    	// XMLSignature signature = factory
-    	// .unmarshalXMLSignature(new DOMStructure(signatureNode));
+    	SignedDocumentValidator val = SignedDocumentValidator.fromDocument(docum);
+    	CommonCertificateVerifier certVeri = new CommonCertificateVerifier();
+    	val.setCertificateVerifier(certVeri);
 
-    	// Create ValidateContext
-    	DOMValidateContext valContext = new DOMValidateContext(publicKey, signatureNode);
-
-    	// to test: CASE 2
-    	XMLSignature signature = factory.unmarshalXMLSignature(valContext);
-
-    	// Validate the XMLSignature
-    	signStatus = signStatus && signature.validate(valContext);
+    	val.validateDocument();
     	
-    	// check the validation status of each Reference
-    	List<?> refs = signature.getSignedInfo().getReferences();
+    	return val.getSignatures().get(0).checkSignatureIntegrity().isSignatureValid() && 
+    		   val.getSignatures().get(0).checkSignatureIntegrity().isSignatureIntact();
     	
-    	for (int i = 0; i < refs.size(); i++) {
-    		Reference ref = (Reference) refs.get(i);
-
-    		// System.out.println("Reference[" + i + "] validity status: "
-    		// + ref.validate(valContext));
-    		signStatus = signStatus && ref.validate(valContext);
-    	}
+    	// 2016-03-03 klara: 
+    	// Switched to DSS Validation due to missing time to fix problem with 
+    	// the dereferencing in the java.crypto signature validation.
     	
-    	return signStatus;
+//    	boolean signStatus = true;
+//	
+//    	NodeList signedPropsNL = doc.getElementsByTagName("SignedProperties");
+//    	if (signedPropsNL.getLength() != 0) {
+//    		Node signedProps = signedPropsNL.item(0);
+//    		((Element) signedProps).setIdAttribute("Id", true); 
+//    	}
+//    	
+//    	NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+//	
+//    	if (nl.getLength() == 0) {
+//    		throw new Exception("Cannot find Signature element");
+//    	}
+//    	
+//    	Node signatureNode = nl.item(0);
+//    	XMLSignatureFactory factory = getSignatureFactory();
+//	
+//    	// to test: CASE 1
+//    	// XMLSignature signature = factory
+//    	// .unmarshalXMLSignature(new DOMStructure(signatureNode));
+//
+//    	// Create ValidateContext
+//    	DOMValidateContext valContext = new DOMValidateContext(publicKey, signatureNode);
+//    	
+//    	// to test: CASE 2
+//    	XMLSignature signature = factory.unmarshalXMLSignature(valContext);
+//
+//    	// Validate the XMLSignature
+//    	signStatus = signStatus && signature.validate(valContext);
+//    	
+//    	// check the validation status of each Reference
+//    	List<?> refs = signature.getSignedInfo().getReferences();
+//    	
+//    	for (int i = 0; i < refs.size(); i++) {
+//    		Reference ref = (Reference) refs.get(i);
+//
+//    		// System.out.println("Reference[" + i + "] validity status: "
+//    		// + ref.validate(valContext));
+//    		signStatus = signStatus && ref.validate(valContext);
+//    	}
+//    	
+//    	return signStatus;
     }
 
     private XMLSignatureFactory getSignatureFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {

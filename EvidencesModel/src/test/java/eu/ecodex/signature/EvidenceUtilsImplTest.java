@@ -50,11 +50,16 @@ public class EvidenceUtilsImplTest {
     
     XMLSignatureFactory signFactory;
 
-    String javaKeyStorePath = "file:src/main/resources/evidenceBuilderStore.jks";
-    String javaKeyStorePassword = "123456";
-    String alias = "evidenceBuilderKey";
-    String keyPassword = "123456";
+//    String javaKeyStorePath = "file:src/main/resources/evidenceBuilderStore.jks";
+//    String javaKeyStorePassword = "123456";
+//    String alias = "evidenceBuilderKey";
+//    String keyPassword = "123456";
 
+    String javaKeyStorePath = "file:src/main/resources/keystore.jks";
+    String javaKeyStorePassword = "test123";
+    String alias = "new_Testcert";
+    String keyPassword = "test123";
+    
     /**
      * Run the EvidenceUtilsImpl(String,String,String,String) constructor test.
      * 
