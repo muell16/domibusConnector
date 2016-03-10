@@ -27,7 +27,7 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-     	 	 	<value>file:${SERVER_ROOT}/conf/webadmin/webadmin.properties</value>
+     	 	 	<value>file:${TOMCAT_ROOT}/conf/webadmin/webadmin.properties</value>
     	  	<!-- 	<value>classpath:webadmin.properties</value>   -->
    				<value>classpath:connector.properties</value>
 			</list>
@@ -40,7 +40,7 @@
 		</property>
 		<property name="arguments">
 			<list>
-   			  	<value>file:${SERVER_ROOT}/conf/webadmin/log4j.properties</value>
+   			  	<value>file:${TOMCAT_ROOT}/conf/webadmin/log4j.properties</value>
  		  	<!-- 	<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>
@@ -79,14 +79,14 @@
 	<!-- Connector Beans -->
 	
 	<bean id="connectorSummaryService" 
-      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl">      
+      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl"  scope="request">      
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="domibusWebAdminConnectorServiceDao" ref="domibusWebAdminConnectorServiceDao" />
    </bean>
    
 	
 	<bean id="connectorCustomService" 
-      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl">     
+      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl" scope="request">     
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="connectorMessageFilter" ref="connectorMessageFilter" /> 
               <property name="domibusWebAdminConnectorPartyDao" ref="domibusWebAdminConnectorPartyDao" /> 
