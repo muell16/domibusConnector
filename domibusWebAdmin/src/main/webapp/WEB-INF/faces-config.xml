@@ -10,6 +10,16 @@
         <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>       
     </application>
     
+    <managed-bean>
+      <managed-bean-name>reportsBean</managed-bean-name>
+      <managed-bean-class>eu.domibus.webadmin.jsf.ReportsBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+			<property-name>reportDao</property-name>
+			<value>#{domibusWebAdminReportDao}</value>
+		</managed-property>
+   </managed-bean>
+    
    <managed-bean>
       <managed-bean-name>connectorBean</managed-bean-name>
       <managed-bean-class>eu.domibus.webadmin.jsf.ConnectorBean</managed-bean-class>
@@ -78,6 +88,10 @@
 			<from-outcome>statistics</from-outcome>
 			<to-view-id>/pages/connector-statistics.xhtml</to-view-id>
 		</navigation-case>
+		<!-- <navigation-case>
+			<from-outcome>reports</from-outcome>
+			<to-view-id>/pages/reports.xhtml</to-view-id>
+		</navigation-case> -->
 	</navigation-rule>
 	
 	<navigation-rule>

@@ -132,6 +132,10 @@
 		class="eu.domibus.webadmin.dao.impl.DomibusWebAdminConnectorActionDao">
 	</bean>
 	
+	<bean id="domibusWebAdminReportDao" class="eu.domibus.webadmin.dao.impl.DomibusWebAdminReportDao">
+		<property name="dataSource" ref="dataSourceWebAdmin" />
+	</bean>
+	
 	<bean id="dbUtil" class="eu.domibus.webadmin.commons.DBUtil">
 		<property name="connectorDatasource" ref="dataSourceWebAdmin" />
 	</bean>
