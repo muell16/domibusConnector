@@ -78,24 +78,10 @@
      <p:panel header="Export All Data" rendered="#{reportsBean.reportGenerated}">  
   
   		<h:commandLink id="excel">  
-            <p:graphicImage value="/images/csv.png" />  
+            <p:graphicImage value="/images/xls.png" />  
             <p:dataExporter type="xls" target="repTable" fileName="MessagesReport" postProcessor="#{reportsBean.postProcessExcel}"/>  
         </h:commandLink> 
-        
-        <h:commandLink id="pdf">  
-            <p:graphicImage value="/images/pdf.png" />  
-            <p:dataExporter type="pdf" target="repTable" fileName="MessagesReport" />  
-        </h:commandLink>  
-          
-        <h:commandLink id="csv">  
-            <p:graphicImage value="/images/csv.png" />  
-            <p:dataExporter type="csv" target="repTable" fileName="MessagesReport" />  
-        </h:commandLink>  
-          
-        <h:commandLink id="xml">  
-            <p:graphicImage value="/images/xml.png" />  
-            <p:dataExporter type="xml" target="repTable" fileName="MessagesReport" />  
-        </h:commandLink>  
+                
     </p:panel> 
     
     </h:panelGrid>
