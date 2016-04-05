@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui:composition template="/templates/menuTemplate.xhtml"
-                xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:h="http://java.sun.com/jsf/html"
-      			xmlns:p="http://primefaces.org/ui"
-                xmlns:ui="http://java.sun.com/jsf/facelets">
-                
-                
-   <ui:param name="title" value="WebAdmin - Statistics"/>
-    <ui:define name="content">
-         
- <h:form  id="formConfiguration">
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+	<ui:param name="title" value="WebAdmin - Statistics" />
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{configurationBean.init()}" />
+
+		<h:form id="formConfiguration">
 
 			<p:panel id="monitoringPanel" header="Monitoring"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
 				toggleable="true" toggleOrientation="horizontal">
-				
+
 				<h:panelGrid columns="3" style="margin: 0 auto;" cellpadding="2">
 					<h:outputText class="textArea" value="Monitoring type: " />
 					<h:selectOneMenu value="#{configurationBean.monitoringType}">
+						<p:ajax listener="#{configurationBean.configure}" update="formConfiguration"/>
 						<f:selectItem itemLabel="DB" itemValue="DB" />
 						<f:selectItem itemLabel="JMX" itemValue="JMX" />
 						<f:selectItem itemLabel="Rest" itemValue="REST" />
 					</h:selectOneMenu>
-					<h:commandButton id="configure"
-						action="#{configurationBean.configure}" value="Show configuration" />
 				</h:panelGrid>
 
 				<h:outputText class="textArea" style="margin: 0 auto;"
 					value="Connector: #{configurationBean.webAdminProperties.connectorDatabaseUrl}"
 					rendered="#{configurationBean.dbSelected}" />
-					<br></br>
+				<br></br>
 				<h:outputText class="textArea" style="margin: 0 auto;"
 					value="Note that the jmx port has to be enabled on your webserver!"
 					rendered="#{configurationBean.jmxSelected}" />
@@ -47,59 +47,61 @@
 						rendered="#{configurationBean.jmxSelected}" />
 				</h:panelGrid>
 
-				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="2">
+				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="2">
 					<h:commandButton id="testJmxConnection"
-						action="#{configurationBean.test}" value="Test"
+						action="#{configurationBean.testMonitoring}" value="Test"
 						rendered="#{configurationBean.jmxSelected}" />
-					<h:commandButton id="saveJmxMonitoring"
-						action="#{configurationBean.saveMonitoringConfiguration}"
-						value="Save" rendered="#{configurationBean.jmxSelected}" />
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="2">
-						<h:outputText class="textArea" value="Rest Server address: "
-							rendered="#{configurationBean.restSelected}" />
-						<p:inputText id="restServerAddress"
-							value="#{configurationBean.webAdminProperties.restServerAddress}"
-							rendered="#{configurationBean.restSelected}" />
-						<h:outputText class="textArea" value="Rest Server port: "
-							rendered="#{configurationBean.restSelected}" />
-						<p:inputText id="restServerPort"
-							value="#{configurationBean.webAdminProperties.restServerPort}"
-							rendered="#{configurationBean.restSelected}" />
-						<h:outputText class="textArea" value="Rest Webcontext: "
-							rendered="#{configurationBean.restSelected}" />
-						<p:inputText id="restWebContext"
-							value="#{configurationBean.webAdminProperties.restWebContext}"
-							rendered="#{configurationBean.restSelected}" />
+					<h:outputText class="textArea" value="Rest Server address: "
+						rendered="#{configurationBean.restSelected}" />
+					<p:inputText id="restServerAddress"
+						value="#{configurationBean.webAdminProperties.restServerAddress}"
+						rendered="#{configurationBean.restSelected}" />
+					<h:outputText class="textArea" value="Rest Server port: "
+						rendered="#{configurationBean.restSelected}" />
+					<p:inputText id="restServerPort"
+						value="#{configurationBean.webAdminProperties.restServerPort}"
+						rendered="#{configurationBean.restSelected}" />
+					<h:outputText class="textArea" value="Rest Webcontext: "
+						rendered="#{configurationBean.restSelected}" />
+					<p:inputText id="restWebContext"
+						value="#{configurationBean.webAdminProperties.restWebContext}"
+						rendered="#{configurationBean.restSelected}" />
 
-					</h:panelGrid>
+				</h:panelGrid>
 
-					<h:panelGrid columns="2" style="margin: 0 auto;" cellpadding="2">
-						<h:commandButton id="testRestConnection"
-							action="#{configurationBean.test}" value="Test"
-							rendered="#{configurationBean.restSelected}" />
-						<h:commandButton id="saveRestMonitoring"
-							action="#{configurationBean.saveMonitoringConfiguration}"
-							value="Save" rendered="#{configurationBean.restSelected}" />
+				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="2">
+					<h:commandButton id="testRestConnection"
+						action="#{configurationBean.testMonitoring}" value="Test"
+						rendered="#{configurationBean.restSelected}" />
+				</h:panelGrid>
+				
+				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="2">
+					<h:commandButton id="saveMonitoring"
+						action="#{configurationBean.saveMonitoringConfiguration}"
+						value="Save" />
+				</h:panelGrid>
 
-					</h:panelGrid>
 
-					<h:panelGrid columns="3" style="margin: 0 auto;" cellpadding="2"
-						border="1" rendered="#{configurationBean.testDisplay}">
-						<h:outputText class="textArea" style="font-weight:bold;"
-							value="#{configurationBean.monitoringType}" />
-						<h:outputText class="textArea"
-							value="#{configurationBean.monitoringTestMessage}" />
-						<h:outputText style="font-weight:bold;" class="textArea"
-							value="#{configurationBean.monitoringTestStatus}" />
-					</h:panelGrid>
-					<h:outputText class="textArea" style="margin: 0 auto;"
-						value="Properties saved!"
-						rendered="#{configurationBean.saveMonitoringDisplay}" />
-					<h:outputText class="textArea" style="margin: 0 auto;"
-						value="Choose a monitoring type!"
-						rendered="#{configurationBean.chooseMonitoringType}" />
+
+
+				<h:panelGrid columns="3" style="margin: 0 auto;" cellpadding="2"
+					border="1" rendered="#{configurationBean.testDisplay}">
+					<h:outputText class="textArea" style="font-weight:bold;"
+						value="#{configurationBean.monitoringType}" />
+					<h:outputText class="textArea"
+						value="#{configurationBean.monitoringTestMessage}" />
+					<h:outputText style="font-weight:bold;" class="textArea"
+						value="#{configurationBean.monitoringTestStatus}" />
+				</h:panelGrid>
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Properties saved!"
+					rendered="#{configurationBean.saveMonitoringDisplay}" />
+				<h:outputText class="textArea" style="margin: 0 auto;"
+					value="Choose a monitoring type!"
+					rendered="#{configurationBean.chooseMonitoringType}" />
 			</p:panel>
 
 
@@ -122,11 +124,11 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="1" style="margin: 0 auto;" cellpadding="2">
-				<h:outputText class="textArea" style="margin: 0 auto;"
-					value="Properties saved!"
-					rendered="#{configurationBean.saveJobDisplay}" />
-					<h:commandButton id="saveJob" action="#{configurationBean.saveJobConfiguration}"
-						value="Save" />
+					<h:outputText class="textArea" style="margin: 0 auto;"
+						value="Properties saved!"
+						rendered="#{configurationBean.saveJobDisplay}" />
+					<h:commandButton id="saveJob"
+						action="#{configurationBean.saveJobConfiguration}" value="Save" />
 				</h:panelGrid>
 
 			</p:panel>
@@ -165,7 +167,8 @@
 					<h:commandButton id="deleteUser"
 						action="#{configurationBean.deleteUser}" value="Delete user" />
 					<h:commandButton id="changePassword"
-						action="#{configurationBean.updateUserPassword}" value="Change password" />
+						action="#{configurationBean.updateUserPassword}"
+						value="Change password" />
 				</h:panelGrid>
 
 			</p:panel>

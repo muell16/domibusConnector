@@ -43,6 +43,25 @@ public class ConfigurationBean implements Serializable{
 
     private IDomibusWebAdminUserDao domibusWebAdminUserDao;
 
+    public void init(){
+    	webAdminProperties.loadProperties();
+    	if(monitoringType==null)
+    	monitoringType=webAdminProperties.getMonitoringType();
+    	if (monitoringType != null && monitoringType.equals("DB")) {
+            dbSelected = true;
+            jmxSelected = false;
+            restSelected = false;
+        } else if (monitoringType != null && monitoringType.equals("JMX")) {
+            jmxSelected = true;
+            dbSelected = false;
+            restSelected = false;
+        } else if (monitoringType != null && monitoringType.equals("REST")) {
+            restSelected = true;
+            dbSelected = false;
+            jmxSelected = false;
+        }
+    }
+    
     public String configure() {
         chooseMonitoringType = false;
         testDisplay = false;
@@ -53,15 +72,17 @@ public class ConfigurationBean implements Serializable{
             dbSelected = true;
             jmxSelected = false;
             restSelected = false;
-
+            webAdminProperties.setMonitoringType(monitoringType);
         } else if (monitoringType != null && monitoringType.equals("JMX")) {
             jmxSelected = true;
             dbSelected = false;
             restSelected = false;
+            webAdminProperties.setMonitoringType(monitoringType);
         } else if (monitoringType != null && monitoringType.equals("REST")) {
             restSelected = true;
             dbSelected = false;
             jmxSelected = false;
+            webAdminProperties.setMonitoringType(monitoringType);
         } else {
             chooseMonitoringType = false;
         }
@@ -69,7 +90,7 @@ public class ConfigurationBean implements Serializable{
         return "/pages/configuration.xhtml";
     }
 
-    public String test() {
+    public String testMonitoring() {
         testDisplay = true;
         chooseMonitoringType = false;
         saveMonitoringDisplay = false;
