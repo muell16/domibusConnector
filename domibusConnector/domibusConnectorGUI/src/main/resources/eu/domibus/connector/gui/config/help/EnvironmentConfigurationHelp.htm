@@ -1,0 +1,255 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 14 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:10.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+h1
+	{mso-style-link:"Überschrift 1 Zchn";
+	margin-top:24.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Cambria","serif";
+	color:#365F91;}
+h2
+	{mso-style-link:"Überschrift 2 Zchn";
+	margin-top:10.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:"Cambria","serif";
+	color:#4F81BD;}
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+p.MsoQuote, li.MsoQuote, div.MsoQuote
+	{mso-style-link:"Zitat Zchn";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:10.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";
+	color:black;
+	font-style:italic;}
+span.berschrift1Zchn
+	{mso-style-name:"Überschrift 1 Zchn";
+	mso-style-link:"Überschrift 1";
+	font-family:"Cambria","serif";
+	color:#365F91;
+	font-weight:bold;}
+span.ZitatZchn
+	{mso-style-name:"Zitat Zchn";
+	mso-style-link:Zitat;
+	color:black;
+	font-style:italic;}
+span.berschrift2Zchn
+	{mso-style-name:"Überschrift 2 Zchn";
+	mso-style-link:"Überschrift 2";
+	font-family:"Cambria","serif";
+	color:#4F81BD;
+	font-weight:bold;}
+.MsoChpDefault
+	{font-family:"Calibri","sans-serif";}
+.MsoPapDefault
+	{margin-bottom:10.0pt;
+	line-height:115%;}
+@page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 70.85pt 2.0cm 70.85pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=DE-AT>
+
+<div class=WordSection1>
+
+<h1><i>Environment Configuration Help</i></h1>
+
+<p class=MsoNormal><i>&nbsp;</i></p>
+
+<h2><strong><i><span style='font-family:"Cambria","serif"'>Gateway
+Configuration:</span></i></strong></h2>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></i></strong></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>Gateway
+Backendservice Address</span></i></strong></p>
+
+<p class=MsoNoSpacing><i>Defines the endpoint address of the gateway webservice
+as a URL.</i></p>
+
+<p class=MsoNoSpacing><i>Example: http://127.0.0.1:8080/domibus/services/backend</i></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></i></strong></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>Gateway
+Name</span></i></strong></p>
+
+<p class=MsoNoSpacing><i>The Name of your gateway as identified by other
+gateways. At this time it usually is the 2-digit countrycode.</i></p>
+
+<p class=MsoNoSpacing><b><i>Attention:</i></b><i> This gateway name must be
+included in the PMODEs and the domibusConnector database as part of the
+identification of the Party!</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><strong><span style='font-family:"Calibri","sans-serif"'>Gateway
+Role</span></strong></p>
+
+<p class=MsoNoSpacing><i>The Name of your gateway as identified by other
+gateways. At this time it usually is „GW“.</i></p>
+
+<p class=MsoNoSpacing><b><i>Attention:</i></b><i> This gateway role must be
+included in the PMODEs and the domibusConnector database as part of the
+identification of the Party!</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<h2><strong><i><span style='font-family:"Cambria","serif"'>General
+configuration:</span></i></strong></h2>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoQuote><b>Time between message jobs (ms)</b></p>
+
+<p class=MsoNoSpacing><i>Defines the time between the gateway and the national
+backend system should be checked for messages.</i></p>
+
+<p class=MsoNoSpacing><i> All messages in both directions should be handled
+entirely before next period starts. So no conflicts are produced.</i></p>
+
+<p class=MsoNoSpacing><i> Value is in milliseconds. For seconds divide value
+with 1000. For example 30 000 milliseconds are 30 seconds.</i></p>
+
+<p class=MsoQuote><b>&nbsp;</b></p>
+
+<h2><strong><i><span style='font-family:"Cambria","serif"'>Proxy Configuration:</span></i></strong></h2>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoQuote><b>Is your connector behind an HTTP Proxy?</b></p>
+
+<p class=MsoNoSpacing><i>To ensure that the domibusConnector can get a
+connection to HTTP addresses like your gateway or the TLS addresses called by
+the security library, you need to know whether it is in a network covered by a
+proxy server or not.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>HTTP Proxy Host</b></p>
+
+<p class=MsoNoSpacing><i>The name address of IP of your proxy server. </i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>HTTP Proxy Port</b></p>
+
+<p class=MsoNoSpacing><i>The port of your proxy server.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>HTTP Proxy Username</b></p>
+
+<p class=MsoNoSpacing><i>If your proxy server need authentication please enter
+the username here.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>HTTP Proxy Password</b></p>
+
+<p class=MsoNoSpacing><i>If your proxy server need authentication please enter
+the password here.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<h2><strong><i><span style='font-family:"Cambria","serif"'>Dynamic Discovery
+configuration:</span></i></strong></h2>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>Should Dynamic Discovery be used?</b></p>
+
+<p class=MsoNoSpacing><i>Dynamic Discovery is a side project of e-CODEX. It is
+designed to request a central address for the pmode depending on other meta
+data of the message like Party, Service and Action.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>Dynamic Discovery SML resolver address</b></p>
+
+<p class=MsoNoSpacing><i>The address of the resolver the requests for pmodes
+should be sent to.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>Dynamic Disvoery community</b></p>
+
+<p class=MsoNoSpacing><i>The community the requests for pmodes should be sent
+to.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>Dynamic Discovery environment</b></p>
+
+<p class=MsoNoSpacing><i>Defines wether the request should be placed in Test or
+Production environment.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><b>Dynamic Discovery normalisation algorithm</b></p>
+
+<p class=MsoNoSpacing><i>Defines how the request and response should be
+normalised.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoNoSpacing><span style='font-size:10.0pt;font-family:Consolas;
+color:#2A00FF'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

@@ -4,6 +4,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
+import eu.domibus.connector.gui.config.DomibusConnectorConfigUI;
+
 public class DomibusConnector {
 
     /**
@@ -22,6 +24,7 @@ public class DomibusConnector {
         }
 
         if (!StringUtils.hasText(connectorProperties)) {
+        	new DomibusConnectorConfigUI();
             throw new RuntimeException(
                     "No connector properties set! Please use the arg -Dconnector.properties='path to the connector properties file'");
         }

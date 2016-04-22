@@ -1,0 +1,221 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 14 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:10.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+h1
+	{mso-style-link:"Überschrift 1 Zchn";
+	margin-top:24.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Cambria","serif";
+	color:#365F91;}
+h2
+	{mso-style-link:"Überschrift 2 Zchn";
+	margin-top:10.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	line-height:115%;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:"Cambria","serif";
+	color:#4F81BD;}
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+p.MsoQuote, li.MsoQuote, div.MsoQuote
+	{mso-style-link:"Zitat Zchn";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:10.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";
+	color:black;
+	font-style:italic;}
+span.berschrift1Zchn
+	{mso-style-name:"Überschrift 1 Zchn";
+	mso-style-link:"Überschrift 1";
+	font-family:"Cambria","serif";
+	color:#365F91;
+	font-weight:bold;}
+span.ZitatZchn
+	{mso-style-name:"Zitat Zchn";
+	mso-style-link:Zitat;
+	color:black;
+	font-style:italic;}
+span.berschrift2Zchn
+	{mso-style-name:"Überschrift 2 Zchn";
+	mso-style-link:"Überschrift 2";
+	font-family:"Cambria","serif";
+	color:#4F81BD;
+	font-weight:bold;}
+.MsoChpDefault
+	{font-family:"Calibri","sans-serif";}
+.MsoPapDefault
+	{margin-bottom:10.0pt;
+	line-height:115%;}
+@page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 70.85pt 2.0cm 70.85pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=DE-AT>
+
+<div class=WordSection1>
+
+<h1><i>Other Configuration Help</i></h1>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></i></strong></p>
+
+<h2><strong><i><span style='font-family:"Cambria","serif"'>Connector as
+Framework settings:</span></i></strong></h2>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></i></strong></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>Implementation
+Class for National Backend Client</span></i></strong></p>
+
+<p class=MsoNoSpacing><i>Defines the full qualified Classname of the Class that
+implements the domibusConnectorNationalBackendClient. As the domibusConnector
+as a framework does not contain a default implementation of the national
+backend this interface must be implemented to tell the connector how the
+nactional backend can be integrated. The interface is fully open and only
+offers the standard methods for implementation so that the implementation is
+not restricted to other technical behaviors.</i></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></i></strong></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>Use
+content mapper?</span></i></strong></p>
+
+<p class=MsoNoSpacing><i>If activated the domibusConnectorContentMapper
+interface must be implemented. In case the national backend provides messages
+in an proprietary message format the content mapper must be used to map this proprietary
+format into the common provided e-CODEX message format that is known by all
+participating Parties.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoNormal><strong><i><span style='font-family:"Calibri","sans-serif"'>Implementation
+Class for Content Mapper</span></i></strong></p>
+
+<p class=MsoNoSpacing><i>Defines the full qualified Classname of the Class that
+implements the domibusConnectorContentMapper interface.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote><strong><span style='font-family:"Calibri","sans-serif"'>Is
+domibusConnector clustered?</span></strong></p>
+
+<p class=MsoNoSpacing><i>Defines if the domibusConnector runs in a clustered
+environment. Still all the instances of the domibusConnector must use the same
+database schema.</i></p>
+
+<p class=MsoQuote><b>&nbsp;</b></p>
+
+<p class=MsoQuote><strong><span style='font-family:"Calibri","sans-serif"'>Monitoring
+type</span></strong></p>
+
+<p class=MsoNoSpacing><i>The domibusConnector offers 3 possibilities to clink
+monitoring systems to it. As default the value „DB“ is set. The
+domibusConnector then provides no additional interfaces. When „JMX“ is
+selected, the domibusConnector offers monitoring interfaces for JMX. In that
+case, the JMX environment must be set up including the JMX port. If „REST“ is
+selected, the domibusConnector offers monitoring interfaces over a REST webservice.</i></p>
+
+<p class=MsoNoSpacing><i>Details on the monitoring interfaces and further
+configuration can be found in the documentation of the domibusConnector in the
+document „domibusConnector_Monitoring_Interfaces“.</i></p>
+
+<p class=MsoQuote><strong><span style='font-family:"Calibri","sans-serif"'> </span></strong></p>
+
+<h2><strong><i><span style='font-family:"Cambria","serif"'>Standalone connector
+settings:</span></i></strong></h2>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoQuote><strong><span style='font-family:"Calibri","sans-serif"'>Directory
+for incoming messages</span></strong></p>
+
+<p class=MsoNoSpacing><i>Defines by FileCooser Button in which directory the
+standalone connector puts incoming messages from the connected gateway. If no
+value is given, the standalone connector chooses the relative path „messages/incoming“
+from the installation path of the standalone connector as default.</i></p>
+
+<p class=MsoNoSpacing><i>Details on structure of the message files can be found
+in the document „DomibusStandaloneConnectorGuide“ provided with the
+domibusConnector-Standalone package.</i></p>
+
+<p class=MsoNoSpacing><i> </i></p>
+
+<p class=MsoQuote><strong><span style='font-family:"Calibri","sans-serif"'>Directory
+for outgoing messages</span></strong></p>
+
+<p class=MsoNoSpacing><i>Defines by FileCooser Button which directory the
+standalone connector scans for new outgoing messages.  If no value is given,
+the standalone connector chooses the relative path „messages/outgoing“ from the
+installation path of the standalone connector as default.</i></p>
+
+<p class=MsoNoSpacing><i>Details on structure of the message files can be found
+in the document „DomibusStandaloneConnectorGuide“ provided with the
+domibusConnector-Standalone package.</i></p>
+
+<p class=MsoNoSpacing><i>&nbsp;</i></p>
+
+<p class=MsoQuote> <strong><span style='font-family:"Calibri","sans-serif"'>Message
+properties file name</span></strong></p>
+
+<p class=MsoNoSpacing><i>Defines the name of the message properties file the
+standalone connector expects of puts in the corresponding directories if
+receiving incoming/outgoing messages. If no value is given, the standalone
+Connector takes „message.properties“ as default.</i></p>
+
+<p class=MsoNoSpacing><i>Details on structure of the message files can be found
+in the document „DomibusStandaloneConnectorGuide“ provided with the
+domibusConnector-Standalone package.</i></p>
+
+<p class=MsoNoSpacing><span style='font-size:10.0pt;font-family:Consolas;
+color:#2A00FF'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

@@ -1,22 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>eu.domibus.connector</groupId>
-		<artifactId>domibusConnector</artifactId>
-		<version>3.2-SNAPSHOT</version>
-	</parent>
-	<artifactId>domibusConnectorRunnable</artifactId>
-
-	<dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.domibus.connector</groupId>
+    <artifactId>domibusConnector</artifactId>
+    <version>3.2-SNAPSHOT</version>
+  </parent>
+  <artifactId>domibusConnectorGUI</artifactId>
+  
+  <dependencies>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorController</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorGUI</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -62,9 +56,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
-				<configuration> <archive> <manifest> <addClasspath>true</addClasspath> <mainClass>at.gv.brz.bjujq.ncdb.cdc.batch.NcdbCourtDataCollector</mainClass> 
-				</manifest> </archive> </configuration> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
