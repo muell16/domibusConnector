@@ -177,11 +177,16 @@ public class ConfigOtherTab extends JPanel {
 		
 		frameworkPanel.add(new JLabel(ConnectorProperties.OTHER_MONITORING_TYPE_LABEL, JLabel.TRAILING));
 		final JComboBox<String> monitoringType = new JComboBox<String>(new String[]{"DB","JMX", "REST"});
+		if(ConnectorProperties.monitoringType!=null){
 		switch(ConnectorProperties.monitoringType){
 		case "DB":monitoringType.setSelectedIndex(0);break;
 		case "JMX":monitoringType.setSelectedIndex(1);break;
 		case "REST":monitoringType.setSelectedIndex(2);break;
 		default:monitoringType.setSelectedIndex(0);ConnectorProperties.monitoringType = "DB";
+		}
+		}else{
+			monitoringType.setSelectedIndex(0);
+			ConnectorProperties.monitoringType = "DB";
 		}
 		monitoringType.addActionListener(new ActionListener() {
 			

@@ -34,6 +34,6 @@
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 	
-	<bean id="connectorUI" class="eu.domibus.connector.runnable.ui.DomibusConnectorUI" init-method="init" />
+	<bean id="connectorUI" class="eu.domibus.connector.gui.DomibusConnectorUI" init-method="init" />
 	
 </beans>

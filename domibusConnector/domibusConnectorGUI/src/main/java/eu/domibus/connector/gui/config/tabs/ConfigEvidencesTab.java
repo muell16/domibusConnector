@@ -141,11 +141,16 @@ public class ConfigEvidencesTab extends JPanel {
 
 		evidencesPanel.add(new JLabel(ConnectorProperties.EVIDENCES_HASH_ALGORITHM_LABEL, JLabel.TRAILING));
 		hashAlgorithm = new JComboBox<String>(new String[]{"MD5","SHA1", "SHA256"});
+		if(ConnectorProperties.hashAlgorithm!=null){
 		switch(ConnectorProperties.hashAlgorithm){
 		case "MD5":hashAlgorithm.setSelectedIndex(0);break;
 		case "SHA1":hashAlgorithm.setSelectedIndex(1);break;
 		case "SHA256":hashAlgorithm.setSelectedIndex(2);break;
 		default:hashAlgorithm.setSelectedIndex(0);ConnectorProperties.hashAlgorithm = "MD5";
+		}
+		}else{
+			hashAlgorithm.setSelectedIndex(0);
+			ConnectorProperties.hashAlgorithm = "MD5";
 		}
 		hashAlgorithm.addActionListener(new ActionListener() {
 			

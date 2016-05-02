@@ -1,6 +1,5 @@
 package eu.domibus.connector.gui.config.properties;
 
-import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -20,6 +17,8 @@ public class ConnectorProperties {
 	public static final File CONNECTOR_PROPERTIES_DIR = new File(CONNECTOR_PROPERTIES_DIR_PATH);
 	public static final String CONNECTOR_PROPERTIES_FILE_PATH = CONNECTOR_PROPERTIES_DIR + File.separator + "connector.properties";
 	public static final File CONNECTOR_PROPERTIES_FILE = new File(CONNECTOR_PROPERTIES_FILE_PATH);
+	
+	public static final String LOG4J_CONFIG_FILE_PATH = CONNECTOR_PROPERTIES_DIR + File.separator + "log4j.properties";
 	
 	public static final String DATABASE_DIALECT_KEY = Messages.getString("connector.database.dialect.key");
 	public static final String DATABASE_DIALECT_LABEL = Messages.getString("connector.database.dialect.label");
