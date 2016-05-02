@@ -8,26 +8,20 @@
 	<fileSets>
 		<!-- ==================== Copying DB Scripts ================= -->
 		<fileSet>
-			<directory>${project.basedir}/DbScripts</directory>
+			<directory>${webadmin.resources.dir}/DbScripts</directory>
 			<outputDirectory>${documentation.output.dir}/db-scripts</outputDirectory>
 		</fileSet>
 		
 		<!-- ==================== Copying Docs ================= -->
 		<fileSet>
-			<directory>${project.basedir}/Docs</directory>
+			<directory>${webadmin.resources.dir}/Docs</directory>
 			<outputDirectory>${documentation.output.dir}/guides</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/ReleaseNotes
-			</directory>
-			<outputDirectory>${release.notes.output.dir}
-			</outputDirectory>
 			<includes>
-				<include>*.txt</include>
+				<include>*.pdf</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/ExampleProperties</directory>
+			<directory>${webadmin.resources.dir}/ExampleProperties</directory>
 			<outputDirectory>${documentation.output.dir}/properties</outputDirectory>
 		</fileSet>
 		
@@ -40,13 +34,23 @@
 			<outputDirectory>${webadmin.build.dir}</outputDirectory>
 		</file>
 		
+		<!-- ==================== Copying WAR ================= -->
 		<file>
-			<source>${project.basedir}/libs/ECodexConnectorCommon-2.0-SNAPSHOT.jar</source>
-			<outputDirectory>${webadmin.build.dir}/libs</outputDirectory>
+			<source>${project.build.directory}/domibusWebAdmin.war</source>
+			<outputDirectory>${webadmin.build.dir}</outputDirectory>
 		</file>
-
-
 	</files>
 
+	<!-- ==================== Copying Non-Public Dependecies ================= -->
+
+	<dependencySets>
+		<dependencySet>
+			<scope>runtime</scope>
+			<outputDirectory>${webadmin.build.dir}/libs</outputDirectory>
+			<includes>
+				<include>*:domibusConnectorCommon*:*</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
 
 </assembly>

@@ -20,6 +20,7 @@
 		<ecodex.monitoring.version>2.1</ecodex.monitoring.version>
 		<mojarra.version>2.1.6</mojarra.version>
 		
+		<webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
 		<webadmin.build.dir>domibusWebAdmin/</webadmin.build.dir>
 		<documentation.output.dir>${webadmin.build.dir}documentation/</documentation.output.dir>
 		<db.scripts.output.dir>${documentation.output.dir}db-scripts</db.scripts.output.dir>
@@ -215,6 +216,12 @@
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
 			<version>2.1.7</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.7</version>
 		</dependency>
 
 	<dependency>

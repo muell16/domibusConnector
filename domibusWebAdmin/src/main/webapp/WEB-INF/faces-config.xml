@@ -10,10 +10,20 @@
         <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>       
     </application>
     
+    <managed-bean>
+      <managed-bean-name>reportsBean</managed-bean-name>
+      <managed-bean-class>eu.domibus.webadmin.jsf.ReportsBean</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+			<property-name>reportDao</property-name>
+			<value>#{domibusWebAdminReportDao}</value>
+		</managed-property>
+   </managed-bean>
+    
    <managed-bean>
       <managed-bean-name>connectorBean</managed-bean-name>
-      <managed-bean-class>eu.ecodex.webadmin.jsf.ConnectorBean</managed-bean-class>
-      <managed-bean-scope>session</managed-bean-scope>
+      <managed-bean-class>eu.domibus.webadmin.jsf.ConnectorBean</managed-bean-class>
+      <managed-bean-scope>request</managed-bean-scope>
       <managed-property>
          <property-name>connectorSummaryService</property-name>
          <value>#{connectorSummaryService}</value>
@@ -30,7 +40,7 @@
    
   <managed-bean>
       <managed-bean-name>configurationBean</managed-bean-name>
-      <managed-bean-class>eu.ecodex.webadmin.jsf.ConfigurationBean</managed-bean-class>
+      <managed-bean-class>eu.domibus.webadmin.jsf.ConfigurationBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
          <property-name>webAdminProperties</property-name>
@@ -44,7 +54,7 @@
    
    <managed-bean>
       <managed-bean-name>gatewayBean</managed-bean-name>
-      <managed-bean-class>eu.ecodex.webadmin.jsf.GatewayBean</managed-bean-class>
+      <managed-bean-class>eu.domibus.webadmin.jsf.GatewayBean</managed-bean-class>
       <managed-bean-scope>session</managed-bean-scope>
       <managed-property>
          <property-name>gatewayCustomService</property-name>
@@ -54,7 +64,7 @@
 
 	<managed-bean>
 		<managed-bean-name>loginBean</managed-bean-name>
-		<managed-bean-class>eu.ecodex.webadmin.jsf.LoginBean</managed-bean-class>
+		<managed-bean-class>eu.domibus.webadmin.jsf.LoginBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>domibusWebAdminUserDao</property-name>
@@ -78,6 +88,10 @@
 			<from-outcome>statistics</from-outcome>
 			<to-view-id>/pages/connector-statistics.xhtml</to-view-id>
 		</navigation-case>
+		<!-- <navigation-case>
+			<from-outcome>reports</from-outcome>
+			<to-view-id>/pages/reports.xhtml</to-view-id>
+		</navigation-case> -->
 	</navigation-rule>
 	
 	<navigation-rule>

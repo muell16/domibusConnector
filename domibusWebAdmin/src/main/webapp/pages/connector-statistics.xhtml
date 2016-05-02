@@ -9,6 +9,7 @@
                 
    <ui:param name="title" value="WebAdmin - Statistics"/>
     <ui:define name="content">
+    <f:event type="preRenderView" listener="#{connectorBean.init()}" />
          
  <h:form  id="formConnector"> 
 	<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="5">           
@@ -73,7 +74,7 @@
             <f:selectItem itemLabel="SUBMISSION_REJECTION" itemValue="SUBMISSION_REJECTION" />      
         </h:selectOneMenu>
         
-            <h:commandButton id="generate" action="#{connectorBean.connectorCustomService.generateCustomReport}" value="Generate"
+            <h:commandButton id="generate" action="#{connectorBean.generateCustomReport}" value="Generate"
         rendered="#{connectorBean.customSelected}"/> 
      
     </h:panelGrid>
@@ -165,18 +166,18 @@
         <h:outputText value="#{messageReportDO.lastEvidenceType}"/>  
       </p:column> 
          
-        <p:column style="width:4%" exportable = "false">  
+      <!--   <p:column style="width:4%" exportable = "false">  
                 <p:commandButton id="selectButton" update=":formConnector:display" oncomplete="evidenceDialog.show()" icon="ui-icon-search" title="View">  
                 <f:setPropertyActionListener value="#{messageReportDO}" target="#{connectorBean.connectorCustomService.selectedMessageReportDO}" />  
             </p:commandButton>  
-        </p:column>  
+        </p:column>   -->
           
 
 
 	</p:dataTable>  
 	
 	
-	<p:dialog header="Evidence Detail" widgetVar="evidenceDialog" resizable="false" id="evidenceDialog"  
+	<!-- <p:dialog header="Evidence Detail" widgetVar="evidenceDialog" resizable="false" id="evidenceDialog"  
                 showEffect="fade" modal="false">  
   
         <h:panelGrid id="display" columns="1" cellpadding="4" style="margin:0 auto;">  
@@ -186,30 +187,30 @@
   
         </h:panelGrid>  
   
-    </p:dialog>
+    </p:dialog> -->
 	
 	
 	
-	<h:panelGrid columns="1"> 
+	<!-- <h:panelGrid columns="1"> 
      <p:panel header="Export All Data" rendered="#{connectorBean.customSelected}">  
   
         <h:commandLink>  
             <p:graphicImage value="/images/pdf.png" />  
-            <p:dataExporter type="pdf" target="tbl" fileName="ECodexMessageList" excludeColumns="9"/>  
+            <p:dataExporter type="pdf" target="tbl" fileName="ECodexMessageList"/>  
         </h:commandLink>  
           
         <h:commandLink>  
             <p:graphicImage value="/images/csv.png" />  
-            <p:dataExporter type="csv" target="tbl" fileName="ECodexMessageList" excludeColumns="9"/>  
+            <p:dataExporter type="csv" target="tbl" fileName="ECodexMessageList"/>  
         </h:commandLink>  
           
         <h:commandLink>  
             <p:graphicImage value="/images/xml.png" />  
-            <p:dataExporter type="xml" target="tbl" fileName="ECodexMessageList" excludeColumns="9" />  
+            <p:dataExporter type="xml" target="tbl" fileName="ECodexMessageList" />  
         </h:commandLink>  
     </p:panel> 
     
-    </h:panelGrid>
+    </h:panelGrid> -->
 </h:form>
 </ui:define>
 </ui:composition>
