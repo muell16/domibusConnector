@@ -166,18 +166,18 @@
         <h:outputText value="#{messageReportDO.lastEvidenceType}"/>  
       </p:column> 
          
-        <p:column style="width:4%" exportable = "false">  
+      <!--   <p:column style="width:4%" exportable = "false">  
                 <p:commandButton id="selectButton" update=":formConnector:display" oncomplete="evidenceDialog.show()" icon="ui-icon-search" title="View">  
                 <f:setPropertyActionListener value="#{messageReportDO}" target="#{connectorBean.connectorCustomService.selectedMessageReportDO}" />  
             </p:commandButton>  
-        </p:column>  
+        </p:column>   -->
           
 
 
 	</p:dataTable>  
 	
 	
-	<p:dialog header="Evidence Detail" widgetVar="evidenceDialog" resizable="false" id="evidenceDialog"  
+	<!-- <p:dialog header="Evidence Detail" widgetVar="evidenceDialog" resizable="false" id="evidenceDialog"  
                 showEffect="fade" modal="false">  
   
         <h:panelGrid id="display" columns="1" cellpadding="4" style="margin:0 auto;">  
@@ -187,11 +187,11 @@
   
         </h:panelGrid>  
   
-    </p:dialog>
+    </p:dialog> -->
 	
 	
 	
-	<h:panelGrid columns="1"> 
+	<!-- <h:panelGrid columns="1"> 
      <p:panel header="Export All Data" rendered="#{connectorBean.customSelected}">  
   
         <h:commandLink>  
@@ -210,7 +210,7 @@
         </h:commandLink>  
     </p:panel> 
     
-    </h:panelGrid>
+    </h:panelGrid> -->
 </h:form>
 </ui:define>
 </ui:composition>
