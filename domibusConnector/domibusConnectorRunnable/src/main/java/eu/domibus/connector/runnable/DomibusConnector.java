@@ -3,6 +3,8 @@ package eu.domibus.connector.runnable;
 import java.io.File;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
@@ -48,10 +50,11 @@ public class DomibusConnector {
         		
         }
 
-        @SuppressWarnings({ "unused", "resource" })
-        ApplicationContext context = new ClassPathXmlApplicationContext(
+        @SuppressWarnings({ "resource" })
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext(
                 "classpath:spring/context/DomibusConnectorRunnableContext.xml");
-
+        
+        context.registerShutdownHook();
     }
 
 }
