@@ -16,8 +16,6 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.aspectj.apache.bcel.util.ClassPath;
-
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.layout.SpringUtilities;
 
@@ -156,6 +154,7 @@ public class ConfigEvidencesTab extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("rawtypes")
 				JComboBox test = (JComboBox) e.getSource();
 				ConnectorProperties.hashAlgorithm = (String) test.getSelectedItem();
 			}

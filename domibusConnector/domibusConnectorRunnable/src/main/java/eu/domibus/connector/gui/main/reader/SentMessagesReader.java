@@ -1,16 +1,10 @@
 package eu.domibus.connector.gui.main.reader;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.cxf.common.util.StringUtils;
 
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.main.data.Message;
-import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
-import eu.domibus.connector.runnable.util.DomibusConnectorRunnableUtil;
 
 public class SentMessagesReader {
 

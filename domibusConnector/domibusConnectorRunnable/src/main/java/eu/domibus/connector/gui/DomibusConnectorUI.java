@@ -8,12 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
 
-import eu.domibus.connector.gui.config.ConfigButtonBar;
-import eu.domibus.connector.gui.config.ConfigMenu;
-import eu.domibus.connector.gui.config.ConfigTab;
-import eu.domibus.connector.gui.config.DomibusConnectorConfigUI;
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.main.DomibusConnectorMainMenu;
 import eu.domibus.connector.gui.main.DomibusConnectorMainTab;

@@ -10,6 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import eu.domibus.connector.gui.config.listener.ConfigSaveCloseListener;
+import eu.domibus.connector.gui.config.tabs.ConfigExportTab;
 import eu.domibus.connector.gui.config.tabs.ConfigImportTab;
 
 public class ConfigMenu extends JMenuBar implements ActionListener {
@@ -24,10 +25,18 @@ public class ConfigMenu extends JMenuBar implements ActionListener {
 
 		this.add(fileMenu);
 		
+		JMenu toolsMenu = buildToolsMenu(parent);
+		
+		this.add(toolsMenu);
+
+		this.setVisible(true);
+	}
+
+	private JMenu buildToolsMenu(final JFrame parent) {
 		JMenu toolsMenu = new JMenu("Tools");
 		toolsMenu.setMnemonic(KeyEvent.VK_T);
 		
-		JMenuItem importProperties = new JMenuItem("ImportProperties");
+		JMenuItem importProperties = new JMenuItem("Import Properties");
 		importProperties.setMnemonic(KeyEvent.VK_I);
 		importProperties.addActionListener(new ActionListener() {
 			
@@ -43,9 +52,23 @@ public class ConfigMenu extends JMenuBar implements ActionListener {
 		
 		toolsMenu.add(importProperties);
 		
-		this.add(toolsMenu);
-
-		this.setVisible(true);
+		JMenuItem exportProperties = new JMenuItem("Export Properties");
+		exportProperties.setMnemonic(KeyEvent.VK_E);
+		exportProperties.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFrame exportFrame = new JFrame("Export configured porperties");
+				exportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				exportFrame.setContentPane(new ConfigExportTab(exportFrame));
+				exportFrame.pack();
+				exportFrame.setVisible(true);
+			}
+		});
+		
+		toolsMenu.add(exportProperties);
+		
+		return toolsMenu;
 	}
 
 	private JMenu buildFileMenu() {

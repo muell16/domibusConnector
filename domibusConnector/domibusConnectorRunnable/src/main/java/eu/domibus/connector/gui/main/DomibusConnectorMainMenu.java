@@ -9,9 +9,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import eu.domibus.connector.gui.config.listener.ConfigSaveCloseListener;
-
 public class DomibusConnectorMainMenu extends JMenuBar implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3537576845229906480L;
 
 	public DomibusConnectorMainMenu(){
 		JMenu fileMenu = buildFileMenu();
@@ -22,16 +25,6 @@ public class DomibusConnectorMainMenu extends JMenuBar implements ActionListener
 	private JMenu buildFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-
-//		JMenuItem saveItem = new JMenuItem(ConfigSaveCloseListener.SAVE);
-//		saveItem.setMnemonic(KeyEvent.VK_S);
-//		saveItem.addActionListener(this);
-//		fileMenu.add(saveItem);
-//
-//		JMenuItem saveExitItem = new JMenuItem(ConfigSaveCloseListener.SAVEEXIT);
-//		saveExitItem.setMnemonic(KeyEvent.VK_X);
-//		saveExitItem.addActionListener(this);
-//		fileMenu.add(saveExitItem);
 
 		JMenuItem exitItem = new JMenuItem("Shutdown domibusConnector");
 		exitItem.setMnemonic(KeyEvent.VK_E);

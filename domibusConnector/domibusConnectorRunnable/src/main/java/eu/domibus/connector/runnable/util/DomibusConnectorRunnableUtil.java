@@ -185,6 +185,7 @@ public class DomibusConnectorRunnableUtil {
         if (!messagePropertiesFile.exists()) {
             LOGGER.error("Message properties file '" + messagePropertiesFile.getAbsolutePath()
                     + "' does not exist. Message cannot be processed!");
+            return null;
         }
         DomibusConnectorMessageProperties details = new DomibusConnectorMessageProperties();
         details.loadPropertiesFromFile(messagePropertiesFile);

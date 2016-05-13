@@ -1,6 +1,15 @@
 package eu.domibus.connector.common.enums;
 
 public enum EvidenceType {
-    SUBMISSION_ACCEPTANCE, SUBMISSION_REJECTION, RELAY_REMMD_ACCEPTANCE, RELAY_REMMD_REJECTION, RELAY_REMMD_FAILURE, DELIVERY, NON_DELIVERY, RETRIEVAL, NON_RETRIEVAL;
+    SUBMISSION_ACCEPTANCE(1), SUBMISSION_REJECTION(2), RELAY_REMMD_ACCEPTANCE(3), RELAY_REMMD_REJECTION(5), RELAY_REMMD_FAILURE(4), DELIVERY(6), NON_DELIVERY(7), RETRIEVAL(8), NON_RETRIEVAL(9);
 
+	private final int priority;
+	
+	EvidenceType(int priority){
+		this.priority=priority;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
 }

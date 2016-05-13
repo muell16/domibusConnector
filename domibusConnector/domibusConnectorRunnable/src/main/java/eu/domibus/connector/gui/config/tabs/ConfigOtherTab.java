@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -194,19 +193,12 @@ public class ConfigOtherTab extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("rawtypes")
 				JComboBox test = (JComboBox) e.getSource();
 				ConnectorProperties.monitoringType = (String) test.getSelectedItem();
 			}
 		});
 		frameworkPanel.add(monitoringType);
-//		final JFormattedTextField monitoringType = ConfigTabHelper.addTextFieldRow(null, frameworkPanel, 
-//				ConnectorProperties.OTHER_MONITORING_TYPE_LABEL, ConnectorProperties.monitoringType, ConnectorProperties.OTHER_MONITORING_TYPE_HELP, 35);
-//		monitoringType.addPropertyChangeListener(new PropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent evt) {
-//				ConnectorProperties.monitoringType = monitoringType.getText();
-//			}
-//		});
 		monitoringType.setEditable(true);
 		
 		SpringUtilities.makeCompactGrid(frameworkPanel,

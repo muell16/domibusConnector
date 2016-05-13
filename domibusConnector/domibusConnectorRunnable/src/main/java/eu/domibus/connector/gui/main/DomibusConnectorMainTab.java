@@ -1,15 +1,17 @@
 package eu.domibus.connector.gui.main;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import eu.domibus.connector.gui.DomibusConnectorUI;
 import eu.domibus.connector.gui.main.tab.ReceivedMessagesTab;
 import eu.domibus.connector.gui.main.tab.SendNewMessageTab;
 import eu.domibus.connector.gui.main.tab.SentMessagesTab;
 
 public class DomibusConnectorMainTab extends JTabbedPane {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3277796843774847324L;
 
 	public DomibusConnectorMainTab(){
 		

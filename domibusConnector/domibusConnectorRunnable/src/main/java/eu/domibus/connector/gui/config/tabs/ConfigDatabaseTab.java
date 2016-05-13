@@ -1,19 +1,12 @@
 package eu.domibus.connector.gui.config.tabs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-import javax.swing.UIManager;
 
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.layout.SpringUtilities;

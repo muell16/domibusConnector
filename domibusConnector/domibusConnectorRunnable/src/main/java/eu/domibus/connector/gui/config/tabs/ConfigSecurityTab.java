@@ -75,6 +75,7 @@ public class ConfigSecurityTab extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("rawtypes")
 				JComboBox test = (JComboBox) e.getSource();
 				ConnectorProperties.tokenIssuerAESValue = (String) test.getSelectedItem();
 			}
