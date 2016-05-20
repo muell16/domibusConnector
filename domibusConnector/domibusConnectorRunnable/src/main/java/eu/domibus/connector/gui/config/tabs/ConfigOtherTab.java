@@ -107,7 +107,6 @@ public class ConfigOtherTab extends JPanel {
 				ConnectorProperties.messagePropertiesFileName = msgPropertiesFileName.getText();
 			}
 		});
-//		msgPropertiesFileName.setEditable(false);
 		standalonePanel.add(new JLabel(""));
 		
 		SpringUtilities.makeCompactGrid(standalonePanel,

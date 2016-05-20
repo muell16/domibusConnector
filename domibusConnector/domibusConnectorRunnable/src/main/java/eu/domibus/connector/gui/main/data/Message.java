@@ -1,99 +1,48 @@
 package eu.domibus.connector.gui.main.data;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
 
 public class Message {
-
-	
-	String fromPartyId;
-	String fromPartyRole;
-	String toPartyId;
-	String toPartyRole;
-	
-	String nationalMessageId;
-	String ebmsMessageId;
-	
-	String originalSender;
-	String finalRecipient;
-	
-	String action;
-	String service;
-	
-	String receivedTimestamp;
 	
 	File messageDir;
+	DomibusConnectorMessageProperties messageProperties;
+	File formXMLFile;
+	File formPDFFile;
+	List<File> attachments = new ArrayList<File>();
 	
-	public String getFromPartyId() {
-		return fromPartyId;
-	}
-	public void setFromPartyId(String fromPartyId) {
-		this.fromPartyId = fromPartyId;
-	}
-	public String getFromPartyRole() {
-		return fromPartyRole;
-	}
-	public void setFromPartyRole(String fromPartyRole) {
-		this.fromPartyRole = fromPartyRole;
-	}
-	public String getToPartyId() {
-		return toPartyId;
-	}
-	public void setToPartyId(String toPartyId) {
-		this.toPartyId = toPartyId;
-	}
-	public String getToPartyRole() {
-		return toPartyRole;
-	}
-	public void setToPartyRole(String toPartyRole) {
-		this.toPartyRole = toPartyRole;
-	}
-	public String getNationalMessageId() {
-		return nationalMessageId;
-	}
-	public void setNationalMessageId(String nationalMessageId) {
-		this.nationalMessageId = nationalMessageId;
-	}
-	public String getEbmsMessageId() {
-		return ebmsMessageId;
-	}
-	public void setEbmsMessageId(String ebmsMessageId) {
-		this.ebmsMessageId = ebmsMessageId;
-	}
-	public String getOriginalSender() {
-		return originalSender;
-	}
-	public void setOriginalSender(String originalSender) {
-		this.originalSender = originalSender;
-	}
-	public String getFinalRecipient() {
-		return finalRecipient;
-	}
-	public void setFinalRecipient(String finalRecipient) {
-		this.finalRecipient = finalRecipient;
-	}
-	public String getAction() {
-		return action;
-	}
-	public void setAction(String action) {
-		this.action = action;
-	}
-	public String getService() {
-		return service;
-	}
-	public void setService(String service) {
-		this.service = service;
-	}
-	public String getReceivedTimestamp() {
-		return receivedTimestamp;
-	}
-	public void setReceivedTimestamp(String receivedTimestamp) {
-		this.receivedTimestamp = receivedTimestamp;
-	}
 	public File getMessageDir() {
 		return messageDir;
 	}
+	public DomibusConnectorMessageProperties getMessageProperties() {
+		return messageProperties;
+	}
+	public void setMessageProperties(DomibusConnectorMessageProperties messageProperties) {
+		this.messageProperties = messageProperties;
+	}
 	public void setMessageDir(File messageDir) {
 		this.messageDir = messageDir;
+	}
+	public File getFormXMLFile() {
+		return formXMLFile;
+	}
+	public void setFormXMLFile(File formXMLFile) {
+		this.formXMLFile = formXMLFile;
+	}
+	public File getFormPDFFile() {
+		return formPDFFile;
+	}
+	public void setFormPDFFile(File formPDFFile) {
+		this.formPDFFile = formPDFFile;
+	}
+	public List<File> getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(List<File> attachments) {
+		this.attachments = attachments;
 	}
 	
 	

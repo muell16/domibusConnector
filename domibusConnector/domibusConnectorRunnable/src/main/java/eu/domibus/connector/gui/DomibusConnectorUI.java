@@ -46,13 +46,14 @@ public class DomibusConnectorUI extends JFrame {
 		});
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setSize(new Dimension(1000, 650));
+        setSize(new Dimension(800, 650));
         setTitle("DomibusConnector");
 
         setState(Frame.NORMAL);
-        getContentPane().add(new DomibusConnectorMainMenu(), BorderLayout.PAGE_START);
+        getContentPane().add(new DomibusConnectorMainMenu(), BorderLayout.NORTH);
         getContentPane().add(new DomibusConnectorMainTab(), BorderLayout.CENTER);
-//        getContentPane().add(new ConfigButtonBar(), BorderLayout.PAGE_END);
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
 	}
 }

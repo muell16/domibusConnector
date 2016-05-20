@@ -2,13 +2,10 @@ package eu.domibus.connector.runnable;
 
 import java.io.File;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
-import eu.domibus.connector.gui.DomibusConnectorUI;
 import eu.domibus.connector.gui.config.DomibusConnectorConfigUI;
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 

@@ -1,7 +1,8 @@
 package eu.domibus.connector.gui.main.tab;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,7 +26,8 @@ import org.apache.commons.io.FileUtils;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.gui.main.data.Message;
 import eu.domibus.connector.gui.main.details.ExportMessagesDetail;
-import eu.domibus.connector.gui.main.details.MessageDetail;
+import eu.domibus.connector.gui.main.details.NewMessageDetail;
+import eu.domibus.connector.gui.main.details.StoredMessageDetail;
 import eu.domibus.connector.gui.utils.ButtonColumn;
 
 public abstract class MessagesTab extends JPanel implements ActionListener {
@@ -38,23 +39,38 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 	private static final String AC_DELETE = "delete";
 	private static final String AC_EXPORT = "export";
 	private static final String AC_REFRESH = "refresh";
+	private static final String AC_STATISTICS = "statistics";
 	JScrollPane messages;
+	JPanel buttonPanel;
 	JTable messagesResultTable;
 	List<Message> messagesList;
-	JFrame messageDetailFrame;
-	JFrame exportFrame;
 	File exportFolder = null;
 	boolean exportAsZip = false;
 	
 	public MessagesTab(){
+		JPanel gridPanel = new JPanel();
+		gridPanel.setLayout(new GridBagLayout());
 		buildAndAddButtonPanel();
 		
 		buildAndAddMessageTable();
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		gridPanel.add(buttonPanel, c);
+		c.fill=GridBagConstraints.VERTICAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		gridPanel.add(messages, c);
+		
+		add(gridPanel);
 		this.setVisible(true);
 	}
 
 	private void buildAndAddButtonPanel() {
-		JPanel buttonPanel = new JPanel();
+		buttonPanel = new JPanel();
 		
 		JButton refreshButton = new JButton(AC_REFRESH);
 		refreshButton.setActionCommand(AC_REFRESH);
@@ -71,10 +87,14 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 		deleteButton.addActionListener(this);
 		buttonPanel.add(deleteButton);
 		
-		this.add(buttonPanel, BorderLayout.NORTH);
+		JButton statisticsButton = new JButton("Statistics");
+		statisticsButton.setActionCommand(AC_STATISTICS);
+		statisticsButton.addActionListener(this);
+		buttonPanel.add(statisticsButton);
+		
 	}
 	
-	private void refresh(){
+	public void refresh(){
 		loadMessagesAndFillList();
 		messages.invalidate();
 		messages.repaint();
@@ -90,7 +110,6 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 		messagesList = new ArrayList<Message>();
 		loadMessagesAndFillList();
 		
-		this.add(messages, BorderLayout.CENTER);
 	}
 
 	private void loadMessagesAndFillList() {
@@ -107,6 +126,10 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 	public abstract String getTableHeader5();
 	
 	public abstract String getMessageStatus(Message msg);
+	
+	public abstract String getMessageDatetime(Message msg);
+	
+	public abstract int getMessageType();
 	
 	public String getLastEvidence(Message msg){
 		EvidenceType lastEvidenceType = null;
@@ -135,13 +158,14 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 		for(int i = 0;i<messagesList.size();++i) {
 			Message msg = messagesList.get(i);
 			Object[] oArr = new Object[11];
-			oArr[0] = msg.getFromPartyId();
-			oArr[1] = msg.getToPartyId();
-			oArr[2] = msg.getOriginalSender();
-			oArr[3] = msg.getFinalRecipient();
-			oArr[4] = msg.getService();
-			oArr[5] = msg.getAction();
-			oArr[6] = msg.getReceivedTimestamp();
+			oArr[0] = msg.getMessageProperties().getFromPartyId();
+			oArr[1] = msg.getMessageProperties().getToPartyId();
+			oArr[2] = msg.getMessageProperties().getOriginalSender();
+			oArr[3] = msg.getMessageProperties().getFinalRecipient();
+			oArr[4] = msg.getMessageProperties().getService();
+			oArr[5] = msg.getMessageProperties().getAction();
+			oArr[6] = getMessageDatetime(msg);
+			oArr[6] = msg.getMessageProperties().getMessageReceivedDatetime();
 			oArr[7] = getLastEvidence(msg);
 			oArr[8] = getMessageStatus(msg);
 			oArr[9] = "Details";
@@ -172,13 +196,13 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 		    {
 		        JTable table = (JTable)e.getSource();
 		        int modelRow = Integer.valueOf( e.getActionCommand() );
+		        String status = (String) ((DefaultTableModel)table.getModel()).getValueAt(modelRow, 8);
 		        Message selected = (Message) ((DefaultTableModel)table.getModel()).getValueAt(modelRow, 10);
-		        messageDetailFrame = new JFrame("Message Details");
-				messageDetailFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				messageDetailFrame.setContentPane(new MessageDetail(selected));
-				messageDetailFrame.setSize(new Dimension(500, 800));
-				messageDetailFrame.pack();
-				messageDetailFrame.setVisible(true);
+		        if(status.equals(SentMessagesTab.STATUS_NEW)){
+		        	new NewMessageDetail(selected, MessagesTab.this);
+		        }else{
+		        	new StoredMessageDetail(selected, getMessageType(), MessagesTab.this);
+		        }
 		    }
 		};
 		 
@@ -188,20 +212,28 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(messagesResultTable.getSelectedRows().length<1){
-			JOptionPane.showMessageDialog(this, "No rows selected.", "No selection", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
 		
 		switch(e.getActionCommand()){
 		case AC_REFRESH:refresh();System.out.println(AC_REFRESH);break;
 		case AC_EXPORT:
 		case AC_DELETE:handleSelected(e.getActionCommand());break;
+		case AC_STATISTICS:showStatisticsInfo();break;
 		}
 	}
 	
-	private void handleSelected(String actionCommand){
+	private void showStatisticsInfo() {
+		JOptionPane.showMessageDialog(this, 
+    		"By now message statistics can only be extracted by the domibusWebAdmin.\n"
+    		+ "For further information please refer to the documentation of the domibusWebAdmin.", "Statistics", 
+    		JOptionPane.INFORMATION_MESSAGE);
 		
+	}
+
+	private void handleSelected(String actionCommand){
+		if(messagesResultTable.getSelectedRows().length<1){
+			JOptionPane.showMessageDialog(this, "No rows selected.", "No selection", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		if(actionCommand.equals(AC_DELETE)){
 			if (JOptionPane.showConfirmDialog(this, 
 	        		"All selected messages will be deleted and cannot be restored. \n "
@@ -215,12 +247,7 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 		
 		if(actionCommand.equals(AC_EXPORT)){
 			
-			exportFrame = new JFrame("Export Messages");
-			exportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			exportFrame.setContentPane(new ExportMessagesDetail(messagesResultTable, exportFrame));
-			exportFrame.setSize(new Dimension(500, 800));
-			exportFrame.pack();
-			exportFrame.setVisible(true);
+			new ExportMessagesDetail(messagesResultTable);
 			
 		}
 		

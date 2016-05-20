@@ -1,16 +1,18 @@
 package eu.domibus.connector.gui.main.details;
 
-import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,15 +20,43 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 
+import eu.domibus.connector.gui.config.properties.ConnectorProperties;
+import eu.domibus.connector.gui.config.tabs.ConfigTabHelper;
 import eu.domibus.connector.gui.layout.SpringUtilities;
 import eu.domibus.connector.gui.main.data.Message;
+import eu.domibus.connector.gui.main.tab.MessagesTab;
 
-public class MessageDetail extends JPanel {
+public abstract class MessageDetail extends JPanel {
 
-	Message selected;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8325814604685434797L;
+	JFrame messageDetailFrame;
+	MessagesTab parent;
+	Message message;
+	int messageType;
+	File messagePropertiesFile;
+	
+	JPanel detailsPanel;
+	JPanel filesPanel;
+	JPanel actionPanel;
+	
+	public MessageDetail(final Message message, MessagesTab list, int messageType){
+		this.message=message;
+		this.parent = list;
+		this.messageType = messageType;
+		messagePropertiesFile = new File(message.getMessageDir(), ConnectorProperties.messagePropertiesFileName);
 
-	public MessageDetail(final Message selected){
-		this.selected=selected;
+		messageDetailFrame = new JFrame("Message "+message.getMessageProperties().getNationalMessageId());
+		messageDetailFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		messageDetailFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	if(parent!=null)
+		        parent.refresh();
+		    }
+		});
 		
 		JPanel gridPanel = new JPanel();
 		gridPanel.setLayout(new GridBagLayout());
@@ -34,8 +64,10 @@ public class MessageDetail extends JPanel {
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
-		JPanel detailsPanel = buildDetailsPanel(selected);
-		JPanel filesPanel = buildFilesPanel(selected);
+		buildDetailsPanel();
+		buildFilesPanel();
+		
+		buildActionPanel();
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -43,88 +75,149 @@ public class MessageDetail extends JPanel {
 		c.gridx = 0;
 		c.gridy = 1;
 		gridPanel.add(filesPanel, c);
-//		c.fill=GridBagConstraints.VERTICAL;
-//		c.gridx = 0;
-//		c.gridy = 3;
-//		gridPanel.add(importPanel, c);
+		c.fill=GridBagConstraints.VERTICAL;
+		c.gridx = 0;
+		c.gridy = 3;
+		gridPanel.add(actionPanel, c);
 		
 		add(gridPanel);
 		
+		messageDetailFrame.setContentPane(this);
+		messageDetailFrame.setSize(new Dimension(500, 800));
+		messageDetailFrame.pack();
+		messageDetailFrame.setLocationRelativeTo(null);
+		messageDetailFrame.setVisible(true);
 	}
+	
+	void buildDetailsPanel() {
+		detailsPanel = new JPanel(new SpringLayout());
 
-	private JPanel buildFilesPanel(final Message selected) {
-		JPanel filesPanel = new JPanel(new SpringLayout());
-
-		int rowIndex = 1;
-		JLabel header = new JLabel("Files in message directory:");
-		filesPanel.add(header);
-		filesPanel.add(new JLabel(""));
-
-		File[] contents = selected.getMessageDir().listFiles();
-
-		if(contents!=null && contents.length>0){
-			for(final File subFile:contents){
-				if(subFile.exists()){
-					final JLabel log = new JLabel(subFile.getName());
-					log.setSize(200, 10);
-					filesPanel.add(log);
-
-					JButton openButton2 = new JButton(UIManager.getIcon("FileView.directoryIcon"));
-					openButton2.setToolTipText("Open file");
-					openButton2.addActionListener(new ActionListener() {
-
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							try {
-								Desktop.getDesktop().open(subFile);
-							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(MessageDetail.this, e1.getMessage(), "Open file failed!", JOptionPane.ERROR_MESSAGE);
-							}
-
-						}
-					});
-					filesPanel.add(openButton2);
-					rowIndex++;
-				}
+		final JFormattedTextField nationalMessageId = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"National Message ID", message.getMessageProperties().getNationalMessageId(), 40);
+		nationalMessageId.setEditable(detailsEditable());
+		nationalMessageId.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setNationalMessageId(nationalMessageId.getText());
 			}
-		}
+		});
+		detailsPanel.add(new JLabel(""));
+		
+		final JFormattedTextField ebmsId = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"EBMS Message ID", message.getMessageProperties().getEbmsMessageId(), 40);
+		ebmsId.setEditable(false);
+		ebmsId.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setEbmsMessageId(ebmsId.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
+		addEmptyRowToDetails();
 
-		SpringUtilities.makeCompactGrid(filesPanel,
-				rowIndex, 2, //rows, cols
-				6, 6,        //initX, initY
-				6, 6);       //xPad, yPad
+		final JFormattedTextField fromPartyId = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"From Party ID", message.getMessageProperties().getFromPartyId(), 10);
+		fromPartyId.setEditable(detailsEditable());
+		fromPartyId.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setFromPartyId(fromPartyId.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
-		filesPanel.setOpaque(true);
-		return filesPanel;
-	}
+		final JFormattedTextField fromPartyRole = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"From Party Role", message.getMessageProperties().getFromPartyRole(), 10);
+		fromPartyRole.setEditable(detailsEditable());
+		fromPartyRole.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setFromPartyRole(fromPartyRole.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
-	private JPanel buildDetailsPanel(final Message selected) {
-		JPanel detailsPanel = new JPanel(new SpringLayout());
+		final JFormattedTextField originalSender = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"Original Sender", message.getMessageProperties().getOriginalSender(), 40);
+		originalSender.setEditable(detailsEditable());
+		originalSender.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setOriginalSender(originalSender.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
-		createLabelValuePair(detailsPanel, "EBMS-ID:", selected.getEbmsMessageId());
-		createLabelValuePair(detailsPanel, "", "");
-		createLabelValuePair(detailsPanel, "National Message ID:", selected.getNationalMessageId());
-		createLabelValuePair(detailsPanel, "", "");
-		createLabelValuePair(detailsPanel, "From Party ID:", selected.getFromPartyId());
-		createLabelValuePair(detailsPanel, "From Party Role:", selected.getFromPartyRole());
-		createLabelValuePair(detailsPanel, "Original Sender:", selected.getOriginalSender());
-		createLabelValuePair(detailsPanel, "", "");
-		createLabelValuePair(detailsPanel, "To Party ID:", selected.getToPartyId());
-		createLabelValuePair(detailsPanel, "To Party Role:", selected.getToPartyRole());
-		createLabelValuePair(detailsPanel, "Final Recipient:", selected.getFinalRecipient());
-		createLabelValuePair(detailsPanel, "", "");
-		createLabelValuePair(detailsPanel, "Service:", selected.getService());
-		createLabelValuePair(detailsPanel, "Action:", selected.getAction());
-		createLabelValuePair(detailsPanel, "", "");
-		createLabelValuePair(detailsPanel, "Message received time:", selected.getReceivedTimestamp());
+		addEmptyRowToDetails();
 
-		JLabel key = new JLabel("Message directory:");
-		detailsPanel.add(key);
+		final JFormattedTextField toPartyId = ConfigTabHelper.addTextFieldRow(null, detailsPanel, "To Party ID",
+				message.getMessageProperties().getToPartyId(), 10);
+		toPartyId.setEditable(detailsEditable());
+		toPartyId.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setToPartyId(toPartyId.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
-		final JLabel log3 = new JLabel(selected.getMessageDir().getAbsolutePath().replace('\\', '/'));
-		detailsPanel.add(log3);
+		final JFormattedTextField toPartyRole = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"To Party Role", message.getMessageProperties().getToPartyRole(), 10);
+		toPartyRole.setEditable(detailsEditable());
+		toPartyRole.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setToPartyRole(toPartyRole.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
+		final JFormattedTextField finalRecipient = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"Final Recipient", message.getMessageProperties().getFinalRecipient(), 40);
+		finalRecipient.setEditable(detailsEditable());
+		finalRecipient.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setFinalRecipient(finalRecipient.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
+
+		addEmptyRowToDetails();
+		
+		final JFormattedTextField service = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"Service", message.getMessageProperties().getService(), 40);
+		service.setEditable(detailsEditable());
+		service.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setService(service.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
+
+		final JFormattedTextField action = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"Action", message.getMessageProperties().getAction(), 40);
+		action.setEditable(detailsEditable());
+		action.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setAction(action.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
+		
+		addEmptyRowToDetails();
+		
+		int additionalRows = additionalDetailRows();
+		
+		addEmptyRowToDetails();
+		
+		final JFormattedTextField msgDir = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"Message directory", message.getMessageDir().getAbsolutePath().replace('\\', '/'), 40);
+		msgDir.setEditable(false);
+		
 		JButton openButton = new JButton(UIManager.getIcon("FileView.directoryIcon"));
 		openButton.setToolTipText("Open directory");
 		openButton.addActionListener(new ActionListener() {
@@ -132,7 +225,7 @@ public class MessageDetail extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					Desktop.getDesktop().open(selected.getMessageDir());
+					Desktop.getDesktop().open(message.getMessageDir());
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(MessageDetail.this, e1.getMessage(), "Open directory failed!", JOptionPane.ERROR_MESSAGE);
 				}
@@ -140,23 +233,37 @@ public class MessageDetail extends JPanel {
 			}
 		});
 		detailsPanel.add(openButton);
-
-		SpringUtilities.makeCompactGrid(detailsPanel,
-				17, 3, //rows, cols
-				6, 6,        //initX, initY
-				6, 6);       //xPad, yPad
+		
+		SpringUtilities.makeCompactGrid(detailsPanel, 
+				(16+additionalRows), 3, // rows, // cols
+				6, 6, // initX, initY
+				6, 6); // xPad, yPad
 
 		detailsPanel.setOpaque(true);
-		return detailsPanel;
 	}
+	
+	abstract void buildFilesPanel();
 
-	private void createLabelValuePair(JPanel detailsPanel, String label, String value) {
-		JLabel key = new JLabel(label);
-		detailsPanel.add(key);
-
-		JLabel vLabel = new JLabel(value);
-		detailsPanel.add(vLabel);
-
+	private void addEmptyRowToDetails() {
+		detailsPanel.add(new JLabel(""));
+		detailsPanel.add(new JLabel(""));
 		detailsPanel.add(new JLabel(""));
 	}
+	
+	void buildActionPanel(){
+		actionPanel = new JPanel();
+		
+		JButton actionButton = buildActionButton();
+				
+		actionPanel.add(actionButton);
+	}
+	
+	
+
+	abstract boolean detailsEditable();
+	
+	abstract int additionalDetailRows();
+	
+	abstract JButton buildActionButton();
+	
 }

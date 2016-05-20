@@ -20,4 +20,6 @@ public class DomibusConnectorRunnableConstants {
     public static final String INCOMING_MESSAGES_DEFAULT_DIR = "messages/incoming";
     public static final String OUTGOING_MESSAGES_DEFAULT_DIR = "messages/outgoing";
 
+    public static final int MESSAGE_TYPE_OUTGOING = 1;
+    public static final int MESSAGE_TYPE_INCOMING = 2;
 }

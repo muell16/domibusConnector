@@ -1,5 +1,6 @@
 package eu.domibus.connector.gui.main.details;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -43,8 +44,11 @@ public class ExportMessagesDetail extends JPanel {
 
 	static final int BUFFER = 2048;
 
-	public ExportMessagesDetail(final JTable messagesResultTable, JFrame exportFrame2){
-		this.exportFrame = exportFrame2;
+	public ExportMessagesDetail(final JTable messagesResultTable){
+		exportFrame = new JFrame("Export Messages");
+		exportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		exportFrame.setSize(new Dimension(500, 800));
+		
 		final JPanel exportPanel = new JPanel();
 
 		exportPanel.setLayout(new GridBagLayout());
@@ -110,6 +114,11 @@ public class ExportMessagesDetail extends JPanel {
 
 		this.add(exportPanel);
 		this.setVisible(true);
+		
+		exportFrame.setContentPane(this);
+		exportFrame.pack();
+		exportFrame.setLocationRelativeTo(null);
+		exportFrame.setVisible(true);
 	}
 
 	private void export(JTable messagesResultTable){

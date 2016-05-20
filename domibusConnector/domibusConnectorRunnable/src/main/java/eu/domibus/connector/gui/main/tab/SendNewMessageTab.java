@@ -1,7 +1,6 @@
 package eu.domibus.connector.gui.main.tab;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,23 +8,26 @@ import java.io.File;
 import java.util.Date;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.config.tabs.ConfigTabHelper;
-import eu.domibus.connector.gui.main.details.MessageDetail;
-import eu.domibus.connector.gui.main.details.SendNewMessageDetail;
+import eu.domibus.connector.gui.main.data.Message;
+import eu.domibus.connector.gui.main.details.NewMessageDetail;
+import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
 import eu.domibus.connector.runnable.util.DomibusConnectorRunnableConstants;
 import eu.domibus.connector.runnable.util.DomibusConnectorRunnableUtil;
 
 public class SendNewMessageTab extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9030411701417070566L;
 	private File messageFolder;
 	private String nationalMessageId;
-	JFrame messageDetailFrame;
 	
 	public SendNewMessageTab(){
 		JPanel helpPanel = ConfigTabHelper.buildHelpPanel("Send new message Help", "DatabaseConfigurationHelp.htm");
@@ -69,12 +71,16 @@ public class SendNewMessageTab extends JPanel {
 				if(!messageFolder.mkdir()){
 					JOptionPane.showMessageDialog(SendNewMessageTab.this, "The Folder "+messageFolder.getAbsolutePath()+" could not be created!", "Exception", JOptionPane.ERROR_MESSAGE);
 				}
-				messageDetailFrame = new JFrame("Send New Message "+nationalMessageId);
-				messageDetailFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				messageDetailFrame.setContentPane(new SendNewMessageDetail());
-				messageDetailFrame.setSize(new Dimension(500, 800));
-				messageDetailFrame.pack();
-				messageDetailFrame.setVisible(true);
+				Message newMessage = new Message();
+				DomibusConnectorMessageProperties messageProperties = new DomibusConnectorMessageProperties();
+				newMessage.setMessageProperties(messageProperties);
+				newMessage.getMessageProperties().setNationalMessageId(nationalMessageId);
+				newMessage.setMessageDir(messageFolder);
+				newMessage.getMessageProperties().setFromPartyId(ConnectorProperties.gatewayNameValue);
+				newMessage.getMessageProperties().setFromPartyRole(ConnectorProperties.gatewayRoleValue);
+				File messagePropertiesFile = new File(messageFolder, ConnectorProperties.messagePropertiesFileName);
+				DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, messagePropertiesFile);
+				new NewMessageDetail(newMessage, null);
 			}
 		});
 		

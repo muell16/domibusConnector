@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,14 +29,10 @@ public class ConfigHelp extends JFrame {
 		cp = getContentPane();
 		try {
 		      URL url = this.getClass().getResource(helpFileName);
-		      // Only create the window once.
 		      if (help == null) {
-		        // System.out.println("Creat-ing help window for " + url);
 		        help = new JEditorPane(url);
-		        // System.out.println("Done!");
 		        help.setEditable(false);
 		        JScrollPane scroller = new JScrollPane();
-//		        scroller.setBorder(BorderFactory.createTitledBorder("Database Configuration Help"));
 		        scroller.getViewport().add(help);
 		        cp.add(BorderLayout.CENTER, scroller);
 		        addWindowListener(new WindowListener() {

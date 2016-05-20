@@ -1,6 +1,7 @@
 package eu.domibus.connector.gui.config.tabs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -26,16 +27,17 @@ public class ConfigDatabaseTab extends JPanel {
 		setLayout(mgr);
 		add(helpPanel, BorderLayout.EAST);
 
+		JPanel dbConnectionPanel = buildDBConnectionPanel();
+		JPanel connectionPoolPanel = buildConnectionPoolPanel();
 		
 		JPanel disp = new JPanel();
+		disp.setPreferredSize(new Dimension(975, 450));
 		
-		
-		JPanel dbConnectionPanel = buildDBConnectionPanel();
-		dbConnectionPanel.setVisible(true);
 		disp.add(dbConnectionPanel);
-		
-		JPanel connectionPoolPanel = buildConnectionPoolPanel();
 		disp.add(connectionPoolPanel);
+		
+		dbConnectionPanel.setVisible(true);
+		
 		
 		add(disp);
 		

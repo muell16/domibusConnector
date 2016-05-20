@@ -43,13 +43,15 @@ public class DomibusConnectorConfigUI extends JFrame {
 		});
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setSize(new Dimension(600, 650));
+        setPreferredSize(new Dimension(700, 650));
         setTitle("DomibusConnector Configuration UI");
 
         setState(Frame.NORMAL);
         getContentPane().add(new ConfigMenu(this), BorderLayout.PAGE_START);
         getContentPane().add(new ConfigTab(), BorderLayout.CENTER);
         getContentPane().add(new ConfigButtonBar(), BorderLayout.PAGE_END);
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
         
         if(!ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists()){

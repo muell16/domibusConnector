@@ -13,8 +13,22 @@ import eu.domibus.connector.runnable.util.DomibusConnectorRunnableUtil;
 
 public class MessagesReader {
 
-public static List<Message> readMessages(File messagesDir) throws Exception{
+public static List<Message> readMessages(String msgDirPropertyKey, String msgDirPropertyValue) throws Exception{
+	
+	if(msgDirPropertyValue == null){
 		
+		throw new Exception("The configured parameter '"+msgDirPropertyKey+"' is not set properly! Set value is: "+msgDirPropertyValue);
+	}
+
+	File messagesDir = new File(msgDirPropertyValue);
+	
+	if(!messagesDir.exists()){
+		throw new Exception("The configured directory to parameter '"+msgDirPropertyKey+"' with value '"+msgDirPropertyValue+"' does not exist!");
+	}
+	
+	if(!messagesDir.isDirectory()){
+		throw new Exception("The configured directory to parameter '"+msgDirPropertyKey+"' with value '"+msgDirPropertyValue+"' is not a directory!");
+	}
 		
 		if(StringUtils.isEmpty(ConnectorProperties.messagePropertiesFileName)){
 			throw new Exception("The configured property '"+ConnectorProperties.OTHER_MSG_PROPERTY_FILE_NAME_KEY+"' is missing or empty!");
@@ -31,19 +45,35 @@ public static List<Message> readMessages(File messagesDir) throws Exception{
 							subFile, ConnectorProperties.messagePropertiesFileName);
 					if(messageProperties!=null){
 						Message message = new Message();
-						message.setAction(convertText(messageProperties.getAction()));
-						message.setFinalRecipient(convertText(messageProperties.getFinalRecipient()));
-						message.setFromPartyId(convertText(messageProperties.getFromPartyId()));
-						message.setOriginalSender(convertText(messageProperties.getOriginalSender()));
-						message.setReceivedTimestamp(convertText(messageProperties.getMessageReceivedDatetime()));
-						message.setService(convertText(messageProperties.getService()));
-						message.setToPartyId(convertText(messageProperties.getToPartyId()));
-						message.setEbmsMessageId(convertText(messageProperties.getEbmsMessageId()));
-						message.setFromPartyRole(convertText(messageProperties.getFromPartyRole()));
+
+						message.setMessageProperties(messageProperties);
 						message.setMessageDir(subFile);
-						message.setNationalMessageId(convertText(messageProperties.getNationalMessageId()));
-						message.setToPartyRole(convertText(messageProperties.getToPartyRole()));
-						
+						if(!StringUtils.isEmpty(messageProperties.getContentXmlFileName())){
+							File contentXMLFile = new File(subFile,messageProperties.getContentXmlFileName());
+							if(contentXMLFile.exists()){
+								message.setFormXMLFile(contentXMLFile);
+							}else{
+								messageProperties.setContentXmlFileName("");
+								DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, new File(subFile,ConnectorProperties.messagePropertiesFileName));
+							}
+						}
+						if(!StringUtils.isEmpty(messageProperties.getContentPdfFileName())){
+							File contentPDFFile = new File(subFile,messageProperties.getContentPdfFileName());
+							if(contentPDFFile.exists()){
+								message.setFormPDFFile(contentPDFFile);
+							}else{
+								messageProperties.setContentPdfFileName("");
+								DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, new File(subFile,ConnectorProperties.messagePropertiesFileName));
+							}
+						}
+						for(File messageFile:subFile.listFiles()){
+							String name = messageFile.getName();
+							if(!name.equals(ConnectorProperties.messagePropertiesFileName) && 
+									!(messageProperties.getContentXmlFileName()!=null && name.equals(messageProperties.getContentXmlFileName())) &&
+									!(messageProperties.getContentPdfFileName()!=null && name.equals(messageProperties.getContentPdfFileName()))){
+								message.getAttachments().add(messageFile);
+							}
+						}
 						messages.add(message);
 						
 					}
@@ -54,9 +84,5 @@ public static List<Message> readMessages(File messagesDir) throws Exception{
 		
 		
 		return messages;
-	}
-	
-	private static String convertText(String text){
-		return text!=null?text:"unknown";
 	}
 }

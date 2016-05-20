@@ -147,9 +147,13 @@ public class DomibusConnectorRunnableUtil {
         messageProperties.setOriginalSender(messageDetails.getOriginalSender());
         messageProperties.setAction(messageDetails.getAction().getAction());
         messageProperties.setService(messageDetails.getService().getService());
-        messageProperties.setMessageReceivedDatetime(sdf2.format(messageReceived));
+        messageProperties.setMessageReceivedDatetime(convertDateToProperty(messageReceived));
 
         return messageProperties;
+    }
+    
+    public static String convertDateToProperty(Date date){
+    	return sdf2.format(date);
     }
 
     public static void storeMessagePropertiesToFile(DomibusConnectorMessageProperties messageProperties,

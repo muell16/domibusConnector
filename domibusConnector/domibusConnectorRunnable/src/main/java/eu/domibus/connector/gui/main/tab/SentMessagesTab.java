@@ -2,8 +2,9 @@ package eu.domibus.connector.gui.main.tab;
 
 import java.util.List;
 
+import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.main.data.Message;
-import eu.domibus.connector.gui.main.reader.SentMessagesReader;
+import eu.domibus.connector.gui.main.reader.MessagesReader;
 import eu.domibus.connector.runnable.util.DomibusConnectorRunnableConstants;
 
 public class SentMessagesTab extends MessagesTab {
@@ -12,11 +13,11 @@ public class SentMessagesTab extends MessagesTab {
 	 * 
 	 */
 	private static final long serialVersionUID = 1221226573691412944L;
-	private static final String STATUS_NEW = "NEW";
-	private static final String STATUS_READY = "READY TO BE SENT";
-	private static final String STATUS_PROCESSING = "PROCESSING";
-	private static final String STATUS_SENT = "SENT";
-	private static final String STATUS_FAILED = "FAILED";
+	static final String STATUS_NEW = "NEW";
+	static final String STATUS_READY = "READY TO BE SENT";
+	static final String STATUS_PROCESSING = "PROCESSING";
+	static final String STATUS_SENT = "SENT";
+	static final String STATUS_FAILED = "FAILED";
 	
 	public SentMessagesTab() {
 		super();
@@ -24,7 +25,7 @@ public class SentMessagesTab extends MessagesTab {
 
 	@Override
 	public List<Message> loadMessages() throws Exception {
-		return SentMessagesReader.readMessages();
+		return MessagesReader.readMessages(ConnectorProperties.OTHER_OUTGOING_MSG_DIR_KEY, ConnectorProperties.outgoingMessagesDirectory);
 	}
 
 	@Override
@@ -46,5 +47,15 @@ public class SentMessagesTab extends MessagesTab {
 		}
 		}
 		return "unknown";
+	}
+
+	@Override
+	public int getMessageType() {
+		return DomibusConnectorRunnableConstants.MESSAGE_TYPE_OUTGOING;
+	}
+
+	@Override
+	public String getMessageDatetime(Message msg) {
+		return msg.getMessageProperties().getMessageSentDatetime();
 	}
 }

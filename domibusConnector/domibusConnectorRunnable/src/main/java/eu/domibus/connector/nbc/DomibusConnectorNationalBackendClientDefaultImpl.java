@@ -133,8 +133,10 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                         + messageFolder.getAbsolutePath() + " to " + workMessageFolder.getAbsolutePath());
             }
 
+            DomibusConnectorMessageProperties messageProperties = DomibusConnectorRunnableUtil.loadMessageProperties(
+                    workMessageFolder, messagePropertiesFileName);
             try {
-                processMessageFolderFiles(message, workMessageFolder);
+                processMessageFolderFiles(message, workMessageFolder, messageProperties);
             } catch (Exception e) {
                 File failedMessageFolder = new File(oldMessageFolderName
                         + DomibusConnectorRunnableConstants.MESSAGE_FAILED_FOLDER_POSTFIX);
@@ -149,8 +151,11 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                 throw e;
             }
 
+            messageProperties.setMessageSentDatetime(DomibusConnectorRunnableUtil.convertDateToProperty(new Date()));
+            DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, new File(messagePropertiesFileName));
             File doneMessageFolder = new File(oldMessageFolderName
                     + DomibusConnectorRunnableConstants.MESSAGE_SENT_FOLDER_POSTFIX);
+            
             LOGGER.debug("Try to rename message folder {} to {}", workMessageFolder.getAbsolutePath(),
                     doneMessageFolder.getAbsolutePath());
             try {
@@ -389,10 +394,8 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
 
     }
 
-    private void processMessageFolderFiles(Message message, File workMessageFolder)
+    private void processMessageFolderFiles(Message message, File workMessageFolder, DomibusConnectorMessageProperties messageProperties)
             throws DomibusConnectorNationalBackendClientException {
-        DomibusConnectorMessageProperties messageProperties = DomibusConnectorRunnableUtil.loadMessageProperties(
-                workMessageFolder, messagePropertiesFileName);
         try {
             util.convertMessagePropertiesToMessageDetails(messageProperties, message.getMessageDetails());
         } catch (DomibusConnectorRunnableException e) {

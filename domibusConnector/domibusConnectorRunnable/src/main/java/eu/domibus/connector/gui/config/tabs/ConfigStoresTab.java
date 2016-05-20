@@ -61,8 +61,9 @@ public class ConfigStoresTab extends JPanel {
 				    int returnVal = fc3.showOpenDialog(ConfigStoresTab.this);
 
 		            if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            	ConnectorProperties.truststorePathValue = fc3.getSelectedFile().getAbsolutePath().replace('\\', '/');
-		            	log3.setText(fc3.getSelectedFile().getAbsolutePath().replace('\\', '/'));
+		            	String value = "file:"+fc3.getSelectedFile().getAbsolutePath().replace('\\', '/');
+		            	ConnectorProperties.truststorePathValue = value;
+		            	log3.setText(value);
 		            }
 		   
 			}
@@ -100,8 +101,9 @@ public class ConfigStoresTab extends JPanel {
 				    int returnVal = fc2.showOpenDialog(ConfigStoresTab.this);
 
 		            if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            	ConnectorProperties.securityKeystorePathValue = fc2.getSelectedFile().getAbsolutePath().replace('\\', '/');
-		            	log2.setText(fc2.getSelectedFile().getAbsolutePath().replace('\\', '/'));
+		            	String value = "file:"+fc2.getSelectedFile().getAbsolutePath().replace('\\', '/');
+		            	ConnectorProperties.securityKeystorePathValue = value;
+		            	log2.setText(value);
 		            }
 		   
 			}
@@ -156,8 +158,9 @@ public class ConfigStoresTab extends JPanel {
 				    int returnVal = fc.showOpenDialog(ConfigStoresTab.this);
 
 		            if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            	ConnectorProperties.evidencesKeystorePathValue = fc.getSelectedFile().getAbsolutePath().replace('\\', '/');
-		            	log.setText(fc.getSelectedFile().getAbsolutePath().replace('\\', '/'));
+		            	String value = "file:"+fc.getSelectedFile().getAbsolutePath().replace('\\', '/');
+		            	ConnectorProperties.evidencesKeystorePathValue = value;
+		            	log.setText(value);
 		            }
 		   
 			}
