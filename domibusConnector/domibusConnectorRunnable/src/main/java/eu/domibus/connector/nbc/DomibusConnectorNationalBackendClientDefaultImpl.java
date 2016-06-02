@@ -22,6 +22,7 @@ import eu.domibus.connector.common.message.MessageAttachment;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageContent;
 import eu.domibus.connector.common.message.MessageError;
+import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
@@ -152,7 +153,7 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
             }
 
             messageProperties.setMessageSentDatetime(DomibusConnectorRunnableUtil.convertDateToProperty(new Date()));
-            DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, new File(messagePropertiesFileName));
+            DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, new File(workMessageFolder, messagePropertiesFileName));
             File doneMessageFolder = new File(oldMessageFolderName
                     + DomibusConnectorRunnableConstants.MESSAGE_SENT_FOLDER_POSTFIX);
             

@@ -10,15 +10,17 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.cxf.common.util.StringUtils;
+
 public class ConnectorProperties {
 
 	
-	public static final String CONNECTOR_PROPERTIES_DIR_PATH = System.getProperty("user.dir") + File.separator + "conf";
-	public static final File CONNECTOR_PROPERTIES_DIR = new File(CONNECTOR_PROPERTIES_DIR_PATH);
-	public static final String CONNECTOR_PROPERTIES_FILE_PATH = CONNECTOR_PROPERTIES_DIR + File.separator + "connector.properties";
-	public static final File CONNECTOR_PROPERTIES_FILE = new File(CONNECTOR_PROPERTIES_FILE_PATH);
+	public static String CONNECTOR_PROPERTIES_DIR_PATH = System.getProperty("user.dir") + File.separator + "conf";
+	public static File CONNECTOR_PROPERTIES_DIR = new File(CONNECTOR_PROPERTIES_DIR_PATH);
+	public static String CONNECTOR_PROPERTIES_FILE_PATH = CONNECTOR_PROPERTIES_DIR + File.separator + "connector.properties";
+	public static File CONNECTOR_PROPERTIES_FILE = new File(CONNECTOR_PROPERTIES_FILE_PATH);
 	
-	public static final String LOG4J_CONFIG_FILE_PATH = CONNECTOR_PROPERTIES_DIR + File.separator + "log4j.properties";
+	public static String LOG4J_CONFIG_FILE_PATH = CONNECTOR_PROPERTIES_DIR + File.separator + "log4j.properties";
 	
 	public static final String DATABASE_DIALECT_KEY = Messages.getString("connector.database.dialect.key");
 	public static final String DATABASE_DIALECT_LABEL = Messages.getString("connector.database.dialect.label");
@@ -216,6 +218,15 @@ public class ConnectorProperties {
 	private final static Properties properties = new Properties();
 
     public static boolean loadConnectorProperties() {
+    	String connectorProperties = System.getProperty("connector.properties");
+    	if(!StringUtils.isEmpty(connectorProperties)){
+    		CONNECTOR_PROPERTIES_DIR_PATH = connectorProperties.substring(0, connectorProperties.lastIndexOf(File.separator));
+    		CONNECTOR_PROPERTIES_DIR = new File(CONNECTOR_PROPERTIES_DIR_PATH);
+    		CONNECTOR_PROPERTIES_FILE_PATH = connectorProperties;
+    		CONNECTOR_PROPERTIES_FILE = new File(CONNECTOR_PROPERTIES_FILE_PATH);
+    		
+    	}
+    	
     	FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(CONNECTOR_PROPERTIES_FILE);
@@ -242,6 +253,14 @@ public class ConnectorProperties {
         setPropertyValues();
         
         return true;
+    }
+    
+    public static boolean checkDatabaseSettings(){
+    	return databaseDialectValue!=null && databaseDriverClassNameValue!=null 
+    			&& databaseUrlValue!=null && databaseUsernameValue!=null 
+    			&& databasePasswordValue!=null && c3p0acquireIncrementValue!=null
+    			&& c3p0maxIdleTimeValue!=null && c3p0maxPoolSizeValue!=null
+    			&& c3p0minPoolSizeValue!=null;
     }
 
 

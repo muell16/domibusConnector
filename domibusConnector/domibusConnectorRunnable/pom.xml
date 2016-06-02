@@ -15,11 +15,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorGUI</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
 			<version>11.1.0.7.0</version>

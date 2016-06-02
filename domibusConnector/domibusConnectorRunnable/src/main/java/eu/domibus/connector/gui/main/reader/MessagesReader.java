@@ -17,21 +17,21 @@ public static List<Message> readMessages(String msgDirPropertyKey, String msgDir
 	
 	if(msgDirPropertyValue == null){
 		
-		throw new Exception("The configured parameter '"+msgDirPropertyKey+"' is not set properly! Set value is: "+msgDirPropertyValue);
+		throw new Exception("The configured parameter '"+msgDirPropertyKey+"' is not set properly! Set value is: "+msgDirPropertyValue+"\nPlease start the domibusConnectorConfigurator and configure the property.");
 	}
 
 	File messagesDir = new File(msgDirPropertyValue);
 	
 	if(!messagesDir.exists()){
-		throw new Exception("The configured directory to parameter '"+msgDirPropertyKey+"' with value '"+msgDirPropertyValue+"' does not exist!");
+		throw new Exception("The configured directory to parameter '"+msgDirPropertyKey+"' with value '"+msgDirPropertyValue+"' does not exist!\nPlease start the domibusConnectorConfigurator and configure the property.");
 	}
 	
 	if(!messagesDir.isDirectory()){
-		throw new Exception("The configured directory to parameter '"+msgDirPropertyKey+"' with value '"+msgDirPropertyValue+"' is not a directory!");
+		throw new Exception("The configured directory to parameter '"+msgDirPropertyKey+"' with value '"+msgDirPropertyValue+"' is not a directory!\nPlease start the domibusConnectorConfigurator and configure the property.");
 	}
 		
 		if(StringUtils.isEmpty(ConnectorProperties.messagePropertiesFileName)){
-			throw new Exception("The configured property '"+ConnectorProperties.OTHER_MSG_PROPERTY_FILE_NAME_KEY+"' is missing or empty!");
+			throw new Exception("The configured property '"+ConnectorProperties.OTHER_MSG_PROPERTY_FILE_NAME_KEY+"' is missing or empty!\nPlease start the domibusConnectorConfigurator and configure the property.");
 		}
 		
 		List<Message> messages = new ArrayList<Message>();

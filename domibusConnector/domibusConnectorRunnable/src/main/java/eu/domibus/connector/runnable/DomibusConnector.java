@@ -1,11 +1,13 @@
 package eu.domibus.connector.runnable;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
+import eu.domibus.connector.gui.DomibusConnectorConfigurator;
 import eu.domibus.connector.gui.config.DomibusConnectorConfigUI;
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 
@@ -23,18 +25,42 @@ public class DomibusConnector {
         if (!StringUtils.hasText(connectorProperties)) {
             connectorProperties = ConnectorProperties.CONNECTOR_PROPERTIES_FILE_PATH;
         }
+        if(StringUtils.hasText(connectorProperties)){
+        	System.setProperty("connector.properties", connectorProperties);
+        }
+        ConnectorProperties.loadConnectorProperties();
+        if (!ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists()) {
+//        	DomibusConnectorConfigurator.main(new String[]{});
+        	
+        	try {
+				Process process = new ProcessBuilder(
+						"java", "-cp",System.getProperty("java.class.path"),"eu.domibus.connector.gui.DomibusConnectorConfigurator").start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
+//        	Runtime runTime = Runtime.getRuntime();
+//			try {
+//				Process process = runTime.exec("java -classpath eu.domibus.connector.gui.DomibusConnectorConfigurator");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//        	new DomibusConnectorConfigUI();
+        	System.exit(0);
+        }
+        
+        
+        if(!ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists()){
+			ConnectorProperties.loadConnectorProperties();
+		}
 
         String loggingProperties = System.getProperty("logging.properties");
         if (!StringUtils.hasText(loggingProperties)) {
             loggingProperties = System.getenv("logging.properties");
         }
 
-        if (!StringUtils.hasText(connectorProperties)) {
-        	new DomibusConnectorConfigUI();
-            throw new RuntimeException(
-                    "No connector properties set! Please use the arg -Dconnector.properties='path to the connector properties file'");
-        }
-        System.setProperty("connector.properties", ConnectorProperties.CONNECTOR_PROPERTIES_FILE_PATH);
 
         if (!StringUtils.hasText(loggingProperties)) {
         	DomibusConnector.class.getResource("log4j.properties");
