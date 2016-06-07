@@ -16,6 +16,7 @@
 		<module>domibusConnectorDistribution</module>
 		<module>domibusConnectorMonitoring</module>
 		<module>domibusConnectorRunnable</module>
+		<module>domibusConnectorConfigurator</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
@@ -46,9 +47,9 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<dependencies>
+	<!-- <dependencies>
 	
-		<!-- Spring dependencies -->
+		Spring dependencies
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -85,11 +86,11 @@
 			<artifactId>spring-oxm</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework.version}</version>
-		</dependency> -->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -102,7 +103,7 @@
 			<version>${org.springframework.version}</version>
 		</dependency>
 		
-		<!-- slf4j dependencies -->
+		slf4j dependencies
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -120,7 +121,7 @@
 			<version>${org.slf4j.version}</version>
 		</dependency>
 		
-		<!-- Apache CXF dependencies -->
+		Apache CXF dependencies
 		
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -137,18 +138,18 @@
 			<artifactId>cxf-rt-bindings-soap</artifactId>
 			<version>${org.apache.cxf.version}</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-codegen-plugin</artifactId>
 			<version>${org.apache.cxf.version}</version>
-		</dependency> -->
-		<!-- <dependency>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-rs-extension-providers</artifactId>
 			<version>${org.apache.cxf.version}</version>
-		</dependency> -->
+		</dependency>
 		
-		<!-- Other dependencies -->
+		Other dependencies
 		
 		<dependency>
 			<groupId>junit</groupId>
@@ -201,20 +202,20 @@
 
 		
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>${org.codehaus.jackson}</version>
-		</dependency> -->
+		</dependency>
 
 		
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-ext</artifactId>
 			<version>1.7</version>
-		</dependency> -->
-	</dependencies>
+		</dependency>
+	</dependencies> -->
 	<build>
 		<plugins>
 			<plugin>

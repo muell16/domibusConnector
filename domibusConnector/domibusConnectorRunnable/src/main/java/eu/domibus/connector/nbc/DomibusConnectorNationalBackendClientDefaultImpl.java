@@ -22,7 +22,6 @@ import eu.domibus.connector.common.message.MessageAttachment;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageContent;
 import eu.domibus.connector.common.message.MessageError;
-import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;

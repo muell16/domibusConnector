@@ -30,6 +30,21 @@
 			<includes>
 				<include>*.jar</include>
 			</includes>
+			<excludes>
+				<exclude>*-sources.jar</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorConfigurator/target/
+			</directory>
+			<outputDirectory>${connector.build.dir}
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<excludes>
+				<exclude>*-sources.jar</exclude>
+			</excludes>
 		</fileSet>
 		
 		<!-- ==================== Copying dependency libraries ================= -->

@@ -7,8 +7,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
-import eu.domibus.connector.gui.DomibusConnectorConfigurator;
-import eu.domibus.connector.gui.config.DomibusConnectorConfigUI;
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 
 public class DomibusConnector {
@@ -34,7 +32,7 @@ public class DomibusConnector {
         	
         	try {
 				Process process = new ProcessBuilder(
-						"java", "-cp",System.getProperty("java.class.path"),"eu.domibus.connector.gui.DomibusConnectorConfigurator").start();
+						"java", "-jar","domibusConnectorConfigurator.jar").start();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
