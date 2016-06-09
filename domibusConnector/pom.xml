@@ -15,6 +15,7 @@
 		<module>domibusConnectorCommon</module>
 		<module>domibusConnectorDistribution</module>
 		<module>domibusConnectorMonitoring</module>
+		<module>domibusConnectorConfigurator</module>
 		<module>domibusConnectorRunnable</module>
 	</modules>
 	<!-- Shared version number properties -->
