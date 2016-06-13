@@ -54,5 +54,4 @@ title "DomibusStandaloneConnector"
 
 java -jar %ECDXCONNJAR% 
 
-pause
 :end

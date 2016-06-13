@@ -22,6 +22,8 @@ public class DomibusConnectorMessageProperties {
     private static final String CONTENT_PDF_FILE_PROPERTY_NAME = "content.pdf.file.name";
     private static final String CONTENT_XML_FILE_PROPERTY_NAME = "content.xml.file.name";
     private static final String DETACHED_SIGNATURE_PROPERTY_NAME = "detached.signature.file.name";
+    private static final String MESSAGE_RECEIVED_PROPERTY_NAME = "message.received.datetime";
+    private static final String MESSAGE_SENT_PROPERTY_NAME = "message.sent.datetime";
 
     private final Properties properties = new Properties();
 
@@ -181,6 +183,22 @@ public class DomibusConnectorMessageProperties {
 
     public void setDetachedSignatureFileName(String detachedSignatureFileName) {
         properties.setProperty(DETACHED_SIGNATURE_PROPERTY_NAME, detachedSignatureFileName);
+    }
+    
+    public String getMessageReceivedDatetime(){
+    	return properties.getProperty(MESSAGE_RECEIVED_PROPERTY_NAME);
+    }
+    
+    public void setMessageReceivedDatetime(String messageReceivedDatetime){
+    	properties.setProperty(MESSAGE_RECEIVED_PROPERTY_NAME, messageReceivedDatetime);
+    }
+
+	public String getMessageSentDatetime() {
+		return properties.getProperty(MESSAGE_SENT_PROPERTY_NAME);
+	}
+	
+	public void setMessageSentDatetime(String messageSentDatetime){
+    	properties.setProperty(MESSAGE_SENT_PROPERTY_NAME, messageSentDatetime);
     }
 
 }

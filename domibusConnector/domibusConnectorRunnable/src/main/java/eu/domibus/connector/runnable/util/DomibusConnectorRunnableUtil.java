@@ -30,6 +30,7 @@ public class DomibusConnectorRunnableUtil {
     static org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DomibusConnectorRunnableUtil.class);
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
+    private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     private static final MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap();
 
@@ -129,7 +130,7 @@ public class DomibusConnectorRunnableUtil {
     }
 
     public static DomibusConnectorMessageProperties convertMessageDetailsToMessageProperties(
-            MessageDetails messageDetails) {
+            MessageDetails messageDetails, Date messageReceived) {
 
         DomibusConnectorMessageProperties messageProperties = new DomibusConnectorMessageProperties();
         if (StringUtils.hasText(messageDetails.getEbmsMessageId())) {
@@ -146,8 +147,13 @@ public class DomibusConnectorRunnableUtil {
         messageProperties.setOriginalSender(messageDetails.getOriginalSender());
         messageProperties.setAction(messageDetails.getAction().getAction());
         messageProperties.setService(messageDetails.getService().getService());
+        messageProperties.setMessageReceivedDatetime(convertDateToProperty(messageReceived));
 
         return messageProperties;
+    }
+    
+    public static String convertDateToProperty(Date date){
+    	return sdf2.format(date);
     }
 
     public static void storeMessagePropertiesToFile(DomibusConnectorMessageProperties messageProperties,
@@ -183,6 +189,7 @@ public class DomibusConnectorRunnableUtil {
         if (!messagePropertiesFile.exists()) {
             LOGGER.error("Message properties file '" + messagePropertiesFile.getAbsolutePath()
                     + "' does not exist. Message cannot be processed!");
+            return null;
         }
         DomibusConnectorMessageProperties details = new DomibusConnectorMessageProperties();
         details.loadPropertiesFromFile(messagePropertiesFile);
@@ -205,8 +212,8 @@ public class DomibusConnectorRunnableUtil {
         return confirmationMessage;
     }
 
-    public static String generateNationalMessageId(String postfix) {
-        String natMessageId = sdf.format(new Date()) + "_" + postfix;
+    public static String generateNationalMessageId(String postfix, Date messageReceived) {
+        String natMessageId = sdf.format(messageReceived) + "_" + postfix;
         return natMessageId;
     }
 

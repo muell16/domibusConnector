@@ -3,6 +3,7 @@ package eu.domibus.connector.nbc;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -53,13 +54,13 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
             ImplementationMissingException {
 
         LOGGER.debug("Start searching dir {} for folder with ending {}", outgoingMessagesDir.getAbsolutePath(),
-                DomibusConnectorRunnableConstants.NEW_MESSAGE_FOLDER_POSTFIX);
+                DomibusConnectorRunnableConstants.MESSAGE_READY_FOLDER_POSTFIX);
         List<File> messagesUnsent = new ArrayList<File>();
 
         if (outgoingMessagesDir.listFiles().length > 0) {
             for (File sub : outgoingMessagesDir.listFiles()) {
                 if (sub.isDirectory()
-                        && sub.getName().endsWith(DomibusConnectorRunnableConstants.NEW_MESSAGE_FOLDER_POSTFIX)) {
+                        && sub.getName().endsWith(DomibusConnectorRunnableConstants.MESSAGE_READY_FOLDER_POSTFIX)) {
                     messagesUnsent.add(sub);
                 }
             }
@@ -80,7 +81,7 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                     }
                     if (!StringUtils.hasText(nationalMessageId)) {
                         nationalMessageId = DomibusConnectorRunnableUtil.generateNationalMessageId(messageProperties
-                                .getOriginalSender());
+                                .getOriginalSender(), new Date());
                         LOGGER.debug("No national message ID resolved. Generated " + nationalMessageId);
                     }
 
@@ -132,8 +133,10 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                         + messageFolder.getAbsolutePath() + " to " + workMessageFolder.getAbsolutePath());
             }
 
+            DomibusConnectorMessageProperties messageProperties = DomibusConnectorRunnableUtil.loadMessageProperties(
+                    workMessageFolder, messagePropertiesFileName);
             try {
-                processMessageFolderFiles(message, workMessageFolder);
+                processMessageFolderFiles(message, workMessageFolder, messageProperties);
             } catch (Exception e) {
                 File failedMessageFolder = new File(oldMessageFolderName
                         + DomibusConnectorRunnableConstants.MESSAGE_FAILED_FOLDER_POSTFIX);
@@ -148,8 +151,11 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                 throw e;
             }
 
+            messageProperties.setMessageSentDatetime(DomibusConnectorRunnableUtil.convertDateToProperty(new Date()));
+            DomibusConnectorRunnableUtil.storeMessagePropertiesToFile(messageProperties, new File(workMessageFolder, messagePropertiesFileName));
             File doneMessageFolder = new File(oldMessageFolderName
                     + DomibusConnectorRunnableConstants.MESSAGE_SENT_FOLDER_POSTFIX);
+            
             LOGGER.debug("Try to rename message folder {} to {}", workMessageFolder.getAbsolutePath(),
                     doneMessageFolder.getAbsolutePath());
             try {
@@ -165,10 +171,12 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
     @Override
     public void deliverMessage(Message message) throws DomibusConnectorNationalBackendClientException,
             ImplementationMissingException {
-        String natMessageId = message.getMessageDetails().getNationalMessageId();
+        Date messageReceived = new Date();
+    	String natMessageId = message.getMessageDetails().getNationalMessageId();
+        
         if (!StringUtils.hasText(natMessageId)) {
             natMessageId = DomibusConnectorRunnableUtil.generateNationalMessageId(message.getMessageDetails()
-                    .getFromParty().getPartyId());
+                    .getFromParty().getPartyId(), messageReceived);
             LOGGER.debug("Generated national message ID for incoming message {}", natMessageId);
             message.getMessageDetails().setNationalMessageId(natMessageId);
             util.mergeMessage(message);
@@ -190,7 +198,7 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
 
             messagePropertiesFile = new File(messagePropertiesPath);
             msgProps = DomibusConnectorRunnableUtil.convertMessageDetailsToMessageProperties(message
-                    .getMessageDetails());
+                    .getMessageDetails(), messageReceived);
         }
 
         MessageContent messageContent = message.getMessageContent();
@@ -309,7 +317,7 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
                 String natMessageId = originalMessage.getMessageDetails().getNationalMessageId();
                 if (!StringUtils.hasText(natMessageId)) {
                     natMessageId = DomibusConnectorRunnableUtil.generateNationalMessageId(originalMessage
-                            .getMessageDetails().getFromParty().getPartyId());
+                            .getMessageDetails().getFromParty().getPartyId(), new Date());
                     LOGGER.debug("Generated national message ID for incoming message {}", natMessageId);
                     originalMessage.getMessageDetails().setNationalMessageId(natMessageId);
                     util.mergeMessage(originalMessage);
@@ -386,10 +394,8 @@ public class DomibusConnectorNationalBackendClientDefaultImpl implements Domibus
 
     }
 
-    private void processMessageFolderFiles(Message message, File workMessageFolder)
+    private void processMessageFolderFiles(Message message, File workMessageFolder, DomibusConnectorMessageProperties messageProperties)
             throws DomibusConnectorNationalBackendClientException {
-        DomibusConnectorMessageProperties messageProperties = DomibusConnectorRunnableUtil.loadMessageProperties(
-                workMessageFolder, messagePropertiesFileName);
         try {
             util.convertMessagePropertiesToMessageDetails(messageProperties, message.getMessageDetails());
         } catch (DomibusConnectorRunnableException e) {

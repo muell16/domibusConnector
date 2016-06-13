@@ -16,8 +16,11 @@
 		<fileSet>
 			<directory>${project.basedir}/../docs</directory>
 			<outputDirectory>${documentation.output.dir}</outputDirectory>
+			<includes>
+				<include>*.pdf</include>
+			</includes>
 		</fileSet>
-		<fileSet>
+		<!-- <fileSet>
 			<directory>${project.basedir}/../ReleaseNotes
 			</directory>
 			<outputDirectory>${release.notes.output.dir}
@@ -25,7 +28,7 @@
 			<includes>
 				<include>*.txt</include>
 			</includes>
-		</fileSet>
+		</fileSet> -->
 		
 		
 		<!-- ==================== Copying Module's JAR files ================= -->
