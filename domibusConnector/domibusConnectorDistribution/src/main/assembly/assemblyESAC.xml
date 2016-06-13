@@ -34,7 +34,7 @@
 				<exclude>*-sources.jar</exclude>
 			</excludes>
 		</fileSet>
-		<fileSet>
+		<!-- <fileSet>
 			<directory>${project.basedir}/../domibusConnectorConfigurator/target/
 			</directory>
 			<outputDirectory>${connector.build.dir}
@@ -45,7 +45,8 @@
 			<excludes>
 				<exclude>*-sources.jar</exclude>
 			</excludes>
-		</fileSet>
+			
+		</fileSet> -->
 		
 		<!-- ==================== Copying dependency libraries ================= -->
 		<fileSet>
@@ -70,10 +71,19 @@
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorRunnable/src/main/resources
 			</directory>
+			<outputDirectory>${documentation.output.dir}exampleProperties
+			</outputDirectory>
+			<includes>
+				<include>connector.properties</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorRunnable/src/main/resources
+			</directory>
 			<outputDirectory>${connector.build.dir}conf
 			</outputDirectory>
 			<includes>
-				<include>*.properties</include>
+				<include>log4j.properties</include>
 			</includes>
 		</fileSet>
 
@@ -94,4 +104,12 @@
 		</fileSet>
 		
 	</fileSets>
+	<files>
+	<file>
+		<source>${project.basedir}/../domibusConnectorConfigurator/target/domibusConnectorConfigurator-${version}.jar
+		</source>
+		<outputDirectory>${connector.build.dir}</outputDirectory>
+		<destName>domibusConnectorConfigurator.jar</destName>
+	</file>
+	</files>
 </assembly>
