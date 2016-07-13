@@ -19,6 +19,7 @@ public class DomibusConnectorMessageProperties {
     private static final String FINAL_RECIPIENT_PROPERTY_NAME = "final.recipient";
     private static final String NATIONAL_MESSAGE_ID_PROPERTY_NAME = "national.message.id";
     private static final String EBMS_MESSAGE_ID_PROPERTY_NAME = "ebms.message.id";
+    private static final String CONVERSATION_ID_PROPERTY_NAME = "conversation.id";
     private static final String CONTENT_PDF_FILE_PROPERTY_NAME = "content.pdf.file.name";
     private static final String CONTENT_XML_FILE_PROPERTY_NAME = "content.xml.file.name";
     private static final String DETACHED_SIGNATURE_PROPERTY_NAME = "detached.signature.file.name";
@@ -159,6 +160,14 @@ public class DomibusConnectorMessageProperties {
 
     public void setEbmsMessageId(String ebmsMessageId) {
         properties.setProperty(EBMS_MESSAGE_ID_PROPERTY_NAME, ebmsMessageId);
+    }
+    
+    public String getConversationId(){
+    	return properties.getProperty(CONVERSATION_ID_PROPERTY_NAME);
+    }
+    
+    public void setConversationId(String conversationId){
+    	properties.setProperty(CONVERSATION_ID_PROPERTY_NAME, conversationId);
     }
 
     public String getContentPdfFileName() {

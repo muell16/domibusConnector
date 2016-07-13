@@ -127,6 +127,10 @@ public class DomibusConnectorRunnableUtil {
             throw new DomibusConnectorRunnableException("Cannot process message without definition of service!");
         }
 
+        String conversationId = properties.getConversationId();
+        if(StringUtils.hasText(conversationId)){
+        	messageDetails.setConversationId(conversationId);
+        }
     }
 
     public static DomibusConnectorMessageProperties convertMessageDetailsToMessageProperties(
@@ -138,6 +142,9 @@ public class DomibusConnectorRunnableUtil {
         }
         if (StringUtils.hasText(messageDetails.getNationalMessageId())) {
             messageProperties.setNationalMessageId(messageDetails.getNationalMessageId());
+        }
+        if (StringUtils.hasText(messageDetails.getConversationId())) {
+            messageProperties.setConversationId(messageDetails.getConversationId());
         }
         messageProperties.setToPartyId(messageDetails.getToParty().getPartyId());
         messageProperties.setToPartyRole(messageDetails.getToParty().getRole());

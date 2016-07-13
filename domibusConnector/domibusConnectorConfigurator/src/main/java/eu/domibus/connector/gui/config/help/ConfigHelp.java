@@ -81,7 +81,8 @@ public class ConfigHelp extends JFrame {
 					}
 				});
 		       
-		        setSize(500, 400);
+		        setSize(700, 700);
+		        setLocationRelativeTo(null);
 		      } else {
 		        System.out.println("Re-using help window!");
 		      }

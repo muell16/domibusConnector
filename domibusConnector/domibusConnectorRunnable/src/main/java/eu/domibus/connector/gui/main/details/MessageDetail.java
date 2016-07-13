@@ -113,6 +113,17 @@ public abstract class MessageDetail extends JPanel {
 			}
 		});
 		detailsPanel.add(new JLabel(""));
+		
+		final JFormattedTextField conversationId = ConfigTabHelper.addTextFieldRow(null, detailsPanel,
+				"Conversation ID", message.getMessageProperties().getConversationId(), 40);
+		conversationId.setEditable(detailsEditable());
+		conversationId.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				message.getMessageProperties().setConversationId(conversationId.getText());
+			}
+		});
+		detailsPanel.add(new JLabel(""));
 
 		addEmptyRowToDetails();
 
@@ -235,7 +246,7 @@ public abstract class MessageDetail extends JPanel {
 		detailsPanel.add(openButton);
 		
 		SpringUtilities.makeCompactGrid(detailsPanel, 
-				(16+additionalRows), 3, // rows, // cols
+				(17+additionalRows), 3, // rows, // cols
 				6, 6, // initX, initY
 				6, 6); // xPad, yPad
 

@@ -30,10 +30,10 @@ public class SendNewMessageTab extends JPanel {
 	private String nationalMessageId;
 	
 	public SendNewMessageTab(){
-		JPanel helpPanel = ConfigTabHelper.buildHelpPanel("Send new message Help", "DatabaseConfigurationHelp.htm");
-		BorderLayout mgr = new BorderLayout();
-		setLayout(mgr);
-		add(helpPanel, BorderLayout.EAST);
+//		JPanel helpPanel = ConfigTabHelper.buildHelpPanel("Send new message Help", "DatabaseConfigurationHelp.htm");
+//		BorderLayout mgr = new BorderLayout();
+//		setLayout(mgr);
+//		add(helpPanel, BorderLayout.EAST);
 
 		
 		JPanel disp = new JPanel();

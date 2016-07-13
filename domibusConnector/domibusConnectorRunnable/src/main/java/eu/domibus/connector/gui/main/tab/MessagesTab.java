@@ -214,7 +214,7 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		
 		switch(e.getActionCommand()){
-		case AC_REFRESH:refresh();System.out.println(AC_REFRESH);break;
+		case AC_REFRESH:refresh();break;
 		case AC_EXPORT:
 		case AC_DELETE:handleSelected(e.getActionCommand());break;
 		case AC_STATISTICS:showStatisticsInfo();break;

@@ -59,7 +59,7 @@
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
 				<configuration> <archive> <manifest> <addClasspath>true</addClasspath> <mainClass>at.gv.brz.bjujq.ncdb.cdc.batch.NcdbCourtDataCollector</mainClass> 
 				</manifest> </archive> </configuration> </plugin> -->
-			<!-- <plugin>
+			 <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -70,7 +70,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<outputDirectory>${project.build.directory}/classes/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -85,14 +85,14 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>../lib/</classpathPrefix>
+							<classpathPrefix>lib/</classpathPrefix>
 							<mainClass>eu.domibus.connector.configurator.DomibusConnectorConfigurator</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
-			</plugin> -->
+			</plugin>
 			
-			<plugin>
+			<!-- <plugin>
   <artifactId>maven-assembly-plugin</artifactId>
   <configuration>
     <archive>
@@ -107,14 +107,14 @@
   </configuration>
   <executions>
     <execution>
-      <id>make-assembly</id> <!-- this is used for inheritance merges -->
-      <phase>package</phase> <!-- bind to the packaging phase -->
+      <id>make-assembly</id> this is used for inheritance merges
+      <phase>package</phase> bind to the packaging phase
       <goals>
         <goal>single</goal>
       </goals>
     </execution>
   </executions>
-</plugin>
+</plugin> -->
 
 		</plugins>
 		<pluginManagement>
