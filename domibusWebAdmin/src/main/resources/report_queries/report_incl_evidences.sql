@@ -39,7 +39,7 @@ from
      (extract(YEAR FROM case when m.delivered_nat is null then m.delivered_gw else delivered_nat end)),
      (extract(MONTH from  case when m.delivered_nat is null then m.delivered_gw else delivered_nat end)),
      (case when m.delivered_nat is null then i.to_party_id else i.from_party_id end)
-   ) 
+   ) x
 order by 
   myear,
   mmonth,
