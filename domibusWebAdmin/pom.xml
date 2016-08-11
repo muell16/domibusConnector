@@ -16,10 +16,10 @@
 		<jsf.version>2.1.6</jsf.version>
 		<org.springframework.version>3.1.4.RELEASE</org.springframework.version>
 		<org.slf4j.version>1.6.6</org.slf4j.version>
-		<domibus.connector.version>3.0-SNAPSHOT</domibus.connector.version>
+		<domibus.connector.version>3.1-RELEASE</domibus.connector.version>
 		<ecodex.monitoring.version>2.1</ecodex.monitoring.version>
 		<mojarra.version>2.1.6</mojarra.version>
-		
+
 		<webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
 		<webadmin.build.dir>domibusWebAdmin/</webadmin.build.dir>
 		<documentation.output.dir>${webadmin.build.dir}documentation/</documentation.output.dir>
@@ -30,32 +30,32 @@
 		<properties.output.dir>${documentation.output.dir}properties</properties.output.dir>
 	</properties>
 
-    <profiles>
-        <profile>
-            <id>mojarra</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sun.faces</groupId>
-                    <artifactId>jsf-api</artifactId>
-                    <version>${mojarra.version}</version>
-                    <scope>compile</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sun.faces</groupId>
-                    <artifactId>jsf-impl</artifactId>
-                    <version>${mojarra.version}</version>
-                    <scope>compile</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-    
+	<profiles>
+		<profile>
+			<id>mojarra</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.sun.faces</groupId>
+					<artifactId>jsf-api</artifactId>
+					<version>${mojarra.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.sun.faces</groupId>
+					<artifactId>jsf-impl</artifactId>
+					<version>${mojarra.version}</version>
+					<scope>compile</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
 
 	<dependencies>
-	
+
 
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
@@ -206,36 +206,41 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.39</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
 			<version>2.1.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.7</version>
 		</dependency>
 
-	<dependency>
-		<groupId>javax.mail</groupId>
-		<artifactId>mail</artifactId>
-		<version>1.4.2</version>
-	</dependency>
-            
-    <dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.2</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>1.8.5</version>
-	</dependency>
-		
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -278,19 +283,55 @@
 				</executions>
 			</plugin>
 		</plugins>
-		
+
 		<finalName>${project.artifactId}</finalName>
-		
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-compiler-plugin
+										</artifactId>
+										<versionRange>
+											[2.0.2,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+											<goal>testCompile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>nexus-releases</id>
+			<url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>
