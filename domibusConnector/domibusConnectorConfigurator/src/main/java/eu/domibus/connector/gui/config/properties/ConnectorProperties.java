@@ -217,7 +217,7 @@ public class ConnectorProperties {
 	
 	private final static Properties properties = new Properties();
 
-    public static boolean loadConnectorProperties() {
+    public static void loadConnectorProperties() throws Exception{
     	String connectorProperties = System.getProperty("connector.properties");
     	if(connectorProperties!=null && connectorProperties.length()>0){
     		CONNECTOR_PROPERTIES_DIR_PATH = connectorProperties.substring(0, connectorProperties.lastIndexOf(File.separator));
@@ -231,28 +231,26 @@ public class ConnectorProperties {
         try {
             fileInputStream = new FileInputStream(CONNECTOR_PROPERTIES_FILE);
         } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-            return false;
+        	e1.printStackTrace();
+        	throw e1;
         }
         try {
             properties.load(fileInputStream);
         } catch (Exception e1) {
-            e1.printStackTrace();
-            return false;
+        	e1.printStackTrace();
+        	throw e1;
         }
 
         if (fileInputStream != null) {
             try {
                 fileInputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+            	e.printStackTrace();
             }
         }
         
         setPropertyValues();
         
-        return true;
     }
     
     public static boolean checkDatabaseSettings(){

@@ -52,6 +52,6 @@ rem echo start java -jar %ECDXCONNJAR%
 
 title "DomibusStandaloneConnector"
 
-java -jar %ECDXCONNJAR% 
+java -jar %ECDXCONNJAR%
 
 :end
