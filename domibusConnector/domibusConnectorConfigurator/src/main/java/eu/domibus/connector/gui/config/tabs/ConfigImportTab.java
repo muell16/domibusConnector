@@ -106,9 +106,10 @@ public class ConfigImportTab extends JPanel {
 					e1.printStackTrace();
 				}
 				
-				if(ConnectorProperties.loadConnectorProperties()){
+				try{
+					ConnectorProperties.loadConnectorProperties();
 					JOptionPane.showMessageDialog(ConfigImportTab.this, "The property file is successfully imported. \n The properties are reloaded.");
-				}else{
+				}catch (Exception e){
 					JOptionPane.showMessageDialog(ConfigImportTab.this, "The properties could not be reloaded!", "Import properties failed!", JOptionPane.ERROR_MESSAGE);
 				}
 				

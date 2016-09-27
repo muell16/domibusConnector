@@ -3,6 +3,7 @@ package eu.domibus.connector.runnable;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
@@ -14,8 +15,14 @@ public class DomibusConnector {
     /**
      * @param args
      */
-    public static void main(String[] args) {
+    @SuppressWarnings("resource")
+	public static void main(String[] args) {
 
+    	boolean startWithGUI = false;
+    	if(ArrayUtils.contains(args, "-gui")){
+    		startWithGUI=true;
+    	}
+    	
         String connectorProperties = System.getProperty("connector.properties");
         if (!StringUtils.hasText(connectorProperties)) {
             connectorProperties = System.getenv("connector.properties");
@@ -26,32 +33,30 @@ public class DomibusConnector {
         if(StringUtils.hasText(connectorProperties)){
         	System.setProperty("connector.properties", connectorProperties);
         }
-        ConnectorProperties.loadConnectorProperties();
-        if (!ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists()) {
-//        	DomibusConnectorConfigurator.main(new String[]{});
+        try{
+        	ConnectorProperties.loadConnectorProperties();
+        }catch(Exception e){
+        	
+        }
+        if (!ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists() && startWithGUI) {
         	
         	try {
 				Process process = new ProcessBuilder(
 						"java", "-jar","domibusConnectorConfigurator.jar").start();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         	
-//        	Runtime runTime = Runtime.getRuntime();
-//			try {
-//				Process process = runTime.exec("java -classpath eu.domibus.connector.gui.DomibusConnectorConfigurator");
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//        	new DomibusConnectorConfigUI();
         	System.exit(0);
         }
         
         
         if(!ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists()){
-			ConnectorProperties.loadConnectorProperties();
+        	try{
+                ConnectorProperties.loadConnectorProperties();
+                }catch(Exception e){
+                	throw new RuntimeException("Connector Properties could not be loaded!");
+                }
 		}
 
         String loggingProperties = System.getProperty("logging.properties");
@@ -71,9 +76,18 @@ public class DomibusConnector {
         		
         }
 
-        @SuppressWarnings({ "resource" })
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext(
-                "classpath:spring/context/DomibusConnectorRunnableContext.xml");
+        AbstractApplicationContext context = null;
+        
+        if(startWithGUI){
+        	System.out.println("Start Connector with GUI.");
+        	context = new ClassPathXmlApplicationContext(
+        			"classpath:spring/context/DomibusConnectorRunnableWithGUI.xml");
+        }else{
+        	System.out.println("Start Connector without GUI");
+        	context = new ClassPathXmlApplicationContext(
+        			"classpath:spring/context/DomibusConnectorRunnableContext.xml");
+        	
+        }
         
         context.registerShutdownHook();
     }

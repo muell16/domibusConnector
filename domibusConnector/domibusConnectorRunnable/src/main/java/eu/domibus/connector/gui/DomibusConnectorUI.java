@@ -23,7 +23,11 @@ public class DomibusConnectorUI extends JFrame {
 
 	public void init(){
 		if(ConnectorProperties.CONNECTOR_PROPERTIES_FILE.exists()){
-			ConnectorProperties.loadConnectorProperties();
+			try {
+				ConnectorProperties.loadConnectorProperties();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		try {
 			UIManager.setLookAndFeel(
