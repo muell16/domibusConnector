@@ -79,14 +79,14 @@
 	<!-- Connector Beans -->
 	
 	<bean id="connectorSummaryService" 
-      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl"  scope="request">      
+      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl"  scope="session">      
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="domibusWebAdminConnectorServiceDao" ref="domibusWebAdminConnectorServiceDao" />
    </bean>
    
 	
 	<bean id="connectorCustomService" 
-      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl" scope="request">     
+      class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorCustomServiceImpl" scope="session">     
               <property name="domibusMessageWebAdminDao" ref="domibusMessageWebAdminDao" /> 
               <property name="connectorMessageFilter" ref="connectorMessageFilter" /> 
               <property name="domibusWebAdminConnectorPartyDao" ref="domibusWebAdminConnectorPartyDao" /> 
