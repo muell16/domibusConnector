@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import eu.domibus.webadmin.model.connector.PeriodEntryDO;
 public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibusWebAdminReportDao, InitializingBean {
 
 	protected final Log logger = LogFactory.getLog(getClass());
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	
 	private String reportIncludingEvidencesSQL;
 	private String reportExcludingEvidencesSQL;
@@ -31,6 +34,8 @@ public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibus
 		if(this.reportIncludingEvidencesSQL==null){
 			loadQueries();
 		}
+		
+		toDate = convertToDate(toDate);
 		
 		Date[] parameter = new Date[4];
 		parameter[0] = fromDate;
@@ -49,6 +54,8 @@ public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibus
 			loadQueries();
 		}
 		
+		toDate = convertToDate(toDate);
+		
 		Date[] parameter = new Date[4];
 		parameter[0] = fromDate;
 		parameter[1] = toDate;
@@ -58,6 +65,18 @@ public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibus
 		List<PeriodEntryDO> result = getJdbcTemplate().query(this.reportExcludingEvidencesSQL, parameter, new BeanPropertyRowMapper(PeriodEntryDO.class));
 		
 		return result;
+	}
+	
+	private Date convertToDate(Date toDate){
+		String dateString = sdf.format(toDate);
+		String newDateString = dateString.substring(0, dateString.indexOf(" ")+1) + "23:59:59";
+		Date newToDate = null;
+		try {
+			newToDate = sdf.parse(newDateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return newToDate;
 	}
 	
 	private void loadQueries(){

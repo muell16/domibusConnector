@@ -3,8 +3,10 @@ package eu.domibus.webadmin.jsf;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
 import javax.faces.event.AjaxBehaviorEvent;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorCustomService;
@@ -21,6 +23,8 @@ import eu.domibus.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 public class ConnectorBean implements Serializable {
 
     private static final long serialVersionUID = -3920852382271662993L;
+    
+    protected final Log logger = LogFactory.getLog(getClass());
 
     private IConnectorSummaryService connectorSummaryService;
     private IConnectorCustomService connectorCustomService;
@@ -58,6 +62,7 @@ public class ConnectorBean implements Serializable {
     public void init(){
 //    	summarySelected = true;
 //    	customSelected = true;
+    	logger.info("ConnectorBean.init()");
     	if(connectorSummaryService.getPieModelMessageSummary()==null || connectorSummaryService.getPieModelServiceSummary()==null)
     		connectorSummaryService.generateMessageSummary();
     	if(connectorCustomService.getCustomResultList()==null)

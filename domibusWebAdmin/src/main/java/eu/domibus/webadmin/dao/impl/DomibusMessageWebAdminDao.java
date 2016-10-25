@@ -1,6 +1,8 @@
 package eu.domibus.webadmin.dao.impl;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
@@ -22,6 +23,8 @@ import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Serializable {
 
     private static final long serialVersionUID = 6927282911714964185L;
+    
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     @PersistenceContext(unitName = "domibus.connector")
     private EntityManager em;
@@ -69,6 +72,10 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     @Override
     public List<DomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate) {
         Query q;
+        if(toDate != null){
+        	toDate = convertToDate(toDate);
+        }
+        
         if (fromDate == null && toDate == null) {
             // Search without parameter is limited to a year!
             Calendar cFrom = Calendar.getInstance();
@@ -78,7 +85,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
             Calendar cTo = Calendar.getInstance();
             cTo = Calendar.getInstance();
             Date dTo = cTo.getTime();
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate");
+            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate order by m.created");
             q.setParameter("fromDate", dFrom);
             q.setParameter("toDate", dTo);
         } else if (fromDate == null && toDate != null) {
@@ -86,22 +93,34 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
             cTo.setTime(toDate);
             cTo.add(Calendar.DAY_OF_MONTH, 1);
             toDate = cTo.getTime();
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created <=:toDate");
+            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created <=:toDate order by m.created");
             q.setParameter("toDate", toDate);
         } else if (fromDate != null && toDate == null) {
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate");
+            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate order by m.created");
             q.setParameter("fromDate", fromDate);
         } else {
             Calendar cTo = Calendar.getInstance();
             cTo.setTime(toDate);
             cTo.add(Calendar.DAY_OF_MONTH, 1);
             toDate = cTo.getTime();
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate");
+            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate order by m.created");
             q.setParameter("fromDate", fromDate);
             q.setParameter("toDate", toDate);
         }
 
         return q.getResultList();
     }
+    
+    private Date convertToDate(Date toDate){
+		String dateString = sdf.format(toDate);
+		String newDateString = dateString.substring(0, dateString.indexOf(" ")+1) + "23:59:59";
+		Date newToDate = null;
+		try {
+			newToDate = sdf.parse(newDateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return newToDate;
+	}
 
 }
