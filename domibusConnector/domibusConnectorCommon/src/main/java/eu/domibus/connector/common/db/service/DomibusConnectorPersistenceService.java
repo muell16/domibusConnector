@@ -62,4 +62,8 @@ public interface DomibusConnectorPersistenceService {
     List<MessageError> getMessageErrors(Message message) throws Exception;
 
     void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) throws PersistenceException;
+
+	List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery();
+
+	List<Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
 }

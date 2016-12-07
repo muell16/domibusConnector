@@ -63,9 +63,11 @@ public class IncomingEvidenceService implements EvidenceService {
         persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
 
         if (originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW)
-                && (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_ACCEPTANCE) || confirmation
-                        .getEvidenceType().equals(EvidenceType.RELAY_REMMD_REJECTION))) {
-            persistenceService.confirmMessage(originalMessage);
+                && originalMessage.getDbMessage().getConfirmed()==null && originalMessage.getDbMessage().getRejected()==null) {
+        	if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_ACCEPTANCE)
+                    || confirmation.getEvidenceType().equals(EvidenceType.DELIVERY)) {
+        		persistenceService.confirmMessage(originalMessage);
+        	}
         }
 
         LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
@@ -81,6 +83,7 @@ public class IncomingEvidenceService implements EvidenceService {
                 if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_REJECTION)
                         || confirmation.getEvidenceType().equals(EvidenceType.NON_DELIVERY)
                         || confirmation.getEvidenceType().equals(EvidenceType.NON_RETRIEVAL)) {
+                	persistenceService.rejectMessage(message);
                     return true;
                 }
             }

@@ -23,4 +23,8 @@ public interface DomibusConnectorMessageDao {
     DomibusConnectorMessage rejectMessage(DomibusConnectorMessage message);
 
     List<DomibusConnectorMessage> findMessagesByConversationId(String conversationId);
+
+	List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
+
+	List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
 }
