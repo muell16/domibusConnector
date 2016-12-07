@@ -85,8 +85,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
                 .createQuery("from DomibusConnectorMessage m where m.rejected is null and m.direction = :dir and m.deliveredToGateway is not null "
                 		+ "and not exists (select 1 from DomibusConnectorEvidence e where e.message = m and (e.type=:type1 or e.type=:type2))");
         q.setParameter("dir", MessageDirection.NAT_TO_GW);
-        q.setParameter("type1", EvidenceType.DELIVERY.name());
-        q.setParameter("type2", EvidenceType.NON_DELIVERY.name());
+        q.setParameter("type1", EvidenceType.DELIVERY);
+        q.setParameter("type2", EvidenceType.NON_DELIVERY);
 
         return q.getResultList();
     }
@@ -98,8 +98,8 @@ public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDa
                 .createQuery("from DomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = :dir and m.deliveredToGateway is not null "
                 		+ "and not exists (select 1 from DomibusConnectorEvidence e where e.message = m and (e.type=:type1 or e.type=:type2))");
         q.setParameter("dir", MessageDirection.NAT_TO_GW);
-        q.setParameter("type1", EvidenceType.RELAY_REMMD_ACCEPTANCE.name());
-        q.setParameter("type2", EvidenceType.RELAY_REMMD_REJECTION.name());
+        q.setParameter("type1", EvidenceType.RELAY_REMMD_ACCEPTANCE);
+        q.setParameter("type2", EvidenceType.RELAY_REMMD_REJECTION);
 
         return q.getResultList();
     }
