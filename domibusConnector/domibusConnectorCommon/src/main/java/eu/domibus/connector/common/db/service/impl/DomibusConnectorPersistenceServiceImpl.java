@@ -225,7 +225,11 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Transactional(readOnly = true)
     public List<Message> findMessagesByConversationId(String conversationId) {
         List<DomibusConnectorMessage> dbMessages = messageDao.findMessagesByConversationId(conversationId);
-        if (dbMessages != null && !dbMessages.isEmpty()) {
+        return mapDBMessagesToDTO(dbMessages);
+    }
+
+	private List<Message> mapDBMessagesToDTO(List<DomibusConnectorMessage> dbMessages) {
+		if (dbMessages != null && !dbMessages.isEmpty()) {
             List<Message> messages = new ArrayList<Message>(dbMessages.size());
             for (DomibusConnectorMessage dbMessage : dbMessages) {
                 messages.add(mapDbMessageToMessage(dbMessage));
@@ -233,34 +237,34 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
             return messages;
         }
         return null;
-    }
+	}
 
     @Override
     @Transactional(readOnly = true)
     public List<Message> findOutgoingUnconfirmedMessages() {
         List<DomibusConnectorMessage> dbMessages = messageDao.findOutgoingUnconfirmedMessages();
-        if (dbMessages != null && !dbMessages.isEmpty()) {
-            List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
-            for (DomibusConnectorMessage dbMessage : dbMessages) {
-                unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
-            }
-            return unconfirmedMessages;
-        }
-        return null;
+        return mapDBMessagesToDTO(dbMessages);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery() {
+        List<DomibusConnectorMessage> dbMessages = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
+        return mapDBMessagesToDTO(dbMessages);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD() {
+        List<DomibusConnectorMessage> dbMessages = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+        return mapDBMessagesToDTO(dbMessages);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Message> findIncomingUnconfirmedMessages() {
         List<DomibusConnectorMessage> dbMessages = messageDao.findIncomingUnconfirmedMessages();
-        if (dbMessages != null && !dbMessages.isEmpty()) {
-            List<Message> unconfirmedMessages = new ArrayList<Message>(dbMessages.size());
-            for (DomibusConnectorMessage dbMessage : dbMessages) {
-                unconfirmedMessages.add(mapDbMessageToMessage(dbMessage));
-            }
-            return unconfirmedMessages;
-        }
-        return null;
+        return mapDBMessagesToDTO(dbMessages);
     }
 
     @Override
