@@ -11,17 +11,7 @@ goto end
 set "PATH=%PATH%;%JAVA_HOME%\bin"
 set "CURRENT_DIR=%cd%"
 
-rem Check and get DomibusStandaloneConnector jar for call
-set "ECDXCONNJAR=bin\DomibusConnectorRunnable.jar"
-
-
-if exist "%ECDXCONNJAR%" goto okJar
-echo Cannot find "%ECDXCONNJAR%"
-echo This file is needed to run this program
-:okJar
-rem echo ECDXCONNJAR set to "%ECDXCONNJAR%"
-
-set "CLASSPATH=%ECDXCONNJAR%;%CURRENT_DIR%\lib\*"
+set "CLASSPATH=%CURRENT_DIR%\bin\*;%CURRENT_DIR%\lib\*"
 echo %CLASSPATH%
 
 :loop
@@ -51,8 +41,6 @@ set "LOGGING_PROPERTIES=conf\log4j.properties
 :okLogProps
 set "logging.properties=%LOGGING_PROPERTIES%"
 rem echo LOGGING_PROPERTIES set to "%LOGGING_PROPERTIES%"
-
-rem echo start java -jar %ECDXCONNJAR% 
 
 title "DomibusStandaloneConnector"
 
