@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
   
@@ -24,12 +24,12 @@
   	<property name="proxyDao" ref="connectorProxyDao"/>
   </bean>
   
-  <bean id="httpDataLoader" class="eu.ecodex.dss.util.ECodexDataLoader" singleton="false">
+  <bean id="httpDataLoader" class="eu.ecodex.dss.util.ECodexDataLoader" scope="prototype">
   	<property name="allowLDAP" value="${connector.security.allow.ldap:false}" />
   	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
   </bean>
   
-  <bean id="ocspDataLoader" class="eu.ecodex.dss.util.ECodexDataLoader" singleton="false">
+  <bean id="ocspDataLoader" class="eu.ecodex.dss.util.ECodexDataLoader" scope="prototype">
   	<property name="allowLDAP" value="${connector.security.allow.ldap:false}" />
   	<property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
   	<property name="contentType" value="application/ocsp-request"/>

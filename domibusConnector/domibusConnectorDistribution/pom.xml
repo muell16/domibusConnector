@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
-		<version>3.2.2</version>
+		<version>${project.parent.version}</version>
 	</parent>
 	<artifactId>domibusConnectorDistribution</artifactId>
 
@@ -21,17 +21,6 @@
 	<build>
 		<finalName>domibusConnector</finalName>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase />
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
@@ -53,7 +42,7 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
@@ -66,4 +55,5 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
 </project>
