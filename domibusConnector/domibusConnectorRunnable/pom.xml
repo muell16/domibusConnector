@@ -19,12 +19,6 @@
 			<artifactId>domibusConnectorConfigurator</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>11.1.0.7.0</version>
-			<type>jar</type>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -55,8 +49,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>../lib/</classpathPrefix>
+							<addClasspath>false</addClasspath>
 							<mainClass>eu.domibus.connector.runnable.DomibusConnector</mainClass>
 						</manifest>
 					</archive>

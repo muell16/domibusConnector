@@ -83,7 +83,7 @@ fi
 if [ -z "$CONNECTOR_PROPERTIES" ]
 then
   # Use default properties 
-  CONNECTOR_PROPERTIES='conf/connector.properties'
+  CONNECTOR_PROPERTIES=`/usr/bin/pwd`'/conf/connector.properties'
 fi
 
 
@@ -91,15 +91,19 @@ fi
 if [ -z "$LOGGING_PROPERTIES" ]
 then
   # Use default properties 
-  LOGGING_PROPERTIES='conf/log4j.properties'
+  LOGGING_PROPERTIES=`/usr/bin/pwd`'/conf/log4j.properties'
 fi
+
+# building the Classpath
+CLASSPATH=`/usr/bin/pwd`'/bin/*:'`/usr/bin/pwd`'/lib/*'
 
 echo "JAVA_PATH  = $JAVA_PATH"
 echo "CONNECTOR_PROPERTIES PATH     = $CONNECTOR_PROPERTIES"
 echo "LOGGING_PROPERTIES PATH    = $LOGGING_PROPERTIES"
+echo "CLASSPATH = $CLASSPATH"
 
 
-COMMAND_LINE="$JAVA_PATH -Dconnector.properties=$CONNECTOR_PROPERTIES -Dlogging.properties=$LOGGING_PROPERTIES -jar bin/DomibusConnectorRunnable.jar"
+COMMAND_LINE="$JAVA_PATH -cp $CLASSPATH -Dconnector.properties=$CONNECTOR_PROPERTIES -Dlogging.properties=$LOGGING_PROPERTIES eu.domibus.connector.runnable.DomibusConnector"
 echo "executing $COMMAND_LINE"
 
 #Launch connector

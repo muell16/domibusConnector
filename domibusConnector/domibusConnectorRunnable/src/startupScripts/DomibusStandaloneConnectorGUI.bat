@@ -14,11 +14,15 @@ set "CURRENT_DIR=%cd%"
 rem Check and get DomibusStandaloneConnector jar for call
 set "ECDXCONNJAR=bin\DomibusConnectorRunnable.jar"
 
+
 if exist "%ECDXCONNJAR%" goto okJar
 echo Cannot find "%ECDXCONNJAR%"
 echo This file is needed to run this program
 :okJar
 rem echo ECDXCONNJAR set to "%ECDXCONNJAR%"
+
+set "CLASSPATH=%ECDXCONNJAR%;%CURRENT_DIR%\lib\*"
+echo %CLASSPATH%
 
 :loop
 IF NOT "%1"=="" (
@@ -52,6 +56,6 @@ rem echo start java -jar %ECDXCONNJAR%
 
 title "DomibusStandaloneConnector"
 
-java -jar %ECDXCONNJAR% -gui
+java -cp %CLASSPATH% eu.domibus.connector.runnable.DomibusConnector -gui
 
 :end
