@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.domibus.connector</groupId>
 	<artifactId>domibusConnector</artifactId>
@@ -17,7 +17,8 @@
 		<module>domibusConnectorMonitoring</module>
 		<module>domibusConnectorConfigurator</module>
 		<module>domibusConnectorRunnable</module>
-	</modules>
+    <module>domibusConnectorGatewayPluginClient</module>
+  </modules>
 	<!-- Shared version number properties -->
 	<properties>
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
@@ -64,7 +65,7 @@
 						<featureBranchPrefix>feature/</featureBranchPrefix>
 						<releaseBranchPrefix>release/</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-						<versionTagPrefix></versionTagPrefix>
+						<versionTagPrefix/>
 					</flowInitContext>
 					<pushFeatures>false</pushFeatures>
 					<pushHotfixes>false</pushHotfixes>

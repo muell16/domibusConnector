@@ -11,7 +11,7 @@
 	<import
 		resource="classpath:/spring/context/DomibusConnectorContentMapperContext.xml" />
 	<import
-		resource="classpath:/spring/context/DomibusConnectorGatewayWebserviceClientContext.xml" />
+		resource="classpath:/spring/context/DomibusConnectorGateway${gateway.routing.option}ClientContext.xml" />
 	<import
 		resource="classpath:/spring/context/DomibusConnectorNationalBackendClientContext.xml" />
 	<import

@@ -1,4 +1,4 @@
-package eu.domibus.connector.gwc.exception;
+package eu.domibus.connector.common.gwc;
 
 public class DomibusConnectorGatewayWebserviceClientException extends Exception {
 

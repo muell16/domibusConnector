@@ -1,8 +1,9 @@
-package eu.domibus.connector.gwc;
+package eu.domibus.connector.common.gwc;
+
+import java.util.Collection;
 
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageDetails;
-import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClientException;
 
 /**
  * WebService Client Interface to communicate with the gateway.
@@ -21,22 +22,29 @@ public interface DomibusConnectorGatewayWebserviceClient {
      */
     public void sendMessage(Message message) throws DomibusConnectorGatewayWebserviceClientException;
 
+//    /**
+//     * WebService method to receive all message ID's of messages on the gateway,
+//     * which are not yet downloaded by the connector.
+//     * 
+//     * @return All MessageIds of pending messages on the gateway.
+//     */
+//    public String[] listPendingMessages() throws DomibusConnectorGatewayWebserviceClientException;
+//
+//    /**
+//     * WebService method to recieve message from gateway.
+//     * 
+//     * @param messageId
+//     *            of the message to receive.
+//     * @return The {@link Message} from the gateway.
+//     */
+//    public Message downloadMessage(String messageId) throws DomibusConnectorGatewayWebserviceClientException;
+    
     /**
-     * WebService method to receive all message ID's of messages on the gateway,
-     * which are not yet downloaded by the connector.
+     * WebService method to recieve all pending messages from gateway.
      * 
-     * @return All MessageIds of pending messages on the gateway.
+     * @return The Collection of all {@link Message} objects from the gateway. May be empty or null.
      */
-    public String[] listPendingMessages() throws DomibusConnectorGatewayWebserviceClientException;
-
-    /**
-     * WebService method to recieve message from gateway.
-     * 
-     * @param messageId
-     *            of the message to receive.
-     * @return The {@link Message} from the gateway.
-     */
-    public Message downloadMessage(String messageId) throws DomibusConnectorGatewayWebserviceClientException;
+    public Collection<Message> requestPendingMessages() throws DomibusConnectorGatewayWebserviceClientException;
 
     /**
      * WebService method to receive the errors of a certain message on gateway.

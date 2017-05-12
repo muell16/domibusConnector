@@ -7,11 +7,11 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import backend.ecodex.org._1_1.PayloadType;
 import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendResponse;
+import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageAttachment;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.gwc.util.CommonMessageHelper;
 
 public class SendMessageHelper {

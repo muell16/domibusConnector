@@ -2,9 +2,9 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.common.CommonConnectorProperties;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.HashValueBuilder;
-import eu.domibus.connector.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.mapping.DomibusConnectorContentMapper;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
