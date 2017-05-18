@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.ws.Holder;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
@@ -12,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.PayloadType;
+import eu.domibus.connector.common.CommonConnectorGlobalConstants;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;
@@ -23,134 +25,155 @@ import eu.domibus.connector.gwc.util.CommonMessageHelper;
 
 public class DownloadMessageHelper {
 
-    private CommonMessageHelper commonMessageHelper;
+	private CommonMessageHelper commonMessageHelper;
 
-    public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
-        this.commonMessageHelper = commonMessageHelper;
-    }
+	private static final String OLD_CONTENT_XML_NAME = "ECodexContentXML";
 
-    public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
-            throws DomibusConnectorGatewayWebserviceClientException {
-        UserMessage userMessage = ebMSHeader.value.getUserMessage();
-        MessageDetails details = commonMessageHelper.convertUserMessageToMessageDetails(userMessage);
+	public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
+		this.commonMessageHelper = commonMessageHelper;
+	}
 
-        MessageContent content = new MessageContent();
+	public Message convertDownloadIntoMessage(Holder<DownloadMessageResponse> response, Holder<Messaging> ebMSHeader)
+			throws DomibusConnectorGatewayWebserviceClientException {
+		UserMessage userMessage = ebMSHeader.value.getUserMessage();
+		MessageDetails details = commonMessageHelper.convertUserMessageToMessageDetails(userMessage);
 
-        Message message = new Message(details, content);
+		MessageContent content = new MessageContent();
 
-        PayloadType bodyload = response.value.getBodyload();
-        if (bodyload != null) {
-            // bodyload dereferencing: The possible constellations are:
-            // -- The header contains an href like "#id" and the bodyload a
-            // PayloadId like "id"
-            // -- The header contains no href and the bodyload the id "id"
-            // -- The header contains an href like "#id" and the bodyload no
-            // PayloadId
-            String elementDescription = findBodyloadDescription(userMessage);
+		Message message = new Message(details, content);
 
-            // is it an Evidence or an eCodex content XML?
+		PayloadType bodyload = response.value.getBodyload();
+		if (bodyload != null) {
+			// bodyload dereferencing: The possible constellations are:
+			// -- The header contains an href like "#id" and the bodyload a
+			// PayloadId like "id"
+			// -- The header contains no href and the bodyload the id "id"
+			// -- The header contains an href like "#id" and the bodyload no
+			// PayloadId
+			String elementDescription = findBodyloadDescription(userMessage);
 
-            if (elementDescription.equals(CommonMessageHelper.CONTENT_XML_NAME)) {
-                message.getMessageContent().setInternationalContent(bodyload.getValue());
-            } else {
-                MessageConfirmation confirmation = new MessageConfirmation();
-                EvidenceType evidenceType = EvidenceType.valueOf(elementDescription);
-                confirmation.setEvidenceType(evidenceType);
-                confirmation.setEvidence(bodyload.getValue());
-                message.addConfirmation(confirmation);
-            }
-            // }
-        }
+			// is it an Evidence or an eCodex content XML?
 
-        List<PayloadType> payloads = response.value.getPayload();
-        if (payloads != null && !payloads.isEmpty()) {
-            if (userMessage.getPayloadInfo() != null && userMessage.getPayloadInfo().getPartInfo() != null
-                    && (userMessage.getPayloadInfo().getPartInfo().size() - 1) == payloads.size()) {
+			if (elementDescription.equals(OLD_CONTENT_XML_NAME) || elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER)) {
+				message.getMessageContent().setInternationalContent(bodyload.getValue());
+			} else if (isEvidence(elementDescription)) {
+				MessageConfirmation confirmation = new MessageConfirmation();
+				EvidenceType evidenceType = EvidenceType.valueOf(elementDescription);
+				confirmation.setEvidenceType(evidenceType);
+				confirmation.setEvidence(bodyload.getValue());
+				message.addConfirmation(confirmation);
+			}
+		}
 
-                for (PayloadType payload : payloads) {
-                    String elementDescription = findElementDesription(userMessage, payload.getPayloadId());
+		List<PayloadType> payloads = response.value.getPayload();
+		if (payloads != null && !payloads.isEmpty()) {
+			if (userMessage.getPayloadInfo() != null && userMessage.getPayloadInfo().getPartInfo() != null
+					//&& (userMessage.getPayloadInfo().getPartInfo().size() - 1) == payloads.size()
+					) {
 
-                    if (elementDescription == null) {
-                        throw new DomibusConnectorGatewayWebserviceClientException(
-                                "No PartInfo of PayloadInfo in ebms header found for actual payloads href "
-                                        + payload.getPayloadId());
-                    }
+				for (PayloadType payload : payloads) {
+					String elementDescription = findElementDesription(userMessage, payload.getPayloadId());
 
-                    if (elementDescription.equals(CommonMessageHelper.CONTENT_PDF_NAME)) {
-                        message.getMessageContent().setPdfDocument(payload.getValue());
-                    } else if (elementDescription.equals("SUBMISSION_ACCEPTANCE")) {
-                        // only SUBMISSION_ACCEPTANCE allowed with EPO message!
-                        message.addConfirmation(extractMessageConfirmation(payload, elementDescription));
-                    } else if (elementDescription.equals("tokenXML") || elementDescription.endsWith(".asics")) {
-                        message.addAttachment(extractAttachment(payload, elementDescription));
-                    } else {
-                        throw new DomibusConnectorGatewayWebserviceClientException(
-                                "Unknown description for a payload: " + elementDescription);
-                    }
+					if (elementDescription == null) {
+						throw new DomibusConnectorGatewayWebserviceClientException(
+								"No PartInfo of PayloadInfo in ebms header found for actual payloads href "
+										+ payload.getPayloadId());
+					}
+					
+					if(ArrayUtils.isEmpty(payload.getValue())){
+						throw new DomibusConnectorGatewayWebserviceClientException(
+								"No payload value found for actual payloads href "
+										+ payload.getPayloadId());
+					}
 
-                }
-            } else {
-                throw new DomibusConnectorGatewayWebserviceClientException(
-                        "Payload size does not match PayloadInfo size!");
-            }
-        }
+					if (elementDescription.equals(OLD_CONTENT_XML_NAME) || elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER)) {
+						message.getMessageContent().setInternationalContent(payload.getValue());
+					} else if (elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_PDF_IDENTIFIER)) {
+						message.getMessageContent().setPdfDocument(payload.getValue());
+					} else if (isEvidence(elementDescription)) {
+						message.addConfirmation(extractMessageConfirmation(payload, elementDescription));
+					} else 
+						message.addAttachment(extractAttachment(payload, elementDescription));
+//					} else if (elementDescription.equals("tokenXML") || elementDescription.endsWith(".asics")) {
+//						message.addAttachment(extractAttachment(payload, elementDescription));
+//					} else {
+//						throw new DomibusConnectorGatewayWebserviceClientException(
+//								"Unknown description for a payload: " + elementDescription);
+//					}
 
-        return message;
-    }
+				}
+			} else {
+				throw new DomibusConnectorGatewayWebserviceClientException(
+						"Payload size does not match PayloadInfo size!");
+			}
+		}
 
-    private String findElementDesription(UserMessage userMessage, String href) {
-        for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            if (info.getHref() != null && info.getHref().equals(href)) {
-                return findPartPropertyDescription(info);
-            }
-        }
+		return message;
+	}
 
-        return null;
-    }
+	private boolean isEvidence(String value) {
+		try {
+			EvidenceType ev = EvidenceType.valueOf(value);
+			if (ev != null)
+				return true;
+		} catch (IllegalArgumentException e) {
+		}
+		return false;
 
-    private String findBodyloadDescription(UserMessage userMessage) {
-        for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
-            // if the PartInfo Href begins with "#" or is empty(null)
-            if ((StringUtils.hasText(info.getHref()) && info.getHref().startsWith(
-                    CommonMessageHelper.BODYLOAD_HREF_PREFIX))
-                    || !StringUtils.hasText(info.getHref())) {
-                return findPartPropertyDescription(info);
-            }
-        }
+	}
 
-        return null;
-    }
+	private String findElementDesription(UserMessage userMessage, String href) {
+		for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
+			if (info.getHref() != null && info.getHref().equals(href)) {
+				return findPartPropertyDescription(info);
+			}
+		}
 
-    private String findPartPropertyDescription(PartInfo info) {
-        if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
-                && !info.getPartProperties().getProperty().isEmpty()) {
-            for (Property property : info.getPartProperties().getProperty()) {
-                if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
-                    return property.getValue();
-                }
-            }
-        }
-        return null;
-    }
+		return null;
+	}
 
-    private MessageConfirmation extractMessageConfirmation(PayloadType payload, String evidenceTypeString) {
-        MessageConfirmation confirmation = new MessageConfirmation();
-        EvidenceType evidenceType = EvidenceType.valueOf(evidenceTypeString);
-        confirmation.setEvidenceType(evidenceType);
+	private String findBodyloadDescription(UserMessage userMessage) {
+		for (PartInfo info : userMessage.getPayloadInfo().getPartInfo()) {
+			// if the PartInfo Href begins with "#" or is empty(null)
+			if ((StringUtils.hasText(info.getHref())
+					&& info.getHref().startsWith(CommonMessageHelper.BODYLOAD_HREF_PREFIX))
+					|| !StringUtils.hasText(info.getHref())) {
+				return findPartPropertyDescription(info);
+			}
+		}
 
-        confirmation.setEvidence(payload.getValue());
+		return null;
+	}
 
-        return confirmation;
-    }
+	private String findPartPropertyDescription(PartInfo info) {
+		if (info.getPartProperties() != null && info.getPartProperties().getProperty() != null
+				&& !info.getPartProperties().getProperty().isEmpty()) {
+			for (Property property : info.getPartProperties().getProperty()) {
+				if (property.getName().equals(CommonMessageHelper.PARTPROPERTY_NAME)) {
+					return property.getValue();
+				}
+			}
+		}
+		return null;
+	}
 
-    private MessageAttachment extractAttachment(PayloadType payload, String attachmentName) {
+	private MessageConfirmation extractMessageConfirmation(PayloadType payload, String evidenceTypeString) {
+		MessageConfirmation confirmation = new MessageConfirmation();
+		EvidenceType evidenceType = EvidenceType.valueOf(evidenceTypeString);
+		confirmation.setEvidenceType(evidenceType);
 
-        MessageAttachment attachment = new MessageAttachment();
-        attachment.setAttachment(payload.getValue());
-        attachment.setMimeType(payload.getContentType());
-        attachment.setName(attachmentName);
-        return attachment;
+		confirmation.setEvidence(payload.getValue());
 
-    }
+		return confirmation;
+	}
+
+	private MessageAttachment extractAttachment(PayloadType payload, String attachmentName) {
+
+		MessageAttachment attachment = new MessageAttachment(payload.getValue(), attachmentName);
+		attachment.setMimeType(payload.getContentType());
+		attachment.setName(attachmentName);
+		return attachment;
+
+	}
 
 }

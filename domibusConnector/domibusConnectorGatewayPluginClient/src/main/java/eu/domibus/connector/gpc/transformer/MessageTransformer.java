@@ -1,12 +1,13 @@
 package eu.domibus.connector.gpc.transformer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.cxf.attachment.ByteDataSource;
 import org.apache.cxf.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import eu.domibus.connector.common.message.MessageAttachment;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageContent;
 import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.gpc.validator.DomibusConnectorMessageValidator;
 
 @Component
 public class MessageTransformer {
@@ -54,6 +56,8 @@ public class MessageTransformer {
 	private DomibusConnectorPersistenceService persistenceService;
 
 	public Message transformToDTO(MessageType msgType) throws Exception{
+		DomibusConnectorMessageValidator.validateMessage(msgType);
+
 		MessageDetails messageDetails = transformMessageDetailsToDTO(msgType);
 
 		MessageContent messageContent = new MessageContent();
@@ -63,39 +67,44 @@ public class MessageTransformer {
 		MessageContentType msgContent = msgType.getMessageContent();
 
 		String contentName = msgContent.getContentName();
-		if(contentName.equals(CONTENT_XML_NAME)){
-			messageContent.setInternationalContent(extractBytesFromDataHandler(msgContent.getContentData()));
-		}else {
+		String contentMimeType = msgContent.getContentMimeType();
+		if(contentName!=null && contentMimeType!=null){
 			EvidenceType evidenceType = isEvidence(contentName);
 			if(evidenceType!=null){
 				MessageConfirmation messageConfirmation = new MessageConfirmation(evidenceType);
 				messageConfirmation.setEvidence(extractBytesFromDataHandler(msgContent.getContentData()));
 				message.addConfirmation(messageConfirmation);
-			}else{
-				throw new Exception("Message contains no valid content!");
+			}else if (contentMimeType.equals(XML_MIME_TYPE)){
+				messageContent.setInternationalContent(extractBytesFromDataHandler(msgContent.getContentData()));
+			}else if (contentMimeType.equals(APPLICATION_MIME_TYPE)){
+				messageContent.setPdfDocument(extractBytesFromDataHandler(msgContent.getContentData()));
+				messageContent.setPdfDocumentName(contentName);
 			}
-		}
-		
+		}else
+			throw new Exception("Message contains no valid content!");
+
 		List<MessageAttachmentType> msgAttachments = msgType.getMessageAttachments();
 		if(!CollectionUtils.isEmpty(msgAttachments)){
 			for (MessageAttachmentType attachment:msgAttachments){
-				if(attachment.getAttachmentName().equals(CONTENT_PDF_NAME)){
-					messageContent.setPdfDocument(extractBytesFromDataHandler(attachment.getAttachmentData()));
-					messageContent.setPdfDocumentName(CONTENT_PDF_NAME);
-				}else{
-					EvidenceType evidenceType = isEvidence(attachment.getAttachmentName());
-					if(evidenceType!=null){
-						MessageConfirmation messageConfirmation = new MessageConfirmation(evidenceType);
-						messageConfirmation.setEvidence(extractBytesFromDataHandler(attachment.getAttachmentData()));
-						message.addConfirmation(messageConfirmation);
+				String attachmentIdentifier = attachment.getAttachmentIdentifier();
+				byte[] attachmentData = extractBytesFromDataHandler(attachment.getAttachmentData());
+				if(!StringUtils.isEmpty(attachmentIdentifier) && !ArrayUtils.isEmpty(attachmentData)){
+					if(attachmentIdentifier.equals(CONTENT_PDF_NAME)){
+						messageContent.setPdfDocument(attachmentData);
+						messageContent.setPdfDocumentName(attachmentIdentifier);
 					}else{
-						MessageAttachment att = new MessageAttachment();
-						att.setAttachment(extractBytesFromDataHandler(attachment.getAttachmentData()));
-						att.setName(attachment.getAttachmentName());
-						att.setMimeType(attachment.getAttachmentMimeType());
-						att.setDescription(attachment.getAttachmentDescription());
-						att.setIdentifier(attachment.getAttachmentIdentifier());
-						message.addAttachment(att);
+						EvidenceType evidenceType = isEvidence(attachmentIdentifier);
+						if(evidenceType!=null){
+							MessageConfirmation messageConfirmation = new MessageConfirmation(evidenceType);
+							messageConfirmation.setEvidence(attachmentData);
+							message.addConfirmation(messageConfirmation);
+						}else{
+							MessageAttachment att = new MessageAttachment(attachmentData, attachmentIdentifier);
+							att.setName(attachment.getAttachmentName());
+							att.setMimeType(attachment.getAttachmentMimeType());
+							att.setDescription(attachment.getAttachmentDescription());
+							message.addAttachment(att);
+						}
 					}
 				}
 			}
@@ -289,7 +298,7 @@ public class MessageTransformer {
 		if (msg.getMessageDetails().getRefToMessageId() != null) {
 			MessagePropertyType originalMessageId = new MessagePropertyType();
 			originalMessageId.setName(ORIGINAL_MESSAGE_ID);
-			originalMessageId.setValue(message.getMessageDetails().getRefToMessageId());
+			originalMessageId.setValue(msg.getMessageDetails().getRefToMessageId());
 			messageProps.getMessageProperties().add(originalMessageId);
 		}
 
@@ -306,17 +315,17 @@ public class MessageTransformer {
 	}
 
 	private byte[] extractBytesFromDataHandler(DataHandler dh){
-		ByteArrayOutputStream os = null;
 		try {
-			os = (ByteArrayOutputStream) dh.getDataSource().getOutputStream();
+			InputStream is = dh.getInputStream();
+			byte[] b = new byte[is.available()];
+			is.read(b);
+			return b;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 
-		byte[] byteArray = os.toByteArray();
-
-		return byteArray;
 	}
 
 	private boolean checkMessageConfirmationValid(MessageConfirmation messageConfirmation) {

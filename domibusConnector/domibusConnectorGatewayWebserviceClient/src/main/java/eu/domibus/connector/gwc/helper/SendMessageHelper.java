@@ -7,6 +7,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import backend.ecodex.org._1_1.PayloadType;
 import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendResponse;
+import eu.domibus.connector.common.CommonConnectorGlobalConstants;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageAttachment;
@@ -42,7 +43,7 @@ public class SendMessageHelper {
             byte[] content = message.getMessageContent().getInternationalContent() != null ? message
                     .getMessageContent().getInternationalContent() : message.getMessageContent()
                     .getNationalXmlContent();
-            buildBodyPayload(content, request, CommonMessageHelper.CONTENT_XML_NAME, userMessage);
+            buildBodyPayload(content, request, CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER, userMessage);
         }
 
         int payloadCounter = 0;
@@ -66,7 +67,7 @@ public class SendMessageHelper {
         if (!asicsFound && messageContent != null && messageContent.getPdfDocument() != null
                 && messageContent.getPdfDocument().length > 0) {
             buildPayloadAndAddToRequest(request, CommonMessageHelper.APPLICATION_MIME_TYPE, ++payloadCounter,
-                    messageContent.getInternationalContent(), CommonMessageHelper.CONTENT_PDF_NAME, userMessage);
+                    messageContent.getInternationalContent(), CommonConnectorGlobalConstants.CONTENT_PDF_IDENTIFIER, userMessage);
         }
 
         if (message.getConfirmations() != null) {

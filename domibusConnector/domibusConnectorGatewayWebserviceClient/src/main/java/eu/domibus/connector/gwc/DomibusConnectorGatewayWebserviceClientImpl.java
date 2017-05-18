@@ -176,9 +176,12 @@ public class DomibusConnectorGatewayWebserviceClientImpl implements DomibusConne
         
         Collection<Message> pendingMessages = new ArrayList<Message>();
         if(!CollectionUtils.isEmpty(pendingMessageIds)){
+        	LOGGER.debug("Received {} messageIds by listPendingMessages.", pendingMessageIds.size());
         	for(String messageId:pendingMessageIds){
+        		LOGGER.debug("Trying to download message with ID {}", messageId);
         		Message message = downloadMessageInternal(messageId);
                 pendingMessages.add(message);
+                LOGGER.debug("Added Message with ID {} to collection.", messageId);
         	}
         	return pendingMessages;
         }
@@ -199,22 +202,24 @@ public class DomibusConnectorGatewayWebserviceClientImpl implements DomibusConne
 		    LOGGER.error("Could not execute! ", e);
 		}
 
-		if (response.value == null || response.value.getBodyload() == null) {
+		//if (LOGGER.isDebugEnabled()) {
+			try {
+				String headerString = commonMessageHelper
+						.printXML(ebMSHeader.value, UserMessage.class, Messaging.class);
+				LOGGER.debug(headerString);
+			} catch (JAXBException e1) {
+				LOGGER.error(e1.getMessage());
+			} catch (IOException e1) {
+				LOGGER.error(e1.getMessage());
+			}
+		//}
+
+		if (response.value == null 
+				//|| response.value.getBodyload() == null
+				) {
 		    LOGGER.info("Message {} contains no payload!", request.getMessageID());
 		    throw new DomibusConnectorGatewayWebserviceClientException("Message " + request.getMessageID()
 		            + " contains no bodyload!");
-		}
-
-		if (LOGGER.isDebugEnabled()) {
-		    try {
-		        String headerString = commonMessageHelper
-		                .printXML(ebMSHeader.value, UserMessage.class, Messaging.class);
-		        LOGGER.debug(headerString);
-		    } catch (JAXBException e1) {
-		        LOGGER.error(e1.getMessage());
-		    } catch (IOException e1) {
-		        LOGGER.error(e1.getMessage());
-		    }
 		}
 
 		Message message = downloadMessageHelper.convertDownloadIntoMessage(response, ebMSHeader);

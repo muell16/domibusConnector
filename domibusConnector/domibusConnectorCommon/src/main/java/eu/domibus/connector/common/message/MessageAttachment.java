@@ -3,52 +3,58 @@ package eu.domibus.connector.common.message;
 /**
  * This object contains an attachment for a message. With every message there
  * can be some documents (mostly PDF's) sent along with. Therefore those
- * documents are attached to the message over this type. For every attachment
- * there is the document itself as a byte[], a name for the attachment and a
- * mimeType.
+ * documents are attached to the message over this type. 
  * 
- * Since 2.0: Additional attributes description and identifier for additional
- * data transmitted for attachments.
+ * Attributes:
+ * 
+ * attachment: The data itself in byte[]
+ * 
+ * name: The name of the attachment. Most usefull usage is the file name of the attachment.
+ * 
+ * mimeType: The type of the attachment. Example: "text/xml", "application/pdf"
+ * 
+ * description: 
+ * 
  * 
  * @author riederb
  * 
  */
 public class MessageAttachment {
 
-    private byte[] attachment;
+	private final String identifier;
+    private final byte[] attachment;
     private String name;
     private String mimeType;
     private String description;
-    private String identifier;
 
-    public MessageAttachment(byte[] attachment, String name, String mimeType) {
-        super();
-        this.attachment = attachment;
-        this.name = name;
-        this.mimeType = mimeType;
+    
+    /**
+     * Constructor filling the two mandatory attributes
+     * 
+     * @param attachment The data itself in byte[]
+     * @param identifier Identifies the attachment for transformation and transportation
+     */
+    public MessageAttachment(byte[] attachment, String identifier) {
+    	super();
+    	this.attachment = attachment;
+    	this.identifier = identifier;
     }
-
-    public MessageAttachment(byte[] attachment, String name, String mimeType, String description, String identifier) {
-        this(attachment, name, mimeType);
-        this.description = description;
-        this.identifier = identifier;
-    }
-
-    public MessageAttachment() {
+    
+    public String getIdentifier() {
+    	return identifier;
     }
 
     public byte[] getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(byte[] attachment) {
-        this.attachment = attachment;
-    }
-
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name The name of the attachment. Most usefull usage is the file name of the attachment.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -57,6 +63,9 @@ public class MessageAttachment {
         return mimeType;
     }
 
+    /**
+     * @param mimeType The type of the attachment. Example: "text/xml", "application/pdf"
+     */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
@@ -65,22 +74,18 @@ public class MessageAttachment {
         return description;
     }
 
+    /**
+     * @param description A description of the attachment.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
+	@Override
+	public String toString() {
+		return "MessageAttachment [identifier=" + identifier + ", name=" + name + ", mimeType=" + mimeType
+				+ ", description=" + description + "]";
+	}
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
-    public String toString() {
-        return "MessageAttachment [name=" + name + ", mimeType=" + mimeType + ", description=" + description
-                + ", identifier=" + identifier + "]";
-    }
 
 }

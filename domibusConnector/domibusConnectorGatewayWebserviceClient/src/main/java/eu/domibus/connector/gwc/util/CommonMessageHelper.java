@@ -61,8 +61,6 @@ public class CommonMessageHelper {
     private static final String ORIGINAL_MESSAGE_ID = "originalMessageId";
     public static final String XML_MIME_TYPE = "text/xml";
     public static final String APPLICATION_MIME_TYPE = "application/octet-stream";
-    public static final String CONTENT_PDF_NAME = "ContentPDF";
-    public static final String CONTENT_XML_NAME = "ECodexContentXML";
     public static final String PARTPROPERTY_NAME = "description";
     public static final String BODYLOAD_HREF_PREFIX = "#";
     public static final String DOMIBUS_MESSAGE_ERROR = "Error to message on domibus gateway side!";
