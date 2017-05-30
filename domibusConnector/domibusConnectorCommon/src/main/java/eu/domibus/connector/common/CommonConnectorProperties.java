@@ -21,6 +21,9 @@ public class CommonConnectorProperties {
     String dynamicDiscoveryEnvironment;
     String dynamicDiscoveryNormalisationAlgorithm;
     String monitoringType;
+    
+    String connectorTestService;
+    String connectorTestAction;
 
     public String getGatewayEndpointAddress() {
         return gatewayEndpointAddress;
@@ -173,5 +176,21 @@ public class CommonConnectorProperties {
     public void setMonitoringType(String monitoringType) {
         this.monitoringType = monitoringType;
     }
+
+	public String getConnectorTestService() {
+		return connectorTestService;
+	}
+
+	public void setConnectorTestService(String connectorTestService) {
+		this.connectorTestService = connectorTestService;
+	}
+
+	public String getConnectorTestAction() {
+		return connectorTestAction;
+	}
+
+	public void setConnectorTestAction(String connectorTestAction) {
+		this.connectorTestAction = connectorTestAction;
+	}
 
 }

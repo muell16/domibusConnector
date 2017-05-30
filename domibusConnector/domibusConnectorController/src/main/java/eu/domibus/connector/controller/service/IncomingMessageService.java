@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 			persistenceService.mergeMessageWithDatabase(message);
 		}
 
-		if(message.getMessageDetails().getService().getService().equals("") && message.getMessageDetails().getAction().getAction().equals("")){
+		if(isConnector2ConnectorTest(message)){
 			// if it is a connector to connector test message defined by service and action, do NOT deliver message to the backend, but 
 			// only send a DELIVERY evidence back.
 			LOGGER.info("Message with id {} is a connector to connector test message. \nIt will not be delivered to the backend!");
@@ -85,6 +86,11 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessage().getId());
 
+	}
+
+	private boolean isConnector2ConnectorTest(Message message) {
+		return (!StringUtils.isEmpty(connectorProperties.getConnectorTestService()) && message.getMessageDetails().getService().getService().equals(connectorProperties.getConnectorTestService())) 
+				&& (!StringUtils.isEmpty(connectorProperties.getConnectorTestAction()) && message.getMessageDetails().getAction().getAction().equals(connectorProperties.getConnectorTestAction()));
 	}
 
 	private void createNonDeliveryEvidenceAndSendIt(Message originalMessage)
