@@ -21,129 +21,156 @@ import eu.domibus.connector.security.exception.DomibusConnectorSecurityException
 
 public class IncomingMessageService extends AbstractMessageService implements MessageService {
 
-    static Logger LOGGER = LoggerFactory.getLogger(IncomingMessageService.class);
+	static Logger LOGGER = LoggerFactory.getLogger(IncomingMessageService.class);
 
-    @Override
-    public void handleMessage(Message message) throws DomibusConnectorControllerException,
-            DomibusConnectorMessageException {
+	@Override
+	public void handleMessage(Message message) throws DomibusConnectorControllerException,
+	DomibusConnectorMessageException {
 
-        try {
-            persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
-        } catch (PersistenceException e1) {
-            createRelayREMMDEvidenceAndSendIt(message, false);
-            LOGGER.error("Message could not be persisted!", e1);
-            return;
-        }
+		try {
+			persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
+		} catch (PersistenceException e1) {
+			createRelayREMMDEvidenceAndSendIt(message, false);
+			LOGGER.error("Message could not be persisted!", e1);
+			return;
+		}
 
-        if (connectorProperties.isUseEvidencesToolkit()) {
-            createRelayREMMDEvidenceAndSendIt(message, true);
-        }
+		if (connectorProperties.isUseEvidencesToolkit()) {
+			createRelayREMMDEvidenceAndSendIt(message, true);
+		}
 
-        if (connectorProperties.isUseSecurityToolkit()) {
-            try {
-                securityToolkit.validateContainer(message);
-            } catch (DomibusConnectorSecurityException e) {
-                createNonDeliveryEvidenceAndSendIt(message);
-                throw e;
-            }
-        }
+		if (connectorProperties.isUseSecurityToolkit()) {
+			try {
+				securityToolkit.validateContainer(message);
+			} catch (DomibusConnectorSecurityException e) {
+				createNonDeliveryEvidenceAndSendIt(message);
+				throw e;
+			}
+		}
 
-        if (connectorProperties.isUseContentMapper()) {
-            try {
-                contentMapper.mapInternationalToNational(message);
-            } catch (DomibusConnectorContentMapperException e) {
-                createNonDeliveryEvidenceAndSendIt(message);
-                throw new DomibusConnectorMessageException(message,
-                        "Error mapping content of message into national format!", e, this.getClass());
-            } catch (ImplementationMissingException e) {
-                createNonDeliveryEvidenceAndSendIt(message);
-                throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
-            }
-            persistenceService.mergeMessageWithDatabase(message);
-        }
+		if (connectorProperties.isUseContentMapper()) {
+			try {
+				contentMapper.mapInternationalToNational(message);
+			} catch (DomibusConnectorContentMapperException e) {
+				createNonDeliveryEvidenceAndSendIt(message);
+				throw new DomibusConnectorMessageException(message,
+						"Error mapping content of message into national format!", e, this.getClass());
+			} catch (ImplementationMissingException e) {
+				createNonDeliveryEvidenceAndSendIt(message);
+				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
+			}
+			persistenceService.mergeMessageWithDatabase(message);
+		}
 
-        try {
-            nationalBackendClient.deliverMessage(message);
-        } catch (DomibusConnectorNationalBackendClientException e) {
-            createNonDeliveryEvidenceAndSendIt(message);
-            throw new DomibusConnectorMessageException(message, "Error delivering message to national backend client!",
-                    e, this.getClass());
-        } catch (ImplementationMissingException e) {
-            createNonDeliveryEvidenceAndSendIt(message);
-            throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
-        }
+		if(message.getMessageDetails().getService().getService().equals("") && message.getMessageDetails().getAction().getAction().equals("")){
+			// if it is a connector to connector test message defined by service and action, do NOT deliver message to the backend, but 
+			// only send a DELIVERY evidence back.
+			LOGGER.info("Message with id {} is a connector to connector test message. \nIt will not be delivered to the backend!");
+			createDeliveryEvidenceAndSendIt(message);
+			LOGGER.info("Connector to Connector Test message is confirmed!");
+		}else{
+			try {
+				nationalBackendClient.deliverMessage(message);
+			} catch (DomibusConnectorNationalBackendClientException e) {
+				createNonDeliveryEvidenceAndSendIt(message);
+				throw new DomibusConnectorMessageException(message, "Error delivering message to national backend client!",
+						e, this.getClass());
+			} catch (ImplementationMissingException e) {
+				createNonDeliveryEvidenceAndSendIt(message);
+				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
+			}
+		}
 
-        persistenceService.setMessageDeliveredToNationalSystem(message);
+		persistenceService.setMessageDeliveredToNationalSystem(message);
 
-        LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessage().getId());
+		LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessage().getId());
 
-    }
+	}
 
-    private void createNonDeliveryEvidenceAndSendIt(Message originalMessage)
-            throws DomibusConnectorControllerException, DomibusConnectorMessageException {
+	private void createNonDeliveryEvidenceAndSendIt(Message originalMessage)
+			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
-        MessageConfirmation nonDelivery = null;
-        try {
+		MessageConfirmation nonDelivery = null;
+		try {
 
-            nonDelivery = evidencesToolkit.createNonDeliveryEvidence(RejectionReason.OTHER, originalMessage);
-        } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorMessageException(originalMessage,
-                    "Error creating NonDelivery evidence for message!", e, this.getClass());
-        }
+			nonDelivery = evidencesToolkit.createNonDeliveryEvidence(RejectionReason.OTHER, originalMessage);
+		} catch (DomibusConnectorEvidencesToolkitException e) {
+			throw new DomibusConnectorMessageException(originalMessage,
+					"Error creating NonDelivery evidence for message!", e, this.getClass());
+		}
 
-        DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
-        sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
+		sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
 
-        persistenceService.rejectMessage(originalMessage);
-    }
+		persistenceService.rejectMessage(originalMessage);
+	}
+	
+	private void createDeliveryEvidenceAndSendIt(Message originalMessage)
+			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
-    private void createRelayREMMDEvidenceAndSendIt(Message originalMessage, boolean isAcceptance)
-            throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-        MessageConfirmation messageConfirmation = null;
-        try {
-            messageConfirmation = isAcceptance ? evidencesToolkit.createRelayREMMDAcceptance(originalMessage)
-                    : evidencesToolkit.createRelayREMMDRejection(RejectionReason.OTHER, originalMessage);
-        } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorMessageException(originalMessage,
-                    "Error creating RelayREMMD evidence for message!", e, this.getClass());
-        }
+		MessageConfirmation delivery = null;
+		try {
 
-        DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+			delivery = evidencesToolkit.createDeliveryEvidence(originalMessage);
+		} catch (DomibusConnectorEvidencesToolkitException e) {
+			throw new DomibusConnectorMessageException(originalMessage,
+					"Error creating Delivery evidence for message!", e, this.getClass());
+		}
 
-        sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
+		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
-        if (!isAcceptance) {
-            persistenceService.rejectMessage(originalMessage);
-        }
-    }
+		sendEvidenceToBackToGateway(originalMessage, action, delivery);
 
-    private void sendEvidenceToBackToGateway(Message originalMessage, DomibusConnectorAction action,
-            MessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
-            DomibusConnectorMessageException {
+		persistenceService.confirmMessage(originalMessage);
+	}
 
-        originalMessage.addConfirmation(messageConfirmation);
-        persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation.getEvidence(),
-                messageConfirmation.getEvidenceType());
+	private void createRelayREMMDEvidenceAndSendIt(Message originalMessage, boolean isAcceptance)
+			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
+		MessageConfirmation messageConfirmation = null;
+		try {
+			messageConfirmation = isAcceptance ? evidencesToolkit.createRelayREMMDAcceptance(originalMessage)
+					: evidencesToolkit.createRelayREMMDRejection(RejectionReason.OTHER, originalMessage);
+		} catch (DomibusConnectorEvidencesToolkitException e) {
+			throw new DomibusConnectorMessageException(originalMessage,
+					"Error creating RelayREMMD evidence for message!", e, this.getClass());
+		}
 
-        MessageDetails details = new MessageDetails();
-        details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
-        details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-        details.setService(originalMessage.getMessageDetails().getService());
-        details.setAction(action);
-        details.setFromParty(originalMessage.getMessageDetails().getToParty());
-        details.setToParty(originalMessage.getMessageDetails().getFromParty());
+		DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
 
-        Message evidenceMessage = new Message(details, messageConfirmation);
+		sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
-        try {
-            gatewayWebserviceClient.sendMessage(evidenceMessage);
-        } catch (DomibusConnectorGatewayWebserviceClientException e) {
-            throw new DomibusConnectorMessageException(originalMessage,
-                    "Exception sending evidence back to sender gateway of message "
-                            + originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
-        }
+		if (!isAcceptance) {
+			persistenceService.rejectMessage(originalMessage);
+		}
+	}
 
-        persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());
-    }
+	private void sendEvidenceToBackToGateway(Message originalMessage, DomibusConnectorAction action,
+			MessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
+	DomibusConnectorMessageException {
+
+		originalMessage.addConfirmation(messageConfirmation);
+		persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation.getEvidence(),
+				messageConfirmation.getEvidenceType());
+
+		MessageDetails details = new MessageDetails();
+		details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
+		details.setConversationId(originalMessage.getMessageDetails().getConversationId());
+		details.setService(originalMessage.getMessageDetails().getService());
+		details.setAction(action);
+		details.setFromParty(originalMessage.getMessageDetails().getToParty());
+		details.setToParty(originalMessage.getMessageDetails().getFromParty());
+
+		Message evidenceMessage = new Message(details, messageConfirmation);
+
+		try {
+			gatewayWebserviceClient.sendMessage(evidenceMessage);
+		} catch (DomibusConnectorGatewayWebserviceClientException e) {
+			throw new DomibusConnectorMessageException(originalMessage,
+					"Exception sending evidence back to sender gateway of message "
+							+ originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
+		}
+
+		persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());
+	}
 }
