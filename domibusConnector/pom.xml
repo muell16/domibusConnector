@@ -18,7 +18,8 @@
 		<module>domibusConnectorConfigurator</module>
 		<module>domibusConnectorRunnable</module>
     <module>domibusConnectorGatewayPluginClient</module>
-  </modules>
+    <module>domibusConnectorDocumentation</module>
+	</modules>
 	<!-- Shared version number properties -->
 	<properties>
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>

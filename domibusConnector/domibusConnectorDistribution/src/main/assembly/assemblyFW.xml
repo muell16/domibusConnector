@@ -7,28 +7,30 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<!-- ==================== Copying DB Scripts ================= -->
-		<fileSet>
-			<directory>${project.basedir}/../DbScripts</directory>
+		<!-- <fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts</directory>
 			<outputDirectory>${db.scripts.output.dir}</outputDirectory>
-		</fileSet>
+		</fileSet> -->
 		
 		<!-- ==================== Copying Docs ================= -->
-		<fileSet>
-			<directory>${project.basedir}/../docs</directory>
+		<!-- <fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs</directory>
 			<outputDirectory>${documentation.output.dir}</outputDirectory>
 			<includes>
 				<include>*.pdf</include>
 			</includes>
-		</fileSet>
+		</fileSet> -->
+		
+		<!-- ==================== Copying example properties ================= -->
+		
 		<!-- <fileSet>
-			<directory>${project.basedir}/../ReleaseNotes
-			</directory>
-			<outputDirectory>${release.notes.output.dir}
-			</outputDirectory>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/properties</directory>
+			<outputDirectory>${properties.output.dir}</outputDirectory>
 			<includes>
-				<include>*.txt</include>
+				<include>*.properties</include>
 			</includes>
 		</fileSet> -->
+		
 		
 		
 		<!-- ==================== Copying Module's JAR files ================= -->
@@ -69,9 +71,27 @@
 			</includes>
 		</fileSet>
 		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorGatewayPluginClient/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayPluginClient
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorGatewayWebserviceClient/target/
 			</directory>
 			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayWebserviceClient
+			</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorMonitoring/target/
+			</directory>
+			<outputDirectory>${modules.output.dir}/domibusConnectorMonitoring
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
@@ -131,9 +151,21 @@
 			</outputDirectory>
 		</file>
 		<file>
+			<source>${project.basedir}/../domibusConnectorGatewayPluginClient/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayPluginClient
+			</outputDirectory>
+		</file>
+		<file>
 			<source>${project.basedir}/../domibusConnectorGatewayWebserviceClient/pom.xml
 			</source>
 			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayWebserviceClient
+			</outputDirectory>
+		</file>
+		<file>
+			<source>${project.basedir}/../domibusConnectorMonitoring/pom.xml
+			</source>
+			<outputDirectory>${modules.output.dir}/domibusConnectorMonitoring
 			</outputDirectory>
 		</file>
 		<file>
@@ -149,13 +181,7 @@
 			</outputDirectory>
 		</file>
 
-		<!-- ==================== Copying example properties ================= -->
 		
-		<file>
-			<source>${project.basedir}/../domibusConnectorCommon/src/main/resources/eu/domibus/connector/common/exampleConnectorProperties.properties</source>
-			<outputDirectory>${properties.output.dir}
-			</outputDirectory>
-		</file>
 	</files>
 
 	<!-- ==================== Copying Non-Public Dependecies ================= -->

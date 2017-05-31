@@ -20,7 +20,7 @@ echo"     SYNOPSIS
      -h, --help                    				Print this help
      
      EXAMPLES
-     DomibusStandaloneConnector.sh -j=/usr/bin/java7"
+     DomibusStandaloneConnector.sh -j=/usr/bin/java8"
 	exit 0
 fi
 
@@ -102,6 +102,7 @@ echo "CONNECTOR_PROPERTIES PATH     = $CONNECTOR_PROPERTIES"
 echo "LOGGING_PROPERTIES PATH    = $LOGGING_PROPERTIES"
 echo "CLASSPATH = $CLASSPATH"
 
+gateway.routing.option=Webservice
 
 COMMAND_LINE="$JAVA_PATH -cp $CLASSPATH -Dconnector.properties=$CONNECTOR_PROPERTIES -Dlogging.properties=$LOGGING_PROPERTIES eu.domibus.connector.runnable.DomibusConnector"
 echo "executing $COMMAND_LINE"
