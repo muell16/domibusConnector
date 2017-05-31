@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
-		<version>3.2.2</version>
+		<version>3.5-RELEASE</version>
 	</parent>
 	<artifactId>domibusConnectorController</artifactId>
 	<dependencies>
@@ -26,6 +26,11 @@
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorGatewayWebserviceClient</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorGatewayPluginClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

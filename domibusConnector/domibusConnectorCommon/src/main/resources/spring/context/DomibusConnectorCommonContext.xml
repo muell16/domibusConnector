@@ -25,6 +25,8 @@
 		<property name="dynamicDiscoveryEnvironment" value="${dynamic.discovery.environment}" />
 		<property name="dynamicDiscoveryNormalisationAlgorithm" value="${dynamic.discovery.normalisation.algorithm}" />
 		<property name="monitoringType" value="${monitoring.type}" />
+		<property name="connectorTestService" value="${connector.test.service}" />
+		<property name="connectorTestAction" value="${connector.test.action}" />
 	</bean>
 
 	<bean id="persistenceService"

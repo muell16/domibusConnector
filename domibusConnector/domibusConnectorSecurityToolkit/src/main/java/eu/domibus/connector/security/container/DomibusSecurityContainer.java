@@ -41,8 +41,6 @@ public class DomibusSecurityContainer implements InitializingBean {
 
     private static final String TOKEN_PDF_FILE_NAME = "Token.pdf";
 
-    private static final String TOKEN_XML_DOCUMENT_NAME = "tokenXML";
-
     private static final String DETACHED_SIGNATURE_DOCUMENT_NAME = "detachedSignature";
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainer.class);
@@ -171,7 +169,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                     Document asicDocument = container.getAsicDocument();
                     if (asicDocument != null) {
                         try {
-                            MessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument,
+                            MessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument, CommonConnectorGlobalConstants.ASICS_CONTAINER_IDENTIFIER,
                                     asicDocument.getName(), asicDocument.getMimeType().getCode());
                             message.addAttachment(asicAttachment);
                         } catch (IOException e) {
@@ -181,8 +179,8 @@ public class DomibusSecurityContainer implements InitializingBean {
                     Document tokenXML = container.getTokenXML();
                     if (tokenXML != null) {
                         try {
-                            MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML,
-                                    TOKEN_XML_DOCUMENT_NAME, MimeType.XML.getCode());
+                            MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML, CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER,
+                                    TOKEN_XML_FILE_NAME, MimeType.XML.getCode());
                             message.addAttachment(tokenAttachment);
                         } catch (IOException e) {
                             throw new DomibusConnectorSecurityException(e);
@@ -207,13 +205,10 @@ public class DomibusSecurityContainer implements InitializingBean {
             MessageAttachment asicsAttachment = null;
             MessageAttachment tokenXMLAttachment = null;
             for (MessageAttachment attachment : message.getAttachments()) {
-                if (
-                // attachment.getMimeType().equals(MimeType.ASICS.getCode()) &&
-                attachment.getName().endsWith(".asics")) {
+            	
+                if (attachment.getIdentifier().equals(CommonConnectorGlobalConstants.ASICS_CONTAINER_IDENTIFIER) || attachment.getIdentifier().endsWith(".asics")) {
                     asicsAttachment = attachment;
-                } else if (
-                // attachment.getMimeType().equals(MimeType.XML.getCode()) &&
-                attachment.getName().equals(TOKEN_XML_DOCUMENT_NAME)) {
+                } else if (attachment.getIdentifier().equals(CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER) || attachment.getIdentifier().equals(TOKEN_XML_FILE_NAME)) {
                     tokenXMLAttachment = attachment;
                 }
             }
@@ -241,16 +236,10 @@ public class DomibusSecurityContainer implements InitializingBean {
                             LOGGER.debug("The business document received from the container is of Mime Type {}",
                                     container.getBusinessDocument().getMimeType());
                             try {
-                                InputStream is = container.getBusinessDocument().openStream();
-                                byte[] docAsBytes = new byte[is.available()];
-                                is.read(docAsBytes);
+                            	byte[] docAsBytes = IOUtils.toByteArray(container.getBusinessDocument().openStream());
                                 if (container.getToken().getDocumentType().equals(MimeType.PDF.name())) {
                                     message.getMessageContent().setPdfDocument(docAsBytes);
-                                    if (!StringUtils.isEmpty(container.getBusinessDocument().getName())
-                                            && !container.getBusinessDocument().getName()
-                                                    .equals(CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME)
-                                            && !container.getBusinessDocument().getName()
-                                                    .equals(CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".pdf")) {
+                                    if (!StringUtils.isEmpty(container.getBusinessDocument().getName())) {
                                         message.getMessageContent().setPdfDocumentName(
                                                 container.getBusinessDocument().getName());
                                     }
@@ -294,7 +283,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                             for (Document businessAttachment : container.getBusinessAttachments()) {
                                 try {
                                     MessageAttachment attachment = convertDocumentToMessageAttachment(
-                                            businessAttachment, businessAttachment.getName(), businessAttachment
+                                            businessAttachment, businessAttachment.getName(), businessAttachment.getName(), businessAttachment
                                                     .getMimeType().getCode());
 
                                     message.addAttachment(attachment);
@@ -307,7 +296,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         Document tokenPDF = container.getTokenPDF();
                         if (tokenPDF != null) {
                             try {
-                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF,
+                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, CommonConnectorGlobalConstants.TOKEN_PDF_IDENTIFIER, 
                                         TOKEN_PDF_FILE_NAME, MimeType.PDF.getCode());
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
@@ -318,7 +307,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         Document tokenXML = container.getTokenXML();
                         if (tokenXML != null) {
                             try {
-                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML,
+                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER, 
                                         TOKEN_XML_FILE_NAME, MimeType.XML.getCode());
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
@@ -342,12 +331,20 @@ public class DomibusSecurityContainer implements InitializingBean {
         }
     }
 
-    private MessageAttachment convertDocumentToMessageAttachment(Document document, String name, String mimeType)
+    private MessageAttachment convertDocumentToMessageAttachment(Document document, String identifier, String name, String mimeType)
             throws IOException {
-        MessageAttachment attachment = new MessageAttachment();
-        attachment.setAttachment(IOUtils.toByteArray(document.openStream()));
-        attachment.setName(name);
-        // attachment.setMimeType(document.getMimeType().toString());
+    	
+    	byte[] byteArray = IOUtils.toByteArray(document.openStream());
+    	
+    	if(ArrayUtils.isEmpty(byteArray)){
+    		throw new DomibusConnectorSecurityException("Cannot create attachment without content data!");
+    	}
+    	if(StringUtils.isEmpty(identifier)){
+    		throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");
+    	}
+    	
+        MessageAttachment attachment = new MessageAttachment(byteArray, identifier);
+		attachment.setName(name);
         attachment.setMimeType(mimeType);
 
         return attachment;

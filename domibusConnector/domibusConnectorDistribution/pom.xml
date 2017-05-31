@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
-		<version>3.2.2</version>
+		<version>3.5-RELEASE</version>
 	</parent>
 	<artifactId>domibusConnectorDistribution</artifactId>
 
 	<properties>
 		<connector.build.dir>domibusConnector/</connector.build.dir>
 		<documentation.output.dir>${connector.build.dir}documentation/</documentation.output.dir>
-		<db.scripts.output.dir>${documentation.output.dir}db-scripts</db.scripts.output.dir>
+		<db.scripts.output.dir>${documentation.output.dir}database-scripts</db.scripts.output.dir>
 		<modules.output.dir>${connector.build.dir}modules</modules.output.dir>
 		<lib.output.dir>${connector.build.dir}lib</lib.output.dir>
 		<release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
@@ -22,23 +22,13 @@
 		<finalName>domibusConnector</finalName>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase />
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
 					<descriptors>
 						<descriptor>src/main/assembly/assemblyFW.xml</descriptor>
 						<descriptor>src/main/assembly/assemblyESAC.xml</descriptor>
+						<descriptor>src/main/assembly/assemblyDocu.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
@@ -53,7 +43,7 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
@@ -66,4 +56,5 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
 </project>

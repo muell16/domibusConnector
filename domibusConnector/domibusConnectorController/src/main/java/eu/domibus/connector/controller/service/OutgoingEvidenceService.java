@@ -7,6 +7,8 @@ import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
+import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageDetails;
@@ -14,8 +16,6 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
-import eu.domibus.connector.gwc.DomibusConnectorGatewayWebserviceClient;
-import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClientException;
 
 public class OutgoingEvidenceService implements EvidenceService {
 

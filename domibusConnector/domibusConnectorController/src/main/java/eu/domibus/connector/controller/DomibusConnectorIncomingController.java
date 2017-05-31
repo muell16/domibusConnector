@@ -1,17 +1,20 @@
 package eu.domibus.connector.controller;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
+import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
-import eu.domibus.connector.gwc.DomibusConnectorGatewayWebserviceClient;
-import eu.domibus.connector.gwc.exception.DomibusConnectorGatewayWebserviceClientException;
 
 public class DomibusConnectorIncomingController implements DomibusConnectorController {
 
@@ -38,20 +41,20 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
         LOGGER.debug("Job for handling incoming messages triggered.");
         Date start = new Date();
 
-        String[] messageIDs = null;
+        Collection<Message> messages = null;
         try {
-            messageIDs = gatewayWebserviceClient.listPendingMessages();
+            messages = gatewayWebserviceClient.requestPendingMessages();
         } catch (DomibusConnectorGatewayWebserviceClientException e) {
             throw new DomibusConnectorControllerException(e);
         }
 
-        if (messageIDs != null && messageIDs.length > 0) {
-            LOGGER.info("Found {} incoming messages on gateway to handle...", messageIDs.length);
-            for (String messageId : messageIDs) {
+        if (!CollectionUtils.isEmpty(messages)) {
+            LOGGER.info("Found {} incoming messages on gateway to handle...", messages.size());
+            for (Message message : messages) {
                 try {
-                    handleMessage(messageId);
+                    handleMessage(message);
                 } catch (DomibusConnectorControllerException e) {
-                    LOGGER.error("Error handling message with id " + messageId, e);
+                    LOGGER.error("Error handling message with id " + message.getMessageDetails().getEbmsMessageId(), e);
                 }
             }
         } else {
@@ -62,26 +65,20 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
                 (System.currentTimeMillis() - start.getTime()));
     }
 
-    private void handleMessage(String messageId) throws DomibusConnectorControllerException {
-        Message message = null;
-        try {
-            message = gatewayWebserviceClient.downloadMessage(messageId);
-        } catch (DomibusConnectorGatewayWebserviceClientException e) {
-            throw new DomibusConnectorControllerException("Error downloading message with id " + messageId
-                    + " from the gateway!", e);
-        }
+    private void handleMessage(Message message) throws DomibusConnectorControllerException {
+        
 
         if (isMessageEvidence(message)) {
             try {
                 incomingEvidenceService.handleEvidence(message);
             } catch (DomibusConnectorMessageException | DomibusConnectorControllerException e) {
-                LOGGER.error("Error handling message with id " + messageId, e);
+                LOGGER.error("Error handling message with id " + message.getMessageDetails().getEbmsMessageId(), e);
             }
         } else {
             try {
                 incomingMessageService.handleMessage(message);
             } catch (DomibusConnectorControllerException | DomibusConnectorMessageException e) {
-                LOGGER.error("Error handling message with id " + messageId, e);
+                LOGGER.error("Error handling message with id " + message.getMessageDetails().getEbmsMessageId(), e);
             }
         }
     }

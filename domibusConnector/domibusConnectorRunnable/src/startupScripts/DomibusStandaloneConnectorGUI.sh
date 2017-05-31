@@ -20,7 +20,7 @@ echo"     SYNOPSIS
      -h, --help                    				Print this help
      
      EXAMPLES
-     DomibusStandaloneConnector.sh -j=/usr/bin/java7"
+     DomibusStandaloneConnector.sh -j=/usr/bin/java8"
 	exit 0
 fi
 
@@ -83,7 +83,7 @@ fi
 if [ -z "$CONNECTOR_PROPERTIES" ]
 then
   # Use default properties 
-  CONNECTOR_PROPERTIES='conf/connector.properties'
+  CONNECTOR_PROPERTIES=`/usr/bin/pwd`'/conf/connector.properties'
 fi
 
 
@@ -91,15 +91,20 @@ fi
 if [ -z "$LOGGING_PROPERTIES" ]
 then
   # Use default properties 
-  LOGGING_PROPERTIES='conf/log4j.properties'
+  LOGGING_PROPERTIES=`/usr/bin/pwd`'/conf/log4j.properties'
 fi
+
+# building the Classpath
+CLASSPATH=`/usr/bin/pwd`'/bin/*:'`/usr/bin/pwd`'/lib/*'
 
 echo "JAVA_PATH  = $JAVA_PATH"
 echo "CONNECTOR_PROPERTIES PATH     = $CONNECTOR_PROPERTIES"
 echo "LOGGING_PROPERTIES PATH    = $LOGGING_PROPERTIES"
+echo "CLASSPATH = $CLASSPATH"
 
+gateway.routing.option=Webservice
 
-COMMAND_LINE="$JAVA_PATH -Dconnector.properties=$CONNECTOR_PROPERTIES -Dlogging.properties=$LOGGING_PROPERTIES -jar bin/DomibusConnectorRunnable.jar -gui"
+COMMAND_LINE="$JAVA_PATH -cp $CLASSPATH -Dconnector.properties=$CONNECTOR_PROPERTIES -Dlogging.properties=$LOGGING_PROPERTIES eu.domibus.connector.runnable.DomibusConnector -gui"
 echo "executing $COMMAND_LINE"
 
 #Launch connector

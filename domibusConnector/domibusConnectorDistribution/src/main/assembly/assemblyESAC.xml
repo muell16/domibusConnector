@@ -6,20 +6,6 @@
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
-		<!-- ==================== Copying DB Scripts ================= -->
-		<fileSet>
-			<directory>${project.basedir}/../DbScripts</directory>
-			<outputDirectory>${db.scripts.output.dir}</outputDirectory>
-		</fileSet>
-		
-		<!-- ==================== Copying Docs ================= -->
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorRunnable/src/doc</directory>
-			<outputDirectory>${documentation.output.dir}</outputDirectory>
-			<includes>
-				<include>*.pdf</include>
-			</includes>
-		</fileSet>
 		
 		<!-- ==================== Copying JAR files ================= -->
 		<fileSet>
@@ -34,19 +20,6 @@
 				<exclude>*-sources.jar</exclude>
 			</excludes>
 		</fileSet>
-		<!-- <fileSet>
-			<directory>${project.basedir}/../domibusConnectorConfigurator/target/
-			</directory>
-			<outputDirectory>${connector.build.dir}
-			</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-			<excludes>
-				<exclude>*-sources.jar</exclude>
-			</excludes>
-			
-		</fileSet> -->
 		
 		<!-- ==================== Copying dependency libraries ================= -->
 		<fileSet>
@@ -67,25 +40,7 @@
 			</outputDirectory>
 		</fileSet>
 		
-		<!-- ==================== Copying example properties ================= -->
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorRunnable/src/main/resources
-			</directory>
-			<outputDirectory>${documentation.output.dir}exampleProperties
-			</outputDirectory>
-			<includes>
-				<include>connector.properties</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorRunnable/src/main/resources
-			</directory>
-			<outputDirectory>${connector.build.dir}conf
-			</outputDirectory>
-			<includes>
-				<include>log4j.properties</include>
-			</includes>
-		</fileSet>
+		
 
 		<!-- ==================== Creating empty messages folders ================= -->
 		<fileSet>
