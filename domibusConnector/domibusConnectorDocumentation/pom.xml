@@ -5,11 +5,9 @@
   <parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.5.1-SNAPSHOT</version>
   </parent>
-  <groupId>eu.domibus.connector</groupId>
   <artifactId>domibusConnectorDocumentation</artifactId>
-  <version>3.5-SNAPSHOT</version>
   <name>domibusConnectorDocumentation</name>
   <url>http://maven.apache.org</url>
   <properties>
