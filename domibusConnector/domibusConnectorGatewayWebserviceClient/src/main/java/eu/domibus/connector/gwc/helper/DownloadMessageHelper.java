@@ -27,8 +27,6 @@ public class DownloadMessageHelper {
 
 	private CommonMessageHelper commonMessageHelper;
 
-	private static final String OLD_CONTENT_XML_NAME = "ECodexContentXML";
-
 	public void setCommonMessageHelper(CommonMessageHelper commonMessageHelper) {
 		this.commonMessageHelper = commonMessageHelper;
 	}
@@ -54,7 +52,7 @@ public class DownloadMessageHelper {
 
 			// is it an Evidence or an eCodex content XML?
 
-			if (elementDescription.equals(OLD_CONTENT_XML_NAME) || elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER)) {
+			if (elementDescription.equals(CommonConnectorGlobalConstants.OLD_CONTENT_XML_NAME) || elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER)) {
 				message.getMessageContent().setInternationalContent(bodyload.getValue());
 			} else if (isEvidence(elementDescription)) {
 				MessageConfirmation confirmation = new MessageConfirmation();
@@ -86,7 +84,7 @@ public class DownloadMessageHelper {
 										+ payload.getPayloadId());
 					}
 
-					if (elementDescription.equals(OLD_CONTENT_XML_NAME) || elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER)) {
+					if (elementDescription.equals(CommonConnectorGlobalConstants.OLD_CONTENT_XML_NAME) || elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER)) {
 						message.getMessageContent().setInternationalContent(payload.getValue());
 					} else if (elementDescription.equals(CommonConnectorGlobalConstants.CONTENT_PDF_IDENTIFIER)) {
 						message.getMessageContent().setPdfDocument(payload.getValue());
