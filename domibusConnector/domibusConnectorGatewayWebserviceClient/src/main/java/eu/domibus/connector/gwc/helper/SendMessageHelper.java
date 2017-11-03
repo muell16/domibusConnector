@@ -54,12 +54,16 @@ public class SendMessageHelper {
                 if (attachment.getAttachment() != null && attachment.getAttachment().length > 0) {
                     String mimeType = StringUtils.isEmpty(attachment.getMimeType()) ? CommonMessageHelper.APPLICATION_MIME_TYPE
                             : attachment.getMimeType();
+                    if(attachment.getIdentifier().equals(CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER)){
+                    	attachment.setName(attachment.getIdentifier());
+                    }
                     buildPayloadAndAddToRequest(request, mimeType, ++payloadCounter, attachment.getAttachment(),
                             attachment.getName(), userMessage);
 
                     if (attachment.getName().endsWith(".asics")) {
                         asicsFound = true;
                     }
+                    
                 }
             }
         }

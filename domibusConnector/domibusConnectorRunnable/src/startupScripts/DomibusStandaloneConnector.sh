@@ -95,7 +95,7 @@ then
 fi
 
 # building the Classpath
-CLASSPATH=`/usr/bin/pwd`'/bin/*:'`/usr/bin/pwd`'/lib/*'
+CLASSPATH=`/usr/bin/pwd`'/bin/*':`/usr/bin/pwd`'/lib/*'
 
 echo "JAVA_PATH  = $JAVA_PATH"
 echo "CONNECTOR_PROPERTIES PATH     = $CONNECTOR_PROPERTIES"
