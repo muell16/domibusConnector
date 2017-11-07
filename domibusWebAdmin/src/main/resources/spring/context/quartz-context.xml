@@ -9,7 +9,7 @@
 	</bean>
  
 	<!-- Spring Quartz -->
-	<bean name="monitoringJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="monitoringJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
  
 		<property name="jobClass" value="eu.domibus.webadmin.quartz.MonitoringJob" />
  
@@ -25,7 +25,7 @@
  
 	<!-- Simple Trigger, run every 5 seconds -->
 	<bean id="simpleMonitoringTrigger" 
-                class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+                class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
  
 		<property name="jobDetail" ref="monitoringJob" />
 		<property name="repeatInterval" value="60000" />

@@ -8,4 +8,6 @@ public interface IDomibusWebAdminConnectorPartyDao {
 
 	public abstract List<DomibusConnectorParty> getPartyList();
 
+	void persistNewParty(DomibusConnectorParty party);
+
 }

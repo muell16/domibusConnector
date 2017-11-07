@@ -14,9 +14,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<theme.version>1.0.3</theme.version>
 		<jsf.version>2.1.6</jsf.version>
-		<org.springframework.version>3.1.4.RELEASE</org.springframework.version>
-		<org.slf4j.version>1.6.6</org.slf4j.version>
-		<domibus.connector.version>3.1-RELEASE</domibus.connector.version>
+		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
+		<org.slf4j.version>1.7.11</org.slf4j.version>
+		<domibus.connector.version>3.2.1-RELEASE</domibus.connector.version>
 		<ecodex.monitoring.version>2.1</ecodex.monitoring.version>
 		<mojarra.version>2.1.6</mojarra.version>
 
@@ -28,6 +28,7 @@
 		<lib.output.dir>${webadmin.build.dir}lib</lib.output.dir>
 		<release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
 		<properties.output.dir>${documentation.output.dir}properties</properties.output.dir>
+		<pmode.xsd.resources.path>src/main/resources/pmode/domibus_3_2_4</pmode.xsd.resources.path>
 	</properties>
 
 	<profiles>
@@ -145,7 +146,7 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>${org.springframework.version}</version>
+			<version>4.2.3.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -189,7 +190,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.2.6.Final</version>
+			<version>5.0.2.Final</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -238,7 +239,7 @@
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>1.8.5</version>
+			<version>2.1.4</version>
 		</dependency>
 
 	</dependencies>
@@ -250,8 +251,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -278,6 +279,35 @@
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.12.0</version>
+				<executions>
+					<execution>
+						<id>PModes</id>
+						<configuration>
+							<schemaDirectory>${pmode.xsd.resources.path}</schemaDirectory>
+							<schemaIncludes>
+								<include>domibus-pmode.xsd</include>
+							</schemaIncludes>
+							<generateDirectory>src/main/java</generateDirectory>
+							<strict>true</strict>
+							<extension>true</extension>
+							<args><arg>-no-header</arg></args>
+						</configuration>
+						<goals>
+							<goal>generate</goal>
 						</goals>
 					</execution>
 				</executions>

@@ -27,9 +27,9 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-     	 	 	<value>file:${SERVER_ROOT}/conf/webadmin/webadmin.properties</value>
+     	 	 	<!-- <value>file:${TOMCAT_ROOT}/conf/webadmin/webadmin.properties</value> -->
     	  	<!-- 	<value>classpath:webadmin.properties</value>   -->
-   				<value>classpath:connector.properties</value>
+   				<value>file:${CATALINA_HOME}/conf/connector/connector.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -40,7 +40,7 @@
 		</property>
 		<property name="arguments">
 			<list>
-   			  	<value>file:${SERVER_ROOT}/conf/webadmin/log4j.properties</value>
+   			  	<value>file:${CATALINA_HOME}/conf/connector/log4j.properties</value>
  		  	<!-- 	<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>
@@ -104,6 +104,12 @@
    
    	<bean id="connectorMessageFilter"
 		class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
+		
+	<bean id="pModeSupport" class="eu.domibus.webadmin.blogic.connector.pmode.impl.ConnectorPModeSupportImpl">
+		<property name="partyDao" ref="domibusWebAdminConnectorPartyDao" /> 
+              <property name="serviceDao" ref="domibusWebAdminConnectorServiceDao" /> 
+              <property name="actionDao" ref="domibusWebAdminConnectorActionDao" /> 	
+	</bean>
 	
 
 	<!-- DAO's -->
