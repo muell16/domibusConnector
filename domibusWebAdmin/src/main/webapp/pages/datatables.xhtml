@@ -7,59 +7,28 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets">
                 
                 
-   <ui:param name="title" value="WebAdmin - Connector Data Tables"/>
+	<ui:param name="title" value="WebAdmin - Connector Data Tables"/>
     <ui:define name="content">
     <f:event type="preRenderView" listener="#{connectorDataTablesBean.init()}" />
          
- <h:form enctype="multipart/form-data" id="formDataTables"> 
- <p:panel id="importPanel" header="Import from PModes"
+ 	<h:form enctype="multipart/form-data" id="formDataTables"> 
+ 	<p:panel id="importPanel" header="Import from PModes"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
 				toggleable="true" toggleOrientation="horizontal">
-  <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
-    	<h:outputText class="textArea" value="Select PMode File: " />
-    	<p:fileUpload value="#{connectorDataTablesBean.pmodeFile}" mode="simple"></p:fileUpload>
-    </h:panelGrid>
-
-     <h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">           
-    	 <p:commandButton id="import" action="#{connectorDataTablesBean.importFromPModes}" ajax="false" value="Import" /> 
-    </h:panelGrid>
-</p:panel>
+	  	<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
+	    	<h:outputText class="textArea" value="Select PMode File: " />
+	    	<p:fileUpload value="#{connectorDataTablesBean.pmodeFile}" mode="simple"></p:fileUpload>
+	    </h:panelGrid>
+	
+	     <h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">           
+	    	 <p:commandButton id="import" action="#{connectorDataTablesBean.importFromPModes}" ajax="false" value="Import" /> 
+    	</h:panelGrid>
+	</p:panel>
+    </h:form>
 
     <hr />
 	
-    <p:panel id="partyPanel" header="Parties"
-				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
-				toggleable="true" toggleOrientation="horizontal">
-    <p:dataTable id="partyTable" var="party" value="#{connectorDataTablesBean.partyList}">
-        <f:facet name="header">
-            domibusConnector configured Parties
-        </f:facet>
- 
- 		
-    	
-            <p:column>
-            	<f:facet name="header">  
-            <h:outputText value="Party ID" />  
-        </f:facet>  
-        <h:outputText value="#{party.partyId}"/>  
-            </p:column>
-            
-            <p:column>
-            <f:facet name="header">  
-            <h:outputText value="Party ID Type" />  
-        </f:facet>  
-                <h:outputText value="#{party.partyIdType}" />
-            </p:column>
-            
-            <p:column>
-            <f:facet name="header">  
-            <h:outputText value="Role" />  
-        </f:facet>  
-                <h:outputText value="#{party.role}" />
-            </p:column>
-        
-    </p:dataTable>
-    </p:panel>
+
     
     <p:panel id="actionPanel" header="Actions"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
@@ -117,6 +86,6 @@
     </p:panel>
 	
    
-</h:form>
+
 </ui:define>
 </ui:composition>

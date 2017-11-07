@@ -1,6 +1,9 @@
 package eu.domibus.webadmin.jsf;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.faces.event.ActionEvent;
 
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -19,11 +22,13 @@ public class ConnectorDataTablesBean {
 	
 	private List<DomibusConnectorAction> actionList;
 	private List<DomibusConnectorService> serviceList;
-	private List<DomibusConnectorParty> partyList;
+	private List<DomibusConnectorParty> partyList;	
+	private List<String> selectedParties; // = new ArrayList<>();
 	
 	private UploadedFile pmodeFile;
 	
 	
+		
 	public void init() {
 		LOG.trace("#init: init method called");
 		setActionList(pModeSupport.getActionList());
@@ -65,7 +70,7 @@ public class ConnectorDataTablesBean {
 	}
 
 
-	public void setPartyList(List<DomibusConnectorParty> partyList) {
+	public void setPartyList(List<DomibusConnectorParty> partyList) {	
 		this.partyList = partyList;
 	}
 
@@ -84,6 +89,20 @@ public class ConnectorDataTablesBean {
 
 	public void setpModeSupport(IConnectorPModeSupport pModeSupport) {
 		this.pModeSupport = pModeSupport;
+	}
+
+	public List<String> getSelectedParties() {
+		return selectedParties;
+	}
+
+	public void setSelectedParties(List<String> selectedParties) {
+		this.selectedParties = selectedParties;
+	}
+	
+	public void deleteSelectedPartiesAction() {
+		LOG.trace("do nothing....");
+		//LOG.trace("#deleteSelectedParties: starting deletion for [{}]", this.selectedParties);
+		//TODO: open dialog after confirmation start deletion or abort
 	}
 
 

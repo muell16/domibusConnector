@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/templates/menuTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+      			xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+	<ui:param name="title" value="WebAdmin - Connector Party Table"/>
+    <ui:define name="content">
+    <f:event type="preRenderView" listener="#{connectorPartiesTableBean.init}" />
+         
+ 	<h:form enctype="multipart/form-data" id="form"> 
+ 	
+ 		<p:dataTable id="partyTable" var="party" value="#{connectorPartiesTableBean.partyList}" selection="#{connectorPartiesTableBean.selectedParties}" rowKey="#{party}">
+        <f:facet name="header">
+            domibusConnector configured Parties
+        </f:facet>
+  
+        <p:column selectionMode="multiple" />
+        
+ 		    
+        <p:column>
+            <f:facet name="header">  
+	            <h:outputText value="Party ID" />  
+	        </f:facet>  
+	        <h:outputText value="#{party.partyId}"/>  
+        </p:column>
+            
+            <p:column>
+            <f:facet name="header">  
+            <h:outputText value="Party ID Type" />  
+        </f:facet>  
+                <h:outputText value="#{party.partyIdType}" />
+            </p:column>
+            
+            <p:column>
+            <f:facet name="header">  
+            <h:outputText value="Role" />  
+        </f:facet>  
+                <h:outputText value="#{party.role}" />
+            </p:column>
+        
+		<f:facet name="footer">
+            <!--  <p:commandButton process="checkboxDT" update=":form:multiCarDetail" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" /> 
+            actionListener="#{connectorPartiesTableBean.deleteSelectedParties}"
+            -->
+            <p:commandButton id="deleteSelectedPartiesButton" 
+            	process="partyTable"
+            	update=":form:partyDetail"
+            	value="Delete Selected" oncomplete="PF('multiPartyDialog').show()" />
+        </f:facet>
+
+    </p:dataTable> 	 
+    
+   	<p:dialog header="For deletion selected parties:" widgetVar="multiPartyDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="420">
+        <p:outputPanel id="partyDetail" style="text-align:center;">
+            <ui:repeat value="#{connectorPartiesTableBean.selectedParties}" var="party">
+                <h:outputText value="#{party.partyId} - #{party.partyIdType} - #{party.role}" style="display:block"/>
+            </ui:repeat>            
+            <p:commandButton id="confirmDeleteSelectedPartiesButton" actionListener="#{connectorPartiesTableBean.confirmDeleteSelectedParties}" ajax="false" value="Delete" />
+            <p:commandButton id="abbortDeleteSelectedPartiesButton" ajax="false" value="Abort" /> <!-- TODO: Styling, ordering -->             
+        </p:outputPanel>
+    </p:dialog>
+    
+  
+    
+    	
+ 	</h:form> 	
+	</ui:define>
+
+</ui:composition>

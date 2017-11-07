@@ -19,10 +19,16 @@
     
     <context-param>
 		<param-name>contextConfigLocation</param-name>
+		
 		<param-value>
             classpath:spring/context/WebAdminContext.xml
-        </param-value>
+        </param-value>        
 	</context-param>
+	<context-param>
+   		<param-name>facelets.SKIP_COMMENTS</param-name>
+   		<param-value>true</param-value>
+	</context-param>
+	
   
   <filter>
 		<filter-name>AuthFilter</filter-name>

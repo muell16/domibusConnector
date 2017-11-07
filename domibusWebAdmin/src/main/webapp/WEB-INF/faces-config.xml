@@ -30,6 +30,17 @@
 		</managed-property>
    </managed-bean>
     
+	<managed-bean>
+		<managed-bean-name>connectorPartiesTableBean</managed-bean-name>
+		<managed-bean-class>eu.domibus.webadmin.jsf.ConnectorPartiesTableBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+		<managed-property>
+			<property-name>pModeSupport</property-name>
+			<value>#{pModeSupport}</value>
+		</managed-property>
+	</managed-bean>    
+    
+    
    <managed-bean>
       <managed-bean-name>connectorBean</managed-bean-name>
       <managed-bean-class>eu.domibus.webadmin.jsf.ConnectorBean</managed-bean-class>
