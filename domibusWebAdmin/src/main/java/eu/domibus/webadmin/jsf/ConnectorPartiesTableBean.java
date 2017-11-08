@@ -60,7 +60,11 @@ public class ConnectorPartiesTableBean {
 	public void confirmDeleteSelectedParties(ActionEvent actionEvent) {
 		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedParties);
 		//TODO: delete DB entries
-		//this.pModeSupport
+		
+		for (DomibusConnectorParty p : selectedParties) {			
+			this.pModeSupport.deleteParty(p);
+			//TODO: handle exceptions in delete, decide abbort all deletions? -> should all deletions be in one transaction?
+		}
 		
 		
 	}

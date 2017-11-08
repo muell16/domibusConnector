@@ -13,32 +13,33 @@
          
  	<h:form enctype="multipart/form-data" id="form"> 
  	
- 		<p:dataTable id="partyTable" var="party" value="#{connectorPartiesTableBean.partyList}" selection="#{connectorPartiesTableBean.selectedParties}" rowKey="#{party}">
-        <f:facet name="header">
-            domibusConnector configured Parties
-        </f:facet>
+ 		<p:dataTable id="partyTable" var="party" value="#{connectorPartiesTableBean.partyList}" 
+ 			selection="#{connectorPartiesTableBean.selectedParties}" 
+ 			rowKey="#{party}"
+ 			resizableColumns="true"
+ 			scrollable="true"
+ 			tableStyle="table-layout: auto; "
+			>
+			
+        	<f:facet name="header">
+            	domibusConnector configured Parties
+            	<p:commandButton id="createPartyButton" ajax="false" value="new Party" 
+            	 /> <!-- TODO: Styling, ordering -->
+        	</f:facet>
+        	
   
-        <p:column selectionMode="multiple" />
+        	<p:column selectionMode="multiple" />
         
  		    
-        <p:column>
-            <f:facet name="header">  
-	            <h:outputText value="Party ID" />  
-	        </f:facet>  
-	        <h:outputText value="#{party.partyId}"/>  
-        </p:column>
+        	<p:column headerText="Party ID">
+		        <h:outputText value="#{party.partyId}"/>  
+        	</p:column>
             
-            <p:column>
-            <f:facet name="header">  
-            <h:outputText value="Party ID Type" />  
-        </f:facet>  
+            <p:column headerText="Party ID Type">
                 <h:outputText value="#{party.partyIdType}" />
             </p:column>
             
-            <p:column>
-            <f:facet name="header">  
-            <h:outputText value="Role" />  
-        </f:facet>  
+            <p:column headerText="Role">
                 <h:outputText value="#{party.role}" />
             </p:column>
         
@@ -48,26 +49,27 @@
             -->
             <p:commandButton id="deleteSelectedPartiesButton" 
             	process="partyTable"
-            	update=":form:partyDetail"
+            	update=":dialogForm:partyDetail"
             	value="Delete Selected" oncomplete="PF('multiPartyDialog').show()" />
         </f:facet>
 
     </p:dataTable> 	 
     
-   	<p:dialog header="For deletion selected parties:" widgetVar="multiPartyDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="420">
-        <p:outputPanel id="partyDetail" style="text-align:center;">
-            <ui:repeat value="#{connectorPartiesTableBean.selectedParties}" var="party">
-                <h:outputText value="#{party.partyId} - #{party.partyIdType} - #{party.role}" style="display:block"/>
-            </ui:repeat>            
-            <p:commandButton id="confirmDeleteSelectedPartiesButton" actionListener="#{connectorPartiesTableBean.confirmDeleteSelectedParties}" ajax="false" value="Delete" />
-            <p:commandButton id="abbortDeleteSelectedPartiesButton" ajax="false" value="Abort" /> <!-- TODO: Styling, ordering -->             
-        </p:outputPanel>
-    </p:dialog>
-    
-  
-    
-    	
  	</h:form> 	
+ 	
+ 	<p:dialog appendTo="@(body)" header="For deletion selected parties:" widgetVar="multiPartyDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="520" >
+ 		<h:form id="dialogForm">
+	        <p:outputPanel id="partyDetail" style="text-align:center;">
+	            <ui:repeat value="#{connectorPartiesTableBean.selectedParties}" var="party">
+	                <h:outputText value="#{party.partyId} - #{party.partyIdType} - #{party.role}" style="display:block"/>
+	            </ui:repeat>            
+	            <p:commandButton id="confirmDeleteSelectedPartiesButton" actionListener="#{connectorPartiesTableBean.confirmDeleteSelectedParties}" ajax="false" value="Delete" />
+	            <p:commandButton id="abbortDeleteSelectedPartiesButton" ajax="false" value="Cancel" /> <!-- TODO: Styling, ordering -->             
+	        </p:outputPanel>
+        </h:form>
+    </p:dialog>
+ 	
+ 	
 	</ui:define>
 
 </ui:composition>
