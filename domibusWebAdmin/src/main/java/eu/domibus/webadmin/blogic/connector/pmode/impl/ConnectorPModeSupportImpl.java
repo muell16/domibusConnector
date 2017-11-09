@@ -16,9 +16,10 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.primefaces.model.UploadedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
@@ -35,6 +36,7 @@ import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Services.Service;
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
+import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
@@ -43,7 +45,7 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 
 public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 	
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final static Logger LOG = LoggerFactory.getLogger(ConnectorPModeSupportImpl.class); 
 	
 private IDomibusWebAdminConnectorActionDao actionDao;
 	
@@ -53,7 +55,7 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 
 	@Override
 	public void importFromPModeFile(UploadedFile pmodeFile) {
-		logger.debug("Starting import of PModes from File "+ pmodeFile.getFileName());
+		LOG.debug("Starting import of PModes from File "+ pmodeFile.getFileName());
 		Configuration pmodes = null;
 		try {
 			pmodes = (Configuration) byteArrayToXmlObject(pmodeFile.getContents(), Configuration.class, Configuration.class);
@@ -201,5 +203,31 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 	
 		public void setPartyDao(IDomibusWebAdminConnectorPartyDao partyDao) {
 			this.partyDao = partyDao;
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManagerWebAdmin")
+		public void deleteParty(DomibusConnectorParty p) {
+			LOG.trace("#deleteParty: called, use partyDao to delete");
+			//domibusConnectorParty is detached so find first, and then delete...
+			this.partyDao.delete(
+					this.partyDao.findById(
+							new DomibusConnectorPartyPK(p.getPartyId(), p.getRole())));			
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManagerWebAdmin")
+		public void updateParty(DomibusConnectorPartyPK oldPartyId, DomibusConnectorParty updatedParty) {
+			DomibusConnectorParty dbParty = this.partyDao.findById(oldPartyId);
+			dbParty.setPartyId(updatedParty.getPartyId());
+			dbParty.setPartyIdType(updatedParty.getPartyIdType());
+			dbParty.setRole(updatedParty.getRole());
+			this.partyDao.update(dbParty);			
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManagerWebAdmin")
+		public void createParty(DomibusConnectorParty party) {
+			this.partyDao.persistNewParty(party);
 		}
 }

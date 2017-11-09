@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
+import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 public class ConnectorPartiesTableBean {
@@ -50,6 +51,11 @@ public class ConnectorPartiesTableBean {
 	 * holds the text of the confirmButton at the editDialog
 	 */
 	private String editDialogConfirmButtonText = "";
+
+	/**
+	 * holds the reference of the old party
+	 */
+	private DomibusConnectorPartyPK oldPartyPK;
 	
 	
 	public void init() {
@@ -141,7 +147,7 @@ public class ConnectorPartiesTableBean {
 		//TODO: delete DB entries
 		
 		for (DomibusConnectorParty p : selectedParties) {			
-			//this.pModeSupport.deleteParty(p);
+			this.pModeSupport.deleteParty(p);
 			//TODO: handle exceptions in delete, decide abbort all deletions? -> should all deletions be in one transaction?
 		}			
 	}
@@ -157,6 +163,7 @@ public class ConnectorPartiesTableBean {
 	public void editParty() {
 		LOG.trace("#editParty: called with party: [{}]", this.party);
 		//TODO: handle edit...
+		this.oldPartyPK = new DomibusConnectorPartyPK(party.getPartyId(), party.getRole());
 		this.createNewPartyMode = false;		
 	}
 
@@ -165,10 +172,13 @@ public class ConnectorPartiesTableBean {
 		LOG.trace("#saveParty: called with party [{}] and mode createNewParty is [{}]", this.party, this.createNewPartyMode);
 		if (this.createNewPartyMode) {
 			//TODO: create new party
+			this.pModeSupport.createParty(this.party);
 		} else {
 			//TODO: save change...
+			this.pModeSupport.updateParty(this.oldPartyPK, this.party);
 		}
 		this.party = null;		
+		this.oldPartyPK = null;
 	}
 	
 	
