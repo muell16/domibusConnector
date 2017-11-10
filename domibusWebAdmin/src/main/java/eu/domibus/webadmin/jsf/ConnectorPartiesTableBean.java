@@ -3,10 +3,15 @@ package eu.domibus.webadmin.jsf;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.primefaces.component.log.Log;
+import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
@@ -152,8 +157,24 @@ public class ConnectorPartiesTableBean {
 		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedParties);
 		//TODO: delete DB entries
 		
-		for (DomibusConnectorParty p : selectedParties) {			
-			this.pModeSupport.deleteParty(p);
+		for (DomibusConnectorParty p : selectedParties) {	
+			try {
+				this.pModeSupport.deleteParty(p);
+			} catch (DataIntegrityViolationException e) {
+				LOG.error("#confirmDeleteSelectedParties: DataIntegrityViolationException occured", e);
+				
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
+						String.format("Delete will corrupt data, there are references pointing to this party! [PartyID: %s - Party ID type: %s - Role: %s] ", 
+								p.getPartyId(), p.getPartyIdType(), p.getRole()));
+				
+				FacesContext.getCurrentInstance()												
+					.addMessage(null, message);
+				
+			} catch (Exception e) {
+				LOG.error("#confirmDeleteSelectedParties: Exception occured", e);
+				FacesContext.getCurrentInstance()
+					.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error!", "Exception occured - delete not possibly! Check log!"));
+			}
 			//TODO: handle exceptions in delete, decide abbort all deletions? -> should all deletions be in one transaction?
 		}			
 	}
@@ -174,11 +195,34 @@ public class ConnectorPartiesTableBean {
 	}
 
 	
+	/*
+	 * handles the call from showCreatePartyDialog and  
+	 * @param actionEvent
+	 */
 	public void saveParty(ActionEvent actionEvent) {
 		LOG.trace("#saveParty: called with party [{}] and mode createNewParty is [{}]", this.party, this.createNewPartyMode);
 		if (this.createNewPartyMode) {
 			//TODO: create new party
-			this.pModeSupport.createParty(this.party);
+			try {
+				this.pModeSupport.createParty(this.party);
+			} catch (DataIntegrityViolationException e) {
+				LOG.warn(":saveParty: create party failed with DataIntegrityException", e);
+				
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Error!", "Creating party failed" );
+				
+				FacesContext.getCurrentInstance()												
+					.addMessage(null, message);
+				
+				RequestContext context = RequestContext.getCurrentInstance();
+				context.execute("PF('showCreatePartyDialog').show();");
+									
+				//return to keep old data (this.party, this.oldPartyPK)
+				return;
+				
+			} catch (Exception e) {
+				LOG.error(":saveparty: create party failed with exception", e);
+			}
 		} else {
 			//TODO: save change...
 			this.pModeSupport.updateParty(this.oldPartyPK, this.party);
@@ -186,11 +230,5 @@ public class ConnectorPartiesTableBean {
 		this.party = null;		
 		this.oldPartyPK = null;
 	}
-	
-	
-	
-
-
-	
-	
+		
 }
