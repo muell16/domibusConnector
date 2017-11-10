@@ -71,6 +71,8 @@
 		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdmin" />
 	</bean>
 	
+	<tx:annotation-driven transaction-manager="transactionManagerWebAdmin" />
+	
 	<bean id="webAdminProperties" class="eu.domibus.webadmin.commons.WebAdminProperties" init-method="loadProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
 		<property name="dataSource" ref="dataSource" />
@@ -104,7 +106,7 @@
    
    	<bean id="connectorMessageFilter"
 		class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
-		
+				
 	<bean id="pModeSupport" class="eu.domibus.webadmin.blogic.connector.pmode.impl.ConnectorPModeSupportImpl">
 		<property name="partyDao" ref="domibusWebAdminConnectorPartyDao" /> 
               <property name="serviceDao" ref="domibusWebAdminConnectorServiceDao" /> 

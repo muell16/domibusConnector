@@ -126,15 +126,21 @@ public class ConnectorPartiesTableBean {
 	public void setEditDialogConfirmButtonText(String editDialogConfirmButtonText) {
 		this.editDialogConfirmButtonText = editDialogConfirmButtonText;
 	}
-	
+
+	public boolean isCreateNewPartyMode() {
+		return createNewPartyMode;
+	}
+
+
+	public void setCreateNewPartyMode(boolean createNewPartyMode) {
+		this.createNewPartyMode = createNewPartyMode;
+	}
+
 	
 	/*
 	 * ACTION LISTENER, BUTTON HANDLER
 	 */
 	
-
-
-
 	public void deleteSelectedParties(ActionEvent actionEvent) {
 		LOG.trace("#deleteSelectedParties: delete [{}] following parties: [{}]", 
 				selectedParties == null ? 0 : selectedParties.size(), 

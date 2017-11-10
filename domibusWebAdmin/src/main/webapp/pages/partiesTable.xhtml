@@ -33,6 +33,8 @@
  			resizableColumns="true"
  			scrollable="true"
  			tableStyle="table-layout: auto; "
+ 			table-layout="auto"
+ 			
 			>
 			
         	<f:facet name="header">
@@ -106,13 +108,14 @@
  			<h:form id="partyEditForm">
  			<p:panelGrid columns="2" layout="grid" width="auto" >
  				<h:outputLabel for="partyEditPartyId" value="Party ID" />
- 				<p:inputText id="partyEditPartyId"  value="#{connectorPartiesTableBean.party.partyId}" size="45" />
+ 				<!--  changing pk components (partyId, role) is not allowed! -->
+ 				<p:inputText id="partyEditPartyId"  value="#{connectorPartiesTableBean.party.partyId}" size="45" disabled="#{not(connectorPartiesTableBean.createNewPartyMode)}" /> 
  					
 				<h:outputLabel for="partyEditPartyIdType" value="Party ID Type"  />
 				<p:inputText id="partyEditPartyIdType" value="#{connectorPartiesTableBean.party.partyIdType}" size="45" />
 				
 				<h:outputLabel for="partyEditPartyRole" value="Role" />
-				<p:inputText id="partyEditPartyRole" value="#{connectorPartiesTableBean.party.role}" size="45" />
+				<p:inputText id="partyEditPartyRole" value="#{connectorPartiesTableBean.party.role}" size="45" disabled="#{not(connectorPartiesTableBean.createNewPartyMode)}" />
 				 					 					 					
  			</p:panelGrid>
  			<!--  TODO: Error Message Feld hier einbauen -->

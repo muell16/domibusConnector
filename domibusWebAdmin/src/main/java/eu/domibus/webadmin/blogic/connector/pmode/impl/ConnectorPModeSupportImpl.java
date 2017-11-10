@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -206,7 +205,7 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 		}
 
 		@Override
-		@Transactional(readOnly=false, value="transactionManagerWebAdmin")
+		@Transactional(readOnly=false, value="transactionManager")
 		public void deleteParty(DomibusConnectorParty p) {
 			LOG.trace("#deleteParty: called, use partyDao to delete");
 			//domibusConnectorParty is detached so find first, and then delete...
@@ -216,18 +215,20 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 		}
 
 		@Override
-		@Transactional(readOnly=false, value="transactionManagerWebAdmin")
+		@Transactional(readOnly=false, value="transactionManager")
 		public void updateParty(DomibusConnectorPartyPK oldPartyId, DomibusConnectorParty updatedParty) {
 			DomibusConnectorParty dbParty = this.partyDao.findById(oldPartyId);
-			dbParty.setPartyId(updatedParty.getPartyId());
+//			altering PK components is not allowed!			
+//			dbParty.setPartyId(updatedParty.getPartyId());
 			dbParty.setPartyIdType(updatedParty.getPartyIdType());
-			dbParty.setRole(updatedParty.getRole());
+//			dbParty.setRole(updatedParty.getRole());
 			this.partyDao.update(dbParty);			
 		}
 
 		@Override
-		@Transactional(readOnly=false, value="transactionManagerWebAdmin")
+		@Transactional(readOnly=false, value="transactionManager")
 		public void createParty(DomibusConnectorParty party) {
 			this.partyDao.persistNewParty(party);
 		}
+		
 }
