@@ -4,26 +4,36 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
          version="3.0">
 
-  
-      <!-- Add Support for Spring -->
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
-    <listener>
-        <listener-class>
-            org.springframework.web.context.request.RequestContextListener
-        </listener-class>
-    </listener>
+	<display-name>domibusWebAdmin</display-name>
+
+	  <!-- Add Support for Spring -->
+  <listener>
+	<listener-class>
+		org.springframework.web.context.ContextLoaderListener
+	</listener-class>
+  </listener>
+  <listener>
+	<listener-class>
+		org.springframework.web.context.request.RequestContextListener
+	</listener-class>
+  </listener>
+
+    <!-- Change to "Production" when you are ready to deploy -->
+  <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
     
-    <context-param>
-		<param-name>contextConfigLocation</param-name>
-		
-		<param-value>
-            classpath:spring/context/WebAdminContext.xml
-        </param-value>        
-	</context-param>
+<!--     <context-param> -->
+<!-- 		<param-name>contextConfigLocation</param-name> -->
+<!-- 		<param-value> -->
+<!--             classpath:spring/context/WebAdminContext.xml -->
+<!--         </param-value>         -->
+<!-- 	</context-param> -->
+
+
+
+	
 	<context-param>
    		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
    		<param-value>true</param-value>
@@ -63,14 +73,17 @@
     <servlet-name>Faces Servlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
   </servlet>
+  
   <servlet-mapping>
     <servlet-name>Faces Servlet</servlet-name>
     <url-pattern>*.jsf</url-pattern>
   </servlet-mapping>
-    <servlet-mapping>
+  
+  <servlet-mapping>
     <servlet-name>Faces Servlet</servlet-name>
     <url-pattern>*.xhtml</url-pattern>
   </servlet-mapping>
+  
   <context-param>
     <param-name>javax.faces.PROJECT_STAGE</param-name>
     <param-value>Development</param-value>
@@ -82,7 +95,7 @@
   </context-param>
   <!-- If you go to http://host/project/ (with no file name), it will
        try index.jsf first, welcome.jsf next, and so forth.
-   -->
+   -->   
   <welcome-file-list>
     <welcome-file>pages/login.xhtml</welcome-file>
   </welcome-file-list>
