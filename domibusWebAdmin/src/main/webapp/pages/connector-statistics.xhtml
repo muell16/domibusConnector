@@ -85,13 +85,13 @@
 
     
     <h:panelGrid columns="2" style="text-align: center; margin: 0 auto;" cellpadding="5">          
-    	<p:pieChart id="messageSummary" value="#{connectorBean.connectorSummaryService.pieModelMessageSummary}" legendPosition="e" fill="false" showDataLabels="true"  
+    	<p:chart id="messageSummary" type="pie" model="#{connectorBean.connectorSummaryService.pieModelMessageSummary}" legendPosition="e" fill="false" showDataLabels="true"  
         title="Incoming/Outgoing" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
         rendered="#{connectorBean.summarySelected}"/> 
-        <p:pieChart id="serviceSummary" value="#{connectorBean.connectorSummaryService.pieModelServiceSummary}" legendPosition="e" fill="false" showDataLabels="true"  
+        <p:chart id="serviceSummary" type="pie" model="#{connectorBean.connectorSummaryService.pieModelServiceSummary}" legendPosition="e" fill="false" showDataLabels="true"  
         title="Services" style="width:400px;height:300px" sliceMargin="5" diameter="150" 
         rendered="#{connectorBean.summarySelected}"/> 
-    
+		    
     </h:panelGrid>
 
     
