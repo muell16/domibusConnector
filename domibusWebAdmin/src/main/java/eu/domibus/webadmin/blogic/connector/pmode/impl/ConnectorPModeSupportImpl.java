@@ -252,5 +252,27 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 			LOG.trace("updateAction: updateAction with");			
 			this.actionDao.update(action);			
 		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManager")
+		public void createService(DomibusConnectorService service) {
+			LOG.trace("createService: with service [{}]", service);
+			this.serviceDao.persistNewService(service);			
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManager")
+		public void updateService(String oldServicePK, DomibusConnectorService service) {
+			LOG.trace("updateService: with new service [{}]", service);
+			this.serviceDao.update(service);			
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManager")
+		public void deleteService(DomibusConnectorService service) {
+			LOG.trace("deleteService: with service [{}]", service);
+			DomibusConnectorService dbService = this.serviceDao.findById(service.getService());
+			this.serviceDao.delete(dbService);
+		}
 		
 }

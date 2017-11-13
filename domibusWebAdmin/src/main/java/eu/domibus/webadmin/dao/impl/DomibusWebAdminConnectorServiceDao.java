@@ -18,12 +18,29 @@ public class DomibusWebAdminConnectorServiceDao implements IDomibusWebAdminConne
 
 	@Override
     public List<DomibusConnectorService> getServiceList() {
-        return em.createQuery("SELECT s FROM DomibusConnectorService s").getResultList();	
+        return em.createQuery("SELECT s FROM DomibusConnectorService s", DomibusConnectorService.class).getResultList();	
     }
 	
 	@Override
-	 @Transactional(readOnly=false, value="transactionManagerWebAdmin")
+	@Transactional(readOnly=false, value="transactionManager")
 	public void persistNewService(DomibusConnectorService service){
 		em.persist(service);
+	}
+
+	@Override
+	public void update(DomibusConnectorService service) {
+		em.merge(service);
+		
+	}
+
+	@Override	
+	@Transactional(readOnly=true, value="transactionManager")
+	public DomibusConnectorService findById(String service) {
+		return em.find(DomibusConnectorService.class, service);
+	}
+
+	@Override
+	public void delete(DomibusConnectorService service) {
+		em.remove(service);
 	}
 }

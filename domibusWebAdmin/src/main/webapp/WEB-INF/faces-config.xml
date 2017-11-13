@@ -49,6 +49,16 @@
 			<value>#{pModeSupport}</value>
 		</managed-property>	
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>connectorServicesTableBean</managed-bean-name>
+		<managed-bean-class>eu.domibus.webadmin.jsf.ConnectorServicesTableBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+		<managed-property>
+			<property-name>pModeSupport</property-name>
+			<value>#{pModeSupport}</value>
+		</managed-property>	
+	</managed-bean>
         
    <managed-bean>
       <managed-bean-name>connectorBean</managed-bean-name>

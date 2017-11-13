@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/templates/menuTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+      			xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+	<ui:param name="title" value="WebAdmin - Connector Service Table"/>
+    <ui:define name="content">
+    <f:event type="preRenderView" listener="#{connectorServicesTableBean.init}" />
+         
+	
+	<p:growl id="growl" showDetail="true" sticky="true" /> 		         
+         
+         
+ 	<h:form enctype="multipart/form-data" id="form"> 
+ 	
+ 		<p:dataTable id="serviceTable" var="service" value="#{connectorServicesTableBean.serviceList}" 
+ 			selection="#{connectorServicesTableBean.selectedServices}" 
+ 			rowKey="#{service.service}"
+ 			resizableColumns="true"
+ 			scrollable="true"
+ 			tableStyle="table-layout: auto;"
+ 			table-layout="auto" 			
+			>
+
+				<f:facet name="header" >
+					<p:panelGrid>
+						<p:row>
+							<p:column styleClass="ui-widget-header">
+
+									<p:commandButton id="showCreateServiceDialog"    
+									 					ajax="true"          	
+									            		value="Create new" 
+														update="serviceEditForm createEditServiceDialog"
+														style="float:left;"
+									            		actionListener="#{connectorServicesTableBean.createNewService}"
+									            	 	onsuccess="PF('createEditServiceDialog').show()" >	
+							        		<f:setPropertyActionListener target="#{connectorServicesTableBean.editDialogTitle}" value="Create Connection Service" />
+											<f:setPropertyActionListener target="#{connectorServicesTableBean.editDialogConfirmButtonText}" value="Create" />
+									</p:commandButton>
+			   
+							</p:column>
+							<p:column styleClass="ui-widget-header" colspan="2" style="border:none;">
+								<h:outputText value=" domibusConnector configured Services" />
+							</p:column>
+
+							<p:column styleClass="ui-widget-header"></p:column>
+						</p:row>
+
+					</p:panelGrid>
+				
+				</f:facet>
+
+				<p:column headerText="" selectionMode="multiple" />
+        
+ 		    
+        	<p:column headerText="Service">
+		        <h:outputText value="#{service.service}"/>  
+        	</p:column>
+            
+            <p:column headerText="service type">
+                <h:outputText value="#{service.serviceType}" />
+            </p:column>
+            
+            
+            <p:column>
+				<p:commandButton
+							icon="ui-icon-pencil" 
+							title="edit"
+							action="#{connectorServicesTableBean.editService}"  
+							ajax="true" 
+							onsuccess="PF('createEditServiceDialog').show()" 
+							update="createEditServiceDialog serviceEditForm" >
+				 	<f:setPropertyActionListener target="#{connectorServicesTableBean.service}" value="#{service}" />
+				 	<f:setPropertyActionListener target="#{connectorServicesTableBean.editDialogTitle}" value="Edit Service" />
+				 	<f:setPropertyActionListener target="#{connectorServicesTableBean.editDialogConfirmButtonText}" value="Save" />
+				</p:commandButton>
+            </p:column>
+        
+		<f:facet name="footer">
+            <!--  <p:commandButton process="checkboxDT" update=":form:multiCarDetail" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" /> 
+            actionListener="#{connectorServicesTableBean.deleteSelectedServices}"
+            -->
+            <p:toolbar name="header"> 
+				<f:facet name="left">
+            		<p:commandButton id="deleteSelectedServicesButton" 
+            			process="serviceTable"
+            			update=":dialogForm:serviceDelete"
+            			value="Delete Selected" oncomplete="PF('multiServiceDialog').show()" />
+            	</f:facet>
+            </p:toolbar>
+        </f:facet>
+
+    </p:dataTable> 	 
+    
+ 	</h:form> 	
+ 	
+ 	<p:dialog appendTo="@(body)" header="For deletion selected services:" widgetVar="multiServiceDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="520" dynamic="true" >
+ 		<h:form id="dialogForm"> 	 			
+	        <p:outputPanel id="serviceDelete" style="text-align:center;">
+	            <ui:repeat value="#{connectorServicesTableBean.selectedServices}" var="service">	            	
+	                <h:outputText value="service: #{service.service} - service type #{service.serviceType}" style="display:block"/>
+	            </ui:repeat>            
+	            <p:commandButton id="confirmDeleteSelectedServicesButton" actionListener="#{connectorServicesTableBean.confirmDeleteSelectedServices}" ajax="false" value="Delete" />
+	            <p:commandButton id="abbortDeleteSelectedServicesButton" ajax="false" value="Cancel" /> <!-- TODO: Styling, ordering -->             
+	        </p:outputPanel>
+        </h:form>
+    </p:dialog>
+ 	
+  	
+  	<!--  TODO: header variabel machen... -->
+  	
+ 		<p:dialog appendTo="@(body)"  widgetVar="createEditServiceDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="50em" >
+ 				
+ 			<f:facet name="header">
+ 				<h:outputText id="createEditServiceDialog" value="#{connectorServicesTableBean.editDialogTitle}" />
+ 			</f:facet>
+ 			<h:form id="serviceEditForm">
+ 			<p:panelGrid columns="2" layout="grid" width="auto" >
+ 				<h:outputLabel for="serviceEditService" value="Service" />
+ 				<!--  changing pk components (service) is not allowed! -->
+ 				<p:inputText id="serviceEditService"  value="#{connectorServicesTableBean.service.service}" disabled="#{not(connectorServicesTableBean.createNewServiceMode)}" /> 
+ 									
+				<h:outputLabel for="serviceEditPdfRequired" value="service type" />
+				<p:inputText id="serviceEditPdfRequired" value="#{connectorServicesTableBean.service.serviceType}" />
+				 					 					 					
+ 			</p:panelGrid>
+ 			<!--  TODO: Error Message Feld hier einbauen -->
+ 			
+ 			<p:commandButton id="confirmCreateService" actionListener="#{connectorServicesTableBean.saveService}" ajax="false" value="#{connectorServicesTableBean.editDialogConfirmButtonText}" />
+ 			
+ 			<p:commandButton id="cancelCreateService" ajax="false" value="Cancel" >
+ 				<!--  setzt service auf null -->
+ 				<f:setPropertyActionListener target="#{connectorServicesTableBean.service}" value="#{doesnotexist}" /> 			
+ 			</p:commandButton>
+ 			
+ 
+ 		
+ 	</h:form> 	
+ 	</p:dialog>
+ 	
+	</ui:define>
+
+</ui:composition>

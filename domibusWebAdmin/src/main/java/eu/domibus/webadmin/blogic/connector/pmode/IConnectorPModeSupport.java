@@ -31,6 +31,11 @@ public interface IConnectorPModeSupport {
 	
 	void deleteAction(DomibusConnectorAction action);
 
+	void createService(DomibusConnectorService service);
+
+	void updateService(String oldServicePK, DomibusConnectorService service);
+
+	void deleteService(DomibusConnectorService service);
 
 	
 }
