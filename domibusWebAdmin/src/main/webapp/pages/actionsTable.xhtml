@@ -7,9 +7,9 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets">
 
 
-	<ui:param name="title" value="WebAdmin - Connector Party Table"/>
+	<ui:param name="title" value="WebAdmin - Connector Action Table"/>
     <ui:define name="content">
-    <f:event type="preRenderView" listener="#{connectorPartiesTableBean.init}" />
+    <f:event type="preRenderView" listener="#{connectorActionsTableBean.init}" />
          
 	
 	<p:growl id="growl" showDetail="true" sticky="true" /> 		         
@@ -17,14 +17,13 @@
          
  	<h:form enctype="multipart/form-data" id="form"> 
  	
- 		<p:dataTable id="partyTable" var="party" value="#{connectorPartiesTableBean.partyList}" 
- 			selection="#{connectorPartiesTableBean.selectedParties}" 
- 			rowKey="#{party}"
+ 		<p:dataTable id="actionTable" var="action" value="#{connectorActionsTableBean.actionList}" 
+ 			selection="#{connectorActionsTableBean.selectedActions}" 
+ 			rowKey="#{action.action}"
  			resizableColumns="true"
  			scrollable="true"
- 			tableStyle="table-layout: auto; "
- 			table-layout="auto"
- 			
+ 			tableStyle="table-layout: auto;"
+ 			table-layout="auto" 			
 			>
 
 				<f:facet name="header" >
@@ -32,112 +31,65 @@
 						<p:row>
 							<p:column styleClass="ui-widget-header">
 
-									<p:commandButton id="showCreatePartyDialog"    
+									<p:commandButton id="showCreateActionDialog"    
 									 					ajax="true"          	
 									            		value="Create new" 
-														update="createEditPartyDialog partyEditForm"
+														update="actionEditForm createEditActionDialog"
 														style="float:left;"
-									            		actionListener="#{connectorPartiesTableBean.createNewParty}"
-									            	 	onsuccess="PF('createEditPartyDialog').show()" >	
-							        		<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogTitle}" value="Create Connection Party" />
-											<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogConfirmButtonText}" value="Create" />
+									            		actionListener="#{connectorActionsTableBean.createNewAction}"
+									            	 	onsuccess="PF('createEditActionDialog').show()" >	
+							        		<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogTitle}" value="Create Connection Action" />
+											<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogConfirmButtonText}" value="Create" />
 									</p:commandButton>
 			   
 							</p:column>
 							<p:column styleClass="ui-widget-header" colspan="2" style="border:none;">
-								<h:outputText value=" domibusConnector configured Parties" />
+								<h:outputText value=" domibusConnector configured Actions" />
 							</p:column>
 
 							<p:column styleClass="ui-widget-header"></p:column>
 						</p:row>
-<!-- 						<p:row> -->
-<!-- 							<p:toolbar> -->
-<!-- 								<p:column colspan="4"> -->
-<!-- 									<p:commandButton id="showCreatePartyDialog"     -->
-<!-- 								 					ajax="true"          	 -->
-<!-- 								            		value="Create new"  -->
-<!-- 													update="createEditPartyDialog partyEditForm" -->
-											
-<!-- 								            		actionListener="#{connectorPartiesTableBean.createNewParty}" -->
-<!-- 								            	 	onsuccess="PF('createEditPartyDialog').show()" >	 -->
-<!-- 						        		<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogTitle}" value="Create Connection Party" /> -->
-<!-- 										<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogConfirmButtonText}" value="Create" /> -->
-<!-- 				        			</p:commandButton> -->
-<!-- 			        			</p:column> -->
-<!-- 							</p:toolbar> -->
-<!-- 						</p:row> -->
+
 					</p:panelGrid>
 				
 				</f:facet>
 
-<!-- 				<f:facet name="header"> -->
-				
-<!-- 					<p:toolbar name="header">  -->
-<!-- 						<f:facet name="left"> -->
-<!-- 							<p:commandButton id="showCreatePartyDialog"    -->
-<!-- 							 					ajax="true"          	 -->
-<!-- 							            		value="Create new"  -->
-<!-- 												update="createEditPartyDialog partyEditForm" -->
-										
-<!-- 							            		actionListener="#{connectorPartiesTableBean.createNewParty}" -->
-<!-- 							            	 	onsuccess="PF('createEditPartyDialog').show()" -->
-<!-- 						        >	 -->
-<!-- 					        	<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogTitle}" value="Create Connection Party" /> -->
-<!-- 								<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogConfirmButtonText}" value="Create" /> -->
-<!-- 			        		</p:commandButton> -->
-<!-- 						</f:facet> -->
-						
-<!-- 						<f:facet name="center"> -->
-<!-- 							<h:outputText value=" domibusConnector configured Parties" /> -->
-<!-- 						</f:facet> -->
-						
-<!-- 					</p:toolbar> -->
-					
-<!-- 				</f:facet> -->
-
-
-
-
-
 				<p:column headerText="" selectionMode="multiple" />
         
  		    
-        	<p:column headerText="Party ID">
-		        <h:outputText value="#{party.partyId}"/>  
+        	<p:column headerText="Action">
+		        <h:outputText value="#{action.action}"/>  
         	</p:column>
             
-            <p:column headerText="Party ID Type">
-                <h:outputText value="#{party.partyIdType}" />
+            <p:column headerText="PDF required">
+                <h:outputText value="#{action.pdfRequired}" />
             </p:column>
             
-            <p:column headerText="Role">
-                <h:outputText value="#{party.role}" />
-            </p:column>
             
             <p:column>
 				<p:commandButton
 							icon="ui-icon-pencil" 
 							title="edit"
-							action="#{connectorPartiesTableBean.editParty}"  
+							action="#{connectorActionsTableBean.editAction}"  
 							ajax="true" 
-							onsuccess="PF('createEditPartyDialog').show()" 
-							update="createEditPartyDialog partyEditForm" >
-				 	<f:setPropertyActionListener target="#{connectorPartiesTableBean.party}" value="#{party}" />
-				 	<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogTitle}" value="Edit Connection Party" />
-				 	<f:setPropertyActionListener target="#{connectorPartiesTableBean.editDialogConfirmButtonText}" value="Save" />
+							onsuccess="PF('createEditActionDialog').show()" 
+							update="createEditActionDialog actionEditForm" >
+				 	<f:setPropertyActionListener target="#{connectorActionsTableBean.action}" value="#{action}" />
+				 	<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogTitle}" value="Edit Action" />
+				 	<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogConfirmButtonText}" value="Save" />
 				</p:commandButton>
             </p:column>
         
 		<f:facet name="footer">
             <!--  <p:commandButton process="checkboxDT" update=":form:multiCarDetail" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" /> 
-            actionListener="#{connectorPartiesTableBean.deleteSelectedParties}"
+            actionListener="#{connectorActionsTableBean.deleteSelectedActions}"
             -->
             <p:toolbar name="header"> 
 				<f:facet name="left">
-            		<p:commandButton id="deleteSelectedPartiesButton" 
-            			process="partyTable"
-            			update=":dialogForm:partyDelete"
-            			value="Delete Selected" oncomplete="PF('multiPartyDialog').show()" />
+            		<p:commandButton id="deleteSelectedActionsButton" 
+            			process="actionTable"
+            			update=":dialogForm:actionDelete"
+            			value="Delete Selected" oncomplete="PF('multiActionDialog').show()" />
             	</f:facet>
             </p:toolbar>
         </f:facet>
@@ -146,14 +98,14 @@
     
  	</h:form> 	
  	
- 	<p:dialog appendTo="@(body)" header="For deletion selected parties:" widgetVar="multiPartyDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="520" dynamic="true" >
+ 	<p:dialog appendTo="@(body)" header="For deletion selected actions:" widgetVar="multiActionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="520" dynamic="true" >
  		<h:form id="dialogForm"> 	 			
-	        <p:outputPanel id="partyDelete" style="text-align:center;">
-	            <ui:repeat value="#{connectorPartiesTableBean.selectedParties}" var="party">	            	
-	                <h:outputText value="#{party.partyId} - #{party.partyIdType} - #{party.role}" style="display:block"/>
+	        <p:outputPanel id="actionDelete" style="text-align:center;">
+	            <ui:repeat value="#{connectorActionsTableBean.selectedActions}" var="action">	            	
+	                <h:outputText value="action: #{action.action} - pdf required: #{action.pdfRequired}" style="display:block"/>
 	            </ui:repeat>            
-	            <p:commandButton id="confirmDeleteSelectedPartiesButton" actionListener="#{connectorPartiesTableBean.confirmDeleteSelectedParties}" ajax="false" value="Delete" />
-	            <p:commandButton id="abbortDeleteSelectedPartiesButton" ajax="false" value="Cancel" /> <!-- TODO: Styling, ordering -->             
+	            <p:commandButton id="confirmDeleteSelectedActionsButton" actionListener="#{connectorActionsTableBean.confirmDeleteSelectedActions}" ajax="false" value="Delete" />
+	            <p:commandButton id="abbortDeleteSelectedActionsButton" ajax="false" value="Cancel" /> <!-- TODO: Styling, ordering -->             
 	        </p:outputPanel>
         </h:form>
     </p:dialog>
@@ -161,31 +113,28 @@
   	
   	<!--  TODO: header variabel machen... -->
   	
- 		<p:dialog appendTo="@(body)"  widgetVar="createEditPartyDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="50em" >
+ 		<p:dialog appendTo="@(body)"  widgetVar="createEditActionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="50em" >
  				
  			<f:facet name="header">
- 				<h:outputText id="createEditPartyDialog" value="#{connectorPartiesTableBean.editDialogTitle}" />
+ 				<h:outputText id="createEditActionDialog" value="#{connectorActionsTableBean.editDialogTitle}" />
  			</f:facet>
- 			<h:form id="partyEditForm">
+ 			<h:form id="actionEditForm">
  			<p:panelGrid columns="2" layout="grid" width="auto" >
- 				<h:outputLabel for="partyEditPartyId" value="Party ID" />
- 				<!--  changing pk components (partyId, role) is not allowed! -->
- 				<p:inputText id="partyEditPartyId"  value="#{connectorPartiesTableBean.party.partyId}" size="45" disabled="#{not(connectorPartiesTableBean.createNewPartyMode)}" /> 
- 					
-				<h:outputLabel for="partyEditPartyIdType" value="Party ID Type"  />
-				<p:inputText id="partyEditPartyIdType" value="#{connectorPartiesTableBean.party.partyIdType}" size="45" />
-				
-				<h:outputLabel for="partyEditPartyRole" value="Role" />
-				<p:inputText id="partyEditPartyRole" value="#{connectorPartiesTableBean.party.role}" size="45" disabled="#{not(connectorPartiesTableBean.createNewPartyMode)}" />
+ 				<h:outputLabel for="actionEditAction" value="Action" />
+ 				<!--  changing pk components (action) is not allowed! -->
+ 				<p:inputText id="actionEditAction"  value="#{connectorActionsTableBean.action.action}" disabled="#{not(connectorActionsTableBean.createNewActionMode)}" /> 
+ 									
+				<h:outputLabel for="actionEditPdfRequired" value="pdf required" />
+				<p:selectBooleanCheckbox id="actionEditPdfRequired" value="#{connectorActionsTableBean.action.pdfRequired}" />
 				 					 					 					
  			</p:panelGrid>
  			<!--  TODO: Error Message Feld hier einbauen -->
  			
- 			<p:commandButton id="confirmCreateParty" actionListener="#{connectorPartiesTableBean.saveParty}" ajax="false" value="#{connectorPartiesTableBean.editDialogConfirmButtonText}" />
+ 			<p:commandButton id="confirmCreateAction" actionListener="#{connectorActionsTableBean.saveAction}" ajax="false" value="#{connectorActionsTableBean.editDialogConfirmButtonText}" />
  			
- 			<p:commandButton id="cancelCreateParty" ajax="false" value="Cancel" >
- 				<!--  setzt party auf null -->
- 				<f:setPropertyActionListener target="#{connectorPartiesTableBean.party}" value="#{doesnotexist}" /> 			
+ 			<p:commandButton id="cancelCreateAction" ajax="false" value="Cancel" >
+ 				<!--  setzt action auf null -->
+ 				<f:setPropertyActionListener target="#{connectorActionsTableBean.action}" value="#{doesnotexist}" /> 			
  			</p:commandButton>
  			
  

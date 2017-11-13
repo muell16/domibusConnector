@@ -7,15 +7,12 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import org.primefaces.component.log.Log;
 import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 public class ConnectorActionsTableBean {
@@ -38,13 +35,13 @@ public class ConnectorActionsTableBean {
 	private List<DomibusConnectorAction> selectedActions = new ArrayList<>();
 	
 	/**
-	 * Holds the party which is being edited by the createEditDialog
+	 * Holds the action which is being edited by the createEditDialog
 	 */
 	private DomibusConnectorAction action;
 
 	/**
-	 * handles if a new party is created (true) or
-	 * if a party is being edited
+	 * handles if a new action is created (true) or
+	 * if a action is being edited
 	 */
 	private boolean createNewActionMode;
 	
@@ -59,7 +56,7 @@ public class ConnectorActionsTableBean {
 	private String editDialogConfirmButtonText = "";
 
 	/**
-	 * holds the reference of the old party
+	 * holds the db key of the old action
 	 */
 	private String oldActionPK;
 	
@@ -167,88 +164,107 @@ public class ConnectorActionsTableBean {
 	
 	
 
-	public void confirmDeleteSelectedParties(ActionEvent actionEvent) {
-		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedActions);
+	public void confirmDeleteSelectedActions(ActionEvent actionEvent) {
+		LOG.trace("#confirmDeleteSelectedActions: delete confirmed, calling Service to delete [{}]", selectedActions);
 		//TODO: delete DB entries
 		
 		//TODO: handle confirm action delete
 		
-//		for (DomibusConnectorAction action : selectedActions) {	
-//			try {
-//				this.pModeSupport.deleteParty(p);
-//			} catch (DataIntegrityViolationException e) {
-//				LOG.error("#confirmDeleteSelectedParties: DataIntegrityViolationException occured", e);
-//				
-//				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
-//						String.format("Delete will corrupt data, there are references pointing to this party! [PartyID: %s - Party ID type: %s - Role: %s] ", 
-//								p.getPartyId(), p.getPartyIdType(), p.getRole()));
-//				
-//				FacesContext.getCurrentInstance()												
-//					.addMessage(null, message);
-//				
-//			} catch (Exception e) {
-//				LOG.error("#confirmDeleteSelectedParties: Exception occured", e);
-//				FacesContext.getCurrentInstance()
-//					.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error!", "Exception occured - delete not possibly! Check log!"));
-//			}
-//		}	
+		for (DomibusConnectorAction action : selectedActions) {	
+			//TODO: delete Action!
+			try {
+				this.pModeSupport.deleteAction(action);
+			} catch (DataIntegrityViolationException e) {
+				LOG.error("#confirmDeleteSelectedActions: DataIntegrityViolationException occured", e);
+				
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
+						String.format("Delete will corrupt data, there are references pointing to this action! [Action Action: %s - Pdf required: %s] ", 
+								action.getAction(), action.isPdfRequired()));
+				
+				FacesContext.getCurrentInstance()												
+					.addMessage(null, message);
+				
+			} catch (Exception e) {
+				LOG.error("#confirmDeleteSelectedActions: Exception occured", e);
+				FacesContext.getCurrentInstance()
+					.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error!", "Exception occured - delete not possibly! Check log!"));
+			}
+		}	
 		
+	}
+		
+ 
+	public void createNewAction(ActionEvent actionEvent) {
+		LOG.trace("#createNewAction: called");
+		this.action = new DomibusConnectorAction();
+		this.createNewActionMode = true;
 	}
 	
 	
-// TODO: createNewAction	
-//	public void createNewParty(ActionEvent actionEvent) {
-//		LOG.trace("#createNewParty: called");
-//		this.party = new DomibusConnectorParty();
-//		this.createNewPartyMode = true;
-//	}
-	
-	
-// TODO: edit Action	
-//	public void editParty() {
-//		LOG.trace("#editParty: called with party: [{}]", this.party);
-//		//TODO: handle edit...
-//		this.oldPartyPK = new DomibusConnectorPartyPK(party.getPartyId(), party.getRole());
-//		this.createNewPartyMode = false;		
-//	}
+ 
+	public void editAction() {
+		LOG.trace("#editAction: called with action: [{}]", this.action);
+		//TODO: handle edit...
+		this.oldActionPK = this.action.getAction();
+		this.createNewActionMode = false;		
+	}
 
 
 	
-//TODO: save Action	
-//	/*
-//	 * handles the call from showCreatePartyDialog and  
-//	 * @param actionEvent
-//	 */
-//	public void saveParty(ActionEvent actionEvent) {
-//		LOG.trace("#saveParty: called with party [{}] and mode createNewParty is [{}]", this.party, this.createNewPartyMode);
-//		if (this.createNewPartyMode) {
-//			//TODO: create new party
-//			try {
-//				this.pModeSupport.createParty(this.party);
-//			} catch (DataIntegrityViolationException e) {
-//				LOG.warn(":saveParty: create party failed with DataIntegrityException", e);
-//				
-//				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-//						"Error!", "Creating party failed" );
-//				
-//				FacesContext.getCurrentInstance()												
-//					.addMessage(null, message);
-//				
-//				RequestContext context = RequestContext.getCurrentInstance();
-//				context.execute("PF('showCreatePartyDialog').show();");
-//									
-//				//return to keep old data (this.party, this.oldPartyPK)
-//				return;
-//				
-//			} catch (Exception e) {
-//				LOG.error(":saveparty: create party failed with exception", e);
-//			}
-//		} else {
-//			//TODO: save change...
-//			this.pModeSupport.updateParty(this.oldPartyPK, this.party);
-//		}
-//		this.party = null;		
-//		this.oldPartyPK = null;
-//	}
+	
+	/*
+	 * handles the call from showCreateActionDialog  
+	 * @param actionEvent
+	 */
+	public void saveAction(ActionEvent actionEvent) {
+		LOG.trace("#saveAction: called with action [{}] and mode createNewAction is [{}]", this.action, this.createNewActionMode);
+		if (this.createNewActionMode) {
+			//create new action			
+			try {
+				this.pModeSupport.createAction(this.action);
+			} catch (DataIntegrityViolationException e) {
+				LOG.warn(":saveAction: create action failed with DataIntegrityException", e);
+				
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Error!", "Creating action failed" );
+				
+				FacesContext.getCurrentInstance()												
+					.addMessage(null, message);
+				
+				RequestContext context = RequestContext.getCurrentInstance();
+				context.execute("PF('showCreateActionDialog').show();");
+									
+				//return to keep old data (this.action, this.oldActionPK), so user input is not lost
+				
+			} catch (Exception e) {
+				LOG.error(":saveAction: create action failed with exception", e);
+				
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, 
+						"Error!", "Creating action failed -> check logs!" );
+				
+				FacesContext.getCurrentInstance()												
+					.addMessage(null, message);
+			}
+			
+			
+		} else {
+			//TODO: save change...
+			try {
+				this.pModeSupport.updateAction(oldActionPK, action);
+			} catch (Exception e) {
+				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+						"Error!", "Updating action failed" );
+				
+				FacesContext.getCurrentInstance()												
+					.addMessage(null, message);
+				
+				LOG.error(":saveAction: update action failed with exception", e);
+			}
+			
+			
+		}
+		this.action = null;		
+		this.oldActionPK = null;
+	}
 		
 }

@@ -19,10 +19,18 @@ public interface IConnectorPModeSupport {
 
 	List<DomibusConnectorService> getServiceList();
 
-	void deleteParty(DomibusConnectorParty p);
-
+	void createParty(DomibusConnectorParty party);
+	
 	void updateParty(DomibusConnectorPartyPK oldPartyId, DomibusConnectorParty updatedParty);
 	
-	void createParty(DomibusConnectorParty party);
+	void deleteParty(DomibusConnectorParty p);
+
+	void createAction(DomibusConnectorAction action);	
+
+	void updateAction(String oldActionPK, DomibusConnectorAction action);
+	
+	void deleteAction(DomibusConnectorAction action);
+
+
 	
 }

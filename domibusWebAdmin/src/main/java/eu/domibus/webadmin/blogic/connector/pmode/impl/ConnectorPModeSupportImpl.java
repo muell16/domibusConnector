@@ -15,7 +15,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-
+import org.primefaces.component.log.Log;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,8 +220,8 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 			DomibusConnectorParty dbParty = this.partyDao.findById(oldPartyId);
 //			altering PK components is not allowed!			
 //			dbParty.setPartyId(updatedParty.getPartyId());
-			dbParty.setPartyIdType(updatedParty.getPartyIdType());
 //			dbParty.setRole(updatedParty.getRole());
+			dbParty.setPartyIdType(updatedParty.getPartyIdType());
 			this.partyDao.update(dbParty);			
 		}
 
@@ -229,6 +229,28 @@ private IDomibusWebAdminConnectorActionDao actionDao;
 		@Transactional(readOnly=false, value="transactionManager")
 		public void createParty(DomibusConnectorParty party) {
 			this.partyDao.persistNewParty(party);
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManager")
+		public void deleteAction(DomibusConnectorAction action) {
+			LOG.trace("deleteAction: delete Action [{}]", action);
+			this.actionDao.delete(
+					this.actionDao.findById(action.getAction()));
+			
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManager")
+		public void createAction(DomibusConnectorAction action) {
+			this.actionDao.persistNewAction(action);			
+		}
+
+		@Override
+		@Transactional(readOnly=false, value="transactionManager")
+		public void updateAction(String oldActionPK, DomibusConnectorAction action) {
+			LOG.trace("updateAction: updateAction with");			
+			this.actionDao.update(action);			
 		}
 		
 }
