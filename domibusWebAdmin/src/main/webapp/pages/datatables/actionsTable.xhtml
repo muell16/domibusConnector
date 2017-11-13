@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ui:composition template="/templates/menuTemplate.xhtml"
+<ui:composition
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
@@ -7,15 +7,17 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets">
 
 
-	<ui:param name="title" value="WebAdmin - Connector Action Table"/>
-    <ui:define name="content">
+<!-- 	<ui:param name="title" value="WebAdmin - Connector Action Table"/> -->
+	
+	
+<!-- 	<ui:define name="content" > -->
+<!--     <ui:define name="actionContent"> -->
     <f:event type="preRenderView" listener="#{connectorActionsTableBean.init}" />
          
-	
-	<p:growl id="growl" showDetail="true" sticky="true" /> 		         
+
+           
          
-         
- 	<h:form enctype="multipart/form-data" id="form"> 
+ 	<h:form enctype="multipart/form-data" id="actionForm"> 
  	
  		<p:dataTable id="actionTable" var="action" value="#{connectorActionsTableBean.actionList}" 
  			selection="#{connectorActionsTableBean.selectedActions}" 
@@ -88,7 +90,7 @@
 				<f:facet name="left">
             		<p:commandButton id="deleteSelectedActionsButton" 
             			process="actionTable"
-            			update=":dialogForm:actionDelete"
+            			update=":actionDialogForm:actionDelete"
             			value="Delete Selected" oncomplete="PF('multiActionDialog').show()" />
             	</f:facet>
             </p:toolbar>
@@ -99,7 +101,7 @@
  	</h:form> 	
  	
  	<p:dialog appendTo="@(body)" header="For deletion selected actions:" widgetVar="multiActionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="520" dynamic="true" >
- 		<h:form id="dialogForm"> 	 			
+ 		<h:form id="actionDialogForm"> 	 			
 	        <p:outputPanel id="actionDelete" style="text-align:center;">
 	            <ui:repeat value="#{connectorActionsTableBean.selectedActions}" var="action">	            	
 	                <h:outputText value="action: #{action.action} - pdf required: #{action.pdfRequired}" style="display:block"/>
@@ -136,12 +138,14 @@
  				<!--  setzt action auf null -->
  				<f:setPropertyActionListener target="#{connectorActionsTableBean.action}" value="#{doesnotexist}" /> 			
  			</p:commandButton>
- 			
- 
+ 			 
  		
  	</h:form> 	
  	</p:dialog>
+ 	 
  	
-	</ui:define>
 
+<!-- 	</ui:define> -->
+<!-- 	</ui:define> -->
 </ui:composition>
+

@@ -11,7 +11,8 @@
     <ui:define name="content">
     <f:event type="preRenderView" listener="#{connectorDataTablesBean.init()}" />
          
- 	<h:form enctype="multipart/form-data" id="formDataTables"> 
+ 	<h:form enctype="multipart/form-data" id="formDataTables">
+ 	 
  	<p:panel id="importPanel" header="Import from PModes"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
 				toggleable="true" toggleOrientation="horizontal">
@@ -26,67 +27,29 @@
 	</p:panel>
     </h:form>
 
+	<p:panel id="partyPanel" header="Parties"
+				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
+				toggleable="true" toggleOrientation="horizontal">				
+			<ui:include src="/pages/datatables/partiesTable.xhtml" />			
+    </p:panel>
 
     <hr />
 	
-
     
     <p:panel id="actionPanel" header="Actions"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
-				toggleable="true" toggleOrientation="horizontal">
-     <p:dataTable id="actionTable" var="action" value="#{connectorDataTablesBean.actionList}">
-        <f:facet name="header">
-            domibusConnector configured Actions
-        </f:facet>
- 
- 		
-    	
-            <p:column>
-            	<f:facet name="header">  
-            <h:outputText value="Action" />  
-        </f:facet>  
-        <h:outputText value="#{action.action}"/>  
-            </p:column>
-            
-            <p:column>
-            <f:facet name="header">  
-            <h:outputText value="PDF required" />  
-        </f:facet>  
-                <h:outputText value="#{action.pdfRequired}" />
-            </p:column>
-            
-    </p:dataTable>
+				toggleable="true" toggleOrientation="horizontal">				
+			<ui:include src="/pages/datatables/actionsTable.xhtml" />			
     </p:panel>
+    
+    <hr />
     
     <p:panel id="servicePanel" header="Services"
 				style="text-align: center; margin: 0 auto;background-color:#F4F4F4;"
-				toggleable="true" toggleOrientation="horizontal">
-    
-     <p:dataTable id="serviceTable" var="service" value="#{connectorDataTablesBean.serviceList}">
-        <f:facet name="header">
-            domibusConnector configured Services
-        </f:facet>
- 
- 		
-    	
-            <p:column>
-            	<f:facet name="header">  
-            <h:outputText value="Service" />  
-        </f:facet>  
-        <h:outputText value="#{service.service}"/>  
-            </p:column>
-            
-            <p:column>
-            <f:facet name="header">  
-            <h:outputText value="Service Type" />  
-        </f:facet>  
-                <h:outputText value="#{service.serviceType}" />
-            </p:column>
-            
-    </p:dataTable>
+				toggleable="true" toggleOrientation="horizontal">				
+			<ui:include src="/pages/datatables/services.xhtml" />
     </p:panel>
 	
    
-
 </ui:define>
 </ui:composition>

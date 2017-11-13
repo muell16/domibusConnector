@@ -15,6 +15,7 @@
 	<!-- 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css" />   -->
 	</h:head>
 	<h:body>
+		<p:growl showDetail="true" sticky="true" />
 		<p:layout fullPage="true">
 			<div id="headerTop">
 				<p:layoutUnit position="north" size="262" resizable="false"  styleClass="headerClass">
@@ -29,7 +30,7 @@
 				resizable="false">
 				<ui:insert name="status"></ui:insert>
 			</p:layoutUnit>
-			<p:layoutUnit position="center">
+			<p:layoutUnit position="center">				 
 				<ui:insert name="content"></ui:insert>
 			</p:layoutUnit>
 		</p:layout>

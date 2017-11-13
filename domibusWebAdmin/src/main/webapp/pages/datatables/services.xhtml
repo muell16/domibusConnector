@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ui:composition template="/templates/menuTemplate.xhtml"
+<ui:composition 
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
@@ -7,12 +7,11 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets">
 
 
-	<ui:param name="title" value="WebAdmin - Connector Service Table"/>
-    <ui:define name="content">
+<!-- 	<ui:param name="title" value="WebAdmin - Connector Service Table"/> -->
+	
     <f:event type="preRenderView" listener="#{connectorServicesTableBean.init}" />
          
 	
-	<p:growl id="growl" showDetail="true" sticky="true" /> 		         
          
          
  	<h:form enctype="multipart/form-data" id="form"> 
@@ -122,10 +121,17 @@
  			<p:panelGrid columns="2" layout="grid" width="auto" >
  				<h:outputLabel for="serviceEditService" value="Service" />
  				<!--  changing pk components (service) is not allowed! -->
- 				<p:inputText id="serviceEditService"  value="#{connectorServicesTableBean.service.service}" disabled="#{not(connectorServicesTableBean.createNewServiceMode)}" /> 
+ 				<p:inputText id="serviceEditService"  
+ 						value="#{connectorServicesTableBean.service.service}" 
+ 						disabled="#{not(connectorServicesTableBean.createNewServiceMode)}" >
+ 					<f:validateLength minimum="1"/>
+ 				</p:inputText>
+ 						 
  									
-				<h:outputLabel for="serviceEditPdfRequired" value="service type" />
-				<p:inputText id="serviceEditPdfRequired" value="#{connectorServicesTableBean.service.serviceType}" />
+				<h:outputLabel for="serviceEditServiceType" value="service type" />
+				<p:inputText id="serviceEditServiceType" value="#{connectorServicesTableBean.service.serviceType}" >
+					<f:validateLength minimum="1"/>
+				</p:inputText>
 				 					 					 					
  			</p:panelGrid>
  			<!--  TODO: Error Message Feld hier einbauen -->
@@ -142,6 +148,6 @@
  	</h:form> 	
  	</p:dialog>
  	
-	</ui:define>
+<!-- 	</ui:define> -->
 
 </ui:composition>
