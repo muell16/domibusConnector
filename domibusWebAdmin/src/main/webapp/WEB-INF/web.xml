@@ -7,16 +7,19 @@
 	<display-name>domibusWebAdmin</display-name>
 
 	  <!-- Add Support for Spring -->
-  <listener>
-	<listener-class>
-		org.springframework.web.context.ContextLoaderListener
-	</listener-class>
-  </listener>
-  <listener>
-	<listener-class>
-		org.springframework.web.context.request.RequestContextListener
-	</listener-class>
-  </listener>
+  	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  	</listener>
+  	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  	</listener>
+  	
+  	
+  	<listener>
+  		<listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
+	</listener>
+
+
 
     <!-- Change to "Production" when you are ready to deploy -->
   <context-param>

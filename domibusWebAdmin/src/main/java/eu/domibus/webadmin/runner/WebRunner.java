@@ -14,6 +14,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -24,6 +25,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 @SpringBootApplication
 @EnableAutoConfiguration
 @Configuration
+@ComponentScan
 public class WebRunner  extends SpringBootServletInitializer  {
 
 	public WebRunner() {
@@ -37,7 +39,10 @@ public class WebRunner  extends SpringBootServletInitializer  {
     @Bean
     public ServletRegistrationBean servletRegistrationBean() {
         FacesServlet servlet = new FacesServlet();
-        return new ServletRegistrationBean(servlet, "*.jsf");
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "*.xhtml", "*.jsf");
+        servletRegistrationBean.setLoadOnStartup(1);
+        
+		return servletRegistrationBean;
     }
 
 //    @Bean
@@ -50,7 +55,6 @@ public class WebRunner  extends SpringBootServletInitializer  {
 //        return rwFilter;
 //    }
 	
-
 //	 implements WebApplicationInitializer 
 //	@Override
 //	public void onStartup(ServletContext servletContext) throws ServletException {

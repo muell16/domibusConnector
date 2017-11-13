@@ -18,7 +18,7 @@
 		<org.slf4j.version>1.7.11</org.slf4j.version>
 		<domibus.connector.version>3.2.1-RELEASE</domibus.connector.version>
 		<ecodex.monitoring.version>2.1</ecodex.monitoring.version>
-		<mojarra.version>2.1.6</mojarra.version>
+<!-- 		<mojarra.version>2.1.6</mojarra.version> -->
 
 		<webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
 		<webadmin.build.dir>domibusWebAdmin/</webadmin.build.dir>
@@ -32,26 +32,26 @@
 	</properties>
 
 	<profiles>
-		<profile>
-			<id>mojarra</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.sun.faces</groupId>
-					<artifactId>jsf-api</artifactId>
-					<version>${mojarra.version}</version>
-					<scope>compile</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.sun.faces</groupId>
-					<artifactId>jsf-impl</artifactId>
-					<version>${mojarra.version}</version>
-					<scope>compile</scope>
-				</dependency>
-			</dependencies>
-		</profile>
+<!-- 		<profile> -->
+<!-- 			<id>mojarra</id> -->
+<!-- 			<activation> -->
+<!-- 				<activeByDefault>false</activeByDefault> -->
+<!-- 			</activation> -->
+<!-- 			<dependencies> -->
+<!-- 				<dependency> -->
+<!-- 					<groupId>com.sun.faces</groupId> -->
+<!-- 					<artifactId>jsf-api</artifactId> -->
+<!-- 					<version>${mojarra.version}</version> -->
+<!-- 					<scope>compile</scope> -->
+<!-- 				</dependency> -->
+<!-- 				<dependency> -->
+<!-- 					<groupId>com.sun.faces</groupId> -->
+<!-- 					<artifactId>jsf-impl</artifactId> -->
+<!-- 					<version>${mojarra.version}</version> -->
+<!-- 					<scope>compile</scope> -->
+<!-- 				</dependency> -->
+<!-- 			</dependencies> -->
+<!-- 		</profile> -->
 	</profiles>
 
 
@@ -98,15 +98,30 @@
 			<artifactId>primefaces</artifactId>
 			<version>6.1</version>
 		</dependency>
+		
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.myfaces.core</groupId> -->
+<!-- 			<artifactId>myfaces-api</artifactId> -->
+<!-- 			<version>2.2.12</version> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.myfaces.core</groupId> -->
+<!-- 			<artifactId>myfaces-impl</artifactId> -->
+<!-- 			<version>2.2.12</version> -->
+<!-- 		</dependency> -->
+		
+		
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>${jsf.version}</version>
+			<version>2.2.15</version>
+<!-- 			<version>${jsf.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
-			<version>${jsf.version}</version>
+<!-- 			<version>${jsf.version}</version>			 -->
+			<version>2.2.15</version>
 		</dependency>
 
 		<!--PrimeFaces -->
