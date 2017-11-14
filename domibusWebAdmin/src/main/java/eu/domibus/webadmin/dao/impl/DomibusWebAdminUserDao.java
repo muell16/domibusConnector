@@ -25,7 +25,7 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
 
     private static final long serialVersionUID = -8330659798855359673L;
     
-    @PersistenceContext(unitName = "domibus.webadmin")
+    @PersistenceContext //(unitName = "domibus.webadmin")
     private EntityManager em;
 
     @Override

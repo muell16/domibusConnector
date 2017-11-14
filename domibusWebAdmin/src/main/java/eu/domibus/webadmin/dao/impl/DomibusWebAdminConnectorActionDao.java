@@ -12,7 +12,7 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 
 public class DomibusWebAdminConnectorActionDao implements IDomibusWebAdminConnectorActionDao {
 
-    @PersistenceContext(unitName = "domibus.connector")
+//    @PersistenceContext(unitName = "domibus.connector")
     private EntityManager em;
 
 	@Override

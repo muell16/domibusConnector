@@ -2,6 +2,7 @@ package eu.domibus.webadmin.jsf;
 
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.management.MBeanServerConnection;
@@ -9,25 +10,42 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.commons.Util;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
+@Controller("loginBean")
+@Scope("session")
+@Component("loginBean")
 public class LoginBean implements Serializable {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(LoginBean.class);
     private static final long serialVersionUID = 1L;
     private String password;
     private String message, uname;
     private boolean loggedIn = false;
+    @Autowired
     private IDomibusWebAdminUserDao domibusWebAdminUserDao;
     private MBeanServerConnection mbsc;
     private String connectedToDb;
+    @Autowired
     private IConnectorMonitoringService connectorMonitoringService;
+    @Autowired
     private ConfigurationBean configurationBean;
 
+//    @PostConstruct
+//    public void init() {
+//    	logger.error("#############INIT BEAN############");
+//    }
+    
     public String loginProject() {
         boolean result;
         try {
@@ -55,7 +73,7 @@ public class LoginBean implements Serializable {
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("loginProject: exception occured", e);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error!", "See Log!"));
             loggedIn = false;
@@ -109,7 +127,7 @@ public class LoginBean implements Serializable {
         this.mbsc = mbsc;
     }
 
-    public Log getLogger() {
+    public Logger getLogger() {
         return logger;
     }
 

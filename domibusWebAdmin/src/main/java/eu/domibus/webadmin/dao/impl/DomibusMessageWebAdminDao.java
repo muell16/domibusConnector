@@ -26,7 +26,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-    @PersistenceContext(unitName = "domibus.connector")
+//    @PersistenceContext(unitName = "domibus.connector")
     private EntityManager em;
 
     @Override

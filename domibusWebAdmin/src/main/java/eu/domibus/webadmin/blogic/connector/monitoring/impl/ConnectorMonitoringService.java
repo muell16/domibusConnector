@@ -14,6 +14,8 @@ import javax.management.ObjectName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
@@ -22,6 +24,7 @@ import eu.domibus.webadmin.commons.DBUtil;
 import eu.domibus.webadmin.commons.JmxConnector;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 
+@Service
 public class ConnectorMonitoringService implements IConnectorMonitoringService, Serializable {
 
     private static final long serialVersionUID = -5017789529520475342L;
@@ -45,9 +48,14 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private Integer rejectedConnectorMessagesCount;
     private String rejectedConnectorMessagesCountStatus;
     private boolean useMonitorServer = false;
+    
+    @Autowired
     private DomibusConnectorConnectorMonitoringDao monitoringDao;
+    
+    @Autowired
     private DBUtil dbUtil;
 
+    @Autowired
     private WebAdminProperties webAdminProperties;
 
     private static final String CHECK_OUTGOING_TRIGGER_NAME = "checkOutgoingTrigger";

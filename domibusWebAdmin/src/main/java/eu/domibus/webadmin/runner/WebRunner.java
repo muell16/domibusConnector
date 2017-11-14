@@ -27,6 +27,8 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -35,14 +37,19 @@ import org.springframework.web.jsf.el.SpringBeanFacesELResolver;
 import com.sun.faces.config.ConfigureListener;
 import com.sun.faces.config.FacesInitializer;
 
+import eu.domibus.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService;
+import eu.domibus.webadmin.commons.WebAdminProperties;
+import eu.domibus.webadmin.dao.impl.DomibusWebAdminUserDao;
 import eu.domibus.webadmin.jsf.AuthFilter;
-
+import eu.domibus.webadmin.jsf.LoginBean;
 
 
 @SpringBootApplication
 @EnableAutoConfiguration
 @Configuration
-@ComponentScan
+@ComponentScan(basePackageClasses= {LoginBean.class, ConnectorMonitoringService.class, WebAdminProperties.class, DomibusWebAdminUserDao.class})
+@Import({JpaContext.class})
+@ImportResource("classpath:/spring/context/connectorDaoContext.xml")
 public class WebRunner extends SpringBootServletInitializer implements ServletContextInitializer {
 
 	private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
@@ -67,7 +74,7 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
         FacesServlet servlet = new FacesServlet();
         ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "*.xhtml", "*.jsf");
         servletRegistrationBean.setLoadOnStartup(1);
-        servletRegistrationBean.addUrlMappings("/faces/*");
+        servletRegistrationBean.addUrlMappings("/*");
 		return servletRegistrationBean;
     }
     
@@ -121,7 +128,8 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 
     @Bean
     public ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener> jsfConfigureListener() {
-    	LOG.trace("jsfConfigureListener: called");
+    	System.out.println("jsfConfigureListener called!");
+    	LOG.debug("jsfConfigureListener: called");
         return new ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener>(
                 new JsfApplicationObjectConfigureListener());
     }
@@ -137,6 +145,7 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
             Application app = factory.getApplication();
 
             app.addELResolver(new SpringBeanFacesELResolver());
+            
         }
     }
     

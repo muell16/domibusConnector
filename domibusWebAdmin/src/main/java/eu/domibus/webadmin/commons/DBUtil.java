@@ -7,6 +7,10 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class DBUtil {
 
     private DataSource connectorDatasource;
@@ -27,6 +31,10 @@ public class DBUtil {
     }
 
 
+    @Autowired
+    public DBUtil(DataSource ds) {
+    	this.connectorDatasource = ds;
+    }
 
     public DataSource getConnectorDatasource() {
         return connectorDatasource;

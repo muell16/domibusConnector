@@ -16,7 +16,7 @@ public class DomibusWebAdminConnectorPartyDao implements IDomibusWebAdminConnect
 
 	private final static Logger LOG = LoggerFactory.getLogger(DomibusWebAdminConnectorPartyDao.class);
 	
-    @PersistenceContext(unitName = "domibus.connector")
+//    @PersistenceContext(unitName = "domibus.connector")
     private EntityManager em;
     
     

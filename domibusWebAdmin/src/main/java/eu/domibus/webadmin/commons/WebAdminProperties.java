@@ -5,17 +5,21 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
 @Component("webAdminProperties")
-public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware{
+public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
 
     private static final long serialVersionUID = -1113080729567255182L;
 
@@ -33,8 +37,13 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private Long monitoringTimerInterval;
     private boolean monitoringLogWrite;
 
-    private XmlWebApplicationContext ctx;
+    private ConfigurableWebApplicationContext ctx;
 
+    @Autowired
+    public WebAdminProperties(DataSource ds) {
+    	this.setDataSource(ds);
+    }
+    
     public void loadProperties() {
         String sql = "select * from DOMIBUS_WEBADMIN_PROPERTIES";
         try {
@@ -213,14 +222,14 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        ctx = (XmlWebApplicationContext) context;
+        ctx = (ConfigurableWebApplicationContext) context;
     }
 
-    public XmlWebApplicationContext getCtx() {
+    public ConfigurableWebApplicationContext getCtx() {
         return ctx;
     }
 
-    public void setCtx(XmlWebApplicationContext ctx) {
+    public void setCtx(ConfigurableWebApplicationContext ctx) {
         this.ctx = ctx;
     }
 
