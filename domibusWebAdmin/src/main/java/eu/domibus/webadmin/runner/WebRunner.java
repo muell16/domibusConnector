@@ -38,6 +38,8 @@ import com.sun.faces.config.ConfigureListener;
 import com.sun.faces.config.FacesInitializer;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService;
+import eu.domibus.webadmin.blogic.connector.pmode.impl.ConnectorPModeSupportImpl;
+import eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.impl.DomibusWebAdminUserDao;
 import eu.domibus.webadmin.jsf.AuthFilter;
@@ -47,7 +49,14 @@ import eu.domibus.webadmin.jsf.LoginBean;
 @SpringBootApplication
 @EnableAutoConfiguration
 @Configuration
-@ComponentScan(basePackageClasses= {LoginBean.class, ConnectorMonitoringService.class, WebAdminProperties.class, DomibusWebAdminUserDao.class})
+@ComponentScan(basePackageClasses= {
+		LoginBean.class, 	
+		WebAdminProperties.class, 
+		DomibusWebAdminUserDao.class, 
+		ConnectorPModeSupportImpl.class, 
+		ConnectorSummaryServiceImpl.class,
+		ConnectorMonitoringService.class
+		})
 @Import({JpaContext.class})
 @ImportResource("classpath:/spring/context/connectorDaoContext.xml")
 public class WebRunner extends SpringBootServletInitializer implements ServletContextInitializer {

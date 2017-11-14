@@ -8,16 +8,23 @@ import javax.faces.event.ActionEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
+
+@Controller
+@Scope("view")
 public class ConnectorDataTablesBean {
 
 	private final static Logger LOG = LoggerFactory.getLogger(ConnectorDataTablesBean.class);
 	
+	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
 	private List<DomibusConnectorAction> actionList;

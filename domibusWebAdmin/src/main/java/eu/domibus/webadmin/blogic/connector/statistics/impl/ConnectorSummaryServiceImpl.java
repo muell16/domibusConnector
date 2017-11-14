@@ -8,6 +8,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.primefaces.model.chart.PieChartModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
@@ -16,6 +18,7 @@ import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
+@Component
 public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Serializable {
 
     private static final long serialVersionUID = 4855196930128932326L;
@@ -25,7 +28,11 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
     private List<String> serviceList;
     private PieChartModel pieModelMessageSummary;
     private PieChartModel pieModelServiceSummary;
+    
+    @Autowired
     private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
+    
+    @Autowired
     private IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao;
     
     @PostConstruct

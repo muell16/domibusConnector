@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
@@ -19,6 +20,7 @@ import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 
+@Repository
 @Transactional(readOnly=true, value="transactionManager")
 public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Serializable {
 
@@ -26,7 +28,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-//    @PersistenceContext(unitName = "domibus.connector")
+    @PersistenceContext //(unitName = "domibus.connector")
     private EntityManager em;
 
     @Override

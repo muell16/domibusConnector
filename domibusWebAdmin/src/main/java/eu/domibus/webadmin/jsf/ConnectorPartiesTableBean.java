@@ -11,12 +11,17 @@ import org.primefaces.component.log.Log;
 import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
+@Controller
+@Scope("view")
 public class ConnectorPartiesTableBean {
 
 	private final static Logger LOG = LoggerFactory.getLogger(ConnectorPartiesTableBean.class);
@@ -24,6 +29,7 @@ public class ConnectorPartiesTableBean {
 	/**
 	 * backend
 	 */
+	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
 	/**

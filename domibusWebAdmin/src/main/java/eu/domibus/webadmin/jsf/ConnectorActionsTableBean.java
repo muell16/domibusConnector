@@ -4,17 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
+
+@Controller("connectorActionsTableBean")
+@Scope("view")
 public class ConnectorActionsTableBean {
 
 	private final static Logger LOG = LoggerFactory.getLogger(ConnectorActionsTableBean.class);

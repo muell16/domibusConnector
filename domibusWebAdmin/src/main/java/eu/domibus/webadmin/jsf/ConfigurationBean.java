@@ -22,9 +22,8 @@ import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
 
-@Controller
+@Controller("configurationBean")
 @Scope("session")
-@ManagedBean(name="testBean")
 public class ConfigurationBean implements Serializable{
 	
 	private static final long serialVersionUID = -6978169110805373376L;

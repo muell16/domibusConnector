@@ -7,16 +7,18 @@ import javax.persistence.PersistenceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 
+@Repository
 public class DomibusWebAdminConnectorPartyDao implements IDomibusWebAdminConnectorPartyDao{
 
 	private final static Logger LOG = LoggerFactory.getLogger(DomibusWebAdminConnectorPartyDao.class);
 	
-//    @PersistenceContext(unitName = "domibus.connector")
+    @PersistenceContext //(unitName = "domibus.connector")
     private EntityManager em;
     
     

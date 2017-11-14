@@ -19,6 +19,7 @@ import org.primefaces.component.log.Log;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
@@ -42,16 +43,26 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 
+@org.springframework.stereotype.Service
 public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 	
 	protected final static Logger LOG = LoggerFactory.getLogger(ConnectorPModeSupportImpl.class); 
 	
-private IDomibusWebAdminConnectorActionDao actionDao;
+	private IDomibusWebAdminConnectorActionDao actionDao;
 	
 	private IDomibusWebAdminConnectorServiceDao serviceDao;
 	
 	private IDomibusWebAdminConnectorPartyDao partyDao;
 
+	@Autowired
+	public ConnectorPModeSupportImpl(IDomibusWebAdminConnectorActionDao actionDao,
+			IDomibusWebAdminConnectorServiceDao serviceDao,
+			IDomibusWebAdminConnectorPartyDao partyDao) {
+		this.actionDao = actionDao;
+		this.serviceDao = serviceDao;
+		this.partyDao = partyDao;
+	}
+	
 	@Override
 	public void importFromPModeFile(UploadedFile pmodeFile) {
 		LOG.debug("Starting import of PModes from File "+ pmodeFile.getFileName());

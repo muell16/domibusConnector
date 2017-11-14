@@ -23,11 +23,15 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.dao.IDomibusWebAdminReportDao;
 import eu.domibus.webadmin.model.connector.PeriodDO;
 import eu.domibus.webadmin.model.connector.PeriodEntryDO;
 
+@Controller("reportsBean")
+@Scope("session")
 public class ReportsBean implements Serializable {
 
 	/**

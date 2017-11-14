@@ -10,11 +10,16 @@ import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
+@Controller
+@Scope("view")
 public class ConnectorServicesTableBean {
 
 	private final static Logger LOG = LoggerFactory.getLogger(ConnectorServicesTableBean.class);
@@ -22,6 +27,7 @@ public class ConnectorServicesTableBean {
 	/**
 	 * backend
 	 */
+	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
 	/**

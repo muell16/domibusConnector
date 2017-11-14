@@ -10,17 +10,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Repository;
 
 import eu.domibus.webadmin.dao.IDomibusWebAdminReportDao;
 import eu.domibus.webadmin.model.connector.PeriodEntryDO;
 
+@Repository
 public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibusWebAdminReportDao, InitializingBean {
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -28,6 +33,11 @@ public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibus
 	
 	private String reportIncludingEvidencesSQL;
 	private String reportExcludingEvidencesSQL;
+	
+	@Autowired
+	public DomibusWebAdminReportDao(DataSource ds) {
+		this.setDataSource(ds);
+	}
 	
 	@Override
 	public List<PeriodEntryDO> loadReportWithEvidences(Date fromDate, Date toDate){

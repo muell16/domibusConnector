@@ -13,6 +13,8 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
@@ -29,14 +31,20 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 import eu.domibus.webadmin.model.connector.MessageReportDO;
 
+@Service
 public class ConnectorCustomServiceImpl implements IConnectorCustomService, Serializable {
 
     private static final long serialVersionUID = 5288892319790964868L;
 
+    @Autowired
     private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
+    @Autowired
     private IDomibusWebAdminConnectorPartyDao domibusWebAdminConnectorPartyDao;
+    @Autowired
     private IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao;
+    @Autowired
     private IDomibusWebAdminConnectorActionDao domibusWebAdminConnectorActionDao;
+    @Autowired
     private IConnectorMessageFilter connectorMessageFilter;
 
     private List<String> fromPartyList;
@@ -57,7 +65,7 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     // The List, which is displayed as result table in main.xhtml
     private List<MessageReportDO> customResultList;
 
-    // Selected entry in result table, necessary for evidence history
+    // Selected entry in result table, necessary for evidence history    
     private MessageReportDO selectedMessageReportDO;
 
     
