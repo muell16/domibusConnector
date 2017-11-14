@@ -6,13 +6,25 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.commons.JmxConnector;
 import eu.domibus.webadmin.commons.Util;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
+
+@Controller
+@Scope("session")
+@ManagedBean(name="testBean")
 public class ConfigurationBean implements Serializable{
 	
 	private static final long serialVersionUID = -6978169110805373376L;
@@ -39,10 +51,13 @@ public class ConfigurationBean implements Serializable{
 
     private String loggedInUser;
 
+    @Autowired
     private WebAdminProperties webAdminProperties;
 
+    @Autowired
     private IDomibusWebAdminUserDao domibusWebAdminUserDao;
 
+    @PostConstruct
     public void init(){
     	webAdminProperties.loadProperties();
     	if(monitoringType==null)

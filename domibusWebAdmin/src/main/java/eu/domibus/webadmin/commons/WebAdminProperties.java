@@ -10,9 +10,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
+@Component("webAdminProperties")
 public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware{
 
     private static final long serialVersionUID = -1113080729567255182L;

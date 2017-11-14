@@ -35,6 +35,8 @@ import org.springframework.web.jsf.el.SpringBeanFacesELResolver;
 import com.sun.faces.config.ConfigureListener;
 import com.sun.faces.config.FacesInitializer;
 
+import eu.domibus.webadmin.jsf.AuthFilter;
+
 
 
 @SpringBootApplication
@@ -57,6 +59,8 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 	//TODO: add auth filter; file-upload-filter; ...
 	
 	
+	
+	
     @Bean
     public ServletRegistrationBean servletRegistrationBean() {
     	LOG.trace("servletRegistrationBean: called");
@@ -65,10 +69,18 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
         servletRegistrationBean.setLoadOnStartup(1);
         servletRegistrationBean.addUrlMappings("/faces/*");
 		return servletRegistrationBean;
-		
-		
-		
     }
+    
+    
+    @Bean
+    public FilterRegistrationBean loginFilter() {
+    	    	
+    	AuthFilter filter = new AuthFilter();
+    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
+		return filterRegistration;
+    	
+    }
+    
     
 //    @Bean
 //    public ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener> jsfConfigureListener() {
