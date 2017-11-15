@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,7 +22,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 
 @Component("webAdminProperties")
 public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
-
+	
     private static final long serialVersionUID = -1113080729567255182L;
 
     private String connectorDatabaseUrl;
@@ -45,6 +47,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     }
     
     public void loadProperties() {
+    	logger.trace("loadProperties: called");
         String sql = "select * from DOMIBUS_WEBADMIN_PROPERTIES";
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
@@ -75,16 +78,12 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
                 } else if ("monitoring.log.write".equals(key)) {
                     monitoringLogWrite = Boolean.parseBoolean(value);
                 }
-
             }
-            getJdbcTemplate().getDataSource().getConnection().close();
+            //getJdbcTemplate().getDataSource().getConnection().close(); //spring closes connection
         } catch (DataAccessException e) {
             logger.error("Unable to load Webadmin Properties: " + e.getStackTrace());
             loadError = e.getMessage();
-        } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        }
 
     }
 

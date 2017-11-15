@@ -1,0 +1,16 @@
+server:
+	port: 8084
+	
+---
+spring:
+	profiles: test
+	
+	datasource:
+		schema: #TODO: create schema script
+		data: #TODO: data load script
+		username: derby
+		password: derby
+		driver-class-name: #TODO: driver name
+		url: #TODO: create derby embedded DB
+		
+
