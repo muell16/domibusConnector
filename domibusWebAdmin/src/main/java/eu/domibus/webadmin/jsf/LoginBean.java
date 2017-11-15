@@ -1,22 +1,24 @@
 package eu.domibus.webadmin.jsf;
 
+import java.io.IOException;
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.management.MBeanServerConnection;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.commons.Util;
@@ -40,15 +42,50 @@ public class LoginBean implements Serializable {
     private IConnectorMonitoringService connectorMonitoringService;
     @Autowired
     private ConfigurationBean configurationBean;
+    
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    
 
 //    @PostConstruct
 //    public void init() {
 //    	logger.error("#############INIT BEAN############");
 //    }
     
-    public String loginProject() {
+    public String loginProject() throws ServletException, IOException {
+    	logger.debug("loginProject: called");
+
+    	
         boolean result;
         try {
+        	
+        	result = domibusWebAdminUserDao.login(uname, password);
+        	
+        	logger.debug("loginProject: result is [{}] (true means user exists with uname and password in db)", result);
+        	
+        	UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(uname, password);
+        	Authentication auth = authenticationManager.authenticate(token);
+        	
+        	//authenticationManager.aut
+        	//SecurityContextHolder.getContext().setAuthentication(token);
+        	
+        	logger.trace("loginProject: spring auth is: [{}]", auth);
+        	
+        	
+        	if (auth.isAuthenticated()) {
+        		  connectorMonitoringService.generateMonitoringReport(true);
+                  // get Http Session and store username
+                  HttpSession session = Util.getSession();
+                  session.setAttribute("username", uname);
+//                  configurationBean.setLoggedInUser(uname);                  
+                  loggedIn = true;
+                             
+                  SecurityContextHolder.getContext().setAuthentication(auth);
+                  
+                  return "main.xhtml";
+        	}
+        	
+        	
             result = domibusWebAdminUserDao.login(uname, password);
 
             if (result) {
@@ -72,6 +109,14 @@ public class LoginBean implements Serializable {
                 return "/pages/login.xhtml";
             }
 
+        } catch (BadCredentialsException badCred) {
+        	logger.warn("loginProject: bad Credentials exception occured", badCred);
+        	 FacesContext.getCurrentInstance().addMessage(null,
+                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid Login!", "Please Try Again!"));
+        	
+        	 loggedIn = false;
+        	 return "/pages/login.xhtml";
+        	
         } catch (Exception e) {
             logger.error("loginProject: exception occured", e);
             FacesContext.getCurrentInstance().addMessage(null,
@@ -84,7 +129,10 @@ public class LoginBean implements Serializable {
     public String logout() {
         HttpSession session = Util.getSession();
         session.invalidate();
-        return "login";
+        
+        SecurityContextHolder.getContext().setAuthentication(null);
+        
+        return "/pages/login.xhtml";
     }
 
     public String getMessage() {

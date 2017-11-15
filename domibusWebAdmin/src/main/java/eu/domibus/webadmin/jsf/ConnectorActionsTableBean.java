@@ -3,6 +3,7 @@ package eu.domibus.webadmin.jsf;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -11,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -28,6 +30,7 @@ public class ConnectorActionsTableBean {
 	/**
 	 * backend
 	 */
+	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
 	/**
@@ -67,6 +70,7 @@ public class ConnectorActionsTableBean {
 	private String oldActionPK;
 	
 	
+	@PostConstruct
 	public void init() {
 		setActionList(pModeSupport.getActionList());
 	}

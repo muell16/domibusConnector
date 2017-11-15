@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.commons.JmxConnector;
@@ -415,9 +416,11 @@ public class ConfigurationBean implements Serializable{
     }
 
     public String getLoggedInUser() {
-        return loggedInUser;
+    	return SecurityContextHolder.getContext().getAuthentication().getName();
+        //return loggedInUser;
     }
 
+    @Deprecated
     public void setLoggedInUser(String loggedInUser) {
         this.loggedInUser = loggedInUser;
     }

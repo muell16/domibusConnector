@@ -16,6 +16,8 @@ import javax.servlet.ServletException;
 import org.primefaces.component.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,6 +31,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -44,6 +51,7 @@ import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.impl.DomibusWebAdminUserDao;
 import eu.domibus.webadmin.jsf.AuthFilter;
 import eu.domibus.webadmin.jsf.LoginBean;
+import eu.domibus.webadmin.runner.springsupport.ViewScope;
 
 
 @SpringBootApplication
@@ -57,7 +65,7 @@ import eu.domibus.webadmin.jsf.LoginBean;
 		ConnectorSummaryServiceImpl.class,
 		ConnectorMonitoringService.class
 		})
-@Import({JpaContext.class})
+@Import({JpaContext.class, SecurityConfig.class})
 @ImportResource("classpath:/spring/context/connectorDaoContext.xml")
 public class WebRunner extends SpringBootServletInitializer implements ServletContextInitializer {
 
@@ -76,7 +84,9 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 	
 	
 	
-	
+	/*
+	 * configure servletRegistration to listen
+	 */
     @Bean
     public ServletRegistrationBean servletRegistrationBean() {
     	LOG.trace("servletRegistrationBean: called");
@@ -87,22 +97,19 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 		return servletRegistrationBean;
     }
     
-    
-    @Bean
-    public FilterRegistrationBean loginFilter() {
-    	    	
-    	AuthFilter filter = new AuthFilter();
-    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
-		return filterRegistration;
-    	
-    }
-    
-    
+    /*
+     * configure authentication filter so only authenticated users can access application
+     */
 //    @Bean
-//    public ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener> jsfConfigureListener() {
-//        return new ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener>(
-//                new JsfApplicationObjectConfigureListener());
+//    public FilterRegistrationBean loginFilter() {
+//    	    	
+//    	AuthFilter filter = new AuthFilter();
+//    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
+//		return filterRegistration;
+//    	
 //    }
+    
+    
 
     
     @Override
@@ -120,8 +127,7 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 		servletContext.setInitParameter("primefaces.FONT_AWESOME", "true");
 		servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", "true");
 		servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-//		servletContext.setInitParameter("com.sun.faces.forceLoadConfiguration", "true");
-		
+//		servletContext.setInitParameter("com.sun.faces.forceLoadConfiguration", "true");		
 //		servletContext.setInitParameter("com.sun.faces.expressionFactory", "com.sun.el.ExpressionFactoryImpl");
         
         
@@ -130,6 +136,7 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
         clazz.add(WebRunner.class); // dummy, enables InitFacesContext
 
         FacesInitializer facesInitializer = new FacesInitializer();
+                        
         facesInitializer.onStartup(clazz, servletContext);
 
     }
@@ -152,30 +159,33 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 
             ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
             Application app = factory.getApplication();
-
+            
             app.addELResolver(new SpringBeanFacesELResolver());
             
         }
     }
     
-//    @Bean
-//    public FilterRegistrationBean rewriteFilter() {
-//        FilterRegistrationBean rwFilter = new FilterRegistrationBean(new RewriteFilter());
-//        
-//        rwFilter.setDispatcherTypes(EnumSet.of(DispatcherType.FORWARD, DispatcherType.REQUEST,
-//                DispatcherType.ASYNC, DispatcherType.ERROR));
-//        rwFilter.addUrlPatterns("/*");
-//        return rwFilter;
-//    }
-	
-//	 implements WebApplicationInitializer 
-//	@Override
-//	public void onStartup(ServletContext servletContext) throws ServletException {
-//		 AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
-////		    root.register(SpringCoreConfig.class);
-//		 
-//		 servletContext.addListener(new ContextLoaderListener(root));
-//		
-//	}
+
+    
+    /*
+     * 
+     *  view scope
+     */
+    @Bean
+    public ViewScope viewScope() {
+    	return new ViewScope();
+    }
+    
+    /*
+     *  configure custom view scope
+     */
+    @Bean
+    public CustomScopeConfigurer customScopeConfigurer() {
+    	CustomScopeConfigurer scopeConfig = new CustomScopeConfigurer();
+    	scopeConfig.addScope("view", viewScope());
+    	return scopeConfig;
+    }
+    
+  
 
 }
