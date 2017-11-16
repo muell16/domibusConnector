@@ -14,6 +14,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletException;
 
 import org.primefaces.component.log.Log;
+import org.primefaces.webapp.filter.FileUploadFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,19 +99,18 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
     }
     
     /*
-     * configure authentication filter so only authenticated users can access application
+     * configure PrimeFaces File Upload filter
      */
-//    @Bean
-//    public FilterRegistrationBean loginFilter() {
-//    	    	
-//    	AuthFilter filter = new AuthFilter();
-//    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
-//		return filterRegistration;
-//    	
-//    }
+    @Bean
+    public FilterRegistrationBean uploadFilter() {
+    	    	
+    	FileUploadFilter filter = new FileUploadFilter();
+    	
+    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
+		return filterRegistration;
+    	
+    }
     
-    
-
     
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
