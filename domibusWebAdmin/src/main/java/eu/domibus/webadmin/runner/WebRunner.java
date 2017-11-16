@@ -22,6 +22,7 @@ import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -72,12 +73,19 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
 
 	private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 	
-	public WebRunner() {
-		// TODO Auto-generated constructor stub
-	}
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+    	LOG.trace("configure: run as war on appserver....");
+    	System.err.print("WebRunner runs as war....");
+//    	throw new RuntimeException("STOPPPPPPPP!");
+        // is not executed when running in container!!! so whole spring context not working when deployed as war!
+    	
+    	
+    	return application.sources(WebRunner.class);
+    }
 
 	public static void main(String[] args) {
-		LOG.trace("main: run Spring application....");
+		LOG.trace("main: run Spring application as jar....");
 		SpringApplication.run(WebRunner.class, args);
 	}
 	
