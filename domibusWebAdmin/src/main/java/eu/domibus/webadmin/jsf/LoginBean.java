@@ -93,7 +93,7 @@ public class LoginBean implements Serializable {
                 // get Http Session and store username
                 HttpSession session = Util.getSession();
                 session.setAttribute("username", uname);
-                configurationBean.setLoggedInUser(uname);
+                //configurationBean.setLoggedInUser(uname);
                 loggedIn = true;
                 return "main";
             } else {

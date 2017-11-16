@@ -221,16 +221,16 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        ctx = (ConfigurableWebApplicationContext) context;
+        //ctx = (ConfigurableWebApplicationContext) context;
     }
 
-    public ConfigurableWebApplicationContext getCtx() {
-        return ctx;
-    }
-
-    public void setCtx(ConfigurableWebApplicationContext ctx) {
-        this.ctx = ctx;
-    }
+//    public ConfigurableWebApplicationContext getCtx() {
+//        return ctx;
+//    }
+//
+//    public void setCtx(ConfigurableWebApplicationContext ctx) {
+//        this.ctx = ctx;
+//    }
 
 
     public boolean isMonitoringLogWrite() {

@@ -12,10 +12,14 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import eu.domibus.webadmin.commons.JmxConnector;
 import eu.domibus.webadmin.commons.Util;
@@ -25,7 +29,7 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
 @Controller("configurationBean")
 @Scope("session")
-public class ConfigurationBean implements Serializable{
+public class ConfigurationBean implements Serializable, ApplicationContextAware {
 	
 	private static final long serialVersionUID = -6978169110805373376L;
 
@@ -56,6 +60,8 @@ public class ConfigurationBean implements Serializable{
 
     @Autowired
     private IDomibusWebAdminUserDao domibusWebAdminUserDao;
+
+	private ConfigurableWebApplicationContext applicationContext;
 
     @PostConstruct
     public void init(){
@@ -272,7 +278,8 @@ public class ConfigurationBean implements Serializable{
     }
 
     public String restart() {
-        webAdminProperties.getCtx().refresh();
+//        webAdminProperties.getCtx().refresh();
+    	applicationContext.refresh();
         HttpSession session = Util.getSession();
         session.invalidate();
         return "login";
@@ -420,9 +427,10 @@ public class ConfigurationBean implements Serializable{
         //return loggedInUser;
     }
 
-    @Deprecated
-    public void setLoggedInUser(String loggedInUser) {
-        this.loggedInUser = loggedInUser;
-    }
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = (ConfigurableWebApplicationContext) applicationContext;		
+	}
 
 }
