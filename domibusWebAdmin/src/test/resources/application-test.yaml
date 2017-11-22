@@ -1,0 +1,17 @@
+server:
+  port: 8084
+---
+spring:
+  profiles: test
+  
+#  datasource:
+#    schema: classpath:/DbScripts/createTable_derby.sql  
+##data: #TODO: data load script
+#    username: SA
+#    password: 
+#    driver-class-name: org.apache.derby.jdbc.EmbeddedDriver
+#    url: jdbc:derby:memory:SA;create=true
+  logging:
+    level:
+      eu.domibus.webadmin: TRACE
+      org.hibernate: INFO

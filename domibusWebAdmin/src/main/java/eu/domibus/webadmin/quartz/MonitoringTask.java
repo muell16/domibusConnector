@@ -10,16 +10,19 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.commons.SendMail;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 
+@Component
 public class MonitoringTask implements ApplicationContextAware, InitializingBean {
 
     protected final Log logger = LogFactory.getLog(getClass());
-    private XmlWebApplicationContext ctx;
+    private ConfigurableWebApplicationContext ctx;
     private IConnectorMonitoringService connectorMonitoringService;
     private WebAdminProperties webAdminProperties;
     private boolean errorFound = false;
@@ -85,7 +88,7 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        ctx = (XmlWebApplicationContext) context;
+        ctx = (ConfigurableWebApplicationContext) context;
 
     }
 

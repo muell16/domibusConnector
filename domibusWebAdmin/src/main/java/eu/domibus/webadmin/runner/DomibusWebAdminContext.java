@@ -29,6 +29,7 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.jsf.el.SpringBeanFacesELResolver;
 
 /**
@@ -140,8 +141,10 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
         FacesInitializer facesInitializer = new FacesInitializer();        
         facesInitializer.onStartup(clazz, servletContext);
     }
-    
-    
-    
-    
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
 }
