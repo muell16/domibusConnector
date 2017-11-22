@@ -7,10 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +18,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import eu.domibus.webadmin.commons.JmxConnector;
-import eu.domibus.webadmin.commons.Util;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
-
 
 @Controller("configurationBean")
 @Scope("session")
 public class ConfigurationBean implements Serializable, ApplicationContextAware {
-	
-	private static final long serialVersionUID = -6978169110805373376L;
 
-	private String monitoringType;
+    private static final long serialVersionUID = -6978169110805373376L;
+
+    private String monitoringType;
 
     private boolean dbSelected;
     private boolean jmxSelected;
@@ -61,14 +55,15 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
     @Autowired
     private IDomibusWebAdminUserDao domibusWebAdminUserDao;
 
-	private ConfigurableWebApplicationContext applicationContext;
+    private ConfigurableWebApplicationContext applicationContext;
 
     @PostConstruct
-    public void init(){
-    	webAdminProperties.loadProperties();
-    	if(monitoringType==null)
-    	monitoringType=webAdminProperties.getMonitoringType();
-    	if (monitoringType != null && monitoringType.equals("DB")) {
+    public void init() {
+        webAdminProperties.loadProperties();
+        if (monitoringType == null) {
+            monitoringType = webAdminProperties.getMonitoringType();
+        }
+        if (monitoringType != null && monitoringType.equals("DB")) {
             dbSelected = true;
             jmxSelected = false;
             restSelected = false;
@@ -82,7 +77,7 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
             jmxSelected = false;
         }
     }
-    
+
     public String configure() {
         chooseMonitoringType = false;
         testDisplay = false;
@@ -147,9 +142,7 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
 
                 monitoringTestMessage = "OK";
                 monitoringTestStatus = "Connected to: " + webAdminProperties.getRestConnectorString();
-            }
-
-            else if (dbSelected) {
+            } else if (dbSelected) {
                 monitoringTestMessage = "OK";
                 monitoringTestStatus = "Connected to: " + webAdminProperties.getConnectorDatabaseUrl();
             } else {
@@ -257,20 +250,20 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
         }
 
     }
-    
+
     public String updateUserPassword() {
-    	try{
-    		if (!loggedInUser.equals(user)) {
+        try {
+            if (!loggedInUser.equals(user)) {
                 userAction = "You can only change the logged in user's password!";
                 saveUserDisplay = true;
                 return "/pages/configuration.xhtml";
             }
-    		
-    		domibusWebAdminUserDao.updateUserPassword(user, password);
-    		userAction = "Password successfully changed!";
-    		saveUserDisplay = true;
-    		return "/pages/configuration.xhtml";
-    	}catch (Exception e) {
+
+            domibusWebAdminUserDao.updateUserPassword(user, password);
+            userAction = "Password successfully changed!";
+            saveUserDisplay = true;
+            return "/pages/configuration.xhtml";
+        } catch (Exception e) {
             saveUserDisplay = true;
             userAction = "Error while deleting user: " + e;
             return "/pages/configuration.xhtml";
@@ -279,9 +272,10 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
 
     public String restart() {
 //        webAdminProperties.getCtx().refresh();
-    	applicationContext.refresh();
-        HttpSession session = Util.getSession();
-        session.invalidate();
+//        HttpSession session = Util.getSession();
+//        session.invalidate();
+
+//    	applicationContext.refresh();
         return "login";
     }
 
@@ -396,17 +390,17 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
     public void setUserAction(String userAction) {
         this.userAction = userAction;
     }
-    
+
     public IDomibusWebAdminUserDao getDomibusWebAdminUserDao() {
-		return domibusWebAdminUserDao;
-	}
+        return domibusWebAdminUserDao;
+    }
 
-	public void setDomibusWebAdminUserDao(
-			IDomibusWebAdminUserDao domibusWebAdminUserDao) {
-		this.domibusWebAdminUserDao = domibusWebAdminUserDao;
-	}
+    public void setDomibusWebAdminUserDao(
+            IDomibusWebAdminUserDao domibusWebAdminUserDao) {
+        this.domibusWebAdminUserDao = domibusWebAdminUserDao;
+    }
 
-	public boolean isChooseMonitoringType() {
+    public boolean isChooseMonitoringType() {
         return chooseMonitoringType;
     }
 
@@ -423,14 +417,13 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
     }
 
     public String getLoggedInUser() {
-    	return SecurityContextHolder.getContext().getAuthentication().getName();
+        return SecurityContextHolder.getContext().getAuthentication().getName();
         //return loggedInUser;
     }
 
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = (ConfigurableWebApplicationContext) applicationContext;		
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = (ConfigurableWebApplicationContext) applicationContext;
+    }
 
 }
