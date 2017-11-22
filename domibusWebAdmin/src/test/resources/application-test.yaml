@@ -4,6 +4,23 @@ server:
 spring:
   profiles: test
   
+     
+  datasource:
+    type: com.mchange.v2.c3p0.ComboPooledDataSource
+    url: jdbc:hsqldb:mem:.
+    username: sa    
+    driverClassName: org.hsqldb.jdbcDriver
+#    url: jdbc:mysql://localhost/domibusconnector
+#    username: domibusconnector
+#    password: domibus
+#    driverClassName: com.mysql.jdbc.Driver
+        
+    
+  jpa:
+    hibernate:
+      ddl-auto: create-drop   
+  
+  
 #  datasource:
 #    schema: classpath:/DbScripts/createTable_derby.sql  
 ##data: #TODO: data load script
@@ -11,7 +28,15 @@ spring:
 #    password: 
 #    driver-class-name: org.apache.derby.jdbc.EmbeddedDriver
 #    url: jdbc:derby:memory:SA;create=true
-  logging:
-    level:
-      eu.domibus.webadmin: TRACE
-      org.hibernate: INFO
+logging:
+  level:
+    eu.domibus.webadmin: TRACE
+    org.hibernate: INFO
+      
+ 
+    
+liquibase:
+  change-log: db/changelog/db.changelog-master.xml
+  enabled: true
+  
+  

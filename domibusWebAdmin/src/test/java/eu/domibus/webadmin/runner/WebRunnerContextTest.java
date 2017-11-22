@@ -11,9 +11,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {WebRunner.class},  
-initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles("test")
-@Ignore //failes because cannot load database in test context!
+//@Ignore //failes because cannot load database in test context!
 public class WebRunnerContextTest {
 
 	

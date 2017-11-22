@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -18,15 +19,30 @@ public class JpaContext {
 	@Autowired
 	DataSource dataSource;
 	
+        @Profile("!test")
 	@Bean("domibus.connector")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource);
 		em.setPackagesToScan(new String[] { "eu.domibus.connector.common.db.model", "eu.domibus.webadmin.model.connector" });
 
-		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		em.setJpaVendorAdapter(vendorAdapter);
+		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+
+		em.setJpaVendorAdapter(vendorAdapter);                
 		return em;
 	}
+        
+//        @Profile("test")
+//        @Bean("domibus.connector")
+//	public LocalContainerEntityManagerFactoryBean entityManagerFactoryCreateDDL() {
+//		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+//		em.setDataSource(dataSource);
+//		em.setPackagesToScan(new String[] { "eu.domibus.connector.common.db.model", "eu.domibus.webadmin.model.connector" });
+//
+//		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+//                vendorAdapter.setGenerateDdl(true);
+//		em.setJpaVendorAdapter(vendorAdapter);                
+//		return em;
+//	}
 
 }

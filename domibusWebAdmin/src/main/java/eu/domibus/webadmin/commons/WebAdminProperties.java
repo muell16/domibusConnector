@@ -1,14 +1,11 @@
 package eu.domibus.webadmin.commons;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -18,7 +15,6 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 @Component("webAdminProperties")
 public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {

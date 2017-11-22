@@ -28,20 +28,20 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
     private List<String> serviceList;
     private PieChartModel pieModelMessageSummary;
     private PieChartModel pieModelServiceSummary;
-    
+
     @Autowired
     private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
-    
+
     @Autowired
     private IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao;
-    
+
     @PostConstruct
-    public void init(){
-    	serviceList = new ArrayList<String>();
-    	List<DomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
-    	for (DomibusConnectorService domibusConnectorService : resultList) {
-			serviceList.add(domibusConnectorService.getService());
-		}
+    public void init() {
+        serviceList = new ArrayList<String>();
+        List<DomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
+        for (DomibusConnectorService domibusConnectorService : resultList) {
+            serviceList.add(domibusConnectorService.getService());
+        }
     }
 
     /*
@@ -63,21 +63,16 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
         pieModelMessageSummary.set("Outgoing Messages", resultOutgoing);
         pieModelServiceSummary = new PieChartModel();
         for (String service : serviceList) {
-        	 HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countService(service);
+            HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countService(service);
 
+            pieModelServiceSummary.set(service, serviceList.get(service));
 
-             
-             pieModelServiceSummary.set(service, serviceList.get(service));
-             
-		}
-        
-        HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countUndefinedService();
-        if (serviceList.containsKey("Undefined")){
-        	pieModelServiceSummary.set("Undefined", serviceList.get("Undefined"));	
         }
-        
 
-       
+        HashMap<String, Long> serviceList = domibusMessageWebAdminDao.countUndefinedService();
+        if (serviceList.containsKey("Undefined")) {
+            pieModelServiceSummary.set("Undefined", serviceList.get("Undefined"));
+        }
 
     }
 
@@ -115,22 +110,22 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
         this.pieModelServiceSummary = pieModelServiceSummary;
     }
 
-	public IDomibusMessageWebAdminDao getDomibusMessageWebAdminDao() {
-		return domibusMessageWebAdminDao;
-	}
+    public IDomibusMessageWebAdminDao getDomibusMessageWebAdminDao() {
+        return domibusMessageWebAdminDao;
+    }
 
-	public void setDomibusMessageWebAdminDao(
-			IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
-		this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
-	}
+    public void setDomibusMessageWebAdminDao(
+            IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
+        this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
+    }
 
-	public IDomibusWebAdminConnectorServiceDao getDomibusWebAdminConnectorServiceDao() {
-		return domibusWebAdminConnectorServiceDao;
-	}
+    public IDomibusWebAdminConnectorServiceDao getDomibusWebAdminConnectorServiceDao() {
+        return domibusWebAdminConnectorServiceDao;
+    }
 
-	public void setDomibusWebAdminConnectorServiceDao(
-			IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao) {
-		this.domibusWebAdminConnectorServiceDao = domibusWebAdminConnectorServiceDao;
-	}
+    public void setDomibusWebAdminConnectorServiceDao(
+            IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao) {
+        this.domibusWebAdminConnectorServiceDao = domibusWebAdminConnectorServiceDao;
+    }
 
 }
