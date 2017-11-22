@@ -35,8 +35,8 @@ import eu.domibus.webadmin.commons.WebAdminProperties;
 @Service
 public class ConnectorMonitoringService implements IConnectorMonitoringService, Serializable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ConnectorMonitoringService.class);
-	
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectorMonitoringService.class);
+
     private static final long serialVersionUID = -5017789529520475342L;
 
     protected final Log logger = LogFactory.getLog(getClass());
@@ -58,10 +58,10 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private Integer rejectedConnectorMessagesCount;
     private String rejectedConnectorMessagesCountStatus;
     private boolean useMonitorServer = false;
-    
+
     @Autowired
     private DomibusConnectorConnectorMonitoringDao monitoringDao;
-    
+
     @Autowired
     private DBUtil dbUtil;
 
@@ -70,7 +70,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     private static final String CHECK_OUTGOING_TRIGGER_NAME = "checkOutgoingTrigger";
     private static final String CHECK_INCOMING_TRIGGER_NAME = "checkIncomingTrigger";
-    private static final String CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME = "checkEvidencesTimeoutTrigger";    
+    private static final String CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME = "checkEvidencesTimeoutTrigger";
     private static final String STATUS_OK = "OK";
     private static final String STATUS_ERROR = "ERROR";
     private static final String STATUS_WAITING = "WAITING";
@@ -80,14 +80,14 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     }
 
     public void refreshMonitoringServer() {
-    	LOG.trace("refreshMonitoringServer: called");
+        LOG.trace("refreshMonitoringServer: called");
         generateMonitoringReport(true);
     }
 
     @Override
     public void generateMonitoringReport(boolean reconnect) {
         if (reconnect) {
-           webAdminProperties.loadProperties();
+            webAdminProperties.loadProperties();
         }
         monitoringType = checkMonitoringType(webAdminProperties.getMonitoringType());
         if (monitoringType.equals(monitoring.JMX.toString())) {
@@ -221,7 +221,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     }
 
-    @Transactional(readOnly=true, value="transactionManager")
+    @Transactional(readOnly = true)
     private void queryDB() {
 
         checkOutgoingRepeatInterval = monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
@@ -232,7 +232,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
                 monitoringDao.selectLastCalledTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME));
         lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
         lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
-       
+
     }
 
     public WebAdminProperties getWebAdminProperties() {
@@ -357,7 +357,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.useMonitorServer = useMonitorServer;
     }
 
-
     public String getRejectedConnectorMessagesCountStatus() {
         return rejectedConnectorMessagesCountStatus;
     }
@@ -391,7 +390,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     }
 
     public String getConnectionConnectorDB() {
-    	LOG.trace("getConnectionConnectorDB: called connectionConnectorDB is [{}]", connectionConnectorDB);
+        LOG.trace("getConnectionConnectorDB: called connectionConnectorDB is [{}]", connectionConnectorDB);
         return connectionConnectorDB;
     }
 

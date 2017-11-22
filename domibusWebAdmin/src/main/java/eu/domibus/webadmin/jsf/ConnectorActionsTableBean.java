@@ -191,8 +191,7 @@ public class ConnectorActionsTableBean {
 						String.format("Delete will corrupt data, there are references pointing to this action! [Action Action: %s - Pdf required: %s] ", 
 								action.getAction(), action.isPdfRequired()));
 				
-				FacesContext.getCurrentInstance()												
-					.addMessage(null, message);
+				RequestContext.getCurrentInstance().showMessageInDialog(message);
 				
 			} catch (Exception e) {
 				LOG.error("#confirmDeleteSelectedActions: Exception occured", e);
@@ -238,14 +237,16 @@ public class ConnectorActionsTableBean {
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Error!", "Creating action failed" );
 				
+                                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                                
+                                /*
 				FacesContext.getCurrentInstance()												
-					.addMessage(null, message);
-				
+					.addMessage(null, message);				
 				RequestContext context = RequestContext.getCurrentInstance();
 				context.execute("PF('showCreateActionDialog').show();");
-									
+				*/					
 				//return to keep old data (this.action, this.oldActionPK), so user input is not lost
-				
+				return;
 			} catch (Exception e) {
 				LOG.error(":saveAction: create action failed with exception", e);
 				

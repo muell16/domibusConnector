@@ -185,9 +185,8 @@ public class ConnectorServicesTableBean {
 						String.format("Delete will corrupt data, there are references pointing to this service! [Service Service: %s - service type: %s] ", 
 								service.getService(), service.getServiceType()));
 				
-				FacesContext.getCurrentInstance()												
-					.addMessage(null, message);
-				
+                                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                                								
 			} catch (Exception e) {
 				LOG.error("#confirmDeleteSelectedServices: Exception occured", e);
 				FacesContext.getCurrentInstance()
@@ -233,14 +232,17 @@ public class ConnectorServicesTableBean {
 				
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Error!", "Creating service failed" );
-				
+				RequestContext.getCurrentInstance().showMessageInDialog(message);
+                                
+                                /*
 				FacesContext.getCurrentInstance()												
 					.addMessage(null, message);
 				
 				RequestContext context = RequestContext.getCurrentInstance();
 				context.execute("PF('showCreateServiceDialog').show();");
-									
+				*/					
 				//return to keep old data (this.service, this.oldServicePK), so user input is not lost
+                                return;
 				
 			} catch (Exception e) {
 				LOG.error(":saveService: create service failed with exception", e);

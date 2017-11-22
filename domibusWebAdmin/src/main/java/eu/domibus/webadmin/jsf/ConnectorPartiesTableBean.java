@@ -158,7 +158,7 @@ public class ConnectorPartiesTableBean {
 						 selectedParties);			
 	}
 	
-	
+	        
 	public void confirmDeleteSelectedParties(ActionEvent actionEvent) {
 		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedParties);
 		//TODO: delete DB entries
@@ -169,13 +169,20 @@ public class ConnectorPartiesTableBean {
 			} catch (DataIntegrityViolationException e) {
 				LOG.error("#confirmDeleteSelectedParties: DataIntegrityViolationException occured", e);
 				
+                                
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
 						String.format("Delete will corrupt data, there are references pointing to this party! [PartyID: %s - Party ID type: %s - Role: %s] ", 
 								p.getPartyId(), p.getPartyIdType(), p.getRole()));
 				
+                                
+                                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                                
+                                /*
 				FacesContext.getCurrentInstance()												
 					.addMessage(null, message);
-				
+				*/
+                                
+                                
 			} catch (Exception e) {
 				LOG.error("#confirmDeleteSelectedParties: Exception occured", e);
 				FacesContext.getCurrentInstance()
@@ -217,11 +224,15 @@ public class ConnectorPartiesTableBean {
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Error!", "Creating party failed" );
 				
+                                /*
 				FacesContext.getCurrentInstance()												
 					.addMessage(null, message);
+                                        */
+
+                                RequestContext.getCurrentInstance().showMessageInDialog(message);
 				
-				RequestContext context = RequestContext.getCurrentInstance();
-				context.execute("PF('showCreatePartyDialog').show();");
+				//RequestContext context = RequestContext.getCurrentInstance();
+				//context.execute("PF('showCreatePartyDialog').show();");
 									
 				//return to keep old data (this.party, this.oldPartyPK)
 				return;
