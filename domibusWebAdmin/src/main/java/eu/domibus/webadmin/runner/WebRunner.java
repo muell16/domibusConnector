@@ -80,7 +80,7 @@ public class WebRunner extends SpringBootServletInitializer {
 //    	throw new RuntimeException("STOPPPPPPPP!");
         // is not executed when running in container!!! so whole spring context not working when deployed as war!
     	    	
-    	return application.sources(WebRunner.class);
+    	return application.sources(WebRunner.class, DomibusWebAdminContext.class);
     }
 
     public static void main(String[] args) {
