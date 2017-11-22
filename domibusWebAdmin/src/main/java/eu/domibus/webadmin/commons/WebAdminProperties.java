@@ -46,6 +46,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     	this.setDataSource(ds);
     }
     
+    @Transactional(readOnly=true)
     public void loadProperties() {
     	logger.trace("loadProperties: called");
         String sql = "select * from DOMIBUS_WEBADMIN_PROPERTIES";
@@ -87,6 +88,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
 
     }
 
+    @Transactional(readOnly=false)
     public void saveProperty(String key, String value) {
 
         String sql = "select PROPERTIES_KEY as result from DOMIBUS_WEBADMIN_PROPERTIES where PROPERTIES_KEY = ?";

@@ -42,6 +42,7 @@ import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
+import javax.annotation.concurrent.NotThreadSafe;
 
 @org.springframework.stereotype.Service
 public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
@@ -64,6 +65,7 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 	}
 	
 	@Override
+        @Transactional(readOnly=false)
 	public void importFromPModeFile(UploadedFile pmodeFile) {
 		LOG.debug("Starting import of PModes from File "+ pmodeFile.getFileName());
 		Configuration pmodes = null;
@@ -112,7 +114,7 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 			}
 		}
 	}
-
+        
 	private void importParties(Configuration pmodes) {
 		Map<String, String> roles = new HashMap<String,String>();
 		for(Role role:pmodes.getBusinessProcesses().getRoles().getRole()){
@@ -153,15 +155,22 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 	}
 
 	private void checkAndCreateParty(Map<String, String> partyIdTypes, Map<String, Identifier> partyIdentifiers,
-			Map<String, Map<String, DomibusConnectorParty>> dbParties, String role, String partyName) {
-		Identifier pId = partyIdentifiers.get(partyName);
-		if(!(dbParties.containsKey(pId.getPartyId()) && dbParties.get(pId.getPartyId()).containsKey(role))){
-			DomibusConnectorParty newParty = new DomibusConnectorParty();
-			newParty.setPartyId(pId.getPartyId());
-			newParty.setPartyIdType(partyIdTypes.get(pId.getPartyIdType()));
-			newParty.setRole(role);
-			this.partyDao.persistNewParty(newParty);
-		}
+            Map<String, Map<String, DomibusConnectorParty>> dbParties, String role, String partyName) {
+            Identifier pId = partyIdentifiers.get(partyName);
+            if(!(dbParties.containsKey(pId.getPartyId()) && dbParties.get(pId.getPartyId()).containsKey(role))){
+		DomibusConnectorParty newParty = new DomibusConnectorParty();
+		newParty.setPartyId(pId.getPartyId());
+		newParty.setPartyIdType(partyIdTypes.get(pId.getPartyIdType()));
+		newParty.setRole(role);
+                this.partyDao.persistNewParty(newParty);
+                
+                //TODO: put persisted newParty into dbParties
+                Map<String, DomibusConnectorParty> partyRoleMape = dbParties.getOrDefault(pId.getPartyId(), new HashMap<>());
+                partyRoleMape.put(role, newParty);
+                dbParties.put(pId.getPartyId(), partyRoleMape);
+                
+                //dbParties.put(newParty.getPartyId(), rolePartyMap);
+            }
 	}
 
 	 public static Object byteArrayToXmlObject(final byte[] xmlAsBytes, final Class<?> instantiationClazz,

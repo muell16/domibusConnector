@@ -26,10 +26,6 @@ public class JpaContext {
 
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
-//		em.setPersistenceUnitName("domibus.connector");
-		//em.setBeanName("domibus.connector");
-		//em.setJpaProperties(additionalProperties());
-				
 		return em;
 	}
 
