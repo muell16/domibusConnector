@@ -67,11 +67,11 @@ import eu.domibus.webadmin.runner.springsupport.ViewScope;
 		ConnectorSummaryServiceImpl.class,
 		ConnectorMonitoringService.class
 		})
-@Import({JpaContext.class, SecurityConfig.class})
+@Import({JpaContext.class, SecurityConfig.class, DomibusWebAdminContext.class})
 @ImportResource("classpath:/spring/context/connectorDaoContext.xml")
-public class WebRunner extends SpringBootServletInitializer implements ServletContextInitializer {
+public class WebRunner extends SpringBootServletInitializer {
 
-	private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
+    private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 	
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -79,121 +79,17 @@ public class WebRunner extends SpringBootServletInitializer implements ServletCo
     	System.err.print("WebRunner runs as war....");
 //    	throw new RuntimeException("STOPPPPPPPP!");
         // is not executed when running in container!!! so whole spring context not working when deployed as war!
-    	
-    	
+    	    	
     	return application.sources(WebRunner.class);
     }
 
-	public static void main(String[] args) {
-		LOG.trace("main: run Spring application as jar....");
-		SpringApplication.run(WebRunner.class, args);
-	}
+    public static void main(String[] args) {
+	LOG.trace("main: run Spring application as jar....");
+	SpringApplication.run(WebRunner.class, args);
+    }
 	
 	//TODO: add auth filter; file-upload-filter; ...
 	
-	
-	
-	/*
-	 * configure servletRegistration to listen
-	 */
-    @Bean
-    public ServletRegistrationBean servletRegistrationBean() {
-    	LOG.trace("servletRegistrationBean: called");
-        FacesServlet servlet = new FacesServlet();
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "*.xhtml", "*.jsf");
-        servletRegistrationBean.setLoadOnStartup(1);
-        servletRegistrationBean.addUrlMappings("/*");
-		return servletRegistrationBean;
-    }
-    
-    /*
-     * configure PrimeFaces File Upload filter
-     */
-    @Bean
-    public FilterRegistrationBean uploadFilter() {
-    	    	
-    	FileUploadFilter filter = new FileUploadFilter();
-    	
-    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
-		return filterRegistration;
-    	
-    }
-    
-    
-    @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
 
-        servletContext.setInitParameter("javax.faces.DEFAULT_SUFFIX", ".xhtml");
-        servletContext.setInitParameter("javax.faces.PARTIAL_STATE_SAVING_METHOD", "true");
-
-        servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-        servletContext.setInitParameter("facelets.DEVELOPMENT", "true");
-        servletContext.setInitParameter("javax.faces.FACELETS_REFRESH_PERIOD", "1");
-
-        servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", "true");
-		servletContext.setInitParameter("primefaces.THEME", "bootstrap");
-		servletContext.setInitParameter("primefaces.FONT_AWESOME", "true");
-		servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", "true");
-		servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-//		servletContext.setInitParameter("com.sun.faces.forceLoadConfiguration", "true");		
-//		servletContext.setInitParameter("com.sun.faces.expressionFactory", "com.sun.el.ExpressionFactoryImpl");
-        
-        
-        Set<Class<?>> clazz = new HashSet<Class<?>>();
-
-        clazz.add(WebRunner.class); // dummy, enables InitFacesContext
-
-        FacesInitializer facesInitializer = new FacesInitializer();
-                        
-        facesInitializer.onStartup(clazz, servletContext);
-
-    }
-    
-
-    @Bean
-    public ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener> jsfConfigureListener() {
-    	System.out.println("jsfConfigureListener called!");
-    	LOG.debug("jsfConfigureListener: called");
-        return new ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener>(
-                new JsfApplicationObjectConfigureListener());
-    }
-
-
-    static class JsfApplicationObjectConfigureListener extends ConfigureListener {
-
-        @Override
-        public void contextInitialized(ServletContextEvent sce) {
-            super.contextInitialized(sce);
-
-            ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
-            Application app = factory.getApplication();
-            
-            app.addELResolver(new SpringBeanFacesELResolver());
-            
-        }
-    }
-    
-
-    
-    /*
-     * 
-     *  view scope
-     */
-    @Bean
-    public ViewScope viewScope() {
-    	return new ViewScope();
-    }
-    
-    /*
-     *  configure custom view scope
-     */
-    @Bean
-    public CustomScopeConfigurer customScopeConfigurer() {
-    	CustomScopeConfigurer scopeConfig = new CustomScopeConfigurer();
-    	scopeConfig.addScope("view", viewScope());
-    	return scopeConfig;
-    }
-    
-  
 
 }

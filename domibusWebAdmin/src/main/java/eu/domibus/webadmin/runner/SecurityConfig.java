@@ -43,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 	@Bean
 	public DomibusWebAdminUserAuthenticationProvider domibusWebAdminUserAuthenticationProvider() {
-		DomibusWebAdminUserAuthenticationProvider authProvider = new DomibusWebAdminUserAuthenticationProvider(userDao);
-		return authProvider;
+            DomibusWebAdminUserAuthenticationProvider authProvider = new DomibusWebAdminUserAuthenticationProvider(userDao);
+            return authProvider;
 	}
 	
 	@Override
@@ -65,8 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/javax.faces.resource/**").permitAll()
 			.antMatchers("/css/**").permitAll()
 			.antMatchers("/images/**").permitAll()
-			.anyRequest().authenticated()
-			
+
+                        .anyRequest().authenticated()
 			.and()
 				.exceptionHandling().defaultAuthenticationEntryPointFor(loginUrlauthenticationEntryPoint(), new AntPathRequestMatcher("/**"));
 	} 
