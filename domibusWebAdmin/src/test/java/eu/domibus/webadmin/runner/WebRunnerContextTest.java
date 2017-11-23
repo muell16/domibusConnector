@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = {WebRunner.class}, //, TestDatabase.class, TestDatabaseInitByLiquibase.class},  
     initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles({"test", "db_h2"})
-//@WebAppConfiguration
+@WebAppConfiguration
 //@Ignore //fails because cannot load database in test context!
 @Import({TestDatabase.class})
 @Transactional

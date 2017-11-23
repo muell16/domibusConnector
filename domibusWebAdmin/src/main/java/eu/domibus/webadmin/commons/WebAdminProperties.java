@@ -34,8 +34,8 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private String smtpHostName;
     private Long monitoringTimerInterval;
     private boolean monitoringLogWrite;
+    private boolean setupRequired;
 
-    private ConfigurableWebApplicationContext ctx;
 
     @Autowired
     public WebAdminProperties(DataSource ds) {
