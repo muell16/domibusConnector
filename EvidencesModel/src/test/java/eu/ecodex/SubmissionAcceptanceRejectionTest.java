@@ -43,9 +43,9 @@ import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
 public class SubmissionAcceptanceRejectionTest  {
-	
-	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
-	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/main/resources/evidenceBuilderStore.jks", "123456", "evidenceBuilderKey", "123456");
+
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/main/resources/keystore.jks", "test123", "new_Testcert", "test123");
+	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/main/resources/keystore.jks", "test123", "new_Testcert", "test123");
 	
 	private static final String PATH_OUTPUT_FILES = "src/test/resources/";
 	private static final String SUBMISSION_ACCEPTANCE_FILE = "submissionAcceptance.xml";
@@ -166,6 +166,7 @@ public class SubmissionAcceptanceRejectionTest  {
 		msgDetails.setSenderAddress("senderAddress");
 		
 		byte[] subm = builder.createSubmissionAcceptanceRejection(true, (EventReasonType) null, details, msgDetails);
+		
 		writeFile(subm, PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
 		assertTrue(utils.verifySignature(subm));
 		
