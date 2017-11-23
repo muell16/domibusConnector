@@ -24,6 +24,20 @@ import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseConnection;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 /**
  * A Test Database
@@ -33,25 +47,37 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 @Configuration
 @Profile("test")
 public class TestDatabase {
-
+        
+    private final static Logger LOG = LoggerFactory.getLogger(TestDatabase.class);
+    
+    @Bean
+    @Profile("db_h2")
+    public DataSource embeddedH2DB() throws SQLException, DatabaseException, LiquibaseException {
+        System.out.println("init embeddedH2DB");
+        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()                
+                .setType(EmbeddedDatabaseType.H2)                
+                .build();
+        return db;
+    }
+    
 	
 	@Bean
-	@Profile("hsqldb")
+	@Profile("db_hsql")
 	public DataSource embeddedDatabaseHSQLDB() {
 		EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
 	    		.setType(EmbeddedDatabaseType.HSQL)
-	    		.addScript("DbScripts/createTable_hsqldb.sql")
+	    	//	.addScript("DbScripts/createTable_hsqldb.sql")
 	    	//	.addScript("dbscripts/data/testdata.sql")
 	    		.build();
 		return db;
 	}
 	
 	@Bean
-	@Profile("derbydb")
+	@Profile("db_derby")
 	public DataSource embeddedDatabase() {
 		EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
 	    		.setType(EmbeddedDatabaseType.DERBY)
-	    		.addScript("DbScripts/createTable_derby.sql")
+	    	//	.addScript("DbScripts/createTable_derby.sql")
 	    	//	.addScript("dbscripts/data/testdata.sql")
 	    		.build();
 		return db;
@@ -59,7 +85,7 @@ public class TestDatabase {
 
 	
 	@Bean
-	@Profile("mariadb")
+	@Profile("db_maria")
 	public DataSource createDataSource() throws PropertyVetoException, ManagedProcessException, ScriptException, SQLException {
 			
 		DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
@@ -76,16 +102,7 @@ public class TestDatabase {
 		cpds.setJdbcUrl( url );
 		cpds.setUser("root");                                  
 		cpds.setPassword("");     
-		
-
-		//create db; insert testdata
-		Connection conn = cpds.getConnection();
-		
-		ScriptUtils.executeSqlScript(conn, new ClassPathResource("/DbScripts/createTable_MySQL.sql"));
-	
-		ScriptUtils.executeSqlScript(conn, new ClassPathResource("/dbscripts/data/testdata.sql"));
-			
-
+				
 		return cpds;
 	}
 	

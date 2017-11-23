@@ -7,18 +7,22 @@ spring:
      
   datasource:
     type: com.mchange.v2.c3p0.ComboPooledDataSource
-    url: jdbc:hsqldb:mem:.
+    url: jdbc:h2:mem:testdb
+#    url: jdbc:h2:./target/testdb
     username: sa    
-    driverClassName: org.hsqldb.jdbcDriver
+    driverClassName: org.h2.Driver
 #    url: jdbc:mysql://localhost/domibusconnector
 #    username: domibusconnector
 #    password: domibus
-#    driverClassName: com.mysql.jdbc.Driver
-        
+#    driverClassName: com.mysql.jdbc.Driver       
+#    url: jdbc:oracle:thin:@sjusee:1521:sjusee
+#    username: tbckenddb
+#    password: tbckenddb
+#    driverClassName: oracle.jdbc.driver.OracleDriver
     
   jpa:
     hibernate:
-      ddl-auto: create-drop   
+      ddl-auto: none
   
   
 #  datasource:
@@ -29,14 +33,17 @@ spring:
 #    driver-class-name: org.apache.derby.jdbc.EmbeddedDriver
 #    url: jdbc:derby:memory:SA;create=true
 logging:
-  level:
+  level:     
+    root: WARN
     eu.domibus.webadmin: TRACE
     org.hibernate: INFO
+    liquibase: DEBUG
       
  
     
 liquibase:
-  change-log: db/changelog/db.changelog-master.xml
+  change-log: classpath:/db/changelog/db.changelog-master.xml
   enabled: true
+  drop-first: true
   
   

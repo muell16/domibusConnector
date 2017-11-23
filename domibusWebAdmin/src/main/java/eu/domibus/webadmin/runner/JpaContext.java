@@ -15,11 +15,9 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @EnableAutoConfiguration
 public class JpaContext {
 
-
 	@Autowired
 	DataSource dataSource;
 	
-        @Profile("!test")
 	@Bean("domibus.connector")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -32,17 +30,4 @@ public class JpaContext {
 		return em;
 	}
         
-//        @Profile("test")
-//        @Bean("domibus.connector")
-//	public LocalContainerEntityManagerFactoryBean entityManagerFactoryCreateDDL() {
-//		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-//		em.setDataSource(dataSource);
-//		em.setPackagesToScan(new String[] { "eu.domibus.connector.common.db.model", "eu.domibus.webadmin.model.connector" });
-//
-//		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-//                vendorAdapter.setGenerateDdl(true);
-//		em.setJpaVendorAdapter(vendorAdapter);                
-//		return em;
-//	}
-
 }
