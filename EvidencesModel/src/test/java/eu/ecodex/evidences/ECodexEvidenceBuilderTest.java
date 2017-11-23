@@ -1,48 +1,30 @@
 package eu.ecodex.evidences;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.X509Certificate;
-import java.util.List;
-
-import javax.xml.crypto.URIDereferencer;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.XMLSignature;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.dom.DOMValidateContext;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
+import eu.ecodex.evidences.types.ECodexMessageDetails;
+import eu.europa.esig.dss.InMemoryDocument;
+import eu.europa.esig.dss.validation.CommonCertificateVerifier;
+import eu.europa.esig.dss.validation.SignedDocumentValidator;
+import eu.europa.esig.dss.validation.reports.Reports;
+import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
+import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
+import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
+import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
 import org.etsi.uri._02640.v2.EventReasonType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
-import eu.ecodex.evidences.types.ECodexMessageDetails;
-import eu.europa.ec.markt.dss.signature.InMemoryDocument;
-import eu.europa.ec.markt.dss.validation102853.CommonCertificateVerifier;
-import eu.europa.ec.markt.dss.validation102853.SignedDocumentValidator;
-import eu.spocseu.edeliverygw.REMErrorEvent;
-import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
-import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
-import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
-import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.net.URL;
+import java.security.*;
+import java.security.cert.X509Certificate;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The class <code>ECodexEvidenceBuilderTest</code> contains tests for the class
@@ -449,10 +431,12 @@ public class ECodexEvidenceBuilderTest {
     	CommonCertificateVerifier certVeri = new CommonCertificateVerifier();
     	val.setCertificateVerifier(certVeri);
 
-    	val.validateDocument();
-    	
-    	return val.getSignatures().get(0).checkSignatureIntegrity().isSignatureValid() && 
-    		   val.getSignatures().get(0).checkSignatureIntegrity().isSignatureIntact();
+    	Reports test = val.validateDocument();
+		boolean sigValid = test.getDiagnosticData().getSignatureById(test.getDiagnosticData().getFirstSignatureId()).isSignatureIntact();
+		boolean sigIntact = test.getDiagnosticData().getSignatureById(test.getDiagnosticData().getFirstSignatureId()).isSignatureIntact();
+
+    	return sigValid &&
+    		   sigIntact;
     	
     	// 2016-03-03 klara: 
     	// Switched to DSS Validation due to missing time to fix problem with 
