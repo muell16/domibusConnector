@@ -32,3 +32,4 @@ target/
 *.iml
 *.ipr
 *.iws
+/domibusWebAdmin/nbproject/

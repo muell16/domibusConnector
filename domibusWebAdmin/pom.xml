@@ -53,10 +53,32 @@
         <!-- 				</dependency> -->
         <!-- 			</dependencies> -->
         <!-- 		</profile> -->
+        <profile>
+            <!-- includes all dependencies to start the war directly! (java -jar domibusWebAdmin-*.war) -->
+            
+            <id>embedded-tomcat</id>            
+            <activation>
+                <!-- TODO: change before make release -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-jasper</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
 
-    <!--  spring-boot -->
+    <!--  spring-boot  -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -142,16 +164,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
         <!-- 		<dependency> -->
         <!-- 			<groupId>org.springframework.boot</groupId> -->
         <!-- 			<artifactId>spring-boot-legacy</artifactId> -->
@@ -171,11 +184,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <!--<scope>provided</scope>-->
-        </dependency>
+
 
         <!--  should be managed by spring-boot -->
 		
