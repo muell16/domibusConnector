@@ -1,5 +1,7 @@
 package eu.domibus.connector.security;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ public class DomibusConnectorSecurityToolkitDefaultImpl implements DomibusConnec
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityToolkitDefaultImpl.class);
 
+    @Resource(name="domibusConnectorSecurityContainer")
     DomibusSecurityContainer securityContainer;
 
     public void setSecurityContainer(DomibusSecurityContainer securityContainer) {
