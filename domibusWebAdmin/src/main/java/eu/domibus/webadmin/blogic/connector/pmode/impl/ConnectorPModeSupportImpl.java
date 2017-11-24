@@ -15,7 +15,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.primefaces.component.log.Log;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,6 @@ import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
-import javax.annotation.concurrent.NotThreadSafe;
 
 @org.springframework.stereotype.Service
 public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
@@ -64,15 +62,23 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 		this.partyDao = partyDao;
 	}
 	
+    /**
+     * {@inheritDoc}
+     * 
+     */
 	@Override
-        @Transactional(readOnly=false)
+    @Transactional(readOnly=false)
 	public void importFromPModeFile(UploadedFile pmodeFile) {
+        if (pmodeFile == null) {
+            throw new IllegalArgumentException("pModeFile is not allowed to be null!");
+        }
 		LOG.debug("Starting import of PModes from File "+ pmodeFile.getFileName());
 		Configuration pmodes = null;
 		try {
 			pmodes = (Configuration) byteArrayToXmlObject(pmodeFile.getContents(), Configuration.class, Configuration.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Cannot load provided pmode file!", e);
+            throw new RuntimeException(e);
 		}
 		
 		importServices(pmodes);

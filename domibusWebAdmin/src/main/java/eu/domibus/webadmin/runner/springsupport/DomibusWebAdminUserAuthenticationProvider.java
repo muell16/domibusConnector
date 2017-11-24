@@ -34,6 +34,9 @@ public class DomibusWebAdminUserAuthenticationProvider implements Authentication
 		this.domibusWebAdminUserDao = domibusWebAdminUserDao;
 	}
 
+    /**
+     * {@inheritDoc }     
+     */
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		if (authentication == null) {
@@ -45,7 +48,7 @@ public class DomibusWebAdminUserAuthenticationProvider implements Authentication
 		
 		UsernamePasswordAuthenticationToken pwAuth = (UsernamePasswordAuthenticationToken) authentication;
 		
-		String username = pwAuth.getName().toString();
+		String username = pwAuth.getName();
 		String password = pwAuth.getCredentials().toString();
 		
 		LOG.trace("authenticate: username is [{}], password is [{}]", username, password);
@@ -72,7 +75,6 @@ public class DomibusWebAdminUserAuthenticationProvider implements Authentication
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return (authentication == UsernamePasswordAuthenticationToken.class);
-		//return false;
 	}
 
 }

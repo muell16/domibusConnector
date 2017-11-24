@@ -235,7 +235,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         } catch (Exception e) {
             LOG.error("Exception in queryDB occured", e);
         }
-
     }
 
     public WebAdminProperties getWebAdminProperties() {

@@ -18,6 +18,7 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -117,13 +118,8 @@ public class ConnectorPModeSupportImplTest {
      * so each party, service and actions should only be persisted once to the db
      */
     @Test
-    public void testImportFromPModeFile_emptyDB() throws Exception {
-        System.out.println("importFromPModeFile");
-        
+    public void testImportFromPModeFile_emptyDB() throws Exception {        
         ClassPathResource classPathResource = new ClassPathResource("pmode.data/domibus-gw-sample-pmode-blue.xml");        
-//        InputStream is = classPathResource.getInputStream();
-//        byte[] xmlAsBytes = StreamUtils.copyToByteArray(is);        
-//        Configuration configuration = (Configuration) ConnectorPModeSupportImpl.byteArrayToXmlObject(xmlAsBytes, Configuration.class, Configuration.class);
         UploadedFile uploadedPmode = uploadedFileHelperFactory(classPathResource);
               
         this.pmodeSupportImpl.importFromPModeFile(uploadedPmode);
@@ -136,18 +132,64 @@ public class ConnectorPModeSupportImplTest {
         Mockito.verify(actionDao, Mockito.times(19)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
+    @Test(expected=IllegalArgumentException.class)
+    public void testImportFromPModeFile_nullFile() throws Exception {
+        this.pmodeSupportImpl.importFromPModeFile(null);
+    }
+    
+    @Test
+    public void testImportFromPModeFile_existingData() throws Exception {        
+        ClassPathResource classPathResource = new ClassPathResource("pmode.data/domibus-gw-sample-pmode-blue.xml");        
+        UploadedFile uploadedPmode = uploadedFileHelperFactory(classPathResource);
+              
+        //simulate existing Service
+        DomibusConnectorService s1 = new DomibusConnectorService();
+        s1.setService("BR");
+        s1.setServiceType("urn:e-codex:services:");
+        List<DomibusConnectorService> serviceList = new ArrayList<>();
+        serviceList.add(s1);        
+        Mockito.when(serviceDao.getServiceList()).thenReturn(serviceList);
+        
+        //simulate existing Action        
+        // 	<service name="BRService" value="BR" type="urn:e-codex:services:"/>
+        
+        
+        this.pmodeSupportImpl.importFromPModeFile(uploadedPmode);
+
+        //there are 2 parties in the pmode xml
+        Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
+        //there are 5 services in the pmode xml
+        Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(DomibusConnectorService.class));
+        //there are 19 actions in the pmode xml
+        Mockito.verify(actionDao, Mockito.times(19)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
+    }
+    
     
 
     /**
      * Test of byteArrayToXmlObject method, of class ConnectorPModeSupportImpl.
      */
     @Test
-    public void testByteArrayToXmlObject() throws Exception {
-        System.out.println("byteArrayToXmlObject");
-        
+    public void testByteArrayToXmlObject() throws Exception {        
         ClassPathResource classPathResource = new ClassPathResource("pmode.data/domibus-gw-sample-pmode-blue.xml");        
         InputStream is = classPathResource.getInputStream();
         byte[] xmlAsBytes = StreamUtils.copyToByteArray(is);        
+        Configuration configuration = (Configuration) ConnectorPModeSupportImpl.byteArrayToXmlObject(xmlAsBytes, Configuration.class, Configuration.class);
+        
+        assertThat(configuration).isNotNull();
+    }
+    
+    /**
+     * Test of byteArrayToXmlObject method, of class ConnectorPModeSupportImpl.
+     */
+    @Test(expected=Exception.class)
+    public void testByteArrayToXmlObject_withCorruptedXML() throws Exception {        
+        ClassPathResource classPathResource = new ClassPathResource("pmode.data/domibus-gw-sample-pmode-blue.xml");        
+        InputStream is = classPathResource.getInputStream();
+        byte[] xmlAsBytes = StreamUtils.copyToByteArray(is);    
+        
+        xmlAsBytes[20] = 'a'; //destroy xml
+        
         Configuration configuration = (Configuration) ConnectorPModeSupportImpl.byteArrayToXmlObject(xmlAsBytes, Configuration.class, Configuration.class);
         
         assertThat(configuration).isNotNull();
