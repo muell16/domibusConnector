@@ -272,13 +272,12 @@
         </dependency>
 		
 		
-        <dependency>
+<!--        <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.1.2</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
+            <type>jar</type>            
+        </dependency>-->
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc7</artifactId>

@@ -132,6 +132,30 @@ public class ConnectorPModeSupportImplTest {
         Mockito.verify(actionDao, Mockito.times(19)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
+        /**
+     * Test of importFromPModeFile method, of class ConnectorPModeSupportImpl.
+     * 
+     * Tests with "emptyDB" so the mocked DAOs are returning empty lists of 
+     * DomibusConnectorService, DomibusConnectorAction and DomibusConnectorParty
+     * 
+     * so each party, service and actions should only be persisted once to the db
+     */
+    @Test
+    public void testImportFromPModeFile2_emptyDB() throws Exception {        
+        ClassPathResource classPathResource = new ClassPathResource("pmode.data/domibus-configuration-service_at.xml");        
+        UploadedFile uploadedPmode = uploadedFileHelperFactory(classPathResource);
+              
+        this.pmodeSupportImpl.importFromPModeFile(uploadedPmode);
+
+        //there are 2 parties in the pmode xml
+        Mockito.verify(partyDao, Mockito.times(12)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
+        //there are 5 services in the pmode xml
+        Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(DomibusConnectorService.class));
+        //there are 19 actions in the pmode xml
+        Mockito.verify(actionDao, Mockito.times(17)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
+    }
+    
+    
     @Test(expected=IllegalArgumentException.class)
     public void testImportFromPModeFile_nullFile() throws Exception {
         this.pmodeSupportImpl.importFromPModeFile(null);
