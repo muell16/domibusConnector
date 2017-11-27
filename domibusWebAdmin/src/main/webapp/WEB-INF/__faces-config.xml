@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8'?>
+ 
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+ 
+<faces-config version="2.0"
+              xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+    <application>
+        <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>       
+    </application>
+    
+<!--     <managed-bean> -->
+<!--       <managed-bean-name>reportsBean</managed-bean-name> -->
+<!--       <managed-bean-class>eu.domibus.webadmin.jsf.ReportsBean</managed-bean-class> -->
+<!--       <managed-bean-scope>session</managed-bean-scope> -->
+<!--       <managed-property> -->
+<!-- 			<property-name>reportDao</property-name> -->
+<!-- 			<value>#{domibusWebAdminReportDao}</value> -->
+<!-- 		</managed-property> -->
+<!--    </managed-bean> -->
+   
+<!--    <managed-bean> -->
+<!--       <managed-bean-name>connectorDataTablesBean</managed-bean-name> -->
+<!--       <managed-bean-class>eu.domibus.webadmin.jsf.ConnectorDataTablesBean</managed-bean-class> -->
+<!--       <managed-bean-scope>request</managed-bean-scope> -->
+<!--       <managed-property> -->
+<!-- 			<property-name>pModeSupport</property-name> -->
+<!-- 			<value>#{pModeSupport}</value> -->
+<!-- 		</managed-property> -->
+<!--    </managed-bean> -->
+    
+<!-- 	<managed-bean> -->
+<!-- 		<managed-bean-name>connectorPartiesTableBean</managed-bean-name> -->
+<!-- 		<managed-bean-class>eu.domibus.webadmin.jsf.ConnectorPartiesTableBean</managed-bean-class> -->
+<!-- 		<managed-bean-scope>view</managed-bean-scope> -->
+<!-- 		<managed-property> -->
+<!-- 			<property-name>pModeSupport</property-name> -->
+<!-- 			<value>#{pModeSupport}</value> -->
+<!-- 		</managed-property> -->
+<!-- 	</managed-bean>     -->
+	
+<!-- 	<managed-bean> -->
+<!-- 		<managed-bean-name>connectorActionsTableBean</managed-bean-name> -->
+<!-- 		<managed-bean-class>eu.domibus.webadmin.jsf.ConnectorActionsTableBean</managed-bean-class> -->
+<!-- 		<managed-bean-scope>view</managed-bean-scope> -->
+<!-- 		<managed-property> -->
+<!-- 			<property-name>pModeSupport</property-name> -->
+<!-- 			<value>#{pModeSupport}</value> -->
+<!-- 		</managed-property>	 -->
+<!-- 	</managed-bean> -->
+	
+<!-- 	<managed-bean> -->
+<!-- 		<managed-bean-name>connectorServicesTableBean</managed-bean-name> -->
+<!-- 		<managed-bean-class>eu.domibus.webadmin.jsf.ConnectorServicesTableBean</managed-bean-class> -->
+<!-- 		<managed-bean-scope>view</managed-bean-scope> -->
+<!-- 		<managed-property> -->
+<!-- 			<property-name>pModeSupport</property-name> -->
+<!-- 			<value>#{pModeSupport}</value> -->
+<!-- 		</managed-property>	 -->
+<!-- 	</managed-bean> -->
+        
+<!--    <managed-bean> -->
+<!--       <managed-bean-name>connectorBean</managed-bean-name> -->
+<!--       <managed-bean-class>eu.domibus.webadmin.jsf.ConnectorBean</managed-bean-class> -->
+<!--       <managed-bean-scope>request</managed-bean-scope> -->
+<!--       <managed-property> -->
+<!--          <property-name>connectorSummaryService</property-name> -->
+<!--          <value>#{connectorSummaryService}</value> -->
+<!--       </managed-property> -->
+<!--       <managed-property> -->
+<!--          <property-name>connectorCustomService</property-name> -->
+<!--          <value>#{connectorCustomService}</value> -->
+<!--       </managed-property> -->
+<!--       <managed-property> -->
+<!--          <property-name>connectorMonitoringService</property-name> -->
+<!--          <value>#{connectorMonitoringService}</value> -->
+<!--       </managed-property> -->
+<!--    </managed-bean> -->
+   
+<!--   <managed-bean> -->
+<!--       <managed-bean-name>configurationBean</managed-bean-name> -->
+<!--       <managed-bean-class>eu.domibus.webadmin.jsf.ConfigurationBean</managed-bean-class> -->
+<!--       <managed-bean-scope>session</managed-bean-scope> -->
+<!--       <managed-property> -->
+<!--          <property-name>webAdminProperties</property-name> -->
+<!--          <value>#{webAdminProperties}</value> -->
+<!--       </managed-property> -->
+<!-- 		<managed-property> -->
+<!-- 			<property-name>domibusWebAdminUserDao</property-name> -->
+<!-- 			<value>#{domibusWebAdminUserDao}</value> -->
+<!-- 		</managed-property> -->
+<!--    </managed-bean> -->
+   
+<!--    <managed-bean> -->
+<!--       <managed-bean-name>gatewayBean</managed-bean-name> -->
+<!--       <managed-bean-class>eu.domibus.webadmin.jsf.GatewayBean</managed-bean-class> -->
+<!--       <managed-bean-scope>session</managed-bean-scope> -->
+<!--       <managed-property> -->
+<!--          <property-name>gatewayCustomService</property-name> -->
+<!--          <value>#{gatewayCustomService}</value> -->
+<!--       </managed-property> -->
+<!--    </managed-bean> -->
+
+<!-- 	<managed-bean> -->
+<!-- 		<managed-bean-name>loginBean</managed-bean-name> -->
+<!-- 		<managed-bean-class>eu.domibus.webadmin.jsf.LoginBean</managed-bean-class> -->
+<!-- 		<managed-bean-scope>session</managed-bean-scope> -->
+<!-- 		<managed-property> -->
+<!-- 			<property-name>domibusWebAdminUserDao</property-name> -->
+<!-- 			<value>#{domibusWebAdminUserDao}</value> -->
+<!-- 		</managed-property> -->
+<!-- 		<managed-property> -->
+<!--          	<property-name>connectorMonitoringService</property-name> -->
+<!--          	<value>#{connectorMonitoringService}</value> -->
+<!--       </managed-property> -->
+<!--       <managed-property> -->
+<!--          	<property-name>configurationBean</property-name> -->
+<!--          	<value>#{configurationBean}</value> -->
+<!--       </managed-property> -->
+<!-- 	</managed-bean> -->
+   
+
+
+<!-- 	<navigation-rule> -->
+<!-- 		<from-view-id>viewMenu</from-view-id> -->
+<!-- 		<navigation-case> -->
+<!-- 			<from-outcome>statistics</from-outcome> -->
+<!-- 			<to-view-id>/pages/connector-statistics.xhtml</to-view-id> -->
+<!-- 		</navigation-case> -->
+
+<!-- 	</navigation-rule> -->
+	
+<!-- 	<navigation-rule> -->
+<!--         <from-view-id>/pages/login.xhtml</from-view-id> -->
+<!--         <navigation-case> -->
+<!--             <from-outcome>main</from-outcome> -->
+<!--             <to-view-id>/pages/main.xhtml</to-view-id> -->
+<!--         <redirect>     -->
+<!--         </redirect> -->
+<!--         </navigation-case> -->
+<!--  </navigation-rule> -->
+ 
+</faces-config>
