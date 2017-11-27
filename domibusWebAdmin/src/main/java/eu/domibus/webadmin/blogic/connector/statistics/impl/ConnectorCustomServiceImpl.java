@@ -13,6 +13,8 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
@@ -29,14 +31,20 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 import eu.domibus.webadmin.model.connector.MessageReportDO;
 
+@Service
 public class ConnectorCustomServiceImpl implements IConnectorCustomService, Serializable {
 
     private static final long serialVersionUID = 5288892319790964868L;
 
+    @Autowired
     private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
+    @Autowired
     private IDomibusWebAdminConnectorPartyDao domibusWebAdminConnectorPartyDao;
+    @Autowired
     private IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao;
+    @Autowired
     private IDomibusWebAdminConnectorActionDao domibusWebAdminConnectorActionDao;
+    @Autowired
     private IConnectorMessageFilter connectorMessageFilter;
 
     private List<String> fromPartyList;
@@ -57,36 +65,36 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     // The List, which is displayed as result table in main.xhtml
     private List<MessageReportDO> customResultList;
 
-    // Selected entry in result table, necessary for evidence history
+    // Selected entry in result table, necessary for evidence history    
     private MessageReportDO selectedMessageReportDO;
 
-    
     @PostConstruct
-    public void init(){
-    	List<DomibusConnectorParty> resultListParty = domibusWebAdminConnectorPartyDao.getPartyList();
-    	List<DomibusConnectorService> resultListService = domibusWebAdminConnectorServiceDao.getServiceList();
-    	List<DomibusConnectorAction> resultListAction = domibusWebAdminConnectorActionDao.getActionList();
-    	fromPartyList = new ArrayList<String>();
-    	toPartyList = new ArrayList<String>();
-    	serviceList = new ArrayList<String>();
-    	actionList = new ArrayList<String>();
-    	fromPartyList.add(BLConstants.selectorAll);
-    	toPartyList.add(BLConstants.selectorAll);
-    	serviceList.add(BLConstants.selectorAll);
-    	actionList.add(BLConstants.selectorAll);
-    	for (DomibusConnectorParty domibusConnectorParty : resultListParty) {
-			fromPartyList.add(domibusConnectorParty.getPartyId());
-			toPartyList.add(domibusConnectorParty.getPartyId());
-		}
-    	
-    	for (DomibusConnectorService domibusConnectorService : resultListService) {
-			serviceList.add(domibusConnectorService.getService());
-		}
-    	
-    	for (DomibusConnectorAction domibusConnectorAction : resultListAction) {
-			actionList.add(domibusConnectorAction.getAction());
-		}
+    public void init() {
+        List<DomibusConnectorParty> resultListParty = domibusWebAdminConnectorPartyDao.getPartyList();
+        List<DomibusConnectorService> resultListService = domibusWebAdminConnectorServiceDao.getServiceList();
+        List<DomibusConnectorAction> resultListAction = domibusWebAdminConnectorActionDao.getActionList();
+        fromPartyList = new ArrayList<String>();
+        toPartyList = new ArrayList<String>();
+        serviceList = new ArrayList<String>();
+        actionList = new ArrayList<String>();
+        fromPartyList.add(BLConstants.selectorAll);
+        toPartyList.add(BLConstants.selectorAll);
+        serviceList.add(BLConstants.selectorAll);
+        actionList.add(BLConstants.selectorAll);
+        for (DomibusConnectorParty domibusConnectorParty : resultListParty) {
+            fromPartyList.add(domibusConnectorParty.getPartyId());
+            toPartyList.add(domibusConnectorParty.getPartyId());
+        }
+
+        for (DomibusConnectorService domibusConnectorService : resultListService) {
+            serviceList.add(domibusConnectorService.getService());
+        }
+
+        for (DomibusConnectorAction domibusConnectorAction : resultListAction) {
+            actionList.add(domibusConnectorAction.getAction());
+        }
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -110,25 +118,25 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
         // Apply selected Filter from View
         if (!customResultList.isEmpty()) {
 
-            if (!StringUtils.isEmpty(selectedFromParty)&&!BLConstants.selectorAll.equals(selectedFromParty)) {
+            if (!StringUtils.isEmpty(selectedFromParty) && !BLConstants.selectorAll.equals(selectedFromParty)) {
                 customResultList = connectorMessageFilter.filterByFromParty(selectedFromParty, customResultList);
             }
-            if (!StringUtils.isEmpty(selectedToParty)&&!BLConstants.selectorAll.equals(selectedToParty)) {
+            if (!StringUtils.isEmpty(selectedToParty) && !BLConstants.selectorAll.equals(selectedToParty)) {
                 customResultList = connectorMessageFilter.filterByToParty(selectedToParty, customResultList);
             }
-            if (!StringUtils.isEmpty(direction)&&!BLConstants.selectorAll.equals(direction)) {
+            if (!StringUtils.isEmpty(direction) && !BLConstants.selectorAll.equals(direction)) {
                 customResultList = connectorMessageFilter.filterByDirection(direction, customResultList);
             }
-            if (!StringUtils.isEmpty(status)&&!BLConstants.selectorAll.equals(status)) {
+            if (!StringUtils.isEmpty(status) && !BLConstants.selectorAll.equals(status)) {
                 customResultList = connectorMessageFilter.filterByStatus(status, customResultList);
             }
-            if (!StringUtils.isEmpty(selectedService)&&!BLConstants.selectorAll.equals(selectedService)) {
+            if (!StringUtils.isEmpty(selectedService) && !BLConstants.selectorAll.equals(selectedService)) {
                 customResultList = connectorMessageFilter.filterByService(selectedService, customResultList);
             }
-            if (!StringUtils.isEmpty(selectedAction)&&!BLConstants.selectorAll.equals(selectedAction)) {
+            if (!StringUtils.isEmpty(selectedAction) && !BLConstants.selectorAll.equals(selectedAction)) {
                 customResultList = connectorMessageFilter.filterByAction(selectedAction, customResultList);
             }
-            if (!StringUtils.isEmpty(evidence)&&!BLConstants.selectorAll.equals(evidence)) {
+            if (!StringUtils.isEmpty(evidence) && !BLConstants.selectorAll.equals(evidence)) {
                 customResultList = connectorMessageFilter.filterByLastEvidence(evidence, customResultList);
             }
 
@@ -142,7 +150,7 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     /**
      * The history of Evidences taken from ECODEX_EVIDENCES are conditioned to a
      * date sorted String representation
-     * 
+     *
      * @param messageReportDO
      */
     private void generateEvidenceHistory(MessageReportDO messageReportDO) {
@@ -180,15 +188,15 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     }
 
     public IDomibusMessageWebAdminDao getDomibusMessageWebAdminDao() {
-		return domibusMessageWebAdminDao;
-	}
+        return domibusMessageWebAdminDao;
+    }
 
-	public void setDomibusMessageWebAdminDao(
-			IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
-		this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
-	}
+    public void setDomibusMessageWebAdminDao(
+            IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
+        this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
+    }
 
-	public String getDirection() {
+    public String getDirection() {
         return direction;
     }
 
@@ -219,34 +227,34 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     public void setToDate(Date toDate) {
         this.toDate = toDate;
     }
-    
-	public IDomibusWebAdminConnectorActionDao getDomibusWebAdminConnectorActionDao() {
-		return domibusWebAdminConnectorActionDao;
-	}
-	
-	public void setDomibusWebAdminConnectorActionDao(
-			IDomibusWebAdminConnectorActionDao domibusWebAdminConnectorActionDao) {
-		this.domibusWebAdminConnectorActionDao = domibusWebAdminConnectorActionDao;
-	}
-	
-	public List<String> getActionList() {
-		return actionList;
-	}
-	
-	public void setActionList(List<String> actionList) {
-		this.actionList = actionList;
-	}
-	
-	public String getSelectedAction() {
-		return selectedAction;
-	}
-	
-	public void setSelectedAction(String selectedAction) {
-		this.selectedAction = selectedAction;
-	}
-	
-	@Override
-	public List<MessageReportDO> getCustomResultList() {
+
+    public IDomibusWebAdminConnectorActionDao getDomibusWebAdminConnectorActionDao() {
+        return domibusWebAdminConnectorActionDao;
+    }
+
+    public void setDomibusWebAdminConnectorActionDao(
+            IDomibusWebAdminConnectorActionDao domibusWebAdminConnectorActionDao) {
+        this.domibusWebAdminConnectorActionDao = domibusWebAdminConnectorActionDao;
+    }
+
+    public List<String> getActionList() {
+        return actionList;
+    }
+
+    public void setActionList(List<String> actionList) {
+        this.actionList = actionList;
+    }
+
+    public String getSelectedAction() {
+        return selectedAction;
+    }
+
+    public void setSelectedAction(String selectedAction) {
+        this.selectedAction = selectedAction;
+    }
+
+    @Override
+    public List<MessageReportDO> getCustomResultList() {
         return customResultList;
     }
 
@@ -285,65 +293,71 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     public void setConnectorMessageFilter(IConnectorMessageFilter connectorMessageFilter) {
         this.connectorMessageFilter = connectorMessageFilter;
     }
-	
-	public String getSelectedFromParty() {
-		return selectedFromParty;
-	}
-	
-	public void setSelectedFromParty(String selectedFromParty) {
-		this.selectedFromParty = selectedFromParty;
-	}
-	public IDomibusWebAdminConnectorPartyDao getDomibusWebAdminConnectorPartyDao() {
-		return domibusWebAdminConnectorPartyDao;
-	}
-	public void setDomibusWebAdminConnectorPartyDao(
-			IDomibusWebAdminConnectorPartyDao domibusWebAdminConnectorPartyDao) {
-		this.domibusWebAdminConnectorPartyDao = domibusWebAdminConnectorPartyDao;
-	}
-	
-	public List<String> getFromPartyList() {
-		return fromPartyList;
-	}
-	
-	public void setFromPartyList(List<String> fromPartyList) {
-		this.fromPartyList = fromPartyList;
-	}
-	
-	public List<String> getToPartyList() {
-		return toPartyList;
-	}
-	
-	public void setToPartyList(List<String> toPartyList) {
-		this.toPartyList = toPartyList;
-	}
-	
-	public String getSelectedToParty() {
-		return selectedToParty;
-	}
-	
-	public void setSelectedToParty(String selectedToParty) {
-		this.selectedToParty = selectedToParty;
-	}
-	public IDomibusWebAdminConnectorServiceDao getDomibusWebAdminConnectorServiceDao() {
-		return domibusWebAdminConnectorServiceDao;
-	}
-	public void setDomibusWebAdminConnectorServiceDao(
-			IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao) {
-		this.domibusWebAdminConnectorServiceDao = domibusWebAdminConnectorServiceDao;
-	}
-	public List<String> getServiceList() {
-		return serviceList;
-	}
-	public void setServiceList(List<String> serviceList) {
-		this.serviceList = serviceList;
-	}
-	public String getSelectedService() {
-		return selectedService;
-	}
-	public void setSelectedService(String selectedService) {
-		this.selectedService = selectedService;
-	}
-	
-	
+
+    public String getSelectedFromParty() {
+        return selectedFromParty;
+    }
+
+    public void setSelectedFromParty(String selectedFromParty) {
+        this.selectedFromParty = selectedFromParty;
+    }
+
+    public IDomibusWebAdminConnectorPartyDao getDomibusWebAdminConnectorPartyDao() {
+        return domibusWebAdminConnectorPartyDao;
+    }
+
+    public void setDomibusWebAdminConnectorPartyDao(
+            IDomibusWebAdminConnectorPartyDao domibusWebAdminConnectorPartyDao) {
+        this.domibusWebAdminConnectorPartyDao = domibusWebAdminConnectorPartyDao;
+    }
+
+    public List<String> getFromPartyList() {
+        return fromPartyList;
+    }
+
+    public void setFromPartyList(List<String> fromPartyList) {
+        this.fromPartyList = fromPartyList;
+    }
+
+    public List<String> getToPartyList() {
+        return toPartyList;
+    }
+
+    public void setToPartyList(List<String> toPartyList) {
+        this.toPartyList = toPartyList;
+    }
+
+    public String getSelectedToParty() {
+        return selectedToParty;
+    }
+
+    public void setSelectedToParty(String selectedToParty) {
+        this.selectedToParty = selectedToParty;
+    }
+
+    public IDomibusWebAdminConnectorServiceDao getDomibusWebAdminConnectorServiceDao() {
+        return domibusWebAdminConnectorServiceDao;
+    }
+
+    public void setDomibusWebAdminConnectorServiceDao(
+            IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao) {
+        this.domibusWebAdminConnectorServiceDao = domibusWebAdminConnectorServiceDao;
+    }
+
+    public List<String> getServiceList() {
+        return serviceList;
+    }
+
+    public void setServiceList(List<String> serviceList) {
+        this.serviceList = serviceList;
+    }
+
+    public String getSelectedService() {
+        return selectedService;
+    }
+
+    public void setSelectedService(String selectedService) {
+        this.selectedService = selectedService;
+    }
 
 }

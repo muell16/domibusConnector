@@ -11,4 +11,10 @@ public interface IDomibusWebAdminConnectorServiceDao {
 
 	void persistNewService(DomibusConnectorService service);
 
+	public abstract void update(DomibusConnectorService service);
+
+	public abstract DomibusConnectorService findById(String service);
+
+	public abstract void delete(DomibusConnectorService service);
+
 }

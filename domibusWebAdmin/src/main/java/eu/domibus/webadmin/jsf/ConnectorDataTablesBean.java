@@ -1,35 +1,54 @@
 package eu.domibus.webadmin.jsf;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.primefaces.model.UploadedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
+
+@Controller
+@Scope("view")
 public class ConnectorDataTablesBean {
 
+	private final static Logger LOG = LoggerFactory.getLogger(ConnectorDataTablesBean.class);
 	
+	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
 	private List<DomibusConnectorAction> actionList;
 	private List<DomibusConnectorService> serviceList;
-	private List<DomibusConnectorParty> partyList;
+	private List<DomibusConnectorParty> partyList;	
+	private List<String> selectedParties; // = new ArrayList<>();
 	
 	private UploadedFile pmodeFile;
 	
 	
-	public void init(){
+		
+	public void init() {
+		LOG.trace("#init: init method called");
 		setActionList(pModeSupport.getActionList());
 		setServiceList(pModeSupport.getServiceList());
 		setPartyList(pModeSupport.getPartyList());
 	}
 	
-	public void importFromPModes(){
+	public void importFromPModes(){ //kein aufruf!
+		LOG.trace("#importFromPModes: method called");
 		if(pmodeFile!=null){
 			pModeSupport.importFromPModeFile(pmodeFile);
+		} else {
+			LOG.warn("#importFromPModes: pmodeFile is null!");
 		}
 	}
 
@@ -58,7 +77,7 @@ public class ConnectorDataTablesBean {
 	}
 
 
-	public void setPartyList(List<DomibusConnectorParty> partyList) {
+	public void setPartyList(List<DomibusConnectorParty> partyList) {	
 		this.partyList = partyList;
 	}
 
@@ -66,7 +85,8 @@ public class ConnectorDataTablesBean {
 		return pmodeFile;
 	}
 
-	public void setPmodeFile(UploadedFile pmodeFile) {
+	public void setPmodeFile(UploadedFile pmodeFile) { //kein Aufruf
+		LOG.trace("#setPmodeFile: pmodeFile = [{}]", pmodeFile);
 		this.pmodeFile = pmodeFile;
 	}
 
@@ -76,6 +96,20 @@ public class ConnectorDataTablesBean {
 
 	public void setpModeSupport(IConnectorPModeSupport pModeSupport) {
 		this.pModeSupport = pModeSupport;
+	}
+
+	public List<String> getSelectedParties() {
+		return selectedParties;
+	}
+
+	public void setSelectedParties(List<String> selectedParties) {
+		this.selectedParties = selectedParties;
+	}
+	
+	public void deleteSelectedPartiesAction() {
+		LOG.trace("do nothing....");
+		//LOG.trace("#deleteSelectedParties: starting deletion for [{}]", this.selectedParties);
+		//TODO: open dialog after confirmation start deletion or abort
 	}
 
 

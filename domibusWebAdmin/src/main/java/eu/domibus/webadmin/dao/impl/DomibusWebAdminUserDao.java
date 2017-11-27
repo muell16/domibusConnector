@@ -19,12 +19,13 @@ import eu.domibus.webadmin.commons.Util;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 import eu.domibus.webadmin.model.connector.DomibusWebAdminUser;
 
-@Transactional(readOnly=true, value="transactionManagerWebAdmin")
+@Repository("domibusWebAdminUserDao")
+@Transactional(readOnly=true, value="transactionManager")
 public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializable {
 
     private static final long serialVersionUID = -8330659798855359673L;
     
-    @PersistenceContext(unitName = "domibus.webadmin")
+    @PersistenceContext //(unitName = "domibus.webadmin")
     private EntityManager em;
 
     @Override
@@ -48,7 +49,7 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
     }
 
     @Override
-    @Transactional(readOnly=false, value="transactionManagerWebAdmin")
+    @Transactional(readOnly=false, value="transactionManager")
     public void insertUser(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String salt = Util.getHexSalt();
         String passwordDB = Util.generatePasswordHashWithSaltOnlyPW(password, salt);
@@ -64,7 +65,7 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
     }
     
     @Override
-    @Transactional(readOnly=false, value="transactionManagerWebAdmin")
+    @Transactional(readOnly=false, value="transactionManager")
     public void updateUserPassword(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException{
     	Query q = em.createQuery("from DomibusWebAdminUser m where m.username =:username");
         q.setParameter("username", username);
@@ -80,7 +81,7 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
     }
 
     @Override
-    @Transactional(readOnly=false, value="transactionManagerWebAdmin")
+    @Transactional(readOnly=false, value="transactionManager")
     public void deleteUser(String username) throws NoSuchAlgorithmException, InvalidKeySpecException {
     	Query q = em.createQuery("from DomibusWebAdminUser m where m.username =:username");
         q.setParameter("username", username);

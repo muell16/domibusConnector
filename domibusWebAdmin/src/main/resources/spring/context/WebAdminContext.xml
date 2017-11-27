@@ -29,7 +29,7 @@
 			<list>
      	 	 	<!-- <value>file:${TOMCAT_ROOT}/conf/webadmin/webadmin.properties</value> -->
     	  	<!-- 	<value>classpath:webadmin.properties</value>   -->
-   				<value>file:${TOMCAT_ROOT}/conf/connector/connector.properties</value>
+   				<value>file:${CATALINA_HOME}/conf/connector/connector.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -40,7 +40,7 @@
 		</property>
 		<property name="arguments">
 			<list>
-   			  	<value>file:${TOMCAT_ROOT}/conf/connector/log4j.properties</value>
+   			  	<value>file:${CATALINA_HOME}/conf/connector/log4j.properties</value>
  		  	<!-- 	<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>
@@ -70,6 +70,8 @@
 	<bean id="transactionManagerWebAdmin" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactoryWebAdmin" />
 	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManagerWebAdmin" />
 	
 	<bean id="webAdminProperties" class="eu.domibus.webadmin.commons.WebAdminProperties" init-method="loadProperties">
 		<property name="connectorDatabaseUrl" value="${connector.database.url}" />
@@ -104,7 +106,7 @@
    
    	<bean id="connectorMessageFilter"
 		class="eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorMessageFilter" />
-		
+				
 	<bean id="pModeSupport" class="eu.domibus.webadmin.blogic.connector.pmode.impl.ConnectorPModeSupportImpl">
 		<property name="partyDao" ref="domibusWebAdminConnectorPartyDao" /> 
               <property name="serviceDao" ref="domibusWebAdminConnectorServiceDao" /> 

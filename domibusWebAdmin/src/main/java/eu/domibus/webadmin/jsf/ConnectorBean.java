@@ -7,6 +7,9 @@ import javax.faces.event.AjaxBehaviorEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorCustomService;
@@ -20,14 +23,19 @@ import eu.domibus.webadmin.blogic.connector.statistics.IConnectorSummaryService;
  * @author michalim
  * 
  */
+@Controller
+@Scope("request")
 public class ConnectorBean implements Serializable {
 
     private static final long serialVersionUID = -3920852382271662993L;
     
     protected final Log logger = LogFactory.getLog(getClass());
 
+    @Autowired
     private IConnectorSummaryService connectorSummaryService;
+    @Autowired
     private IConnectorCustomService connectorCustomService;
+    @Autowired
     private IConnectorMonitoringService connectorMonitoringService;
 
     private Integer categoryNumber;

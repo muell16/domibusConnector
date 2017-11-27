@@ -10,4 +10,10 @@ public interface IDomibusWebAdminConnectorActionDao {
 
 	void persistNewAction(DomibusConnectorAction action);
 
+	public DomibusConnectorAction findById(String action);
+
+	public void delete(DomibusConnectorAction action);
+
+	public void update(DomibusConnectorAction action);
+
 }

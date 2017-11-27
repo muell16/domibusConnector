@@ -1,20 +1,24 @@
 package eu.domibus.webadmin.commons;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.support.XmlWebApplicationContext;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 
-public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware{
-
+@Component("webAdminProperties")
+public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
+	
     private static final long serialVersionUID = -1113080729567255182L;
 
     private String connectorDatabaseUrl;
@@ -30,10 +34,17 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private String smtpHostName;
     private Long monitoringTimerInterval;
     private boolean monitoringLogWrite;
+    private boolean setupRequired;
 
-    private XmlWebApplicationContext ctx;
 
+    @Autowired
+    public WebAdminProperties(DataSource ds) {
+    	this.setDataSource(ds);
+    }
+    
+    @Transactional(readOnly=true)
     public void loadProperties() {
+    	logger.trace("loadProperties: called");
         String sql = "select * from DOMIBUS_WEBADMIN_PROPERTIES";
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
@@ -64,19 +75,16 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
                 } else if ("monitoring.log.write".equals(key)) {
                     monitoringLogWrite = Boolean.parseBoolean(value);
                 }
-
             }
-            getJdbcTemplate().getDataSource().getConnection().close();
+            //getJdbcTemplate().getDataSource().getConnection().close(); //spring closes connection
         } catch (DataAccessException e) {
             logger.error("Unable to load Webadmin Properties: " + e.getStackTrace());
             loadError = e.getMessage();
-        } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        }
 
     }
 
+    @Transactional(readOnly=false)
     public void saveProperty(String key, String value) {
 
         String sql = "select PROPERTIES_KEY as result from DOMIBUS_WEBADMIN_PROPERTIES where PROPERTIES_KEY = ?";
@@ -211,16 +219,16 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        ctx = (XmlWebApplicationContext) context;
+        //ctx = (ConfigurableWebApplicationContext) context;
     }
 
-    public XmlWebApplicationContext getCtx() {
-        return ctx;
-    }
-
-    public void setCtx(XmlWebApplicationContext ctx) {
-        this.ctx = ctx;
-    }
+//    public ConfigurableWebApplicationContext getCtx() {
+//        return ctx;
+//    }
+//
+//    public void setCtx(ConfigurableWebApplicationContext ctx) {
+//        this.ctx = ctx;
+//    }
 
 
     public boolean isMonitoringLogWrite() {

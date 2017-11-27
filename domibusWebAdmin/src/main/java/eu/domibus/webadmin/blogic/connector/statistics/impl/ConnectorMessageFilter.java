@@ -3,10 +3,13 @@ package eu.domibus.webadmin.blogic.connector.statistics.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.domibus.webadmin.commons.BLConstants;
 import eu.domibus.webadmin.model.connector.MessageReportDO;
 
+@Component
 public class ConnectorMessageFilter implements IConnectorMessageFilter {
 
     /*

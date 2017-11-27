@@ -14,6 +14,10 @@ import javax.management.ObjectName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
@@ -22,7 +26,16 @@ import eu.domibus.webadmin.commons.DBUtil;
 import eu.domibus.webadmin.commons.JmxConnector;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 
+/*
+ * 
+ * ist das wirklich ein service? möglicherweise seiteneffekte bei multi threading?
+ * immerhin hat der Service einen eigenen zustand
+ * 
+ */
+@Service
 public class ConnectorMonitoringService implements IConnectorMonitoringService, Serializable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectorMonitoringService.class);
 
     private static final long serialVersionUID = -5017789529520475342L;
 
@@ -45,38 +58,47 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private Integer rejectedConnectorMessagesCount;
     private String rejectedConnectorMessagesCountStatus;
     private boolean useMonitorServer = false;
+
+    @Autowired
     private DomibusConnectorConnectorMonitoringDao monitoringDao;
+
+    @Autowired
     private DBUtil dbUtil;
 
+    @Autowired
     private WebAdminProperties webAdminProperties;
 
     private static final String CHECK_OUTGOING_TRIGGER_NAME = "checkOutgoingTrigger";
     private static final String CHECK_INCOMING_TRIGGER_NAME = "checkIncomingTrigger";
     private static final String CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME = "checkEvidencesTimeoutTrigger";
+    private static final String STATUS_OK = "OK";
+    private static final String STATUS_ERROR = "ERROR";
+    private static final String STATUS_WAITING = "WAITING";
 
     private enum monitoring {
         JMX, REST, DB
     }
 
     public void refreshMonitoringServer() {
+        LOG.trace("refreshMonitoringServer: called");
         generateMonitoringReport(true);
     }
 
     @Override
     public void generateMonitoringReport(boolean reconnect) {
         if (reconnect) {
-           webAdminProperties.loadProperties();
+            webAdminProperties.loadProperties();
         }
         monitoringType = checkMonitoringType(webAdminProperties.getMonitoringType());
         if (monitoringType.equals(monitoring.JMX.toString())) {
             connectionMessage = "Connected to: " + "service:jmx:rmi:///jndi/rmi:/"
                     + webAdminProperties.getJmxServerAddress() + "/:" + webAdminProperties.getJmxServerPort()
                     + "/jmxrmi";
-            connectionStatus = "OK";
+            connectionStatus = STATUS_OK;
             queryJMXServer(reconnect);
             useMonitorServer = true;
         } else if (monitoringType.equals(monitoring.REST.toString())) {
-            connectionStatus = "OK";
+            connectionStatus = STATUS_OK;
             connectionMessage = "Connected to: " + webAdminProperties.getRestConnectorString();
             queryRestServer();
             useMonitorServer = true;
@@ -85,22 +107,22 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             useMonitorServer = false;
         }
 
-        if ("ERROR".equals(connectionStatus)) {
+        if (STATUS_ERROR.equals(connectionStatus)) {
             queryDB();
         }
 
-        if ("WAITING".equals(jobStatusEvidencesTimeout)) {
-            jobStatusEvidencesTimeout = "OK";
+        if (STATUS_WAITING.equals(jobStatusEvidencesTimeout)) {
+            jobStatusEvidencesTimeout = STATUS_OK;
         }
-        if ("WAITING".equals(jobStatusIncoming)) {
-            jobStatusIncoming = "OK";
+        if (STATUS_WAITING.equals(jobStatusIncoming)) {
+            jobStatusIncoming = STATUS_OK;
         }
-        if ("WAITING".equals(jobStatusOutgoing)) {
-            jobStatusOutgoing = "OK";
+        if (STATUS_WAITING.equals(jobStatusOutgoing)) {
+            jobStatusOutgoing = STATUS_OK;
         }
 
-        connectionStatusConnectorDB = "OK";
-        connectionStatusGatewayDB = "OK";
+        connectionStatusConnectorDB = STATUS_OK;
+        connectionStatusGatewayDB = STATUS_OK;
         connectionConnectorDB = webAdminProperties.getConnectorDatabaseUrl();
 //        if (!dbUtil.testConnectorDbConnection()) {
 //            connectionConnectorDB = dbUtil.getConnectorErrorMessage();
@@ -138,7 +160,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             logger.error(e.getMessage());
             connectionMessage = "Error while connecting to: " + webAdminProperties.getJmxServerAddress() + ":"
                     + webAdminProperties.getJmxServerPort() + " " + e.getMessage();
-            connectionStatus = "ERROR";
+            connectionStatus = STATUS_ERROR;
         }
 
     }
@@ -161,7 +183,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
             logger.error(e.getMessage());
             connectionMessage = "Error while connecting to: " + webAdminProperties.getRestConnectorString() + " "
                     + e.getMessage();
-            connectionStatus = "ERROR";
+            connectionStatus = STATUS_ERROR;
         }
 
     }
@@ -199,18 +221,20 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
 
     }
 
-    @Transactional(readOnly=true, value="transactionManager")
+    @Transactional(readOnly = true)
     private void queryDB() {
-
-        checkOutgoingRepeatInterval = monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
-        jobStatusIncoming = monitoringDao.selectStatusTrigger(CHECK_INCOMING_TRIGGER_NAME);
-        jobStatusOutgoing = monitoringDao.selectStatusTrigger(CHECK_OUTGOING_TRIGGER_NAME);
-        jobStatusEvidencesTimeout = monitoringDao.selectStatusTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME);
-        lastCalledCheckEvidencesTimeout = new Date(
-                monitoringDao.selectLastCalledTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME));
-        lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
-        lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
-       
+        try {
+            checkOutgoingRepeatInterval = monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
+            jobStatusIncoming = monitoringDao.selectStatusTrigger(CHECK_INCOMING_TRIGGER_NAME);
+            jobStatusOutgoing = monitoringDao.selectStatusTrigger(CHECK_OUTGOING_TRIGGER_NAME);
+            jobStatusEvidencesTimeout = monitoringDao.selectStatusTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME);
+            lastCalledCheckEvidencesTimeout = new Date(
+            monitoringDao.selectLastCalledTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME));
+            lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
+            lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
+        } catch (Exception e) {
+            LOG.error("Exception in queryDB occured", e);
+        }
     }
 
     public WebAdminProperties getWebAdminProperties() {
@@ -335,7 +359,6 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.useMonitorServer = useMonitorServer;
     }
 
-
     public String getRejectedConnectorMessagesCountStatus() {
         return rejectedConnectorMessagesCountStatus;
     }
@@ -369,6 +392,7 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     }
 
     public String getConnectionConnectorDB() {
+        LOG.trace("getConnectionConnectorDB: called connectionConnectorDB is [{}]", connectionConnectorDB);
         return connectionConnectorDB;
     }
 

@@ -32,3 +32,9 @@ target/
 *.iml
 *.ipr
 *.iws
+/.idea/
+
+/domibusWebAdmin/nbproject/
+/domibusWebAdmin/nb-configuration.xml
+/domibusWebAdmin/nbactions.xml
+
