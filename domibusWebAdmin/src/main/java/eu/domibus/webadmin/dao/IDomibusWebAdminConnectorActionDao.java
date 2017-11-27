@@ -8,4 +8,6 @@ public interface IDomibusWebAdminConnectorActionDao {
 
 	public abstract List<DomibusConnectorAction> getActionList();
 
+	void persistNewAction(DomibusConnectorAction action);
+
 }

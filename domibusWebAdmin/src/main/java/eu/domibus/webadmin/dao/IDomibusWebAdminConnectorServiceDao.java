@@ -9,4 +9,6 @@ public interface IDomibusWebAdminConnectorServiceDao {
 
 	public abstract List<DomibusConnectorService> getServiceList();
 
+	void persistNewService(DomibusConnectorService service);
+
 }

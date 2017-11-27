@@ -4,11 +4,12 @@ import javax.mail.MessagingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.scheduling.quartz.SimpleTriggerBean;
+import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
@@ -90,7 +91,7 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        SimpleTriggerBean simpleTriggerBean = (SimpleTriggerBean) ctx.getBean("simpleMonitoringTrigger");
+        SimpleTriggerImpl simpleTriggerBean = (SimpleTriggerImpl) ctx.getBean("simpleMonitoringTrigger");
         if (webAdminProperties.getMonitoringTimerInterval() != null
                 && webAdminProperties.getMonitoringTimerInterval() > Long.valueOf(60000)) {
             simpleTriggerBean.setRepeatInterval(webAdminProperties.getMonitoringTimerInterval());
