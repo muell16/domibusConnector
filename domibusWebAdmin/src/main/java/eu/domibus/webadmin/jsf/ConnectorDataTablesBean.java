@@ -36,8 +36,7 @@ public class ConnectorDataTablesBean {
 	
 	private UploadedFile pmodeFile;
 	
-	
-		
+			
 	public void init() {
 		LOG.trace("#init: init method called");
 		setActionList(pModeSupport.getActionList());

@@ -1,10 +1,15 @@
 package eu.domibus.webadmin.commons;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+
+
 import javax.sql.DataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,8 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
 	
     private static final long serialVersionUID = -1113080729567255182L;
+    
+    private final static Logger LOG = LoggerFactory.getLogger(WebAdminProperties.class);
 
     private String connectorDatabaseUrl;
     private String monitoringType;
@@ -39,7 +46,13 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
 
     @Autowired
     public WebAdminProperties(DataSource ds) {
-    	this.setDataSource(ds);
+        try {
+            this.setDataSource(ds);            
+            this.connectorDatabaseUrl = ds.getConnection().getMetaData().getURL();
+        } catch (Exception ex) {
+            //don't throw any exceptions in constructor
+            LOG.warn("Exception occured while retrieveng database connection url", ex);
+        }
     }
     
     @Transactional(readOnly=true)
