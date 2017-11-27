@@ -128,8 +128,8 @@ public class ConnectorPModeSupportImplTest {
         Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
         //there are 5 services in the pmode xml
         Mockito.verify(serviceDao, Mockito.times(5)).persistNewService(Mockito.any(DomibusConnectorService.class));
-        //there are 19 actions in the pmode xml
-        Mockito.verify(actionDao, Mockito.times(19)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
+        //there are 19 actions in the pmode xml one duplicate
+        Mockito.verify(actionDao, Mockito.times(18)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
         /**
@@ -151,8 +151,8 @@ public class ConnectorPModeSupportImplTest {
         Mockito.verify(partyDao, Mockito.times(12)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
         //there are 5 services in the pmode xml
         Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(DomibusConnectorService.class));
-        //there are 19 actions in the pmode xml
-        Mockito.verify(actionDao, Mockito.times(17)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
+        //there are 17 actions in the pmode xml, one is a duplicate
+        Mockito.verify(actionDao, Mockito.times(16)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
     
@@ -184,8 +184,8 @@ public class ConnectorPModeSupportImplTest {
         Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
         //there are 5 services in the pmode xml
         Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(DomibusConnectorService.class));
-        //there are 19 actions in the pmode xml
-        Mockito.verify(actionDao, Mockito.times(19)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
+        //there are 19 actions in the pmode xml one duplicate
+        Mockito.verify(actionDao, Mockito.times(18)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
     
