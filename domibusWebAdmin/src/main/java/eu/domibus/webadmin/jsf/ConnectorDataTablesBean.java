@@ -16,6 +16,8 @@ import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
+import javax.faces.application.FacesMessage;
+import org.primefaces.context.RequestContext;
 
 
 @Controller
@@ -43,12 +45,22 @@ public class ConnectorDataTablesBean {
 		setPartyList(pModeSupport.getPartyList());
 	}
 	
-	public void importFromPModes(){ //kein aufruf!
+	public void importFromPModes() {
 		LOG.trace("#importFromPModes: method called");
 		if(pmodeFile!=null){
-			pModeSupport.importFromPModeFile(pmodeFile);
+            try {
+                pModeSupport.importFromPModeFile(pmodeFile);
+            } catch (Exception e) {
+                LOG.warn("#importFromPModes: a exception during import occured!", e);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
+                    String.format("Import failed! Please check your pmode file! For Details check the logs!"));				                                
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
 		} else {
 			LOG.warn("#importFromPModes: pmodeFile is null!");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
+                String.format("Please provide a file!"));				                                
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
 		}
 	}
 

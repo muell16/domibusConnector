@@ -102,12 +102,13 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 				newService.setService(service.getValue());
 				newService.setServiceType(service.getType());
 				this.serviceDao.persistNewService(newService);
+                services.put(service.getValue(), newService);
 			}
 		}
 	}
 
 	private void importActions(Configuration pmodes) {
-		Set<String> actions = new HashSet<String>();
+		HashSet<String> actions = new HashSet<String>();
 		for(DomibusConnectorAction dbAction:getActionList()){
 			actions.add(dbAction.getAction());
 		}
@@ -118,6 +119,7 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 				newAction.setAction(action.getValue());
 				newAction.setPdfRequired(true);
 				this.actionDao.persistNewAction(newAction);
+                actions.add(action.getValue());
 			}
 		}
 	}

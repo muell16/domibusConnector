@@ -53,9 +53,10 @@
         <!-- 				</dependency> -->
         <!-- 			</dependencies> -->
         <!-- 		</profile> -->
-        <profile>
-            <!-- includes all dependencies to start the war directly! (java -jar domibusWebAdmin-*.war) -->
-            
+        
+        <profile>            
+            <!-- includes all dependencies to start the war directly! (java -jar domibusWebAdmin-*.war)  -->            
+            <!-- can be used with spring-code-reload for development -->
             <id>embedded-tomcat</id>            
             <activation>
                 <!-- TODO: change before make release -->
@@ -73,6 +74,7 @@
                     <artifactId>tomcat-embed-jasper</artifactId>
                     <scope>provided</scope>
                 </dependency>
+               
             </dependencies>
         </profile>
     </profiles>
