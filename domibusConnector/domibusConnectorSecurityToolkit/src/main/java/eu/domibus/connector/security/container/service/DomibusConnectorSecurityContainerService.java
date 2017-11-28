@@ -36,9 +36,9 @@ public class DomibusConnectorSecurityContainerService extends DSSECodexContainer
 		setLegalValidationService(legalValidationService);
 		
 		DSSECodexTechnicalValidationService technicalValidationService = new DSSECodexTechnicalValidationService();
+		technicalValidationService.setProxyPreferenceManager(proxyPreferenceManager);
 		technicalValidationService.setEnvironmentConfiguration(environmentConfiguration);
 		technicalValidationService.setCertificateVerifier(certificateVerifier);
-		technicalValidationService.setProxyPreferenceManager(proxyPreferenceManager);
 		setTechnicalValidationService(technicalValidationService);
 		
 	}

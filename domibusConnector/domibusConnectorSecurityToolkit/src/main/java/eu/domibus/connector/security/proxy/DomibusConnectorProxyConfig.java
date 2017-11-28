@@ -1,7 +1,6 @@
 package eu.domibus.connector.security.proxy;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,7 @@ import eu.europa.esig.dss.client.http.proxy.ProxyProperties;
 @Component("domibusConnectorProxyConfig")
 public class DomibusConnectorProxyConfig extends ProxyConfig implements InitializingBean {
 
-	@Value("${http.proxy.enabled:false}")
+	@Value("${http.proxy.enabled}")
 	boolean httpProxyEnabled;
 	
 	@Value("${http.proxy.host:null}")
@@ -26,7 +25,7 @@ public class DomibusConnectorProxyConfig extends ProxyConfig implements Initiali
 	@Value("${http.proxy.password:null}")
 	String httpProxyPassword;
 	
-	@Value("${https.proxy.enabled:false}")
+	@Value("${https.proxy.enabled}")
 	boolean httpsProxyEnabled;
 	
 	@Value("${https.proxy.host:null}")
