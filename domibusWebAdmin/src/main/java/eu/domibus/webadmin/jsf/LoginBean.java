@@ -45,10 +45,6 @@ public class LoginBean implements Serializable {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-//    @PostConstruct
-//    public void init() {
-//    	logger.error("#############INIT BEAN############");
-//    }
     public String loginProject() throws ServletException, IOException {
         logger.debug("loginProject: called");
 

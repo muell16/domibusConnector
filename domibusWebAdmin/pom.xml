@@ -60,7 +60,7 @@
             <id>embedded-tomcat</id>            
             <activation>
                 <!-- TODO: change before make release -->
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             
             <dependencies>
@@ -80,7 +80,7 @@
     </profiles>
 
 
-    <!--  spring-boot  -->
+    <!--  spring dependency management  -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -162,34 +162,43 @@
         </dependency>
 
         <!--Spring -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- 		<dependency> -->
-        <!-- 			<groupId>org.springframework.boot</groupId> -->
-        <!-- 			<artifactId>spring-boot-legacy</artifactId> -->
-        <!-- 			<version>1.0.2</version> -->
-        <!-- 		</dependency> -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.springframework.boot</groupId> -->
+<!--             <artifactId>spring-boot-starter-web</artifactId> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.springframework.boot</groupId> -->
+<!--             <artifactId>spring-boot-starter-security</artifactId> -->
+<!--         </dependency> -->
+        
+        
+<!--         <dependency> -->
+<!--             <groupId>org.springframework.boot</groupId> -->
+<!--             <artifactId>spring-boot-devtools</artifactId> -->
+<!--         </dependency> -->
 	
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>6.0.53</version>
+            <scope>provided</scope>
+        </dependency>
 		
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
 
-
-        <!--  should be managed by spring-boot -->
-		
+        <!--  should be managed by spring-boot -->		
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -223,22 +232,16 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -267,42 +270,34 @@
         </dependency>
 		
         <!--  von hibernate benötigt?, aber ich habe den Datentyp gar nicht... -->
-        <dependency>
-            <groupId>org.threeten</groupId>
-            <artifactId>threetenbp</artifactId>
-            <version>1.3.6</version>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.threeten</groupId> -->
+<!--             <artifactId>threetenbp</artifactId> -->
+<!--             <version>1.3.6</version> -->
+<!--         </dependency> -->
 		
 		
-<!--        <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
-            <type>jar</type>            
-        </dependency>-->
+		<!--  Databases -->
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc7</artifactId>
             <version>12.1.0.1</version>
             <type>jar</type>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <artifactId>mysql-connector-java</artifactId>            
         </dependency>
-
         <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
             <version>2.1.7</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.7</version>
         </dependency>
-
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -318,6 +313,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- required by primefaces for file-upload -->
@@ -332,23 +328,6 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.2.2</version>
             <scope>runtime</scope>
-        </dependency>
-	
-        <dependency>
-            <groupId>ch.vorburger.mariaDB4j</groupId>
-            <artifactId>mariaDB4j</artifactId>
-            <version>2.2.3</version>
-            <scope>test</scope>
-        </dependency>
-<!--        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>-->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>    	
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -365,11 +344,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>            
-<!--            <scope>test</scope>-->
+           <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>   
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>   
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
@@ -377,22 +357,33 @@
             <version>2.0.1</version>
             <type>jar</type>
         </dependency>
+                <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>1.5.8.RELEASE</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--             <plugin> -->
+<!--                 <groupId>org.springframework.boot</groupId> -->
+<!--                 <artifactId>spring-boot-maven-plugin</artifactId> -->
+<!--                 <version>1.5.8.RELEASE</version> -->
+<!--                 <executions> -->
+<!--                     <execution> -->
+<!--                         <goals> -->
+<!--                             <goal>repackage</goal> -->
+<!--                         </goals> -->
+<!--                     </execution> -->
+<!--                 </executions> -->
+<!--             </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -408,11 +399,6 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
-                <!-- 				<configuration> -->
-
-                <!-- 					<webXml>src/main/webapp/WEB-INF/web.xml</webXml> -->
-
-                <!-- 				</configuration> -->
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

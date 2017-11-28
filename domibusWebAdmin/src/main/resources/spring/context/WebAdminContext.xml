@@ -61,10 +61,8 @@
         <property name="driverClass" value="${connector.database.driverClassName}" />
         <property name="jdbcUrl" value="${connector.database.url}" />
         <property name="user" value="${connector.database.username}" />
-        <property name="password" value="${connector.database.password}" />
-        
-        <property name="maxPoolSize" value="3" />
-        
+        <property name="password" value="${connector.database.password}" />        
+        <property name="maxPoolSize" value="3" />        
 	 </bean>
 
 	<bean id="transactionManagerWebAdmin" class="org.springframework.orm.jpa.JpaTransactionManager">

@@ -17,23 +17,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.ScriptException;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfiguration;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
-import liquibase.Contexts;
-import liquibase.LabelExpression;
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseConnection;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
@@ -52,8 +36,7 @@ public class TestDatabase {
     
     @Bean
     @Profile("db_h2")
-    public DataSource embeddedH2DB() throws SQLException, DatabaseException, LiquibaseException {
-        System.out.println("init embeddedH2DB");
+    public DataSource embeddedH2DB() {
         EmbeddedDatabase db = new EmbeddedDatabaseBuilder()                
                 .setType(EmbeddedDatabaseType.H2)                
                 .build();
@@ -84,27 +67,6 @@ public class TestDatabase {
 	}
 
 	
-	@Bean
-	@Profile("db_maria")
-	public DataSource createDataSource() throws PropertyVetoException, ManagedProcessException, ScriptException, SQLException {
-			
-		DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
-		configBuilder.setPort(0); // setPort(0); => autom. detect free port
-//		configBuilder.setDataDir("/home/theapp/db"); // just an example
-		
-		DB db = DB.newEmbeddedDB(configBuilder.build());
-		db.start();
-		
-		String url = configBuilder.getURL("test");		
-		ComboPooledDataSource cpds = new ComboPooledDataSource();
-					
-		cpds.setDriverClass( "org.mariadb.jdbc.Driver" );
-		cpds.setJdbcUrl( url );
-		cpds.setUser("root");                                  
-		cpds.setPassword("");     
-				
-		return cpds;
-	}
 	
 	
 

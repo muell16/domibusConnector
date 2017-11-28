@@ -1,52 +1,44 @@
 package eu.domibus.webadmin.runner;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
 
+/**
+ * Configures Spring Security
+ * @author spindlest
+ *
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
-	
+
 	@Autowired
-	IDomibusWebAdminUserDao userDao;
+	DomibusWebAdminUserAuthenticationProvider authProvider;
 	
 	@Bean
 	public AuthenticationEntryPoint loginUrlauthenticationEntryPoint(){
 	    return new LoginUrlAuthenticationEntryPoint("/pages/login.xhtml");
 	}
 		
-	@Bean
-	public DomibusWebAdminUserAuthenticationProvider domibusWebAdminUserAuthenticationProvider() {
-            DomibusWebAdminUserAuthenticationProvider authProvider = new DomibusWebAdminUserAuthenticationProvider(userDao);
-            return authProvider;
-	}
-	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
@@ -70,12 +62,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 				.exceptionHandling().defaultAuthenticationEntryPointFor(loginUrlauthenticationEntryPoint(), new AntPathRequestMatcher("/**"));
 	} 
+		
+	
+	/**
+	 * creates a Authentication Provider
+	 *  including authProvider
+	 */
+	@Bean
+	public AuthenticationManager authenticationManager() {		
+		List<AuthenticationProvider> authProviders = new ArrayList<>();	
+		authProviders.add(authProvider);
+		return new ProviderManager(authProviders);		
+	}
 	
 	
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		//auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
-		auth.authenticationProvider(domibusWebAdminUserAuthenticationProvider());
-	}	
+	
 } 
 

@@ -44,8 +44,7 @@ public class DomibusWebAdminUserAuthenticationProvider implements Authentication
 		}
 		LOG.trace("authenticate: called");
 		
-		
-		
+				
 		UsernamePasswordAuthenticationToken pwAuth = (UsernamePasswordAuthenticationToken) authentication;
 		
 		String username = pwAuth.getName();
@@ -64,7 +63,6 @@ public class DomibusWebAdminUserAuthenticationProvider implements Authentication
 			LOG.error("Exception occured with crypto", e); 
 			throw new AuthenticationServiceException("Problems with crypto", e);
 		}
-
 	}
 
 	/**

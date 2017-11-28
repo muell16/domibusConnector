@@ -19,6 +19,7 @@ import eu.domibus.test.db.TestDatabase;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.runner.DomibusWebAdminContext;
 import eu.domibus.webadmin.runner.JpaContext;
+import org.junit.Ignore;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {JpaContext.class, WebAdminProperties.class, DomibusWebAdminContext.class},  
@@ -26,6 +27,7 @@ import eu.domibus.webadmin.runner.JpaContext;
 @ActiveProfiles({"test", "mariadb"}) //test with mariaDb
 //@ActiveProfiles({"test", "hsqldb"})
 @Import({TestDatabase.class}) //TODO: mark as DB Test!
+@Ignore
 public class WebAdminPropertiesTest {
 
 	@Autowired
