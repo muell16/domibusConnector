@@ -45,12 +45,15 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
     private final static Logger LOG = LoggerFactory.getLogger(DomibusWebAdminContext.class);
     
     //@Value("${connector.webadmin.contextPath:'/domibuswebadmin'}") //TODO: funktioniert nicht...
-    public String domibusWebAdminContextPath = "/domibuswebadmin";
+    //public String domibusWebAdminContextPath = "/peter";
+    
+    @Value("${connector.webadmin.debug:false}")
+    boolean debugMode;
     
     
     @PostConstruct
     public void postConstruct() {
-        LOG.trace("postConstruct: connector.webadmin.contextPath is : [{}]", domibusWebAdminContextPath);
+        //LOG.trace("postConstruct: connector.webadmin.contextPath is : [{}]", domibusWebAdminContextPath);
     }
     
     /*
@@ -60,10 +63,10 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
     public ServletRegistrationBean servletRegistrationBean() {
     	LOG.trace("servletRegistrationBean: called");
         FacesServlet servlet = new FacesServlet();
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet); //, "*.xhtml", "*.jsf");
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "*.jsf", "*.xhtml"); 
         servletRegistrationBean.setLoadOnStartup(1);
-        servletRegistrationBean.addUrlMappings(domibusWebAdminContextPath + "/*");        
-	return servletRegistrationBean;
+        //servletRegistrationBean.addUrlMappings("/*");        
+        return servletRegistrationBean;
     }
     
     /*
@@ -80,7 +83,6 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
 
     @Bean
     public ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener> jsfConfigureListener() {
-    	System.out.println("jsfConfigureListener called!");
     	LOG.debug("jsfConfigureListener: called");
         return new ServletListenerRegistrationBean<JsfApplicationObjectConfigureListener>(
             new JsfApplicationObjectConfigureListener());
@@ -122,19 +124,20 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
   
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        LOG.debug("onStartup: startup");
+        LOG.debug("#onStartup: startup");
         servletContext.setInitParameter("javax.faces.DEFAULT_SUFFIX", ".xhtml");
         servletContext.setInitParameter("javax.faces.PARTIAL_STATE_SAVING_METHOD", "true");
-
-        servletContext.setInitParameter("facelets.DEVELOPMENT", "true");
+        
         servletContext.setInitParameter("javax.faces.FACELETS_REFRESH_PERIOD", "1");
 
         servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", "true");
         servletContext.setInitParameter("primefaces.THEME", "bootstrap");
         servletContext.setInitParameter("primefaces.FONT_AWESOME", "true");
         servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", "true");
-        servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-
+        
+        //servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Production");
+        servletContext.setInitParameter("facelets.DEVELOPMENT", Boolean.toString(debugMode));
+        
         Set<Class<?>> clazz = new HashSet<Class<?>>();
 
         clazz.add(DomibusWebAdminContext.class); // dummy, enables InitFacesContext

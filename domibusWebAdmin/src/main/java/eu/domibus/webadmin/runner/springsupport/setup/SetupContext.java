@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.domibus.webadmin.runner.springsupport.setup;
 
 import javax.sql.DataSource;
@@ -17,7 +12,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
  * Context provides DataSource 
- *  for unintialized System
+ *  for uninitialized System to provide all necessary beans to boot application
+ *  to make it possibly to start an SetupWizard
  * 
  * @author spindlest
  */

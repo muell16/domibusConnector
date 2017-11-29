@@ -2,8 +2,6 @@ package eu.domibus.webadmin.runner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-//import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,10 +18,19 @@ import eu.domibus.webadmin.jsf.LoginBean;
 import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
 
 import java.util.Properties;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 
-//@SpringBootApplication
-//@EnableAutoConfiguration
+/**
+ * "Main" class / context
+ * extends SpringBootServletInitializer to initalize the spring context
+ *  
+ *  for further doc see {@link SpringBootServletInitializer}
+ *  
+ * @author spindlest
+ *
+ */
+@EnableAutoConfiguration
 @Configuration
 @ComponentScan(basePackageClasses= {
 		LoginBean.class, 	
@@ -35,28 +42,29 @@ import java.util.Properties;
 		DomibusWebAdminUserAuthenticationProvider.class
 		})
 @Import({JpaContext.class, SecurityConfig.class, DomibusWebAdminContext.class})
-@ImportResource({"classpath:/spring/context/webadmin/connectorDaoContext.xml", 
-    "classpath:/spring/context/webadmin/dataSource.xml"
+@ImportResource({"classpath:/spring/context/webadmin/connectorDaoContext.xml", //load daos from connector
+    "classpath:/spring/context/webadmin/dataSource.xml" //create datasource context
 })
 public class WebRunner extends SpringBootServletInitializer {
 
     private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 	
+    /**
+     * configures the Spring application by adding this class as source
+     * also sets the spring.config.location 
+     * to ${catalina.home}/conf/webadmin/webadmin.properties
+     * 
+     *  
+     */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
     	LOG.info("configure: run as war on appserver....");
         Properties props = new Properties();
         //if deployed as war set search location for config to ${CATALINA_HOME}/conf/webadmin/webadmin.properties
-        props.put("spring.config.location", "${CATALINA_HOME}/conf/webadmin/webadmin.properties");                 
+        props.put("spring.config.location", "${catalina.home}/conf/webadmin/webadmin.properties");                 
     	application.properties(props);        
-    	return application.sources(WebRunner.class, DomibusWebAdminContext.class);
+    	return application.sources(WebRunner.class);
     }
-
-//    public static void main(String[] args) {
-//        LOG.trace("main: run Spring application as jar....");
-//        SpringApplication.run(WebRunner.class, args);
-//    }
-
 
 
 }
