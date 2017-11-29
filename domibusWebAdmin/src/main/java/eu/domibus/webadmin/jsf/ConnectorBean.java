@@ -70,7 +70,7 @@ public class ConnectorBean implements Serializable {
     public void init(){
 //    	summarySelected = true;
 //    	customSelected = true;
-    	logger.info("ConnectorBean.init()");
+    	logger.trace("ConnectorBean.init()");
     	if(connectorSummaryService.getPieModelMessageSummary()==null || connectorSummaryService.getPieModelServiceSummary()==null)
     		connectorSummaryService.generateMessageSummary();
     	if(connectorCustomService.getCustomResultList()==null)
