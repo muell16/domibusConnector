@@ -25,6 +25,8 @@ import org.springframework.context.annotation.Import;
 
 /**
  * A Test Database
+ * 
+ * the corresponding test database must be on the class path!
  * @author spindlest
  *
  */
@@ -34,6 +36,7 @@ public class TestDatabase {
         
     private final static Logger LOG = LoggerFactory.getLogger(TestDatabase.class);
     
+   
     @Bean
     @Profile("db_h2")
     public DataSource embeddedH2DB() {
