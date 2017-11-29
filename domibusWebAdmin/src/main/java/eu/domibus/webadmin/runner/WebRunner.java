@@ -18,7 +18,6 @@ import eu.domibus.webadmin.jsf.LoginBean;
 import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
 
 import java.util.Properties;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 
 /**
@@ -30,7 +29,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
  * @author spindlest
  *
  */
-@EnableAutoConfiguration
+//@EnableAutoConfiguration
 @Configuration
 @ComponentScan(basePackageClasses= {
 		LoginBean.class, 	

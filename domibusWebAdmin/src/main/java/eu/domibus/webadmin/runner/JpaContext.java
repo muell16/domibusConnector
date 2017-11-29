@@ -12,6 +12,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * creates a EntityManagerFactory with all Entity classes in 
@@ -24,6 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  *
  */
 @Configuration
+@EnableTransactionManagement
 public class JpaContext {
 
 	@Autowired
