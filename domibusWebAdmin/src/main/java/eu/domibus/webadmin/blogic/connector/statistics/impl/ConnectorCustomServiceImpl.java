@@ -24,7 +24,6 @@ import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorCustomService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.domibus.webadmin.commons.BLConstants;
-import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;

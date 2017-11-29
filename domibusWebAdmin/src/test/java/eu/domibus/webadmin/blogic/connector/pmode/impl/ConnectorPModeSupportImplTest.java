@@ -5,27 +5,17 @@
  */
 package eu.domibus.webadmin.blogic.connector.pmode.impl;
 
-import eu.domibus.configuration.Configuration;
-import static org.assertj.core.api.Assertions.*;
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
-import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,6 +24,14 @@ import org.primefaces.model.UploadedFile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
+
+import eu.domibus.configuration.Configuration;
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.model.DomibusConnectorParty;
+import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
+import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
+import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 
 /**
  *

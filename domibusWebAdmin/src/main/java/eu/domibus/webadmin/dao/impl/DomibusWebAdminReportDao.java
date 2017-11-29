@@ -53,7 +53,7 @@ public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibus
 		parameter[2] = fromDate;
 		parameter[3] = toDate;
 		
-		List<PeriodEntryDO> result = getJdbcTemplate().query(this.reportIncludingEvidencesSQL, parameter, new BeanPropertyRowMapper(PeriodEntryDO.class));
+		List<PeriodEntryDO> result = getJdbcTemplate().query(this.reportIncludingEvidencesSQL, parameter, new BeanPropertyRowMapper<>(PeriodEntryDO.class));
 		
 		return result;
 	}
@@ -72,7 +72,7 @@ public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibus
 		parameter[2] = fromDate;
 		parameter[3] = toDate;
 		
-		List<PeriodEntryDO> result = getJdbcTemplate().query(this.reportExcludingEvidencesSQL, parameter, new BeanPropertyRowMapper(PeriodEntryDO.class));
+		List<PeriodEntryDO> result = getJdbcTemplate().query(this.reportExcludingEvidencesSQL, parameter, new BeanPropertyRowMapper<>(PeriodEntryDO.class));
 		
 		return result;
 	}

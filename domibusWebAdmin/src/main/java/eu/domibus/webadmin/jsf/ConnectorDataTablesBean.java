@@ -1,10 +1,10 @@
 package eu.domibus.webadmin.jsf;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
+import javax.faces.application.FacesMessage;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +16,6 @@ import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
-import javax.faces.application.FacesMessage;
-import org.primefaces.context.RequestContext;
 
 
 @Controller

@@ -11,12 +11,10 @@ import org.primefaces.model.chart.PieChartModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
 @Component
 public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Serializable {

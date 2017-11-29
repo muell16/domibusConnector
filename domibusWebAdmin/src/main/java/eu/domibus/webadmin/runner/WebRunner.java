@@ -29,7 +29,6 @@ import java.util.Properties;
  * @author spindlest
  *
  */
-//@EnableAutoConfiguration
 @Configuration
 @ComponentScan(basePackageClasses= {
 		LoginBean.class, 	
@@ -42,7 +41,8 @@ import java.util.Properties;
 		})
 @Import({JpaContext.class, SecurityConfig.class, DomibusWebAdminContext.class})
 @ImportResource({"classpath:/spring/context/webadmin/connectorDaoContext.xml", //load daos from connector
-    "classpath:/spring/context/webadmin/dataSource.xml" //create datasource context
+    "classpath:/spring/context/webadmin/dataSource.xml", //create datasource context
+    "classpath:/spring/context/webadmin/logging.xml" //logging context 
 })
 public class WebRunner extends SpringBootServletInitializer {
 
@@ -61,7 +61,7 @@ public class WebRunner extends SpringBootServletInitializer {
         Properties props = new Properties();
         //if deployed as war set search location for config to ${CATALINA_HOME}/conf/webadmin/webadmin.properties
         props.put("spring.config.location", "${catalina.home}/conf/webadmin/webadmin.properties");                 
-    	application.properties(props);        
+    	application.properties(props);      
     	return application.sources(WebRunner.class);
     }
 

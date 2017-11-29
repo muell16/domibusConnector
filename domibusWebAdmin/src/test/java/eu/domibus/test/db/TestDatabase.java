@@ -1,27 +1,15 @@
 package eu.domibus.test.db;
 
-import java.beans.PropertyVetoException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.jdbc.datasource.init.ScriptException;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
  * A Test Database
@@ -34,7 +22,8 @@ import org.springframework.context.annotation.Import;
 @Profile("test")
 public class TestDatabase {
         
-    private final static Logger LOG = LoggerFactory.getLogger(TestDatabase.class);
+    @SuppressWarnings("unused")
+	private final static Logger LOG = LoggerFactory.getLogger(TestDatabase.class);
     
    
     @Bean

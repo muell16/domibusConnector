@@ -10,8 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,7 +96,7 @@ public class DomibusWebAdminUserDao implements IDomibusWebAdminUserDao, Serializ
 
             DomibusWebAdminUser domibusWebAdminUser = (DomibusWebAdminUser) q.getSingleResult();
 
-            return true;
+            return domibusWebAdminUser != null;
 
         } catch (EmptyResultDataAccessException e) {
             return false;

@@ -1,7 +1,6 @@
 package eu.domibus.webadmin.commons;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,18 +10,14 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 @Component("webAdminProperties")
-public class WebAdminProperties extends JdbcDaoSupport implements Serializable, ApplicationContextAware {
+public class WebAdminProperties extends JdbcDaoSupport implements Serializable {
 	
     private static final long serialVersionUID = -1113080729567255182L;
     
@@ -41,7 +36,6 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
     private String smtpHostName;
     private Long monitoringTimerInterval;
     private boolean monitoringLogWrite;
-    private boolean setupRequired;
 
 
     @Autowired
@@ -61,7 +55,7 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
         String sql = "select * from DOMIBUS_WEBADMIN_PROPERTIES";
         try {
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql);
-            for (Map row : rows) {
+            for (Map<String, Object> row : rows) {
             	
                 String key = ((String) (row.get("PROPERTIES_KEY")));
                 String value = ((String) (row.get("PROPERTIES_VALUE")));
@@ -230,20 +224,6 @@ public class WebAdminProperties extends JdbcDaoSupport implements Serializable, 
         this.smtpHostName = smtpHostName;
     }
     
-    @Override
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        //ctx = (ConfigurableWebApplicationContext) context;
-    }
-
-//    public ConfigurableWebApplicationContext getCtx() {
-//        return ctx;
-//    }
-//
-//    public void setCtx(ConfigurableWebApplicationContext ctx) {
-//        this.ctx = ctx;
-//    }
-
-
     public boolean isMonitoringLogWrite() {
         return monitoringLogWrite;
     }

@@ -40,7 +40,7 @@
 		</property>
 		<property name="arguments">
 			<list>
-   			  	<value>file:${CATALINA_HOME}/conf/connector/log4j.properties</value>
+   			  	<value>file:${CATALINA_HOME}/conf/webadmin/log4j.properties</value>
  		  	<!-- 	<value>classpath:log4j.properties</value>    -->
 			</list>
 		</property>

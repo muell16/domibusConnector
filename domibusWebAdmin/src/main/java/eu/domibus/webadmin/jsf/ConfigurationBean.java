@@ -8,14 +8,10 @@ import java.net.URL;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import eu.domibus.webadmin.commons.JmxConnector;
 import eu.domibus.webadmin.commons.WebAdminProperties;
@@ -23,7 +19,7 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
 
 @Controller("configurationBean")
 @Scope("session")
-public class ConfigurationBean implements Serializable, ApplicationContextAware {
+public class ConfigurationBean implements Serializable {
 
     private static final long serialVersionUID = -6978169110805373376L;
 
@@ -55,7 +51,6 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
     @Autowired
     private IDomibusWebAdminUserDao domibusWebAdminUserDao;
 
-    private ConfigurableWebApplicationContext applicationContext;
 
     @PostConstruct
     public void init() {
@@ -421,9 +416,6 @@ public class ConfigurationBean implements Serializable, ApplicationContextAware 
         //return loggedInUser;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = (ConfigurableWebApplicationContext) applicationContext;
-    }
+
 
 }
