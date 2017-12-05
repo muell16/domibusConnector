@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
 			<artifactId>ecodex-container</artifactId>
-			<version>1.11_RC1</version>
+			<version>1.11_RC2</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jaxb-impl</artifactId>
