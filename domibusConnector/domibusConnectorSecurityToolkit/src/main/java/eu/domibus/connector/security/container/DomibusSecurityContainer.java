@@ -177,11 +177,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                     if (asicDocument != null) {
                         try {
                             MessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument, CommonConnectorGlobalConstants.ASICS_CONTAINER_IDENTIFIER,
-<<<<<<< HEAD
-                                    asicDocument.getName(), asicDocument.getMimeType().getCode());
-=======
                                     asicDocument.getName(), asicDocument.getMimeType().getMimeTypeString());
->>>>>>> development
                             message.addAttachment(asicAttachment);
                         } catch (IOException e) {
                             throw new DomibusConnectorSecurityException(e);
@@ -191,11 +187,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                     if (tokenXML != null) {
                         try {
                             MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML, CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER,
-<<<<<<< HEAD
-                                    TOKEN_XML_FILE_NAME, MimeType.XML.getCode());
-=======
                                     TOKEN_XML_FILE_NAME, MimeType.XML.getMimeTypeString());
->>>>>>> development
                             message.addAttachment(tokenAttachment);
                         } catch (IOException e) {
                             throw new DomibusConnectorSecurityException(e);
@@ -252,11 +244,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                                     container.getBusinessDocument().getMimeType());
                             try {
                             	byte[] docAsBytes = IOUtils.toByteArray(container.getBusinessDocument().openStream());
-<<<<<<< HEAD
-                                if (container.getToken().getDocumentType().equals(MimeType.PDF.name())) {
-=======
                                 if (container.getToken().getDocumentType().equals(MimeType.PDF.getMimeTypeString())) {
->>>>>>> development
                                     message.getMessageContent().setPdfDocument(docAsBytes);
                                     if (!StringUtils.isEmpty(container.getBusinessDocument().getName())) {
                                         message.getMessageContent().setPdfDocumentName(
@@ -303,11 +291,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                                 try {
                                     MessageAttachment attachment = convertDocumentToMessageAttachment(
                                             businessAttachment, businessAttachment.getName(), businessAttachment.getName(), businessAttachment
-<<<<<<< HEAD
-                                                    .getMimeType().getCode());
-=======
                                                     .getMimeType().getMimeTypeString());
->>>>>>> development
 
                                     message.addAttachment(attachment);
                                 } catch (IOException e) {
@@ -320,11 +304,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         if (tokenPDF != null) {
                             try {
                                 MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, CommonConnectorGlobalConstants.TOKEN_PDF_IDENTIFIER, 
-<<<<<<< HEAD
-                                        TOKEN_PDF_FILE_NAME, MimeType.PDF.getCode());
-=======
                                         TOKEN_PDF_FILE_NAME, MimeType.PDF.getMimeTypeString());
->>>>>>> development
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
                                 LOGGER.error("Could not read Token PDF!", e);
@@ -335,11 +315,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         if (tokenXML != null) {
                             try {
                                 MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER, 
-<<<<<<< HEAD
-                                        TOKEN_XML_FILE_NAME, MimeType.XML.getCode());
-=======
                                         TOKEN_XML_FILE_NAME, MimeType.XML.getMimeTypeString());
->>>>>>> development
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
                                 LOGGER.error("Could not read Token XML!", e);
@@ -362,11 +338,7 @@ public class DomibusSecurityContainer implements InitializingBean {
         }
     }
 
-<<<<<<< HEAD
-    private MessageAttachment convertDocumentToMessageAttachment(Document document, String identifier, String name, String mimeType)
-=======
     private MessageAttachment convertDocumentToMessageAttachment(DSSDocument document, String identifier, String name, String mimeType)
->>>>>>> development
             throws IOException {
     	
     	byte[] byteArray = IOUtils.toByteArray(document.openStream());

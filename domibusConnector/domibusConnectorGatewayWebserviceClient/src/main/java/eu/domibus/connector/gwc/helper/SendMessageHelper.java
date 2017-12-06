@@ -43,11 +43,7 @@ public class SendMessageHelper {
             byte[] content = message.getMessageContent().getInternationalContent() != null ? message
                     .getMessageContent().getInternationalContent() : message.getMessageContent()
                     .getNationalXmlContent();
-<<<<<<< HEAD
-            buildBodyPayload(content, request, CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER, userMessage);
-=======
             buildBodyPayload(content, request, CommonConnectorGlobalConstants.OLD_CONTENT_XML_NAME, userMessage);
->>>>>>> development
         }
 
         int payloadCounter = 0;

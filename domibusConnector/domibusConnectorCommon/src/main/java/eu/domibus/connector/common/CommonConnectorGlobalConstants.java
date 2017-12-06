@@ -10,9 +10,6 @@ public class CommonConnectorGlobalConstants {
     
     public static final String CONTENT_PDF_IDENTIFIER = "ContentPDF";
     public static final String CONTENT_XML_IDENTIFIER = "ContentXML";
-<<<<<<< HEAD
-=======
     
     public static final String OLD_CONTENT_XML_NAME = "ECodexContentXML";
->>>>>>> development
 }
