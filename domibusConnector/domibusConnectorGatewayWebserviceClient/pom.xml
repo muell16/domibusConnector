@@ -6,7 +6,11 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
+<<<<<<< HEAD
 		<version>3.5-RELEASE</version>
+=======
+		<version>3.5.1-RELEASE</version>
+>>>>>>> development
 	</parent>
 	<artifactId>domibusConnectorGatewayWebserviceClient</artifactId>
 	<name>domibusConnectorGatewayWebserviceClient</name>

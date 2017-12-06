@@ -38,8 +38,11 @@ INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('Form_G', 1);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('FreeFormLetter', 1);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('FreeFormLetterIn', 1);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('FreeFormLetterOut', 1);
+<<<<<<< HEAD
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('br_merger_notification', 1);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('br_result_notification', 1);
+=======
+>>>>>>> development
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('SubmissionAcceptanceRejection', 0);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('RelayREMMDAcceptanceRejection', 0);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('RelayREMMDFailure', 0);
@@ -50,7 +53,10 @@ INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('Test_Form', 0);
 ----------------------- Values for DOMIBUS_CONNECTOR_SERVICE ------------------------------
 
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('EPO', 'urn:e-codex:services:');
+<<<<<<< HEAD
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('BR', 'urn:e-codex:services:');
+=======
+>>>>>>> development
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('SmallClaims', 'urn:e-codex:services:');
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('Connector-TEST', 'urn:e-codex:services:');
 

@@ -43,7 +43,11 @@ public class SendMessageHelper {
             byte[] content = message.getMessageContent().getInternationalContent() != null ? message
                     .getMessageContent().getInternationalContent() : message.getMessageContent()
                     .getNationalXmlContent();
+<<<<<<< HEAD
             buildBodyPayload(content, request, CommonConnectorGlobalConstants.CONTENT_XML_IDENTIFIER, userMessage);
+=======
+            buildBodyPayload(content, request, CommonConnectorGlobalConstants.OLD_CONTENT_XML_NAME, userMessage);
+>>>>>>> development
         }
 
         int payloadCounter = 0;
@@ -54,12 +58,16 @@ public class SendMessageHelper {
                 if (attachment.getAttachment() != null && attachment.getAttachment().length > 0) {
                     String mimeType = StringUtils.isEmpty(attachment.getMimeType()) ? CommonMessageHelper.APPLICATION_MIME_TYPE
                             : attachment.getMimeType();
+                    if(attachment.getIdentifier().equals(CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER)){
+                    	attachment.setName(attachment.getIdentifier());
+                    }
                     buildPayloadAndAddToRequest(request, mimeType, ++payloadCounter, attachment.getAttachment(),
                             attachment.getName(), userMessage);
 
                     if (attachment.getName().endsWith(".asics")) {
                         asicsFound = true;
                     }
+                    
                 }
             }
         }
