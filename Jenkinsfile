@@ -38,7 +38,7 @@ node {
     }
     
             
-    dir ('domibusWebAdmin') {                    
+    dir ('domibusConnector') {                    
         stage ('Build') {
             try {
                 sh 'mvn -Dmaven.test.failure.ignore=true install'
