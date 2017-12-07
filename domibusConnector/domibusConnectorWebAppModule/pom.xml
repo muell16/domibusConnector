@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.domibus.webadmin</groupId>
-    <artifactId>domibusWebAdmin</artifactId>
-    <version>3.2-RELEASE</version>
+    <artifactId>domibusConnectorWebAppModule</artifactId>
+    <version>4.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>domibusWebAdmin</name>
