@@ -5,6 +5,11 @@
 
 ## PMD Eclipse plugin files ##
 .pmd
+﻿## Eclipse config files ##
+.settings/
+.classpath
+.project
+
 
 ## soapUI test reports ##
 
@@ -34,4 +39,14 @@ target/
 *.iml
 *.ipr
 *.iws
+/.idea/
+
+##netbeans files
+nbactions.xml
+nb-configuration.xml
+nbproject/**
+
+## soapUI test reports ##
+
+/holodeck/modules/holodeck-distribution/src/test/resources/soapui_testsuites/*.txt
 
