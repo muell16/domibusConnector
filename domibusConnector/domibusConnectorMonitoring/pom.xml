@@ -12,7 +12,6 @@
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorCommon</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<description>Module to hold all monitoring interfaces for the domibus Connector</description>

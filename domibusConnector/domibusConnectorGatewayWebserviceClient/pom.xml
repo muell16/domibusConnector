@@ -18,14 +18,11 @@
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorCommon</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.e-codex</groupId>
 			<artifactId>discovery-library</artifactId>
-			<version>0.0.5-FINAL</version>
 		</dependency>
-
 	</dependencies>
 	<packaging>jar</packaging>
 	<build>
@@ -33,7 +30,6 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${org.apache.cxf.version}</version>
 				<executions>
 					<execution>
 						<id>generate-sources</id>
