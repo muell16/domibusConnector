@@ -36,9 +36,11 @@
         <org.primefaces.version>6.1</org.primefaces.version>
 		<javax.ws.rs>1.1.1</javax.ws.rs>
 		<org.codehaus.jackson>1.9.12</org.codehaus.jackson>
-		<test.http.proxy.enabled>false</test.http.proxy.enabled>
+<!--		<test.http.proxy.enabled>false</test.http.proxy.enabled>
 		<test.http.proxy.port>3128</test.http.proxy.port>
-		<test.http.proxy.host>localhost</test.http.proxy.host>
+		<test.http.proxy.host>localhost</test.http.proxy.host>-->
+        <https.proxy.enabled>false</https.proxy.enabled>
+        <http.proxy.enabled>false</http.proxy.enabled>
 	</properties>
 
 	<scm>
