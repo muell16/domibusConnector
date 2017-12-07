@@ -55,11 +55,13 @@ node {
 				currentBuild.result = 'UNSTABLE'
 			}
 		}
+		
         stage ('Post') {
             if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
                 junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
             }
         }
+		
         
         if (RELEASE) {
             stage("INIT Release") {
