@@ -37,7 +37,7 @@
 		
 		<!-- ==================== Copying WAR ================= -->
 		<file>
-			<source>${project.build.directory}/domibusWebAdmin.war</source>
+			<source>${project.build.directory}/${pom.artifactId}.war</source>
 			<outputDirectory>${webadmin.build.dir}</outputDirectory>
 		</file>
 	</files>
