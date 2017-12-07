@@ -16,9 +16,7 @@ node {
         "M2_HOME=${mvnHome}",
         "JAVA_HOME=${jdktool}",
     ]
-          //echo "GIT_COMMIT = ${scmVars.GIT_COMMIT}"\n\
-          //  echo "GIT_BRANCH = ${scmVars.GIT_BRANCH}"\n\
-          //        sh 'echo "env GIT_BRANCH: ${env.GIT_BRANCH}"'
+
     
     withEnv(javaEnv) {
     def RELEASE = false
@@ -37,18 +35,29 @@ node {
         //TODO: always clean up workspace!
     }
     
+	//FAILURE, SUCCESS, UNSTABLE
             
     dir ('domibusConnector') {                    
-        stage ('Build') {
+		stage ('Build') {
+			sh 'mvn compile'
+		}
+        stage ('Test') {
             try {
-                sh 'mvn -Dmaven.test.failure.ignore=true install'
+                sh 'mvn test'
             } catch (e) {
-                currentBuild.result = 'FAILURE'
+                currentBuild.result = 'UNSTABLE'
             }
         }
+		stage ('Integration Test') {
+			try {
+				sh 'mvn verify'
+			} catch (e) {
+				currentBuild.result = 'UNSTABLE'
+			}
+		}
         stage ('Post') {
-            if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
-                junit '**/surefire-reports/*.xml'  
+            if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
+                junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
             }
         }
         
