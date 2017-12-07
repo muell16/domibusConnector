@@ -28,8 +28,10 @@ target/
 *.tmp
 *.log
 *.tmp
+*.orig
 
 ## Intellij IDEA files 
 *.iml
 *.ipr
 *.iws
+
