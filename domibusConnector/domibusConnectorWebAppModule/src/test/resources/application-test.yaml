@@ -47,4 +47,10 @@ liquibase:
   enabled: true
   drop-first: true
   
-  
+connector:
+    database:
+        type: com.mchange.v2.c3p0.ComboPooledDataSource
+        url: jdbc:h2:mem:testdb
+        username: sa    
+        password: 
+        driverClassName: org.h2.Driver

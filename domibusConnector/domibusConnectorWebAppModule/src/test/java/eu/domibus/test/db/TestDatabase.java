@@ -1,6 +1,15 @@
 package eu.domibus.test.db;
 
+import java.sql.SQLException;
 import javax.sql.DataSource;
+import liquibase.Contexts;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,40 +35,26 @@ public class TestDatabase {
 	private final static Logger LOG = LoggerFactory.getLogger(TestDatabase.class);
     
    
-    @Bean
+    @Bean("dataSource")
     @Profile("db_h2")
-    public DataSource embeddedH2DB() {
-        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()                
-                .setType(EmbeddedDatabaseType.H2)                
-                .build();
-        return db;
+    public static DataSource embeddedH2DB() {
+        try {
+            EmbeddedDatabase db = new EmbeddedDatabaseBuilder()                
+                    .setType(EmbeddedDatabaseType.H2)                
+                    .build();
+
+            DataSource dataSource = db;
+
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection()));
+            Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml", new ClassLoaderResourceAccessor(), database);
+            liquibase.update(new Contexts());
+        
+            return db;
+        } catch (DatabaseException | SQLException ex) {
+            throw new RuntimeException("Exception occured during test database init", ex);
+        } catch (LiquibaseException ex) {
+            throw new RuntimeException("Exception occured during test database init", ex);
+        }
     }
     
-	
-	@Bean
-	@Profile("db_hsql")
-	public DataSource embeddedDatabaseHSQLDB() {
-		EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-	    		.setType(EmbeddedDatabaseType.HSQL)
-	    	//	.addScript("DbScripts/createTable_hsqldb.sql")
-	    	//	.addScript("dbscripts/data/testdata.sql")
-	    		.build();
-		return db;
-	}
-	
-	@Bean
-	@Profile("db_derby")
-	public DataSource embeddedDatabase() {
-		EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-	    		.setType(EmbeddedDatabaseType.DERBY)
-	    	//	.addScript("DbScripts/createTable_derby.sql")
-	    	//	.addScript("dbscripts/data/testdata.sql")
-	    		.build();
-		return db;
-	}
-
-	
-	
-	
-
 }

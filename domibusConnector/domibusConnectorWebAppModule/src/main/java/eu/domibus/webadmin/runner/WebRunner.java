@@ -39,10 +39,14 @@ import java.util.Properties;
 		ConnectorMonitoringService.class,
 		DomibusWebAdminUserAuthenticationProvider.class
 		})
-@Import({JpaContext.class, SecurityConfig.class, DomibusWebAdminContext.class})
+@Import({
+    DatabaseConnectionContext.class,
+    JpaContext.class, 
+    SecurityConfig.class, 
+    DomibusWebAdminContext.class})
 @ImportResource({"classpath:/spring/context/webadmin/connectorDaoContext.xml", //load daos from connector
     "classpath:/spring/context/webadmin/dataSource.xml", //create datasource context
-    "classpath:/spring/context/webadmin/logging.xml" //logging context 
+    //"classpath:/spring/context/webadmin/logging.xml" //logging context 
 })
 public class WebRunner extends SpringBootServletInitializer {
 
