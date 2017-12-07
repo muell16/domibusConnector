@@ -42,5 +42,9 @@
              <groupId>eu.europa.ec.joinup.sd-dss</groupId>
              <artifactId>dss-utils-apache-commons</artifactId>
        </dependency>
+	 <dependency>
+	  <groupId>junit</groupId>
+	  <artifactId>junit</artifactId>
+	 </dependency>
 	</dependencies>
 </project>
