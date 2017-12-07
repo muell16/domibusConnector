@@ -4,14 +4,13 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
-		<version>3.5.1-RELEASE</version>
+		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>domibusConnectorEvidencesToolkit</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorCommon</artifactId>
-			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jaxb-impl</artifactId>
@@ -22,7 +21,6 @@
 		<dependency>
 			<groupId>eu.ecodex.evidences</groupId>
 			<artifactId>EvidenceBuilder</artifactId>
-			<version>1.0.5.10</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jaxb-impl</artifactId>
@@ -38,5 +36,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 </project>
