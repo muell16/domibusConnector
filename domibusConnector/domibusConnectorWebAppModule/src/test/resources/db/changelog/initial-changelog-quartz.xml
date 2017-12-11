@@ -23,16 +23,16 @@
             <column name="JOB_CLASS_NAME" type="VARCHAR(250)" >
                 <constraints nullable="false" />
             </column>
-            <column name="IS_DURABLE" type="VARCHAR(1)" >
+            <column name="IS_DURABLE" type="VARCHAR(5)" >
                 <constraints nullable="false" />
             </column>
-            <column name="IS_NONCONCURRENT" type="VARCHAR(1)" >
+            <column name="IS_NONCONCURRENT" type="VARCHAR(5)" >
                 <constraints nullable="false" />
             </column>
-            <column name="IS_UPDATE_DATA" type="VARCHAR(1)" >
+            <column name="IS_UPDATE_DATA" type="VARCHAR(5)" >
                 <constraints nullable="false" />
             </column>
-            <column name="REQUESTS_RECOVERY" type="VARCHAR(1)" >
+            <column name="REQUESTS_RECOVERY" type="VARCHAR(5)" >
                 <constraints nullable="false" />
             </column>
             <column name="JOB_DATA" type="BLOB" />
