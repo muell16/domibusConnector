@@ -48,7 +48,9 @@ public class TestDatabase {
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection()));
             Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.xml", new ClassLoaderResourceAccessor(), database);
             liquibase.update(new Contexts());
-        
+            database.commit();
+            
+            
             return db;
         } catch (DatabaseException | SQLException ex) {
             throw new RuntimeException("Exception occured during test database init", ex);

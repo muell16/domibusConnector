@@ -10,6 +10,8 @@
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd"
 	default-autowire="byName">
 
-    <!-- empty context, but file not deleted because it is still referenced by other context files -->
+	<import resource="classpath:/spring/context/domibusconnector/dao.xml" />
+
+    <import resource="classpath:/spring/context/domibusconnector/connectorBeans.xml" />
 
 </beans>

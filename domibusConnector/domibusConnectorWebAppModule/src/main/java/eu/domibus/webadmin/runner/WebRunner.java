@@ -1,5 +1,6 @@
 package eu.domibus.webadmin.runner;
 
+import eu.domibus.connector.gwc.spring.DomibusConnectorGatewayWebserviceClientContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -43,10 +44,18 @@ import java.util.Properties;
     DatabaseConnectionContext.class,
     JpaContext.class, 
     SecurityConfig.class, 
-    DomibusWebAdminContext.class})
-@ImportResource({"classpath:/spring/context/webadmin/connectorDaoContext.xml", //load daos from connector
-    "classpath:/spring/context/webadmin/dataSource.xml", //create datasource context
-    //"classpath:/spring/context/webadmin/logging.xml" //logging context 
+    DomibusWebAdminContext.class,
+    DomibusConnectorGatewayWebserviceClientContext.class
+})
+@ImportResource({        
+    "classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml",
+    "classpath:/spring/context/DomibusConnectorSecurityToolkitContext.xml",
+    "classpath:/spring/context/DomibusConnectorEvidencesToolkitContext.xml",
+	"classpath:/spring/context/DomibusConnectorContentMapperContext.xml",
+//	"classpath:/spring/context/DomibusConnectorGateway${gateway.routing.option}ClientContext.xml", replaced by DomibusConnectorGatewayWebserviceClientContext.class
+	"classpath:/spring/context/DomibusConnectorNationalBackendClientContext.xml",
+	"classpath:/spring/context/DomibusConnectorMonitoringContext.xml",
+	"classpath:/spring/context/quartz-context.xml"
 })
 public class WebRunner extends SpringBootServletInitializer {
 

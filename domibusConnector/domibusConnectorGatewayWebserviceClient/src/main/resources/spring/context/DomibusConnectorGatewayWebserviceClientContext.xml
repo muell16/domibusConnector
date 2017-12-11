@@ -4,11 +4,14 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-	<import resource="classpath:/spring/context/DomibusConnectorCommonContext.xml"/>
+
 		
 	<jaxws:client id="gatewayClient" serviceClass="backend.ecodex.org._1_1.BackendInterface"
 		address="${gateway.endpoint.address}" />
-
+    
+<!-- content moved to DomibusConnectorGatewayWebserviceClientContext.class -->    
+<!--	<import resource="classpath:/spring/context/DomibusConnectorCommonContext.xml"/>-->
+<!--
 	<bean id="gatewayWebServiceClient"
 		class="eu.domibus.connector.gwc.DomibusConnectorGatewayWebserviceClientImpl">
 		<property name="gatewayBackendWebservice" ref="gatewayClient" />
@@ -34,6 +37,6 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="dynamicDiscoveryClient" ref="dynamicDiscoveryClient" />
 	</bean>
-	
+	-->
 
 </beans>

@@ -13,7 +13,7 @@
         <version>4.0-SNAPSHOT</version>
     </parent>
 
-    <name>domibusWebAdmin</name>
+    <name>domibusConnectorWebApp</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -226,14 +226,25 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorController</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

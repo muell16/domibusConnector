@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {WebRunner.class}, 
+@ContextConfiguration(classes = {WebRunner.class, TestDatabase.class}, 
     initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles({"test", "db_h2"})
 @WebAppConfiguration
