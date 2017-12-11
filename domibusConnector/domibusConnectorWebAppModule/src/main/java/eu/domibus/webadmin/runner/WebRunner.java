@@ -74,7 +74,7 @@ public class WebRunner extends SpringBootServletInitializer {
         Properties props = new Properties();
         //if deployed as war set search location for config to ${CATALINA_HOME}/conf/webadmin/webadmin.properties
         props.put("spring.config.location", "${catalina.home}/conf/webadmin/webadmin.properties");                 
-    	application.properties(props);      
+    	application.properties(props);   
     	return application.sources(WebRunner.class);
     }
 
