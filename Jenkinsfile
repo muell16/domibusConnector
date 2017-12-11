@@ -50,7 +50,7 @@ node {
         }
 		stage ('Integration Test') {
 			try {
-				sh 'mvn verify'
+				sh 'mvn -P integration-testing verify'
 			} catch (e) {
 				currentBuild.result = 'UNSTABLE'
 			}
