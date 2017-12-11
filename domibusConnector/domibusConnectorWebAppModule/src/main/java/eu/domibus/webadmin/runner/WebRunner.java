@@ -35,7 +35,9 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfigurati
  *
  */
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={LiquibaseAutoConfiguration.class})
+@EnableAutoConfiguration(exclude={
+//    LiquibaseAutoConfiguration.class
+})
 @Configuration
 @ComponentScan(basePackageClasses= {
 		LoginBean.class, 	
