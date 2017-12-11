@@ -41,7 +41,67 @@
     </properties>
 
     <profiles>
-
+        <profile>
+            <id>spring-boot</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>                
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>eu.domibus.webadmin.runner.WebRunner</mainClass>
+                        </configuration>
+                    </plugin>
+                    
+                </plugins>                
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>ch.qos.logback</groupId>
+                            <artifactId>logback-classic</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-core</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
+                </dependency>
+<!--                <dependency>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-jasper</artifactId>
+                </dependency>-->
+                <dependency>
+                    <groupId>org.glassfish.web</groupId>
+                    <artifactId>el-impl</artifactId>
+                    <version>2.2</version>
+                </dependency>
+                <dependency>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>jstl</artifactId>             
+                </dependency>
+<!--                 <dependency>-->
+<!--        <groupId>javax.el</groupId>
+        <artifactId>el-api</artifactId>
+        <version>2.2</version>
+    </dependency>-->
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc7</artifactId>
+                    <version>12.1.0.1</version>
+                </dependency> 
+            </dependencies>
+        </profile>
     </profiles>
 
 
@@ -85,11 +145,11 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>jsp-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-		
+        </dependency>		
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+             <scope>provided</scope>
         </dependency>
 
         <!--  versions are managed by spring-boot-dependencies -->		
@@ -245,6 +305,13 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>                
+                
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

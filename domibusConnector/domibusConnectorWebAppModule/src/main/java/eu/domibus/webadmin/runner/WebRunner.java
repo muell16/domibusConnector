@@ -19,6 +19,10 @@ import eu.domibus.webadmin.jsf.LoginBean;
 import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
 
 import java.util.Properties;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 
 
 /**
@@ -30,6 +34,8 @@ import java.util.Properties;
  * @author spindlest
  *
  */
+@SpringBootApplication
+@EnableAutoConfiguration(exclude={LiquibaseAutoConfiguration.class})
 @Configuration
 @ComponentScan(basePackageClasses= {
 		LoginBean.class, 	
@@ -41,7 +47,7 @@ import java.util.Properties;
 		DomibusWebAdminUserAuthenticationProvider.class
 		})
 @Import({
-    DatabaseConnectionContext.class,
+    //DatabaseConnectionContext.class,
     JpaContext.class, 
     SecurityConfig.class, 
     DomibusWebAdminContext.class,
@@ -86,5 +92,9 @@ public class WebRunner extends SpringBootServletInitializer {
     	return application.sources(WebRunner.class);
     }
 
+    
+    public static void main(String[] args) {
+        SpringApplication.run(WebRunner.class, args);
+    }
 
 }

@@ -171,8 +171,8 @@
             <column name="LONG_PROP_2" type="BIGINT"/>
             <column name="DEC_PROP_1" type="DECIMAL(13,4)"/>
             <column name="DEC_PROP_2" type="DECIMAL(13,4)"/>
-            <column name="BOOL_PROP_1" type="VARCHAR(1)"/>
-            <column name="BOOL_PROP_2" type="VARCHAR(1)"/>
+            <column name="BOOL_PROP_1" type="VARCHAR(5)"/>
+            <column name="BOOL_PROP_2" type="VARCHAR(5)"/>
         </createTable>
     </changeSet>
     <changeSet author="StephanSpindler" id="init-quartz-5.1" >
@@ -270,8 +270,8 @@
             </column>
             <column name="JOB_NAME" type="VARCHAR(200)"/>
             <column name="JOB_GROUP" type="VARCHAR(200)"/>
-            <column name="IS_NONCONCURRENT" type="VARCHAR(1)"/>
-            <column name="REQUESTS_RECOVERY" type="VARCHAR(1)"/>
+            <column name="IS_NONCONCURRENT" type="VARCHAR(5)"/>
+            <column name="REQUESTS_RECOVERY" type="VARCHAR(5)"/>
         </createTable>        
     </changeSet>
     <changeSet author="StephanSpindler" id="init-quartz-9.1" >
