@@ -50,6 +50,7 @@ node {
         }
 		stage ('Integration Test') {
 			try {
+				sh 'docker ps'
 				sh 'mvn -P integration-testing verify'
 			} catch (e) {
 				currentBuild.result = 'UNSTABLE'
