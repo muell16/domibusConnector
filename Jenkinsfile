@@ -73,15 +73,16 @@ node {
 				}
 				
 				
+				//TODO: only execute when build stable/success!
 				stage ('test deployment') {
 					
 				
 					println "download tomcat"
 					sh 'mkdir testDeploy'
 					sh 'mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip -Ddest=testDeploy/tomcat.zip'
-					sh 'cd testDeploy'
-					sh 'ls -la'
-					sh 'unzip tomcat.zip'
+					//sh 'cd testDeploy'
+					sh 'ls -la testDeploy'
+					sh 'cd testDeploy; unzip tomcat.zip'
 					
 					println "download testdb"
 					sh 'mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 -Ddest=mariadb.jar'
