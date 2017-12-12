@@ -136,15 +136,25 @@
                             <path>/</path>
                             <systemProperties>
                                 <spring.profiles.active>embedded</spring.profiles.active>
+                                <spring.debug>true</spring.debug>
                             </systemProperties>
-                            <!-- TODO: add h2 to jars -->
-                            <extraDependencies>
-                                <dependency>                              
-                                    <groupId>com.h2database</groupId>
-                                    <artifactId>h2</artifactId>                 
-                                </dependency>                             
-                            </extraDependencies>
+                            
                         </configuration>
+                        
+                        <dependencies>
+                            <!-- dependency Management not working here -->
+                            <!-- add h2 to jars -->                                                        
+                            <dependency>                              
+                                <groupId>com.h2database</groupId>
+                                <artifactId>h2</artifactId>    
+                                <version>1.4.196</version>             
+                            </dependency>   
+                            <dependency>
+                                <groupId>org.liquibase</groupId>
+                                <artifactId>liquibase-core</artifactId>
+                                <version>3.5.3</version>
+                            </dependency>                          
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>start-tomcat</id>

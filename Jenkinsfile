@@ -73,6 +73,24 @@ node {
 				}
 				
 				
+				stage ('test deployment') {
+				
+					step("prepare deployments") {
+						println "download tomcat"
+						sh 'mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip -Ddest=tomcat.zip'
+						println "download testdb
+						sh 'mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 -Ddest=mariadb.jar'
+						
+						sh 'unzip tomcat.zip'
+					}
+					
+					step("initialize & start db") {
+					}
+					
+				
+				}
+				
+				
 				if (RELEASE) {
 					stage("INIT Release") {
 					   

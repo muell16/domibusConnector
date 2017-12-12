@@ -71,23 +71,37 @@ public class WebRunner extends SpringBootServletInitializer {
 	
     /**
      * configures the Spring application by adding this class as source
-     * also sets the spring.config.location 
+     * also sets the spring.config.location if not set
      * to domibuswebapp.config.location if this environment variable is set
-     * otherwhise to ${catalina.home}/conf/webadmin/webadmin.properties
+     * otherwhise to ${catalina.home}/conf/webadmin/
      * 
-     *  
+     * also sets spring.config.name if not set to 
+     * webadmin
+     * 
+     * this settings results if not anything is configured to 
+     * ${catalina.home}/conf/webadmin/domibuswebapp.properties
+     * 
+     * 
+     *  {@inheritDoc }
      */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
     	LOG.info("configure: run as war on appserver....");
         Properties props = new Properties();
         
+        if (System.getProperty("spring.config.name") != null) {
+            props.put("spring.config.name", "domibuswebapp");
+        }
+        
         //if deployed as war and no domibuswebapp.config.location is set 
         //set search location for config to ${CATALINA_HOME}/conf/webadmin/webadmin.properties
         if (System.getProperty("domibuswebapp.config.location") != null ) {
             props.put("spring.config.location", System.getProperty("domibuswebapp.config.location"));
-        } else {            
-            props.put("spring.config.location", "${catalina.home}/conf/domibuswebapp/domibuswebapp.properties");                 
+        } else if (System.getProperty("spring.config.location") != null) {
+            //do nothing spring.config.location is already in environment!
+        } else {         
+            //if not already set, set to default:
+            props.put("spring.config.location", "${catalina.home}/conf/domibuswebapp/");                 
         }
         
     	application.properties(props);   
