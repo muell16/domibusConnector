@@ -9,5 +9,5 @@
     <include file="db/changelog/initial-changelog-domibus.xml"/> 
     <include file="db/changelog/initial-changelog-webadmin.xml"/> 
     <include file="db/changelog/initial-changelog-quartz.xml"/> 
-     
+    <include file="db/changelog/initial-changelog-data.sql"/>
 </databaseChangeLog> 

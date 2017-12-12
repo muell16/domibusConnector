@@ -89,6 +89,8 @@ public class WebRunner extends SpringBootServletInitializer {
     	LOG.info("configure: run as war on appserver....");
         Properties props = new Properties();
         
+        props.put("debug", true);
+        
         if (System.getProperty("spring.config.name") != null) {
             props.put("spring.config.name", "domibuswebapp");
         }
@@ -102,9 +104,8 @@ public class WebRunner extends SpringBootServletInitializer {
         } else {         
             //if not already set, set to default:
             props.put("spring.config.location", "${catalina.home}/conf/domibuswebapp/");                 
-        }
-        
-    	application.properties(props);   
+        }        
+    	application.properties(props);  
     	return application.sources(WebRunner.class);
     }
 
