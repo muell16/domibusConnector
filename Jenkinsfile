@@ -79,13 +79,17 @@ node {
 				
 					println "download tomcat"
 					sh 'mkdir testDeploy'
-					sh 'mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip -Ddest=testDeploy/tomcat.zip'
+					sh '''mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip
+							mvn dependency:copy -Dartifact=org.apache.tomcat:tomcat:7.0.82:zip -DoutputDirectory=./testDeploy'''
+							
 					//sh 'cd testDeploy'
 					sh 'ls -la testDeploy'
 					sh 'cd testDeploy; unzip tomcat.zip'
 					
 					println "download testdb"
-					sh 'mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 -Ddest=mariadb.jar'
+					sh '''mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 ; 
+						mvn dependency:copy -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 -DoutputDirectory=.
+					'''
 
 				
 				}
