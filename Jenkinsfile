@@ -1,5 +1,7 @@
 node {
    
+	println "hallo welt"
+   
 	List GIT_ENV = [
 		"GIT_SSL_NO_VERIFY=true",
 	]
