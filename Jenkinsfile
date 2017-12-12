@@ -24,6 +24,7 @@ node {
 			"JAVA_HOME=${jdktool}",
 		]
 
+		def boolean docker_available = false
 		
 		withEnv(javaEnv) {
 			def RELEASE = false
@@ -38,7 +39,14 @@ node {
 					RELEASE = true 
 					releaseVersion = scmInfo.GIT_BRANCH.substring(8)
 				}
-													
+						
+				try {
+					docker_available = true
+					sh 'docker ps'
+				} catch (e) {
+					docker_available = false
+				}
+						
 				//TODO: always clean up workspace!
 			}
 			
@@ -74,9 +82,13 @@ node {
 				
 				
 				//TODO: only execute when build stable/success!
-				stage ('test deployment') {
-					
+				if (docker_available) {	
+					stage ('test deployment') {
+						
+					}
+				}
 				
+				/*
 					println "download tomcat"
 					sh 'mkdir testDeploy'
 					sh '''mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip
@@ -92,7 +104,7 @@ node {
 					'''
 
 				
-				}
+				} */
 			} //end dir ('domibusConnector')	
 				
 			if (RELEASE) {
