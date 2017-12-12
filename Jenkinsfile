@@ -1,6 +1,5 @@
 node {
    
-	println "hallo welt"
    
 	List GIT_ENV = [
 		"GIT_SSL_NO_VERIFY=true",
@@ -16,7 +15,7 @@ node {
 				
 			
 		String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
-		def mvnHome = tool name: 'MAVEN 3.0.5'
+		def mvnHome = tool name: 'MAVEN 3.0'
 	 
 		/* Set JAVA_HOME, and special PATH variables. */
 		List javaEnv = [
