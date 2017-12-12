@@ -116,6 +116,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
+                            <skipTests>true</skipTests>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -136,15 +137,32 @@
                             <path>/</path>
                             <systemProperties>
                                 <spring.profiles.active>embedded</spring.profiles.active>
+                                <spring.debug>true</spring.debug>
+                                <spring.config.name>application</spring.config.name>
+                                <spring.config.location>classpath:</spring.config.location>
                             </systemProperties>
-                            <!-- TODO: add h2 to jars -->
-                            <extraDependencies>
-                                <dependency>                              
-                                    <groupId>com.h2database</groupId>
-                                    <artifactId>h2</artifactId>                 
-                                </dependency>                             
-                            </extraDependencies>
+                            
                         </configuration>
+                        
+                        <dependencies>
+                            <!-- dependency Management not working here -->
+                            <dependency>
+                                <groupId>org.liquibase</groupId>
+                                <artifactId>liquibase-core</artifactId>
+                                <version>3.5.2</version>
+                            </dependency>
+                            <!-- add h2 to jars -->                                                        
+                            <dependency>                              
+                                <groupId>com.h2database</groupId>
+                                <artifactId>h2</artifactId>    
+                                <version>1.4.196</version>             
+                            </dependency>  
+                            <dependency>
+                                <groupId>com.oracle</groupId>
+                                <artifactId>ojdbc7</artifactId>
+                                <version>12.1.0.1</version>
+                            </dependency>                            
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>start-tomcat</id>
@@ -313,7 +331,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <scope>test</scope>
+<!--            <scope>test</scope>-->
         </dependency>
 
         <!-- required by primefaces for file-upload -->
