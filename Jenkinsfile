@@ -71,22 +71,24 @@ node {
 						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
 					}
 				}
-			} //end dir ('domibusConnector')	
 				
-			stage ('test deployment') {
 				
-			
-				println "download tomcat"
-				sh 'mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip -Ddest=tomcat.zip'
-				sh 'ls -la'
-				sh 'unzip tomcat.zip'
+				stage ('test deployment') {
+					
 				
-				println "download testdb"
-				sh 'mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 -Ddest=mariadb.jar'
+					println "download tomcat"
+					sh 'mkdir testDeploy'
+					sh 'mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip -Ddest=testDeploy/tomcat.zip'
+					sh 'cd testDeploy'
+					sh 'ls -la'
+					sh 'unzip tomcat.zip'
+					
+					println "download testdb"
+					sh 'mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 -Ddest=mariadb.jar'
 
-			
-			}
 				
+				}
+			} //end dir ('domibusConnector')	
 				
 			if (RELEASE) {
 				stage("INIT Release") {
