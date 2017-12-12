@@ -15,7 +15,7 @@ node {
 				
 			
 		String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
-		def mvnHome = tool name: 'MAVEN 3.0'
+		def mvnHome = tool name: 'MAVEN 3.0.x'
 	 
 		/* Set JAVA_HOME, and special PATH variables. */
 		List javaEnv = [
