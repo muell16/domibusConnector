@@ -65,7 +65,7 @@ node {
 						currentBuild.result = 'UNSTABLE'
 					}
 				}
-				
+												
 				stage ('Integration Test') {
 					try {
 						sh 'mvn -P integration-testing verify'
@@ -77,6 +77,19 @@ node {
 				stage ('Post') {
 					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
 						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
+					}
+				}
+				
+				
+				stage('SonarQube analysis') {
+					try {
+						// requires SonarQube Scanner 2.8+
+						def scannerHome = tool 'Sonar Scanner';
+						withSonarQubeEnv('My SonarQube Server') {
+							sh "${scannerHome}/bin/sonar-scanner"
+						}
+					} catch (e) {
+					
 					}
 				}
 				
