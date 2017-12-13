@@ -82,18 +82,28 @@ node {
 				}
 				
 				
-				stage('SonarQube analysis') {
-					//try {
-						//JU 3.0 SonarQube Server
-						// requires SonarQube Scanner 2.8+
-						def scannerHome = tool 'Sonar Scanner';
-						withSonarQubeEnv {
-							//sh "${scannerHome}/bin/sonar-scanner"
-							sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
-						}
-					//} catch (e) {
-					
-					//}
+				//sonar analysis only if sonar available!
+				def sonarAvailable = false;
+				try {					
+					def scannerHome = tool 'Sonar Scanner';
+					sonarAvailable = true
+				} catch (e) {
+					//tool not found
+				}
+				if (sonarAvailable) {
+					stage('SonarQube analysis') {
+						//try {
+							//JU 3.0 SonarQube Server
+							// requires SonarQube Scanner 2.8+
+							
+							withSonarQubeEnv {
+								//sh "${scannerHome}/bin/sonar-scanner"
+								sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
+							}
+						//} catch (e) {
+						
+						//}
+					}
 				}
 				
 				
