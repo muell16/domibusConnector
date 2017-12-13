@@ -99,7 +99,7 @@ node {
 							withSonarQubeEnv {
 								//sh "${scannerHome}/bin/sonar-scanner"
 								def projectPostfix = scmInfo.GIT_BRANCH.replace("/", ":")
-								sh "mvn -Dsonar.projectKey=DomibusWebApp_${projectPostfix} org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar"
+								sh "mvn -Dsonar.branch=${scmInfo.GIT_BRANCH} org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar"
 							}
 						//} catch (e) {
 						
