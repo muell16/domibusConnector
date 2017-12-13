@@ -86,7 +86,7 @@ node {
 						//JU 3.0 SonarQube Server
 						// requires SonarQube Scanner 2.8+
 						def scannerHome = tool 'Sonar Scanner';
-						withSonarQubeEnv('My SonarQube Server') {
+						withSonarQubeEnv {
 							sh "${scannerHome}/bin/sonar-scanner"
 						}
 					//} catch (e) {
