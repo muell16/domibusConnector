@@ -98,7 +98,7 @@ node {
 							
 							withSonarQubeEnv {
 								//sh "${scannerHome}/bin/sonar-scanner"
-								sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
+								sh 'mvn -Dsonar.projectKey=DomibusWebApp_${scmInfo.GIT_BRANCH} org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
 							}
 						//} catch (e) {
 						
