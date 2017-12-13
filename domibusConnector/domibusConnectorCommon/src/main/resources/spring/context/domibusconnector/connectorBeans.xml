@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-autowire="byName">
+    
+    <bean id="connectorProperties" class="eu.domibus.connector.common.CommonConnectorProperties">
+		<property name="gatewayEndpointAddress" value="${gateway.endpoint.address}" />
+		<property name="gatewayName" value="${gateway.name}" />
+		<property name="gatewayRole" value="${gateway.role}" />
+		<property name="useContentMapper" value="${connector.use.content.mapper}" />
+		<property name="useSecurityToolkit" value="${connector.use.security.toolkit}" />
+		<property name="useEvidencesToolkit" value="${connector.use.evidences.toolkit}" />
+		<property name="postalAddressStreet" value="${postal.address.street}" />
+		<property name="postalAddressLocality" value="${postal.address.locality}" />
+		<property name="postalAddressPostalCode" value="${postal.address.postal.code}" />
+		<property name="postalAddressCountry" value="${postal.address.country}" />
+		<property name="timeoutRelayREMMD" value="${connector.evidence.relayremmd.timeout.ms}" />
+		<property name="timeoutDelivery" value="${connector.evidence.delivery.timeout.ms}" />
+		<property name="timeoutRetrieval" value="${connector.evidence.retrieval.timeout.ms}" />
+		<property name="checkEvidences" value="${connector.use.evidences.timeout}" />
+		<property name="useDynamicDiscovery" value="${connector.use.dynamic.discovery}" />
+		<property name="dynamicDiscoveryCommunity" value="${dynamic.discovery.community}" />
+		<property name="dynamicDiscoveryEnvironment" value="${dynamic.discovery.environment}" />
+		<property name="dynamicDiscoveryNormalisationAlgorithm" value="${dynamic.discovery.normalisation.algorithm}" />
+		<property name="monitoringType" value="${monitoring.type}" />
+		<property name="connectorTestService" value="${connector.test.service}" />
+		<property name="connectorTestAction" value="${connector.test.action}" />
+	</bean>
+
+	<bean id="persistenceService"
+		class="eu.domibus.connector.common.db.service.impl.DomibusConnectorPersistenceServiceImpl">
+		<property name="messageDao" ref="messageDao" />
+		<property name="evidenceDao" ref="evidenceDao" />
+		<property name="actionDao" ref="actionDao" />
+		<property name="partyDao" ref="partyDao" />
+		<property name="serviceDao" ref="serviceDao" />
+		<property name="messageInfoDao" ref="messageInfoDao" />
+		<property name="messageErrorDao" ref="messageErrorDao" />
+	</bean>
+	
+	<bean class="eu.domibus.connector.common.DomibusApplicationContextManager" />
+    
+</beans>

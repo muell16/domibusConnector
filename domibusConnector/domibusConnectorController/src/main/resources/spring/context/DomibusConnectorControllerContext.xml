@@ -3,7 +3,8 @@
 
 <beans>
 
-	<import resource="classpath:/spring/context/DomibusConnectorCommonContext.xml" />
+<!--	<import resource="classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml" />
+    
 	<import
 		resource="classpath:/spring/context/DomibusConnectorSecurityToolkitContext.xml" />
 	<import
@@ -17,7 +18,7 @@
 	<import
 		resource="classpath:/spring/context/DomibusConnectorMonitoringContext.xml" />
 
-	<import resource="quartz-context.xml" />
+	<import resource="quartz-context.xml" />-->
 	
 	<bean id="outgoingController"
 		class="eu.domibus.connector.controller.DomibusConnectorOutgoingController">

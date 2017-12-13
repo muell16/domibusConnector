@@ -73,16 +73,20 @@ public class DomibusConnectorMonitorController implements ApplicationContextAwar
         if (monitoringType.equals(monitoring.DB) && !ctx.containsBean("domibusConnectorMonitorDB")) {
             // if DB is configured (or the context is not a web context) the
             // right bean will be loaded manually into the context
-            AbstractRefreshableApplicationContext refctx = (AbstractRefreshableApplicationContext) ctx;
+            try {
+                AbstractRefreshableApplicationContext refctx = (AbstractRefreshableApplicationContext) ctx;
 
-            // Creating and registering bean to the container
-            BeanDefinition beanDefinition = new RootBeanDefinition(DomibusConnectorMonitorDB.class);
-            DomibusConnectorMonitor monitor = (DomibusConnectorMonitor) refctx.getBean("domibusConnectorMonitor");
+                // Creating and registering bean to the container
+                BeanDefinition beanDefinition = new RootBeanDefinition(DomibusConnectorMonitorDB.class);
+                DomibusConnectorMonitor monitor = (DomibusConnectorMonitor) refctx.getBean("domibusConnectorMonitor");
 
-            beanDefinition.setAttribute("domibusConnectorMonitor", monitor);
+                beanDefinition.setAttribute("domibusConnectorMonitor", monitor);
 
-            BeanDefinitionRegistry factory = (BeanDefinitionRegistry) refctx.getBeanFactory();
-            factory.registerBeanDefinition("domibusConnectorMonitorDB", beanDefinition);
+                BeanDefinitionRegistry factory = (BeanDefinitionRegistry) refctx.getBeanFactory();
+                factory.registerBeanDefinition("domibusConnectorMonitorDB", beanDefinition);
+            } catch (ClassCastException cce) {
+                LOGGER.error("Application context not compatible with AbstractRefreshableApplicationContext. Monitoring disabled!", cce);
+            }
         }
 
     }

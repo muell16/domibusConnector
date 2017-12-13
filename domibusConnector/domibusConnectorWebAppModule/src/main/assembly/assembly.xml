@@ -1,0 +1,57 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+	<id>${project.version}</id>
+	<formats>
+		<format>zip</format>
+		<format>dir</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<!-- ==================== Copying DB Scripts ================= -->
+		<fileSet>
+			<directory>${webadmin.resources.dir}/DbScripts</directory>
+			<outputDirectory>${documentation.output.dir}/db-scripts</outputDirectory>
+		</fileSet>
+		
+		<!-- ==================== Copying Docs ================= -->
+		<fileSet>
+			<directory>${webadmin.resources.dir}/Docs</directory>
+			<outputDirectory>${documentation.output.dir}/guides</outputDirectory>
+			<includes>
+				<include>*.pdf</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${webadmin.resources.dir}/ExampleProperties</directory>
+			<outputDirectory>${documentation.output.dir}/properties</outputDirectory>
+		</fileSet>
+		
+	</fileSets>
+
+	<files>
+		<!-- ==================== Copying Parent POM ================= -->
+		<file>
+			<source>${project.basedir}/pom.xml</source>
+			<outputDirectory>${webadmin.build.dir}</outputDirectory>
+		</file>
+		
+		<!-- ==================== Copying WAR ================= -->
+		<file>
+			<source>${project.build.directory}/${pom.artifactId}.war</source>
+			<outputDirectory>${webadmin.build.dir}</outputDirectory>
+		</file>
+	</files>
+
+	<!-- ==================== Copying Non-Public Dependecies ================= -->
+
+	<dependencySets>
+		<dependencySet>
+			<scope>runtime</scope>
+			<outputDirectory>${webadmin.build.dir}/libs</outputDirectory>
+			<includes>
+				<include>*:domibusConnectorCommon*:*</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
+
+</assembly>

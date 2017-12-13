@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition template="/templates/menuTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+      			xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+                
+                
+   <ui:param name="title" value="WebAdmin - Reports"/>
+    <ui:define name="content">
+         
+ <h:form  id="formReports"> 
+	<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
+    	<h:outputText class="textArea" value="From: " /> 
+    	<p:calendar value="#{reportsBean.fromDate}" id="fromButtonCal" showOn="button" />  
+    	<h:outputText class="textArea" value="To: " />  
+    	<p:calendar value="#{reportsBean.toDate}" id="toButtonCal" showOn="button"  />    
+    </h:panelGrid>
+
+     <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">           
+    	<h:selectBooleanCheckbox
+						value="#{reportsBean.includeEvidences}" />
+					<h:outputText class="textArea"
+						value="Include Evidences sent as own messages" />
+     	 <h:commandButton id="generate" action="#{reportsBean.generateReport}" value="Generate Report" /> 
+    </h:panelGrid>
+
+
+    <hr />
+    
+    <p:dataTable id="repTable" var="period" value="#{reportsBean.periods}" rendered="#{reportsBean.reportGenerated}">
+        <f:facet name="header">
+            Messages Report
+        </f:facet>
+ 
+ 		
+    	
+    	<p:columnGroup type="header">
+            <p:row>
+                <p:column headerText="Party" />
+                <p:column headerText="Service" />
+                <p:column headerText="Messages received from" />
+                <p:column headerText="Messages sent to" />
+            </p:row>
+            
+        </p:columnGroup>
+ 
+        <p:subTable var="p" value="#{period.entries}">
+            <f:facet name="header">
+                <h:outputText value="#{period.period}" />
+            </f:facet>
+            <p:column>
+                <h:outputText value="#{p.party}" />
+            </p:column>
+            <p:column>
+                <h:outputText value="#{p.service}" />
+            </p:column>
+            <p:column>
+                <h:outputText value="#{p.received}" />
+            </p:column>
+            <p:column>
+                <h:outputText value="#{p.sent}" />
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column footerText="Totals: " style="text-align:right" colspan="2"/>
+                    <p:column footerText="#{period.sumReceived}" />
+                    <p:column footerText="#{period.sumSent}" />
+                </p:row>
+            </p:columnGroup>
+        </p:subTable>
+        
+    </p:dataTable>
+    
+	
+    <h:panelGrid columns="1"> 
+     <p:panel header="Export All Data" rendered="#{reportsBean.reportGenerated}">  
+  
+  		<h:commandLink id="excel">  
+            <p:graphicImage value="/images/xls.png" />  
+            <p:dataExporter type="xls" target="repTable" fileName="MessagesReport" postProcessor="#{reportsBean.postProcessExcel}"/>  
+        </h:commandLink> 
+                
+    </p:panel> 
+    
+    </h:panelGrid>
+</h:form>
+</ui:define>
+</ui:composition>
