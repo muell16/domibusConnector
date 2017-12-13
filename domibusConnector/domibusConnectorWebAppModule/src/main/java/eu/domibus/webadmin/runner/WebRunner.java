@@ -91,7 +91,7 @@ public class WebRunner extends SpringBootServletInitializer {
         
         props.put("debug", true);
         
-        if (System.getProperty("spring.config.name") != null) {
+        if (System.getProperty("spring.config.name") == null) {
             props.put("spring.config.name", "domibuswebapp");
         }
         
