@@ -217,7 +217,7 @@
             
             
             <!-- LOGGING -->
-            <dependency>
+<!--            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${org.slf4j.version}</version>
@@ -231,7 +231,7 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${org.slf4j.version}</version>
-            </dependency>
+            </dependency>-->
             
             <!-- Apache CXF dependencies -->
 		
@@ -539,4 +539,24 @@
             </plugin>
 		</plugins>
 	</build>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>      
+        </dependency>        
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>           
+        </dependency>
+    </dependencies>
+    
 </project>
