@@ -36,6 +36,7 @@
         <org.primefaces.version>6.1</org.primefaces.version>
 		<javax.ws.rs>1.1.1</javax.ws.rs>
 		<org.codehaus.jackson>1.9.12</org.codehaus.jackson>
+        <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
         <!-- if necessary overwrite proxy settings in local settings.xml -->
         <https.proxy.enabled>false</https.proxy.enabled>
         <https.proxy.host></https.proxy.host>
@@ -367,6 +368,11 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.9</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.7.0</version>
@@ -409,8 +415,18 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.6</version>
                     <configuration>
-                        <encoding>UTF-8</encoding>
+                        <encoding>UTF-8</encoding>                        
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.12.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.20.1</version>
                 </plugin>
                 <plugin>                                         
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -423,9 +439,9 @@
                     <version>${org.apache.cxf.version}</version>
                 </plugin>
                 <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>1.5.8.RELEASE</version>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>1.5.8.RELEASE</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -456,19 +472,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -482,7 +486,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
@@ -490,15 +493,50 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
-<!--				<configuration>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-				</configuration>-->
 			</plugin>
+            <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>            
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*.docx</exclude>
+                            <exclude>**/*.pdf</exclude>
+                            <exclude>**/*.zip</exclude>
+                        </excludes>
+                    </configuration>        
+                    <executions>
+                        <execution>
+                            <id>default-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-report</id>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>                        
+<!--                        <execution>
+                            <id>default-report-integration</id>
+                            <goals>
+                                <goal>report-integration</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-check</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>                            
+                        </execution>-->
+                    </executions>                    
+            </plugin>
 		</plugins>
-        
-        
-        
-        
 	</build>
 </project>

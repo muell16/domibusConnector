@@ -15,7 +15,7 @@ node {
 				
 			
 		String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
-		def mvnHome = tool name: 'MAVEN 3.0.x'
+		def mvnHome = tool name: 'MAVEN 3.3.x'
 	 
 		/* Set JAVA_HOME, and special PATH variables. */
 		List javaEnv = [
@@ -65,7 +65,7 @@ node {
 						currentBuild.result = 'UNSTABLE'
 					}
 				}
-				
+												
 				stage ('Integration Test') {
 					try {
 						sh 'mvn -P integration-testing verify'
@@ -77,6 +77,37 @@ node {
 				stage ('Post') {
 					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
 						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
+						try {
+							jacoco() //ignore failures
+						} catch (e) {
+							
+						}
+					}
+				}
+				
+				
+				//sonar analysis only if sonar available!
+				def sonarAvailable = false;
+				try {					
+					def scannerHome = tool 'Sonar Scanner';
+					sonarAvailable = true
+				} catch (e) {
+					//tool not found
+				}
+				if (sonarAvailable) {
+					stage('SonarQube analysis') {
+						//try {
+							//JU 3.0 SonarQube Server
+							// requires SonarQube Scanner 2.8+
+							
+							withSonarQubeEnv {
+								//sh "${scannerHome}/bin/sonar-scanner"
+								def projectPostfix = scmInfo.GIT_BRANCH.replace("/", ":")
+								sh "mvn -Dsonar.branch=${scmInfo.GIT_BRANCH} org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar"
+							}
+						//} catch (e) {
+						
+						//}
 					}
 				}
 				
