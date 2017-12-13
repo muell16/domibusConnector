@@ -15,7 +15,7 @@ node {
 				
 			
 		String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
-		def mvnHome = tool name: 'MAVEN 3.0.x'
+		def mvnHome = tool name: 'MAVEN 3.3.x'
 	 
 		/* Set JAVA_HOME, and special PATH variables. */
 		List javaEnv = [
@@ -77,6 +77,7 @@ node {
 				stage ('Post') {
 					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
 						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
+						//jacoco						
 					}
 				}
 				
@@ -87,7 +88,8 @@ node {
 						// requires SonarQube Scanner 2.8+
 						def scannerHome = tool 'Sonar Scanner';
 						withSonarQubeEnv {
-							sh "${scannerHome}/bin/sonar-scanner"
+							//sh "${scannerHome}/bin/sonar-scanner"
+							sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
 						}
 					//} catch (e) {
 					
