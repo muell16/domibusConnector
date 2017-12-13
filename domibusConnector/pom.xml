@@ -496,7 +496,14 @@
 			</plugin>
             <plugin>
                     <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>                    
+                    <artifactId>jacoco-maven-plugin</artifactId>            
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*.docx</exclude>
+                            <exclude>**/*.pdf</exclude>
+                            <exclude>**/*.zip</exclude>
+                        </excludes>
+                    </configuration>        
                     <executions>
                         <execution>
                             <id>default-prepare-agent</id>
@@ -510,13 +517,13 @@
                                 <goal>prepare-agent-integration</goal>
                             </goals>
                         </execution>
-<!--                        <execution>
+                        <execution>
                             <id>default-report</id>
                             <goals>
                                 <goal>report</goal>
                             </goals>
-                        </execution>
-                        <execution>
+                        </execution>                        
+<!--                        <execution>
                             <id>default-report-integration</id>
                             <goals>
                                 <goal>report-integration</goal>
