@@ -11,11 +11,17 @@
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorWebAppModule/target/
 			</directory>
-			<outputDirectory>${modules.output.dir}/domibusConnectorCommon</outputDirectory>
+			<outputDirectory>domibusConnectorWebApp/webapps</outputDirectory>
 			<includes>
 				<include>*.war</include>
 			</includes>
-		</fileSet>                
-        
+		</fileSet>   
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/ExampleProperties/</directory>
+            <outputDirectory>domibusConnectorWebApp/conf/domibuswebapp/</outputDirectory>
+            <includes>
+                <include>domibuswebapp.properties</include>
+            </includes>
+        </fileSet>                     
     </fileSets>
 </assembly>
