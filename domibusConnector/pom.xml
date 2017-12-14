@@ -49,6 +49,10 @@
 	<scm>
 		<developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
 	</scm>
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://www.e-codex.eu/jenkins/job/domibusWebConnector/</url>
+    </ciManagement>
 
 	<distributionManagement>
 		<repository>
@@ -556,6 +560,14 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>           
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
         </dependency>
     </dependencies>
     
