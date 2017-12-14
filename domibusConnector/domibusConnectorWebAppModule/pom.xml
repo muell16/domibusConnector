@@ -114,7 +114,11 @@
                     <artifactId>ojdbc7</artifactId>
                     <version>12.1.0.1</version>
                 </dependency> 
-
+                <dependency>
+                    <groupId>com.zaxxer</groupId>
+                    <artifactId>HikariCP</artifactId>
+                    <scope>compile</scope>       
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -206,6 +210,12 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorCommon</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>c3p0</groupId>
+                    <artifactId>c3p0</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--JSF -->
@@ -317,10 +327,10 @@
         </dependency>
         
         
-<!--        <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>-->
+        </dependency>        
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -340,6 +350,12 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>c3p0</groupId>
+                    <artifactId>c3p0</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--  TEST DEPENDENCIES -->
@@ -396,6 +412,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
         </dependency>
     </dependencies>
 
