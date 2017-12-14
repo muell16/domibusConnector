@@ -29,6 +29,7 @@
                         <descriptor>src/main/assembly/assemblyFW.xml</descriptor>
                         <descriptor>src/main/assembly/assemblyESAC.xml</descriptor>
                         <descriptor>src/main/assembly/assemblyDocu.xml</descriptor>
+                        <descriptor>src/main/assembly/assemblyWebApp.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
