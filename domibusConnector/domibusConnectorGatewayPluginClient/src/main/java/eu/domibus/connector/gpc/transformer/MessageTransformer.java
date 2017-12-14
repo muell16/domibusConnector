@@ -291,9 +291,10 @@ public class MessageTransformer {
 			messageProps.getMessageProperties().add(originalSender);
 		}
 
-		if (connectorProperties.isUseDynamicDiscovery()) {
-			LOGGER.error("Dynamic Discovery not yet supported!");
-		}
+		 // dynamic discovery removed due to missing developments on the library
+//		if (connectorProperties.isUseDynamicDiscovery()) {
+//			LOGGER.error("Dynamic Discovery not yet supported!");
+//		}
 
 		if (msg.getMessageDetails().getRefToMessageId() != null) {
 			MessagePropertyType originalMessageId = new MessagePropertyType();

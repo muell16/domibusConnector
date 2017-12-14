@@ -16,10 +16,13 @@ public class CommonConnectorProperties {
     long timeoutDelivery;
     long timeoutRetrieval;
     boolean checkEvidences;
-    boolean useDynamicDiscovery;
-    String dynamicDiscoveryCommunity;
-    String dynamicDiscoveryEnvironment;
-    String dynamicDiscoveryNormalisationAlgorithm;
+    
+    // dynamic discovery removed due to missing developments on the library
+//    boolean useDynamicDiscovery;
+//    String dynamicDiscoveryCommunity;
+//    String dynamicDiscoveryEnvironment;
+//    String dynamicDiscoveryNormalisationAlgorithm;
+    
     String monitoringType;
     
     String connectorTestService;
@@ -137,37 +140,38 @@ public class CommonConnectorProperties {
         this.checkEvidences = checkEvidences;
     }
 
-    public boolean isUseDynamicDiscovery() {
-        return useDynamicDiscovery;
-    }
-
-    public void setUseDynamicDiscovery(boolean useDynamicDiscovery) {
-        this.useDynamicDiscovery = useDynamicDiscovery;
-    }
-
-    public String getDynamicDiscoveryCommunity() {
-        return dynamicDiscoveryCommunity;
-    }
-
-    public void setDynamicDiscoveryCommunity(String dynamicDiscoveryCommunity) {
-        this.dynamicDiscoveryCommunity = dynamicDiscoveryCommunity;
-    }
-
-    public String getDynamicDiscoveryEnvironment() {
-        return dynamicDiscoveryEnvironment;
-    }
-
-    public void setDynamicDiscoveryEnvironment(String dynamicDiscoveryEnvironment) {
-        this.dynamicDiscoveryEnvironment = dynamicDiscoveryEnvironment;
-    }
-
-    public String getDynamicDiscoveryNormalisationAlgorithm() {
-        return dynamicDiscoveryNormalisationAlgorithm;
-    }
-
-    public void setDynamicDiscoveryNormalisationAlgorithm(String dynamicDiscoveryNormalisationAlgorithm) {
-        this.dynamicDiscoveryNormalisationAlgorithm = dynamicDiscoveryNormalisationAlgorithm;
-    }
+    // dynamic discovery removed due to missing developments on the library
+//    public boolean isUseDynamicDiscovery() {
+//        return useDynamicDiscovery;
+//    }
+//
+//    public void setUseDynamicDiscovery(boolean useDynamicDiscovery) {
+//        this.useDynamicDiscovery = useDynamicDiscovery;
+//    }
+//
+//    public String getDynamicDiscoveryCommunity() {
+//        return dynamicDiscoveryCommunity;
+//    }
+//
+//    public void setDynamicDiscoveryCommunity(String dynamicDiscoveryCommunity) {
+//        this.dynamicDiscoveryCommunity = dynamicDiscoveryCommunity;
+//    }
+//
+//    public String getDynamicDiscoveryEnvironment() {
+//        return dynamicDiscoveryEnvironment;
+//    }
+//
+//    public void setDynamicDiscoveryEnvironment(String dynamicDiscoveryEnvironment) {
+//        this.dynamicDiscoveryEnvironment = dynamicDiscoveryEnvironment;
+//    }
+//
+//    public String getDynamicDiscoveryNormalisationAlgorithm() {
+//        return dynamicDiscoveryNormalisationAlgorithm;
+//    }
+//
+//    public void setDynamicDiscoveryNormalisationAlgorithm(String dynamicDiscoveryNormalisationAlgorithm) {
+//        this.dynamicDiscoveryNormalisationAlgorithm = dynamicDiscoveryNormalisationAlgorithm;
+//    }
 
     public String getMonitoringType() {
         return monitoringType;

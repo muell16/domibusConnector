@@ -5,19 +5,17 @@
  */
 package eu.domibus.connector.gwc.spring;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.gwc.DomibusConnectorGatewayWebserviceClientImpl;
 import eu.domibus.connector.gwc.helper.DownloadMessageHelper;
 import eu.domibus.connector.gwc.helper.SendMessageHelper;
 import eu.domibus.connector.gwc.util.CommonMessageHelper;
-import eu.ecodex.discovery.DiscoveryClient;
-import eu.ecodex.discovery.DiscoveryException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 
 /**
  * WebContext to initialize the default GW Client
@@ -51,13 +49,10 @@ public class DomibusConnectorGatewayWebserviceClientContext {
         return new DownloadMessageHelper();
     }
     
-    @Value("${dynamic.discovery.sml.resolver.address}")    
-    private String resolverAddress;
+    // dynamic discovery removed due to missing developments on the library
+//    @Value("${dynamic.discovery.sml.resolver.address}")    
+//    private String resolverAddress;
     
-    @Bean
-    public DiscoveryClient discoveryClient() throws DiscoveryException {
-        return new DiscoveryClient(resolverAddress);
-    }
     
     @Bean
     public CommonMessageHelper commonMessageHelper() {

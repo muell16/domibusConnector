@@ -4,8 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
@@ -46,16 +44,13 @@ import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientEx
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageDetails;
 import eu.domibus.connector.common.message.MessageError;
-import eu.ecodex.discovery.DiscoveryClient;
-import eu.ecodex.discovery.DiscoveryException;
-import eu.ecodex.discovery.Metadata;
-import eu.ecodex.discovery.names.ECodexNamingScheme;
 
 public class CommonMessageHelper {
 
     org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CommonMessageHelper.class);
 
-    private static final String ENDPOINT_ADDRESS_PROPERTY_NAME = "EndpointAddress";
+ // dynamic discovery removed due to missing developments on the library
+//    private static final String ENDPOINT_ADDRESS_PROPERTY_NAME = "EndpointAddress";
     private static final String ORIGINAL_SENDER_PROPERTY_NAME = "originalSender";
     private static final String FINAL_RECIPIENT_PROPERTY_NAME = "finalRecipient";
     private static final String ORIGINAL_MESSAGE_ID = "originalMessageId";
@@ -67,8 +62,7 @@ public class CommonMessageHelper {
 
     private CommonConnectorProperties connectorProperties;
     private DomibusConnectorPersistenceService persistenceService;
-    private DiscoveryClient dynamicDiscoveryClient;
-
+    
     public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
@@ -77,10 +71,7 @@ public class CommonMessageHelper {
         this.persistenceService = persistenceService;
     }
 
-    public void setDynamicDiscoveryClient(DiscoveryClient dynamicDiscoveryClient) {
-        this.dynamicDiscoveryClient = dynamicDiscoveryClient;
-    }
-
+   
     public void persistEbmsMessageIdIntoDatabase(String ebmsMessageId, Message message) {
         if (!ebmsMessageId.isEmpty()) {
             message.getDbMessage().setEbmsMessageId(ebmsMessageId);
@@ -195,20 +186,21 @@ public class CommonMessageHelper {
             mp.getProperty().add(originalSender);
         }
 
-        if (connectorProperties.isUseDynamicDiscovery()) {
-            String endpointAddress = null;
-            try {
-                endpointAddress = resolveEndpointAddress(message.getMessageDetails());
-            } catch (DiscoveryException e) {
-                e.printStackTrace();
-            }
-            if (endpointAddress != null) {
-                Property ddEndpointAddress = new Property();
-                ddEndpointAddress.setName(ENDPOINT_ADDRESS_PROPERTY_NAME);
-                ddEndpointAddress.setValue(endpointAddress);
-                mp.getProperty().add(ddEndpointAddress);
-            }
-        }
+        // dynamic discovery removed due to missing developments on the library
+//        if (connectorProperties.isUseDynamicDiscovery()) {
+//            String endpointAddress = null;
+//            try {
+//                endpointAddress = resolveEndpointAddress(message.getMessageDetails());
+//            } catch (DiscoveryException e) {
+//                e.printStackTrace();
+//            }
+//            if (endpointAddress != null) {
+//                Property ddEndpointAddress = new Property();
+//                ddEndpointAddress.setName(ENDPOINT_ADDRESS_PROPERTY_NAME);
+//                ddEndpointAddress.setValue(endpointAddress);
+//                mp.getProperty().add(ddEndpointAddress);
+//            }
+//        }
 
         if (message.getMessageDetails().getRefToMessageId() != null) {
             Property originalMessageId = new Property();
@@ -220,41 +212,42 @@ public class CommonMessageHelper {
         return mp;
     }
 
-    private String resolveEndpointAddress(MessageDetails messageDetails) throws DiscoveryException {
-
-        final SortedMap<String, Object> metadata = new TreeMap<String, Object>();
-        metadata.put(Metadata.PROCESS_ID, messageDetails.getService().getService());
-        metadata.put(Metadata.DOCUMENT_OR_ACTION_ID, messageDetails.getAction().getAction());
-        metadata.put(Metadata.SENDING_END_ENTITY_ID, messageDetails.getOriginalSender());
-        metadata.put(Metadata.RECEIVING_END_ENTITY_ID, messageDetails.getFinalRecipient());
-        metadata.put(Metadata.COMMUNITY, connectorProperties.getDynamicDiscoveryCommunity());
-        metadata.put(Metadata.ENVIRONMENT, connectorProperties.getDynamicDiscoveryEnvironment());
-        metadata.put(Metadata.COUNTRY_CODE_OR_EU, messageDetails.getToParty().getPartyId());
-        metadata.put(Metadata.NORMALISATION_ALGORITHM, connectorProperties.getDynamicDiscoveryNormalisationAlgorithm()); // use
-                                                                                                                         // hashed
-        // identifiers
-        metadata.put(Metadata.SUFFIX, "bdxl.e-codex.eu");
-        metadata.put(Metadata.NAMING_SCHEME, new ECodexNamingScheme());
-
-        LOGGER.info(
-                "Calling dynamic discovery with parameters processId={}, documentOrActionId={}, sendingEndEntityId={}, receivingEndEntityId={}, "
-                        + "community={}, environment={}, countryCode={}, normalisationAlgorithm={}, suffix={}",
-                new Object[] { metadata.get(Metadata.PROCESS_ID), metadata.get(Metadata.DOCUMENT_OR_ACTION_ID),
-                        metadata.get(Metadata.SENDING_END_ENTITY_ID), metadata.get(Metadata.RECEIVING_END_ENTITY_ID),
-                        metadata.get(Metadata.COMMUNITY), metadata.get(Metadata.ENVIRONMENT),
-                        metadata.get(Metadata.COUNTRY_CODE_OR_EU), metadata.get(Metadata.NORMALISATION_ALGORITHM),
-                        metadata.get(Metadata.SUFFIX) });
-
-        dynamicDiscoveryClient.resolveMetadata(metadata);
-
-        final String endpointAddress = (String) metadata.get(Metadata.ENDPOINT_ADDRESS);
-
-        if (endpointAddress == null || endpointAddress.isEmpty()) {
-            LOGGER.info("Dynamic discovery could not find an endpoint address!");
-        }
-
-        return endpointAddress;
-    }
+ // dynamic discovery removed due to missing developments on the library
+//    private String resolveEndpointAddress(MessageDetails messageDetails) throws DiscoveryException {
+//
+//        final SortedMap<String, Object> metadata = new TreeMap<String, Object>();
+//        metadata.put(Metadata.PROCESS_ID, messageDetails.getService().getService());
+//        metadata.put(Metadata.DOCUMENT_OR_ACTION_ID, messageDetails.getAction().getAction());
+//        metadata.put(Metadata.SENDING_END_ENTITY_ID, messageDetails.getOriginalSender());
+//        metadata.put(Metadata.RECEIVING_END_ENTITY_ID, messageDetails.getFinalRecipient());
+//        metadata.put(Metadata.COMMUNITY, connectorProperties.getDynamicDiscoveryCommunity());
+//        metadata.put(Metadata.ENVIRONMENT, connectorProperties.getDynamicDiscoveryEnvironment());
+//        metadata.put(Metadata.COUNTRY_CODE_OR_EU, messageDetails.getToParty().getPartyId());
+//        metadata.put(Metadata.NORMALISATION_ALGORITHM, connectorProperties.getDynamicDiscoveryNormalisationAlgorithm()); // use
+//                                                                                                                         // hashed
+//        // identifiers
+//        metadata.put(Metadata.SUFFIX, "bdxl.e-codex.eu");
+//        metadata.put(Metadata.NAMING_SCHEME, new ECodexNamingScheme());
+//
+//        LOGGER.info(
+//                "Calling dynamic discovery with parameters processId={}, documentOrActionId={}, sendingEndEntityId={}, receivingEndEntityId={}, "
+//                        + "community={}, environment={}, countryCode={}, normalisationAlgorithm={}, suffix={}",
+//                new Object[] { metadata.get(Metadata.PROCESS_ID), metadata.get(Metadata.DOCUMENT_OR_ACTION_ID),
+//                        metadata.get(Metadata.SENDING_END_ENTITY_ID), metadata.get(Metadata.RECEIVING_END_ENTITY_ID),
+//                        metadata.get(Metadata.COMMUNITY), metadata.get(Metadata.ENVIRONMENT),
+//                        metadata.get(Metadata.COUNTRY_CODE_OR_EU), metadata.get(Metadata.NORMALISATION_ALGORITHM),
+//                        metadata.get(Metadata.SUFFIX) });
+//
+//        dynamicDiscoveryClient.resolveMetadata(metadata);
+//
+//        final String endpointAddress = (String) metadata.get(Metadata.ENDPOINT_ADDRESS);
+//
+//        if (endpointAddress == null || endpointAddress.isEmpty()) {
+//            LOGGER.info("Dynamic discovery could not find an endpoint address!");
+//        }
+//
+//        return endpointAddress;
+//    }
 
     private PartyInfo buildPartyInfo(Message message) throws DomibusConnectorGatewayWebserviceClientException {
         MessageDetails details = message.getMessageDetails();
