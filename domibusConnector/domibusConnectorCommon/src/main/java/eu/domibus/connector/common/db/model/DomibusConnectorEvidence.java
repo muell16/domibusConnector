@@ -21,8 +21,8 @@ import eu.domibus.connector.common.enums.EvidenceType;
 public class DomibusConnectorEvidence {
 
     @Id
-    @TableGenerator(name = "seqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_EVIDENCES.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStore")
+    @TableGenerator(name = "evidencesSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_EVIDENCES.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "evidencesSeqStore")
     private Long id;
 
     @ManyToOne

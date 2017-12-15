@@ -19,8 +19,8 @@ import javax.persistence.TableGenerator;
 public class DomibusConnectorMessageInfo {
 
     @Id
-    @TableGenerator(name = "seqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE_INFO.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStore")
+    @TableGenerator(name = "seqStoreMsgInfo", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE_INFO.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgInfo")
     private Long id;
 
     @OneToOne
@@ -28,13 +28,16 @@ public class DomibusConnectorMessageInfo {
     private DomibusConnectorMessage message;
 
     @ManyToOne
-    @JoinColumns(value = { @JoinColumn(name = "FROM_PARTY_ID", nullable = true),
-            @JoinColumn(name = "FROM_PARTY_ROLE", nullable = true) })
+    @JoinColumns(value = { 
+        @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
+        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) 
+    })
     private DomibusConnectorParty from;
 
     @ManyToOne
-    @JoinColumns(value = { @JoinColumn(name = "TO_PARTY_ID", nullable = true),
-            @JoinColumn(name = "TO_PARTY_ROLE", nullable = true) })
+    @JoinColumns(value = { 
+        @JoinColumn(name = "TO_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
+        @JoinColumn(name = "TO_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) })
     private DomibusConnectorParty to;
 
     @Column(name = "ORIGINAL_SENDER")

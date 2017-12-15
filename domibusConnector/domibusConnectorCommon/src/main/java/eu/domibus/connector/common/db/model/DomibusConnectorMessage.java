@@ -23,8 +23,8 @@ import eu.domibus.connector.common.enums.MessageDirection;
 public class DomibusConnectorMessage {
 
     @Id
-    @TableGenerator(name = "seqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGES.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStore")
+    @TableGenerator(name = "seqStoreMessages", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGES.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMessages")
     private Long id;
 
     @Column(name = "EBMS_MESSAGE_ID", unique = true)

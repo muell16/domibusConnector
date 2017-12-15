@@ -17,8 +17,8 @@ import javax.persistence.TableGenerator;
 public class DomibusConnectorMessageError {
 
     @Id
-    @TableGenerator(name = "seqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_ERROR.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStore")
+    @TableGenerator(name = "seqStoreMsgError", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_ERROR.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgError")
     private Long id;
 
     @OneToOne
