@@ -28,13 +28,16 @@ public class DomibusConnectorMessageInfo {
     private DomibusConnectorMessage message;
 
     @ManyToOne
-    @JoinColumns(value = { @JoinColumn(name = "FROM_PARTY_ID", nullable = true),
-            @JoinColumn(name = "FROM_PARTY_ROLE", nullable = true) })
+    @JoinColumns(value = { 
+        @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
+        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) 
+    })
     private DomibusConnectorParty from;
 
     @ManyToOne
-    @JoinColumns(value = { @JoinColumn(name = "TO_PARTY_ID", nullable = true),
-            @JoinColumn(name = "TO_PARTY_ROLE", nullable = true) })
+    @JoinColumns(value = { 
+        @JoinColumn(name = "TO_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
+        @JoinColumn(name = "TO_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) })
     private DomibusConnectorParty to;
 
     @Column(name = "ORIGINAL_SENDER")
