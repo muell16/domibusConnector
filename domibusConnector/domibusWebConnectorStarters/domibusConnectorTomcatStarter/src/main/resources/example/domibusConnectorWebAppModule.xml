@@ -1,0 +1,12 @@
+<Context docBase="C:\Entwicklung\repos\connector\domibusConnector\domibusConnectorWebAppModule\target\domibusConnectorWebAppModule.war">
+  
+  <Parameter name="spring.datasource.jndi-name" value="jdbc/domibusWebConnectorDS" override="false" />
+  <Parameter name="spring.active.profiles" value="tomcat" override="false" />
+  
+  <Resource name="jdbc/domibusWebConnectorDS" auth="Container"
+              type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+              url="jdbc:oracle:thin:@sjusee:1521:sjusee"
+              username="tbckenddb" password="tbckenddb" maxActive="20" maxIdle="10"
+              maxWait="-1"/>
+   
+</Context>

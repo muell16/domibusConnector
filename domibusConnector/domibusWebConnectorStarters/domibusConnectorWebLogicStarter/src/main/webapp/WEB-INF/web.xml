@@ -11,7 +11,7 @@
     </session-config>
   <context-param>
       <param-name>spring.datasource.jndi-name</param-name>
-      <param-value>domibusWebConnectorDS</param-value>
+      <param-value>jdbc/domibusWebConnectorDS</param-value>
   </context-param>
   <context-param>
       <param-name>spring.active.profiles</param-name>
