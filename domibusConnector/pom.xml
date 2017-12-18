@@ -20,6 +20,7 @@
         <module>domibusConnectorGatewayPluginClient</module>
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorWebAppModule</module>
+        <module>domibusWebConnectorStarters</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
@@ -39,11 +40,11 @@
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
         <!-- if necessary overwrite proxy settings in local settings.xml -->
         <https.proxy.enabled>false</https.proxy.enabled>
-        <https.proxy.host></https.proxy.host>
-        <https.proxy.port></https.proxy.port>
+        <https.proxy.host/>
+        <https.proxy.port/>
         <http.proxy.enabled>false</http.proxy.enabled>
-        <http.proxy.host></http.proxy.host>
-        <http.proxy.port></http.proxy.port>            
+        <http.proxy.host/>
+        <http.proxy.port/>            
 	</properties>
 
 	<scm>
@@ -135,57 +136,11 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.5.2.RELEASE</version>
+                <version>1.5.5.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
-        
-<!--            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-oxm</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>-->
-<!--            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>-->
-<!--            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>-->
             
             <!--JSF -->
             <dependency>
@@ -219,24 +174,6 @@
                 <version>1.2.2</version>
             </dependency>
             
-            
-            <!-- LOGGING -->
-<!--            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-ext</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>-->
-            
             <!-- Apache CXF dependencies -->
 		
             <dependency>
@@ -258,13 +195,6 @@
 		
             <!-- Other dependencies -->
 		
-        
-<!--            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>compile</scope>
-            </dependency>-->
             <dependency>
                 <groupId>c3p0</groupId>
                 <artifactId>c3p0</artifactId>
@@ -338,32 +268,6 @@
 
             <!--  TEST DEPENDENCIES -->
 
-<!--            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-            </dependency>
-
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>            
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-test</artifactId>        
-            </dependency>-->
-                        
         </dependencies>
     </dependencyManagement>
     
