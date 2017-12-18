@@ -13,7 +13,7 @@
         <version>4.0-SNAPSHOT</version>
     </parent>
 
-    <name>domibusConnectorWebApp</name>
+    <name>domibusConnectorWebAppModule</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -197,6 +197,7 @@
                             </execution>
                         </executions>
                     </plugin>
+                   
                 </plugins>
             </build>
                 
@@ -417,6 +418,16 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
         </dependency>
+        <!-- required for weblogic -->
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+        </dependency>
+<!--         end of weblogic req -->
     </dependencies>
 
     <build>
@@ -434,6 +445,31 @@
             </resource>
         </resources>
         <plugins>
+            
+<!--            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.2</version>
+                       
+                <executions>
+                    <execution>
+                        <id>src-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                             use copy-dependencies instead if you don't want to explode the sources 
+                            <goal>unpack-dependencies</goal>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>sources</classifier>
+                            <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                            <outputDirectory>${project.build.directory}/sources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+            
+            
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
