@@ -21,9 +21,16 @@
 				<include>*.pdf</include>
 			</includes>
 		</fileSet>
+        <fileSet>
+			<directory>${project.build.directory}/target/pdf</directory>
+			<outputDirectory>${documentation.output.dir}/guides</outputDirectory>
+			<includes>
+				<include>*.pdf</include>
+			</includes>
+		</fileSet>
 		<fileSet>
-			<directory>${webadmin.resources.dir}/ExampleProperties</directory>
-			<outputDirectory>${documentation.output.dir}/properties</outputDirectory>
+			<directory>${webadmin.resources.dir}/docs/examplecontext</directory>
+			<outputDirectory>${documentation.output.dir}/ExampleContext</outputDirectory>
 		</fileSet>
 		
 	</fileSets>

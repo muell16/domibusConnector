@@ -18,16 +18,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--
-        <theme.version>1.0.10</theme.version>
-        <jsf.version>2.2.15</jsf.version> 
-        <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
-        <org.slf4j.version>1.7.11</org.slf4j.version>
-        <domibus.connector.version>4.0-SNAPSHOT</domibus.connector.version>
-        <ecodex.monitoring.version>2.1</ecodex.monitoring.version>
-        <org.primefaces.version>6.1</org.primefaces.version>-->
-        <!-- 		<mojarra.version>2.1.6</mojarra.version> -->
-
         <webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
         <webadmin.build.dir>domibusWebAdmin/</webadmin.build.dir>
         <documentation.output.dir>${webadmin.build.dir}documentation/</documentation.output.dir>
@@ -445,31 +435,8 @@
             </resource>
         </resources>
         <plugins>
-            
-<!--            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.2</version>
-                       
-                <executions>
-                    <execution>
-                        <id>src-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                             use copy-dependencies instead if you don't want to explode the sources 
-                            <goal>unpack-dependencies</goal>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>sources</classifier>
-                            <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-                            <outputDirectory>${project.build.directory}/sources</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
-            
-            
+
+                        
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -512,23 +479,22 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pdf-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <executions>                    
+                    <execution>
+                        <id>make-pdf</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>pdf</goal>
+                        </goals>                        
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
-        <finalName>${project.artifactId}</finalName>
-        
+        <finalName>${project.artifactId}</finalName>        
     </build>
     
-<!--    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>-->
+
 
 </project>
