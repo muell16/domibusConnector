@@ -13,21 +13,11 @@
         <version>4.0-SNAPSHOT</version>
     </parent>
 
-    <name>domibusConnectorWebApp</name>
+    <name>domibusConnectorWebAppModule</name>
     <url>http://maven.apache.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--
-        <theme.version>1.0.10</theme.version>
-        <jsf.version>2.2.15</jsf.version> 
-        <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
-        <org.slf4j.version>1.7.11</org.slf4j.version>
-        <domibus.connector.version>4.0-SNAPSHOT</domibus.connector.version>
-        <ecodex.monitoring.version>2.1</ecodex.monitoring.version>
-        <org.primefaces.version>6.1</org.primefaces.version>-->
-        <!-- 		<mojarra.version>2.1.6</mojarra.version> -->
-
         <webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
         <webadmin.build.dir>domibusWebAdmin/</webadmin.build.dir>
         <documentation.output.dir>${webadmin.build.dir}documentation/</documentation.output.dir>
@@ -197,6 +187,7 @@
                             </execution>
                         </executions>
                     </plugin>
+                   
                 </plugins>
             </build>
                 
@@ -417,6 +408,16 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
         </dependency>
+        <!-- required for weblogic -->
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+        </dependency>
+<!--         end of weblogic req -->
     </dependencies>
 
     <build>
@@ -434,6 +435,8 @@
             </resource>
         </resources>
         <plugins>
+
+                        
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -475,19 +478,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-pdf-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <executions>                    
+                    <execution>
+                        <id>make-pdf</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>pdf</goal>
+                        </goals>                        
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}</finalName>        
     </build>
     
-<!--    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>-->
+
 
 </project>

@@ -11,16 +11,30 @@
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorWebAppModule/target/
 			</directory>
-			<outputDirectory>domibusConnectorWebApp/webapps</outputDirectory>
+			<outputDirectory>domibusConnectorWebApp/webapp</outputDirectory>
 			<includes>
 				<include>*.war</include>
 			</includes>
 		</fileSet>   
         <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/ExampleProperties/</directory>
-            <outputDirectory>domibusConnectorWebApp/conf/domibuswebapp/</outputDirectory>
+            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/examplecontext</directory>
+            <outputDirectory>domibusConnectorWebApp/Documentation/ExampleContext</outputDirectory>
             <includes>
-                <include>domibuswebapp.properties</include>
+                <include>*.xml</include>
+            </includes>
+        </fileSet>  
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs</directory>
+            <outputDirectory>domibusConnectorWebApp/Documentation/Guides</outputDirectory>
+            <includes>
+                <include>*.pdf</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorWebAppModule/target/pdf/</directory>
+            <outputDirectory>domibusConnectorWebApp/Documentation/Guides</outputDirectory>
+            <includes>
+                <include>*.pdf</include>
             </includes>
         </fileSet>                     
     </fileSets>
