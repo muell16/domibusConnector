@@ -269,9 +269,14 @@
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-core</artifactId>
                 <version>2.5.1</version>
-            </dependency>
-                        
+            </dependency>  
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>2.5.4</version>
+            </dependency>                     
         </dependencies>
+
     </dependencyManagement>
     
     

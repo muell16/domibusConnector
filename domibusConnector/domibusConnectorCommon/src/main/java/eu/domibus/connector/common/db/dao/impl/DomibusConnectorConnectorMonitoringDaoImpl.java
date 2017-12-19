@@ -3,8 +3,16 @@ package eu.domibus.connector.common.db.dao.impl;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
+
+@Repository("monitoringDao")
 public class DomibusConnectorConnectorMonitoringDaoImpl extends JdbcDaoSupport implements DomibusConnectorConnectorMonitoringDao {
+
+    public DomibusConnectorConnectorMonitoringDaoImpl(DataSource ds) {
+        super.setDataSource(ds);
+    }
 
     /* (non-Javadoc)
      * @see eu.domibus.connector.common.db.dao.impl.DomibusConnectorConnectorMonitoringDao#selectTimerIntervalForJob(java.lang.String)

@@ -10,10 +10,12 @@ import javax.persistence.Query;
 import eu.domibus.connector.common.db.dao.DomibusConnectorMessageErrorDao;
 import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
 import eu.domibus.connector.common.db.model.DomibusConnectorMessageError;
+import org.springframework.stereotype.Repository;
 
+@Repository("messageErrorDao")
 public class DomibusConnectorMessageErrorDaoImpl implements DomibusConnectorMessageErrorDao {
 
-    @PersistenceContext(unitName = "domibus.connector")
+    @PersistenceContext //(unitName = "domibus.connector")
     private EntityManager em;
 
     @Override

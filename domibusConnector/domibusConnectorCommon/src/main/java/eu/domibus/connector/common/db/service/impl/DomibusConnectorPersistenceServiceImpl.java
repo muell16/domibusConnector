@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -31,6 +33,9 @@ import eu.domibus.connector.common.message.MessageConfirmation;
 import eu.domibus.connector.common.message.MessageDetails;
 import eu.domibus.connector.common.message.MessageError;
 
+import javax.annotation.Resource;
+
+@Service("persistenceService")
 public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorPersistenceService {
 
     private static final String RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT = "RetrievalNonRetrievalToRecipient";
@@ -38,12 +43,19 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     private static final String RELAY_REMMD_FAILURE = "RelayREMMDFailure";
     private static final String RELAY_REMMD_ACCEPTANCE_REJECTION = "RelayREMMDAcceptanceRejection";
 
+    @Autowired
     private DomibusConnectorMessageDao messageDao;
+    @Autowired
     private DomibusConnectorEvidenceDao evidenceDao;
+    @Autowired
     private DomibusConnectorActionDao actionDao;
+    @Autowired
     private DomibusConnectorServiceDao serviceDao;
+    @Autowired
     private DomibusConnectorPartyDao partyDao;
+    @Autowired
     private DomibusConnectorMessageInfoDao messageInfoDao;
+    @Autowired
     private DomibusConnectorMessageErrorDao messageErrorDao;
 
     public void setMessageDao(DomibusConnectorMessageDao messageDao) {

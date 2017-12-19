@@ -15,10 +15,10 @@ import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 
-@Repository
+@Repository("messageDao")
 public class DomibusConnectorMessageDaoImpl implements DomibusConnectorMessageDao {
 
-    @PersistenceContext(unitName = "domibus.connector")
+    @PersistenceContext //(unitName = "domibus.connector")
     private EntityManager em;
 
     @Override
