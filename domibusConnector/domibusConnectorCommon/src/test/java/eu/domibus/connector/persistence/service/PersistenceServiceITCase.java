@@ -1,13 +1,17 @@
 package eu.domibus.connector.persistence.service;
 
 
+import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorService;
 import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.connector.common.exception.PersistenceException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageContent;
 import eu.domibus.connector.common.message.MessageDetails;
+import javax.persistence.NoResultException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,6 +26,7 @@ import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Ignore;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 /**
  * Integration Test for testing persistence service
@@ -131,6 +136,50 @@ public class PersistenceServiceITCase {
         persistenceService.mergeMessageWithDatabase(message);
     }
     
+    @Test
+    @Ignore
+    public void testPersistEvidenceForMessageIntoDatabase() {
+        MessageDetails messageDetails = new MessageDetails();
+        MessageContent messageContent = new MessageContent();
+        Message message = new Message(messageDetails, messageContent);
+        
+        byte[] evidence = "hallo Welt".getBytes();
+        
+        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, EvidenceType.DELIVERY);
+    }
+    
+    //TODO: load testdata and do check with testdata
+    
+    @Test(expected=EmptyResultDataAccessException.class)
+    public void testFindMessageByNationalId_doesNotExist_shouldThrowEmptyResultException() {
+        String nationalIdString = "TEST1";
+        Message findMessageByNationalId = persistenceService.findMessageByNationalId(nationalIdString);
+        
+    }
+    
+    @Test
+    public void testGetAction() {
+        DomibusConnectorAction action = persistenceService.getAction("Form_A");
+        assertThat(action).isNotNull();
+    }
+    
+    @Test
+    public void testGetParty() {       
+        DomibusConnectorParty party = persistenceService.getParty("AT", "GW");
+        assertThat(party).isNotNull();
+    }
+    
+    @Test
+    public void testGetParty_doesNotExistInDB_shouldBeNull() {       
+        DomibusConnectorParty party = persistenceService.getParty("ATEA", "GW");
+        assertThat(party).isNull();
+    }
+    
+    @Test
+    public void testGetPartyById() {
+        DomibusConnectorParty party = persistenceService.getPartyByPartyId("AT");
+        assertThat(party).isNotNull();
+    }
     
     /**
      *  void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException;
