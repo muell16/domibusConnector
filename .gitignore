@@ -39,7 +39,7 @@ target/
 *.iml
 *.ipr
 *.iws
-/.idea/
+*/.idea/
 
 ##netbeans files
 nbactions.xml
@@ -48,6 +48,7 @@ nbproject/**
 
 ##temp docx files
 ~$*.docx
+$Recycle.Bin
 
 ## soapUI test reports ##
 
