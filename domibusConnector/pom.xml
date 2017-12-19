@@ -19,7 +19,7 @@
 		<module>domibusConnectorRunnable</module>
         <module>domibusConnectorGatewayPluginClient</module>
         <module>domibusConnectorDocumentation</module>
-        <module>domibusConnectorWebAppModule</module>
+        <module>domibusConnectorWebAppModule</module>        
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
@@ -39,11 +39,11 @@
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
         <!-- if necessary overwrite proxy settings in local settings.xml -->
         <https.proxy.enabled>false</https.proxy.enabled>
-        <https.proxy.host></https.proxy.host>
-        <https.proxy.port></https.proxy.port>
+        <https.proxy.host/>
+        <https.proxy.port/>
         <http.proxy.enabled>false</http.proxy.enabled>
-        <http.proxy.host></http.proxy.host>
-        <http.proxy.port></http.proxy.port>            
+        <http.proxy.host/>
+        <http.proxy.port/>            
 	</properties>
 
 	<scm>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.5.2.RELEASE</version>
+                <version>1.5.5.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -172,7 +172,6 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>1.2.2</version>
             </dependency>
-
             
             <!-- Apache CXF dependencies -->
 		
@@ -329,6 +328,18 @@
                     <configuration>
                         <encoding>UTF-8</encoding>                        
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pdf-plugin</artifactId>
+                    <version>1.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.doxia</groupId>
+                            <artifactId>doxia-module-markdown</artifactId>
+                            <version>1.3</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

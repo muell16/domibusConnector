@@ -17,12 +17,18 @@ import eu.domibus.webadmin.commons.WebAdminProperties;
 import eu.domibus.webadmin.dao.impl.DomibusWebAdminUserDao;
 import eu.domibus.webadmin.jsf.LoginBean;
 import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
+import java.io.File;
 
 import java.util.Properties;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
+import org.springframework.web.WebApplicationInitializer;
 
 
 /**
@@ -31,84 +37,36 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfigurati
  *  
  *  for further doc see {@link SpringBootServletInitializer}
  *  
+ * 
  * @author spindlest
  *
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "eu.domibus")
 @EnableAutoConfiguration(exclude={
 //    LiquibaseAutoConfiguration.class
-})
-@Configuration
-@ComponentScan(basePackageClasses= {
-		LoginBean.class, 	
-		WebAdminProperties.class, 
-		DomibusWebAdminUserDao.class, 
-		ConnectorPModeSupportImpl.class, 
-		ConnectorSummaryServiceImpl.class,
-		ConnectorMonitoringService.class,
-		DomibusWebAdminUserAuthenticationProvider.class
-		})
-@Import({
-    //DatabaseConnectionContext.class,
-    JpaContext.class, 
-    SecurityConfig.class, 
-    DomibusWebAdminContext.class,
-    DomibusConnectorGatewayWebserviceClientContext.class
 })
 @ImportResource({        
     "classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml",
     "classpath:/spring/context/DomibusConnectorSecurityToolkitContext.xml",
     "classpath:/spring/context/DomibusConnectorEvidencesToolkitContext.xml",
 	"classpath:/spring/context/DomibusConnectorContentMapperContext.xml",
-//	"classpath:/spring/context/DomibusConnectorGateway${gateway.routing.option}ClientContext.xml", replaced by DomibusConnectorGatewayWebserviceClientContext.class
 	"classpath:/spring/context/DomibusConnectorNationalBackendClientContext.xml",
 	"classpath:/spring/context/DomibusConnectorMonitoringContext.xml",
 	"classpath:/spring/context/quartz-context.xml"
 })
-public class WebRunner extends SpringBootServletInitializer {
+public class WebRunner extends SpringBootServletInitializer implements WebApplicationInitializer {
 
     private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 	
     /**
-     * configures the Spring application by adding this class as source
-     * also sets the spring.config.location if not set
-     * to domibuswebapp.config.location if this environment variable is set
-     * otherwhise to ${catalina.home}/conf/webadmin/
-     * 
-     * also sets spring.config.name if not set to 
-     * webadmin
-     * 
-     * this settings results if not anything is configured to 
-     * ${catalina.home}/conf/webadmin/domibuswebapp.properties
-     * 
+     *  just adds WebRunner.class to the Spring Application sources
      * 
      *  {@inheritDoc }
      */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-    	LOG.info("configure: run as war on appserver....");
-        Properties props = new Properties();
-        
-        props.put("debug", true);
-        
-        if (System.getProperty("spring.config.name") == null) {
-            props.put("spring.config.name", "domibuswebapp");
-        }
-        
-        //if deployed as war and no domibuswebapp.config.location is set 
-        //set search location for config to ${CATALINA_HOME}/conf/webadmin/webadmin.properties
-        if (System.getProperty("domibuswebapp.config.location") != null ) {
-            props.put("spring.config.location", System.getProperty("domibuswebapp.config.location"));
-        } else if (System.getProperty("spring.config.location") != null) {
-            //do nothing spring.config.location is already in environment!
-        } else {         
-            //if not already set, set to default:
-            props.put("spring.config.location", "${catalina.home}/conf/domibuswebapp/");                 
-        }        
-    	application.properties(props);  
     	return application.sources(WebRunner.class);
     }
-
     
     public static void main(String[] args) {
         SpringApplication.run(WebRunner.class, args);
