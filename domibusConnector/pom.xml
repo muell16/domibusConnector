@@ -140,52 +140,6 @@
                 <scope>import</scope>
             </dependency>
 
-        
-<!--            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-oxm</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>-->
-<!--            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>-->
-<!--            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>-->
             
             <!--JSF -->
             <dependency>
@@ -218,24 +172,7 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>1.2.2</version>
             </dependency>
-            
-            
-            <!-- LOGGING -->
-<!--            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-ext</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${org.slf4j.version}</version>
-            </dependency>-->
+
             
             <!-- Apache CXF dependencies -->
 		
@@ -257,14 +194,7 @@
 
 		
             <!-- Other dependencies -->
-		
-        
-<!--            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>compile</scope>
-            </dependency>-->
+
             <dependency>
                 <groupId>c3p0</groupId>
                 <artifactId>c3p0</artifactId>
@@ -284,7 +214,6 @@
                 <version>3.2</version>
                 <scope>compile</scope>
             </dependency>
-		
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -322,8 +251,6 @@
                 <version>4.12</version>
                 <scope>test</scope>
             </dependency>
-            
-            
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
@@ -334,35 +261,16 @@
                 <artifactId>mail</artifactId>
                 <version>1.4.2</version>
             </dependency>
-
-
-            <!--  TEST DEPENDENCIES -->
-
-<!--            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-            </dependency>
-
             <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-matchers</artifactId>
+                <version>2.5.1</version>
             </dependency>
             <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>            
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>2.5.1</version>
             </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-test</artifactId>        
-            </dependency>-->
                         
         </dependencies>
     </dependencyManagement>
