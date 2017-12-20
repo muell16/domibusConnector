@@ -7,10 +7,12 @@ import javax.persistence.Query;
 import eu.domibus.connector.common.db.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.common.db.model.DomibusConnectorParty;
 import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
+import org.springframework.stereotype.Repository;
 
+@Repository("partyDao")
 public class DomibusConnectorPartyDaoImpl implements DomibusConnectorPartyDao {
 
-    @PersistenceContext(unitName = "domibus.connector")
+    @PersistenceContext //(unitName = "domibus.connector")
     private EntityManager em;
 
     @Override

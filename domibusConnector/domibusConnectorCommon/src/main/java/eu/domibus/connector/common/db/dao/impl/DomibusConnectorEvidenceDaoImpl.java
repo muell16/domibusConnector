@@ -13,10 +13,10 @@ import eu.domibus.connector.common.db.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
 import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
 
-@Repository
+@Repository("evidenceDao")
 public class DomibusConnectorEvidenceDaoImpl implements DomibusConnectorEvidenceDao {
 
-    @PersistenceContext(unitName = "domibus.connector")
+    @PersistenceContext //(unitName = "domibus.connector")
     private EntityManager em;
 
     @Override

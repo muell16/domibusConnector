@@ -39,7 +39,7 @@ target/
 *.iml
 *.ipr
 *.iws
-/.idea/
+*/.idea/
 
 ##netbeans files
 nbactions.xml
@@ -48,8 +48,10 @@ nbproject/**
 
 ##temp docx files
 ~$*.docx
+$Recycle.Bin
 
 ## soapUI test reports ##
 
 /holodeck/modules/holodeck-distribution/src/test/resources/soapui_testsuites/*.txt
 
+/domibusConnector/domibusConnectorSecurityToolkit/nbproject/
