@@ -19,7 +19,8 @@
 		<module>domibusConnectorRunnable</module>
         <module>domibusConnectorGatewayPluginClient</module>
         <module>domibusConnectorDocumentation</module>
-        <module>domibusConnectorWebAppModule</module>        
+        <module>domibusConnectorWebAppModule</module>
+	 <module>domibusConnectorPersistence</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
