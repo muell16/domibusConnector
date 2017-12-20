@@ -27,8 +27,7 @@ import java.io.IOException;
 
 /**
  * basic test of security toolkit
- *  based on the test character it is more a integration test (loads external ressources)
- *  than a unit test
+ * 
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
