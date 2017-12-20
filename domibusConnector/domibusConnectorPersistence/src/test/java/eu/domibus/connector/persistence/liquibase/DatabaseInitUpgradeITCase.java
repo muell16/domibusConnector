@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -75,7 +76,7 @@ public class DatabaseInitUpgradeITCase {
     */
     protected void checkInstallDB(String profile, Properties props) {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInstallDB");
-        props.put("liquibase.change-log","classpath:/db/changelog/v004/initial-4.0.xml");
+        props.put("liquibase.change-log","classpath:/db/changelog/install/initial-4.0.xml");
         
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
@@ -94,12 +95,23 @@ public class DatabaseInitUpgradeITCase {
         }
     }
     
+        
+    @Test
+    public void testInstall004Database_h2() {
+        checkInstallDB("db_h2", new Properties());  
+    }
+    
+    @Test
+    public void testInstall004Database_mysql() {        
+        Properties p = loadMysqlTestProperties();
+        checkInstallDB("db_mysql", p);  
+    }
+    
 
     
     /*
     * INITIAL VERSION 3 Tests
     */
-
     protected void checkInital003DB(String profile, Properties props)  {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
         props.put("liquibase.change-log","classpath:/db/changelog/v003/initial-3.0.xml");
@@ -119,15 +131,22 @@ public class DatabaseInitUpgradeITCase {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        
+//        if ("db_h2".equals(profile)) {
+//            DataSource ds = ctx.getBean(DataSource.class);
+//            
+//        }
     }
     
     
     @Test
+//    @Ignore
     public void testInitial003Database_h2() {
         checkInital003DB("db_h2", new Properties());  
     }
     
     @Test
+    @Ignore
     public void testInitial003Database_mysql() {        
         Properties p = loadMysqlTestProperties();
         checkInital003DB("db_mysql", p);  

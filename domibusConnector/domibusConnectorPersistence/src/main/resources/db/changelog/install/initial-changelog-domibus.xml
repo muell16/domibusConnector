@@ -4,150 +4,297 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
-    <changeSet author="StephanSpindler" id="changelog-domibus-1.0">
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0">
     
         <createTable tableName="DOMIBUS_CONNECTOR_SEQ_STORE" >
             <column name="SEQ_NAME" type="VARCHAR(255)" >
-                <constraints nullable="false" primaryKey="true" />
+                <constraints nullable="false" />
             </column>
             <column name="SEQ_VALUE" type="NUMBER(10,0)" >
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
       
-        <createTable tableName="DOMIBUS_CONNECTOR_MESSAGES">
-            <column name="ID" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" />
-            </column>
-            <column name="EBMS_MESSAGE_ID" type="VARCHAR(255)" ></column>
-            <column name="NAT_MESSAGE_ID" type="VARCHAR(255)"></column>
-            <column name="CONVERSATION_ID" type="VARCHAR(255)"></column>      
-            <column name="DIRECTION" type="VARCHAR(10)"></column>
-            <column name="HASH_VALUE" type="VARCHAR(1000)"></column>
-            <column name="CONFIRMED" type="DATETIME" ></column>
-            <column name="REJECTED" type="DATETIME"></column>
-            <column name="DELIVERED_NAT" type="DATETIME"></column>
-            <column name="DELIVERED_GW" type="DATETIME"></column>
-            <column name="UPDATED" type="TIMESTAMP"></column>      
-        </createTable>
-    
-        <createTable tableName="DOIMBUS_CONNECTOR_EVIDENCES">
-            <column name="ID" type="BIGINT"> 
-                <constraints nullable="false" primaryKey="true" />
-            </column>
-            <column name="MESSAGE_ID" type="BIGINT">
-                <constraints references="DOMIBUS_CONNECTOR_MESSAGES(ID)" foreignKeyName="fk_domibus_connector_messages_id" />
-            </column>
-            <column name="TYPE" type="VARCHAR(255)" />
-            <column name="EVIDENCE" type="TEXT" />
-            <column name="DELIVERED_NAT" type="DATETIME" />
-            <column name="DELIVERED_GW" type="DATETIME" />
-            <column name="UPDATED" type="TIMESTAMP" />            
-        </createTable>
-    
-        <createTable tableName="DOMIBUS_CONNECTOR_PARTY">
-            <column name="PARTY_ID" type="VARCHAR(50)" >
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="ROLE" type="VARCHAR(255)" >
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="PARTY_ID_TYPE" type="VARCHAR(255)" />        
-        </createTable>
-    
-        <createTable tableName="DOMIBUS_CONNECTOR_ACTION" >
-            <column name="ACTION" type="VARCHAR(50)" >
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="PDF_REQUIRED" type="boolean" defaultValue="true" >
-                <constraints nullable="false" />
-            </column>        
-        </createTable>
-    
         <createTable tableName="DOMIBUS_CONNECTOR_SERVICE" >
-            <column name="SERVICE" type="VARCHAR(50)" >
-                <constraints nullable="false" primaryKey="true" />
+            <column name="SERVICE" type="VARCHAR(255)" >
+                <constraints nullable="false" />
             </column>
             <column name="SERVICE_TYPE" type="VARCHAR(255)" >
                 <constraints nullable="false" />
             </column>
         </createTable>
-    
-        <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" >
-            <column name="ID" type="BIGINT" >
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="MESSAGE_ID" type="BIGINT" >
-                <constraints nullable="false" unique="true" />
-            </column>
-            <column name="FROM_PARTY_ID" type="VARCHAR(50)" />
-            <column name="FROM_PARTY_ROLE" type="VARCHAR(50)" />
-            <column name="TO_PARTY_ID" type="VARCHAR(50)" />
-            <column name="TO_PARTY_ROLE" type="VARCHAR(50)" />
-            <column name="ORIGINAL_SENDER" type="VARCHAR(50)" />
-            <column name="FINAL_RECIPIENT" type="VARCHAR(50)" />
-            <column name="SERVICE" type="VARCHAR(50)" />
-            <column name="ACTION" type="VARCHAR(50)" />
-            <column name="CREATED" type="DATETIME" >
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
+            
+        <createTable tableName="DOMIBUS_CONNECTOR_PARTY">
+            <column name="PARTY_ID" type="VARCHAR(255)" >
                 <constraints nullable="false" />
             </column>
-            <column name="UPDATED" type="DATETIME" >
+            <column name="ROLE" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="PARTY_ID_TYPE" type="VARCHAR(512)" />        
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
+        
+           
+        <createTable tableName="DOMIBUS_CONNECTOR_MSG_ERROR">
+            <column name="ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+<!--                             foreignKeyName="fk_message_to_domibus_connector_message" 
+                             references="DOMIBUS_CONNECTOR_MESSAGES(ID)" />-->
+            </column>
+            <column name="ERROR_MESSAGE" type="VARCHAR(512)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="DETAILED_TEXT" type="TEXT" />
+            <column name="ERROR_SOURCE" type="TEXT" />
+            <column name="CREATED" type="TIMESTAMP" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG_ERROR" />
+         
+        <createTable tableName="DOMIBUS_CONNECTOR_MSG_CONT" >
+            <column name="ID" type="DECIMAL(10,0)">
+                <constraints nullable="false" />
+            </column>
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
+            <column name="CONTENT_TYPE" type="VARCHAR(255)" />
+            <column name="CONTENT" type="BLOB" />
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
+        
+        <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" >
+            <column name="ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="FROM_PARTY_ID" type="VARCHAR(255)" />
+            <column name="FROM_PARTY_ROLE" type="VARCHAR(255)" />
+            <column name="TO_PARTY_ID" type="VARCHAR(255)" />
+            <column name="TO_PARTY_ROLE" type="VARCHAR(255)" />
+            <column name="ORIGINAL_SENDER" type="VARCHAR(255)" />
+            <column name="FINAL_RECIPIENT" type="VARCHAR(255)" />
+            <column name="SERVICE" type="VARCHAR(255)" />
+            <column name="ACTION" type="VARCHAR(255)" />
+            <column name="CREATED" type="TIMESTAMP" >
+                <constraints nullable="false" />
+            </column>
+            <column name="UPDATED" type="TIMESTAMP" >
                 <constraints nullable="false" />
             </column>        
         </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_I" />
+        
+            
+        <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE">
+            <column name="ID" type="DECIMAL(10,0)">
+                <constraints nullable="false" />
+            </column>
+            <column name="EBMS_MESSAGE_ID" type="VARCHAR(255)" ></column>
+            <column name="BACKEND_MESSAGE_ID" type="VARCHAR(255)"></column>
+            <column name="CONVERSATION_ID" type="VARCHAR(255)"></column>      
+            <column name="DIRECTION" type="VARCHAR(10)"></column>
+            <column name="HASH_VALUE" type="TEXT"></column>
+            <column name="CONFIRMED" type="TIMESTAMP" ></column>
+            <column name="REJECTED" type="TIMESTAMP"></column>
+            <column name="DELIVERED_BACKEND" type="TIMESTAMP"></column>
+            <column name="DELIVERED_GW" type="TIMESTAMP"></column>
+            <column name="UPDATED" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>      
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGES" /> 
     
-        <addForeignKeyConstraint    
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"     
-            baseColumnNames="MESSAGE_ID"         
-            constraintName="fk_message_to_domibus_connector_messages"
-            referencedColumnNames="ID"
-            referencedTableName="DOMIBUS_CONNECTOR_MESSAGES"        
-        />
+        
+        <createTable tableName="DOMIBUS_CONNECTOR_EVIDENCE">
+            <column name="ID" type="DECIMAL(10,0)"> 
+                <constraints nullable="false" />
+            </column>
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)">
+                <constraints nullable="false" />
+            </column>
+            <column name="TYPE" type="VARCHAR(255)" />
+            <column name="EVIDENCE" type="TEXT" />
+            <column name="DELIVERED_NAT" type="TIMESTAMP" />
+            <column name="DELIVERED_GW" type="TIMESTAMP" />
+            <column name="UPDATED" type="TIMESTAMP" >
+                <constraints nullable="false" />
+            </column>            
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
     
+        <createTable tableName="DOMIBUS_CONNECTOR_CONT_TYPE">
+            <column name="MESSAGE_CONTENT_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_CONT_TYPE" columnNames="MESSAGE_CONTENT_TYPE" constraintName="PK_DOMIBUS_CONN_02" />
+            
+        <createTable tableName="DOMIBUS_CONNECTOR_ACTION" >
+            <column name="ACTION" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="PDF_REQUIRED" type="DECIMAL(1,0)" >
+                <constraints nullable="false" />
+            </column>        
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION" />
+    
+        <createTable tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" >
+            <column name="ID" type="DECIMAL(10,0)">
+                <constraints nullable="false" />
+            </column>
+            <column name="BACKEND_NAME" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="BACKEND_KEY_ALIAS" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="BACKEND_KEY_PASS" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="BACKEND_SERVICE_TYPE" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="SERVICE" type="VARCHAR(255)" >                
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_BACK_01" />
+    
+        <createTable tableName="DOMIBUS_CONNECTOR_BACK_2_S">
+            <column name="DOMIBUS_CONNECTOR_SERVICE_ID" type="VARCHAR(255)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="DOMIBUS_CONNECTOR_BACKEND_ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+            </column>            
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACK_2_S" columnNames="DOMIBUS_CONNECTOR_SERVICE_ID, DOMIBUS_CONNECTOR_BACKEND_ID" constraintName="PK_DOMIBUS_CONN_01" />
+            
+        
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="EBMS_MESSAGE_ID" constraintName="UQ_DOMIBUS_CONNE_EBMS_MESSAGE" />
+        
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="BACKEND_MESSAGE_ID" constraintName="UQ_DOMIBUS_CONNE_NAT_MESSAGE_" />
+        
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_NAME" constraintName="UN_DOMIBUS_CONNECTOR_BACK_01" /> 
+        
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_KEY_ALIAS" constraintName="UN_DOMIBUS_CONNECTOR_BACK_02" />
+        
+        <createIndex tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" indexName="IXFK_DOMIBUS_CONN_DOMIBUS01"  >
+            <column name="SERVICE" />
+        </createIndex>
+    
+        
         <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="FROM_PARTY_ID, FROM_PARTY_ROLE" 
-            constraintName="fk_from_party_to_domibus_connector_party" 
-            referencedTableName="DOMIBUS_CONNECTOR_PARTY" referencedColumnNames="PARTY_ID, ROLE" />
-    
+            baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
+            baseColumnNames="MESSAGE_ID" 
+            constraintName="FK_DOMIBUS_CONNECTOR_MSG_ERROR" 
+            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
+            referencedColumnNames="ID" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION" />
+        
         <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="TO_PARTY_ID, TO_PARTY_ROLE" 
-            constraintName="fk_to_party_to_domibus_connector_party" 
-            referencedTableName="DOMIBUS_CONNECTOR_PARTY" referencedColumnNames="PARTY_ID, ROLE" />
-    
+            baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
+            baseColumnNames="CONTENT_TYPE" 
+            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_03" 
+            referencedTableName="DOMIBUS_CONNECTOR_CONT_TYPE" 
+            referencedColumnNames="MESSAGE_CONTENT_TYPE" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"/>
+        
         <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="SERVICE" 
-            constraintName="fk_service_to_domibus_connector_service" 
-            referencedTableName="DOMIBUS_CONNECTOR_SERVICE" 
-            referencedColumnNames="service" />
+            baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
+            baseColumnNames="MESSAGE_ID" 
+            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_04" 
+            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
+            referencedColumnNames="ID" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"/>
         
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
             baseColumnNames="ACTION" 
-            constraintName="fk_action_to_domibus_connector_action" 
+            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_1" 
             referencedTableName="DOMIBUS_CONNECTOR_ACTION" 
-            referencedColumnNames="ACTION" />
+            referencedColumnNames="ACTION" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"/>
+        
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
+            baseColumnNames="SERVICE" 
+            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_2" 
+            referencedTableName="DOMIBUS_CONNECTOR_SERVICE" 
+            referencedColumnNames="service" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION" />
+        
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
+            baseColumnNames="FROM_PARTY_ID, FROM_PARTY_ROLE" 
+            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_3" 
+            referencedTableName="DOMIBUS_CONNECTOR_PARTY" 
+            referencedColumnNames="PARTY_ID, ROLE" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION" />
+        
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
+            baseColumnNames="TO_PARTY_ID, TO_PARTY_ROLE" 
+            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_4" 
+            referencedTableName="DOMIBUS_CONNECTOR_PARTY" 
+            referencedColumnNames="PARTY_ID, ROLE" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"/>
+                
+        <addForeignKeyConstraint    
+            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"     
+            baseColumnNames="MESSAGE_ID"         
+            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_I"
+            referencedColumnNames="ID"
+            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"       
+        />
     
-        <createTable tableName="DOMIBUS_CONNECTOR_MSG_ERROR">
-            <column name="ID" type="BIGINT" >
-                <constraints nullable="false" primaryKey="true" />
-            </column>
-            <column name="MESSAGE_ID" type="BIGINT" >
-                <constraints nullable="false" 
-                             foreignKeyName="fk_message_to_domibus_connector_message" 
-                             references="DOMIBUS_CONNECTOR_MESSAGES(ID)" />
-            </column>
-            <column name="ERROR_MESSAGE" type="VARCHAR(255)" />
-            <column name="DETAILED_TEXT" type="VARCHAR(2048)" />
-            <column name="ERROR_SOURCE" type="VARCHAR(255)" />
-            <column name="CREATED" type="DATETIME" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="DOMIBUS_CONNECTOR_EVIDENCE" 
+            baseColumnNames="MESSAGE_ID" 
+            constraintName="FK_DOMIBUS_CONNECTOR_EVIDENCES" 
+            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
+            referencedColumnNames="ID"
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"  
+        />
     
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_BACK_2_S" 
+            baseColumnNames="DOMIBUS_CONNECTOR_BACKEND_ID" 
+            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_01" 
+            referencedTableName="DOMIBUS_CONNECTOR_BACKEND_INFO" 
+            referencedColumnNames="ID"
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"  
+        />
+        
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_BACK_2_S" 
+            baseColumnNames="DOMIBUS_CONNECTOR_SERVICE_ID" 
+            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_02" 
+            referencedTableName="DOMIBUS_CONNECTOR_SERVICE" 
+            referencedColumnNames="SERVICE"
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION"  
+        />
     
-     
+
     </changeSet>
 </databaseChangeLog> 

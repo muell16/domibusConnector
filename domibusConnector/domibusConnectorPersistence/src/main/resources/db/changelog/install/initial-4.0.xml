@@ -8,10 +8,10 @@
     <!-- 
         Changelog to fresh install 4.0 DataModel
     -->
-    <include file="db/changelog/install/initial-changelog-domibus.xml"/>     
-    <include file="db/changelog/install/initial-changelog-webadmin.xml"/>     
-    <include file="db/changelog/install/initial-changelog-quartz.xml"/> 
+    <include file="db/changelog/install/initial-changelog-domibus.xml" />     
+<!--    <include file="db/changelog/install/initial-changelog-webadmin.xml" />     
+    <include file="db/changelog/install/initial-changelog-quartz.xml" /> 
 
-    <!-- initial data -->   
-    <!--    <include file="db/changelog/v003/initial-changelog-data.sql"/>-->
+     initial data    
+    <include file="db/changelog/install/initial-changelog-data.sql" />-->
 </databaseChangeLog> 
