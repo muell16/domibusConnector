@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author spindlest
  *
  */
-@Configuration
-@EnableTransactionManagement
+//@Configuration replaced by autoconfiguration!
+//@EnableTransactionManagement
 public class JpaContext {
 
 	@Autowired

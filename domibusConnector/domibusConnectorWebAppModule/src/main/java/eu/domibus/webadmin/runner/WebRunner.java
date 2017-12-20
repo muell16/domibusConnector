@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
 
 
@@ -23,6 +24,7 @@ import org.springframework.web.WebApplicationInitializer;
  *
  */
 @SpringBootApplication(scanBasePackages = "eu.domibus")
+@EnableTransactionManagement
 @EnableAutoConfiguration(exclude={
 //    LiquibaseAutoConfiguration.class
 })
