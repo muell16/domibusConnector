@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 
 @Repository

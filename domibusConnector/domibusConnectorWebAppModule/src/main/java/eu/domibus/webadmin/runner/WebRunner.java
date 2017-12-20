@@ -1,33 +1,14 @@
 package eu.domibus.webadmin.runner;
 
-import eu.domibus.connector.gwc.spring.DomibusConnectorGatewayWebserviceClientContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
-import eu.domibus.webadmin.blogic.connector.monitoring.impl.ConnectorMonitoringService;
-import eu.domibus.webadmin.blogic.connector.pmode.impl.ConnectorPModeSupportImpl;
-import eu.domibus.webadmin.blogic.connector.statistics.impl.ConnectorSummaryServiceImpl;
-import eu.domibus.webadmin.commons.WebAdminProperties;
-import eu.domibus.webadmin.dao.impl.DomibusWebAdminUserDao;
-import eu.domibus.webadmin.jsf.LoginBean;
-import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
-import java.io.File;
-
-import java.util.Properties;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.web.WebApplicationInitializer;
 
 

@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 
 @Repository

@@ -24,10 +24,10 @@ import connector.domibus.eu.domibusconnectorgatewayservice._1.MessagePropertyTyp
 import connector.domibus.eu.domibusconnectorgatewayservice._1.MessageType;
 import connector.domibus.eu.domibusconnectorgatewayservice._1.PartyType;
 import eu.domibus.connector.common.CommonConnectorProperties;
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
-import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageAttachment;

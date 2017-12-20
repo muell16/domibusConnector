@@ -33,7 +33,7 @@
 		<property name="connectorTestAction" value="${connector.test.action}" />
 	</bean>
 
-	<bean id="persistenceService"
+<!--	<bean id="persistenceService"
 		class="eu.domibus.connector.common.db.service.impl.DomibusConnectorPersistenceServiceImpl">
 		<property name="messageDao" ref="messageDao" />
 		<property name="evidenceDao" ref="evidenceDao" />
@@ -42,7 +42,7 @@
 		<property name="serviceDao" ref="serviceDao" />
 		<property name="messageInfoDao" ref="messageInfoDao" />
 		<property name="messageErrorDao" ref="messageErrorDao" />
-	</bean>
+	</bean>-->
 	
 	<bean class="eu.domibus.connector.common.DomibusApplicationContextManager" />
     

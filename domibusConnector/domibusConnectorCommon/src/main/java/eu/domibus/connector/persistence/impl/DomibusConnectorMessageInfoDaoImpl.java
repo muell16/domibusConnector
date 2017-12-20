@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.db.dao.impl;
+package eu.domibus.connector.persistence.impl;
 
 import java.util.Date;
 
@@ -9,8 +9,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorMessageInfoDao;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
 import eu.domibus.connector.common.exception.PersistenceException;
 import org.springframework.stereotype.Repository;
 

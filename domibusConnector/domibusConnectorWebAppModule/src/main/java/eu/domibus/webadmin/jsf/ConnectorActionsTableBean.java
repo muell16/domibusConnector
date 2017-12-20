@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 

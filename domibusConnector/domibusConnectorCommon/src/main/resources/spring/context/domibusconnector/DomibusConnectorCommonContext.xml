@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd"
 	default-autowire="byName">
 
-	<import resource="classpath:/spring/context/domibusconnector/dao.xml" />
+<!--	<import resource="classpath:/spring/context/domibusconnector/dao.xml" />-->
 
     <import resource="classpath:/spring/context/domibusconnector/connectorBeans.xml" />
 

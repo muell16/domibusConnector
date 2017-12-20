@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.db.dao.impl;
+package eu.domibus.connector.persistence.impl;
 
 import java.util.Date;
 import java.util.List;
@@ -10,8 +10,8 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorEvidenceDao;
-import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
 
 @Repository("evidenceDao")
 public class DomibusConnectorEvidenceDaoImpl implements DomibusConnectorEvidenceDao {

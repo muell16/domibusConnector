@@ -32,10 +32,10 @@ import eu.domibus.configuration.Configuration.BusinessProcesses.Process.Initiato
 import eu.domibus.configuration.Configuration.BusinessProcesses.Process.ResponderParties.ResponderParty;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Services.Service;
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;

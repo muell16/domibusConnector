@@ -36,10 +36,10 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import eu.domibus.connector.common.CommonConnectorProperties;
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
-import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.common.message.MessageDetails;

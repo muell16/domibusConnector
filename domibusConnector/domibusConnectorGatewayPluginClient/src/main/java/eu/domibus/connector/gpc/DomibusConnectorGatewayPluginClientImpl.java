@@ -21,7 +21,7 @@ import connector.domibus.eu.domibusconnectorgatewayservice._1.MessagesType;
 import connector.domibus.eu.domibusconnectorgatewayservice._1_0.DomibusConnectorGatewayServiceInterface;
 import connector.domibus.eu.domibusconnectorgatewayservice._1_0.RequestPendingMessagesFault;
 import connector.domibus.eu.domibusconnectorgatewayservice._1_0.SendMessageFault;
-import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.common.message.Message;

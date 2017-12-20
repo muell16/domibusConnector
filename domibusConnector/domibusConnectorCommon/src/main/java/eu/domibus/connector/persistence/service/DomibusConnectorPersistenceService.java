@@ -1,10 +1,10 @@
-package eu.domibus.connector.common.db.service;
+package eu.domibus.connector.persistence.service;
 
 import java.util.List;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.connector.common.exception.PersistenceException;

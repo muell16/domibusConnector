@@ -1,10 +1,10 @@
-package eu.domibus.connector.common.db.dao.impl;
+package eu.domibus.connector.persistence.impl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorActionDao;
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import org.springframework.stereotype.Repository;
 
 @Repository("actionDao")

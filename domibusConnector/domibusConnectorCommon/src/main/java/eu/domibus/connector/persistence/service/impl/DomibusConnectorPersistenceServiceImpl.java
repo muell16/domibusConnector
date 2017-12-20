@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.db.service.impl;
+package eu.domibus.connector.persistence.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,14 +17,14 @@ import eu.domibus.connector.common.db.dao.DomibusConnectorMessageErrorDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.common.db.dao.DomibusConnectorServiceDao;
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageError;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
-import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageError;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.connector.common.exception.PersistenceException;

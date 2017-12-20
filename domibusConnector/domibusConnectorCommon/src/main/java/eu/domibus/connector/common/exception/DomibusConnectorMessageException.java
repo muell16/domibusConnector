@@ -1,7 +1,7 @@
 package eu.domibus.connector.common.exception;
 
 import eu.domibus.connector.common.DomibusApplicationContextManager;
-import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.message.Message;
 
 public class DomibusConnectorMessageException extends Exception {

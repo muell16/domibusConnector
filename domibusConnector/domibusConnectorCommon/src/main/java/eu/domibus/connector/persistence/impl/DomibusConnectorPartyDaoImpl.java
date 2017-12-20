@@ -1,12 +1,12 @@
-package eu.domibus.connector.common.db.dao.impl;
+package eu.domibus.connector.persistence.impl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import eu.domibus.connector.common.db.dao.DomibusConnectorPartyDao;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
 import org.springframework.stereotype.Repository;
 
 @Repository("partyDao")

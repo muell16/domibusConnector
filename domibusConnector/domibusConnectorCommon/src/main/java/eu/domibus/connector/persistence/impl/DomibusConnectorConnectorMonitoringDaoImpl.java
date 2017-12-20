@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.db.dao.impl;
+package eu.domibus.connector.persistence.impl;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 

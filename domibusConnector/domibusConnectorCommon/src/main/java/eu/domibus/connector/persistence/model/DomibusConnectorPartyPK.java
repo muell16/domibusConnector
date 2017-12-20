@@ -1,4 +1,4 @@
-package eu.domibus.connector.common.db.model;
+package eu.domibus.connector.persistence.model;
 
 import java.io.Serializable;
 

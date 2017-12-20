@@ -1,10 +1,9 @@
 package eu.domibus.connector.persistence.service;
 
 
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
-import eu.domibus.connector.common.db.model.DomibusConnectorParty;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
-import eu.domibus.connector.common.db.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.connector.common.exception.PersistenceException;
@@ -45,13 +44,13 @@ public class PersistenceServiceITCase {
 
     @Configuration
     @EnableAutoConfiguration
-    @ComponentScan(basePackages = { "eu.domibus.connector.common.db.dao.impl", "eu.domibus.connector.common.db.service.impl" })
-    @EntityScan("eu.domibus.connector.common.db.model")
+    @ComponentScan(basePackages = { "eu.domibus.connector.persistence" })
+//    @EntityScan("eu.domibus.connector.persistence.model")
     static class TestConfiguration {
-        @Bean
-        public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-            return new PropertySourcesPlaceholderConfigurer();
-        }
+//        @Bean
+//        public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+//            return new PropertySourcesPlaceholderConfigurer();
+//        }
     }
 
     static ConfigurableApplicationContext APPLICATION_CONTEXT;

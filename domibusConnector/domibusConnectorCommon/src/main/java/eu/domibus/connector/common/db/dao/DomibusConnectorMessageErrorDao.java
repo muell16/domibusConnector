@@ -2,8 +2,8 @@ package eu.domibus.connector.common.db.dao;
 
 import java.util.List;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorMessage;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageError;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageError;
 
 public interface DomibusConnectorMessageErrorDao {
 
