@@ -41,7 +41,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at>}
  */
 public class PersistenceServiceITCase {
-
+    
     @Configuration
     @EnableAutoConfiguration
     @ComponentScan(basePackages = { "eu.domibus.connector.persistence" })
