@@ -50,17 +50,10 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
  * within spring context
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DatabaseInitUpgradeITCase {
+public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DatabaseInitUpgradeITCase.class);
     
-    public final static String TEST_MYSQL_PROPERTY_PREFIX = "mysql";
-    
-    public final static String TEST_ORACLE_PROPERTY_PREFIX = "oracle";
-    
-    private final static String H2_PROFILE = "db_h2";
-
-    public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
        
     @Configuration
     @EnableAutoConfiguration
@@ -230,42 +223,5 @@ public class DatabaseInitUpgradeITCase {
         checkInital003DB("db_mysql", p);  
     }
     
-    /*
-     * TEST HELPER
-     *
-     */
-    
-    protected Properties loadProperties(String prefix) {
-        org.junit.Assume.assumeTrue("true".equalsIgnoreCase(System.getenv("test.db." + prefix + ".enabled")));
-        final String p = "test." + prefix;
-        Properties props = new Properties();           
-        Map<String, String> env = System.getenv();        
-        Map<Object, Object> collect = env.entrySet()                  
-                .stream()
-                .filter( (Entry<String, String> entry) -> 
-                { return entry.getKey() != null && entry.getKey().toUpperCase().startsWith(p.toUpperCase());} )
-                .map( (Entry<String, String> entry) -> { 
-                    return new  AbstractMap.SimpleEntry(
-                            entry.getKey().substring(p.length() + 1).toLowerCase(), 
-                            entry.getValue().toLowerCase());})
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-                //.collect(Collectors.toMap(Entry::getKey(), Entry::getValue())); 
-        props.putAll(collect);
-        return props;
-    }
-    
-    protected Properties loadMysqlTestProperties() {
-        return loadProperties("mysql");
-    }
-    
-    protected Properties loadOracleTestProperties() {
-        return loadProperties("oracle");
-    }
-    
-    private static String getTestFilesDir() {
-		String dir = System.getProperty(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
-		dir = dir + DatabaseInitUpgradeITCase.class.getSimpleName();
-		return dir;
-	}
     
 }
