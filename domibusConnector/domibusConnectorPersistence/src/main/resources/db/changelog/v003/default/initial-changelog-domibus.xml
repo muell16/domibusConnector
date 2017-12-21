@@ -6,6 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     <changeSet author="StephanSpindler" id="changelog-domibus-1.0">
     
+        
+        
         <createTable tableName="DOMIBUS_CONNECTOR_SEQ_STORE" >
             <column name="SEQ_NAME" type="VARCHAR(255)" >
                 <constraints nullable="false" primaryKey="true" />
@@ -146,8 +148,8 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-    
-    
-     
+    </changeSet>
+    <changeSet id="domibus-tag-3.0" author="STEPHAN SPINDLER">
+        <tagDatabase tag="DOMIBUS_DB_V3.0" />
     </changeSet>
 </databaseChangeLog> 

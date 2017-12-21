@@ -6,6 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
 
+    
+    
     <changeSet author="StephanSpindler" id="init-quartz-1" >
         <createTable tableName="DCON_QRTZ_JOB_DETAILS">
             <column name="SCHED_NAME" type="VARCHAR(120)"> 
@@ -311,6 +313,10 @@
     </changeSet>
     <changeSet author="StephanSpindler" id="init-quartz-11.1" > 
         <addPrimaryKey tableName="DCON_QRTZ_LOCKS" columnNames="SCHED_NAME,LOCK_NAME" />
+    </changeSet>
+        
+    <changeSet id="StephanSpindler" author="init-qaurtz-finished" >
+        <tagDatabase tag="QUARTZ_DB " />
     </changeSet>
         
 </databaseChangeLog> 

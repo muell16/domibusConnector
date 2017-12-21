@@ -6,39 +6,50 @@
 
 package eu.domibus.connector.persistence.liquibase;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import liquibase.Contexts;
+import liquibase.Liquibase;
+import liquibase.change.Change;
+import liquibase.changelog.ChangeSet;
+import liquibase.changelog.DatabaseChangeLog;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.sql.Sql;
+import liquibase.sqlgenerator.SqlGeneratorFactory;
+import liquibase.statement.SqlStatement;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 /**
- *
+ * A Integration test for database  setup and migration
+ * within spring context
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-//@RunWith(Parameterized.class)
 public class DatabaseInitUpgradeITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DatabaseInitUpgradeITCase.class);
@@ -47,8 +58,10 @@ public class DatabaseInitUpgradeITCase {
     
     public final static String TEST_ORACLE_PROPERTY_PREFIX = "oracle";
     
+    private final static String H2_PROFILE = "db_h2";
 
-   
+    public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
+       
     @Configuration
     @EnableAutoConfiguration
     static class TestConfiguration {
@@ -57,19 +70,6 @@ public class DatabaseInitUpgradeITCase {
            return new PropertySourcesPlaceholderConfigurer();
         }
     }
-
-//    @BeforeClass
-//    public static void beforeClass() {
-//        Map env = System.getenv();
-//        
-//        env.entrySet().stream().forEach( entry -> entry.getClass() );
-//        
-//        env.entrySet().stream().forEach( e -> { Map.Entry entry = (Map.Entry) e; LOGGER.info("Property: [{}={}]", entry.getKey(), entry.getValue()); });
-//        //LOGGER.info("Properties:\n{}", properties);
-//        System.out.println("Hallo WELT!");
-//        env.entrySet().stream().forEach( e -> { Map.Entry entry = (Map.Entry) e; System.out.println( "Property: " + entry.getKey() + "=" + entry.getValue() + "" ); });
-//        
-//    }
 
     /*
     * INSTALL VERSION 4 Tests
@@ -107,7 +107,72 @@ public class DatabaseInitUpgradeITCase {
         checkInstallDB("db_mysql", p);  
     }
     
-
+    
+    @Test
+    public void testMigrate3to4_h2() throws SQLException, LiquibaseException, DatabaseException, IOException {
+        Properties props = new Properties();
+        props.setProperty("spring.datasource.url", "jdbc:h2:mem:");
+        testMigrate3to4Database(H2_PROFILE, props);
+    }
+    
+    /**
+     * DB MIGRATION TEST
+     */
+    public void testMigrate3to4Database(String profile, Properties props) throws SQLException, DatabaseException, LiquibaseException, FileNotFoundException, IOException {
+        System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
+        props.put("liquibase.change-log","classpath:/db/changelog/v004/upgrade-3to4.xml");       
+        if (H2_PROFILE.equalsIgnoreCase(profile)) {
+            props.put("liquibase.enabled", "false"); //disable liquibase!
+        } else {
+            
+        }
+        //SETUP OLD DB
+        LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
+        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
+                .profiles("test", profile)                
+                .properties(props);
+        
+        ConfigurableApplicationContext ctx = springAppBuilder.run();  
+        DataSource ds = ctx.getBean(DataSource.class);
+        
+        Connection connection = ds.getConnection();
+        ScriptUtils.executeSqlScript(connection, new ClassPathResource("/database/domibus_v3_database_h2.sql"));
+        
+        
+        
+        //OLD DB IS SETUP WITH OLD DATA
+        
+        //start migration
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+        Liquibase liquibase = new Liquibase("db/changelog/v004/upgrade-3to4.xml", new ClassLoaderResourceAccessor(), database);
+        liquibase.update(new Contexts());
+        database.commit();
+        
+        String testFilesDir = getTestFilesDir();
+        File f = new File(testFilesDir);
+        f.mkdirs();
+        File sqlFile = new File(testFilesDir + "/sqlfile" + profile + ".sql");
+        FileOutputStream fstream = new FileOutputStream(sqlFile);
+        
+        
+        DatabaseChangeLog databaseChangeLog = liquibase.getDatabaseChangeLog();
+        for (ChangeSet set : databaseChangeLog.getChangeSets()) {
+            for (Change change: set.getChanges()) {
+                SqlStatement[] generateStatements = change.generateStatements(database);
+                SqlGeneratorFactory instance = SqlGeneratorFactory.getInstance();
+                Sql[] generateSql = instance.generateSql(generateStatements, database);
+                for (Sql sql : generateSql) {
+                    System.out.println("sql: " +  sql);                    
+                    fstream.write(sql.toString().getBytes());
+                    fstream.write("\n".getBytes());
+                }                
+            }
+        }
+        //getTestFilesDir
+        //verify correct migration
+        
+        
+    }
     
     /*
     * INITIAL VERSION 3 Tests
@@ -184,5 +249,10 @@ public class DatabaseInitUpgradeITCase {
         return loadProperties("oracle");
     }
     
+    private static String getTestFilesDir() {
+		String dir = System.getProperty(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
+		dir = dir + DatabaseInitUpgradeITCase.class.getSimpleName();
+		return dir;
+	}
     
 }

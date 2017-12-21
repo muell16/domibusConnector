@@ -1,39 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<databaseChangeLog 
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     
+    <property name="varchar.type" value="VARCHAR" />
+    <property name="varchar.type" value="VARCHAR2" dbms="oracle" />
+    
+    <property name="varchar.length.type" value="" />
+    <property name="varchar.length.type" value="CHAR" dbms="oracle" />
+    
+    <property name="id.type" value="NUMBER(10,0)" />
+    <property name="id.type" value="NUMBER(10)" dbms="oracle" />
+    
+    <property name="text.type" value="TEXT" />
+    <property name="text.type" value="CLOB" dbms="oracle" />
+    
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0">
         <createTable tableName="DOMIBUS_CONNECTOR_SEQ_STORE" >
-            <column name="SEQ_NAME" type="VARCHAR(255)" >
+            <column name="SEQ_NAME" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="SEQ_VALUE" type="NUMBER(10,0)" >
+            <column name="SEQ_VALUE" type="${id.type}" >
                 <constraints nullable="false" />
             </column>
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
+        <createIndex tableName="DOMIBUS_CONNECTOR_SEQ_STORE" indexName="INDEX_PK_DOMIBUS_CONNECTOR_SEQ_STORE" >
+            <column name="SEQ_NAME" />
+        </createIndex>
       
         <createTable tableName="DOMIBUS_CONNECTOR_SERVICE" >
-            <column name="SERVICE" type="VARCHAR(255)" >
+            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="SERVICE_TYPE" type="VARCHAR(255)" >
+            <column name="SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
             
         <createTable tableName="DOMIBUS_CONNECTOR_PARTY">
-            <column name="PARTY_ID" type="VARCHAR(255)" >
+            <column name="PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="ROLE" type="VARCHAR(255)" >
+            <column name="ROLE" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="PARTY_ID_TYPE" type="VARCHAR(512)" />        
+            <column name="PARTY_ID_TYPE" type="${varchar.type}(512 ${varchar.length.type})" />        
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
         
@@ -44,14 +60,12 @@
             </column>
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
-<!--                             foreignKeyName="fk_message_to_domibus_connector_message" 
-                             references="DOMIBUS_CONNECTOR_MESSAGES(ID)" />-->
             </column>
-            <column name="ERROR_MESSAGE" type="VARCHAR(512)" >
+            <column name="ERROR_MESSAGE" type="${varchar.type}(512 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="DETAILED_TEXT" type="TEXT" />
-            <column name="ERROR_SOURCE" type="TEXT" />
+            <column name="DETAILED_TEXT" type="${text.type}" />
+            <column name="ERROR_SOURCE" type="${text.type}" />
             <column name="CREATED" type="TIMESTAMP" >
                 <constraints nullable="false" />
             </column>
@@ -63,7 +77,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
-            <column name="CONTENT_TYPE" type="VARCHAR(255)" />
+            <column name="CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="CONTENT" type="BLOB" />
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
@@ -75,14 +89,14 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
             </column>
-            <column name="FROM_PARTY_ID" type="VARCHAR(255)" />
-            <column name="FROM_PARTY_ROLE" type="VARCHAR(255)" />
-            <column name="TO_PARTY_ID" type="VARCHAR(255)" />
-            <column name="TO_PARTY_ROLE" type="VARCHAR(255)" />
-            <column name="ORIGINAL_SENDER" type="VARCHAR(255)" />
-            <column name="FINAL_RECIPIENT" type="VARCHAR(255)" />
-            <column name="SERVICE" type="VARCHAR(255)" />
-            <column name="ACTION" type="VARCHAR(255)" />
+            <column name="FROM_PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="FROM_PARTY_ROLE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="TO_PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="TO_PARTY_ROLE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="ORIGINAL_SENDER" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="FINAL_RECIPIENT" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="ACTION" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="CREATED" type="TIMESTAMP" >
                 <constraints nullable="false" />
             </column>
@@ -97,11 +111,11 @@
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="EBMS_MESSAGE_ID" type="VARCHAR(255)" ></column>
-            <column name="BACKEND_MESSAGE_ID" type="VARCHAR(255)"></column>
-            <column name="CONVERSATION_ID" type="VARCHAR(255)"></column>      
-            <column name="DIRECTION" type="VARCHAR(10)"></column>
-            <column name="HASH_VALUE" type="TEXT"></column>
+            <column name="EBMS_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})" ></column>
+            <column name="BACKEND_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
+            <column name="CONVERSATION_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>      
+            <column name="DIRECTION" type="${varchar.type}(10)"></column>
+            <column name="HASH_VALUE" type="${text.type}"></column>
             <column name="CONFIRMED" type="TIMESTAMP" ></column>
             <column name="REJECTED" type="TIMESTAMP"></column>
             <column name="DELIVERED_BACKEND" type="TIMESTAMP"></column>
@@ -120,8 +134,8 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="TYPE" type="VARCHAR(255)" />
-            <column name="EVIDENCE" type="TEXT" />
+            <column name="TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="EVIDENCE" type="${text.type}" />
             <column name="DELIVERED_NAT" type="TIMESTAMP" />
             <column name="DELIVERED_GW" type="TIMESTAMP" />
             <column name="UPDATED" type="TIMESTAMP" >
@@ -131,14 +145,14 @@
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
     
         <createTable tableName="DOMIBUS_CONNECTOR_CONT_TYPE">
-            <column name="MESSAGE_CONTENT_TYPE" type="VARCHAR(255)">
+            <column name="MESSAGE_CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})">
                 <constraints nullable="false" />
             </column>
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_CONT_TYPE" columnNames="MESSAGE_CONTENT_TYPE" constraintName="PK_DOMIBUS_CONN_02" />
             
         <createTable tableName="DOMIBUS_CONNECTOR_ACTION" >
-            <column name="ACTION" type="VARCHAR(255)" >
+            <column name="ACTION" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
             <column name="PDF_REQUIRED" type="DECIMAL(1,0)" >
@@ -151,25 +165,25 @@
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_NAME" type="VARCHAR(255)" >
+            <column name="BACKEND_NAME" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_KEY_ALIAS" type="VARCHAR(255)" >
+            <column name="BACKEND_KEY_ALIAS" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_KEY_PASS" type="VARCHAR(255)" >
+            <column name="BACKEND_KEY_PASS" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_SERVICE_TYPE" type="VARCHAR(255)" >
+            <column name="BACKEND_SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="SERVICE" type="VARCHAR(255)" >                
+            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >                
             </column>
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_BACK_01" />
     
         <createTable tableName="DOMIBUS_CONNECTOR_BACK_2_S">
-            <column name="DOMIBUS_CONNECTOR_SERVICE_ID" type="VARCHAR(255)" >
+            <column name="DOMIBUS_CONNECTOR_SERVICE_ID" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
             <column name="DOMIBUS_CONNECTOR_BACKEND_ID" type="DECIMAL(10,0)" >
@@ -294,7 +308,8 @@
             onDelete="NO ACTION" 
             onUpdate="NO ACTION"  
         />
-    
-
+    </changeSet>
+    <changeSet id="tag-db-domibus-4.0" author="StephanSpindler">
+        <tagDatabase tag="DOMIBUS_DB_V4.0" /> 
     </changeSet>
 </databaseChangeLog> 

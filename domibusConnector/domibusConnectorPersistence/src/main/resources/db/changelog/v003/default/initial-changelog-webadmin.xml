@@ -26,6 +26,8 @@
         <column name="SALT" value="5b424031616564356639" />
         <column name="ROLE" value="admin" />
     </insert>
-    
+  </changeSet>
+  <changeSet id="webadmin-3.0-tag" author="StephanSpindler">
+    <tagDatabase tag="DOMIBUS_WEBADMIN_3.0" /> 
   </changeSet>
 </databaseChangeLog> 
