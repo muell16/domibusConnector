@@ -96,12 +96,13 @@ public class DatabaseInitUpgradeITCase {
     }
     
         
-    @Test
+    @Test    
     public void testInstall004Database_h2() {
         checkInstallDB("db_h2", new Properties());  
     }
     
     @Test
+    @Ignore
     public void testInstall004Database_mysql() {        
         Properties p = loadMysqlTestProperties();
         checkInstallDB("db_mysql", p);  
@@ -115,17 +116,24 @@ public class DatabaseInitUpgradeITCase {
         testMigrate3to4Database(H2_PROFILE, props);
     }
     
+    @Test
+    public void testMigrate3to4_mysql() throws SQLException, LiquibaseException, DatabaseException, IOException {
+        Properties props = loadMysqlTestProperties();
+        //props.setProperty("spring.datasource.url", "jdbc:h2:mem:");
+        testMigrate3to4Database("db_mysql", props);
+    }
+    
     /**
      * DB MIGRATION TEST
      */
     public void testMigrate3to4Database(String profile, Properties props) throws SQLException, DatabaseException, LiquibaseException, FileNotFoundException, IOException {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
         props.put("liquibase.change-log","classpath:/db/changelog/v004/upgrade-3to4.xml");       
-        if (H2_PROFILE.equalsIgnoreCase(profile)) {
-            props.put("liquibase.enabled", "false"); //disable liquibase!
-        } else {
-            
-        }
+//        if (H2_PROFILE.equalsIgnoreCase(profile)) {
+        props.put("liquibase.enabled", "false"); //disable liquibase!
+//        } else {
+//            
+//        }
         //SETUP OLD DB
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
@@ -136,24 +144,23 @@ public class DatabaseInitUpgradeITCase {
         DataSource ds = ctx.getBean(DataSource.class);
         
         Connection connection = ds.getConnection();
-        ScriptUtils.executeSqlScript(connection, new ClassPathResource("/database/domibus_v3_database_h2.sql"));
+        if (H2_PROFILE.equalsIgnoreCase(profile)) {
+            ScriptUtils.executeSqlScript(connection, new ClassPathResource("/database/testdata/v3/domibus_v3_database_h2.sql"));                        
+        }
         
-        
-        
+       
         //OLD DB IS SETUP WITH OLD DATA
         
-        //start migration
-        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-        Liquibase liquibase = new Liquibase("db/changelog/v004/upgrade-3to4.xml", new ClassLoaderResourceAccessor(), database);
-        liquibase.update(new Contexts());
-        database.commit();
-        
+
+        //write migration sql file
         String testFilesDir = getTestFilesDir();
         File f = new File(testFilesDir);
         f.mkdirs();
-        File sqlFile = new File(testFilesDir + "/sqlfile" + profile + ".sql");
+        File sqlFile = new File(testFilesDir + "/sqlmigrate3to4_" + profile + ".sql");
         FileOutputStream fstream = new FileOutputStream(sqlFile);
         
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+        Liquibase liquibase = new Liquibase("db/changelog/v004/upgrade-3to4.xml", new ClassLoaderResourceAccessor(), database);
         
         DatabaseChangeLog databaseChangeLog = liquibase.getDatabaseChangeLog();
         for (ChangeSet set : databaseChangeLog.getChangeSets()) {
@@ -169,6 +176,13 @@ public class DatabaseInitUpgradeITCase {
             }
         }
         //getTestFilesDir
+        
+        //start migration
+       
+        liquibase.update(new Contexts());
+        database.commit();
+        
+        
         //verify correct migration
         
         
@@ -205,7 +219,6 @@ public class DatabaseInitUpgradeITCase {
     
     
     @Test
-//    @Ignore
     public void testInitial003Database_h2() {
         checkInital003DB("db_h2", new Properties());  
     }
