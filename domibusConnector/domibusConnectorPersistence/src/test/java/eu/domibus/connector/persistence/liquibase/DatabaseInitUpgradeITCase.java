@@ -158,14 +158,19 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         DatabaseChangeLog databaseChangeLog = liquibase.getDatabaseChangeLog();
         for (ChangeSet set : databaseChangeLog.getChangeSets()) {
             for (Change change: set.getChanges()) {
-                SqlStatement[] generateStatements = change.generateStatements(database);
-                SqlGeneratorFactory instance = SqlGeneratorFactory.getInstance();
-                Sql[] generateSql = instance.generateSql(generateStatements, database);
-                for (Sql sql : generateSql) {
-                    System.out.println("sql: " +  sql);                    
-                    fstream.write(sql.toString().getBytes());
-                    fstream.write("\n".getBytes());
-                }                
+                try {
+                    SqlStatement[] generateStatements = change.generateStatements(database);
+                    SqlGeneratorFactory instance = SqlGeneratorFactory.getInstance();
+                    Sql[] generateSql = instance.generateSql(generateStatements, database);
+                    for (Sql sql : generateSql) {
+                        System.out.println("sql: " +  sql);                    
+                        fstream.write(sql.toString().getBytes());
+                        fstream.write("\n".getBytes());
+                    }    
+                } catch (Exception e ) {
+                    LOGGER.warn("Failed to print changeset", e);
+                    //do nothing just don't print change set
+                }
             }
         }
         //getTestFilesDir

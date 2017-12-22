@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <databaseChangeLog
-   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <!-- 
         Changelog to upgrade from 3.0 database to 4.0 database
@@ -26,14 +26,19 @@
     <property name="text.type" value="CLOB" dbms="oracle" />
      
     <changeSet id="3to4_upgrade_001.0_pre_setup" author="StephanSpindler">
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_ACTION" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_EVIDENCES" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
-          <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
+        <preConditions onFail="CONTINUE">
+            <not>
+                <dbms type="h2" />
+            </not>
+        </preConditions>
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_ACTION" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_EVIDENCES" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
+        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
     </changeSet>
     
        
@@ -84,7 +89,7 @@
             tableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
             columnName="DETAILED_TEXT" 
             newDataType="${text.type}" />
-                <modifyDataType
+        <modifyDataType
             tableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
             columnName="ERROR_SOURCE" 
             newDataType="${text.type}" />
@@ -207,23 +212,23 @@
     </changeSet>
     
     <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
-         <modifyDataType 
+        <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             columnName="ID"
             newDataType="${id.type}" />
-         <modifyDataType 
+        <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             columnName="MESSAGE_ID"
             newDataType="${id.type}" />
-         <modifyDataType 
+        <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             columnName="EVIDENCE"
             newDataType="${text.type}" />
-         <modifyDataType 
+        <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             columnName="DELIVERED_NAT"
             newDataType="TIMESTAMP" />
-         <modifyDataType 
+        <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             columnName="DELIVERED_GW"
             newDataType="TIMESTAMP" />
@@ -281,7 +286,12 @@
             newDataType="${varchar255.type}" />
     </changeSet>
     
-    <changeSet id="3to4_upgrade_014_fk_create" author="StephanSpindler">
+    <changeSet id="3to4_upgrade_014.0_fk_drop" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <dbms type="h2" />
+            </not>
+        </preConditions>
         <!-- drop all FK to make sure i can create them -->
         <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />
         <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />
@@ -291,6 +301,17 @@
         <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />
         <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
         <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
+    </changeSet>
+    
+    <changeSet id="3to4_upgrade_014_fk_create" author="StephanSpindler">
+<!--        <preConditions>
+            <or>
+                <changeSetExecuted id="3to4_upgrade_014.0_fk_drop" author="StephanSpindler" changeLogFile="db/changelog/v004/upgrade-3to4.xml" />
+                <not>
+                    <dbms type="h2" />
+                </not>
+            </or>
+        </preConditions>-->
         
         
         <addForeignKeyConstraint 
