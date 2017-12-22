@@ -1,6 +1,6 @@
 package eu.domibus.connector.monitoring;
 
-//import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
+import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
 
 public class DomibusConnectorMonitor {
 
@@ -8,8 +8,7 @@ public class DomibusConnectorMonitor {
     private static final String CHECK_INCOMING_TRIGGER_NAME = "checkIncomingTrigger";
     private static final String CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME = "checkEvidencesTimeoutTrigger";
 
-    //TODO:
-    //private DomibusConnectorConnectorMonitoringDao monitoringDao;
+    private DomibusConnectorConnectorMonitoringDao monitoringDao;
 
     public Long getCheckOutgoingRepeatInterval() {
         return monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
