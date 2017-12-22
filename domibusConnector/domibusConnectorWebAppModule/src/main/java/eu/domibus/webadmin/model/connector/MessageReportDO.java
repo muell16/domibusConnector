@@ -3,8 +3,8 @@ package eu.domibus.webadmin.model.connector;
 import java.io.Serializable;
 import java.util.List;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorEvidence;
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
 
 public class MessageReportDO extends DomibusConnectorMessageInfo implements Serializable {
 

@@ -1,6 +1,6 @@
 package eu.domibus.connector.common.db.dao;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 
 public interface DomibusConnectorActionDao {
 

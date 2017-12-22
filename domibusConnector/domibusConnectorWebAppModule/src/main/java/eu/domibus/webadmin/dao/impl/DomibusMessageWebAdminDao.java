@@ -15,8 +15,8 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 

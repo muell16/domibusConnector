@@ -2,7 +2,7 @@ package eu.domibus.webadmin.dao;
 
 import java.util.List;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.DomibusConnectorService;
 
 public interface IDomibusWebAdminConnectorServiceDao {
 

@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import eu.domibus.connector.common.db.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
 
 public interface IDomibusMessageWebAdminDao {
 
