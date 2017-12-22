@@ -68,7 +68,7 @@ node {
 												
 				stage ('Integration Test') {
 					try {
-						sh 'mvn -P integration-testing verify'
+						sh 'mvn -P integration-testing,dbunit-testing verify'
 					} catch (e) {
 						currentBuild.result = 'UNSTABLE'
 					}
@@ -76,7 +76,7 @@ node {
 				
 				stage ('Post') {
 					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
-						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml'  //publish test reports
+						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
 						try {
 							jacoco() //ignore failures
 						} catch (e) {

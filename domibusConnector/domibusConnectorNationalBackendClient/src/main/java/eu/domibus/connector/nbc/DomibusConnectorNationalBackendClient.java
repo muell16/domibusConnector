@@ -3,10 +3,10 @@ package eu.domibus.connector.nbc;
 import java.util.List;
 
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageDetails;
-import eu.domibus.connector.common.message.MessageError;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 
 /**

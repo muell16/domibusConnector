@@ -29,7 +29,7 @@ import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendResponse;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
+import eu.domibus.domain.message.Message;
 import eu.domibus.connector.gwc.helper.DownloadMessageHelper;
 import eu.domibus.connector.gwc.helper.SendMessageHelper;
 import eu.domibus.connector.gwc.util.CommonMessageHelper;

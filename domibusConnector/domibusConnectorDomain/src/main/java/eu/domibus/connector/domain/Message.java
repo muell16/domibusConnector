@@ -17,7 +17,7 @@ public class Message {
     private final MessageContent messageContent;
     private List<MessageAttachment> attachments;
     private List<MessageConfirmation> confirmations;
-//    private Message dbMessage;
+    private Long dbMessageId;
 
     /**
      * This constructor is for messages which contain content and original
@@ -94,12 +94,12 @@ public class Message {
         this.confirmations = confirmations;
     }
 
-//    public DomibusConnectorMessage getDbMessage() {
-//        return dbMessage;
-//    }
-//
-//    public void setDbMessage(DomibusConnectorMessage dbMessage) {
-//        this.dbMessage = dbMessage;
-//    }
+    public Long getDbMessageId() {
+        return dbMessageId;
+    }
+
+    public void setDbMessageId(Long dbMessageId) {
+        this.dbMessageId = dbMessageId;
+    }
 
 }

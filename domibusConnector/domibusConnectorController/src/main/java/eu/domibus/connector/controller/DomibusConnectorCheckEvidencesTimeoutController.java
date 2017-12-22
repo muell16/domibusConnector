@@ -11,10 +11,10 @@ import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageDetails;
+
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
@@ -70,7 +70,8 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 		if (messages != null && !messages.isEmpty()) {
 			for (Message message : messages) {
 				//Evaluate time in ms the reception of a RELAY_REMMD_ACCEPTANCE/REJECTION for the message times out
-				Date delivered = message.getDbMessage().getDeliveredToGateway();
+				//Date delivered = message.getDbMessage().getDeliveredToGateway(); //TODO:
+                Date delivered = new Date();
 				long relayRemmdTimout = delivered.getTime() + connectorProperties.getTimeoutRelayREMMD();
 				
 				//if it is later then the evaluated timeout given
@@ -93,7 +94,8 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 		if (messages != null && !messages.isEmpty()) {
 			for (Message message : messages) {
 				//Evaluate time in ms the reception of a DELIVERY/NON_DELIVERY for the message times out
-				Date delivered = message.getDbMessage().getDeliveredToGateway();
+				//Date delivered = message.getDbMessage().getDeliveredToGateway(); //TODO
+                Date delivered = new Date();
 				long deliveryTimeout = delivered.getTime() + connectorProperties.getTimeoutDelivery();
 				
 				//if it is later then the evaluated timeout given

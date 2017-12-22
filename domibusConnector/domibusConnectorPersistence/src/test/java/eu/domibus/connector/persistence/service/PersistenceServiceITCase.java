@@ -1,31 +1,36 @@
 package eu.domibus.connector.persistence.service;
 
 
-//import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-//import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-//import eu.domibus.connector.persistence.model.DomibusConnectorService;
-//import eu.domibus.connector.common.enums.EvidenceType;
-//import eu.domibus.connector.common.enums.MessageDirection;
-//import eu.domibus.connector.common.exception.PersistenceException;
-//import eu.domibus.connector.common.message.Message;
-//import eu.domibus.connector.common.message.MessageContent;
-//import eu.domibus.connector.common.message.MessageDetails;
-//import javax.persistence.NoResultException;
-import org.junit.AfterClass;
+
+import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.Party;
+import eu.domibus.connector.domain.Service;
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.persistence.dao.PDomibusConnectorRepositories;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
+import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceContext;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Integration Test for testing persistence service
@@ -41,11 +46,12 @@ import org.springframework.dao.EmptyResultDataAccessException;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at>}
  */
 public class PersistenceServiceITCase {
-    
-    @Configuration
-    @EnableAutoConfiguration
-    @ComponentScan(basePackages = { "eu.domibus.connector.persistence" })
-//    @EntityScan("eu.domibus.connector.persistence.model")
+
+    @SpringBootApplication(scanBasePackages={"eu.domibus.connector"})
+//    @Import({DomibusConnectorPersistenceContext.class})
+//    @EntityScan(basePackageClasses={PDomibusConnectorPersistenceModel.class})
+//    @EnableJpaRepositories(basePackageClasses = {PDomibusConnectorRepositories.class} )
+//    @EnableTransactionManagement
     static class TestConfiguration {
 //        @Bean
 //        public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -60,6 +66,7 @@ public class PersistenceServiceITCase {
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
                 //.profiles("test", "db_mysql")
                 .profiles("test", "db_h2")
+                .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml")
                 ;
         APPLICATION_CONTEXT = springAppBuilder.run();
         System.out.println("APPCONTEXT IS STARTED...:" + APPLICATION_CONTEXT.isRunning());
@@ -71,114 +78,123 @@ public class PersistenceServiceITCase {
         APPLICATION_CONTEXT.close();
     }
 
-//    @Before
-//    public void setUp() throws InterruptedException {
-//        //lookup type
-//        this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
-//        //lookup name
-//        this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
-//    }
-//
-//    DataSource ds;
-//
-//    DomibusConnectorPersistenceService persistenceService;
-//
-//
-//    @Test
-//    public void simpleTest() {
-//        assertThat(ds).isNotNull();
-//    }
-//
-//
-//    @Test
-//    public void testGetService() {
-//        DomibusConnectorService epo = persistenceService.getService("EPO");
-//        assertThat(epo).isNotNull();
-//    }
-//
-//    
-//    @Test
-//    public void testPersistMessageIntoDatabase() throws PersistenceException {
-//        MessageDetails messageDetails = new MessageDetails();
-//        MessageContent messageContent = new MessageContent();
-//        Message message = new Message(messageDetails, messageContent);
-//        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
-//        
+    @Before
+    public void setUp() throws InterruptedException {
+        
+        //lookup type
+        this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
+        //lookup name
+        this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
+    }
+
+    DataSource ds;
+
+    DomibusConnectorPersistenceService persistenceService;
+
+
+    @Test
+    public void simpleTest() {
+        assertThat(ds).isNotNull();
+    }
+
+
+    @Test
+//    @Ignore
+    public void testGetService() {
+        Service epo = persistenceService.getService("EPO");
+        assertThat(epo).isNotNull();
+    }
+
+    
+    @Test
+    @Ignore
+    public void testPersistMessageIntoDatabase() {
+        MessageDetails messageDetails = new MessageDetails();
+        MessageContent messageContent = new MessageContent();
+        Message message = new Message(messageDetails, messageContent);
+        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        
+        persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
+        
+        //TODO: test db if entity is there!                
+    }
+    
+    
+    
+    @Test
+    @Ignore
+    public void testMergeMessageWithDatabase() {
+        
+        MessageDetails messageDetails = new MessageDetails();
+        MessageContent messageContent = new MessageContent();
+        Message message = new Message(messageDetails, messageContent);
+        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        
 //        persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
 //        
-//        //TODO: test db if entity is there!                
-//    }
-//    
-//    
-//    
-//    @Test
-//    @Ignore
-//    public void testMergeMessageWithDatabase() throws PersistenceException {
-//        
-//        MessageDetails messageDetails = new MessageDetails();
-//        MessageContent messageContent = new MessageContent();
-//        Message message = new Message(messageDetails, messageContent);
-//        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
-//        
-////        persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
-////        
-////        persistenceService.mergeMessageWithDatabase(message);
-//        
-//    }
-//    
-//    @Test(expected=Exception.class)
-//    public void testMergeMessageWithDatabase_doesNotExistInDatabase() {
-//        MessageDetails messageDetails = new MessageDetails();
-//        MessageContent messageContent = new MessageContent();
-//        Message message = new Message(messageDetails, messageContent);
-//        
 //        persistenceService.mergeMessageWithDatabase(message);
-//    }
-//    
-//    @Test
+        
+    }
+    
+    @Test(expected=Exception.class)
+    @Ignore
+    public void testMergeMessageWithDatabase_doesNotExistInDatabase() {
+        MessageDetails messageDetails = new MessageDetails();
+        MessageContent messageContent = new MessageContent();
+        Message message = new Message(messageDetails, messageContent);
+        
+        persistenceService.mergeMessageWithDatabase(message);
+    }
+    
+    @Test
+    @Ignore
+    public void testPersistEvidenceForMessageIntoDatabase() {
+        MessageDetails messageDetails = new MessageDetails();
+        MessageContent messageContent = new MessageContent();
+        Message message = new Message(messageDetails, messageContent);
+        
+        byte[] evidence = "hallo Welt".getBytes();
+        
+        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, EvidenceType.DELIVERY);
+    }
+    
+    //TODO: load testdata and do check with testdata
+    
+    @Test(expected=EmptyResultDataAccessException.class)
+    @Ignore
+    public void testFindMessageByNationalId_doesNotExist_shouldThrowEmptyResultException() {
+        String nationalIdString = "TEST1";
+        Message findMessageByNationalId = persistenceService.findMessageByNationalId(nationalIdString);
+        
+    }
+    
+    @Test
 //    @Ignore
-//    public void testPersistEvidenceForMessageIntoDatabase() {
-//        MessageDetails messageDetails = new MessageDetails();
-//        MessageContent messageContent = new MessageContent();
-//        Message message = new Message(messageDetails, messageContent);
-//        
-//        byte[] evidence = "hallo Welt".getBytes();
-//        
-//        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, EvidenceType.DELIVERY);
-//    }
-//    
-//    //TODO: load testdata and do check with testdata
-//    
-//    @Test(expected=EmptyResultDataAccessException.class)
-//    public void testFindMessageByNationalId_doesNotExist_shouldThrowEmptyResultException() {
-//        String nationalIdString = "TEST1";
-//        Message findMessageByNationalId = persistenceService.findMessageByNationalId(nationalIdString);
-//        
-//    }
-//    
-//    @Test
-//    public void testGetAction() {
-//        DomibusConnectorAction action = persistenceService.getAction("Form_A");
-//        assertThat(action).isNotNull();
-//    }
-//    
-//    @Test
-//    public void testGetParty() {       
-//        DomibusConnectorParty party = persistenceService.getParty("AT", "GW");
-//        assertThat(party).isNotNull();
-//    }
-//    
-//    @Test
-//    public void testGetParty_doesNotExistInDB_shouldBeNull() {       
-//        DomibusConnectorParty party = persistenceService.getParty("ATEA", "GW");
-//        assertThat(party).isNull();
-//    }
-//    
-//    @Test
-//    public void testGetPartyById() {
-//        DomibusConnectorParty party = persistenceService.getPartyByPartyId("AT");
-//        assertThat(party).isNotNull();
-//    }
+    public void testGetAction() {
+        Action action = persistenceService.getAction("Form_A");
+        assertThat(action).isNotNull();
+    }
+    
+    @Test
+//    @Ignore
+    public void testGetParty() {       
+        Party party = persistenceService.getParty("AT", "GW");
+        assertThat(party).isNotNull();
+    }
+    
+    @Test
+//    @Ignore
+    public void testGetParty_doesNotExistInDB_shouldBeNull() {       
+        Party party = persistenceService.getParty("ATEA", "GW");
+        assertThat(party).isNull();
+    }
+    
+    @Test
+//    @Ignore
+    public void testGetPartyById() {
+        Party party = persistenceService.getPartyByPartyId("AT");
+        assertThat(party).isNotNull();
+    }
     
     /**
      *  void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException;

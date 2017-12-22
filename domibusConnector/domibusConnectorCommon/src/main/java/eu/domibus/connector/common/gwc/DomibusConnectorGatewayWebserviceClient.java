@@ -1,9 +1,8 @@
 package eu.domibus.connector.common.gwc;
 
+import eu.domibus.connector.domain.Message;
 import java.util.Collection;
 
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageDetails;
 
 /**
  * WebService Client Interface to communicate with the gateway.

@@ -6,6 +6,7 @@
 
 package eu.domibus.connector.persistence.dao;
 
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,6 @@ import org.springframework.stereotype.Repository;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Repository
-public interface DomibusConnectorPartyDao extends CrudRepository<DomibusConnectorPartyDao, DomibusConnectorPartyPK> {
+public interface DomibusConnectorPartyDao extends CrudRepository<DomibusConnectorParty, DomibusConnectorPartyPK> {
 
 }

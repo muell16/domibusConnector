@@ -55,5 +55,10 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>domibusConnectorDomain</artifactId>
+	  <version>${project.version}</version>
+	 </dependency>
+	</dependencies>
 </project>

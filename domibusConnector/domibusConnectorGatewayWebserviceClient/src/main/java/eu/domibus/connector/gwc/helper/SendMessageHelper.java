@@ -9,10 +9,10 @@ import backend.ecodex.org._1_1.SendRequest;
 import backend.ecodex.org._1_1.SendResponse;
 import eu.domibus.connector.common.CommonConnectorGlobalConstants;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageAttachment;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageAttachment;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageContent;
 import eu.domibus.connector.gwc.util.CommonMessageHelper;
 
 public class SendMessageHelper {

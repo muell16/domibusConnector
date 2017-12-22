@@ -1,19 +1,20 @@
 package eu.domibus.connector.persistence.service;
 
+import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageError;
+import eu.domibus.connector.domain.Party;
+import eu.domibus.connector.domain.Service;
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.MessageDirection;
+
 import java.util.List;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.enums.MessageDirection;
-import eu.domibus.connector.common.exception.PersistenceException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageError;
+
 
 public interface DomibusConnectorPersistenceService {
 
-    void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException;
+    void persistMessageIntoDatabase(Message message, MessageDirection direction);
 
     void mergeMessageWithDatabase(Message message);
 
@@ -39,21 +40,21 @@ public interface DomibusConnectorPersistenceService {
 
     void rejectMessage(Message message);
 
-    DomibusConnectorAction getAction(String action);
+    Action getAction(String action);
 
-    DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction();
+    Action getRelayREMMDAcceptanceRejectionAction();
 
-    DomibusConnectorAction getRelayREMMDFailure();
+    Action getRelayREMMDFailure();
 
-    DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction();
+    Action getDeliveryNonDeliveryToRecipientAction();
 
-    DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
+    Action getRetrievalNonRetrievalToRecipientAction();
 
-    DomibusConnectorService getService(String service);
+    Service getService(String service);
 
-    DomibusConnectorParty getParty(String partyId, String role);
+    Party getParty(String partyId, String role);
 
-    DomibusConnectorParty getPartyByPartyId(String partyId);
+    Party getPartyByPartyId(String partyId);
 
     List<Message> findMessagesByConversationId(String conversationId);
 
@@ -61,7 +62,7 @@ public interface DomibusConnectorPersistenceService {
 
     List<MessageError> getMessageErrors(Message message) throws Exception;
 
-    void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) throws PersistenceException;
+    void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source); 
 
 	List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery();
 
