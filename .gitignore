@@ -55,3 +55,4 @@ $Recycle.Bin
 /holodeck/modules/holodeck-distribution/src/test/resources/soapui_testsuites/*.txt
 
 /domibusConnector/domibusConnectorSecurityToolkit/nbproject/
+/domibusConnector/domibusConnectorPersistence/nbproject/

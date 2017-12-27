@@ -26,6 +26,8 @@ import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.DomibusConnectorMessageError;
 import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 
 
@@ -57,7 +59,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Autowired
     private DomibusConnectorServiceDao serviceDao;
     
-//    @Autowired
+    @Autowired
     private DomibusConnectorPartyDao partyDao;
     
     @Autowired
@@ -432,11 +434,20 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         return new Service();
     }
 
+    Party mapPartyToDomain(DomibusConnectorParty persistenceParty) {
+        if (persistenceParty != null) {
+            Party p = new Party();
+            BeanUtils.copyProperties(persistenceParty, p);
+            return p;
+        }
+        return null;
+    }
+    
     @Override
     public Party getParty(String partyId, String role) {
-        //return partyDao.getParty(partyId, role);
-        //TODO        
-        return new Party();
+        DomibusConnectorPartyPK pk = new DomibusConnectorPartyPK(partyId, role);        
+        DomibusConnectorParty party = partyDao.findOne(pk);
+        return mapPartyToDomain(party);
     }
 
     @Override
