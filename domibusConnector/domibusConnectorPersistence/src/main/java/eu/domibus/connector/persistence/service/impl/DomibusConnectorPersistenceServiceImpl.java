@@ -15,6 +15,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.domain.Service;
+import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceServi
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DuplicateKeyException;
 
 @org.springframework.stereotype.Service("persistenceService")
@@ -407,10 +409,20 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     public Action getAction(String action) {
-        //return actionDao.findOne(action);
-        return new Action();
+        
+        DomibusConnectorAction findOne = actionDao.findOne(action);
+
+        return mapActionToDomain(findOne);
     }
 
+    Action mapActionToDomain(DomibusConnectorAction persistenceAction) {
+        if (persistenceAction != null) {
+            Action action = new Action();
+            BeanUtils.copyProperties(persistenceAction, action);
+            return action;
+        }
+        return null;
+    }
     
     
     @Override

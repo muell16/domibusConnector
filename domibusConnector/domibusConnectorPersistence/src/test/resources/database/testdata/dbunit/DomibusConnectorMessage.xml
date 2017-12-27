@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<dataset>
+
+    <domibus_connector_message 
+        id="73" 
+        ebms_message_id="8dbba1fc-41ff-4d93-ae38-462bb3c5a1d2@domibus.eu"	
+        backend_message_id="20171103080259732_domibus-blue" 
+        direction="NAT_TO_GW"
+        hash_value="31fb9a629e9640c4723cbd101adafd32"
+        updated="2017-12-12 12:34:23.000000000"
+    />
+
+</dataset>

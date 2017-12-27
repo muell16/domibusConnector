@@ -10,12 +10,10 @@
     -->
     <include file="/db/changelog/install/initial-changelog-domibus.xml" />   
     
-    
-      
 <!--    <include file="db/changelog/install/initial-changelog-webadmin.xml" />     
     <include file="db/changelog/install/initial-changelog-quartz.xml" /> 
      initial data     -->
      
-<!--   <include file="/db/changelog/install/initial-changelog-data.sql" />-->
+   <include file="/db/changelog/install/initial-changelog-data.sql" />
    
 </databaseChangeLog> 

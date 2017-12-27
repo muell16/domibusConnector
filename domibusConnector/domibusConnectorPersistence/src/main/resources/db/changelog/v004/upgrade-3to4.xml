@@ -234,6 +234,13 @@
             newDataType="TIMESTAMP" />
     </changeSet>
     
+    <changeSet id="3to4_upgrade_009a_tb_update_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
+        <renameColumn 
+            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
+            oldColumnName="DELIVERED_NAT" 
+            newColumnName="DELIVERED_NATIONAL_BACKEND" />
+    </changeSet>
+    
     <changeSet id="3to4_upgrade_010_tb_create_DOMIBUS_CONNECTOR_CONTENT_TYPE" author="StephanSpindler">
         <createTable tableName="MESSAGE_CONTENT_TYPE" >
             <column name="MESSAGE_CONTENT_TYPE" type="${varchar255.type}" >

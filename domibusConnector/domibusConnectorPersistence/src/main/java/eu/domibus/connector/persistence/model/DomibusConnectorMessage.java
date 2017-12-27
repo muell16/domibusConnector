@@ -33,7 +33,7 @@ public class DomibusConnectorMessage {
     @Column(name = "EBMS_MESSAGE_ID", unique = true)
     private String ebmsMessageId;
 
-    @Column(name = "NAT_MESSAGE_ID", unique = true)
+    @Column(name = "BACKEND_MESSAGE_ID", unique = true)
     private String nationalMessageId;
 
     @Column(name = "CONVERSATION_ID")
@@ -46,7 +46,7 @@ public class DomibusConnectorMessage {
     @Column(name = "HASH_VALUE")
     private String hashValue;
 
-    @Column(name = "DELIVERED_NAT")
+    @Column(name = "DELIVERED_BACKEND")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredToNationalSystem;
 

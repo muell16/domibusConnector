@@ -20,6 +20,8 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public abstract class CommonPersistenceDBUnitITCase {
 
+
+
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector"})
     static class TestConfiguration {
     }
@@ -43,17 +45,21 @@ public abstract class CommonPersistenceDBUnitITCase {
         APPLICATION_CONTEXT.close();
     }
 
+    protected DataSource ds;
+
+    protected DomibusConnectorPersistenceService persistenceService;
+
+    protected ConfigurableApplicationContext applicationContext;
+        
     @Before
-    public void setUp() throws InterruptedException {        
+    public void setUp() throws Exception {        
+        this.applicationContext = APPLICATION_CONTEXT;
         //lookup type
         this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
         //lookup name
         this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
     }
 
-    DataSource ds;
-
-    DomibusConnectorPersistenceService persistenceService;
 
     
     

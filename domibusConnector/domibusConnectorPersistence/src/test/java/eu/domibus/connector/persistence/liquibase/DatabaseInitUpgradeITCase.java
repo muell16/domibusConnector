@@ -69,8 +69,7 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     */
     protected void checkInstallDB(String profile, Properties props) {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInstallDB");
-        props.put("liquibase.change-log","classpath:/db/changelog/install/initial-4.0.xml");
-        
+        props.put("liquibase.change-log","classpath:/db/changelog/install/initial-4.0.xml");        
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
                 .profiles("test", profile)                
@@ -85,13 +84,17 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
             connection.createStatement().executeQuery("SELECT * FROM DOMIBUS_CONNECTOR_PARTY");
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        }                
+        
+        ctx.close();
     }
     
         
     @Test    
     public void testInstall004Database_h2() {
-        checkInstallDB("db_h2", new Properties());  
+        Properties props = loadH2TestProperties();
+        props.put("spring.datasource.url", "jdbc:h2:mem:install004");
+        checkInstallDB("db_h2", props);  
     }
     
     @Test
@@ -104,8 +107,8 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     
     @Test
     public void testMigrate3to4_h2() throws SQLException, LiquibaseException, DatabaseException, IOException {
-        Properties props = new Properties();
-        props.setProperty("spring.datasource.url", "jdbc:h2:mem:");
+        Properties props = loadH2TestProperties();
+        props.put("spring.datasource.url", "jdbc:h2:mem:3to4db");
         testMigrate3to4Database(H2_PROFILE, props);
     }
     
@@ -180,10 +183,10 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         liquibase.update(new Contexts());
         database.commit();
         
-        
+        database.close();
         //verify correct migration
         
-        
+        ctx.close();
     }
     
     /*
@@ -194,31 +197,37 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         props.put("liquibase.change-log","classpath:/db/changelog/v003/initial-3.0.xml");
         
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
-        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
-                .profiles("test", profile)                
+        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)                
+                .profiles("test", profile)                   
                 .properties(props);
         
         
-        ConfigurableApplicationContext ctx = springAppBuilder.run();        
-        try {
-            DataSource ds = ctx.getBean(DataSource.class);
+        ConfigurableApplicationContext ctx = springAppBuilder.run();    
+
+        DataSource ds = ctx.getBean(DataSource.class);
+        try ( Connection connection = ds.getConnection() )  {            
             //TODO: test DB
-            Connection connection = ds.getConnection();
+         
             connection.createStatement().executeQuery("SELECT * FROM DOMIBUS_CONNECTOR_PARTY");
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        } 
         
 //        if ("db_h2".equals(profile)) {
 //            DataSource ds = ctx.getBean(DataSource.class);
 //            
 //        }
+
+        ctx.close();
     }
     
-    
+
+//@Ignore    
     @Test
     public void testInitial003Database_h2() {
-        checkInital003DB("db_h2", new Properties());  
+        Properties props = super.loadH2TestProperties();
+        props.put("spring.datasource.url", "jdbc:h2:mem:install003");
+        checkInital003DB("db_h2", props);  
     }
     
     @Test

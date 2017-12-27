@@ -169,6 +169,12 @@ public class PersistenceServiceITCase {
     }
     
     @Test
+    public void testGetAction_doesNotExistInDb_retShouldBeNull() {
+        Action action = persistenceService.getAction("DOESNOTEXIST");
+        assertThat(action).as("should be null beacause does not exist in db").isNull();
+    }
+    
+    @Test
 //    @Ignore
     public void testGetAction() {
         Action action = persistenceService.getAction("Form_A");
@@ -184,7 +190,7 @@ public class PersistenceServiceITCase {
     
     @Test
 //    @Ignore
-    public void testGetParty_doesNotExistInDB_shouldBeNull() {       
+    public void testGetParty_doesNotExistInDB_retShouldBeNull() {       
         Party party = persistenceService.getParty("ATEA", "GW");
         assertThat(party).isNull();
     }

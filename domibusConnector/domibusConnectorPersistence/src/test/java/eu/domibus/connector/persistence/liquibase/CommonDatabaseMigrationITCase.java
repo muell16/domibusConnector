@@ -31,6 +31,11 @@ public abstract class CommonDatabaseMigrationITCase {
         return dir;
     }
 
+    protected Properties loadH2TestProperties() {
+        Properties p = new Properties();
+        return p;
+    }
+    
     protected Properties loadMysqlTestProperties() {
         return loadProperties("mysql");
     }
