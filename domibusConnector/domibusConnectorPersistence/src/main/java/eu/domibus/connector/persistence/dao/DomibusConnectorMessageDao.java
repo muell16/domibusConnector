@@ -12,12 +12,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Repository
+@Transactional
 public interface DomibusConnectorMessageDao extends CrudRepository<DomibusConnectorMessage, Long> {
 
     public DomibusConnectorMessage findOneByNationalMessageId(String nationalId);
@@ -42,11 +44,11 @@ public interface DomibusConnectorMessageDao extends CrudRepository<DomibusConnec
         
     @Modifying
     @Query("update DomibusConnectorMessage m set confirmed=CURRENT_TIMESTAMP, rejected=NULL where m.id = ?1")
-    public void confirmMessage(Long messageId);
+    public int confirmMessage(Long messageId);
     
     @Modifying
-    @Query("update DomibusConnectorMessage m set rejected=CURRENT_TIMESTAMP, confirmed=NULL where m.id= ?1")
-    public void rejectMessage(Long messageId);
+    @Query("update DomibusConnectorMessage m set rejected=CURRENT_TIMESTAMP, confirmed=NULL where m.id = ?1")
+    public int rejectMessage(Long messageId);
     
     
 }
