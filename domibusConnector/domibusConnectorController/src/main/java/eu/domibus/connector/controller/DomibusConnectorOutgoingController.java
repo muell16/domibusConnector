@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.common.message.MessageDetails;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 

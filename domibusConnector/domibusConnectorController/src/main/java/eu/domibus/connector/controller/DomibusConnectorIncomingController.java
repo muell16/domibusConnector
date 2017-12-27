@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
+import eu.domibus.connector.domain.Message;
 
 public class DomibusConnectorIncomingController implements DomibusConnectorController {
 

@@ -19,9 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.common.CommonConnectorGlobalConstants;
-import eu.domibus.connector.common.enums.DetachedSignatureMimeType;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageAttachment;
+
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageAttachment;
+import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;

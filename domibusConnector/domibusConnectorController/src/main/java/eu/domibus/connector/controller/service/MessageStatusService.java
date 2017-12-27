@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageError;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 
 public class MessageStatusService extends AbstractMessageService {

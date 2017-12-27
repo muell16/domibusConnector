@@ -7,14 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.common.CommonConnectorProperties;
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+//import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
@@ -126,7 +128,7 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 					"Error creating RelayREMMDFailure for message!", e, this.getClass());
 		}
 
-		DomibusConnectorAction action = persistenceService.getRelayREMMDFailure();
+		Action action = persistenceService.getRelayREMMDFailure();
 
 		sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
 	}
@@ -144,14 +146,14 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 					this.getClass());
 		}
 
-		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		Action action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToNationalSystem(originalMessage, nonDelivery, action);
 	}
 
 
 	private void sendEvidenceToNationalSystem(Message originalMessage, MessageConfirmation confirmation,
-			DomibusConnectorAction evidenceAction) throws DomibusConnectorControllerException,
+			Action evidenceAction) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
 		originalMessage.addConfirmation(confirmation);

@@ -1,8 +1,8 @@
 package eu.domibus.connector.security.container;
 
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.ecodex.dss.model.SignatureParameters;
 import eu.ecodex.dss.model.token.AdvancedSystemType;
 import eu.ecodex.dss.service.ECodexContainerService;

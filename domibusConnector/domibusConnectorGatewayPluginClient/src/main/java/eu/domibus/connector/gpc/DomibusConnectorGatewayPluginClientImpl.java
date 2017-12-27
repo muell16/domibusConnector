@@ -24,8 +24,8 @@ import connector.domibus.eu.domibusconnectorgatewayservice._1_0.SendMessageFault
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageError;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.gpc.transformer.MessageTransformer;
 
 public class DomibusConnectorGatewayPluginClientImpl implements DomibusConnectorGatewayWebserviceClient {
@@ -163,7 +163,8 @@ public class DomibusConnectorGatewayPluginClientImpl implements DomibusConnector
 
 	private void persistEbmsMessageIdIntoDatabase(String ebmsMessageId, Message message) {
 		if (!ebmsMessageId.isEmpty()) {
-			message.getDbMessage().setEbmsMessageId(ebmsMessageId);
+//			message.getDbMessage().setEbmsMessageId(ebmsMessageId);
+//TODO!
 			persistenceService.mergeMessageWithDatabase(message);
 		}
 	}

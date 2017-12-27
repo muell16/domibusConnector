@@ -66,10 +66,11 @@ public class ConnectorMessageFilter implements IConnectorMessageFilter {
         List<MessageReportDO> resultList = new ArrayList<MessageReportDO>();
 
         for (MessageReportDO eCodexMessageInfo : customResultList) {
-            if (eCodexMessageInfo.getMessage().getDirection() != null
-                    && direction.equals(eCodexMessageInfo.getMessage().getDirection().toString())) {
-                resultList.add(eCodexMessageInfo);
-            }
+//            if (eCodexMessageInfo.getMessage().getDirection() != null
+//                    && direction.equals(eCodexMessageInfo.getMessage().getDirection().toString())) {
+//                resultList.add(eCodexMessageInfo);
+//            }
+//TODO!
         }
         return resultList;
     }

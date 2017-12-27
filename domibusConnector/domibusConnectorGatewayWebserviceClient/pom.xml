@@ -28,6 +28,11 @@
 	  <artifactId>domibusConnectorDomain</artifactId>
 	  <version>${project.version}</version>
 	 </dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>domibusConnectorPersistence</artifactId>
+	  <version>${project.version}</version>
+	 </dependency>
 	</dependencies>
 	<packaging>jar</packaging>
 	<build>
