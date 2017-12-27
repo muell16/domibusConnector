@@ -16,7 +16,7 @@ import eu.domibus.connector.domain.MessageDetails;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class TestMessageCreator {
+public class DomainMessageCreator {
 
     public static Message createSimpleTestMessage() {
         MessageDetails messageDetails = new MessageDetails();
@@ -27,7 +27,7 @@ public class TestMessageCreator {
         
         
         Message msg = new Message(messageDetails, messageContent);
-        
+        msg.setDbMessageId(78L);
                 
         return msg;
     }

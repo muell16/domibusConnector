@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.model.test.util;
 import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 
 /**
  *
@@ -24,8 +25,9 @@ public class PersistenceMessageCreator {
             msg.setConfirmed(dateFormat.parse("2017-12-23 23:45:23"));
             msg.setConversationId("conversation1");
             msg.setHashValue("hashvalue");
-            msg.setId(78L);
-            
+            msg.setId(78L);            
+            msg.setEvidences(new HashSet<>());
+                        
             
             return msg;
             

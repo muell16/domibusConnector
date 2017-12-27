@@ -56,6 +56,13 @@ public interface DomibusConnectorPersistenceService {
 
     Party getPartyByPartyId(String partyId);
 
+    /**
+     * returns all messages related to the
+     * conversation id
+     * @param conversationId - the conversation id
+     * @return - a list of messages, if there are no messages found
+     *  the list will be empty
+     */
     List<Message> findMessagesByConversationId(String conversationId);
 
     void persistMessageError(MessageError messageError);
@@ -64,7 +71,15 @@ public interface DomibusConnectorPersistenceService {
 
     void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source); 
 
+    /**
+     * 
+     * @return a list of Messages or an emtpy List if nothing found
+     */
 	List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery();
 
+    /**
+     * 
+     * @return a list of Messages or an emtpy List if nothing found
+     */
 	List<Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
 }
