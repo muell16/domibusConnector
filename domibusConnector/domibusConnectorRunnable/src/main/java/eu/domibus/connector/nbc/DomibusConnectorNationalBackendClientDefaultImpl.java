@@ -14,15 +14,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import eu.domibus.connector.common.enums.DetachedSignatureMimeType;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageAttachment;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.common.message.MessageError;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageAttachment;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
@@ -350,8 +350,10 @@ InitializingBean {
 	}
 
 	private boolean isOutgoingMessage(Message originalMessage) {
-		return originalMessage.getDbMessage() != null && originalMessage.getDbMessage().getDirection() != null
-				&& originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW);
+//		return originalMessage.getDbMessage() != null && originalMessage.getDbMessage().getDirection() != null
+//				&& originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW);
+//TODO!
+        return true;
 	}
 
 	@Override

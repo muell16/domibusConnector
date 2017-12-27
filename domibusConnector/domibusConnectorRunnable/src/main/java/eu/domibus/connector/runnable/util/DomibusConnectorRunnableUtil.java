@@ -14,15 +14,16 @@ import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.Party;
+import eu.domibus.connector.domain.Service;
+
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 
 public class DomibusConnectorRunnableUtil {
@@ -79,7 +80,7 @@ public class DomibusConnectorRunnableUtil {
             fromPartyRole = gatewayRole;
         }
         if (fromPartyId != null && fromPartyRole != null) {
-            DomibusConnectorParty fromParty = persistenceService.getParty(fromPartyId, fromPartyRole);
+            Party fromParty = persistenceService.getParty(fromPartyId, fromPartyRole);
             if (fromParty == null) {
                 throw new DomibusConnectorRunnableException("Could not find Party with id '" + fromPartyId
                         + "' and role '" + fromPartyRole + "'!");
@@ -92,7 +93,7 @@ public class DomibusConnectorRunnableUtil {
         String toPartyId = properties.getToPartyId();
         String toPartyRole = properties.getToPartyRole();
         if (toPartyId != null && toPartyRole != null) {
-            DomibusConnectorParty toParty = persistenceService.getParty(toPartyId, toPartyRole);
+            Party toParty = persistenceService.getParty(toPartyId, toPartyRole);
             if (toParty == null) {
                 throw new DomibusConnectorRunnableException("Could not find Party with id '" + toPartyId
                         + "' and role '" + toPartyRole + "'!");
@@ -105,7 +106,7 @@ public class DomibusConnectorRunnableUtil {
 
         String action = properties.getAction();
         if (StringUtils.hasText(action)) {
-            DomibusConnectorAction dbAction = persistenceService.getAction(action);
+            Action dbAction = persistenceService.getAction(action);
             if (dbAction == null) {
                 throw new DomibusConnectorRunnableException("Could not find Action in database by set action '" + action
                         + "'!");
@@ -117,7 +118,7 @@ public class DomibusConnectorRunnableUtil {
 
         String service = properties.getService();
         if (StringUtils.hasText(service)) {
-            DomibusConnectorService dbService = persistenceService.getService(service);
+            Service dbService = persistenceService.getService(service);
             if (dbService == null) {
                 throw new DomibusConnectorRunnableException("Could not find Service in database by set service '"
                         + service + "'!");

@@ -1,8 +1,8 @@
 package eu.domibus.connector.mapping;
 
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageContent;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageContent;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 
 /**
