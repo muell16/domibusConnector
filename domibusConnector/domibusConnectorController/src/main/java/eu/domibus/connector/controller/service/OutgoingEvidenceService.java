@@ -3,21 +3,20 @@ package eu.domibus.connector.controller.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
-import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
-import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 
 public class OutgoingEvidenceService implements EvidenceService {
 
@@ -95,19 +94,8 @@ public class OutgoingEvidenceService implements EvidenceService {
 
     private MessageConfirmation generateEvidence(EvidenceType type, Message originalMessage)
             throws DomibusConnectorEvidencesToolkitException, DomibusConnectorMessageException {
-        switch (type) {
-        case DELIVERY:
-            return evidencesToolkit.createDeliveryEvidence(originalMessage);
-        case NON_DELIVERY:
-            return evidencesToolkit.createNonDeliveryEvidence(RejectionReason.OTHER, originalMessage);
-        case RETRIEVAL:
-            return evidencesToolkit.createRetrievalEvidence(originalMessage);
-        case NON_RETRIEVAL:
-            return evidencesToolkit.createNonRetrievalEvidence(RejectionReason.OTHER, originalMessage);
-        default:
-            throw new DomibusConnectorMessageException(originalMessage, "Illegal Evidence type " + type
-                    + " to be generated!", this.getClass());
-        }
+            return evidencesToolkit.createEvidence(type, originalMessage, RejectionReason.OTHER, null);
+        
     }
 
     private Action createEvidenceAction(EvidenceType type) throws DomibusConnectorControllerException {

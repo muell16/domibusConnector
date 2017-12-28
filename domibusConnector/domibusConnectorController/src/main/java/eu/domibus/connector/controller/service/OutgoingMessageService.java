@@ -1,22 +1,19 @@
 package eu.domibus.connector.controller.service;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
-import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
-import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
@@ -40,11 +37,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         String hashValue = null;
 
+        
         if (connectorProperties.isUseContentMapper()) {
             try {
                 contentMapper.mapNationalToInternational(message);
             } catch (DomibusConnectorContentMapperException | ImplementationMissingException cme) {
-                createSubmissionRejectionAndReturnIt(message, hashValue, cme.getMessage());
+                createSubmissionRejectionAndReturnIt(message, cme.getMessage());
                 throw new DomibusConnectorMessageException(message, cme.getMessage(), cme, this.getClass());
             }
             try {
@@ -55,18 +53,11 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             }
         }
 
-        try {
-            hashValue = checkPDFandBuildHashValue(message, hashValue);
-        } catch (DomibusConnectorControllerException e) {
-            createSubmissionRejectionAndReturnIt(message, hashValue, e.getMessage());
-            throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
-        }
-
         if (connectorProperties.isUseSecurityToolkit()) {
             try {
                 securityToolkit.buildContainer(message);
             } catch (DomibusConnectorSecurityException se) {
-                createSubmissionRejectionAndReturnIt(message, hashValue, se.getMessage());
+                createSubmissionRejectionAndReturnIt(message, se.getMessage());
                 throw new DomibusConnectorMessageException(message, se.getMessage(), se, this.getClass());
             }
         }
@@ -74,14 +65,13 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         MessageConfirmation confirmation = null;
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
-                byte[] submissionAcceptance = evidencesToolkit.createSubmissionAcceptance(message, hashValue);
+            	confirmation = evidencesToolkit.createEvidence(EvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
                 // immediately persist new evidence into database
-                persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionAcceptance,
+                persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
                         EvidenceType.SUBMISSION_ACCEPTANCE);
 
-                confirmation = new MessageConfirmation(EvidenceType.SUBMISSION_ACCEPTANCE, submissionAcceptance);
             } catch (DomibusConnectorEvidencesToolkitException ete) {
-                createSubmissionRejectionAndReturnIt(message, hashValue, ete.getMessage());
+                createSubmissionRejectionAndReturnIt(message, ete.getMessage());
                 throw new DomibusConnectorMessageException(message,
                         "Could not generate evidence submission acceptance! ", ete, this.getClass());
             }
@@ -91,7 +81,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         try {
             gatewayWebserviceClient.sendMessage(message);
         } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
-            createSubmissionRejectionAndReturnIt(message, hashValue, gwse.getMessage());
+            createSubmissionRejectionAndReturnIt(message, gwse.getMessage());
             throw new DomibusConnectorMessageException(message, "Could not send Message to Gateway! ", gwse,
                     this.getClass());
         }
@@ -123,40 +113,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
     }
 
-    private String checkPDFandBuildHashValue(Message message, String hashValue)
-            throws DomibusConnectorControllerException {
-        if (ArrayUtils.isEmpty(message.getMessageContent().getPdfDocument())) {
-            Action action = message.getMessageDetails().getAction();
-            if (action == null) {
-                throw new DomibusConnectorControllerException("Action still null after mapping!");
-            }
-            if (action.isPdfRequired()) {
-                throw new DomibusConnectorControllerException(
-                        "There is no PDF document in the message though the Action " + action.getAction()
-                                + " requires one!");
-            }
-        } else {
-            try {
-                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
 
-                if (StringUtils.isNotEmpty(hashValue)) {
-                    //TODO!
-//                    message.getDbMessage().setHashValue(hashValue);
-                    persistenceService.mergeMessageWithDatabase(message);
-                }
-            } catch (Exception e) {
-                throw new DomibusConnectorControllerException("Could not build hash code though the PDF is not empty!",
-                        e);
-            }
-        }
-        return hashValue;
-    }
+    private void createSubmissionRejectionAndReturnIt(Message message, String errorMessage){
 
-    private void createSubmissionRejectionAndReturnIt(Message message, String hashValue, String errorMessage){
-
-        byte[] submissionRejection = null;
+    	MessageConfirmation confirmation = null;
         try {
-            submissionRejection = evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message, hashValue,
+        	confirmation = evidencesToolkit.createEvidence(EvidenceType.SUBMISSION_REJECTION, message, RejectionReason.OTHER,
                     errorMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
             new DomibusConnectorMessageException(message, "Could not even generate submission rejection! ", e,
@@ -167,7 +129,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         try {
             // immediately persist new evidence into database
-            persistenceService.persistEvidenceForMessageIntoDatabase(message, submissionRejection,
+            persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
                     EvidenceType.SUBMISSION_REJECTION);
         } catch (Exception e) {
             new DomibusConnectorMessageException(message, "Could not persist evidence of type SUBMISSION_REJECTION! ",
@@ -175,9 +137,6 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             LOGGER.error("Could not persist evidence of type SUBMISSION_REJECTION! ", e);
             return;
         }
-
-        MessageConfirmation confirmation = new MessageConfirmation(EvidenceType.SUBMISSION_REJECTION,
-                submissionRejection);
 
         try {
             Message returnMessage = buildEvidenceMessage(confirmation, message);

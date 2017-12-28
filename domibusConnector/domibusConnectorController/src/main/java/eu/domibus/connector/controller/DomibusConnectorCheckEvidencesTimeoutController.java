@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
@@ -124,7 +125,7 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 		MessageConfirmation relayRemMDFailure = null;
 
 		try {
-			relayRemMDFailure = evidencesToolkit.createRelayREMMDFailure(RejectionReason.OTHER, originalMessage);
+			relayRemMDFailure = evidencesToolkit.createEvidence(EvidenceType.RELAY_REMMD_FAILURE, originalMessage, RejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating RelayREMMDFailure for message!", e, this.getClass());
@@ -142,7 +143,7 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 				.getMessageDetails().getEbmsMessageId());
 		MessageConfirmation nonDelivery = null;
 		try {
-			nonDelivery = evidencesToolkit.createNonDeliveryEvidence(RejectionReason.OTHER, originalMessage);
+			nonDelivery = evidencesToolkit.createEvidence(EvidenceType.NON_DELIVERY, originalMessage, RejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage, "Error creating NonDelivery for message!", e,
 					this.getClass());
