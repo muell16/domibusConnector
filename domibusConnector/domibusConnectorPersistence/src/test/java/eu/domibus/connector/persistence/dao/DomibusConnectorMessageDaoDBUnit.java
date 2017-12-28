@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
+import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -141,13 +142,38 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     }
     
     @Test
-    public void testSetMessageDeliveredToGateway() {
-        fail("TODO: finish Test!");
+    public void testSetMessageDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {
+        
+        int upd = messageDao.setMessageDeliveredToGateway(73L);
+        
+        assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
+        
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=73");
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        Date value = (Date) domibusConnectorTable.getValue(0, "delivered_gw");
+        assertThat(value).isCloseTo(new Date(), 2000);
+
     }
     
     @Test
-    public void testSetmessageDeliveredToBackend() {
-        fail("TODO: finish Test!");
+    public void testSetmessageDeliveredToBackend() throws SQLException, AmbiguousTableNameException, DataSetException {
+        int upd = messageDao.setMessageDeliveredToBackend(74L);
+        
+        assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
+        
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=74");
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        Date value = (Date) domibusConnectorTable.getValue(0, "delivered_backend");
+        assertThat(value).isCloseTo(new Date(), 2000);
+        
     }
     
 }
