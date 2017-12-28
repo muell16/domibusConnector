@@ -22,9 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;

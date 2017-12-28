@@ -6,16 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.exception.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
@@ -30,12 +31,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     public void handleMessage(Message message) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
-        try {
+//        try {
             persistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW);
-        } catch (PersistenceException e1) {
-            // createSubmissionRejectionAndReturnIt(message, hashValue);
-            throw new DomibusConnectorControllerException(e1);
-        }
+//        } catch (PersistenceException e1) {
+//            // createSubmissionRejectionAndReturnIt(message, hashValue);
+//            throw new DomibusConnectorControllerException(e1);
+//        }
 
         String hashValue = null;
 
@@ -103,14 +104,14 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
 
-        LOGGER.info("Successfully sent message with id {} to gateway.", message.getDbMessage().getId());
+        LOGGER.info("Successfully sent message with id {} to gateway.", message.getDbMessageId());
 
     }
 
     private String checkPDFandBuildHashValue(Message message, String hashValue)
             throws DomibusConnectorControllerException {
         if (ArrayUtils.isEmpty(message.getMessageContent().getPdfDocument())) {
-            DomibusConnectorAction action = message.getMessageDetails().getAction();
+            Action action = message.getMessageDetails().getAction();
             if (action == null) {
                 throw new DomibusConnectorControllerException("Action still null after mapping!");
             }
@@ -124,7 +125,8 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
 
                 if (StringUtils.isNotEmpty(hashValue)) {
-                    message.getDbMessage().setHashValue(hashValue);
+                    //TODO!
+//                    message.getDbMessage().setHashValue(hashValue);
                     persistenceService.mergeMessageWithDatabase(message);
                 }
             } catch (Exception e) {
@@ -182,7 +184,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
         details.setService(originalMessage.getMessageDetails().getService());
 
-        DomibusConnectorAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
+        Action action = persistenceService.getAction("SubmissionAcceptanceRejection");
         details.setAction(action);
 
         Message returnMessage = new Message(details, confirmation);

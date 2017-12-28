@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
+//import eu.domibus.connector.common.db.dao.DomibusConnectorConnectorMonitoringDao;
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.commons.DBUtil;
 import eu.domibus.webadmin.commons.JmxConnector;
@@ -59,8 +59,8 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     private String rejectedConnectorMessagesCountStatus;
     private boolean useMonitorServer = false;
 
-    @Autowired
-    private DomibusConnectorConnectorMonitoringDao monitoringDao;
+//    @Autowired
+//    private DomibusConnectorConnectorMonitoringDao monitoringDao;
 
     @Autowired
     private DBUtil dbUtil;
@@ -224,14 +224,15 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
     @Transactional(readOnly = true)
     private void queryDB() {
         try {
-            checkOutgoingRepeatInterval = monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
-            jobStatusIncoming = monitoringDao.selectStatusTrigger(CHECK_INCOMING_TRIGGER_NAME);
-            jobStatusOutgoing = monitoringDao.selectStatusTrigger(CHECK_OUTGOING_TRIGGER_NAME);
-            jobStatusEvidencesTimeout = monitoringDao.selectStatusTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME);
-            lastCalledCheckEvidencesTimeout = new Date(
-            monitoringDao.selectLastCalledTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME));
-            lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
-            lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
+            //TODO!
+//            checkOutgoingRepeatInterval = monitoringDao.selectTimerIntervalForJob(CHECK_OUTGOING_TRIGGER_NAME);
+//            jobStatusIncoming = monitoringDao.selectStatusTrigger(CHECK_INCOMING_TRIGGER_NAME);
+//            jobStatusOutgoing = monitoringDao.selectStatusTrigger(CHECK_OUTGOING_TRIGGER_NAME);
+//            jobStatusEvidencesTimeout = monitoringDao.selectStatusTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME);
+//            lastCalledCheckEvidencesTimeout = new Date(
+//            monitoringDao.selectLastCalledTrigger(CHECK_EVIDENCES_TIMEOUT_TRIGGER_NAME));
+//            lastCalledIncoming = new Date(monitoringDao.selectLastCalledTrigger(CHECK_INCOMING_TRIGGER_NAME));
+//            lastCalledOutgoing = new Date(monitoringDao.selectLastCalledTrigger(CHECK_OUTGOING_TRIGGER_NAME));
         } catch (Exception e) {
             LOG.error("Exception in queryDB occured", e);
         }
@@ -408,12 +409,12 @@ public class ConnectorMonitoringService implements IConnectorMonitoringService, 
         this.connectionGatewayDB = connectionGatewayDB;
     }
 
-    public DomibusConnectorConnectorMonitoringDao getMonitoringDao() {
-        return monitoringDao;
-    }
-
-    public void setMonitoringDao(DomibusConnectorConnectorMonitoringDao monitoringDao) {
-        this.monitoringDao = monitoringDao;
-    }
+//    public DomibusConnectorConnectorMonitoringDao getMonitoringDao() {
+//        return monitoringDao;
+//    }
+//
+//    public void setMonitoringDao(DomibusConnectorConnectorMonitoringDao monitoringDao) {
+//        this.monitoringDao = monitoringDao;
+//    }
 
 }

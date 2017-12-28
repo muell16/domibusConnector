@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
 import javax.persistence.EntityManager;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -25,7 +26,7 @@ public class PersistenceModelTest {
     
     @Configuration
     @EnableAutoConfiguration(exclude={LiquibaseAutoConfiguration.class})
-    @EntityScan("eu.domibus.connector.persistence.model")
+    @EntityScan(basePackageClasses={PDomibusConnectorPersistenceModel.class})
     static class TestConfiguration {
         
     }
@@ -39,7 +40,9 @@ public class PersistenceModelTest {
         
         //test if i get a EntityManager and can execute a query...
         EntityManager bean = appContext.getBean(EntityManager.class);
-        bean.find(DomibusConnectorService.class, "service");
+        DomibusConnectorService service = bean.find(DomibusConnectorService.class, "service");
+        
+        DomibusConnectorParty party = bean.find(DomibusConnectorParty.class, new DomibusConnectorPartyPK("AT", "GW"));
                 
     }
 

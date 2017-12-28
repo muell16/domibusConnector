@@ -5,15 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.common.enums.MessageDirection;
+
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.common.exception.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageDetails;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
@@ -28,13 +30,13 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 	public void handleMessage(Message message) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
-		try {
+//		try {
 			persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
-		} catch (PersistenceException e1) {
-			createRelayREMMDEvidenceAndSendIt(message, false);
-			LOGGER.error("Message could not be persisted!", e1);
-			return;
-		}
+//		} catch (PersistenceException e1) {
+//			createRelayREMMDEvidenceAndSendIt(message, false);
+//			LOGGER.error("Message could not be persisted!", e1);
+//			return;
+//		}
 
 		if (connectorProperties.isUseEvidencesToolkit()) {
 			createRelayREMMDEvidenceAndSendIt(message, true);
@@ -84,7 +86,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		persistenceService.setMessageDeliveredToNationalSystem(message);
 
-		LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessage().getId());
+		LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessageId());
 
 	}
 
@@ -105,7 +107,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 					"Error creating NonDelivery evidence for message!", e, this.getClass());
 		}
 
-		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		Action action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
 
@@ -124,7 +126,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 					"Error creating Delivery evidence for message!", e, this.getClass());
 		}
 
-		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		Action action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, delivery);
 
@@ -142,7 +144,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 					"Error creating RelayREMMD evidence for message!", e, this.getClass());
 		}
 
-		DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+		Action action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
@@ -151,7 +153,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 		}
 	}
 
-	private void sendEvidenceToBackToGateway(Message originalMessage, DomibusConnectorAction action,
+	private void sendEvidenceToBackToGateway(Message originalMessage, Action action,
 			MessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 

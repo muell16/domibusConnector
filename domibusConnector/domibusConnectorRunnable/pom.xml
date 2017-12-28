@@ -19,6 +19,11 @@
 			<artifactId>domibusConnectorConfigurator</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>domibusConnectorPersistence</artifactId>
+	  <version>${project.version}</version>
+	 </dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>

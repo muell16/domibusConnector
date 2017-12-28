@@ -4,9 +4,10 @@ import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
 
 import eu.domibus.connector.common.CommonConnectorProperties;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
+//import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.ecodex.evidences.EvidenceBuilder;

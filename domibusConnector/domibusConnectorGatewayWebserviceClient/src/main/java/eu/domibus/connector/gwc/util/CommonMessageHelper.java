@@ -36,14 +36,17 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import eu.domibus.connector.common.CommonConnectorProperties;
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+//import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+//import eu.domibus.connector.persistence.model.DomibusConnectorParty;
+//import eu.domibus.connector.persistence.model.DomibusConnectorService;
+//import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageDetails;
-import eu.domibus.connector.common.message.MessageError;
+import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.MessageError;
+import eu.domibus.connector.domain.Party;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 
 public class CommonMessageHelper {
 
@@ -74,7 +77,8 @@ public class CommonMessageHelper {
    
     public void persistEbmsMessageIdIntoDatabase(String ebmsMessageId, Message message) {
         if (!ebmsMessageId.isEmpty()) {
-            message.getDbMessage().setEbmsMessageId(ebmsMessageId);
+//            message.getDbMessage().setEbmsMessageId(ebmsMessageId);
+// TODO!
             persistenceService.mergeMessageWithDatabase(message);
         }
     }
@@ -257,7 +261,7 @@ public class CommonMessageHelper {
         PartyId partyId = new PartyId();
 
         if (details.getFromParty() == null) {
-            DomibusConnectorParty fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
+            Party fromParty = persistenceService.getParty(connectorProperties.getGatewayName(),
                     connectorProperties.getGatewayRole());
             if (fromParty == null) {
                 throw new DomibusConnectorGatewayWebserviceClientException(
@@ -317,7 +321,7 @@ public class CommonMessageHelper {
         if (actionString.contains(":")) {
             actionString = actionString.substring(actionString.lastIndexOf(":") + 1);
         }
-        DomibusConnectorAction action = persistenceService.getAction(actionString);
+        Action action = persistenceService.getAction(actionString);
         if (action == null) {
             throw new DomibusConnectorGatewayWebserviceClientException("Could not find Action in database for value "
                     + actionString);
@@ -328,7 +332,7 @@ public class CommonMessageHelper {
         if (serviceString.contains(":")) {
             serviceString = serviceString.substring(serviceString.lastIndexOf(":") + 1);
         }
-        DomibusConnectorService service = persistenceService.getService(serviceString);
+        eu.domibus.connector.domain.Service service = persistenceService.getService(serviceString);
         if (service == null) {
             throw new DomibusConnectorGatewayWebserviceClientException("Could not find Service in database for value "
                     + serviceString);
@@ -340,7 +344,7 @@ public class CommonMessageHelper {
         if (fromPartnerId.contains(":")) {
             fromPartnerId = fromPartnerId.substring(fromPartnerId.lastIndexOf(":") + 1);
         }
-        DomibusConnectorParty fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
+        Party fromPartner = persistenceService.getParty(fromPartnerId, from.getRole());
         if (fromPartner == null) {
             throw new DomibusConnectorGatewayWebserviceClientException("Could not find Party in database for PartyId "
                     + from.getPartyId().get(0).getValue() + " and Role " + from.getRole() + " as FromParty");
@@ -352,7 +356,7 @@ public class CommonMessageHelper {
         if (toPartnerId.contains(":")) {
             toPartnerId = toPartnerId.substring(toPartnerId.lastIndexOf(":") + 1);
         }
-        DomibusConnectorParty toPartner = persistenceService.getParty(toPartnerId, to.getRole());
+        Party toPartner = persistenceService.getParty(toPartnerId, to.getRole());
         if (toPartner == null) {
             throw new DomibusConnectorGatewayWebserviceClientException("Could not find Party in database for PartyId "
                     + to.getPartyId().get(0).getValue() + " and Role " + to.getRole() + " as ToParty");

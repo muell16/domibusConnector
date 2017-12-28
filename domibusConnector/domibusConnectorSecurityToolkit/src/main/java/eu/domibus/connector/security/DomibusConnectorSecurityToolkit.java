@@ -1,6 +1,7 @@
 package eu.domibus.connector.security;
 
-import eu.domibus.connector.common.message.Message;
+
+import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
 /**

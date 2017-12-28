@@ -23,6 +23,16 @@
 	  <groupId>org.springframework.boot</groupId>
 	  <artifactId>spring-boot-autoconfigure</artifactId>
 	 </dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>domibusConnectorDomain</artifactId>
+	  <version>${project.version}</version>
+	 </dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>domibusConnectorPersistence</artifactId>
+	  <version>${project.version}</version>
+	 </dependency>
 	</dependencies>
 	<packaging>jar</packaging>
 	<build>

@@ -24,16 +24,18 @@ import connector.domibus.eu.domibusconnectorgatewayservice._1.MessagePropertyTyp
 import connector.domibus.eu.domibusconnectorgatewayservice._1.MessageType;
 import connector.domibus.eu.domibusconnectorgatewayservice._1.PartyType;
 import eu.domibus.connector.common.CommonConnectorProperties;
+import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageAttachment;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageAttachment;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.gpc.validator.DomibusConnectorMessageValidator;
 
 @Component
@@ -134,10 +136,10 @@ public class MessageTransformer {
 
 		MessageCollaborationInfoType collaborationInfo = msgDetails.getCollaborationInfo();
 
-		DomibusConnectorAction action = persistenceService.getAction(collaborationInfo.getAction());
+		Action action = persistenceService.getAction(collaborationInfo.getAction());
 		messageDetails.setAction(action);
 
-		DomibusConnectorService service = persistenceService.getService(collaborationInfo.getServiceId());
+		eu.domibus.connector.domain.Service service = persistenceService.getService(collaborationInfo.getServiceId());
 		messageDetails.setService(service);
 
 		messageDetails.setConversationId(collaborationInfo.getConversationId());
@@ -145,10 +147,10 @@ public class MessageTransformer {
 
 		MessagePartyInfoType partyInfo = msgDetails.getPartyInfo();
 
-		DomibusConnectorParty fromParty = persistenceService.getPartyByPartyId(partyInfo.getFrom().getPartyId());
+		Party fromParty = persistenceService.getPartyByPartyId(partyInfo.getFrom().getPartyId());
 		messageDetails.setFromParty(fromParty);
 
-		DomibusConnectorParty toParty = persistenceService.getPartyByPartyId(partyInfo.getTo().getPartyId());
+		Party toParty = persistenceService.getPartyByPartyId(partyInfo.getTo().getPartyId());
 		messageDetails.setToParty(toParty);
 
 

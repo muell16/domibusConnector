@@ -7,6 +7,7 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorMessageError;
+import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DomibusConnectorMessageErrorDao extends CrudRepository<DomibusConnectorMessageError, Long> {
 
+    public List<DomibusConnectorMessageError> findByMessage(Long messageId);
+    
 }

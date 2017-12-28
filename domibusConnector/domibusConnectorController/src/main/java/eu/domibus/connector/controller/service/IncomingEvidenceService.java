@@ -8,9 +8,10 @@ import eu.domibus.connector.common.enums.EvidenceType;
 import eu.domibus.connector.common.enums.MessageDirection;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
+
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 
@@ -62,22 +63,23 @@ public class IncomingEvidenceService implements EvidenceService {
 
         persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
 
-        if (originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW)
-                && originalMessage.getDbMessage().getConfirmed()==null && originalMessage.getDbMessage().getRejected()==null) {
-        	if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_ACCEPTANCE)
-                    || confirmation.getEvidenceType().equals(EvidenceType.DELIVERY)) {
-        		persistenceService.confirmMessage(originalMessage);
-        	}
-        }
-
-        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
-                originalMessage.getDbMessage().getId());
+        //TODO:
+//        if (originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW)
+//                && originalMessage.getDbMessage().getConfirmed()==null && originalMessage.getDbMessage().getRejected()==null) {
+//        	if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_ACCEPTANCE)
+//                    || confirmation.getEvidenceType().equals(EvidenceType.DELIVERY)) {
+//        		persistenceService.confirmMessage(originalMessage);
+//        	}
+//        }
+//
+//        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
+//                originalMessage.getDbMessage().getId());
     }
 
     private boolean isMessageAlreadyRejected(Message message) {
-        if (message.getDbMessage().getRejected() != null) {
-            return true;
-        }
+//        if (message.getDbMessage().getRejected() != null) {
+//            return true;
+//        } //TODO!
         if (message.getConfirmations() != null) {
             for (MessageConfirmation confirmation : message.getConfirmations()) {
                 if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_REJECTION)

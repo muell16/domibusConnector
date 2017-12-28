@@ -5,14 +5,15 @@ import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageConfirmation;
-import eu.domibus.connector.common.message.MessageDetails;
+import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
@@ -46,7 +47,7 @@ public class OutgoingEvidenceService implements EvidenceService {
         EvidenceType evidenceType = confirmationMessage.getConfirmations().get(0).getEvidenceType();
 
         MessageDetails details = new MessageDetails();
-        DomibusConnectorAction action = createEvidenceAction(evidenceType);
+        Action action = createEvidenceAction(evidenceType);
         details.setAction(action);
         details.setService(confirmationMessage.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
@@ -77,12 +78,13 @@ public class OutgoingEvidenceService implements EvidenceService {
 
         persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
 
-        if (originalMessage.getDbMessage().getConfirmed() == null) {
-            persistenceService.confirmMessage(originalMessage);
-        }
+        //TODO!
+//        if (originalMessage.getDbMessage().getConfirmed() == null) {
+//            persistenceService.confirmMessage(originalMessage);
+//        }
 
         LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(),
-                originalMessage.getDbMessage().getId());
+                originalMessage.getDbMessageId());
     }
 
     private MessageConfirmation generateEvidence(EvidenceType type, Message originalMessage)
@@ -102,7 +104,7 @@ public class OutgoingEvidenceService implements EvidenceService {
         }
     }
 
-    private DomibusConnectorAction createEvidenceAction(EvidenceType type) throws DomibusConnectorControllerException {
+    private Action createEvidenceAction(EvidenceType type) throws DomibusConnectorControllerException {
         switch (type) {
         case DELIVERY:
             return persistenceService.getDeliveryNonDeliveryToRecipientAction();
