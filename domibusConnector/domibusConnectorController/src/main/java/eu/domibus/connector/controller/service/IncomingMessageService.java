@@ -4,17 +4,15 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.exception.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
@@ -100,8 +98,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		MessageConfirmation nonDelivery = null;
 		try {
-
-			nonDelivery = evidencesToolkit.createNonDeliveryEvidence(RejectionReason.OTHER, originalMessage);
+			nonDelivery = evidencesToolkit.createEvidence(EvidenceType.NON_DELIVERY, originalMessage,RejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating NonDelivery evidence for message!", e, this.getClass());
@@ -119,8 +116,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		MessageConfirmation delivery = null;
 		try {
-
-			delivery = evidencesToolkit.createDeliveryEvidence(originalMessage);
+			delivery = evidencesToolkit.createEvidence(EvidenceType.DELIVERY,originalMessage, null, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating Delivery evidence for message!", e, this.getClass());
@@ -137,8 +133,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 		MessageConfirmation messageConfirmation = null;
 		try {
-			messageConfirmation = isAcceptance ? evidencesToolkit.createRelayREMMDAcceptance(originalMessage)
-					: evidencesToolkit.createRelayREMMDRejection(RejectionReason.OTHER, originalMessage);
+			messageConfirmation = isAcceptance ? evidencesToolkit.createEvidence(EvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null)
+					: evidencesToolkit.createEvidence(EvidenceType.RELAY_REMMD_REJECTION, originalMessage, RejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating RelayREMMD evidence for message!", e, this.getClass());
