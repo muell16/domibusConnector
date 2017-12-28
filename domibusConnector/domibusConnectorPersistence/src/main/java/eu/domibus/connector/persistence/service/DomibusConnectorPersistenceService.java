@@ -36,8 +36,26 @@ public interface DomibusConnectorPersistenceService {
 
     List<Message> findIncomingUnconfirmedMessages();
 
+    //TODO: improve Exceptions
+    /**
+     * marks the message as confirmed
+     * @throws IllegalArgumentException  is thrown, if the message is null,
+     *  or the message does not contain a db id
+     * @throws RuntimeException - if the message is not sucessfully marked as
+     * confirmed
+     * @param message 
+     */
     void confirmMessage(Message message);
 
+    //TODO: improve Exceptions
+    /**
+     * marks the message as rejected
+     * @throws IllegalArgumentException is thrown, if the message is null,
+     *  or the message does not contain a db id
+     * @trows RuntimeException - if the message is not successfully marked as
+     * rejected
+     * @param message - the message
+     */
     void rejectMessage(Message message);
 
     Action getAction(String action);

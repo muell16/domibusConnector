@@ -18,4 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DomibusConnectorPartyDao extends CrudRepository<DomibusConnectorParty, DomibusConnectorPartyPK> {
 
+    public DomibusConnectorParty findOneByPartyId(String partyId);
+    
 }

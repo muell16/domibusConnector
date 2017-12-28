@@ -110,14 +110,15 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     public void persistMessageIntoDatabase(Message message, MessageDirection direction) {
         DomibusConnectorMessage dbMessage = new DomibusConnectorMessage();
 
-        //dbMessage.setDirection(direction);
+        dbMessage.setDirection(
+        eu.domibus.connector.persistence.model.enums.MessageDirection.valueOf(direction.name()));
+                
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setNationalMessageId(message.getMessageDetails().getNationalMessageId());
 
         try {
-            messageDao.save(dbMessage);
-            //messageDao.saveNewMessage(dbMessage);
+            dbMessage = messageDao.save(dbMessage);
         } catch (DuplicateKeyException cve) {
             LOGGER.error("Duplicate key exception occured! The nationalMessageId [{}] or the ebmsMessageId [{}] already exist.", 
                     dbMessage.getNationalMessageId(), dbMessage.getEbmsMessageId());
@@ -128,47 +129,59 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
         DomibusConnectorMessageInfo dbMessageInfo = new DomibusConnectorMessageInfo();
         dbMessageInfo.setMessage(dbMessage);
-//        dbMessageInfo.setAction(message.getMessageDetails().getAction());
-//        dbMessageInfo.setService(message.getMessageDetails().getService());
+        DomibusConnectorAction persistenceAction = this.mapActionToPersistence(message.getMessageDetails().getAction());
+        dbMessageInfo.setAction(persistenceAction);
+                
+        DomibusConnectorService persistenceService = this.mapServiceToPersistence(message.getMessageDetails().getService());
+        dbMessageInfo.setService(persistenceService);
+        
         dbMessageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
         dbMessageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
-//        dbMessageInfo.setFrom(message.getMessageDetails().getFromParty());
-//        dbMessageInfo.setTo(message.getMessageDetails().getToParty());
+        
+        DomibusConnectorParty from = this.mapPartyToPersistence(message.getMessageDetails().getFromParty());        
+        dbMessageInfo.setFrom(from);
+        DomibusConnectorParty to = this.mapPartyToPersistence(message.getMessageDetails().getToParty());
+        dbMessageInfo.setTo(to);
 
-//        try {
-//            messageInfoDao.persistMessageInfo(dbMessageInfo);
-//        } catch (Exception e) {
-//            throw new PersistenceException("Could not persist message info into database. ", e);
-//        }
+        try {
+            this.messageInfoDao.save(dbMessageInfo);
+        } catch (Exception e) {
+            //throw new PersistenceException("Could not persist message info into database. ", e);
+        }
 
         dbMessage.setMessageInfo(dbMessageInfo);
 
-//        message.setDbMessage(dbMessage);
+        message.setDbMessageId(dbMessage.getId());
         message.getMessageDetails().setDbMessageId(dbMessage.getId());
     }
 
+//    void mapMessageInfoToPersistence(MessageInfo messageInfo, DomibusConnectorMessageInfo messageInfo) {
+//        
+//    }
+    
     @Override
     @Transactional
     public void mergeMessageWithDatabase(Message message) {
-
-        //messageDao.mergeMessage(message.getDbMessage());
 
         DomibusConnectorMessage dbMessage = messageDao.findOne(message.getDbMessageId());
         
         dbMessage.getMessageInfo();
         
-//        DomibusConnectorMessageInfo messageInfo = message.getDbMessage().getMessageInfo();
-//
-//        if (messageInfo != null) {
+        DomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
+
+        if (messageInfo != null) {
 //            messageInfo.setAction(message.getMessageDetails().getAction());
 //            messageInfo.setService(message.getMessageDetails().getService());
 //            messageInfo.setFrom(message.getMessageDetails().getFromParty());
 //            messageInfo.setTo(message.getMessageDetails().getToParty());
-//            messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
-//            messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
-//
-//            messageInfoDao.mergeMessageInfo(messageInfo);
-//        }
+            
+            messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
+            messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+
+            messageInfoDao.save(messageInfo);
+        }
+
+        //dbMessage = messageDao.save(dbMessage);
     }
 
     @Override
@@ -329,7 +342,21 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     @Transactional
     public void rejectMessage(Message message) {
-        messageDao.rejectMessage(message.getDbMessageId());
+        if (message == null) {
+            throw new IllegalArgumentException("Argument message must be not null! Cannot reject null!");
+        }
+        if (message.getDbMessageId() == null) {
+            throw new IllegalArgumentException("Message must provide a db message id! But message.getDbMessageId was null!");
+        }
+        int rejected = messageDao.rejectMessage(message.getDbMessageId());;
+        if (rejected == 1) {
+            LOGGER.debug("Message {} successfully marked as rejected in persistence", message);
+        } else if (rejected < 1) {            
+            throw new RuntimeException("message not confirmed!");
+        } else {
+            throw new IllegalStateException("Multiple messages marked as rejected! This should not happen! Maybe DB corrupted? Duplicate IDs?");
+        }
+        
     }
 
     /**
@@ -465,11 +492,29 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         return null;
     }
     
+    DomibusConnectorAction mapActionToPersistence(Action action) {
+        if (action != null) {
+            DomibusConnectorAction persistenceAction = new DomibusConnectorAction();
+            BeanUtils.copyProperties(action, persistenceAction);
+            return persistenceAction;
+        }
+        return null;
+    }
+    
     Service mapServiceToDomain(DomibusConnectorService persistenceService) {
         if (persistenceService != null) {
             Service service = new Service();
             BeanUtils.copyProperties(persistenceService, service);
             return service;
+        }
+        return null;
+    }
+    
+    DomibusConnectorService mapServiceToPersistence(Service service) {
+        if (service != null) {
+            DomibusConnectorService persistenceService = new DomibusConnectorService();
+            BeanUtils.copyProperties(service, persistenceService);
+            return persistenceService;
         }
         return null;
     }
@@ -490,6 +535,15 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         return null;
     }
     
+    DomibusConnectorParty mapPartyToPersistence(Party party) {
+        if (party != null) {
+            DomibusConnectorParty persistenceParty = new DomibusConnectorParty();
+            BeanUtils.copyProperties(party, persistenceParty);
+            return persistenceParty;
+        }
+        return null;
+    }
+    
     @Override
     public Party getParty(String partyId, String role) {
         DomibusConnectorPartyPK pk = new DomibusConnectorPartyPK(partyId, role);        
@@ -499,9 +553,11 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     public Party getPartyByPartyId(String partyId) {
-        //return partyDao.getPartyByPartyId(partyId);
-        //TODO
-        return new Party();
+//        //return partyDao.getPartyByPartyId(partyId);
+//        //TODO
+//        return new Party();
+        DomibusConnectorParty party = partyDao.findOneByPartyId(partyId);
+        return mapPartyToDomain(party);
     }
 
     @Override
@@ -523,6 +579,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     public Action getRetrievalNonRetrievalToRecipientAction() {
         return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
     }
+
+   
+
+
 
 
 

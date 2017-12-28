@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.model;
 
-import eu.domibus.connector.persistence.model.enums.MessageDirection;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -19,7 +19,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-//import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.persistence.model.enums.MessageDirection;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
@@ -104,13 +104,13 @@ public class DomibusConnectorMessage {
         this.conversationId = conversationId;
     }
 
-//    public MessageDirection getDirection() {
-//        return direction;
-//    }
-//
-//    public void setDirection(MessageDirection direction) {
-//        this.direction = direction;
-//    }
+    public MessageDirection getDirection() {
+        return direction;
+    }
+
+    public void setDirection(MessageDirection direction) {
+        this.direction = direction;
+    }
 
     public String getHashValue() {
         return hashValue;

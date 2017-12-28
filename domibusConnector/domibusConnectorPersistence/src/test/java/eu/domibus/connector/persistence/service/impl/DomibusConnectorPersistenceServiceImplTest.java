@@ -7,9 +7,11 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
 import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.domain.test.util.DomainMessageCreator;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
@@ -36,6 +38,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import static org.mockito.Matchers.eq;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *
@@ -241,21 +245,92 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).confirmMessage(eq(78L));        
     }
 
-    @Test
-    @Ignore //not finished yet
-    public void testRejectMessage() {
-    }
+    
+    
     
     @Test
-    @Ignore //not finished yet
+    public void testRejectMessage() {
+        Mockito.when(domibusConnectorMessageDao.rejectMessage(any(Long.class)))
+                .thenReturn(1);
+                
+        Message message = DomainMessageCreator.createSimpleTestMessage();
+        message.setDbMessageId(78L);
+        domibusConnectorPersistenceService.rejectMessage(message);        
+        Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).rejectMessage(eq(78L));    
+    }
+    
+        
+    @Test(expected=IllegalArgumentException.class)
+    public void testRejectMessage_noMessageIdSet_shouldThrowIllegalArgumentException() {
+        Message message = DomainMessageCreator.createSimpleTestMessage();
+        message.setDbMessageId(null);
+        domibusConnectorPersistenceService.rejectMessage(message);                
+    }
+    
+    @Test(expected=RuntimeException.class)
+    public void testRejectMessage_confirmFails_shouldThrowException() {
+        Mockito.when(domibusConnectorMessageDao.rejectMessage(any(Long.class)))
+                .thenReturn(0); //tell service nothing has been updated!                
+        Message message = DomainMessageCreator.createSimpleTestMessage();
+        message.setDbMessageId(78L);
+        domibusConnectorPersistenceService.rejectMessage(message);        
+        Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).rejectMessage(eq(78L));        
+    }
+    
+    
+    @Ignore //test is failing and not finished yet
+    @Test
     public void testPersistMessageIntoDatabase() {
+        Message message = DomainMessageCreator.createSimpleTestMessage();
+        
+        MessageConfirmation messageConfirmation = new MessageConfirmation();
+        messageConfirmation.setEvidence("MYEVIDENCE".getBytes());
+        messageConfirmation.setEvidenceType(EvidenceType.DELIVERY);
+        
+        message.addConfirmation(messageConfirmation);
+        
+        message.getMessageDetails().setEbmsMessageId("ebmsid");
+        message.getMessageDetails().setConversationId("conversation1");
         
         
+        
+//        Mockito.when(domibusConnectorMessageDao.save(any(DomibusConnectorMessage.class)))
+//                .then(new Answer<DomibusConnectorMessage>() {
+//                    @Override
+//                    public DomibusConnectorMessage answer(InvocationOnMock invocation) throws Throwable {
+//                        DomibusConnectorMessage message = invocation.getArgumentAt(0, DomibusConnectorMessage.class);
+//                        
+//                        //TODO: check mapping
+//                        assertThat(message.getEbmsMessageId()).isEqualTo("ebmsid");
+//                        assertThat(message.getConversationId()).isEqualTo("conversation1");
+//                        
+//                        return message;
+//                    }                    
+//                });
+        
+        
+        
+        domibusConnectorPersistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW);
+
+        Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
     }
 
+    @Ignore //test not completed yet!
     @Test
-    @Ignore //not finished yet
     public void testMergeMessageWithDatabase() {
+        Message message = DomainMessageCreator.createSimpleTestMessage();
+        message.setDbMessageId(47L);
+        
+        DomibusConnectorMessage pMessage = PersistenceMessageCreator.createSimpleDomibusConnectorMessage();
+        pMessage.setId(47L);
+        
+        Mockito.when(domibusConnectorMessageDao.findOne(47L)).thenReturn(pMessage);
+        
+        domibusConnectorPersistenceService.mergeMessageWithDatabase(message);
+        
+        //TODO: test mapping back to db
+        Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).findOne(eq(47L));
+        Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
     }
 
     @Test
@@ -395,8 +470,18 @@ public class DomibusConnectorPersistenceServiceImplTest {
     }
 
     @Test
-    @Ignore //not finished yet
     public void testGetPartyByPartyId() {
+        
+        Mockito.when(this.domibusConnectorPartyDao.findOneByPartyId(eq("AT")))
+                .thenReturn(createPartyAT());        
+        
+        Party party = domibusConnectorPersistenceService.getPartyByPartyId("AT");
+        
+        assertThat(party).isNotNull();
+        assertThat(party.getPartyId()).isEqualTo("AT");
+        assertThat(party.getRole()).isEqualTo("GW");
+        assertThat(party.getPartyIdType()).isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+        
     }
 
 
