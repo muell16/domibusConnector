@@ -108,6 +108,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     @Transactional
     public void persistMessageIntoDatabase(Message message, MessageDirection direction) {
+        if (message.getDbMessageId() !=  null) {
+            throw new IllegalArgumentException("Cannot persist (create) a message with an already set db message id! Use mergeMessageIntoDatabase instead!");
+        }
+        if (message.getMessageDetails() == null) {
+            throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
+        }
         DomibusConnectorMessage dbMessage = new DomibusConnectorMessage();
 
         dbMessage.setDirection(
@@ -129,20 +135,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
         DomibusConnectorMessageInfo dbMessageInfo = new DomibusConnectorMessageInfo();
         dbMessageInfo.setMessage(dbMessage);
-        DomibusConnectorAction persistenceAction = this.mapActionToPersistence(message.getMessageDetails().getAction());
-        dbMessageInfo.setAction(persistenceAction);
-                
-        DomibusConnectorService persistenceService = this.mapServiceToPersistence(message.getMessageDetails().getService());
-        dbMessageInfo.setService(persistenceService);
         
-        dbMessageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
-        dbMessageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
+        mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), dbMessageInfo);
         
-        DomibusConnectorParty from = this.mapPartyToPersistence(message.getMessageDetails().getFromParty());        
-        dbMessageInfo.setFrom(from);
-        DomibusConnectorParty to = this.mapPartyToPersistence(message.getMessageDetails().getToParty());
-        dbMessageInfo.setTo(to);
-
+       
         try {
             this.messageInfoDao.save(dbMessageInfo);
         } catch (Exception e) {
@@ -155,51 +151,55 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         message.getMessageDetails().setDbMessageId(dbMessage.getId());
     }
 
-//    void mapMessageInfoToPersistence(MessageInfo messageInfo, DomibusConnectorMessageInfo messageInfo) {
-//        
-//    }
+    void mapMessageDetailsToDbMessageInfoPersistence(MessageDetails messageDetails, DomibusConnectorMessageInfo dbMessageInfo) {
+        DomibusConnectorAction persistenceAction = this.mapActionToPersistence(messageDetails.getAction());
+        dbMessageInfo.setAction(persistenceAction);
+                
+        DomibusConnectorService persistenceService = this.mapServiceToPersistence(messageDetails.getService());
+        dbMessageInfo.setService(persistenceService);
+        
+        dbMessageInfo.setFinalRecipient(messageDetails.getFinalRecipient());
+        dbMessageInfo.setOriginalSender(messageDetails.getOriginalSender());
+        
+        DomibusConnectorParty from = this.mapPartyToPersistence(messageDetails.getFromParty());        
+        dbMessageInfo.setFrom(from);
+        DomibusConnectorParty to = this.mapPartyToPersistence(messageDetails.getToParty());
+        dbMessageInfo.setTo(to);
+    }
     
     @Override
     @Transactional
     public void mergeMessageWithDatabase(Message message) {
-
         DomibusConnectorMessage dbMessage = messageDao.findOne(message.getDbMessageId());
         
         dbMessage.getMessageInfo();
         
         DomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
+        if (messageInfo == null) {
+            messageInfo = new DomibusConnectorMessageInfo();
+            dbMessage.setMessageInfo(messageInfo);
+        }
 
-        if (messageInfo != null) {
-//            messageInfo.setAction(message.getMessageDetails().getAction());
-//            messageInfo.setService(message.getMessageDetails().getService());
-//            messageInfo.setFrom(message.getMessageDetails().getFromParty());
-//            messageInfo.setTo(message.getMessageDetails().getToParty());
-            
-            messageInfo.setFinalRecipient(message.getMessageDetails().getFinalRecipient());
-            messageInfo.setOriginalSender(message.getMessageDetails().getOriginalSender());
-
+        MessageDetails messageDetails = message.getMessageDetails();
+        
+        if (messageDetails != null) {
+            mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), messageInfo);            
             messageInfoDao.save(messageInfo);
         }
 
-        //dbMessage = messageDao.save(dbMessage);
+        messageDao.save(dbMessage);
     }
 
     @Override
     @Transactional
     public void setMessageDeliveredToGateway(Message message) {
-//        DomibusConnectorMessage dbMessage = messageDao.mergeMessage(message.getDbMessage());
-//        dbMessage.setDeliveredToGateway(new Date());
-//        dbMessage = messageDao.mergeMessage(dbMessage);
-//        message.setDbMessage(dbMessage);
+        messageDao.setMessageDeliveredToGateway(message.getDbMessageId());
     }
 
     @Override
     @Transactional
     public void setMessageDeliveredToNationalSystem(Message message) {
-//        DomibusConnectorMessage dbMessage = messageDao.mergeMessage(message.getDbMessage());
-//        dbMessage.setDeliveredToNationalSystem(new Date());
-//        dbMessage = messageDao.mergeMessage(dbMessage);
-//        message.setDbMessage(dbMessage);
+        messageDao.setMessageDeliveredToBackend(message.getDbMessageId());
     }
 
     @Override

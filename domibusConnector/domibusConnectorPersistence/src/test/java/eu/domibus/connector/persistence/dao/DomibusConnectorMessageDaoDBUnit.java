@@ -140,6 +140,14 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(upd).as("there should be no updates!").isEqualTo(0);
     }
     
+    @Test
+    public void testSetMessageDeliveredToGateway() {
+        fail("TODO: finish Test!");
+    }
     
+    @Test
+    public void testSetmessageDeliveredToBackend() {
+        fail("TODO: finish Test!");
+    }
     
 }

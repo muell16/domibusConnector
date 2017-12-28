@@ -49,6 +49,14 @@ public interface DomibusConnectorMessageDao extends CrudRepository<DomibusConnec
     @Modifying
     @Query("update DomibusConnectorMessage m set rejected=CURRENT_TIMESTAMP, confirmed=NULL where m.id = ?1")
     public int rejectMessage(Long messageId);
+
+    @Modifying
+    @Query("update DomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP")
+    public void setMessageDeliveredToGateway(Long dbMessageId);
+    
+    @Modifying
+    @Query("update DomibusConnectorMessage m set m.deliveredToBackend=CURRENT_TIMESTAMP")
+    public void setMessageDeliveredToBackend(Long dbMessageId);
     
     
 }
