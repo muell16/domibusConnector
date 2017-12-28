@@ -408,6 +408,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
      * Evidence related tests
      */
     
+    @Ignore //not finished yet!
     @Test    
     public void testSetEvidenceDeliveredToGateway() {
         DomainCreator.createMessageDeliveryConfirmation();

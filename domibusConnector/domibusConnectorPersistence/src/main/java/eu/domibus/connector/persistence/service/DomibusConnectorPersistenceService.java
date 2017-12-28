@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.service;
 
+import javax.annotation.Nonnull;
+
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageError;
@@ -35,7 +37,7 @@ public interface DomibusConnectorPersistenceService {
      * 
      * 
      */
-    void setEvidenceDeliveredToGateway(@NonNull Message message, @NonNull EvidenceType evidenceType);
+    void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull EvidenceType evidenceType);
 
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
