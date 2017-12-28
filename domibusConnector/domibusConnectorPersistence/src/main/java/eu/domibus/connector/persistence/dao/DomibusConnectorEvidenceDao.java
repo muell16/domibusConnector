@@ -7,6 +7,10 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
+import java.util.List;
+import javax.annotation.Nonnull;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +21,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DomibusConnectorEvidenceDao extends CrudRepository<DomibusConnectorEvidence, Long> {
 
+    @Query("select e from DomibusConnectorEvidence e where e.message = ?1")
+    public @Nonnull List<DomibusConnectorEvidence> findEvidencesForMessage(Long messageId);
+    
+    @Modifying
+    @Query("update DomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.id = ?1")
+    public int setDeliveredToGateway(Long evidenceId);
+    
 }

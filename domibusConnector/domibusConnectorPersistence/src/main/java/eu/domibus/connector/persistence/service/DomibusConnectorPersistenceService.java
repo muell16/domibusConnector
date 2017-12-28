@@ -24,12 +24,41 @@ public interface DomibusConnectorPersistenceService {
 
     Message findMessageByEbmsId(String ebmsMessageId);
 
-    void setEvidenceDeliveredToGateway(Message message, EvidenceType evidenceType);
+    /**
+     * Merges the message into the storage @see #mergeMessageWithDatabase
+     * and updates the delivered to gateway 
+     * field with the current time of the corresponding
+     * evidence (the corresponding evidence is identified by the evidence type)
+     * 
+     * @param message - the message
+     * @param evidenceType - the evidenceType
+     * 
+     * 
+     */
+    void setEvidenceDeliveredToGateway(@NonNull Message message, @NonNull EvidenceType evidenceType);
 
+    /**
+     * Merges the message into the storage @see #mergeMessageWithDatabase
+     * and updates the delivered to national_backend 
+     * field with the current time of the corresponding
+     * evidence (the corresponding evidence is identified by the evidence type)
+     * 
+     * @param message - the message
+     * @param evidenceType - the evidenceType
+     * 
+     */
     void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType);
 
+    /**
+     * Marks the message as delivered to the gateway
+     * @param message - the message, which should be marked
+     */
     void setMessageDeliveredToGateway(Message message);
 
+    /**
+     * Marks the message as delivered to national backend
+     * @param message - the message, which should be marked
+     */
     void setMessageDeliveredToNationalSystem(Message message);
 
     List<Message> findOutgoingUnconfirmedMessages();

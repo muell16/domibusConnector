@@ -31,6 +31,9 @@ import eu.domibus.connector.persistence.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
 import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import java.util.Date;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 
@@ -205,13 +208,15 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     @Transactional
     public void setEvidenceDeliveredToGateway(Message message, EvidenceType evidenceType) {
-//        messageDao.mergeMessage(message.getDbMessage());
-//        List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessage());
-//        DomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
-//        if (dbEvidence != null) {
-//            dbEvidence.setDeliveredToGateway(new Date());
-//            evidenceDao.mergeEvidence(dbEvidence);
-//        }
+        //messageDao.mergeMessage(message.getDbMessage());
+        this.mergeMessageWithDatabase(message);
+        List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessageId());
+        DomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
+        if (dbEvidence != null) {
+            evidenceDao.setDeliveredToGateway(dbEvidence.getId());
+            //dbEvidence.setDeliveredToGateway(new Date());
+            //evidenceDao.save(dbEvidence);
+        }
     }
 
     @Override
@@ -226,14 +231,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 //        }
     }
 
-    private DomibusConnectorEvidence findEvidence(List<DomibusConnectorEvidence> evidences, EvidenceType evidenceType) {
-        if (evidences != null) {
-            for (DomibusConnectorEvidence evidence : evidences) {
-                if (evidence.getType().equals(evidenceType)) {
-                    return evidence;
-                }
+    private @Nullable DomibusConnectorEvidence findEvidence(@Nonnull List<DomibusConnectorEvidence> evidences, EvidenceType evidenceType) {
+        for (DomibusConnectorEvidence evidence : evidences) {
+            if (evidence.getType().name().equals(evidenceType.name())) {
+                return evidence;
             }
-        }
+        }       
         return null;
     }
 

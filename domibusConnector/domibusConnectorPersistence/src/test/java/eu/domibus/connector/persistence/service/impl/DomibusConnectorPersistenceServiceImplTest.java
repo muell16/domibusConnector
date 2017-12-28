@@ -14,6 +14,7 @@ import eu.domibus.connector.domain.Service;
 import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.domain.test.util.DomainCreator;
+import static eu.domibus.connector.domain.test.util.DomainCreator.createMessageNonDeliveryConfirmation;
 import eu.domibus.connector.domain.test.util.DomainMessageCreator;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
@@ -404,11 +405,24 @@ public class DomibusConnectorPersistenceServiceImplTest {
     }
 
     /**
-     * Evidence related
+     * Evidence related tests
      */
-    @Test
-    @Ignore //not finished yet
+    
+    @Test    
     public void testSetEvidenceDeliveredToGateway() {
+        DomainCreator.createMessageDeliveryConfirmation();
+        
+        Message message = DomainMessageCreator.createSimpleTestMessage();
+        message.setDbMessageId(47L);
+        
+        
+        
+        domibusConnectorPersistenceService.setEvidenceDeliveredToGateway(message, EvidenceType.DELIVERY);
+                
+        
+        Mockito.verify(this.domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
+        Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(47L));
+        
     }
 
     @Test

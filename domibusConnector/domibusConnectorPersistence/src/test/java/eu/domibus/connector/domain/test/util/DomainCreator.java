@@ -7,8 +7,10 @@
 package eu.domibus.connector.domain.test.util;
 
 import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
+import eu.domibus.connector.domain.enums.EvidenceType;
 
 /**
  *
@@ -44,4 +46,19 @@ public class DomainCreator {
         s.setServiceType("urn:e-codex:services:");
         return s;
     }
+    
+    public static MessageConfirmation createMessageDeliveryConfirmation() {
+        MessageConfirmation confirmation = new MessageConfirmation();
+        confirmation.setEvidence("EVIDENCE1_DELIVERY".getBytes());
+        confirmation.setEvidenceType(EvidenceType.DELIVERY);
+        return confirmation;
+    }
+    
+    public static MessageConfirmation createMessageNonDeliveryConfirmation() {
+        MessageConfirmation confirmation = new MessageConfirmation();
+        confirmation.setEvidence("EVIDENCE1_NON_DELIVERY".getBytes());
+        confirmation.setEvidenceType(EvidenceType.NON_DELIVERY);
+        return confirmation;
+    }
+    
 }
