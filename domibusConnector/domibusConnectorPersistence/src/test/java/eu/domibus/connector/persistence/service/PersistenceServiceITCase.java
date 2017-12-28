@@ -112,23 +112,30 @@ public class PersistenceServiceITCase {
         
         persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
         
+        assertThat(message.getDbMessageId()).isNotNull();
         //TODO: test db if entity is there!                
     }
     
     
     
     @Test
-    @Ignore
-    public void testMergeMessageWithDatabase() {
+    public void testMergeMessageWithDatabase() throws PersistenceException {
         
         MessageDetails messageDetails = new MessageDetails();
         MessageContent messageContent = new MessageContent();
-        Message message = new Message(messageDetails, messageContent);
-        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        Message message = new Message(messageDetails, messageContent);                
+        message.setDbMessageId(null); //is a new message
         
-//        persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
-//        
-//        persistenceService.mergeMessageWithDatabase(message);
+        
+        MessageDirection messageDirection = MessageDirection.GW_TO_NAT;        
+        persistenceService.persistMessageIntoDatabase(message, messageDirection);
+        
+        message.getMessageDetails().setConversationId("newconversation");
+        message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());
+        
+        persistenceService.mergeMessageWithDatabase(message);
+        
+        //TODO: check db changes
         
     }
     
@@ -142,25 +149,27 @@ public class PersistenceServiceITCase {
     }
     
     @Test
-    @Ignore
-    public void testPersistEvidenceForMessageIntoDatabase() {
+    public void testPersistEvidenceForMessageIntoDatabase() throws PersistenceException {
         MessageDetails messageDetails = new MessageDetails();
         MessageContent messageContent = new MessageContent();
         Message message = new Message(messageDetails, messageContent);
         
+        persistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW); //create message first
+                
         byte[] evidence = "hallo Welt".getBytes();
         
         persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, EvidenceType.DELIVERY);
+        
+        //TODO: check db changes
     }
+
     
-    //TODO: load testdata and do check with testdata
-    
-    @Test(expected=EmptyResultDataAccessException.class)
-    @Ignore
+    @Test  
     public void testFindMessageByNationalId_doesNotExist_shouldThrowEmptyResultException() {
         String nationalIdString = "TEST1";
         Message findMessageByNationalId = persistenceService.findMessageByNationalId(nationalIdString);
         
+        assertThat(findMessageByNationalId).isNull();
     }
     
     @Test
@@ -170,33 +179,31 @@ public class PersistenceServiceITCase {
     }
     
     @Test
-//    @Ignore
     public void testGetAction() {
         Action action = persistenceService.getAction("Form_A");
         assertThat(action).isNotNull();
     }
     
     @Test
-//    @Ignore
     public void testGetParty() {       
         Party party = persistenceService.getParty("AT", "GW");
         assertThat(party).isNotNull();
     }
     
     @Test
-//    @Ignore
     public void testGetParty_doesNotExistInDB_retShouldBeNull() {       
         Party party = persistenceService.getParty("ATEA", "GW");
         assertThat(party).isNull();
     }
     
     @Test
-//    @Ignore
     public void testGetPartyById() {
         Party party = persistenceService.getPartyByPartyId("AT");
         assertThat(party).isNotNull();
     }
     
+    
+    //TODO: test other methods/use cases
     /**
      *  void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException;
 

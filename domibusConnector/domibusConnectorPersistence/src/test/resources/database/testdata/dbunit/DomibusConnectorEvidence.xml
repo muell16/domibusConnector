@@ -18,6 +18,15 @@
         hash_value="31fb9a1239e9640c4723cbd101adafd32"
         updated="2017-12-12 14:34:23.000000000"
     />
+    
+    <domibus_connector_message 
+        id="75" 
+        ebms_message_id="8dbdfsadf-4d93-ae38-462bb3c5a1d2@domibus.eu"	
+        backend_message_id="209732_dom123sasfbus-blue" 
+        direction="GW_TO_NAT"
+        hash_value="31fb9a1239e13240c4723cbd101adafd32"
+        updated="2017-12-12 14:34:23.000000000"
+    />
         
         
     <domibus_connector_evidence

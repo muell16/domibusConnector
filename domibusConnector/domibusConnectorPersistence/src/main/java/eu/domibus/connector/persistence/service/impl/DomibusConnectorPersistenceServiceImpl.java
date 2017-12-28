@@ -271,7 +271,6 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.valueOf(evidenceType.name()));
         dbEvidence.setDeliveredToGateway(null);
         dbEvidence.setDeliveredToNationalSystem(null);
-        
         evidenceDao.save(dbEvidence);
     }
 

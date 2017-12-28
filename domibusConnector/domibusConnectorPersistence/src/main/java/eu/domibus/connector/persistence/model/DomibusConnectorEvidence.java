@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 
 
@@ -50,6 +52,16 @@ public class DomibusConnectorEvidence {
     @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
+    @PrePersist
+    public void prePersist() {
+        updated = new Date();
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+        updated = new Date();
+    }
+    
     public Long getId() {
         return id;
     }

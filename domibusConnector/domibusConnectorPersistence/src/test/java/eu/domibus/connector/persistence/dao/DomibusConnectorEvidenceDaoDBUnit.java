@@ -38,6 +38,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     private DomibusConnectorEvidenceDao evidenceDao;
     
     private TransactionTemplate transactionTemplate;
+    private DomibusConnectorMessageDao messageDao;
 
     
     @Before
@@ -45,6 +46,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     public void setUp() throws Exception {
         super.setUp();
         this.evidenceDao = applicationContext.getBean(DomibusConnectorEvidenceDao.class);
+        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
         
         this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
         
@@ -105,5 +107,23 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     public void testSetDeliveredToBackend_updateNoneExistant_shouldReturnZero() {
         int result = evidenceDao.setDeliveredToBackend(83231L);        
         assertThat(result).isEqualTo(0); //check one row updated
+    }
+    
+    @Test
+    public void testSaveEvidence() {
+        DomibusConnectorEvidence dbEvidence = new DomibusConnectorEvidence();
+        
+        DomibusConnectorMessage dbMessage = messageDao.findOne(75L);  
+        assertThat(dbMessage).isNotNull();
+        
+        byte[] evidence = "Hallo Welt".getBytes();
+
+        dbEvidence.setMessage(dbMessage);
+        dbEvidence.setEvidence(new String(evidence));
+        dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
+        dbEvidence.setDeliveredToGateway(null);
+        dbEvidence.setDeliveredToNationalSystem(null);
+        
+        evidenceDao.save(dbEvidence);
     }
 }

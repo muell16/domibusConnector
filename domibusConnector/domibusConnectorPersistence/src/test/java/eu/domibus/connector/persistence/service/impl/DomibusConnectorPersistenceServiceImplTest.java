@@ -423,7 +423,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
     
 
     @Test    
-    public void testSetEvidenceDeliveredToGateway() {
+    public void testSetEvidenceDeliveredToGateway() throws PersistenceException {
         DomainCreator.createMessageDeliveryConfirmation();
         
         Message message = DomainCreator.createSimpleTestMessage();
@@ -445,7 +445,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
     }
 
     @Test
-    public void testSetEvidenceDeliveredToNationalSystem() {
+    public void testSetEvidenceDeliveredToNationalSystem() throws PersistenceException {
         DomainCreator.createMessageDeliveryConfirmation();
         
         Message message = DomainCreator.createSimpleTestMessage();

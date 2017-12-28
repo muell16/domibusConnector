@@ -234,11 +234,16 @@
             newDataType="TIMESTAMP" />
     </changeSet>
     
-    <changeSet id="3to4_upgrade_009a_tb_update_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
-        <renameColumn 
+    <changeSet id="3to4_upgrade_009c_tb_update_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
+        <!-- TODO set all NULL values in update to reasonable value -->
+    </changeSet>
+    
+    <changeSet id="3to4_upgrade_009c_tb_update_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
+        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnName="DELIVERED_NAT" />
+<!--        <renameColumn 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             oldColumnName="DELIVERED_NAT" 
-            newColumnName="DELIVERED_NAT" />
+            newColumnName="DELIVERED_NAT" />-->
     </changeSet>
     
     <changeSet id="3to4_upgrade_010_tb_create_DOMIBUS_CONNECTOR_CONTENT_TYPE" author="StephanSpindler">
