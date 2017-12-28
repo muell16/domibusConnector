@@ -27,6 +27,7 @@ import static eu.domibus.connector.persistence.model.test.util.PersistenceEntity
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyAT;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyPKforPartyAT;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.PersistenceException;
 import java.util.Arrays;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
@@ -282,9 +283,8 @@ public class DomibusConnectorPersistenceServiceImplTest {
     }
     
     
-    //@Ignore //test is failing and not finished yet
     @Test
-    public void testPersistMessageIntoDatabase() {
+    public void testPersistMessageIntoDatabase() throws PersistenceException {
         Message message = DomainCreator.createSimpleTestMessage();
         
         message.setDbMessageId(null);
@@ -321,14 +321,11 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
     }
 
-    //@Ignore //test not completed yet!
     @Test
-    public void testMergeMessageWithDatabase() {
+    public void testMergeMessageWithDatabase() throws PersistenceException {
         Message message = DomainCreator.createSimpleTestMessage();
         message.setDbMessageId(47L);
-        
-        
-        
+
         MessageDetails messageDetails = message.getMessageDetails();
         
         messageDetails.setFinalRecipient("finalRecipient");
@@ -382,6 +379,22 @@ public class DomibusConnectorPersistenceServiceImplTest {
         //Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
         
         Mockito.verify(domibusConnectorMessageInfoDao, Mockito.times(1)).save(any(DomibusConnectorMessageInfo.class));
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testMergeMessageWithDatabase_messageIdNotSet_shouldThrowIllegalArgumentException() throws PersistenceException {
+        Message message = DomainCreator.createSimpleTestMessage();
+        message.setDbMessageId(null); //message id not set!
+        
+        domibusConnectorPersistenceService.mergeMessageWithDatabase(message);
+    }
+    
+    @Test(expected=PersistenceException.class)
+    public void testMergeMessageWithDatabase_doesNotExistInDB_shouldThrowPersistenceException() throws PersistenceException {
+        Message message = DomainCreator.createSimpleTestMessage();
+        message.setDbMessageId(89L); //does not exist in db, because dao will return null anyway is not mocked!
+        
+        domibusConnectorPersistenceService.mergeMessageWithDatabase(message);
     }
 
     @Test

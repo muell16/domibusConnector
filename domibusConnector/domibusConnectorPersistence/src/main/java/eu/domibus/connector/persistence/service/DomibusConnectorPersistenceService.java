@@ -11,14 +11,23 @@ import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.domain.enums.MessageDirection;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
+@Transactional
 public interface DomibusConnectorPersistenceService {
 
-    void persistMessageIntoDatabase(Message message, MessageDirection direction);
+    /**
+     * stores a new message into storage
+     * @param message - the message
+     * @param direction - direction of the message
+     * @throws PersistenceException - in case of failures with persistence
+     * 
+     */
+    void persistMessageIntoDatabase(@Nonnull Message message, MessageDirection direction) throws PersistenceException;
 
-    void mergeMessageWithDatabase(Message message);
+    void mergeMessageWithDatabase(@Nonnull Message message) throws PersistenceException;
 
     /**
      * Creates the evidence in storage
@@ -41,10 +50,12 @@ public interface DomibusConnectorPersistenceService {
      * 
      * @param message - the message
      * @param evidenceType - the evidenceType
+     * @throws eu.domibus.connector.persistence.service.PersistenceException - if the message could not be updated
+     * in storage
      * 
      * 
      */
-    void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull EvidenceType evidenceType);
+    void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull EvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
@@ -54,9 +65,11 @@ public interface DomibusConnectorPersistenceService {
      * 
      * @param message - the message
      * @param evidenceType - the evidenceType
+     * @throws eu.domibus.connector.persistence.service.PersistenceException - if the message
+     * could not be updated in storage
      * 
      */
-    void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType);
+    void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Marks the message as delivered to the gateway

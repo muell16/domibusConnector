@@ -22,6 +22,8 @@ import javax.persistence.TemporalType;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import java.util.HashSet;
 import javax.annotation.Nullable;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
@@ -74,6 +76,16 @@ public class DomibusConnectorMessage {
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
     private Set<DomibusConnectorEvidence> evidences;
 
+    @PrePersist    
+    public void prePersist() {
+        this.updated = new Date();
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+        this.updated = new Date();
+    }
+    
     public Long getId() {
         return id;
     }

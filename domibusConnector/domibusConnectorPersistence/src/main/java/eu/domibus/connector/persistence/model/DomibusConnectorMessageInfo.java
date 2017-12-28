@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -60,6 +62,17 @@ public class DomibusConnectorMessageInfo {
     @Column(name = "UPDATED", nullable = false)
     private Date updated;
 
+    @PrePersist
+    public void prePersist() {
+        this.updated = new Date();
+        this.created = new Date();
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+        this.updated = new Date();
+    }
+        
     public Long getId() {
         return id;
     }

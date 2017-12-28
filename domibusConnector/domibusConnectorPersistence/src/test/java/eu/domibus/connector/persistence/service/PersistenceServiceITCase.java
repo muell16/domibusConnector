@@ -10,6 +10,7 @@ import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
 import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.domain.test.util.DomainCreator;
 import eu.domibus.connector.persistence.dao.PDomibusConnectorRepositories;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceContext;
@@ -93,13 +94,6 @@ public class PersistenceServiceITCase {
 
 
     @Test
-    public void simpleTest() {
-        assertThat(ds).isNotNull();
-    }
-
-
-    @Test
-//    @Ignore
     public void testGetService() {
         Service epo = persistenceService.getService("EPO");
         assertThat(epo).isNotNull();
@@ -107,12 +101,14 @@ public class PersistenceServiceITCase {
 
     
     @Test
-    @Ignore
-    public void testPersistMessageIntoDatabase() {
-        MessageDetails messageDetails = new MessageDetails();
-        MessageContent messageContent = new MessageContent();
-        Message message = new Message(messageDetails, messageContent);
+    public void testPersistMessageIntoDatabase() throws PersistenceException {
+//        MessageDetails messageDetails = new MessageDetails();
+//        MessageContent messageContent = new MessageContent();
+        Message message = DomainCreator.createSimpleTestMessage();
+        message.setDbMessageId(null);
         //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        
+        
         
         persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
         
@@ -136,13 +132,12 @@ public class PersistenceServiceITCase {
         
     }
     
-    @Test(expected=Exception.class)
-    @Ignore
-    public void testMergeMessageWithDatabase_doesNotExistInDatabase() {
+    @Test(expected=PersistenceException.class)
+    public void testMergeMessageWithDatabase_doesNotExistInDatabase() throws PersistenceException {
         MessageDetails messageDetails = new MessageDetails();
         MessageContent messageContent = new MessageContent();
         Message message = new Message(messageDetails, messageContent);
-        
+        message.setDbMessageId(48L);
         persistenceService.mergeMessageWithDatabase(message);
     }
     

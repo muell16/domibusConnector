@@ -68,6 +68,8 @@ public class DomainCreator {
     public static Message createSimpleTestMessage() {
         MessageDetails messageDetails = new MessageDetails();
         messageDetails.setConversationId("conversation1");
+        messageDetails.setEbmsMessageId("ebms1");
+        
         MessageContent messageContent = new MessageContent();
         Message msg = new Message(messageDetails, messageContent);
         msg.setDbMessageId(78L);

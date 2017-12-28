@@ -7,6 +7,7 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
 import java.io.FileInputStream;
 import java.sql.SQLException;
@@ -174,6 +175,16 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         Date value = (Date) domibusConnectorTable.getValue(0, "delivered_backend");
         assertThat(value).isCloseTo(new Date(), 2000);
         
+    }
+    
+    @Test
+    public void testSave() {
+        DomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
+        
+        message.setId(null);
+        
+        messageDao.save(message);
+                
     }
     
 }
