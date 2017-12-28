@@ -6,6 +6,7 @@
 
 package eu.domibus.connector.persistence.dao;
 
+import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
 import java.io.FileInputStream;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
+import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -23,6 +25,9 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  *
@@ -31,6 +36,8 @@ import org.springframework.core.io.ClassPathResource;
 public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitITCase {
 
     private DomibusConnectorEvidenceDao evidenceDao;
+    
+    private TransactionTemplate transactionTemplate;
 
     
     @Before
@@ -38,6 +45,8 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     public void setUp() throws Exception {
         super.setUp();
         this.evidenceDao = applicationContext.getBean(DomibusConnectorEvidenceDao.class);
+        
+        this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
         
         //Load testdata
         IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorEvidence.xml").getInputStream()));
@@ -49,17 +58,52 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     
     @Test
     public void testFindEvidencesForMessage() {
-        fail("not finished yet!");
+        
+        List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(73L);
+        
+        assertThat(evidences).hasSize(3);
     }
     
     @Test
-    public void testSetDeliveredToGateway() {
-        fail("not finished yet!");
+    public void testSetDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {                
+        int result = evidenceDao.setDeliveredToGateway(82L);        
+        assertThat(result).isEqualTo(1); //check on row updated
+        
+         //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=82");
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
+        Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_GW");
+        assertThat(value).isCloseTo(new Date(), 2000);        
+    }
+    
+    @Test
+    public void testSetDeliveredToGateway_updateNonExistant_shouldReturnZero() {
+        int result = evidenceDao.setDeliveredToGateway(882L);        
+        assertThat(result).isEqualTo(0); //check on row updated
     }
   
     
     @Test
-    public void testSetDeliveredToBackend() {
-        fail("not finished yet!");
+    public void testSetDeliveredToBackend() throws SQLException, AmbiguousTableNameException, DataSetException {
+        int result = evidenceDao.setDeliveredToBackend(83L);        
+        assertThat(result).isEqualTo(1); //check one row updated
+        
+         //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=83");
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
+        Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_NAT");
+        assertThat(value).isCloseTo(new Date(), 2000);
+    }
+    
+    @Test
+    public void testSetDeliveredToBackend_updateNoneExistant_shouldReturnZero() {
+        int result = evidenceDao.setDeliveredToBackend(83231L);        
+        assertThat(result).isEqualTo(0); //check one row updated
     }
 }

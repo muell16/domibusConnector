@@ -39,7 +39,7 @@ public class DomibusConnectorEvidence {
     @Column(name = "EVIDENCE")
     private String evidence;
 
-    @Column(name = "DELIVERED_NATIONAL_BACKEND")
+    @Column(name = "DELIVERED_NAT")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredToNationalSystem;
 

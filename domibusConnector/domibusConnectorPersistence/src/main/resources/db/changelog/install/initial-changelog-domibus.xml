@@ -136,7 +136,7 @@
             </column>
             <column name="TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="EVIDENCE" type="${text.type}" />
-            <column name="DELIVERED_NATIONAL_BACKEND" type="TIMESTAMP" />
+            <column name="DELIVERED_NAT" type="TIMESTAMP" />
             <column name="DELIVERED_GW" type="TIMESTAMP" />
             <column name="UPDATED" type="TIMESTAMP" >
                 <constraints nullable="false" />

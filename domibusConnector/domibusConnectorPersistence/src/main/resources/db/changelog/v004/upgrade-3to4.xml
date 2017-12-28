@@ -238,7 +238,7 @@
         <renameColumn 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
             oldColumnName="DELIVERED_NAT" 
-            newColumnName="DELIVERED_NATIONAL_BACKEND" />
+            newColumnName="DELIVERED_NAT" />
     </changeSet>
     
     <changeSet id="3to4_upgrade_010_tb_create_DOMIBUS_CONNECTOR_CONTENT_TYPE" author="StephanSpindler">
