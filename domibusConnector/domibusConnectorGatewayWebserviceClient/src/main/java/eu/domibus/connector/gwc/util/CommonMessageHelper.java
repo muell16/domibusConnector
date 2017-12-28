@@ -47,6 +47,9 @@ import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.PersistenceException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CommonMessageHelper {
 
@@ -77,9 +80,12 @@ public class CommonMessageHelper {
    
     public void persistEbmsMessageIdIntoDatabase(String ebmsMessageId, Message message) {
         if (!ebmsMessageId.isEmpty()) {
-//            message.getDbMessage().setEbmsMessageId(ebmsMessageId);
-// TODO!
-            persistenceService.mergeMessageWithDatabase(message);
+            try {
+                message.getMessageDetails().setEbmsMessageId(ebmsMessageId);
+                persistenceService.mergeMessageWithDatabase(message);
+            } catch (PersistenceException ex) {
+                Logger.getLogger(CommonMessageHelper.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -268,7 +274,11 @@ public class CommonMessageHelper {
                         "Could not find own configured party in database!");
             }
             details.setFromParty(fromParty);
-            persistenceService.mergeMessageWithDatabase(message);
+            try {
+                persistenceService.mergeMessageWithDatabase(message);
+            } catch (PersistenceException ex) {
+                LOGGER.error("Exception occured", ex);
+            }
         }
 
         partyId.setValue(details.getFromParty().getPartyId());
