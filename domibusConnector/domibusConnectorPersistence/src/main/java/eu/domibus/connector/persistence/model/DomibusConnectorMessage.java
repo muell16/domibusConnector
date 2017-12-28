@@ -20,6 +20,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
+import java.util.HashSet;
+import javax.annotation.Nullable;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
@@ -168,7 +170,7 @@ public class DomibusConnectorMessage {
         this.messageInfo = messageInfo;
     }
 
-    public Set<DomibusConnectorEvidence> getEvidences() {
+    public @Nullable Set<DomibusConnectorEvidence> getEvidences() {
         return evidences;
     }
 

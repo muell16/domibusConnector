@@ -34,6 +34,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceServi
 import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 
 
@@ -41,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.util.CollectionUtils;
 
 @org.springframework.stereotype.Service("persistenceService")
 public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorPersistenceService {
@@ -207,7 +209,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void setEvidenceDeliveredToGateway(Message message, EvidenceType evidenceType) {
+    public void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull EvidenceType evidenceType) {
         //messageDao.mergeMessage(message.getDbMessage());
         this.mergeMessageWithDatabase(message);
         List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessageId());
@@ -221,17 +223,19 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType) {
+    public void setEvidenceDeliveredToNationalSystem(@Nonnull Message message, @Nonnull EvidenceType evidenceType) {
 //        messageDao.mergeMessage(message.getDbMessage());
-//        List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessage());
-//        DomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
-//        if (dbEvidence != null) {
+        this.mergeMessageWithDatabase(message);
+        List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessageId());
+        DomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
+        if (dbEvidence != null) {
 //            dbEvidence.setDeliveredToNationalSystem(new Date());
 //            evidenceDao.mergeEvidence(dbEvidence);
-//        }
+            evidenceDao.setDeliveredToBackend(dbEvidence.getId());
+        }
     }
 
-    private @Nullable DomibusConnectorEvidence findEvidence(@Nonnull List<DomibusConnectorEvidence> evidences, EvidenceType evidenceType) {
+    private @Nullable DomibusConnectorEvidence findEvidence(@Nonnull List<DomibusConnectorEvidence> evidences, @Nonnull EvidenceType evidenceType) {
         for (DomibusConnectorEvidence evidence : evidences) {
             if (evidence.getType().name().equals(evidenceType.name())) {
                 return evidence;
@@ -242,16 +246,24 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, EvidenceType evidenceType) {
+    public void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, EvidenceType evidenceType) {   
+        if (message.getDbMessageId() == null) {
+            throw new IllegalArgumentException("The DbMessageId of message is not allowed to be null!");
+        }
         DomibusConnectorEvidence dbEvidence = new DomibusConnectorEvidence();
-
-//        dbEvidence.setMessage(message.getDbMessage());
-//        dbEvidence.setEvidence(new String(evidence));
-//        dbEvidence.setType(evidenceType);
-//        dbEvidence.setDeliveredToGateway(null);
-//        dbEvidence.setDeliveredToNationalSystem(null);
-//
-//        evidenceDao.saveNewEvidence(dbEvidence);
+        
+        DomibusConnectorMessage dbMessage = messageDao.findOne(message.getDbMessageId());
+        if (dbMessage == null) {
+            throw new IllegalStateException(String.format("The provided message with storage id [%d] does not exist in storage!", message.getDbMessageId()));
+        }
+        
+        dbEvidence.setMessage(dbMessage);
+        dbEvidence.setEvidence(new String(evidence));
+        dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.valueOf(evidenceType.name()));
+        dbEvidence.setDeliveredToGateway(null);
+        dbEvidence.setDeliveredToNationalSystem(null);
+        
+        evidenceDao.save(dbEvidence);
     }
 
     @Override
@@ -435,10 +447,15 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) {
+    public void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) {        
         if (message == null || message.getDbMessageId() == null) {
             throw new RuntimeException (
                     "Message Error cannot be stored as the message object, or its database reference is null!");
+        }
+        DomibusConnectorMessage dbMessage = this.messageDao.findOne(message.getDbMessageId());
+        if (dbMessage == null) {
+            throw new RuntimeException(
+                String.format("No message for message id [%d] has been found in database!", message.getDbMessageId()));
         }
         if (ex == null) {
             throw new RuntimeException("Message Error cannot be stored as there is no exception given!");
@@ -449,9 +466,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         DomibusConnectorMessageError error = new DomibusConnectorMessageError();
         error.setErrorMessage(ex.getMessage());
-        //error.setDetailedText(ExceptionUtils.getStackTrace(ex));
+        error.setDetailedText(ExceptionUtils.getStackTrace(ex));        
         error.setErrorSource(source.getName());
-        //error.setMessage(message.getDbMessage());
+        error.setMessage(dbMessage);
 
         this.messageErrorDao.save(error);
     }
@@ -459,23 +476,23 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     public List<MessageError> getMessageErrors(Message message) throws Exception {
         List<DomibusConnectorMessageError> dbErrorsForMessage = this.messageErrorDao.findByMessage(message.getDbMessageId());
-//        if (!CollectionUtils.isEmpty(dbErrorsForMessage)) {
-//            List<MessageError> messageErrors = new ArrayList<MessageError>(dbErrorsForMessage.size());
-//
-//            for (DomibusConnectorMessageError dbMsgError : dbErrorsForMessage) {
-//                MessageError msgError = new MessageError();
-//                msgError.setMessage(message);
-//                msgError.setText(dbMsgError.getErrorMessage());
-//                if (dbMsgError.getDetailedText() != null)
-//                    msgError.setDetails(dbMsgError.getDetailedText());
-//                msgError.setSource(dbMsgError.getErrorSource());
-//
-//                messageErrors.add(msgError);
-//            }
-//
-//            return messageErrors;
-//        }
-        return null;
+        if (!CollectionUtils.isEmpty(dbErrorsForMessage)) {
+            List<MessageError> messageErrors = new ArrayList<MessageError>(dbErrorsForMessage.size());
+
+            for (DomibusConnectorMessageError dbMsgError : dbErrorsForMessage) {
+                MessageError msgError = new MessageError();
+                msgError.setMessage(message);
+                msgError.setText(dbMsgError.getErrorMessage());
+                if (dbMsgError.getDetailedText() != null)
+                    msgError.setDetails(dbMsgError.getDetailedText());
+                msgError.setSource(dbMsgError.getErrorSource());
+
+                messageErrors.add(msgError);
+            }
+
+            return messageErrors;
+        }
+        return new ArrayList<>();
     }
 
     @Override

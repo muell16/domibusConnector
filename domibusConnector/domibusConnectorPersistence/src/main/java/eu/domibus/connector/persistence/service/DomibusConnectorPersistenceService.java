@@ -20,7 +20,14 @@ public interface DomibusConnectorPersistenceService {
 
     void mergeMessageWithDatabase(Message message);
 
-    void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, EvidenceType evidenceType);
+    /**
+     * Creates the evidence in storage
+     * 
+     * @param message - the message related to the evidence
+     * @param evidence - the evidence as byte[]
+     * @param evidenceType - the type of the evidence
+     */
+    void persistEvidenceForMessageIntoDatabase(@Nonnull Message message, @Nonnull byte[] evidence, @Nonnull EvidenceType evidenceType);
 
     Message findMessageByNationalId(String nationalMessageId);
 
@@ -116,7 +123,7 @@ public interface DomibusConnectorPersistenceService {
 
     void persistMessageError(MessageError messageError);
 
-    List<MessageError> getMessageErrors(Message message) throws Exception;
+    @Nonnull List<MessageError> getMessageErrors(@Nonnull Message message) throws Exception;
 
     void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source); 
 

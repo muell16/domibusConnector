@@ -28,4 +28,8 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<DomibusConne
     @Query("update DomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.id = ?1")
     public int setDeliveredToGateway(Long evidenceId);
     
+    @Modifying
+    @Query("update DomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.id = ?1")
+    public int setDeliveredToBackend(Long evidenceId);
+    
 }

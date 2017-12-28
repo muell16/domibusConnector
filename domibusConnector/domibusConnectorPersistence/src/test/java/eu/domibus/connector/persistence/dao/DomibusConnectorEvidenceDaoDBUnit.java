@@ -57,4 +57,9 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         fail("not finished yet!");
     }
   
+    
+    @Test
+    public void testSetDeliveredToBackend() {
+        fail("not finished yet!");
+    }
 }

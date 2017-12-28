@@ -7,7 +7,11 @@
 package eu.domibus.connector.domain.test.util;
 
 import eu.domibus.connector.domain.Action;
+import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.MessageContent;
+import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
 import eu.domibus.connector.domain.enums.EvidenceType;
@@ -59,6 +63,32 @@ public class DomainCreator {
         confirmation.setEvidence("EVIDENCE1_NON_DELIVERY".getBytes());
         confirmation.setEvidenceType(EvidenceType.NON_DELIVERY);
         return confirmation;
+    }
+
+    public static Message createSimpleTestMessage() {
+        MessageDetails messageDetails = new MessageDetails();
+        messageDetails.setConversationId("conversation1");
+        MessageContent messageContent = new MessageContent();
+        Message msg = new Message(messageDetails, messageContent);
+        msg.setDbMessageId(78L);
+        return msg;
+    }
+
+     /**
+     * creates a error message with
+     * #createSimpleDomibusConnectorMessage as message
+     * "error detail message" as details
+     * "error message" as text
+     * "error source" as error source
+     * @return the MessageError
+     */
+    public static MessageError createMessageError() {
+        MessageError error = new MessageError();
+        error.setDetails("error detail message");
+        error.setSource("error source");
+        error.setText("error message");
+        error.setMessage(createSimpleTestMessage());
+        return error;
     }
     
 }
