@@ -22,6 +22,8 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
+import eu.domibus.connector.persistence.service.PersistenceException;
+import java.util.logging.Level;
 
 public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusConnectorController {
 
@@ -156,30 +158,37 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 			Action evidenceAction) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
-		originalMessage.addConfirmation(confirmation);
-		persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
-				confirmation.getEvidenceType());
-
-		MessageDetails details = new MessageDetails();
-		details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
-		details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-		details.setService(originalMessage.getMessageDetails().getService());
-		details.setAction(evidenceAction);
-
-		Message evidenceMessage = new Message(details, confirmation);
-
 		try {
-			nationalBackendClient.deliverLastEvidenceForMessage(evidenceMessage);
-		} catch (DomibusConnectorNationalBackendClientException e) {
-			throw new DomibusConnectorMessageException(originalMessage, "Exception sending "
-					+ confirmation.getEvidenceType().toString() + " evidence back to national system for message "
-					+ originalMessage.getMessageDetails().getNationalMessageId(), e, this.getClass());
-		} catch (ImplementationMissingException e) {
-			throw new DomibusConnectorControllerException(e);
+            
+            originalMessage.addConfirmation(confirmation);
+            persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
+                    confirmation.getEvidenceType());
+            
+            MessageDetails details = new MessageDetails();
+            details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
+            details.setConversationId(originalMessage.getMessageDetails().getConversationId());
+            details.setService(originalMessage.getMessageDetails().getService());
+            details.setAction(evidenceAction);
+            
+            Message evidenceMessage = new Message(details, confirmation);
+            
+            try {
+                nationalBackendClient.deliverLastEvidenceForMessage(evidenceMessage);
+            } catch (DomibusConnectorNationalBackendClientException e) {
+                throw new DomibusConnectorMessageException(originalMessage, "Exception sending "
+                        + confirmation.getEvidenceType().toString() + " evidence back to national system for message "
+                        + originalMessage.getMessageDetails().getNationalMessageId(), e, this.getClass());
+            } catch (ImplementationMissingException e) {
+                throw new DomibusConnectorControllerException(e);
+            }
+            
+            persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
+            persistenceService.rejectMessage(originalMessage);
+        } catch (PersistenceException ex) {
+            LOGGER.error("PersistenceException occured", ex);
+            throw new RuntimeException(ex);
+            //TODO: handle exception
 		}
-
-		persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
-		persistenceService.rejectMessage(originalMessage);
 	}
 
 	public void setNationalBackendClient(DomibusConnectorNationalBackendClient nationalBackendClient) {

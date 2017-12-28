@@ -27,6 +27,9 @@ import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientEx
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.gpc.transformer.MessageTransformer;
+import eu.domibus.connector.persistence.service.PersistenceException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DomibusConnectorGatewayPluginClientImpl implements DomibusConnectorGatewayWebserviceClient {
 
@@ -163,9 +166,12 @@ public class DomibusConnectorGatewayPluginClientImpl implements DomibusConnector
 
 	private void persistEbmsMessageIdIntoDatabase(String ebmsMessageId, Message message) {
 		if (!ebmsMessageId.isEmpty()) {
-//			message.getDbMessage().setEbmsMessageId(ebmsMessageId);
-//TODO!
-			persistenceService.mergeMessageWithDatabase(message);
+            try {                
+                message.getMessageDetails().setEbmsMessageId(ebmsMessageId);
+                persistenceService.mergeMessageWithDatabase(message);
+            } catch (PersistenceException ex) {
+                Logger.getLogger(DomibusConnectorGatewayPluginClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
 		}
 	}
 

@@ -327,7 +327,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         message.setDbMessageId(47L);
 
         MessageDetails messageDetails = message.getMessageDetails();
-        
+                
         messageDetails.setFinalRecipient("finalRecipient");
         messageDetails.setFromParty(DomainCreator.createPartyAT());       
         messageDetails.setOriginalSender("original1");
@@ -344,7 +344,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
                     @Override
                     public DomibusConnectorMessageInfo answer(InvocationOnMock invocation) throws Throwable {
                         DomibusConnectorMessageInfo messageInfo = invocation.getArgumentAt(0, DomibusConnectorMessageInfo.class);     
-                        
+                                                
                         assertThat(messageInfo.getFinalRecipient()).isEqualTo("finalRecipient");
                         assertThat(messageInfo.getOriginalSender()).isEqualTo("original1");   
                         //check action

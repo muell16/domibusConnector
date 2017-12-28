@@ -14,6 +14,7 @@ import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
+import eu.domibus.connector.persistence.service.PersistenceException;
 
 public class IncomingEvidenceService implements EvidenceService {
 
@@ -61,9 +62,13 @@ public class IncomingEvidenceService implements EvidenceService {
             throw new DomibusConnectorControllerException(e);
         }
 
-        persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
+        try {
+            persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
+        } catch (PersistenceException persistenceException) {
+            LOGGER.error("Persistence Exception occured", persistenceException);
+        }
 
-        //TODO:
+        //TODO:        
 //        if (originalMessage.getDbMessage().getDirection().equals(MessageDirection.NAT_TO_GW)
 //                && originalMessage.getDbMessage().getConfirmed()==null && originalMessage.getDbMessage().getRejected()==null) {
 //        	if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_ACCEPTANCE)
@@ -71,9 +76,9 @@ public class IncomingEvidenceService implements EvidenceService {
 //        		persistenceService.confirmMessage(originalMessage);
 //        	}
 //        }
-//
-//        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
-//                originalMessage.getDbMessage().getId());
+
+        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
+                originalMessage.getDbMessageId());
     }
 
     private boolean isMessageAlreadyRejected(Message message) {

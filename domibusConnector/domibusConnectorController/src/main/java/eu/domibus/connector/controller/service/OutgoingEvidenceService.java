@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.type.RejectionReason;
+import eu.domibus.connector.persistence.service.PersistenceException;
 
 public class OutgoingEvidenceService implements EvidenceService {
 
@@ -76,12 +77,17 @@ public class OutgoingEvidenceService implements EvidenceService {
                     gwse, this.getClass());
         }
 
-        persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
+        try {
+            persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
+        } catch(PersistenceException persistenceException) {
+            //TODO: exception
+            LOGGER.error("persistence Exception occured", persistenceException);
+        }
 
         //TODO!
-//        if (originalMessage.getDbMessage().getConfirmed() == null) {
-//            persistenceService.confirmMessage(originalMessage);
-//        }
+        //if (originalMessage.getDbMessage().getConfirmed() == null) {        
+        //    persistenceService.confirmMessage(originalMessage);
+        //}
 
         LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(),
                 originalMessage.getDbMessageId());

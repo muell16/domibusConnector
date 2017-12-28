@@ -8,7 +8,7 @@ import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.exception.PersistenceException;
+import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.domain.Action;
@@ -21,6 +21,7 @@ import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
+import java.util.logging.Level;
 
 public class IncomingMessageService extends AbstractMessageService implements MessageService {
 
@@ -30,13 +31,13 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 	public void handleMessage(Message message) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
-//		try {
+		try {
 			persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
-//		} catch (PersistenceException e1) {
-//			createRelayREMMDEvidenceAndSendIt(message, false);
-//			LOGGER.error("Message could not be persisted!", e1);
-//			return;
-//		}
+		} catch (PersistenceException e1) {
+			createRelayREMMDEvidenceAndSendIt(message, false);
+			LOGGER.error("Message could not be persisted!", e1);
+			return;
+		} 
 
 		if (connectorProperties.isUseEvidencesToolkit()) {
 			createRelayREMMDEvidenceAndSendIt(message, true);
@@ -62,7 +63,12 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 				createNonDeliveryEvidenceAndSendIt(message);
 				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
 			}
-			persistenceService.mergeMessageWithDatabase(message);
+            try {
+                persistenceService.mergeMessageWithDatabase(message);
+            } catch (PersistenceException ex) {
+                LOGGER.error("Message could not be persisted!", ex);
+                //TODO: further exception handling...
+            }
 		}
 
 		if(isConnector2ConnectorTest(message)){
@@ -179,6 +185,11 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 							+ originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
 		}
 
-		persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());
+        try {
+            persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());
+        } catch (PersistenceException ex) {
+            LOGGER.error("Evidence could not persisted", ex);
+            //TODO: further exception handling!
+        }
 	}
 }

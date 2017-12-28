@@ -14,6 +14,8 @@ import eu.domibus.connector.domain.test.util.DomainCreator;
 import eu.domibus.connector.persistence.dao.PDomibusConnectorRepositories;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceContext;
+import java.sql.SQLException;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,11 @@ import org.springframework.context.annotation.*;
 import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.dbunit.database.AmbiguousTableNameException;
+import org.dbunit.database.DatabaseDataSourceConnection;
+import org.dbunit.database.QueryDataSet;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.ITable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -101,25 +108,45 @@ public class PersistenceServiceITCase {
 
     
     @Test
-    public void testPersistMessageIntoDatabase() throws PersistenceException {
+    public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
 //        MessageDetails messageDetails = new MessageDetails();
 //        MessageContent messageContent = new MessageContent();
         Message message = DomainCreator.createSimpleTestMessage();
         message.setDbMessageId(null);
         //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
         
+        message.getMessageDetails().setConversationId("newconversation");
+        message.getMessageDetails().setEbmsMessageId("ebms1");
+        message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());       
         
         
         persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
         
         assertThat(message.getDbMessageId()).isNotNull();
-        //TODO: test db if entity is there!                
+        //TODO: test db if entity is there!         
+        
+        
+        long messageId = message.getDbMessageId();
+        assertThat(messageId).isNotNull();
+        
+        //TODO: check db changes
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=%s", messageId));
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        
+        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
+        assertThat(ebmsId).isEqualTo("ebms1");
+        
+        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
+        assertThat(conversationId).isEqualTo("newconversation");        
     }
-    
-    
+        
     
     @Test
-    public void testMergeMessageWithDatabase() throws PersistenceException {
+    public void testMergeMessageWithDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
         
         MessageDetails messageDetails = new MessageDetails();
         MessageContent messageContent = new MessageContent();
@@ -129,14 +156,9 @@ public class PersistenceServiceITCase {
         
         MessageDirection messageDirection = MessageDirection.GW_TO_NAT;        
         persistenceService.persistMessageIntoDatabase(message, messageDirection);
-        
-        message.getMessageDetails().setConversationId("newconversation");
-        message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());
-        
+                
         persistenceService.mergeMessageWithDatabase(message);
-        
-        //TODO: check db changes
-        
+
     }
     
     @Test(expected=PersistenceException.class)

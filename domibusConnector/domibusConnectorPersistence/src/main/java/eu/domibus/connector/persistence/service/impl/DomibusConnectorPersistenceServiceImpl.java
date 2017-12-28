@@ -173,6 +173,18 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         dbMessageInfo.setTo(to);
     }
     
+    /**
+     * Only updates 
+     *  - action
+     *  - service
+     *  - fromParty
+     *  - toParty
+     *  - finalRecipient
+     *  - originalRecipient 
+     *  of the provided message details
+     * @param message - the message
+     * @throws PersistenceException 
+     */
     @Override
     @Transactional
     public void mergeMessageWithDatabase(Message message) throws PersistenceException {

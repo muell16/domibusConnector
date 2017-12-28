@@ -24,6 +24,7 @@ import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 
 public class DomibusConnectorRunnableUtil {
@@ -242,7 +243,12 @@ public class DomibusConnectorRunnableUtil {
     }
 
     public void mergeMessage(Message message) {
-        persistenceService.mergeMessageWithDatabase(message);
+        try {
+            persistenceService.mergeMessageWithDatabase(message);
+        } catch (PersistenceException persistenceException) {
+            //TODO: handle exception
+            LOGGER.error("PersistenceException occured", persistenceException);
+        }
     }
 
     public List<Message> findUnconfirmedMessages() {

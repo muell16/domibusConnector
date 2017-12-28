@@ -10,7 +10,7 @@ import eu.domibus.connector.domain.enums.EvidenceType;
 import eu.domibus.connector.domain.enums.MessageDirection;
 import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
-import eu.domibus.connector.common.exception.PersistenceException;
+import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
@@ -31,12 +31,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     public void handleMessage(Message message) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
-//        try {
+        try {
             persistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW);
-//        } catch (PersistenceException e1) {
-//            // createSubmissionRejectionAndReturnIt(message, hashValue);
-//            throw new DomibusConnectorControllerException(e1);
-//        }
+        } catch (PersistenceException e1) {
+            //createSubmissionRejectionAndReturnIt(message, hashValue);
+            throw new DomibusConnectorControllerException(e1);
+        }
 
         String hashValue = null;
 
@@ -47,7 +47,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                 createSubmissionRejectionAndReturnIt(message, hashValue, cme.getMessage());
                 throw new DomibusConnectorMessageException(message, cme.getMessage(), cme, this.getClass());
             }
-            persistenceService.mergeMessageWithDatabase(message);
+            try {
+                persistenceService.mergeMessageWithDatabase(message);
+            } catch (PersistenceException e1) {
+                //TODO: handle exception    
+                LOGGER.error("Exception occured", e1);
+            }
         }
 
         try {
@@ -92,7 +97,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         persistenceService.setMessageDeliveredToGateway(message);
-        persistenceService.setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
+        try {
+            persistenceService.setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
+        } catch (PersistenceException ex) {
+                //TODO: handle exception    
+            LOGGER.error("Exception occured", ex);
+        }
 
         try {
             Message returnMessage = buildEvidenceMessage(confirmation, message);
@@ -102,7 +112,12 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                     "Could not send submission acceptance back to national connector! ", e, this.getClass());
         }
 
-        persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+        try {
+            persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+        } catch (PersistenceException ex) {
+            //TODO: handle exception    
+            LOGGER.error("Exception occured", ex);
+        }
 
         LOGGER.info("Successfully sent message with id {} to gateway.", message.getDbMessageId());
 
@@ -166,7 +181,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         try {
             Message returnMessage = buildEvidenceMessage(confirmation, message);
-            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
+            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);            
             persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
 
             persistenceService.rejectMessage(message);
@@ -175,6 +190,9 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
                     this.getClass());
             LOGGER.error("Exception while trying to send submission rejection. ", e);
             return;
+        } catch (PersistenceException persistenceException) {
+            //TODO: exception
+            LOGGER.error("Persistence exceptoin occured while trying to send submission rejection. Rejection is not stored in Storage!", persistenceException);
         }
 
     }
