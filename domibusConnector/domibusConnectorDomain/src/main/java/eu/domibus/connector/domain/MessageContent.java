@@ -1,7 +1,6 @@
 package eu.domibus.connector.domain;
 
-import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
-
+import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 
 /**
  * This is a container object that contains the content of the message in XML
