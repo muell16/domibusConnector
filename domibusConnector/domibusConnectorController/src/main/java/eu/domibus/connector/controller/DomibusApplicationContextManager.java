@@ -1,4 +1,4 @@
-package eu.domibus.connector.common;
+package eu.domibus.connector.controller;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

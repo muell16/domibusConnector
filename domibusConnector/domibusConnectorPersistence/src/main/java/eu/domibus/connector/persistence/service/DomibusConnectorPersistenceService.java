@@ -7,8 +7,8 @@ import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public interface DomibusConnectorPersistenceService {
      * @throws PersistenceException - in case of failures with persistence
      * 
      */
-    void persistMessageIntoDatabase(@Nonnull Message message, MessageDirection direction) throws PersistenceException;
+    void persistMessageIntoDatabase(@Nonnull Message message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
     void mergeMessageWithDatabase(@Nonnull Message message) throws PersistenceException;
 
@@ -36,7 +36,7 @@ public interface DomibusConnectorPersistenceService {
      * @param evidence - the evidence as byte[]
      * @param evidenceType - the type of the evidence
      */
-    void persistEvidenceForMessageIntoDatabase(@Nonnull Message message, @Nonnull byte[] evidence, @Nonnull EvidenceType evidenceType);
+    void persistEvidenceForMessageIntoDatabase(@Nonnull Message message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
     Message findMessageByNationalId(String nationalMessageId);
 
@@ -55,7 +55,7 @@ public interface DomibusConnectorPersistenceService {
      * 
      * 
      */
-    void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull EvidenceType evidenceType) throws PersistenceException;
+    void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
@@ -69,7 +69,7 @@ public interface DomibusConnectorPersistenceService {
      * could not be updated in storage
      * 
      */
-    void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType) throws PersistenceException;
+    void setEvidenceDeliveredToNationalSystem(Message message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Marks the message as delivered to the gateway

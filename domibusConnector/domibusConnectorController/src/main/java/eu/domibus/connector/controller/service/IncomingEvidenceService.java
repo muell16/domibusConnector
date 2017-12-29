@@ -4,14 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.common.enums.EvidenceType;
-import eu.domibus.connector.common.enums.MessageDirection;
-import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.persistence.service.PersistenceException;
@@ -87,9 +86,9 @@ public class IncomingEvidenceService implements EvidenceService {
 //        } //TODO!
         if (message.getConfirmations() != null) {
             for (MessageConfirmation confirmation : message.getConfirmations()) {
-                if (confirmation.getEvidenceType().equals(EvidenceType.RELAY_REMMD_REJECTION)
-                        || confirmation.getEvidenceType().equals(EvidenceType.NON_DELIVERY)
-                        || confirmation.getEvidenceType().equals(EvidenceType.NON_RETRIEVAL)) {
+                if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION)
+                        || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_DELIVERY)
+                        || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_RETRIEVAL)) {
                 	persistenceService.rejectMessage(message);
                     return true;
                 }

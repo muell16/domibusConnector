@@ -6,8 +6,8 @@ import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.domain.Party;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
@@ -113,7 +113,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     
     @Override
     @Transactional(readOnly = false)  //TODO: rollback for PersistenceException?
-    public void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException {
+    public void persistMessageIntoDatabase(Message message, DomibusConnectorMessageDirection direction) throws PersistenceException {
         if (message.getDbMessageId() !=  null) {
             throw new IllegalArgumentException("Cannot persist (create) a message with an already set db message id! Use mergeMessageIntoDatabase instead!");
         }
@@ -230,7 +230,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull EvidenceType evidenceType) throws PersistenceException {
+    public void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
         //messageDao.mergeMessage(message.getDbMessage());
         this.mergeMessageWithDatabase(message);
         List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessageId());
@@ -244,7 +244,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void setEvidenceDeliveredToNationalSystem(@Nonnull Message message, @Nonnull EvidenceType evidenceType) throws PersistenceException {
+    public void setEvidenceDeliveredToNationalSystem(@Nonnull Message message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
 //        messageDao.mergeMessage(message.getDbMessage());
         this.mergeMessageWithDatabase(message);
         List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(message.getDbMessageId());
@@ -256,7 +256,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
     }
 
-    private @Nullable DomibusConnectorEvidence findEvidence(@Nonnull List<DomibusConnectorEvidence> evidences, @Nonnull EvidenceType evidenceType) {
+    private @Nullable DomibusConnectorEvidence findEvidence(@Nonnull List<DomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
         for (DomibusConnectorEvidence evidence : evidences) {
             if (evidence.getType().name().equals(evidenceType.name())) {
                 return evidence;
@@ -267,7 +267,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, EvidenceType evidenceType) {   
+    public void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, DomibusConnectorEvidenceType evidenceType) {   
         if (message.getDbMessageId() == null) {
             throw new IllegalArgumentException("The DbMessageId of message is not allowed to be null!");
         }

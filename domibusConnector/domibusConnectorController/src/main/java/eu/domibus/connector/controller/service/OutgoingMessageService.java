@@ -3,18 +3,18 @@ package eu.domibus.connector.controller.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
-import eu.domibus.connector.domain.enums.RejectionReason;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
@@ -29,7 +29,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             DomibusConnectorMessageException {
 
         try {
-            persistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW);
+            persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
         } catch (PersistenceException e1) {
             //createSubmissionRejectionAndReturnIt(message, hashValue);
             throw new DomibusConnectorControllerException(e1);
@@ -65,10 +65,10 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         MessageConfirmation confirmation = null;
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
-            	confirmation = evidencesToolkit.createEvidence(EvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+            	confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
                 // immediately persist new evidence into database
                 persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
-                        EvidenceType.SUBMISSION_ACCEPTANCE);
+                        DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 
             } catch (DomibusConnectorEvidencesToolkitException ete) {
                 createSubmissionRejectionAndReturnIt(message, ete.getMessage());
@@ -118,7 +118,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
     	MessageConfirmation confirmation = null;
         try {
-        	confirmation = evidencesToolkit.createEvidence(EvidenceType.SUBMISSION_REJECTION, message, RejectionReason.OTHER,
+        	confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER,
                     errorMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
             new DomibusConnectorMessageException(message, "Could not even generate submission rejection! ", e,
@@ -130,7 +130,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         try {
             // immediately persist new evidence into database
             persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
-                    EvidenceType.SUBMISSION_REJECTION);
+                    DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
         } catch (Exception e) {
             new DomibusConnectorMessageException(message, "Could not persist evidence of type SUBMISSION_REJECTION! ",
                     e, this.getClass());

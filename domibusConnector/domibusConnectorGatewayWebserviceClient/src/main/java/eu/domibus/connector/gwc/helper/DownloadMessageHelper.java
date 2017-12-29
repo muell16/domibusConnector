@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 import backend.ecodex.org._1_1.DownloadMessageResponse;
 import backend.ecodex.org._1_1.PayloadType;
 import eu.domibus.connector.common.CommonConnectorGlobalConstants;
-import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageAttachment;
@@ -56,7 +56,7 @@ public class DownloadMessageHelper {
 				message.getMessageContent().setInternationalContent(bodyload.getValue());
 			} else if (isEvidence(elementDescription)) {
 				MessageConfirmation confirmation = new MessageConfirmation();
-				EvidenceType evidenceType = EvidenceType.valueOf(elementDescription);
+				DomibusConnectorEvidenceType evidenceType = DomibusConnectorEvidenceType.valueOf(elementDescription);
 				confirmation.setEvidenceType(evidenceType);
 				confirmation.setEvidence(bodyload.getValue());
 				message.addConfirmation(confirmation);
@@ -111,7 +111,7 @@ public class DownloadMessageHelper {
 
 	private boolean isEvidence(String value) {
 		try {
-			EvidenceType ev = EvidenceType.valueOf(value);
+			DomibusConnectorEvidenceType ev = DomibusConnectorEvidenceType.valueOf(value);
 			if (ev != null)
 				return true;
 		} catch (IllegalArgumentException e) {
@@ -157,7 +157,7 @@ public class DownloadMessageHelper {
 
 	private MessageConfirmation extractMessageConfirmation(PayloadType payload, String evidenceTypeString) {
 		MessageConfirmation confirmation = new MessageConfirmation();
-		EvidenceType evidenceType = EvidenceType.valueOf(evidenceTypeString);
+		DomibusConnectorEvidenceType evidenceType = DomibusConnectorEvidenceType.valueOf(evidenceTypeString);
 		confirmation.setEvidenceType(evidenceType);
 
 		confirmation.setEvidence(payload.getValue());

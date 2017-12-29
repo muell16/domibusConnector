@@ -18,7 +18,7 @@ import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
 
-import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
@@ -206,7 +206,7 @@ public class DomibusConnectorRunnableUtil {
         return details;
     }
 
-    public static Message createConfirmationMessage(EvidenceType evidenceType, Message originalMessage) {
+    public static Message createConfirmationMessage(DomibusConnectorEvidenceType evidenceType, Message originalMessage) {
         MessageDetails details = new MessageDetails();
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setService(originalMessage.getMessageDetails().getService());

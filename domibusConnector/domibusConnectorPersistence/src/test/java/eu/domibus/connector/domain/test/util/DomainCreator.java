@@ -14,7 +14,7 @@ import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
-import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 
 /**
  *
@@ -54,14 +54,14 @@ public class DomainCreator {
     public static MessageConfirmation createMessageDeliveryConfirmation() {
         MessageConfirmation confirmation = new MessageConfirmation();
         confirmation.setEvidence("EVIDENCE1_DELIVERY".getBytes());
-        confirmation.setEvidenceType(EvidenceType.DELIVERY);
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         return confirmation;
     }
     
     public static MessageConfirmation createMessageNonDeliveryConfirmation() {
         MessageConfirmation confirmation = new MessageConfirmation();
         confirmation.setEvidence("EVIDENCE1_NON_DELIVERY".getBytes());
-        confirmation.setEvidenceType(EvidenceType.NON_DELIVERY);
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.NON_DELIVERY);
         return confirmation;
     }
 

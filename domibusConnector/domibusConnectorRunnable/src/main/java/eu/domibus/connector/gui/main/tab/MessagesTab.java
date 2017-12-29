@@ -23,7 +23,7 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.io.FileUtils;
 
-import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.gui.main.data.Message;
 import eu.domibus.connector.gui.main.details.ExportMessagesDetail;
 import eu.domibus.connector.gui.main.details.NewMessageDetail;
@@ -132,7 +132,7 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 	public abstract int getMessageType();
 	
 	public String getLastEvidence(Message msg){
-		EvidenceType lastEvidenceType = null;
+		DomibusConnectorEvidenceType lastEvidenceType = null;
 		File[] contents = msg.getMessageDir().listFiles();
 
 		if(contents!=null && contents.length>0){
@@ -140,7 +140,7 @@ public abstract class MessagesTab extends JPanel implements ActionListener {
 				if(subFile.exists()){
 					try{
 						String name = subFile.getName().substring(0, subFile.getName().indexOf("."));
-					EvidenceType evidence = EvidenceType.valueOf(EvidenceType.class, name);
+					DomibusConnectorEvidenceType evidence = DomibusConnectorEvidenceType.valueOf(DomibusConnectorEvidenceType.class, name);
 					if(evidence!=null){
 						if(lastEvidenceType==null || lastEvidenceType.getPriority()<evidence.getPriority())
 							lastEvidenceType=evidence;

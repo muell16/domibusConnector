@@ -1,6 +1,6 @@
 package eu.domibus.connector.domain;
 
-import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 
 
 /**
@@ -15,16 +15,16 @@ import eu.domibus.connector.domain.enums.EvidenceType;
  */
 public class MessageConfirmation {
 
-    private EvidenceType evidenceType;
+    private DomibusConnectorEvidenceType evidenceType;
     private byte[] evidence;
 
-    public MessageConfirmation(EvidenceType evidenceType, byte[] evidence) {
+    public MessageConfirmation(DomibusConnectorEvidenceType evidenceType, byte[] evidence) {
         super();
         this.evidenceType = evidenceType;
         this.evidence = evidence;
     }
 
-    public MessageConfirmation(EvidenceType evidenceType) {
+    public MessageConfirmation(DomibusConnectorEvidenceType evidenceType) {
         super();
         this.evidenceType = evidenceType;
     }
@@ -32,11 +32,11 @@ public class MessageConfirmation {
     public MessageConfirmation() {
     }
 
-    public EvidenceType getEvidenceType() {
+    public DomibusConnectorEvidenceType getEvidenceType() {
         return evidenceType;
     }
 
-    public void setEvidenceType(EvidenceType evidenceType) {
+    public void setEvidenceType(DomibusConnectorEvidenceType evidenceType) {
         this.evidenceType = evidenceType;
     }
 

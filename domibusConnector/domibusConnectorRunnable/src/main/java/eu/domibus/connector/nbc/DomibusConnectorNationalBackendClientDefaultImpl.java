@@ -15,8 +15,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageAttachment;
@@ -270,12 +270,12 @@ InitializingBean {
 			LOGGER.info("Found {} unconfirmed incoming messages.", unconfirmed.size());
 			List<Message> confirmationMessages = new ArrayList<Message>();
 			for (Message originalMessage : unconfirmed) {
-				Message deliveryMessage = DomibusConnectorRunnableUtil.createConfirmationMessage(EvidenceType.DELIVERY,
+				Message deliveryMessage = DomibusConnectorRunnableUtil.createConfirmationMessage(DomibusConnectorEvidenceType.DELIVERY,
 						originalMessage);
 				confirmationMessages.add(deliveryMessage);
 
 				Message retrievalMessage = DomibusConnectorRunnableUtil.createConfirmationMessage(
-						EvidenceType.RETRIEVAL, originalMessage);
+						DomibusConnectorEvidenceType.RETRIEVAL, originalMessage);
 				confirmationMessages.add(retrievalMessage);
 
 			}

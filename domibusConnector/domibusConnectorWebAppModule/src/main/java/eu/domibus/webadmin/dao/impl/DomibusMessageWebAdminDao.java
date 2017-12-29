@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.model.DomibusConnectorService;
-import eu.domibus.connector.common.enums.MessageDirection;
+import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 
 @Repository

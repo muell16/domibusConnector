@@ -7,8 +7,8 @@ import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.test.util.DomainCreator;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
@@ -291,7 +291,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         
         MessageConfirmation messageConfirmation = new MessageConfirmation();
         messageConfirmation.setEvidence("MYEVIDENCE".getBytes());
-        messageConfirmation.setEvidenceType(EvidenceType.DELIVERY);
+        messageConfirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         
         message.addConfirmation(messageConfirmation);
         
@@ -316,7 +316,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         
         
         
-        domibusConnectorPersistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW);
+        domibusConnectorPersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
 
         Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
     }
@@ -437,7 +437,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.when(domibusConnectorEvidenceDao.findEvidencesForMessage(eq(47L))).thenReturn(evidences);
         Mockito.when(domibusConnectorMessageDao.findOne(eq(47L))).thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage());
         
-        domibusConnectorPersistenceService.setEvidenceDeliveredToGateway(message, EvidenceType.DELIVERY);
+        domibusConnectorPersistenceService.setEvidenceDeliveredToGateway(message, DomibusConnectorEvidenceType.DELIVERY);
                         
         Mockito.verify(this.domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(13L));
@@ -459,7 +459,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.when(domibusConnectorEvidenceDao.findEvidencesForMessage(eq(47L))).thenReturn(evidences);
         Mockito.when(domibusConnectorMessageDao.findOne(eq(47L))).thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage());
                 
-        domibusConnectorPersistenceService.setEvidenceDeliveredToNationalSystem(message, EvidenceType.DELIVERY);
+        domibusConnectorPersistenceService.setEvidenceDeliveredToNationalSystem(message, DomibusConnectorEvidenceType.DELIVERY);
                         
         Mockito.verify(this.domibusConnectorMessageDao, Mockito.times(1)).save(any(DomibusConnectorMessage.class));
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(13L));
@@ -489,7 +489,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
                     }
         });
         
-        domibusConnectorPersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, EvidenceType.DELIVERY);
+        domibusConnectorPersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
         
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(DomibusConnectorEvidence.class));
     }

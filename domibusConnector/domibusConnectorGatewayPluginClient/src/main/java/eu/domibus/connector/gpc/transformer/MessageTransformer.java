@@ -29,7 +29,7 @@ import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageAttachment;
 import eu.domibus.connector.domain.MessageConfirmation;
@@ -71,7 +71,7 @@ public class MessageTransformer {
 		String contentName = msgContent.getContentName();
 		String contentMimeType = msgContent.getContentMimeType();
 		if(contentName!=null && contentMimeType!=null){
-			EvidenceType evidenceType = isEvidence(contentName);
+			DomibusConnectorEvidenceType evidenceType = isEvidence(contentName);
 			if(evidenceType!=null){
 				MessageConfirmation messageConfirmation = new MessageConfirmation(evidenceType);
 				messageConfirmation.setEvidence(extractBytesFromDataHandler(msgContent.getContentData()));
@@ -95,7 +95,7 @@ public class MessageTransformer {
 						messageContent.setPdfDocument(attachmentData);
 						messageContent.setPdfDocumentName(attachmentIdentifier);
 					}else{
-						EvidenceType evidenceType = isEvidence(attachmentIdentifier);
+						DomibusConnectorEvidenceType evidenceType = isEvidence(attachmentIdentifier);
 						if(evidenceType!=null){
 							MessageConfirmation messageConfirmation = new MessageConfirmation(evidenceType);
 							messageConfirmation.setEvidence(attachmentData);
@@ -116,9 +116,9 @@ public class MessageTransformer {
 		return message;
 	}
 
-	private EvidenceType isEvidence(String value){
+	private DomibusConnectorEvidenceType isEvidence(String value){
 		try{
-			EvidenceType ev = EvidenceType.valueOf(value);
+			DomibusConnectorEvidenceType ev = DomibusConnectorEvidenceType.valueOf(value);
 			return ev;
 		}catch(IllegalArgumentException e){
 		}

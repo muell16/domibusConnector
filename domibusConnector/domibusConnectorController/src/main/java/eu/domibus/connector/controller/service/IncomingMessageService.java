@@ -4,18 +4,18 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
-import eu.domibus.connector.domain.enums.RejectionReason;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
@@ -31,7 +31,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 	DomibusConnectorMessageException {
 
 		try {
-			persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
+			persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
 		} catch (PersistenceException e1) {
 			createRelayREMMDEvidenceAndSendIt(message, false);
 			LOGGER.error("Message could not be persisted!", e1);
@@ -105,7 +105,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		MessageConfirmation nonDelivery = null;
 		try {
-			nonDelivery = evidencesToolkit.createEvidence(EvidenceType.NON_DELIVERY, originalMessage,RejectionReason.OTHER, null);
+			nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage,DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating NonDelivery evidence for message!", e, this.getClass());
@@ -123,7 +123,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		MessageConfirmation delivery = null;
 		try {
-			delivery = evidencesToolkit.createEvidence(EvidenceType.DELIVERY,originalMessage, null, null);
+			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY,originalMessage, null, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating Delivery evidence for message!", e, this.getClass());
@@ -140,8 +140,8 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 		MessageConfirmation messageConfirmation = null;
 		try {
-			messageConfirmation = isAcceptance ? evidencesToolkit.createEvidence(EvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null)
-					: evidencesToolkit.createEvidence(EvidenceType.RELAY_REMMD_REJECTION, originalMessage, RejectionReason.OTHER, null);
+			messageConfirmation = isAcceptance ? evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null)
+					: evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating RelayREMMD evidence for message!", e, this.getClass());

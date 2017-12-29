@@ -8,4 +8,6 @@
     </parent>
     <artifactId>domibusConnectorDomain</artifactId>
     <packaging>jar</packaging>
+    
+
 </project>

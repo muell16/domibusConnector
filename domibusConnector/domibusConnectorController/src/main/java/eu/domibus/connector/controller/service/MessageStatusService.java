@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 
 public class MessageStatusService extends AbstractMessageService {
 

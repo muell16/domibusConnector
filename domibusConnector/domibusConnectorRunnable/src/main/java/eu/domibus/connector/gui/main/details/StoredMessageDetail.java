@@ -17,7 +17,7 @@ import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
 
-import eu.domibus.connector.common.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.gui.config.properties.ConnectorProperties;
 import eu.domibus.connector.gui.config.tabs.ConfigTabHelper;
 import eu.domibus.connector.gui.layout.SpringUtilities;
@@ -170,7 +170,7 @@ public class StoredMessageDetail extends MessageDetail {
 					for(File attachment:message.getAttachments()){
 						try{
 						String name = attachment.getName().substring(0, attachment.getName().indexOf("."));
-						EvidenceType evidence = EvidenceType.valueOf(EvidenceType.class, name);
+						DomibusConnectorEvidenceType evidence = DomibusConnectorEvidenceType.valueOf(DomibusConnectorEvidenceType.class, name);
 						if(evidence!=null){
 						}
 						}catch(IllegalArgumentException iae){

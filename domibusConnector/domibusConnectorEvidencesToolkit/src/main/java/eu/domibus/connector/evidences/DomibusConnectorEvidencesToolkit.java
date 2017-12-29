@@ -3,8 +3,8 @@ package eu.domibus.connector.evidences;
 
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.RejectionReason;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 
 /**
@@ -15,6 +15,6 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
  */
 public interface DomibusConnectorEvidencesToolkit {
 
-	MessageConfirmation createEvidence(EvidenceType type, Message message, RejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException;
+	MessageConfirmation createEvidence(DomibusConnectorEvidenceType type, Message message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException;
 	
 }

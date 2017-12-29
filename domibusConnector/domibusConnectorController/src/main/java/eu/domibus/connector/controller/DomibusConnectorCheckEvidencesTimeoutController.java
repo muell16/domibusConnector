@@ -9,16 +9,16 @@ import org.slf4j.LoggerFactory;
 import eu.domibus.connector.common.CommonConnectorProperties;
 //import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.common.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.RejectionReason;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
@@ -125,7 +125,7 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 		MessageConfirmation relayRemMDFailure = null;
 
 		try {
-			relayRemMDFailure = evidencesToolkit.createEvidence(EvidenceType.RELAY_REMMD_FAILURE, originalMessage, RejectionReason.OTHER, null);
+			relayRemMDFailure = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage,
 					"Error creating RelayREMMDFailure for message!", e, this.getClass());
@@ -143,7 +143,7 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 				.getMessageDetails().getEbmsMessageId());
 		MessageConfirmation nonDelivery = null;
 		try {
-			nonDelivery = evidencesToolkit.createEvidence(EvidenceType.NON_DELIVERY, originalMessage, RejectionReason.OTHER, null);
+			nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			throw new DomibusConnectorMessageException(originalMessage, "Error creating NonDelivery for message!", e,
 					this.getClass());

@@ -8,8 +8,8 @@ import eu.domibus.connector.domain.MessageContent;
 import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.Party;
 import eu.domibus.connector.domain.Service;
-import eu.domibus.connector.domain.enums.EvidenceType;
-import eu.domibus.connector.domain.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.test.util.DomainCreator;
 import eu.domibus.connector.persistence.dao.PDomibusConnectorRepositories;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
@@ -120,7 +120,7 @@ public class PersistenceServiceITCase {
         message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());       
         
         
-        persistenceService.persistMessageIntoDatabase(message, MessageDirection.GW_TO_NAT);
+        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
         
         assertThat(message.getDbMessageId()).isNotNull();
         //TODO: test db if entity is there!         
@@ -154,7 +154,7 @@ public class PersistenceServiceITCase {
         message.setDbMessageId(null); //is a new message
         
         
-        MessageDirection messageDirection = MessageDirection.GW_TO_NAT;        
+        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GW_TO_NAT;        
         persistenceService.persistMessageIntoDatabase(message, messageDirection);
                 
         persistenceService.mergeMessageWithDatabase(message);
@@ -176,11 +176,11 @@ public class PersistenceServiceITCase {
         MessageContent messageContent = new MessageContent();
         Message message = new Message(messageDetails, messageContent);
         
-        persistenceService.persistMessageIntoDatabase(message, MessageDirection.NAT_TO_GW); //create message first
+        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW); //create message first
                 
         byte[] evidence = "hallo Welt".getBytes();
         
-        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, EvidenceType.DELIVERY);
+        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
         
         //TODO: check db changes
     }
