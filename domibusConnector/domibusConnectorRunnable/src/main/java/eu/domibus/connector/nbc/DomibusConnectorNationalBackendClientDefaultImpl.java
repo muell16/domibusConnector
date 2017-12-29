@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
