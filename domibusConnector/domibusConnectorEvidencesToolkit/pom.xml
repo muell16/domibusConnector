@@ -61,4 +61,14 @@
 	  <version>${project.version}</version>
 	 </dependency>
 	</dependencies>
+	
+	<build>
+        <!-- activate resource filtering to provide the tests with correct properties for the environment -->
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    </build>
 </project>

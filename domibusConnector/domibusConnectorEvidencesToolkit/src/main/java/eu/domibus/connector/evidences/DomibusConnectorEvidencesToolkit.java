@@ -4,8 +4,8 @@ package eu.domibus.connector.evidences;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.RejectionReason;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.evidences.type.RejectionReason;
 
 /**
  * Interface to publish methods for creation of eCodex Evidence Messages.

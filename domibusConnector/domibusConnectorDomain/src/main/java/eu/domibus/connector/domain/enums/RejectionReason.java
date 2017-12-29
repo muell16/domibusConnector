@@ -1,4 +1,4 @@
-package eu.domibus.connector.evidences.type;
+package eu.domibus.connector.domain.enums;
 
 
 public enum RejectionReason {

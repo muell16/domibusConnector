@@ -1,28 +1,52 @@
 package eu.domibus.connector.evidences;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.common.CommonConnectorProperties;
 import eu.domibus.connector.domain.Action;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.RejectionReason;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.ecodex.evidences.EvidenceBuilder;
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
 
+@Component("domibusConnectorEvidencesToolkit")
 public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvidencesToolkit {
 
+	@Resource(name="domibusConnectorEvidenceBuilder")
     private EvidenceBuilder evidenceBuilder;
+	
+	@Resource(name="hashValueBuilder")
     private HashValueBuilder hashValueBuilder;
-    private CommonConnectorProperties connectorProperties;
-
+	
+	@Value("${gateway.name}")
+	private String gatewayName;
+	
+	@Value("${gateway.endpoint.address}")
+	private String gatewayEndpointAddress;
+	
+	@Value("${postal.address.street}")
+	private String postalAddressStreet;
+	
+	@Value("${postal.address.locality}")
+	private String postalAddressLocality;
+	
+	@Value("${postal.address.postal.code}")
+	private String postalAddressPostalCode;
+	
+	@Value("${postal.address.country}")
+	private String postalAddressCountry;
+	
     @Override
     public MessageConfirmation createEvidence(EvidenceType type, Message message, RejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
     	byte[] evidence = null;
@@ -344,15 +368,15 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         EDeliveryDetail detail = new EDeliveryDetail();
 
         EDeliveryDetail.Server server = new EDeliveryDetail.Server();
-        server.setGatewayName(connectorProperties.getGatewayName());
-        server.setGatewayAddress(connectorProperties.getGatewayEndpointAddress());
+        server.setGatewayName(gatewayName);
+        server.setGatewayAddress(gatewayEndpointAddress);
         detail.setServer(server);
 
         EDeliveryDetail.PostalAdress postalAddress = new EDeliveryDetail.PostalAdress();
-        postalAddress.setStreetAddress(connectorProperties.getPostalAddressStreet());
-        postalAddress.setLocality(connectorProperties.getPostalAddressLocality());
-        postalAddress.setPostalCode(connectorProperties.getPostalAddressPostalCode());
-        postalAddress.setCountry(connectorProperties.getPostalAddressCountry());
+        postalAddress.setStreetAddress(postalAddressStreet);
+        postalAddress.setLocality(postalAddressLocality);
+        postalAddress.setPostalCode(postalAddressPostalCode);
+        postalAddress.setCountry(postalAddressCountry);
         detail.setPostalAdress(postalAddress);
 
         EDeliveryDetails evidenceIssuerDetails = new EDeliveryDetails(detail);
@@ -383,18 +407,6 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         messageDetails.setRecipientAddress(recipientAddress);
         messageDetails.setSenderAddress(senderAddress);
         return messageDetails;
-    }
-
-    public void setEvidenceBuilder(EvidenceBuilder evidenceBuilder) {
-        this.evidenceBuilder = evidenceBuilder;
-    }
-
-    public void setHashValueBuilder(HashValueBuilder hashValueBuilder) {
-        this.hashValueBuilder = hashValueBuilder;
-    }
-
-    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
-        this.connectorProperties = connectorProperties;
     }
 
 }

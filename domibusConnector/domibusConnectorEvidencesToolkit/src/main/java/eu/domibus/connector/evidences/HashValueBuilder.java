@@ -4,6 +4,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 public class HashValueBuilder {
 
@@ -36,12 +38,12 @@ public class HashValueBuilder {
 
     private final MessageDigest digester;
 
-    public HashValueBuilder(HashAlgorithm algorithm) throws NoSuchAlgorithmException {
+    private HashValueBuilder(HashAlgorithm algorithm) throws NoSuchAlgorithmException {
         this.algorithm = algorithm;
         digester = MessageDigest.getInstance(this.algorithm.toString());
     }
 
-    public HashValueBuilder(String algorithm) throws NoSuchAlgorithmException {
+    public HashValueBuilder(@Value(value = "${hash.algorithm}") String algorithm) throws NoSuchAlgorithmException {
         this(HashAlgorithm.getHashAlgorithm(algorithm));
     }
 

@@ -2,8 +2,7 @@ package eu.domibus.connector.evidences;
 
 import java.security.NoSuchAlgorithmException;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import eu.domibus.connector.evidences.HashValueBuilder;

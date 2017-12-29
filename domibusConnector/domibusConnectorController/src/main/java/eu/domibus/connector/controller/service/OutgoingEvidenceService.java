@@ -12,9 +12,9 @@ import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.enums.EvidenceType;
+import eu.domibus.connector.domain.enums.RejectionReason;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.evidences.type.RejectionReason;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 
