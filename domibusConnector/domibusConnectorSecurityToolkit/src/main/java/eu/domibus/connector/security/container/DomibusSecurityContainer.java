@@ -22,7 +22,7 @@ import eu.domibus.connector.common.CommonConnectorGlobalConstants;
 
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageAttachment;
-import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;
