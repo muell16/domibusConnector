@@ -22,6 +22,7 @@
         <module>domibusConnectorWebAppModule</module>
 	 <module>domibusConnectorPersistence</module>
 	 <module>domibusConnectorDomain</module>
+	 <module>domibusConnectorGatewayLink</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>

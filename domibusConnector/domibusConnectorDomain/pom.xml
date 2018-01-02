@@ -10,31 +10,31 @@
     <packaging>jar</packaging>
     
     <build>
-	<plugins>
-		<plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>court-database</id>
-						<configuration>
-							<!-- <forceRegenerate>true</forceRegenerate> -->
-							<schemaDirectory>src/main/resources/eu.domibus.connector.domain.transition.model</schemaDirectory>
-							<schemaIncludes>
-								<include>DomibusConnectorTransitionModel.xsd</include>
-							</schemaIncludes>
-							<generateDirectory>src/main/java</generateDirectory>
-							<strict>true</strict>
-							<extension>true</extension>
-							<args><arg>-no-header</arg></args>
-						</configuration>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-	</plugins>
+        <plugins>
+            <plugin>
+                    <groupId>org.jvnet.jaxb2.maven2</groupId>
+                    <artifactId>maven-jaxb2-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>court-database</id>
+                            <configuration>
+                                <!-- <forceRegenerate>true</forceRegenerate> -->
+                                <schemaDirectory>src/main/resources/eu.domibus.connector.domain.transition</schemaDirectory>
+                                <schemaIncludes>
+                                    <include>DomibusConnectorTransitionModel.xsd</include>
+                                </schemaIncludes>
+                                <generateDirectory>src/main/java</generateDirectory>
+                                <strict>true</strict>
+                                <extension>true</extension>
+                                <args><arg>-no-header</arg></args>
+                            </configuration>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+        </plugins>
 	</build>
     <dependencies>
         <dependency>

@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	
+	<context:component-scan base-package="eu.domibus.connector.gateway.link" />
+		
+	<jaxws:client id="submissionClient" serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"
+		address="${gateway.submission.endpoint.address}" />
+		
+	<jaxws:endpoint
+		id="domibusConnectorDeliveryServiceEndpoint"
+        implementor="#domibusConnectorDeliveryServiceImpl"
+        address="/domibusConnectorDeliveryWebservice">
+   	</jaxws:endpoint>
+	
+</beans>

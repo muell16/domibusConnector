@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="transition.domain.connector.domibus.eu" xmlns:tns="transition.domain.connector.domibus.eu">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="transition.domain.connector.domibus.eu" 
+	xmlns:tns="transition.domain.connector.domibus.eu"
+	xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
 	<xs:complexType name="DomibusConnectorMessageContentType">
 		<xs:sequence>
-			<xs:element name="xmlContent" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="xmlContent" type="xs:base64Binary" xmime:expectedContentTypes="application/xml" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="document" type="tns:DomibusConnectorMessageDocumentType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorMessageDocumentType">
 		<xs:sequence>
-			<xs:element name="document" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="documentName" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="detachedSignature" type="tns:DomibusConnectorDetachedSignatureType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
@@ -53,7 +56,7 @@
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorMessageConfirmationType">
 		<xs:sequence>
-			<xs:element name="confirmation" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="confirmation" type="xs:base64Binary" xmime:expectedContentTypes="application/xml" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="confirmationType" type="tns:DomibusConnectorConfirmationType" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -73,7 +76,7 @@
 	<xs:complexType name="DomibusConnectorMessageAttachmentType">
 		<xs:sequence>
 			<xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="attachment" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="attachment" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="mimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
