@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 
 /**
@@ -63,6 +64,15 @@ public class DomainCreator {
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.NON_DELIVERY);
         return confirmation;
     }
+    
+    public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
+        DomibusConnectorMessageAttachment attachment = 
+                new DomibusConnectorMessageAttachment("attachment".getBytes(), "identifier");       
+        attachment.setName("name");
+        attachment.setMimeType("application/garbage");
+        return attachment;
+    }
+    
 
     public static DomibusConnectorMessage createSimpleTestMessage() {
         
@@ -76,18 +86,10 @@ public class DomainCreator {
         //msg.getMessageDetails().
         return msg;
     }
-
+    
     public static DomibusConnectorMessage createMessage() {
-        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        messageDetails.setConversationId("conversation1");
-        messageDetails.setEbmsMessageId("ebms1");
-        messageDetails.setBackendMessageId("national1");
+        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
         
-        messageDetails.setAction(createActionForm_A());
-        messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyAT());
-        messageDetails.setFromParty(createPartyDE());
-                        
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
         messageContent.setXmlContent("xmlContent".getBytes());
         
@@ -98,8 +100,27 @@ public class DomainCreator {
         messageContent.setDocument(messageDocument);
         
         DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
-
+        msg.addConfirmation(createMessageDeliveryConfirmation());
+        msg.addAttachment(createSimpleMessageAttachment());
+        msg.addError(createMessageError());
         return msg;
+    }
+    
+    public static DomibusConnectorMessageDetails createDomibusConnectorMessageDetails() {
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        messageDetails.setConversationId("conversation1");
+        messageDetails.setEbmsMessageId("ebms1");
+        messageDetails.setBackendMessageId("national1");
+        messageDetails.setFinalRecipient("finalRecipient");
+        messageDetails.setOriginalSender("originalSender");
+        messageDetails.setRefToMessageId("refToMessageId");
+        
+        messageDetails.setAction(createActionForm_A());
+        messageDetails.setService(createServiceEPO());
+        messageDetails.setToParty(createPartyAT());
+        messageDetails.setFromParty(createPartyDE());
+        
+        return messageDetails;
     }
     
     
