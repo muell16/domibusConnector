@@ -14,15 +14,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import eu.domibus.connector.domain.enums.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageAttachment;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.MessageContent;
 import eu.domibus.connector.domain.MessageError;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.runnable.exception.DomibusConnectorRunnableException;
 import eu.domibus.connector.runnable.util.DomibusConnectorMessageProperties;
