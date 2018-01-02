@@ -19,7 +19,7 @@
 						<id>court-database</id>
 						<configuration>
 							<!-- <forceRegenerate>true</forceRegenerate> -->
-							<schemaDirectory>src/main/resources/eu.domibus.connector.domain.transition.model</schemaDirectory>
+							<schemaDirectory>src/main/resources/eu.domibus.connector.domain.transition</schemaDirectory>
 							<schemaIncludes>
 								<include>DomibusConnectorTransitionModel.xsd</include>
 							</schemaIncludes>
