@@ -57,3 +57,6 @@ $Recycle.Bin
 /domibusConnector/domibusConnectorSecurityToolkit/nbproject/
 /domibusConnector/domibusConnectorPersistence/nbproject/
 /domibusConnector/domibusConnectorDomain/nbproject/
+
+#is downloaded and unpacked by maven so ignore it
+/domibusConnector/domibusConnectorGatewayLink/src/main/resources/wsdl/src/main/resources/eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd

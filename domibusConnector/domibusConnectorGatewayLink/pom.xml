@@ -62,10 +62,10 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack-dependencies</id>
+                        <id>unpack-transition-model</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>unpack-dependencies</goal>
+                            <goal>unpack</goal>
                         </goals>                                                
                         <configuration>
                             <artifactItems>
@@ -73,15 +73,13 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>domibusConnectorDomain</artifactId>
                                     <version>${project.version}</version>
-                                    <type>jar</type>
+                                    <classifier>transition</classifier>
+                                    <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>src/main/resources/wsdl</outputDirectory>                                    
                                     <includes>**/DomibusConnectorTransitionModel.xsd</includes>
                                 </artifactItem>
                             </artifactItems>
-<!--                            
-                            <includes>**/DomibusConnectorTransitionModel.xsd</includes>
-                            <outputDirectory>src/main/resources/wsdl</outputDirectory>-->
                         </configuration>
                     </execution>
                 </executions>
