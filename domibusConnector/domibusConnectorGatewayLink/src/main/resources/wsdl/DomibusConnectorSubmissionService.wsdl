@@ -8,7 +8,7 @@
 	targetNamespace="http://connector.domibus.eu/ws/submission/service">
 	<wsdl:import
 		namespace="transition.domain.connector.domibus.eu"
-		location="src/main/resources/wsdl/eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
+		location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
 
 	<wsdl:message name="submitMessageRequest">
 		<wsdl:part name="submitMessageRequest" type="dct:DomibusConnectorMessageType"></wsdl:part>
