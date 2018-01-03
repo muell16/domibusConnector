@@ -25,23 +25,28 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
 import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
 import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.activation.DataHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StreamUtils;
-import sun.misc.IOUtils;
 
 /**
  * @author riederb
@@ -175,7 +180,8 @@ public class DomibusConnectorDomainMessageTransformer {
         if (messageAttachment.getIdentifier() == null) {
             throw new CannotBeMappedToTransitionException("identifier is not allowed to be null!");
         }
-        BeanUtils.copyProperties(messageAttachment, attachmentTO);        
+        BeanUtils.copyProperties(messageAttachment, attachmentTO);               
+        attachmentTO.setAttachment(convertByteArrayToDataHandler(messageAttachment.getAttachment(), messageAttachment.getMimeType()));
         return attachmentTO;
     }
     
@@ -261,24 +267,43 @@ public class DomibusConnectorDomainMessageTransformer {
     
     static @Nonnull byte[] convertDataHandlerToByteArray(@Nonnull DataHandler dataHandler) {
         try {
-            InputStream inputStream = dataHandler.getInputStream();
-            byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
-            return byteArray;
+            //InputStream inputStream = dataHandler.getInputStream();
+            Object content = dataHandler.getContent();
+            if (content instanceof byte[]) {
+                byte[] byteArray = (byte[]) content;
+                return byteArray;
+            } else if (content instanceof InputStream) {
+                byte[] copyToByteArray = StreamUtils.copyToByteArray((InputStream) content);
+                return copyToByteArray;
+            } else {
+                LOGGER.error("Cannot map content [{}] to byte[]", content);
+                throw new RuntimeException("Cannot map content!");
+            }
         } catch (IOException ex) {
-            LOGGER.error("IO Exception occured while reading InputStream provided over network");
+            LOGGER.error("IO Exception occured while reading InputStream provided over network", ex);
             throw new RuntimeException("Cannot be mapped!", ex);
         }        
     }
     
-    
-    static @Nonnull byte[] convertInputStreamToByteArray(@Nonnull InputStream inputStream) {
+    /**
+     * takes a source element and converts with 
+     * Transformer to an byte[] backed by ByteArrayOutputStream
+     * @param xmlInput - the Source
+     * @throws RuntimeException - in case of any error! //TODO: improve exceptions
+     * @return the byte[]
+     */
+    static @Nonnull byte[] convertXmlSourceToByteArray(@Nonnull Source xmlInput) {
         try {
-            byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
-            return byteArray;
-        } catch (IOException ex) {
-            LOGGER.error("IO Exception occured while reading InputStream provided over network");
-            throw new RuntimeException("Cannot be mapped!", ex);
-        }        
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");    
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(output));
+            transformer.transform(xmlInput, xmlOutput);            
+            return output.toByteArray();
+        } catch (IllegalArgumentException | TransformerException e) {
+            throw new RuntimeException("Exception occured during transforming xml into byte[]", e);
+        }
     }
     
     static @Nonnull DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @Nonnull DomibusConnectorMessageDetails messageDetails) {        
@@ -410,8 +435,7 @@ public class DomibusConnectorDomainMessageTransformer {
     static DomibusConnectorMessageConfirmation transformMessageConfirmationTransitionToDomain(final @Nonnull DomibusConnectorMessageConfirmationType messageConfirmationTO) {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
 
-        //confirmation.setEvidence(Arrays.copyOf(messageConfirmationTO.getConfirmation(), messageConfirmationTO.getConfirmation().length));
-        //messageConfirmationTO.getConfirmation(). //TODO: mapping?
+        confirmation.setEvidence(convertXmlSourceToByteArray(messageConfirmationTO.getConfirmation()));
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.valueOf(messageConfirmationTO.getConfirmationType().name()));
         
         return confirmation;
@@ -421,8 +445,7 @@ public class DomibusConnectorDomainMessageTransformer {
     static @Nonnull DomibusConnectorMessageContent transformMessageContentTransitionToDomain(final @Nonnull DomibusConnectorMessageContentType messageContentTO) {
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
         
-        //TODO: mapping!
-        //messageContent.setXmlContent(Arrays.copyOf(messageContentTO.getXmlContent(), messageContentTO.getXmlContent().length));
+        messageContent.setXmlContent(convertXmlSourceToByteArray(messageContentTO.getXmlContent()));
         
         
         //maps Document of messageContent

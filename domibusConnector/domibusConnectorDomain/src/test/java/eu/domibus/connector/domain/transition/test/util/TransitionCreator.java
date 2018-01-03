@@ -39,7 +39,7 @@ public class TransitionCreator {
     public static DomibusConnectorMessageContentType createMessageContent() {
         DomibusConnectorMessageContentType messageContent = new DomibusConnectorMessageContentType();
         //messageContent.setXmlContent("xmlContent".getBytes());
-        messageContent.setXmlContent(new StreamSource(new ByteArrayInputStream("xmlContent".getBytes())));
+        messageContent.setXmlContent(new StreamSource(new ByteArrayInputStream("<xmlContent></xmlContent>".getBytes())));
         
         DomibusConnectorMessageDocumentType document = new DomibusConnectorMessageDocumentType();
         
@@ -62,14 +62,14 @@ public class TransitionCreator {
     
     public static DomibusConnectorMessageConfirmationType createMessageConfirmationType_DELIVERY() {
         DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
-        confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("DELIVERY".getBytes())));
+        confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("<DELIVERY></DELIVERY>".getBytes())));
         confirmation.setConfirmationType(DomibusConnectorConfirmationType.DELIVERY);
         return confirmation;
     }
     
     public static DomibusConnectorMessageConfirmationType createMessageConfirmationType_NON_DELIVERY() {
         DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
-        confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("NON_DELIVERY".getBytes())));
+        confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("<NON_DELIVERY></NON_DELIVERY>".getBytes())));
         confirmation.setConfirmationType(DomibusConnectorConfirmationType.NON_DELIVERY);
         return confirmation;
     }
