@@ -25,13 +25,12 @@ import org.springframework.web.WebApplicationInitializer;
  */
 @SpringBootApplication(scanBasePackages = "eu.domibus")
 @EnableTransactionManagement
-@EnableAutoConfiguration(exclude={
+@EnableAutoConfiguration(exclude={ //activates pre defined configurations provided by spring 
 //    LiquibaseAutoConfiguration.class
 })
 @ImportResource({        
-    "classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml",
+//    "classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml",
     "classpath:/spring/context/DomibusConnectorSecurityToolkitContext.xml",
-    "classpath:/spring/context/DomibusConnectorEvidencesToolkitContext.xml",
 	"classpath:/spring/context/DomibusConnectorContentMapperContext.xml",
 	"classpath:/spring/context/DomibusConnectorNationalBackendClientContext.xml",
 	"classpath:/spring/context/DomibusConnectorMonitoringContext.xml",
