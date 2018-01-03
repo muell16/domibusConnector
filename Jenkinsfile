@@ -55,7 +55,8 @@ node {
 			dir ('domibusConnector') {
 			
 				stage ('Build') {
-					sh 'mvn compile'
+					//sh 'mvn compile'
+					sh 'mvn -DskipTests package'
 				}
 				
 				stage ('Test') {
