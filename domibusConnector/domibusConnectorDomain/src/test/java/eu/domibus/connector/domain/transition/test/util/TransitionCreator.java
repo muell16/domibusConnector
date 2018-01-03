@@ -13,6 +13,9 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
 import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
+import java.io.ByteArrayInputStream;
+import javax.activation.DataHandler;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * Helper class to create TransitionModel Objects for testing 
@@ -20,6 +23,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
  */
 public class TransitionCreator {
 
+    public static String APPLICATION_OCTET_STREAM_MIME_TYPE = "application/octet-stream";
     
     public static DomibusConnectorMessageType createMessage() {
         DomibusConnectorMessageType message = new DomibusConnectorMessageType();        
@@ -34,10 +38,14 @@ public class TransitionCreator {
 
     public static DomibusConnectorMessageContentType createMessageContent() {
         DomibusConnectorMessageContentType messageContent = new DomibusConnectorMessageContentType();
-        messageContent.setXmlContent("xmlContent".getBytes());
+        //messageContent.setXmlContent("xmlContent".getBytes());
+        messageContent.setXmlContent(new StreamSource(new ByteArrayInputStream("xmlContent".getBytes())));
         
         DomibusConnectorMessageDocumentType document = new DomibusConnectorMessageDocumentType();
-        document.setDocument("document".getBytes());
+        
+        DataHandler dataHandler = new DataHandler("document".getBytes(), "application/octet-stream");        
+        document.setDocument(dataHandler);
+        //document.setDocument(value);
         document.setDocumentName("documentName");
         
         messageContent.setDocument(document);        
@@ -54,14 +62,14 @@ public class TransitionCreator {
     
     public static DomibusConnectorMessageConfirmationType createMessageConfirmationType_DELIVERY() {
         DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
-        confirmation.setConfirmation("DELIVERY".getBytes());
+        confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("DELIVERY".getBytes())));
         confirmation.setConfirmationType(DomibusConnectorConfirmationType.DELIVERY);
         return confirmation;
     }
     
     public static DomibusConnectorMessageConfirmationType createMessageConfirmationType_NON_DELIVERY() {
         DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
-        confirmation.setConfirmation("NON_DELIVERY".getBytes());
+        confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("NON_DELIVERY".getBytes())));
         confirmation.setConfirmationType(DomibusConnectorConfirmationType.NON_DELIVERY);
         return confirmation;
     }
@@ -76,10 +84,17 @@ public class TransitionCreator {
     
     public static DomibusConnectorMessageAttachmentType createMessageAttachment() {
         DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
-        attachment.setAttachment("attachment".getBytes());
+        //attachment.setAttachment("attachment".getBytes());
+        
+        
+        
+        
+        DataHandler dataHandler = new DataHandler("attachment".getBytes(), APPLICATION_OCTET_STREAM_MIME_TYPE);   
+        
+        attachment.setAttachment(dataHandler);
         attachment.setDescription("description");
         attachment.setIdentifier("identifier");
-        attachment.setMimeType("mimetype");
+        attachment.setMimeType(APPLICATION_OCTET_STREAM_MIME_TYPE);
         attachment.setName("name");
         return attachment;
     }

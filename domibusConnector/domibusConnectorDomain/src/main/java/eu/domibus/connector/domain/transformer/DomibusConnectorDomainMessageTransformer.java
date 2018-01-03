@@ -24,15 +24,24 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentTyp
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
 import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
 import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.activation.DataHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StreamUtils;
+import sun.misc.IOUtils;
 
 /**
  * @author riederb
@@ -121,7 +130,16 @@ public class DomibusConnectorDomainMessageTransformer {
         if (messageConfirmation.getEvidenceType() == null) {
             throw new CannotBeMappedToTransitionException("evidenceType is not allowed to be null!");
         }
-        confirmationTO.setConfirmation(Arrays.copyOf(messageConfirmation.getEvidence(), messageConfirmation.getEvidence().length));        
+        
+        StreamSource streamSource = new StreamSource(new ByteArrayInputStream(
+                //byte[] is copied because domain model is not immutable
+                Arrays.copyOf(messageConfirmation.getEvidence(), messageConfirmation.getEvidence().length)));
+        confirmationTO.setConfirmation(streamSource);
+        
+        //confirmationTO.setConfirmation(Arrays.copyOf(messageConfirmation.getEvidence(), messageConfirmation.getEvidence().length));        
+        
+        
+        
         confirmationTO.setConfirmationType(DomibusConnectorConfirmationType.valueOf(messageConfirmation.getEvidenceType().name()));
         
         return confirmationTO;
@@ -175,12 +193,17 @@ public class DomibusConnectorDomainMessageTransformer {
         if (messageContent.getXmlContent() == null) {
             throw new CannotBeMappedToTransitionException("xmlContent of content must be not null!");
         }
-        messageContentTO.setXmlContent(Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length));
+        
+        StreamSource streamSource = new StreamSource(new ByteArrayInputStream(
+                //byte[] is copied because domain model is not immutable
+                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)));        
+        messageContentTO.setXmlContent(streamSource);
         
         //maps Document of messageContent
         DomibusConnectorMessageDocument document = messageContent.getDocument();
         DomibusConnectorMessageDocumentType documentTO = new DomibusConnectorMessageDocumentType();
-        documentTO.setDocument(Arrays.copyOf(document.getDocument(), document.getDocument().length));
+        
+        documentTO.setDocument(convertByteArrayToDataHandler(document.getDocument(), null));
         documentTO.setDocumentName(document.getDocumentName());
         messageContentTO.setDocument(documentTO);
         
@@ -198,6 +221,65 @@ public class DomibusConnectorDomainMessageTransformer {
         return messageContentTO;
     }
     
+    /**
+     * converts a byte[] by creating a copy of the provided byte array
+     * (because byte array is not immutable) and wrapping this byte array in an
+     * inputStream which is provided to StreamSource
+     * 
+     * There are no checks of the byte[] content, if its a valid Source ressource!
+     * 
+     * @param array - the byte array
+     * @return - the Source
+     */
+    static @Nonnull Source convertByteArrayToSource(@Nonnull byte[] array) {
+        StreamSource streamSource = new StreamSource(new ByteArrayInputStream(
+                //byte[] is copied because domain model is not immutable
+                Arrays.copyOf(array, array.length)));       
+        return streamSource;
+    }
+    
+    /**
+     * converts a byte[] by creating a copy of the provided byte array
+     * (because byte array is not immutable) and passing this byte array to
+     * DataHandler constructor
+     * 
+     * 
+     * @param array - the byte array
+     * @param mimeType - the provided mimeType, can be null, if null 
+     *   "application/octet-stream" mimeType will be set
+     * 
+     * @return the DataHandler
+     */
+    static @Nonnull DataHandler convertByteArrayToDataHandler(@Nonnull byte[] array, @Nullable String mimeType) {
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
+        }
+        DataHandler dataHandler = new DataHandler(Arrays.copyOf(array, array.length), mimeType);
+        return dataHandler;
+    }
+    
+    
+    static @Nonnull byte[] convertDataHandlerToByteArray(@Nonnull DataHandler dataHandler) {
+        try {
+            InputStream inputStream = dataHandler.getInputStream();
+            byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
+            return byteArray;
+        } catch (IOException ex) {
+            LOGGER.error("IO Exception occured while reading InputStream provided over network");
+            throw new RuntimeException("Cannot be mapped!", ex);
+        }        
+    }
+    
+    
+    static @Nonnull byte[] convertInputStreamToByteArray(@Nonnull InputStream inputStream) {
+        try {
+            byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
+            return byteArray;
+        } catch (IOException ex) {
+            LOGGER.error("IO Exception occured while reading InputStream provided over network");
+            throw new RuntimeException("Cannot be mapped!", ex);
+        }        
+    }
     
     static @Nonnull DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @Nonnull DomibusConnectorMessageDetails messageDetails) {        
         LOGGER.debug("transformMessageDetailsDomaintToTransition: messageDetails are [{}]", messageDetails);
@@ -301,9 +383,12 @@ public class DomibusConnectorDomainMessageTransformer {
 	}
 
     
+    
     static @Nonnull DomibusConnectorMessageAttachment transformMessageAttachmentTransitionToDomain(final @Nonnull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
+        
+        
         DomibusConnectorMessageAttachment messageAttachment = new DomibusConnectorMessageAttachment(
-                Arrays.copyOf(messageAttachmentTO.getAttachment(), messageAttachmentTO.getAttachment().length),
+                convertDataHandlerToByteArray(messageAttachmentTO.getAttachment()),
                 messageAttachmentTO.getIdentifier()
         );        
         BeanUtils.copyProperties(messageAttachmentTO, messageAttachment);
@@ -325,7 +410,8 @@ public class DomibusConnectorDomainMessageTransformer {
     static DomibusConnectorMessageConfirmation transformMessageConfirmationTransitionToDomain(final @Nonnull DomibusConnectorMessageConfirmationType messageConfirmationTO) {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
 
-        confirmation.setEvidence(Arrays.copyOf(messageConfirmationTO.getConfirmation(), messageConfirmationTO.getConfirmation().length));
+        //confirmation.setEvidence(Arrays.copyOf(messageConfirmationTO.getConfirmation(), messageConfirmationTO.getConfirmation().length));
+        //messageConfirmationTO.getConfirmation(). //TODO: mapping?
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.valueOf(messageConfirmationTO.getConfirmationType().name()));
         
         return confirmation;
@@ -335,7 +421,9 @@ public class DomibusConnectorDomainMessageTransformer {
     static @Nonnull DomibusConnectorMessageContent transformMessageContentTransitionToDomain(final @Nonnull DomibusConnectorMessageContentType messageContentTO) {
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
         
-        messageContent.setXmlContent(Arrays.copyOf(messageContentTO.getXmlContent(), messageContentTO.getXmlContent().length));
+        //TODO: mapping!
+        //messageContent.setXmlContent(Arrays.copyOf(messageContentTO.getXmlContent(), messageContentTO.getXmlContent().length));
+        
         
         //maps Document of messageContent
         DomibusConnectorMessageDocumentType documentTO = messageContentTO.getDocument();
@@ -352,10 +440,13 @@ public class DomibusConnectorDomainMessageTransformer {
                         .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
         );
         
+        
+        
         //maps Document of messageContent
         DomibusConnectorMessageDocument document = 
                 new DomibusConnectorMessageDocument(
-                        Arrays.copyOf(documentTO.getDocument(), documentTO.getDocument().length),
+                        //Arrays.copyOf(documentTO.getDocument(), documentTO.getDocument().length),
+                        convertDataHandlerToByteArray(documentTO.getDocument()),
                         documentTO.getDocumentName(),
                         detachedSignature
                 ); 
