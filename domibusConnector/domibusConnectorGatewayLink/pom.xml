@@ -66,10 +66,22 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
-                        </goals>
+                        </goals>                                                
                         <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>domibusConnectorDomain</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>src/main/resources/wsdl</outputDirectory>                                    
+                                    <includes>**/DomibusConnectorTransitionModel.xsd</includes>
+                                </artifactItem>
+                            </artifactItems>
+<!--                            
                             <includes>**/DomibusConnectorTransitionModel.xsd</includes>
-                            <outputDirectory>src/main/resources/wsdl</outputDirectory>
+                            <outputDirectory>src/main/resources/wsdl</outputDirectory>-->
                         </configuration>
                     </execution>
                 </executions>
