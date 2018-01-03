@@ -55,8 +55,9 @@ node {
 			dir ('domibusConnector') {
 			
 				stage ('Build') {
-					//sh 'mvn compile'
-					sh 'mvn -DskipTests package'
+					sh 'mvn -DskipTests=true -pl domibusConnectorDomain -am install' //package domain so other modules can load wsdl via dependency plugin
+					sh 'mvn compile'
+					//sh 'mvn -DskipTests package'
 				}
 				
 				stage ('Test') {
