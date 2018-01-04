@@ -75,6 +75,11 @@
                 <artifactId>domibusConnectorCommon</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorDomain</artifactId>
+                <version>${project.version}</version> 
+            </dependency>
             <!-- E-CODEX LIBRARIES -->
             <dependency>
                 <groupId>eu.e-codex</groupId>
