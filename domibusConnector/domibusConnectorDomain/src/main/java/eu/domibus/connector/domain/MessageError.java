@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain;
 
+@Deprecated
 public class MessageError {
 
     private Message message;

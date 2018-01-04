@@ -10,6 +10,7 @@ package eu.domibus.connector.domain;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@Deprecated
 public class Party {
 
     private String partyId;

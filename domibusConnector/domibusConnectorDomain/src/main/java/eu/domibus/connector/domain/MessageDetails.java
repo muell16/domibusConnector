@@ -8,6 +8,7 @@ package eu.domibus.connector.domain;
  * @author riederb
  * 
  */
+@Deprecated
 public class MessageDetails {
 
     private String nationalMessageId;

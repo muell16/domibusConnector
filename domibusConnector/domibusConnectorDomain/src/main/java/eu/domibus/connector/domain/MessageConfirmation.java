@@ -13,6 +13,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
  * @author riederb
  * 
  */
+@Deprecated
 public class MessageConfirmation {
 
     private DomibusConnectorEvidenceType evidenceType;

@@ -10,7 +10,7 @@ import java.util.List;
  * @author riederb
  * 
  */
-
+@Deprecated 
 public class Message {
 
     private final MessageDetails messageDetails;
