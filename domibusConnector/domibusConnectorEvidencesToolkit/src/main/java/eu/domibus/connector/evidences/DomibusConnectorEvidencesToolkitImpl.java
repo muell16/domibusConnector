@@ -2,23 +2,23 @@ package eu.domibus.connector.evidences;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.domain.Action;
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.ecodex.evidences.EvidenceBuilder;
 import eu.ecodex.evidences.exception.ECodexEvidenceBuilderException;
 import eu.ecodex.evidences.types.ECodexMessageDetails;
 import eu.spocseu.edeliverygw.configuration.EDeliveryDetails;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail;
+import org.apache.commons.lang3.ArrayUtils;
 
 @Component("domibusConnectorEvidencesToolkit")
 public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvidencesToolkit {
@@ -48,7 +48,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 	private String postalAddressCountry;
 	
     @Override
-    public MessageConfirmation createEvidence(DomibusConnectorEvidenceType type, Message message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
+    public DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
     	byte[] evidence = null;
     	switch(type) {
     	case SUBMISSION_ACCEPTANCE:
@@ -82,28 +82,28 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 			break;
     	}
     	
-    	MessageConfirmation confirmation = buildConfirmation(type, evidence);
+    	DomibusConnectorMessageConfirmation confirmation = buildConfirmation(type, evidence);
     	
     	
     	return confirmation;
     }
     
-    private String checkPDFandBuildHashValue(Message message)
+    private String checkPDFandBuildHashValue(DomibusConnectorMessage message)
             throws DomibusConnectorEvidencesToolkitException {
         String hashValue = null;
-    	if (ArrayUtils.isEmpty(message.getMessageContent().getPdfDocument())) {
-            Action action = message.getMessageDetails().getAction();
+    	if (ArrayUtils.isEmpty(message.getMessageContent().getXmlContent())) {
+            DomibusConnectorAction action = message.getMessageDetails().getAction();
             if (action == null) {
                 throw new DomibusConnectorEvidencesToolkitException("Action still null!");
             }
-            if (action.isPdfRequired()) {
+            if (action.isDocumentRequired()) {
                 throw new DomibusConnectorEvidencesToolkitException(
-                        "There is no PDF document in the message though the Action " + action.getAction()
+                        "There is no document in the message though the Action " + action.getAction()
                                 + " requires one!");
             }
         } else {
             try {
-                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getPdfDocument());
+                hashValue = hashValueBuilder.buildHashValueAsString(message.getMessageContent().getXmlContent());
 
             } catch (Exception e) {
                 throw new DomibusConnectorEvidencesToolkitException("Could not build hash code though the PDF is not empty!",
@@ -113,7 +113,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return hashValue;
     }
     
-    private byte[] createSubmissionAcceptance(Message message)
+    private byte[] createSubmissionAcceptance(DomibusConnectorMessage message)
             throws DomibusConnectorEvidencesToolkitException {
     	String hash = checkPDFandBuildHashValue(message);
         byte[] evidence = createSubmissionAcceptanceRejection(true, null, message, hash);
@@ -121,7 +121,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
    
-    private byte[] createSubmissionRejection(DomibusConnectorRejectionReason rejectionReason, Message message,
+    private byte[] createSubmissionRejection(DomibusConnectorRejectionReason rejectionReason, DomibusConnectorMessage message,
             String errorDetails) throws DomibusConnectorEvidencesToolkitException {
     	String hash = checkPDFandBuildHashValue(message);
         if (rejectionReason == null) {
@@ -137,9 +137,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private byte[] createRelayREMMDAcceptance(Message message)
+    private byte[] createRelayREMMDAcceptance(DomibusConnectorMessage message)
             throws DomibusConnectorEvidencesToolkitException {
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -154,7 +154,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
     }
 
-    private byte[] createRelayREMMDRejection(DomibusConnectorRejectionReason rejectionReason, Message message,
+    private byte[] createRelayREMMDRejection(DomibusConnectorRejectionReason rejectionReason, DomibusConnectorMessage message,
             String errorDetails) throws DomibusConnectorEvidencesToolkitException {
         if (rejectionReason == null) {
             throw new DomibusConnectorEvidencesToolkitException(
@@ -163,7 +163,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -176,7 +176,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private byte[] createRelayREMMDFailure(DomibusConnectorRejectionReason rejectionReason, Message message,
+    private byte[] createRelayREMMDFailure(DomibusConnectorRejectionReason rejectionReason, DomibusConnectorMessage message,
             String errorDetails) throws DomibusConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
@@ -186,7 +186,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -199,8 +199,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private byte[] createDeliveryEvidence(Message message) throws DomibusConnectorEvidencesToolkitException {
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
+    private byte[] createDeliveryEvidence(DomibusConnectorMessage message) throws DomibusConnectorEvidencesToolkitException {
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -214,7 +214,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private byte[] createNonDeliveryEvidence(DomibusConnectorRejectionReason rejectionReason, Message message,
+    private byte[] createNonDeliveryEvidence(DomibusConnectorRejectionReason rejectionReason, DomibusConnectorMessage message,
             String errorDetails) throws DomibusConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
@@ -224,7 +224,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -237,8 +237,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private byte[] createRetrievalEvidence(Message message) throws DomibusConnectorEvidencesToolkitException {
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.DELIVERY, message);
+    private byte[] createRetrievalEvidence(DomibusConnectorMessage message) throws DomibusConnectorEvidencesToolkitException {
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.DELIVERY, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -251,7 +251,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private byte[] createNonRetrievalEvidence(DomibusConnectorRejectionReason rejectionReason, Message message,
+    private byte[] createNonRetrievalEvidence(DomibusConnectorRejectionReason rejectionReason, DomibusConnectorMessage message,
             String errorDetails) throws DomibusConnectorEvidencesToolkitException {
 
         if (rejectionReason == null) {
@@ -261,7 +261,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
         EventReasonType event = new EventReasonType(rejectionReason.toString(), errorDetails);
 
-        MessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.DELIVERY, message);
+        DomibusConnectorMessageConfirmation prevConfirmation = findConfirmation(DomibusConnectorEvidenceType.DELIVERY, message);
 
         if (prevConfirmation == null) {
             throw new DomibusConnectorEvidencesToolkitException("Message contains no evidence of type "
@@ -274,9 +274,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return evidence;
     }
 
-    private MessageConfirmation findConfirmation(DomibusConnectorEvidenceType evidenctType, Message message) {
-        if (message.getConfirmations() != null) {
-            for (MessageConfirmation confirmation : message.getConfirmations()) {
+    private DomibusConnectorMessageConfirmation findConfirmation(DomibusConnectorEvidenceType evidenctType, DomibusConnectorMessage message) {
+        if (message.getMessageConfirmations() != null) {
+            for (DomibusConnectorMessageConfirmation confirmation : message.getMessageConfirmations()) {
                 if (confirmation.getEvidenceType().equals(evidenctType)) {
                     return confirmation;
                 }
@@ -285,8 +285,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         return null;
     }
 
-    private MessageConfirmation buildConfirmation(DomibusConnectorEvidenceType evidenceType, byte[] evidence) {
-        MessageConfirmation confirmation = new MessageConfirmation();
+    private DomibusConnectorMessageConfirmation buildConfirmation(DomibusConnectorEvidenceType evidenceType, byte[] evidence) {
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
         confirmation.setEvidenceType(evidenceType);
         confirmation.setEvidence(evidence);
         return confirmation;
@@ -340,10 +340,10 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     }
 
     private byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason,
-            Message message, String hash) throws DomibusConnectorEvidencesToolkitException {
+            DomibusConnectorMessage message, String hash) throws DomibusConnectorEvidencesToolkitException {
         EDeliveryDetails evidenceIssuerDetails = buildEDeliveryDetails();
 
-        String nationalMessageId = message.getMessageDetails().getNationalMessageId();
+        String nationalMessageId = message.getMessageDetails().getBackendMessageId();
 
         String senderAddress = message.getMessageDetails().getOriginalSender();
 

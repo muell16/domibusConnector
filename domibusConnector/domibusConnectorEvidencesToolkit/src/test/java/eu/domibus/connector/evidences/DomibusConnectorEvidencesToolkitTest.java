@@ -25,12 +25,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageConfirmation;
-import eu.domibus.connector.domain.MessageContent;
-import eu.domibus.connector.domain.MessageDetails;
+
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 
@@ -58,11 +60,11 @@ public class DomibusConnectorEvidencesToolkitTest {
     public void testCreateSubmissionAcceptance() {
         LOG.info("Started testCreateSubmissionAcceptance");
 
-        Message message = buildTestMessage();
+        DomibusConnectorMessage message = buildTestMessage();
 
         try {
         	
-        	MessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+        	DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
         	Assert.assertNotNull(confirmation);
         	String evidencePretty = prettyPrint(confirmation.getEvidence());
             LOG.info(evidencePretty);
@@ -83,10 +85,13 @@ public class DomibusConnectorEvidencesToolkitTest {
     public void testCreateSubmissionRejection() {
         LOG.info("Started testCreateSubmissionRejection");
 
-        Message message = buildTestMessage();
+        DomibusConnectorMessage message = buildTestMessage();
 
         try {
-        	MessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER, null);
+        	DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(
+                    DomibusConnectorEvidenceType.SUBMISSION_REJECTION, 
+                    message, 
+                    DomibusConnectorRejectionReason.OTHER, null);
         	Assert.assertNotNull(confirmation);
         	String evidencePretty = prettyPrint(confirmation.getEvidence());
             LOG.info(evidencePretty);
@@ -103,17 +108,21 @@ public class DomibusConnectorEvidencesToolkitTest {
         LOG.info("Finished testCreateSubmissionRejection");
     }
 
-    private Message buildTestMessage() {
-        MessageDetails details = new MessageDetails();
-        details.setNationalMessageId("nationalMessageId1");
+    private DomibusConnectorMessage buildTestMessage() {
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+        details.setBackendMessageId("nationalMessageId1");
         details.setOriginalSender("someSenderAddress");
         details.setFinalRecipient("someRecipientAddress");
 
-        MessageContent content = new MessageContent();
-        content.setNationalXmlContent(new String("originalMessage").getBytes());
-        content.setPdfDocument(new String("originalMessage").getBytes());
+        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
+               
+        DomibusConnectorMessageDocument document = 
+                new DomibusConnectorMessageDocument("originalMessage".getBytes(), "documentName", null);
+        
+        content.setXmlContent("originalMessage".getBytes());
+        content.setDocument(document);
 
-        Message message = new Message(details, content);
+        DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 
         return message;
     }

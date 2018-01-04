@@ -9,16 +9,6 @@
 	<artifactId>domibusConnectorEvidencesToolkit</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorCommon</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jaxb-impl</artifactId>
-					<groupId>com.sun.xml.bind</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>eu.ecodex.evidences</groupId>
 			<artifactId>EvidenceBuilder</artifactId>
 			<exclusions>
@@ -55,12 +45,16 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-	 <dependency>
-	  <groupId>${project.groupId}</groupId>
-	  <artifactId>domibusConnectorDomain</artifactId>
-	  <version>${project.version}</version>
-	 </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorDomain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+    </dependencies>
 	
 	<build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment -->
