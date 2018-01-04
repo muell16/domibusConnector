@@ -8,8 +8,8 @@
 	<fileSets>
 		<!-- ==================== Copying TransitionModel.xsd ================= -->
 		<fileSet>
-			<directory>${project.basedir}/src/main/resources/</directory>
-<!--			<outputDirectory>/</outputDirectory>            -->
+			<directory>${project.basedir}/src/main/resources/</directory>            
+			<outputDirectory>/</outputDirectory>            
 		</fileSet>			
 	</fileSets>
 </assembly>

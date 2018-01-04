@@ -14,10 +14,10 @@
 		<module>domibusConnectorController</module>
 		<module>domibusConnectorCommon</module>
 		<module>domibusConnectorDistribution</module>
-		<module>domibusConnectorMonitoring</module>
-		<module>domibusConnectorConfigurator</module>
-		<module>domibusConnectorRunnable</module>
-        <module>domibusConnectorGatewayPluginClient</module>
+<!--		<module>domibusConnectorMonitoring</module>-->
+<!--		<module>domibusConnectorConfigurator</module>-->
+<!--		<module>domibusConnectorRunnable</module>
+        <module>domibusConnectorGatewayPluginClient</module>-->
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorWebAppModule</module>
 	 <module>domibusConnectorPersistence</module>
