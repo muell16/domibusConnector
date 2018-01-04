@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface DomibusConnectorMessageDao extends CrudRepository<DomibusConnectorMessage, Long> {
 
-    public DomibusConnectorMessage findOneByNationalMessageId(String nationalId);
+    public DomibusConnectorMessage findOneByBackendMessageId(String nationalId);
     
     public DomibusConnectorMessage findOneByEbmsMessageId(String ebmsMessageId);
     

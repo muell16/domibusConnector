@@ -2,13 +2,13 @@ package eu.domibus.connector.persistence.service;
 
 import javax.annotation.Nonnull;
 
-import eu.domibus.connector.domain.Action;
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageError;
-import eu.domibus.connector.domain.Party;
-import eu.domibus.connector.domain.Service;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
 
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +25,15 @@ public interface DomibusConnectorPersistenceService {
      * @throws PersistenceException - in case of failures with persistence
      * 
      */
-    void persistMessageIntoDatabase(@Nonnull Message message, DomibusConnectorMessageDirection direction) throws PersistenceException;
+    void persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
-    void mergeMessageWithDatabase(@Nonnull Message message) throws PersistenceException;
+    /**
+     * merges changes of a message into database
+     * 
+     * @param message - the message
+     * @throws PersistenceException  - in case of persistence errors
+     */
+    void mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
     /**
      * Creates the evidence in storage
@@ -36,11 +42,11 @@ public interface DomibusConnectorPersistenceService {
      * @param evidence - the evidence as byte[]
      * @param evidenceType - the type of the evidence
      */
-    void persistEvidenceForMessageIntoDatabase(@Nonnull Message message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
+    void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
-    Message findMessageByNationalId(String nationalMessageId);
+    DomibusConnectorMessage findMessageByNationalId(String nationalMessageId);
 
-    Message findMessageByEbmsId(String ebmsMessageId);
+    DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId);
 
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
@@ -55,7 +61,7 @@ public interface DomibusConnectorPersistenceService {
      * 
      * 
      */
-    void setEvidenceDeliveredToGateway(@Nonnull Message message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
+    void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
@@ -69,23 +75,32 @@ public interface DomibusConnectorPersistenceService {
      * could not be updated in storage
      * 
      */
-    void setEvidenceDeliveredToNationalSystem(Message message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
+    void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Marks the message as delivered to the gateway
      * @param message - the message, which should be marked
      */
-    void setMessageDeliveredToGateway(Message message);
+    void setMessageDeliveredToGateway(DomibusConnectorMessage message);
 
     /**
      * Marks the message as delivered to national backend
      * @param message - the message, which should be marked
      */
-    void setMessageDeliveredToNationalSystem(Message message);
+    void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
 
-    List<Message> findOutgoingUnconfirmedMessages();
+    List<DomibusConnectorMessage> findOutgoingUnconfirmedMessages();
 
-    List<Message> findIncomingUnconfirmedMessages();
+    List<DomibusConnectorMessage> findIncomingUnconfirmedMessages();
+    
+    /**
+     * returns all messages related to the
+     * conversation id
+     * @param conversationId - the conversation id
+     * @return - a list of messages, if there are no messages found
+     *  the list will be empty
+     */
+    List<DomibusConnectorMessage> findMessagesByConversationId(String conversationId);
 
     //TODO: improve Exceptions
     /**
@@ -96,7 +111,7 @@ public interface DomibusConnectorPersistenceService {
      * confirmed
      * @param message 
      */
-    void confirmMessage(Message message);
+    void confirmMessage(DomibusConnectorMessage message);
 
     //TODO: improve Exceptions
     /**
@@ -107,48 +122,41 @@ public interface DomibusConnectorPersistenceService {
      * rejected
      * @param message - the message
      */
-    void rejectMessage(Message message);
+    void rejectMessage(DomibusConnectorMessage message);
 
-    Action getAction(String action);
+    DomibusConnectorAction getAction(String action);
 
-    Action getRelayREMMDAcceptanceRejectionAction();
+    DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction();
 
-    Action getRelayREMMDFailure();
+    DomibusConnectorAction getRelayREMMDFailure();
 
-    Action getDeliveryNonDeliveryToRecipientAction();
+    DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction();
 
-    Action getRetrievalNonRetrievalToRecipientAction();
+    DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
 
-    Service getService(String service);
+    DomibusConnectorService getService(String service);
 
-    Party getParty(String partyId, String role);
+    DomibusConnectorParty getParty(String partyId, String role);
 
-    Party getPartyByPartyId(String partyId);
+    DomibusConnectorParty getPartyByPartyId(String partyId);
 
-    /**
-     * returns all messages related to the
-     * conversation id
-     * @param conversationId - the conversation id
-     * @return - a list of messages, if there are no messages found
-     *  the list will be empty
-     */
-    List<Message> findMessagesByConversationId(String conversationId);
 
-    void persistMessageError(MessageError messageError);
 
-    @Nonnull List<MessageError> getMessageErrors(@Nonnull Message message) throws Exception;
+    void persistMessageError(DomibusConnectorMessageError messageError);
 
-    void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source); 
+    @Nonnull List<DomibusConnectorMessageError> getMessageErrors(@Nonnull DomibusConnectorMessage message) throws Exception;
+
+    void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source); 
 
     /**
      * 
      * @return a list of Messages or an emtpy List if nothing found
      */
-	List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery();
+	List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
 
     /**
      * 
      * @return a list of Messages or an emtpy List if nothing found
      */
-	List<Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+	List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
 }

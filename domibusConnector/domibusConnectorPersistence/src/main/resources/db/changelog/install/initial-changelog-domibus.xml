@@ -104,7 +104,7 @@
                 <constraints nullable="false" />
             </column>        
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_I" />
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_INFO" />
         
             
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE">
@@ -124,8 +124,33 @@
                 <constraints nullable="false" />
             </column>      
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGES" /> 
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
     
+        
+        <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_CONTENT">
+            <column name="ID" type="DECIMAL(10,0)">
+                <constraints nullable="false" />
+            </column>
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)">
+                <constraints nullable="false" />
+            </column>
+            <column name="XML_CONTENT" type="${text.type}" />
+            <column name="DOC_DOCUMENT_CONTENT" type="${text.type}" />
+            <column name="DOC_DOCUMENT_NAME" type="${varchar.type}(512 ${varchar.length.type})" />
+            <column name="DOC_HASH_VALUE" type="${text.type}" />
+            <column name="SIG_DETACHED_SIGNATURE" type="${text.type}" />
+            <column name="SIG_DETACHED_SIGNATURE_NAME" type="${varchar.type}(512 ${varchar.length.type})" />
+            <column name="SIG_MIME_TYPE" type="${varchar.type}(512 ${varchar.length.type})" />
+        </createTable> 
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_CONTENT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_CONTENT" /> 
+        
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_CONTENT" 
+            baseColumnNames="MESSAGE_ID" 
+            constraintName="FK_MESSAGE_MESSAGE_CONTENT" 
+            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
+            referencedColumnNames="ID" 
+        />
         
         <createTable tableName="DOMIBUS_CONNECTOR_EVIDENCE">
             <column name="ID" type="DECIMAL(10,0)"> 
@@ -308,7 +333,7 @@
             onDelete="NO ACTION" 
             onUpdate="NO ACTION"  
         />
-    </changeSet>
+    </changeSet>   
     <changeSet id="tag-db-domibus-4.0" author="StephanSpindler">
         <tagDatabase tag="DOMIBUS_DB_V4.0" /> 
     </changeSet>

@@ -20,30 +20,31 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
-import java.util.HashSet;
+import java.io.Serializable;
 import javax.annotation.Nullable;
+import javax.persistence.JoinColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
-public class DomibusConnectorMessage {
+public class DomibusConnectorMessage implements Serializable {
 
     @Id
     @TableGenerator(name = "seqStoreMessages", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMessages")
     private Long id;
 
-    @Column(name = "EBMS_MESSAGE_ID", unique = true)
+    @Column(name = "EBMS_MESSAGE_ID", unique = true, length = 255)
     private String ebmsMessageId;
 
-    @Column(name = "BACKEND_MESSAGE_ID", unique = true)
-    private String nationalMessageId;
+    @Column(name = "BACKEND_MESSAGE_ID", unique = true, length = 255)
+    private String backendMessageId;
 
-    @Column(name = "CONVERSATION_ID")
+    @Column(name = "CONVERSATION_ID", length = 255)
     private String conversationId;
 
-    @Column(name = "DIRECTION")
+    @Column(name = "DIRECTION", length = 10)
     @Enumerated(EnumType.STRING)
     private MessageDirection direction;
 
@@ -76,6 +77,9 @@ public class DomibusConnectorMessage {
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
     private Set<DomibusConnectorEvidence> evidences;
 
+    @OneToOne(fetch = FetchType.LAZY, optional = true, mappedBy = "message")    
+    private PersistedMessageContent messageContent;
+    
     @PrePersist    
     public void prePersist() {
         this.updated = new Date();
@@ -102,12 +106,12 @@ public class DomibusConnectorMessage {
         this.ebmsMessageId = ebmsMessageId;
     }
 
-    public String getNationalMessageId() {
-        return nationalMessageId;
+    public String getBackendMessageId() {
+        return backendMessageId;
     }
 
-    public void setNationalMessageId(String nationalMessageId) {
-        this.nationalMessageId = nationalMessageId;
+    public void setBackendMessageId(String nationalMessageId) {
+        this.backendMessageId = nationalMessageId;
     }
 
     public String getConversationId() {
@@ -189,4 +193,15 @@ public class DomibusConnectorMessage {
     public void setEvidences(Set<DomibusConnectorEvidence> evidences) {
         this.evidences = evidences;
     }
+
+    public @Nullable PersistedMessageContent getMessageContent() {
+        return messageContent;
+    }
+
+    public void setMessageContent(@Nullable PersistedMessageContent messageContent) {
+        this.messageContent = messageContent;
+    }
+
+    
+    
 }

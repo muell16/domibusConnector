@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.model.test.util;
 
+import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
@@ -7,6 +8,7 @@ import eu.domibus.connector.persistence.model.DomibusConnectorMessageError;
 import eu.domibus.connector.persistence.model.DomibusConnectorParty;
 import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
 import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PersistedMessageContent;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,35 +25,35 @@ public class PersistenceEntityCreator {
     public static DomibusConnectorAction createAction() {
         DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
         domibusConnectorAction.setAction("action1");
-        domibusConnectorAction.setPdfRequired(true);
+        domibusConnectorAction.setDocumentRequired(true);
         return domibusConnectorAction;
     }
     
     public static DomibusConnectorAction createRelayREMMDAcceptanceRejectionAction() {
         DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
         domibusConnectorAction.setAction("RelayREMMDAcceptanceRejection");
-        domibusConnectorAction.setPdfRequired(false);
+        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
     public static DomibusConnectorAction createDeliveryNonDeliveryToRecipientAction() {
         DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
         domibusConnectorAction.setAction("DeliveryNonDeliveryToRecipient");
-        domibusConnectorAction.setPdfRequired(false);
+        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
     public static DomibusConnectorAction createRetrievalNonRetrievalToRecipientAction() {        
         DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
         domibusConnectorAction.setAction("RetrievalNonRetrievalToRecipient");
-        domibusConnectorAction.setPdfRequired(false);
+        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
     public static DomibusConnectorAction createRelayREMMDFailureAction() {        
         DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
         domibusConnectorAction.setAction("RelayREMMDFailure");
-        domibusConnectorAction.setPdfRequired(false);
+        domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
@@ -110,20 +112,36 @@ public class PersistenceEntityCreator {
 
     /**
      * Creates a default DomibusConnectorMessage, for testing purposes
+     *  it is a message with message content! and NO evidences
      * @return - the message
      */
     public static DomibusConnectorMessage createSimpleDomibusConnectorMessage() {
         try {
             DomibusConnectorMessage msg = new DomibusConnectorMessage();
-            msg.setNationalMessageId("national1");
-            msg.setConfirmed(dateFormat.parse("2017-12-23 23:45:23"));
+            msg.setBackendMessageId("national1");
+            msg.setEbmsMessageId("ebms1");
+            msg.setConfirmed(dateFormat.parse("2017-12-23 23:45:23"));            
             msg.setConversationId("conversation1");
             msg.setHashValue("hashvalue");
             msg.setId(47L);
             msg.setEvidences(new HashSet<>());
+            msg.setMessageContent(createMessageContent());
             return msg;
         } catch (ParseException ex) {
             throw new RuntimeException("should not happen!");
         }
+    }
+    
+    public static PersistedMessageContent createMessageContent() {
+        PersistedMessageContent p = new PersistedMessageContent();
+        p.setDetachedSignature("detachedSignature".getBytes());
+        p.setDetachedSignatureMimeType(DetachedSignatureMimeType.PKCS7.name());
+        p.setDocument("document".getBytes());
+        p.setDocumentName("documentName");
+        p.setHashValue("hashValue");
+        p.setId(90L);
+        p.setXmlContent("xmlContent".getBytes());
+        
+        return p;        
     }
 }

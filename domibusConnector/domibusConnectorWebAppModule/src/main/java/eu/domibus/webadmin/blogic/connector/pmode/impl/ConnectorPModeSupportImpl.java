@@ -115,7 +115,7 @@ public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
 			if(!actions.contains(action.getValue())){
 				DomibusConnectorAction newAction = new DomibusConnectorAction();
 				newAction.setAction(action.getValue());
-				newAction.setPdfRequired(true);
+				newAction.setDocumentRequired(true);
 				this.actionDao.persistNewAction(newAction);
                 actions.add(action.getValue());
 			}

@@ -15,7 +15,7 @@ public class DomibusConnectorAction implements Serializable {
     private String action;
 
     @Column(name = "PDF_REQUIRED")
-    private boolean pdfRequired;
+    private boolean documentRequired;
 
     public String getAction() {
         return action;
@@ -25,12 +25,12 @@ public class DomibusConnectorAction implements Serializable {
         this.action = action;
     }
 
-    public boolean isPdfRequired() {
-        return pdfRequired;
+    public boolean isDocumentRequired() {
+        return documentRequired;
     }
 
-    public void setPdfRequired(boolean pdfRequired) {
-        this.pdfRequired = pdfRequired;
+    public void setDocumentRequired(boolean pdfRequired) {
+        this.documentRequired = pdfRequired;
     }
 
 }

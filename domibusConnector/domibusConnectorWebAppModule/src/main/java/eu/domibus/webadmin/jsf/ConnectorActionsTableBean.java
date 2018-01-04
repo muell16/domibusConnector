@@ -188,7 +188,7 @@ public class ConnectorActionsTableBean {
 				
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", 
 						String.format("Delete will corrupt data, there are references pointing to this action! [Action Action: %s - Pdf required: %s] ", 
-								action.getAction(), action.isPdfRequired()));
+								action.getAction(), action.isDocumentRequired()));
 				
 				RequestContext.getCurrentInstance().showMessageInDialog(message);
 				

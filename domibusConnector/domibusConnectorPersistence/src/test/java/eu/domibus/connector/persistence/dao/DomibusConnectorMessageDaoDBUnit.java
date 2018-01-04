@@ -179,8 +179,8 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     
     @Test
     public void testSave() {
-        DomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        
+        DomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
+        message.setEbmsMessageId("ebms2");        
         message.setId(null);
         
         messageDao.save(message);
