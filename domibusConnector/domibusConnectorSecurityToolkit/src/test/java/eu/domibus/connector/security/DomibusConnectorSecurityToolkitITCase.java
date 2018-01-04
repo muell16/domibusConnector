@@ -4,6 +4,10 @@ import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageAttachment;
 import eu.domibus.connector.domain.MessageContent;
 import eu.domibus.connector.domain.MessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,13 +62,14 @@ public class DomibusConnectorSecurityToolkitITCase {
 
 
 	private void testDoc(final String exampleName, final String resultName) {
-		MessageDetails details = new MessageDetails();
+		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
 
-		MessageContent content = new MessageContent();
+		DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
-		content.setPdfDocument(readRessource(exampleName));
+        //TODO!
+		//content.setPdfDocument(readRessource(exampleName));
 		
-		Message message = new Message(details, content);
+		DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 
 		try {
 			securityContainer.createContainer(message);
@@ -74,12 +79,12 @@ public class DomibusConnectorSecurityToolkitITCase {
 			e.printStackTrace();
 		}
 
-		assertThat(message.getAttachments()).isNotEmpty();
+		assertThat(message.getMessageAttachments()).isNotEmpty();
 		//Assert.notEmpty(message.getAttachments());
 
 		securityContainer.recieveContainerContents(message);
 
-		for (MessageAttachment attachment : message.getAttachments()) {
+		for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
 
 			if (attachment.getName().equals("Token.xml")) {
 				writeResult(resultName +".xml", attachment.getAttachment());

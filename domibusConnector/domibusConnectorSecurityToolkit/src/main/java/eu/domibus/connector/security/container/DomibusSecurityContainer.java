@@ -18,11 +18,15 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.common.CommonConnectorGlobalConstants;
+//import eu.domibus.connector.common.CommonConnectorGlobalConstants;
 
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageAttachment;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;
@@ -40,6 +44,7 @@ import eu.europa.esig.dss.DigestAlgorithm;
 import eu.europa.esig.dss.EncryptionAlgorithm;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
+import javax.annotation.Nonnull;
 
 @Component("domibusConnectorSecurityContainer")
 public class DomibusSecurityContainer implements InitializingBean {
@@ -49,6 +54,19 @@ public class DomibusSecurityContainer implements InitializingBean {
     private static final String TOKEN_PDF_FILE_NAME = "Token.pdf";
 
     private static final String DETACHED_SIGNATURE_DOCUMENT_NAME = "detachedSignature";
+    
+    public static final String MAIN_DOCUMENT_NAME = "mainDocument";
+    
+    public static final String ASICS_CONTAINER_IDENTIFIER = "ASIC-S";
+
+    public static final String TOKEN_XML_IDENTIFIER = "tokenXML";
+
+    public static final String TOKEN_PDF_IDENTIFIER = "tokenPDF";
+
+    public static final String CONTENT_PDF_IDENTIFIER = "ContentPDF";
+
+    public static final String CONTENT_XML_IDENTIFIER = "ContentXML";
+    
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainer.class);
 
@@ -118,52 +136,67 @@ public class DomibusSecurityContainer implements InitializingBean {
 
     }
 
-    private BusinessContent buildBusinessContent(Message message) {
+    private BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
+        if (message.getMessageContent() == null) {
+            throw new IllegalArgumentException("messageContent is null!");
+        }
+        @Nonnull DomibusConnectorMessageContent messageContent = message.getMessageContent();
+        
         BusinessContent businessContent = new BusinessContent();
 
-        DSSDocument document = null;
-        if (ArrayUtils.isNotEmpty(message.getMessageContent().getPdfDocument())) {
-            String pdfName = StringUtils.isEmpty(message.getMessageContent().getPdfDocumentName()) ? CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME
+        DSSDocument dssDocument = null;
+        if (messageContent.getDocument() != null &&
+                ArrayUtils.isNotEmpty(messageContent.getDocument().getDocument())) {
+            
+            String pdfName = StringUtils.isEmpty(messageContent.getDocument().getDocumentName()) ? MAIN_DOCUMENT_NAME
                     + ".pdf"
-                    : message.getMessageContent().getPdfDocumentName();
-            document = new InMemoryDocument(message.getMessageContent().getPdfDocument(), pdfName, MimeType.PDF);
-        } else if (message.getMessageDetails().isValidWithoutPDF()) {
-            byte[] content = message.getMessageContent().getInternationalContent() != null ? message
-                    .getMessageContent().getInternationalContent() : message.getMessageContent()
-                    .getNationalXmlContent();
-            document = new InMemoryDocument(content, CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".xml",
-                    MimeType.XML);
-        } else
+                    : messageContent.getDocument().getDocumentName();            
+            dssDocument = new InMemoryDocument(messageContent.getDocument().getDocument(), pdfName, MimeType.PDF);
+// TODO: check with new domain model!            
+//        } else if (message.getMessageDetails().isValidWithoutPDF()) {
+//            byte[] content = message.getMessageContent().getInternationalContent() != null ? message
+//                    .getMessageContent().getInternationalContent() : message.getMessageContent()
+//                    .getNationalXmlContent();
+//            document = new InMemoryDocument(content, CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".xml",
+//                    MimeType.XML);
+        } else {
             LOGGER.error("No content found for container!");
+        }
+            
+        businessContent.setDocument(dssDocument);
 
-        businessContent.setDocument(document);
-
-        if (message.getMessageContent().getDetachedSignature() != null
-                && message.getMessageContent().getDetachedSignatureMimeType() != null) {
-            String detachedSignatureName = message.getMessageContent().getDetachedSignatureName() != null ? message
-                    .getMessageContent().getDetachedSignatureName() : DETACHED_SIGNATURE_DOCUMENT_NAME;
-                    DSSDocument detachedSignature = new InMemoryDocument(message.getMessageContent().getDetachedSignature(),
-                    detachedSignatureName, MimeType.fromMimeTypeString(message.getMessageContent().getDetachedSignatureMimeType()
-                            .name()));
+        DomibusConnectorMessageDocument msgDocument = messageContent.getDocument();
+        
+        if (msgDocument != null && 
+                msgDocument.getDetachedSignature() != null
+                && msgDocument.getDetachedSignature().getMimeType() != null) {
+            
+            String detachedSignatureName = msgDocument.getDetachedSignature().getDetachedSignatureName() != null ? msgDocument
+                    .getDetachedSignature().getDetachedSignatureName() : DETACHED_SIGNATURE_DOCUMENT_NAME;
+                    DSSDocument detachedSignature = new InMemoryDocument(
+                            msgDocument.getDetachedSignature().getDetachedSignature(),
+                            detachedSignatureName,
+                            MimeType.fromMimeTypeString(msgDocument.getDetachedSignature().getMimeType().name()));
             businessContent.setDetachedSignature(detachedSignature);
         }
 
-        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-            for (MessageAttachment attachment : message.getAttachments()) {
-                businessContent.addAttachment(new InMemoryDocument(attachment.getAttachment(), attachment.getName(),
-                        MimeType.fromFileName(attachment.getName())));
-            }
+        //if (!message.getMessageAttachments().isEmpty()) {
+        for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
+            businessContent.addAttachment(new InMemoryDocument(
+                    attachment.getAttachment(), 
+                    attachment.getName(),
+                    MimeType.fromFileName(attachment.getName())));
         }
+        //}
 
         return businessContent;
     }
 
-    public void createContainer(Message message) {
+    public void createContainer(DomibusConnectorMessage message) {
         BusinessContent businessContent = buildBusinessContent(message);
 
-        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-            message.getAttachments().clear();
-        }
+        message.getMessageAttachments().clear();
+
         try {
             ECodexContainer container = containerService.create(businessContent, tokenIssuer);
 
@@ -177,7 +210,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                 	DSSDocument asicDocument = container.getAsicDocument();
                     if (asicDocument != null) {
                         try {
-                            MessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument, CommonConnectorGlobalConstants.ASICS_CONTAINER_IDENTIFIER,
+                            DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument, ASICS_CONTAINER_IDENTIFIER,
                                     asicDocument.getName(), asicDocument.getMimeType().getMimeTypeString());
                             message.addAttachment(asicAttachment);
                         } catch (IOException e) {
@@ -187,7 +220,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                     DSSDocument tokenXML = container.getTokenXML();
                     if (tokenXML != null) {
                         try {
-                            MessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML, CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER,
+                            DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML, TOKEN_XML_IDENTIFIER,
                                     TOKEN_XML_FILE_NAME, MimeType.XML.getMimeTypeString());
                             message.addAttachment(tokenAttachment);
                         } catch (IOException e) {
@@ -208,15 +241,15 @@ public class DomibusSecurityContainer implements InitializingBean {
         }
     }
 
-    public void recieveContainerContents(Message message) {
-        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-            MessageAttachment asicsAttachment = null;
-            MessageAttachment tokenXMLAttachment = null;
-            for (MessageAttachment attachment : message.getAttachments()) {
+    public void recieveContainerContents(DomibusConnectorMessage message) {
+        if (message.getMessageAttachments() != null && !message.getMessageAttachments().isEmpty()) {
+            DomibusConnectorMessageAttachment asicsAttachment = null;
+            DomibusConnectorMessageAttachment tokenXMLAttachment = null;
+            for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
             	
-                if (attachment.getIdentifier().equals(CommonConnectorGlobalConstants.ASICS_CONTAINER_IDENTIFIER) || attachment.getIdentifier().endsWith(".asics")) {
+                if (attachment.getIdentifier().equals(ASICS_CONTAINER_IDENTIFIER) || attachment.getIdentifier().endsWith(".asics")) {
                     asicsAttachment = attachment;
-                } else if (attachment.getIdentifier().equals(CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER) || attachment.getIdentifier().equals(TOKEN_XML_FILE_NAME)) {
+                } else if (attachment.getIdentifier().equals(TOKEN_XML_IDENTIFIER) || attachment.getIdentifier().equals(TOKEN_XML_FILE_NAME)) {
                     tokenXMLAttachment = attachment;
                 }
             }
@@ -226,8 +259,8 @@ public class DomibusSecurityContainer implements InitializingBean {
             if (tokenXMLAttachment == null) {
                 throw new DomibusConnectorSecurityException("Could not find token XML in message attachments!");
             }
-            message.getAttachments().remove(asicsAttachment);
-            message.getAttachments().remove(tokenXMLAttachment);
+            message.getMessageAttachments().remove(asicsAttachment);
+            message.getMessageAttachments().remove(tokenXMLAttachment);
 
             InputStream asicInputStream = new ByteArrayInputStream(asicsAttachment.getAttachment());
             InputStream tokenStream = new ByteArrayInputStream(tokenXMLAttachment.getAttachment());
@@ -238,6 +271,8 @@ public class DomibusSecurityContainer implements InitializingBean {
                 // error-handling
                 CheckResult results = containerService.check(container);
 
+                DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.build();
+                DetachedSignatureBuilder detachedSignatureBuilder = DetachedSignatureBuilder.build();
                 if (results.isSuccessful()) {
                     if (container != null) {
                         if (container.getBusinessDocument() != null) {
@@ -245,16 +280,21 @@ public class DomibusSecurityContainer implements InitializingBean {
                                     container.getBusinessDocument().getMimeType());
                             try {
                             	byte[] docAsBytes = IOUtils.toByteArray(container.getBusinessDocument().openStream());
-                                if (container.getToken().getDocumentType().equals(MimeType.PDF.getMimeTypeString())) {
-                                    message.getMessageContent().setPdfDocument(docAsBytes);
+                                documentBuilder.setContent(docAsBytes);
+                                
+                                if (container.getToken().getDocumentType().equals(MimeType.PDF.getMimeTypeString())) {                                    
+                                    //message.getMessageContent().setDocument(document);
+                                    String docName = MAIN_DOCUMENT_NAME;
                                     if (!StringUtils.isEmpty(container.getBusinessDocument().getName())) {
-                                        message.getMessageContent().setPdfDocumentName(
-                                                container.getBusinessDocument().getName());
+                                        docName = container.getBusinessDocument().getName();
                                     }
+                                    documentBuilder.setName(docName);
                                 }
-                                if (container.getToken().getDocumentType().equals(MimeType.XML.getMimeTypeString())
-                                        && message.getMessageDetails().isValidWithoutPDF())
-                                    message.getMessageContent().setInternationalContent(docAsBytes);
+                                //TODO: check with new Domain Model:
+//                                if (container.getToken().getDocumentType().equals(MimeType.XML.getMimeTypeString())
+//                                        && message.getMessageDetails().isValidWithoutPDF()) {
+//                                    message.getMessageContent().setInternationalContent(docAsBytes);
+//                                }
                             } catch (IOException e) {
                                 throw new DomibusConnectorSecurityException("Could not read business document!");
                             }
@@ -268,29 +308,34 @@ public class DomibusSecurityContainer implements InitializingBean {
                                 InputStream is = container.getBusinessContent().getDetachedSignature().openStream();
                                 byte[] docAsBytes = new byte[is.available()];
                                 is.read(docAsBytes);
-                                message.getMessageContent().setDetachedSignature(docAsBytes);
+                                //message.getMessageContent().setDetachedSignature(docAsBytes);
+                                detachedSignatureBuilder.setSignature(docAsBytes);
                             } catch (IOException e) {
                                 throw new DomibusConnectorSecurityException("Could not read detached signature!");
                             }
                             if (!StringUtils.isEmpty(container.getBusinessContent().getDetachedSignature().getName()))
-                                message.getMessageContent().setDetachedSignatureName(
-                                        container.getBusinessContent().getDetachedSignature().getName());
+                                //message.getMessageContent().setDetachedSignatureName(
+                                //        container.getBusinessContent().getDetachedSignature().getName());
+                                detachedSignatureBuilder.setName( container.getBusinessContent().getDetachedSignature().getName());
                             try {
-                                message.getMessageContent().setDetachedSignatureMimeType(
-                                        DetachedSignatureMimeType.valueOf(container.getBusinessContent()
+//                                message.getMessageContent().setDetachedSignatureMimeType(
+//                                        DetachedSignatureMimeType.valueOf(container.getBusinessContent()
+//                                                .getDetachedSignature().getMimeType().getMimeTypeString()));
+                                 detachedSignatureBuilder.setMimeType(DetachedSignatureMimeType.valueOf(container.getBusinessContent()
                                                 .getDetachedSignature().getMimeType().getMimeTypeString()));
                             } catch (IllegalArgumentException e) {
                                 LOGGER.error("No DetachedSignatureMimeType could be resolved of MimeType {}", container
                                         .getBusinessContent().getDetachedSignature().getMimeType().getMimeTypeString());
-                                message.getMessageContent().setDetachedSignatureMimeType(
-                                        DetachedSignatureMimeType.BINARY);
+//                                message.getMessageContent().setDetachedSignatureMimeType(
+//                                        DetachedSignatureMimeType.BINARY);
+                                detachedSignatureBuilder.setMimeType(DetachedSignatureMimeType.BINARY);
                             }
                         }
 
                         if (container.getBusinessAttachments() != null && !container.getBusinessAttachments().isEmpty()) {
                             for (DSSDocument businessAttachment : container.getBusinessAttachments()) {
                                 try {
-                                    MessageAttachment attachment = convertDocumentToMessageAttachment(
+                                    DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(
                                             businessAttachment, businessAttachment.getName(), businessAttachment.getName(), businessAttachment
                                                     .getMimeType().getMimeTypeString());
 
@@ -304,7 +349,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         DSSDocument tokenPDF = container.getTokenPDF();
                         if (tokenPDF != null) {
                             try {
-                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, CommonConnectorGlobalConstants.TOKEN_PDF_IDENTIFIER, 
+                                DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, TOKEN_PDF_IDENTIFIER, 
                                         TOKEN_PDF_FILE_NAME, MimeType.PDF.getMimeTypeString());
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
@@ -315,7 +360,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         DSSDocument tokenXML = container.getTokenXML();
                         if (tokenXML != null) {
                             try {
-                                MessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, CommonConnectorGlobalConstants.TOKEN_XML_IDENTIFIER, 
+                                DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, TOKEN_XML_IDENTIFIER, 
                                         TOKEN_XML_FILE_NAME, MimeType.XML.getMimeTypeString());
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
@@ -339,7 +384,7 @@ public class DomibusSecurityContainer implements InitializingBean {
         }
     }
 
-    private MessageAttachment convertDocumentToMessageAttachment(DSSDocument document, String identifier, String name, String mimeType)
+    private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DSSDocument document, String identifier, String name, String mimeType)
             throws IOException {
     	
     	byte[] byteArray = IOUtils.toByteArray(document.openStream());
@@ -351,7 +396,7 @@ public class DomibusSecurityContainer implements InitializingBean {
     		throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");
     	}
     	
-        MessageAttachment attachment = new MessageAttachment(byteArray, identifier);
+        DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(byteArray, identifier);
 		attachment.setName(name);
         attachment.setMimeType(mimeType);
 

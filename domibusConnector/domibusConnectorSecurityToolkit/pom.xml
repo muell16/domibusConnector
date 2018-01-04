@@ -10,7 +10,8 @@
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorCommon</artifactId>			
+            <artifactId>domibusConnectorDomain</artifactId>		
+            <version>${project.version}</version>	
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -75,9 +76,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
     <build>
