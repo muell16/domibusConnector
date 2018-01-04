@@ -63,4 +63,4 @@ $Recycle.Bin
 /domibusConnector/domibusConnectorDomain/src/main/java/eu/domibus/connector/domain/transition/
 
 #is downloaded and unpacked by maven so ignore it
-/domibusConnector/domibusConnectorGatewayLink/src/main/resources/wsdl/src/main/resources/eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd
+/domibusConnector/domibusConnectorGatewayLink/src/main/resources/wsdl/eu.domibus.connector.domain.transition
