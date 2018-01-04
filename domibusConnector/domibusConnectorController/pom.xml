@@ -13,17 +13,22 @@
     </description>
 	<artifactId>domibusConnectorController</artifactId>
 	<dependencies>
-		<dependency>
+<!--		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorCommon</artifactId>			
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorContentMapper</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>eu.domibus.connector</groupId>
+			<artifactId>domibusConnectorDomain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!--<dependency>-->
+<!--			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorGatewayWebserviceClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -31,7 +36,7 @@
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorGatewayPluginClient</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorSecurityToolkit</artifactId>

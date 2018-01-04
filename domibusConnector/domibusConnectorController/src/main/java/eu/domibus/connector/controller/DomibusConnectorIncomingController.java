@@ -16,16 +16,18 @@ import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
+//is deprecated because will be replaced by push from GW
+@Deprecated 
 public class DomibusConnectorIncomingController implements DomibusConnectorController {
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorIncomingController.class);
 
-    private DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
+    //private DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
     private MessageService incomingMessageService;
     private EvidenceService incomingEvidenceService;
 
     public void setGatewayWebserviceClient(DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient) {
-        this.gatewayWebserviceClient = gatewayWebserviceClient;
+        //this.gatewayWebserviceClient = gatewayWebserviceClient;
     }
 
     public void setIncomingMessageService(MessageService incomingMessageService) {
@@ -42,11 +44,11 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
         Date start = new Date();
 
         Collection<DomibusConnectorMessage> messages = null;
-        try {
-            messages = gatewayWebserviceClient.requestPendingMessages();
-        } catch (DomibusConnectorGatewayWebserviceClientException e) {
-            throw new DomibusConnectorControllerException(e);
-        }
+//        try {
+//            messages = gatewayWebserviceClient.requestPendingMessages();
+//        } catch (DomibusConnectorGatewayWebserviceClientException e) {
+//            throw new DomibusConnectorControllerException(e);
+//        }
 
         if (!CollectionUtils.isEmpty(messages)) {
             LOGGER.info("Found {} incoming messages on gateway to handle...", messages.size());

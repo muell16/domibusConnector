@@ -78,13 +78,14 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
         }
 
-        try {
-            gatewayWebserviceClient.sendMessage(message);
-        } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
-            createSubmissionRejectionAndReturnIt(message, gwse.getMessage());
-            throw new DomibusConnectorMessageException(message, "Could not send Message to Gateway! ", gwse,
-                    this.getClass());
-        }
+        // replace with new message send service
+//        try {
+//            gatewayWebserviceClient.sendMessage(message);
+//        } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
+//            createSubmissionRejectionAndReturnIt(message, gwse.getMessage());
+//            throw new DomibusConnectorMessageException(message, "Could not send Message to Gateway! ", gwse,
+//                    this.getClass());
+//        }
 
         persistenceService.setMessageDeliveredToGateway(message);
         try {

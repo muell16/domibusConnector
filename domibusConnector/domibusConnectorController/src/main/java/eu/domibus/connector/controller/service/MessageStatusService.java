@@ -32,13 +32,15 @@ public class MessageStatusService extends AbstractMessageService {
             message = persistenceService.findMessageByNationalId(message.getMessageDetails().getBackendMessageId());
         }
 
-        try {
-            return gatewayWebserviceClient.getMessageStatusOnGateway(message);
-        } catch (DomibusConnectorGatewayWebserviceClientException e) {
-            throw new DomibusConnectorMessageException(message,
-                    "Exception calling backend webservice method getMessageStatusOnGateway for message id "
-                            + message.getMessageDetails().getEbmsMessageId(), e, this.getClass());
-        }
+//replace with new gateway handling!        
+//        try {
+//            return gatewayWebserviceClient.getMessageStatusOnGateway(message);
+//        } catch (DomibusConnectorGatewayWebserviceClientException e) {
+//            throw new DomibusConnectorMessageException(message,
+//                    "Exception calling backend webservice method getMessageStatusOnGateway for message id "
+//                            + message.getMessageDetails().getEbmsMessageId(), e, this.getClass());
+//        }
+        return "emtpy";
     }
 
     public List<DomibusConnectorMessageError> requestMessageErrors(DomibusConnectorMessage message) throws DomibusConnectorMessageException,
@@ -61,13 +63,14 @@ public class MessageStatusService extends AbstractMessageService {
             message = persistenceService.findMessageByNationalId(message.getMessageDetails().getBackendMessageId());
         }
 
-        try {
-            gatewayWebserviceClient.getMessageErrorsFromGateway(message);
-        } catch (DomibusConnectorGatewayWebserviceClientException e) {
-            throw new DomibusConnectorMessageException(message,
-                    "Exception calling backend webservice method getMessageErrorsFromGateway for message id "
-                            + message.getMessageDetails().getEbmsMessageId(), e, this.getClass());
-        }
+// TODO: replace with new GW connection        
+//        try {
+//            gatewayWebserviceClient.getMessageErrorsFromGateway(message);
+//        } catch (DomibusConnectorGatewayWebserviceClientException e) {
+//            throw new DomibusConnectorMessageException(message,
+//                    "Exception calling backend webservice method getMessageErrorsFromGateway for message id "
+//                            + message.getMessageDetails().getEbmsMessageId(), e, this.getClass());
+//        }
 
         try {
             List<DomibusConnectorMessageError> msgErrors = persistenceService.getMessageErrors(message);

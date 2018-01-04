@@ -9,10 +9,6 @@ import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.domain.Action;
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageConfirmation;
-import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -180,13 +176,14 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
 
-		try {
-			gatewayWebserviceClient.sendMessage(evidenceMessage);
-		} catch (DomibusConnectorGatewayWebserviceClientException e) {
-			throw new DomibusConnectorMessageException(originalMessage,
-					"Exception sending evidence back to sender gateway of message "
-							+ originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
-		}
+//TODO! replace with new message handling GW Link        
+//		try {
+//			gatewayWebserviceClient.sendMessage(evidenceMessage);
+//		} catch (DomibusConnectorGatewayWebserviceClientException e) {
+//			throw new DomibusConnectorMessageException(originalMessage,
+//					"Exception sending evidence back to sender gateway of message "
+//							+ originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
+//		}
 
         try {
             persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());

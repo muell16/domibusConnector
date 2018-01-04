@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
+//import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
@@ -23,16 +23,16 @@ public class OutgoingEvidenceService implements EvidenceService {
     static Logger LOGGER = LoggerFactory.getLogger(OutgoingEvidenceService.class);
 
     DomibusConnectorPersistenceService persistenceService;
-    DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
+    //DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
     DomibusConnectorEvidencesToolkit evidencesToolkit;
 
     public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
-    public void setGatewayWebserviceClient(DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient) {
-        this.gatewayWebserviceClient = gatewayWebserviceClient;
-    }
+//    public void setGatewayWebserviceClient(DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient) {
+//        this.gatewayWebserviceClient = gatewayWebserviceClient;
+//    }
 
     public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
         this.evidencesToolkit = evidencesToolkit;
@@ -69,12 +69,13 @@ public class OutgoingEvidenceService implements EvidenceService {
 
         DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, confirmation);
 
-        try {
-            gatewayWebserviceClient.sendMessage(evidenceMessage);
-        } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
-            throw new DomibusConnectorMessageException(originalMessage, "Could not send Evidence Message to Gateway! ",
-                    gwse, this.getClass());
-        }
+        //TODO: replace with new Message send service!
+//        try {
+//            gatewayWebserviceClient.sendMessage(evidenceMessage);
+//        } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
+//            throw new DomibusConnectorMessageException(originalMessage, "Could not send Evidence Message to Gateway! ",
+//                    gwse, this.getClass());
+//        }
 
         try {
             persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
