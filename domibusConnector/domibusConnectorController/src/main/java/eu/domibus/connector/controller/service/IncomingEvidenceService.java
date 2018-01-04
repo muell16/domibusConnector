@@ -11,34 +11,36 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.domain.Message;
 import eu.domibus.connector.domain.MessageConfirmation;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
 
 public class IncomingEvidenceService implements EvidenceService {
 
     static Logger LOGGER = LoggerFactory.getLogger(IncomingEvidenceService.class);
 
     DomibusConnectorPersistenceService persistenceService;
-    DomibusConnectorNationalBackendClient nationalBackendClient;
+    DomibusConnectorRemoteNationalBackendService nationalBackendClient;
 
     public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
-    public void setNationalBackendClient(DomibusConnectorNationalBackendClient nationalBackendClient) {
+    public void setNationalBackendClient(DomibusConnectorRemoteNationalBackendService nationalBackendClient) {
         this.nationalBackendClient = nationalBackendClient;
     }
 
     @Override
-    public void handleEvidence(Message confirmationMessage) throws DomibusConnectorControllerException,
+    public void handleEvidence(DomibusConnectorMessage confirmationMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
         String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
-        Message originalMessage = persistenceService.findMessageByEbmsId(messageID);
+        DomibusConnectorMessage originalMessage = persistenceService.findMessageByEbmsId(messageID);
 
-        MessageConfirmation confirmation = confirmationMessage.getConfirmations().get(0);
+        DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {
             persistenceService.rejectMessage(originalMessage);
@@ -76,16 +78,17 @@ public class IncomingEvidenceService implements EvidenceService {
 //        	}
 //        }
 
-        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
-                originalMessage.getDbMessageId());
+//        LOGGER.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
+//                originalMessage.getDbMessageId());
     }
 
-    private boolean isMessageAlreadyRejected(Message message) {
+    //better in Domain, message should know that by itself
+    private boolean isMessageAlreadyRejected(DomibusConnectorMessage message) {
 //        if (message.getDbMessage().getRejected() != null) {
 //            return true;
 //        } //TODO!
-        if (message.getConfirmations() != null) {
-            for (MessageConfirmation confirmation : message.getConfirmations()) {
+        if (message.getMessageConfirmations() != null) {
+            for (DomibusConnectorMessageConfirmation confirmation : message.getMessageConfirmations()) {
                 if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION)
                         || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_DELIVERY)
                         || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_RETRIEVAL)) {

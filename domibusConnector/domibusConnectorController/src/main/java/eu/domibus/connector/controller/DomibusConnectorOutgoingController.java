@@ -11,11 +11,11 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageContent;
-import eu.domibus.connector.domain.MessageDetails;
-import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
+import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
 
 public class DomibusConnectorOutgoingController implements DomibusConnectorController, Serializable {
 
@@ -26,11 +26,11 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorOutgoingController.class);
 
-    private DomibusConnectorNationalBackendClient nationalBackendClient;
+    private DomibusConnectorRemoteNationalBackendService nationalBackendClient;
     private MessageService outgoingMessageService;
     private EvidenceService outgoingEvidenceService;
 
-    public void setNationalBackendClient(DomibusConnectorNationalBackendClient nationalBackendClient) {
+    public void setNationalBackendClient(DomibusConnectorRemoteNationalBackendService nationalBackendClient) {
         this.nationalBackendClient = nationalBackendClient;
     }
 
@@ -97,12 +97,12 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
 
     private void handleMessage(String messageId) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
-        MessageDetails details = new MessageDetails();
-        details.setNationalMessageId(messageId);
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+        details.setBackendMessageId(messageId);
 
-        MessageContent content = new MessageContent();
+        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
-        Message message = new Message(details, content);
+        DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 
         try {
             nationalBackendClient.requestMessage(message);
@@ -122,7 +122,7 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
     private void handleEvidences() throws DomibusConnectorControllerException {
         LOGGER.debug("Started to check national implementation for pending confirmations!");
 
-        Message[] confirmationMessages = null;
+        DomibusConnectorMessage[] confirmationMessages = null;
         try {
             confirmationMessages = nationalBackendClient.requestConfirmations();
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class DomibusConnectorOutgoingController implements DomibusConnectorContr
 
             LOGGER.info("Found {} confirmations on national system to handle...", confirmationMessages.length);
 
-            for (Message confirmationMessage : confirmationMessages) {
+            for (DomibusConnectorMessage confirmationMessage : confirmationMessages) {
 
                 try {
                     outgoingEvidenceService.handleEvidence(confirmationMessage);

@@ -8,15 +8,14 @@ import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.domain.Action;
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageConfirmation;
-import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
@@ -25,7 +24,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
     static Logger LOGGER = LoggerFactory.getLogger(OutgoingMessageService.class);
 
     @Override
-    public void handleMessage(Message message) throws DomibusConnectorControllerException,
+    public void handleMessage(DomibusConnectorMessage message) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
         try {
@@ -38,20 +37,21 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         String hashValue = null;
 
         
-        if (connectorProperties.isUseContentMapper()) {
-            try {
-                contentMapper.mapNationalToInternational(message);
-            } catch (DomibusConnectorContentMapperException | ImplementationMissingException cme) {
-                createSubmissionRejectionAndReturnIt(message, cme.getMessage());
-                throw new DomibusConnectorMessageException(message, cme.getMessage(), cme, this.getClass());
-            }
-            try {
-                persistenceService.mergeMessageWithDatabase(message);
-            } catch (PersistenceException e1) {
-                //TODO: handle exception    
-                LOGGER.error("Exception occured", e1);
-            }
-        }
+        //should happen in WebClient?
+//        if (connectorProperties.isUseContentMapper()) {
+//            try {
+//                contentMapper.mapNationalToInternational(message);
+//            } catch (DomibusConnectorContentMapperException | ImplementationMissingException cme) {
+//                createSubmissionRejectionAndReturnIt(message, cme.getMessage());
+//                throw new DomibusConnectorMessageException(message, cme.getMessage(), cme, this.getClass());
+//            }
+//            try {
+//                persistenceService.mergeMessageWithDatabase(message);
+//            } catch (PersistenceException e1) {
+//                //TODO: handle exception    
+//                LOGGER.error("Exception occured", e1);
+//            }
+//        }
 
         if (connectorProperties.isUseSecurityToolkit()) {
             try {
@@ -62,7 +62,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             }
         }
 
-        MessageConfirmation confirmation = null;
+        DomibusConnectorMessageConfirmation confirmation = null;
         if (connectorProperties.isUseEvidencesToolkit()) {
             try {
             	confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
@@ -95,7 +95,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         try {
-            Message returnMessage = buildEvidenceMessage(confirmation, message);
+            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
             nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
         } catch (DomibusConnectorNationalBackendClientException | ImplementationMissingException e) {
             throw new DomibusConnectorMessageException(message,
@@ -109,14 +109,14 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             LOGGER.error("Exception occured", ex);
         }
 
-        LOGGER.info("Successfully sent message with id {} to gateway.", message.getDbMessageId());
+        LOGGER.info("Successfully sent message {} to gateway.", message);
 
     }
 
 
-    private void createSubmissionRejectionAndReturnIt(Message message, String errorMessage){
+    private void createSubmissionRejectionAndReturnIt(DomibusConnectorMessage message, String errorMessage){
 
-    	MessageConfirmation confirmation = null;
+    	DomibusConnectorMessageConfirmation confirmation = null;
         try {
         	confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER,
                     errorMessage);
@@ -139,7 +139,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         }
 
         try {
-            Message returnMessage = buildEvidenceMessage(confirmation, message);
+            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
             nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);            
             persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
 
@@ -156,15 +156,15 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
 
     }
 
-    private Message buildEvidenceMessage(MessageConfirmation confirmation, Message originalMessage) {
-        MessageDetails details = new MessageDetails();
-        details.setRefToMessageId(originalMessage.getMessageDetails().getNationalMessageId());
+    private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageConfirmation confirmation, DomibusConnectorMessage originalMessage) {
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+        details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
         details.setService(originalMessage.getMessageDetails().getService());
 
-        Action action = persistenceService.getAction("SubmissionAcceptanceRejection");
+        DomibusConnectorAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
         details.setAction(action);
 
-        Message returnMessage = new Message(details, confirmation);
+        DomibusConnectorMessage returnMessage = new DomibusConnectorMessage(details, confirmation);
 
         return returnMessage;
     }

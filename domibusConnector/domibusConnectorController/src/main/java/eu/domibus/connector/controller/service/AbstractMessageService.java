@@ -6,14 +6,14 @@ import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.domibus.connector.mapping.DomibusConnectorContentMapper;
-import eu.domibus.connector.nbc.DomibusConnectorNationalBackendClient;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
+import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
 
 public class AbstractMessageService {
 
     CommonConnectorProperties connectorProperties;
     DomibusConnectorContentMapper contentMapper;
-    DomibusConnectorNationalBackendClient nationalBackendClient;
+    DomibusConnectorRemoteNationalBackendService nationalBackendClient;
     DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
     DomibusConnectorEvidencesToolkit evidencesToolkit;
     DomibusConnectorSecurityToolkit securityToolkit;
@@ -28,7 +28,7 @@ public class AbstractMessageService {
         this.contentMapper = contentMapper;
     }
 
-    public void setNationalBackendClient(DomibusConnectorNationalBackendClient nationalBackendClient) {
+    public void setNationalBackendClient(DomibusConnectorRemoteNationalBackendService nationalBackendClient) {
         this.nationalBackendClient = nationalBackendClient;
     }
 

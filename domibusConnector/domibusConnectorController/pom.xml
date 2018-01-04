@@ -6,21 +6,20 @@
 		<artifactId>domibusConnector</artifactId>
 		<version>4.0-SNAPSHOT</version>
 	</parent>
+    <description>
+        This module is the worker/core of the domibusWebConnector it contains the responsibly services to retrieve the messages from the domibusGateway
+        and sends it to the domibusClients
+        For this purpose it uses other modules like persistence, evidenceToolkit, securityToolkit,...
+    </description>
 	<artifactId>domibusConnectorController</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorCommon</artifactId>
-			<version>${project.version}</version>
+			<artifactId>domibusConnectorCommon</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorContentMapper</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorNationalBackendClient</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

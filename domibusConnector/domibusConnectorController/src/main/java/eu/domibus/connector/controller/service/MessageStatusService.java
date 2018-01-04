@@ -5,26 +5,31 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageError;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MessageStatusService extends AbstractMessageService {
 
-    public String requestMessageStatusFromGateway(Message message) throws DomibusConnectorControllerException,
+    private final static Logger LOGGER = LoggerFactory.getLogger(MessageStatusService.class);
+    
+    public String requestMessageStatusFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
         if (message == null
                 || message.getMessageDetails() == null
                 || (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId()) && StringUtils.isEmpty(message
-                        .getMessageDetails().getNationalMessageId()))) {
+                        .getMessageDetails().getBackendMessageId()))) {
             throw new DomibusConnectorControllerException(
                     "Backend webservice method getMessageStatusOnGateway cannont be called if no message id (ebms message id of national message id) is set!");
         }
 
         if (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())
-                && !StringUtils.isEmpty(message.getMessageDetails().getNationalMessageId())) {
-            message = persistenceService.findMessageByNationalId(message.getMessageDetails().getNationalMessageId());
+                && !StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId())) {
+            //message = persistenceService.findMessageByNationalId(message.getMessageDetails().getNationalMessageId());
+            message = persistenceService.findMessageByNationalId(message.getMessageDetails().getBackendMessageId());
         }
 
         try {
@@ -36,13 +41,13 @@ public class MessageStatusService extends AbstractMessageService {
         }
     }
 
-    public List<MessageError> requestMessageErrors(Message message) throws DomibusConnectorMessageException,
+    public List<DomibusConnectorMessageError> requestMessageErrors(DomibusConnectorMessage message) throws DomibusConnectorMessageException,
             DomibusConnectorControllerException {
 
         if (message == null
                 || message.getMessageDetails() == null
                 || (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId()) && StringUtils.isEmpty(message
-                        .getMessageDetails().getNationalMessageId()))) {
+                        .getMessageDetails().getBackendMessageId()))) {
             throw new DomibusConnectorControllerException(
                     "MessageErrors cannont be loaded if no message id (ebms message id of national message id) is set!");
         }
@@ -52,8 +57,8 @@ public class MessageStatusService extends AbstractMessageService {
         }
 
         if (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())
-                && !StringUtils.isEmpty(message.getMessageDetails().getNationalMessageId())) {
-            message = persistenceService.findMessageByNationalId(message.getMessageDetails().getNationalMessageId());
+                && !StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId())) {
+            message = persistenceService.findMessageByNationalId(message.getMessageDetails().getBackendMessageId());
         }
 
         try {
@@ -65,10 +70,11 @@ public class MessageStatusService extends AbstractMessageService {
         }
 
         try {
-            List<MessageError> msgErrors = persistenceService.getMessageErrors(message);
+            List<DomibusConnectorMessageError> msgErrors = persistenceService.getMessageErrors(message);
             return msgErrors;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Exception occured", e);            
+            //TODO: logging!
         }
 
         return null;

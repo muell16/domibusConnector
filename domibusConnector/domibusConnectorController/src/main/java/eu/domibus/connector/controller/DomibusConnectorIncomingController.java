@@ -14,7 +14,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
-import eu.domibus.connector.domain.Message;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 public class DomibusConnectorIncomingController implements DomibusConnectorController {
 
@@ -41,7 +41,7 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
         LOGGER.debug("Job for handling incoming messages triggered.");
         Date start = new Date();
 
-        Collection<Message> messages = null;
+        Collection<DomibusConnectorMessage> messages = null;
         try {
             messages = gatewayWebserviceClient.requestPendingMessages();
         } catch (DomibusConnectorGatewayWebserviceClientException e) {
@@ -50,7 +50,7 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
 
         if (!CollectionUtils.isEmpty(messages)) {
             LOGGER.info("Found {} incoming messages on gateway to handle...", messages.size());
-            for (Message message : messages) {
+            for (DomibusConnectorMessage message : messages) {
                 try {
                     handleMessage(message);
                 } catch (DomibusConnectorControllerException e) {
@@ -65,7 +65,7 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
                 (System.currentTimeMillis() - start.getTime()));
     }
 
-    private void handleMessage(Message message) throws DomibusConnectorControllerException {
+    private void handleMessage(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
         
 
         if (isMessageEvidence(message)) {
@@ -83,7 +83,8 @@ public class DomibusConnectorIncomingController implements DomibusConnectorContr
         }
     }
 
-    private boolean isMessageEvidence(Message message) {
+    //maybe better in Domain, message itself should know if its an evidence message
+    private boolean isMessageEvidence(DomibusConnectorMessage message) {
         return message.getMessageDetails().getAction().getAction().equals("RelayREMMDAcceptanceRejection")
                 || message.getMessageDetails().getAction().getAction().equals("DeliveryNonDeliveryToRecipient")
                 || message.getMessageDetails().getAction().getAction().equals("RetrievalNonRetrievalToRecipient");

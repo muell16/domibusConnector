@@ -16,6 +16,10 @@ import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
@@ -27,7 +31,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 	static Logger LOGGER = LoggerFactory.getLogger(IncomingMessageService.class);
 
 	@Override
-	public void handleMessage(Message message) throws DomibusConnectorControllerException,
+	public void handleMessage(DomibusConnectorMessage message) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
 		try {
@@ -52,16 +56,18 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 		}
 
 		if (connectorProperties.isUseContentMapper()) {
-			try {
-				contentMapper.mapInternationalToNational(message);
-			} catch (DomibusConnectorContentMapperException e) {
-				createNonDeliveryEvidenceAndSendIt(message);
-				throw new DomibusConnectorMessageException(message,
-						"Error mapping content of message into national format!", e, this.getClass());
-			} catch (ImplementationMissingException e) {
-				createNonDeliveryEvidenceAndSendIt(message);
-				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
-			}
+            //TODO:
+            //is done by webClient?
+//			try {
+//				contentMapper.mapInternationalToNational(message);
+//			} catch (DomibusConnectorContentMapperException e) {
+//				createNonDeliveryEvidenceAndSendIt(message);
+//				throw new DomibusConnectorMessageException(message,
+//						"Error mapping content of message into national format!", e, this.getClass());
+//			} catch (ImplementationMissingException e) {
+//				createNonDeliveryEvidenceAndSendIt(message);
+//				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
+//			}
             try {
                 persistenceService.mergeMessageWithDatabase(message);
             } catch (PersistenceException ex) {
@@ -91,19 +97,19 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 
 		persistenceService.setMessageDeliveredToNationalSystem(message);
 
-		LOGGER.info("Successfully processed message with id {} from GW to NAT.", message.getDbMessageId());
+		LOGGER.info("Successfully processed message from GW to NAT.", message);
 
 	}
 
-	private boolean isConnector2ConnectorTest(Message message) {
+	private boolean isConnector2ConnectorTest(DomibusConnectorMessage message) {
 		return (!StringUtils.isEmpty(connectorProperties.getConnectorTestService()) && message.getMessageDetails().getService().getService().equals(connectorProperties.getConnectorTestService())) 
 				&& (!StringUtils.isEmpty(connectorProperties.getConnectorTestAction()) && message.getMessageDetails().getAction().getAction().equals(connectorProperties.getConnectorTestAction()));
 	}
 
-	private void createNonDeliveryEvidenceAndSendIt(Message originalMessage)
+	private void createNonDeliveryEvidenceAndSendIt(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
-		MessageConfirmation nonDelivery = null;
+		DomibusConnectorMessageConfirmation nonDelivery = null;
 		try {
 			nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage,DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
@@ -111,17 +117,17 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 					"Error creating NonDelivery evidence for message!", e, this.getClass());
 		}
 
-		Action action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
 
 		persistenceService.rejectMessage(originalMessage);
 	}
 	
-	private void createDeliveryEvidenceAndSendIt(Message originalMessage)
+	private void createDeliveryEvidenceAndSendIt(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
-		MessageConfirmation delivery = null;
+		DomibusConnectorMessageConfirmation delivery = null;
 		try {
 			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY,originalMessage, null, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
@@ -129,16 +135,16 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 					"Error creating Delivery evidence for message!", e, this.getClass());
 		}
 
-		Action action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, delivery);
 
 		persistenceService.confirmMessage(originalMessage);
 	}
 
-	private void createRelayREMMDEvidenceAndSendIt(Message originalMessage, boolean isAcceptance)
+	private void createRelayREMMDEvidenceAndSendIt(DomibusConnectorMessage originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-		MessageConfirmation messageConfirmation = null;
+		DomibusConnectorMessageConfirmation messageConfirmation = null;
 		try {
 			messageConfirmation = isAcceptance ? evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null)
 					: evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
@@ -147,7 +153,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 					"Error creating RelayREMMD evidence for message!", e, this.getClass());
 		}
 
-		Action action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+		DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
@@ -156,15 +162,15 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 		}
 	}
 
-	private void sendEvidenceToBackToGateway(Message originalMessage, Action action,
-			MessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
+	private void sendEvidenceToBackToGateway(DomibusConnectorMessage originalMessage, DomibusConnectorAction action,
+			DomibusConnectorMessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
 		originalMessage.addConfirmation(messageConfirmation);
 		persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation.getEvidence(),
 				messageConfirmation.getEvidenceType());
 
-		MessageDetails details = new MessageDetails();
+		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
 		details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
 		details.setConversationId(originalMessage.getMessageDetails().getConversationId());
 		details.setService(originalMessage.getMessageDetails().getService());
@@ -172,7 +178,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 		details.setFromParty(originalMessage.getMessageDetails().getToParty());
 		details.setToParty(originalMessage.getMessageDetails().getFromParty());
 
-		Message evidenceMessage = new Message(details, messageConfirmation);
+		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
 
 		try {
 			gatewayWebserviceClient.sendMessage(evidenceMessage);
