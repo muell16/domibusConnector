@@ -8,9 +8,11 @@ package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import javax.annotation.Nonnull;
 
 /**
- *
+ * Builder for @see eu.domibus.connector.domain.model.DetachedSignatureBuilder
+ * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 public class DetachedSignatureBuilder {
@@ -25,26 +27,52 @@ public class DetachedSignatureBuilder {
     
     private DetachedSignatureBuilder() {};
     
-    
-    public DetachedSignatureBuilder setSignature(byte[] signature) {
+    /**
+     * the signature @see eu.domibus.connector.domain.model.DetachedSignatureBuilder#detachedSignature
+     * @param signature - the signature, must be not null
+     * @return the builder
+     */
+    public DetachedSignatureBuilder setSignature(@Nonnull byte[] signature) {
         this.detachedSignature = signature;
         return this;
     }
     
-    public DetachedSignatureBuilder setName(String name) {
+    /**
+     * the name @see eu.domibus.connector.domain.model.DetachedSignatureBuilder#detachedSignatureName
+     * @param name - the name
+     * @return the builder
+     */
+    public DetachedSignatureBuilder setName(@Nonnull String name) {
         this.detachedSignatureName = name;
         return this;
     }
     
-    public DetachedSignatureBuilder setMimeType(DetachedSignatureMimeType mimeType) {
+    /**
+     * the mimeType @see eu.domibus.connector.domain.model.DetachedSignatureBuilder#mimeType
+     * @param mimeType - mimeType
+     * @return  the builder
+     */
+    public DetachedSignatureBuilder setMimeType(@Nonnull DetachedSignatureMimeType mimeType) {
         this.mimeType = mimeType;
         return this;
     }
     
-    
+    /**
+     * creates the DetachedSignature based 
+     * on the provided properties, also checks 
+     * if the requirements are fullfilled
+     * @throws IllegalArgumentException if an argument is missing or illegal
+     * @return the created DetachedSignature
+     */
     public DetachedSignature create() {
         if (detachedSignature == null || detachedSignature.length < 1) {
             throw new IllegalArgumentException("");
+        }
+        if (detachedSignatureName == null) {
+            throw new IllegalArgumentException("detachedSignatureName is mandatory!");
+        }
+        if (mimeType == null) {
+            throw new IllegalArgumentException("mimeType is mandatory!");
         }
         return new DetachedSignature(detachedSignature, detachedSignatureName, mimeType);
     }
