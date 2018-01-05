@@ -1,44 +1,54 @@
 package eu.domibus.connector.security;
 
-import eu.domibus.connector.domain.Message;
-import eu.domibus.connector.domain.MessageAttachment;
-import eu.domibus.connector.domain.MessageContent;
-import eu.domibus.connector.domain.MessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.xmlunit.diff.DefaultNodeMatcher;
-import org.xmlunit.diff.ElementSelectors;
-import org.xmlunit.matchers.CompareMatcher;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * basic test of security toolkit
  * 
+ * is an integration test because DSSECodexContainerService is not mocked
+ * and DSSECodexContainerService is loading data from remote location
+ * (the trust lists)
+ * 
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/spring/context/DomibusConnectorSecurityToolkitContext.xml",
-"/test/context/testContext.xml" })
+@ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class})
+@TestPropertySource("classpath:test.properties")
 public class DomibusConnectorSecurityToolkitITCase {
 
+    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"})
+    public static class TestContextConfiguration {
+
+        @Bean
+        public static PropertySourcesPlaceholderConfigurer
+                propertySourcesPlaceholderConfigurer() {
+            return new PropertySourcesPlaceholderConfigurer();
+        }
+    }
+    
+    
 	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityToolkitITCase.class);
 
 	public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";

@@ -136,7 +136,7 @@ public class DomibusSecurityContainer implements InitializingBean {
 
     }
 
-    private BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
+    BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
         if (message.getMessageContent() == null) {
             throw new IllegalArgumentException("messageContent is null!");
         }
@@ -159,8 +159,9 @@ public class DomibusSecurityContainer implements InitializingBean {
 //                    .getNationalXmlContent();
 //            document = new InMemoryDocument(content, CommonConnectorGlobalConstants.MAIN_DOCUMENT_NAME + ".xml",
 //                    MimeType.XML);
-        } else {
+        } else {            
             LOGGER.error("No content found for container!");
+            throw new RuntimeException("not valid without document!");
         }
             
         businessContent.setDocument(dssDocument);
@@ -173,10 +174,13 @@ public class DomibusSecurityContainer implements InitializingBean {
             
             String detachedSignatureName = msgDocument.getDetachedSignature().getDetachedSignatureName() != null ? msgDocument
                     .getDetachedSignature().getDetachedSignatureName() : DETACHED_SIGNATURE_DOCUMENT_NAME;
+            
+                    
+            
                     DSSDocument detachedSignature = new InMemoryDocument(
                             msgDocument.getDetachedSignature().getDetachedSignature(),
                             detachedSignatureName,
-                            MimeType.fromMimeTypeString(msgDocument.getDetachedSignature().getMimeType().name()));
+                            MimeType.fromMimeTypeString(msgDocument.getDetachedSignature().getMimeType().getCode()));
             businessContent.setDetachedSignature(detachedSignature);
         }
 
