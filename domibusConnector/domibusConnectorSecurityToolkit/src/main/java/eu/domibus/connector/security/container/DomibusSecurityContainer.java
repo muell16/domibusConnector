@@ -46,6 +46,10 @@ import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
 import javax.annotation.Nonnull;
 
+/**
+ * TODO: documentation needed
+ * 
+ */
 @Component("domibusConnectorSecurityContainer")
 public class DomibusSecurityContainer implements InitializingBean {
 
@@ -69,6 +73,8 @@ public class DomibusSecurityContainer implements InitializingBean {
     
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainer.class);
+    
+    static org.slf4j.Marker CONFIDENTAL_MARKER = org.slf4j.MarkerFactory.getMarker("CONFIDENTAL");
 
     @Resource(name="domibusConnectorContainerService")
     ECodexContainerService containerService;
@@ -115,12 +121,14 @@ public class DomibusSecurityContainer implements InitializingBean {
         tokenIssuer.setCountry(country);
         tokenIssuer.setServiceProvider(serviceProvider);
         tokenIssuer.setAdvancedElectronicSystem(advancedElectronicSystem);
-
+        LOGGER.debug("tokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}] ",
+                country, serviceProvider, advancedElectronicSystem);
+        
         LOGGER.info("Finished initializing security container!");
     }
 
     protected SignatureParameters createSignatureParameters() throws Exception {
-
+        LOGGER.debug("creatingSignatureParameters");
         // KlarA: Changed the functionality of this method to use the methods
         // that have been ordered by Austria
         // and realized by Arhs.
@@ -129,9 +137,15 @@ public class DomibusSecurityContainer implements InitializingBean {
         certStore.setLocation(javaKeyStorePath);
         certStore.setPassword(javaKeyStorePassword);
 
+        EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
+        DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
+        
         final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore, keyAlias,
-                keyPassword, EncryptionAlgorithm.RSA, DigestAlgorithm.SHA1);
-
+                keyPassword, encryptionAlgorithm, digestAlgorithm);
+        LOGGER.info("SignatureParameters are certStore [{}], keyAlias [{}], encryptionAlgorithm [{}], digestAlgorithm [{}]",
+                certStore.getLocation(), keyAlias, encryptionAlgorithm, digestAlgorithm);        
+        
+        
         return mySignatureParameters;
 
     }
@@ -196,7 +210,19 @@ public class DomibusSecurityContainer implements InitializingBean {
         return businessContent;
     }
 
-    public void createContainer(DomibusConnectorMessage message) {
+    
+    /**
+     * Takes the messageContent (xmlDocument + document)
+     * and all messageAttachments and wraps them into a asic container
+     * the generated token and the asic container
+     * are attached as messageAttachments again
+     * all other attachments are removed!
+     * 
+     * the messageContent of the message must not be null!
+     * 
+     * @param message the message to process
+     */
+    public void createContainer(@Nonnull DomibusConnectorMessage message) {
         BusinessContent businessContent = buildBusinessContent(message);
 
         message.getMessageAttachments().clear();
@@ -245,6 +271,13 @@ public class DomibusSecurityContainer implements InitializingBean {
         }
     }
 
+    /**
+     * Unpacks the asic container from the message
+     * and puts the businessDocument, xmlContent into MessageContent
+     * and other attachments are added to the messageAttachments
+     * the asicAttachment and xmlToken attachment are removed from the message
+     * @param message - the message to process
+     */
     public void recieveContainerContents(DomibusConnectorMessage message) {
         if (message.getMessageAttachments() != null && !message.getMessageAttachments().isEmpty()) {
             DomibusConnectorMessageAttachment asicsAttachment = null;
@@ -320,7 +353,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                             if (!StringUtils.isEmpty(container.getBusinessContent().getDetachedSignature().getName()))
                                 //message.getMessageContent().setDetachedSignatureName(
                                 //        container.getBusinessContent().getDetachedSignature().getName());
-                                detachedSignatureBuilder.setName( container.getBusinessContent().getDetachedSignature().getName());
+                                detachedSignatureBuilder.setName(container.getBusinessContent().getDetachedSignature().getName());
                             try {
 //                                message.getMessageContent().setDetachedSignatureMimeType(
 //                                        DetachedSignatureMimeType.valueOf(container.getBusinessContent()
