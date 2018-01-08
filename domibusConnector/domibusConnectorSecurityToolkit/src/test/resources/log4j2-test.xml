@@ -9,5 +9,8 @@
         <Root level="info">
             <AppenderRef ref="Console" />
         </Root>
+        <logger name="eu.domibus.connector.security" level="trace">
+            <AppenderRef ref="Console" />
+        </logger>
     </Loggers>
 </Configuration>

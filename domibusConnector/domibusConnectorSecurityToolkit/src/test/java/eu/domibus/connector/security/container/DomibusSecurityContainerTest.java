@@ -9,6 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import static eu.domibus.connector.security.container.DomibusSecurityContainer.TOKEN_PDF_IDENTIFIER;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
@@ -24,6 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.io.IOUtils;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -228,7 +231,11 @@ public class DomibusSecurityContainerTest {
         BusinessContent businessContent = securityContainer.buildBusinessContent(testMessage);                 
      
         assertThat(businessContent.getAttachments()).hasSize(1);
-        assertThat(businessContent.getAttachments().get(0).getMimeType()).isEqualTo(MimeType.PDF);
+        assertThat(businessContent.getAttachments().get(0).getMimeType())
+                .as("Mime Type %s should be equal to Mime Type %s", 
+                        businessContent.getAttachments().get(0).getMimeType().getMimeTypeString(),
+                        MimeType.PDF.getMimeTypeString())
+                .isEqualTo(MimeType.PDF);
     }
     
     
@@ -288,26 +295,20 @@ public class DomibusSecurityContainerTest {
         securityContainer.createContainer(testMessage);
     }
 
-    @Ignore //not finished yet
-    @Test
-    public void testRecieveContainerContents() throws ECodexException {
-        
-        DomibusConnectorMessage testMessage = createTestMessage();
-        
-        DomibusConnectorMessageAttachment asicAttach = new DomibusConnectorMessageAttachment("asiccontent".getBytes(), DomibusSecurityContainer.ASICS_CONTAINER_IDENTIFIER);
-        DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment("<xmlContent></xmlContent>".getBytes(), DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
-        
-        testMessage.addAttachment(asicAttach);
-        testMessage.addAttachment(xmlTokenAttach);
-        
-        ECodexContainer mockedECodexContainer = Mockito.mock(ECodexContainer.class);
+    
+    ECodexContainer mockedECodexContainer;
+    
+    void testRecieveContainerContents_initMocks() throws ECodexException {
+        mockedECodexContainer = Mockito.mock(ECodexContainer.class);
+                
+        //mock eCodexContainerService to return mockedECodexContainer
         Mockito.when(eCodexContainerService.receive(any(InputStream.class), any(InputStream.class))).thenReturn(mockedECodexContainer);
-        
+        //mock eCodexContainerService for successfull result                
         CheckResult result = Mockito.mock(CheckResult.class);
         Mockito.when(result.isSuccessful()).thenReturn(true);
         Mockito.when(eCodexContainerService.check(any(ECodexContainer.class))).thenReturn(result);
         
-        //return converted business doc
+        //return converted business doc, out of the asic container extracted files
         DSSDocument businessDocument = Mockito.mock(DSSDocument.class);
         Mockito.when(businessDocument.getName()).thenReturn("documentName");
         Mockito.when(businessDocument.getMimeType()).thenReturn(MimeType.PDF);
@@ -315,24 +316,140 @@ public class DomibusSecurityContainerTest {
         
         Mockito.when(mockedECodexContainer.getBusinessDocument()).thenReturn(businessDocument);
         
-        Token mockedTocken = Mockito.mock(Token.class);        
-        Mockito.when(mockedECodexContainer.getToken()).thenReturn(mockedTocken);
-       
-        //TODO: mock other content:
-        //TODO: business Attachments , or own test?
+        //mock signature of business project
+        DSSDocument detachedSignatureOfBusinessDoc = Mockito.mock(DSSDocument.class);
+        Mockito.when(detachedSignatureOfBusinessDoc.getName()).thenReturn("sig");
+        Mockito.when(detachedSignatureOfBusinessDoc.getMimeType()).thenReturn(MimeType.PKCS7);
+        Mockito.when(detachedSignatureOfBusinessDoc.openStream()).thenReturn(new ByteArrayInputStream("signature".getBytes()));
         
-        //TODO: businessContent, or own test?
-                
-        //TODO: tokenPDF, or own test?
-                
-        //TODO: tokenXML, or own test?
+        //BusinessContent
+        BusinessContent mockedBusinesContent = Mockito.mock(BusinessContent.class);
+        Mockito.when(mockedBusinesContent.getDetachedSignature()).thenReturn(detachedSignatureOfBusinessDoc);
+        Mockito.when(mockedECodexContainer.getBusinessContent()).thenReturn(mockedBusinesContent);
         
         
+        //mock the returned token
+        Token mockedToken = Mockito.mock(Token.class);        
+        Mockito.when(mockedECodexContainer.getToken()).thenReturn(mockedToken);
+        Mockito.when(mockedToken.getDocumentType()).thenReturn(MimeType.PDF.getMimeTypeString());
+        
+               
+        //a attachment
+        DSSDocument textDoc = Mockito.mock(DSSDocument.class);
+        Mockito.when(textDoc.getName()).thenReturn("textdoc");
+        Mockito.when(textDoc.getMimeType()).thenReturn(MimeType.TEXT);
+        Mockito.when(textDoc.openStream()).thenReturn(new ByteArrayInputStream("a super text".getBytes()));
+        
+        //mock attachment
+        List<DSSDocument> dssDocList = new ArrayList<>();
+        dssDocList.add(textDoc);
+        Mockito.when(mockedECodexContainer.getBusinessAttachments()).thenReturn(dssDocList);
+        
+        //mock token PDF
+        DSSDocument tokenPDF = Mockito.mock(DSSDocument.class);                
+        Mockito.when(tokenPDF.openStream()).thenReturn(new ByteArrayInputStream("pdf token".getBytes()));
+        Mockito.when(mockedECodexContainer.getTokenPDF()).thenReturn(tokenPDF);
+        
+        //mock token XML
+        DSSDocument tokenXML = Mockito.mock(DSSDocument.class);                
+        Mockito.when(tokenXML.openStream()).thenReturn(new ByteArrayInputStream("xml token".getBytes()));
+        Mockito.when(mockedECodexContainer.getTokenXML()).thenReturn(tokenXML);
+    }
+    
+    /**
+     * Should throw an exception if the message does not contain a
+     * asic container in the message attachments
+     * 
+     * @throws ECodexException the Exception expected by the test
+     * 
+     */
+    @Test(expected=DomibusConnectorSecurityException.class)
+    public void testRecieveContainerContents_noAsicContainer_shouldThrowException() throws ECodexException {
+        testRecieveContainerContents_initMocks();
+        DomibusConnectorMessage testMessage = createTestMessage();
+        
+        DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment(
+                "<xmlContent></xmlContent>".getBytes(), 
+                DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
+        
+        testMessage.addAttachment(xmlTokenAttach);
+                        
+        //execute method to test                
+        securityContainer.recieveContainerContents(testMessage);
+    }
+    
+    /**
+     * should throw an Exception if the message does not contain a
+     * token Xml in the message attachments
+     * 
+     * @throws ECodexException the Exception expected by the test
+     */
+    @Test(expected=DomibusConnectorSecurityException.class)
+    public void testRecieveContainerContents_noTokenXML_shouldThrowException() throws ECodexException {
+        testRecieveContainerContents_initMocks();
+        DomibusConnectorMessage testMessage = createTestMessage();
+        
+        DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment(
+                "<xmlContent></xmlContent>".getBytes(), 
+                DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
+        
+        testMessage.addAttachment(xmlTokenAttach);
+                        
+        //execute method to test                
+        securityContainer.recieveContainerContents(testMessage);
+    }
+    
+    
+    
+    @Test
+    public void testRecieveContainerContents() throws ECodexException, IOException {
+        testRecieveContainerContents_initMocks();
+        DomibusConnectorMessage testMessage = createTestMessage();
+        
+        DomibusConnectorMessageAttachment asicAttach = new DomibusConnectorMessageAttachment(
+                "asiccontent".getBytes(), 
+                DomibusSecurityContainer.ASICS_CONTAINER_IDENTIFIER);
+        
+        DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment(
+                "<xmlContent></xmlContent>".getBytes(), 
+                DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
+        
+        testMessage.addAttachment(asicAttach);
+        testMessage.addAttachment(xmlTokenAttach);
+        
+        
+        
+        //execute method to test                
         securityContainer.recieveContainerContents(testMessage);
         
-        assertThat(testMessage.getMessageContent().getDocument().getDocument()).isEqualTo("superbusinessdoc".getBytes());
+                
+        //test xml Content
+        assertThat(testMessage.getMessageContent().getXmlContent()).isNotNull();
         
+        //test document
+        assertThat(IOUtils.toString(testMessage.getMessageContent().getDocument().getDocument(), "UTF8")).as("is provided").isEqualTo("superbusinessdoc");
+                
+        //Test signature
+        DetachedSignature detachedSignature = testMessage.getMessageContent().getDocument().getDetachedSignature();
+        assertThat(detachedSignature).as("is set in testdata").isNotNull();
+        assertThat(detachedSignature.getDetachedSignatureName()).as("signature is named sig").isEqualTo("sig");
+        assertThat(IOUtils.toString(detachedSignature.getDetachedSignature(), "UTF8")).as("signature should be").isEqualTo("signature");
         
+        //test attachments
+        assertThat(testMessage.getMessageAttachments()).as("Contains one attachment + pdf token and xml token makes 3").hasSize(3);
+        
+        //test pdf token
+        DomibusConnectorMessageAttachment pdfTokenAttachment = testMessage.getMessageAttachments().stream()
+                .filter( a -> DomibusSecurityContainer.TOKEN_PDF_IDENTIFIER.equals(a.getIdentifier()))
+                .findFirst().get();
+        assertThat(pdfTokenAttachment.getAttachment()).isEqualTo("pdf token".getBytes());
+        
+                        
+        //test xml token
+        DomibusConnectorMessageAttachment xmlTokenAttachment = testMessage.getMessageAttachments().stream()
+                .filter( a -> DomibusSecurityContainer.TOKEN_XML_IDENTIFIER.equals(a.getIdentifier()))
+                .findFirst().get();
+        assertThat(xmlTokenAttachment.getAttachment()).isEqualTo("xml token".getBytes());
         
     }
     
