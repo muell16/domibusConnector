@@ -31,6 +31,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -84,9 +85,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Autowired
     private DomibusConnectorMessageErrorDao messageErrorDao;
     
-    @Autowired
-    private DomibusConnectorMsgContDao msgContDao;
+//    @Autowired
+//    private DomibusConnectorMsgContDao msgContDao;
 
+    @Autowired
+    private MsgContentPersistenceService msgContentService;
+    
     /*
      * DAO SETTER  
      */
@@ -118,8 +122,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         this.messageErrorDao = messageErrorDao;
     }
     
-    public void setMsgContDao(DomibusConnectorMsgContDao msgContDao) {
-        this.msgContDao = msgContDao;
+//    public void setMsgContDao(DomibusConnectorMsgContDao msgContDao) {
+//        this.msgContDao = msgContDao;
+//    }
+    
+    public void setMsgContentService(MsgContentPersistenceService msgContService) {
+        this.msgContentService = msgContService;
     }
     /*
     * END DAO SETTER
@@ -155,7 +163,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         dbMessageInfo.setUpdated(new Date());
         mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), dbMessageInfo);
         
-       
+        this.msgContentService.storeMsgContent(message);
+        
+        
         try {
             dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
         } catch (Exception e) {
@@ -185,104 +195,6 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     
     
     
-    void loadMsgContent(final @Nonnull DomibusConnectorMessageBuilder messageBuilder, final PDomibusConnectorMessage dbMessage) throws PersistenceException {
-        List<PDomibusConnectorMsgCont> findByMessage = this.msgContDao.findByMessage(dbMessage);
-        //map content back
-        Optional<PDomibusConnectorMsgCont> findFirst = findByMessage.stream()
-                .filter( c -> StoreType.MESSAGE_CONTENT.getDbString().equals(c.getContentType()))
-                .findFirst();
-        if (findFirst.isPresent()) {
-            DomibusConnectorMessageContent messageContent = mapFromMsgCont(findFirst.get(), DomibusConnectorMessageContent.class);
-            messageBuilder.setMessageContent(messageContent);
-        }
-        //map evidence back
-        findByMessage.stream()
-                .filter( c -> StoreType.MESSAGE_CONFIRMATION.getDbString().equals(c.getContentType()))
-                .forEach( c -> {
-                    DomibusConnectorMessageConfirmation msgConfirmation = mapFromMsgCont(c, DomibusConnectorMessageConfirmation.class);
-                    messageBuilder.addConfirmation(msgConfirmation);
-                });
-        //map attachments back
-        findByMessage.stream()
-                .filter( c -> StoreType.MESSAGE_ATTACHMENT.getDbString().equals(c.getContentType()))
-                .forEach( c -> {
-                    DomibusConnectorMessageAttachment msgAttachment = mapFromMsgCont(c, DomibusConnectorMessageAttachment.class);
-                    messageBuilder.addAttachment(msgAttachment);
-                });        
-    }
-    
-    /**
-     * takes a message and stores all content into the database
-     * deletes all old content regarding the message and persists it again in the database
-     * 
-     * @param message the message
-     */
-    void storeMsgContent(@Nonnull eu.domibus.connector.domain.model.DomibusConnectorMessage message) throws PersistenceException {
-        //handle document
-        List<PDomibusConnectorMsgCont> toStoreList = new ArrayList<>();
-        DomibusConnectorMessageContent messageContent = message.getMessageContent();
-        if (messageContent != null) {
-            toStoreList.add(mapToMsgCont(StoreType.MESSAGE_CONTENT, messageContent));
-        }
-        //handle attachments
-        for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-            toStoreList.add(mapToMsgCont(StoreType.MESSAGE_ATTACHMENT, attachment));
-        }
-        //handle confirmations
-        for (DomibusConnectorMessageConfirmation c : message.getMessageConfirmations()) {
-            toStoreList.add(mapToMsgCont(StoreType.MESSAGE_CONFIRMATION, c));            
-        }
-        PDomibusConnectorMessage findMessageByMessage = this.findMessageByMessage(message);
-        this.msgContDao.deleteByMessage(findMessageByMessage);   //delete old contents
-        this.msgContDao.save(toStoreList); //save new contents
-    }        
-    
-    /**
-     * Takes a StoreType and a Object
-     * maps that object into @see eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont
-     * 
-     * 
-     */
-    PDomibusConnectorMsgCont mapToMsgCont(            
-            @Nonnull StoreType type, 
-            @Nonnull Object object) throws PersistenceException {        
-        try {
-            PDomibusConnectorMsgCont msgCont = new PDomibusConnectorMsgCont();
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(byteOut);
-            out.writeObject(object);
-            byte[] toByteArray = byteOut.toByteArray();
-            String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
-            msgCont.setContentType(type.getDbString());
-            msgCont.setChecksum(md5DigestAsHex);
-            msgCont.setContent(toByteArray);
-            return msgCont;
-        } catch (IOException ioe) {
-            String error = String.format("storeMsgContent: A error occured during serializing [%s] object [%s] and storing it into database", type, object);
-            LOGGER.error(error, ioe);
-            throw new PersistenceException(error);
-        }        
-    }
-    
-    <T> T mapFromMsgCont(@Nonnull PDomibusConnectorMsgCont msgContent, Class<T> clazz) throws PersistenceException {
-        ObjectInputStream inputStream;
-        try {
-            byte[] byteContent = msgContent.getContent();
-            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteContent);
-            inputStream = new ObjectInputStream(byteInputStream);
-            T confirmation = (T) inputStream.readObject();                                    
-            return confirmation;            
-        } catch (IOException ex) {
-            String error = String.format("mapFromMsgCont: IOException occured during reading object out of message content [%s]", msgContent);
-            LOGGER.error(error);
-            throw new PersistenceException(error, ex);
-        } catch (ClassNotFoundException ex) {
-            String error = String.format("mapFromMsgCont: Class not found exception occured during reading object out of message content [%s], "
-                    + "maybe incompatible updates or corruped database", msgContent);
-            LOGGER.error(error);
-            throw new PersistenceException(error, ex);
-        }
-    }
     
     /**
      * Tries to find a message by ebmsId or backendId
@@ -328,8 +240,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
             mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), messageInfo);            
             messageInfoDao.save(messageInfo);
         }
-
-        messageDao.save(dbMessage);
+                
+        this.msgContentService.storeMsgContent(message);
+        
+        this.messageDao.save(dbMessage);
     }
 
     /**
@@ -567,62 +481,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
         
         
+        this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
+        
 
-        if (dbMessage.getEvidences() != null) {
-            dbMessage.getEvidences().stream()
-                    .map( e -> mapDbEvidenceToMessageConfirmation(e))
-                    .forEach(e -> messageBuilder.addConfirmation(e));
-        }
-        
-        
-        loadMessageContents(dbMessage, messageBuilder);
-        
-//        //PersistedMessageContent dbMessageContent = dbMessage.getMessageContent();
-//        if (dbMessageContent != null) {
-//            //if message content is not null:
-//           
-//             eu.domibus.connector.domain.model.DetachedSignature detachedSignature = 
-//                     new eu.domibus.connector.domain.model.DetachedSignature(
-//                             dbMessageContent.getDetachedSignature(),
-//                             dbMessageContent.getDetachedSignatureName(),
-//                             DetachedSignatureMimeType.valueOf(dbMessageContent.getDetachedSignatureMimeType())                             
-//                     );
-//            
-//            
-//            eu.domibus.connector.domain.model.DomibusConnectorMessageDocument doc = 
-//                    new eu.domibus.connector.domain.model.DomibusConnectorMessageDocument(
-//                            dbMessageContent.getDocument(),
-//                            dbMessageContent.getDocumentName(),
-//                            detachedSignature
-//                    );
-//            
-//            eu.domibus.connector.domain.model.DomibusConnectorMessageContent messageContent = new eu.domibus.connector.domain.model.DomibusConnectorMessageContent();            
-//            
-//            messageContent.setXmlContent(dbMessageContent.getXmlContent());
-//            messageContent.setDocument(doc);
-//            
-//            //final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageContent messageContent
-//            eu.domibus.connector.domain.model.PDomibusConnectorMessage message = 
-//                new eu.domibus.connector.domain.model.PDomibusConnectorMessage(
-//                        details, 
-//                        messageContent
-//                );
-//            message.getMessageConfirmations().addAll(evidences);
-//            return message;
-//        } else if (evidences != null && !evidences.isEmpty()) {
-//            //if message content is null maybe its an evidence message try to load this way:
-//            DomibusConnectorMessageConfirmation evidence = evidences.remove(0); //try with first evidence
-//            
-//            eu.domibus.connector.domain.model.PDomibusConnectorMessage message = 
-//                new eu.domibus.connector.domain.model.PDomibusConnectorMessage(
-//                        details, 
-//                        evidence
-//                );
-//                        
-//            message.getMessageConfirmations().addAll(evidences);
-//            return message;                        
-//        } 
-        
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = messageBuilder.build();
         return message;
         
@@ -633,16 +494,6 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 //        throw new RuntimeException(error);
     }
 
-    DomibusConnectorMessageConfirmation mapDbEvidenceToMessageConfirmation(PDomibusConnectorEvidence e) {
-        
-        return null;
-    }
-    
-    void loadMessageContents(PDomibusConnectorMessage dbMessage, DomibusConnectorMessageBuilder messageBuilder) {
-        
-    }
-    
-    
 
 
     @Override

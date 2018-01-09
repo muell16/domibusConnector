@@ -122,6 +122,7 @@ public class PersistenceEntityCreator {
             msg.setConfirmed(dateFormat.parse("2017-12-23 23:45:23"));            
             msg.setConversationId("conversation1");
             msg.setHashValue("hashvalue");
+            msg.setConnectorMessageId("messagestamp");
             msg.setId(47L);
             msg.setEvidences(new HashSet<>());
             return msg;

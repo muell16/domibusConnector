@@ -10,6 +10,7 @@
         direction="NAT_TO_GW"
         hash_value="31fb9a629e9640c4723cbd101adafd32"
         updated="2017-12-12 12:34:23.000000000"
+        connector_message_id="msg72"
     />
     
     
@@ -20,6 +21,7 @@
         direction="NAT_TO_GW"
         hash_value="31fb9a629e9640c4723cbd101adafd32"
         updated="2017-12-12 12:34:23.000000000"
+        connector_message_id="msg73"
     />
     
     <!-- to gw delivered message -->
@@ -31,6 +33,7 @@
         hash_value="31fb9a629e9640c4723cbd101adafd32"
         delivered_gw="2017-11-06 16:00:00.852000000"
         updated="2017-11-06 16:00:00.977000000"
+        connector_message_id="msg74"
     />
     
     <domibus_connector_message 
@@ -40,7 +43,10 @@
         direction="GW_TO_NAT"
 		confirmed="2017-05-17 15:11:54.145000000" 
         delivered_backend="2017-05-17 15:11:48.867000000" 
-        updated="2017-05-17 15:11:55.005000000" />
+        updated="2017-05-17 15:11:55.005000000" 
+        connector_message_id="msg59"
+    />
+    
     
     
     <domibus_connector_message
@@ -49,7 +55,9 @@
 		conversation_id="7ba0dca2-3804-44b0-b866-f31eb1ace8a0@domibus.eu"
     	direction="GW_TO_NAT"
 		delivered_gw="2017-11-28 15:35:37.236000000"
-		updated="2017-11-28 15:35:45.090000000" />
+		updated="2017-11-28 15:35:45.090000000" 
+        connector_message_id="msg65"
+    />
 
     <domibus_connector_message
         id="655"
@@ -57,7 +65,9 @@
 		conversation_id="7ba0dca2-3804-44b0-b866-f31eb1ace8a0@domibus.eu"
     	direction="NAT_TO_GW"
 		delivered_gw="2017-11-28 15:35:37.236000000"
-		updated="2017-11-28 15:35:45.090000000" />
+		updated="2017-11-28 15:35:45.090000000" 
+        connector_message_id="msg655"
+    />
         
     <domibus_connector_evidence
         id="81"

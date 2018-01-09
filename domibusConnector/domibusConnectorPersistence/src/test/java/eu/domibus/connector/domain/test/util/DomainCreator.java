@@ -80,10 +80,9 @@ public class DomainCreator {
         messageDetails.setConversationId("conversation1");
         messageDetails.setEbmsMessageId("ebms1");
         
+        
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-        DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
-        //msg.setDbMessageId(78L);
-        //msg.getMessageDetails().
+        DomibusConnectorMessage msg = new DomibusConnectorMessage("msgid", messageDetails, messageContent);
         return msg;
     }
     
