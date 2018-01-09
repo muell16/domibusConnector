@@ -64,18 +64,18 @@ public class DomibusSecurityContainerTest {
             byte[] xml = "xml".getBytes();
             
             DetachedSignature sig = DetachedSignatureBuilder
-                    .build()
+                    .createBuilder()
                     .setName("sig1")
                     .setMimeType(DetachedSignatureMimeType.BINARY)
                     .setSignature("asupersignature".getBytes())
-                    .create();
+                    .build();
             
             DomibusConnectorMessageDocument document = DomibusConnectorMessageDocumentBuilder
-                    .build()
+                    .createBuilder()
                     .setContent(pdf)
                     .setName("Form_A")
                     .withDetachedSignature(sig)
-                    .create();
+                    .build();
             
             content.setXmlContent(xml);
             content.setDocument(document);

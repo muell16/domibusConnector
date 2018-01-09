@@ -308,8 +308,8 @@ public class DomibusSecurityContainer implements InitializingBean {
                 // error-handling
                 CheckResult results = containerService.check(container);
 
-                DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.build();
-                DetachedSignatureBuilder detachedSignatureBuilder = DetachedSignatureBuilder.build();
+                DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
+                DetachedSignatureBuilder detachedSignatureBuilder = DetachedSignatureBuilder.createBuilder();
                 if (results.isSuccessful()) {
                     if (container != null) {
                         
@@ -343,7 +343,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                                 detachedSignatureBuilder.setMimeType(DetachedSignatureMimeType.BINARY);
                             }
                             //set detached signature                            
-                            documentBuilder.withDetachedSignature(detachedSignatureBuilder.create());
+                            documentBuilder.withDetachedSignature(detachedSignatureBuilder.build());
                         }
                         
 
@@ -364,7 +364,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                                         docName = container.getBusinessDocument().getName();
                                     }
                                     documentBuilder.setName(docName);
-                                    message.getMessageContent().setDocument(documentBuilder.create());
+                                    message.getMessageContent().setDocument(documentBuilder.build());
                                 }
                                 
                                 LOGGER.trace("recieveContainerContents: check if MimeType.XML [{}] equals to [{}]", 
