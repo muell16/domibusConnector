@@ -28,10 +28,27 @@ public interface DomibusConnectorPersistenceService {
     void persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
     /**
-     * merges changes of a message into database
+     * Only updates 
+     * <ul>
+     *   <li>action</li>
+     *   <li>service</li>
+     *   <li>fromParty</li>
+     *   <li>toParty</li>
+     *   <li>finalRecipient</li>
+     *   <li>originalRecipient</li>
+     * </ul>
+     *  of the provided message details
+     * 
+     * also stores/updates message content
+     * <ul>
+     *  <li>all attachments</li>
+     *  <li>message content xml content</li>
+     *  <li>message message content document with signature</li>
+     * </ul>
+     *  
      * 
      * @param message - the message
-     * @throws PersistenceException  - in case of persistence errors
+     * @throws PersistenceException 
      */
     void mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
@@ -44,8 +61,19 @@ public interface DomibusConnectorPersistenceService {
      */
     void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
+    /**
+     * finds the message by the national id
+     * the nationalId is not set if the message was received from the gw
+     * @param nationalMessageId
+     * @return 
+     */
     DomibusConnectorMessage findMessageByNationalId(String nationalMessageId);
 
+    /**
+     * TODO!
+     * @param ebmsMessageId
+     * @return 
+     */
     DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId);
 
     /**
@@ -89,8 +117,17 @@ public interface DomibusConnectorPersistenceService {
      */
     void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
 
+    /**
+     * all messages which are going to the GW
+     * @return the list of unconfirmed messages
+     */
     List<DomibusConnectorMessage> findOutgoingUnconfirmedMessages();
 
+    
+    /**
+     * all messages which are going to the national system
+     * @return the list of unconfirmed messages
+     */
     List<DomibusConnectorMessage> findIncomingUnconfirmedMessages();
     
     /**
@@ -141,11 +178,26 @@ public interface DomibusConnectorPersistenceService {
     DomibusConnectorParty getPartyByPartyId(String partyId);
 
 
-
+    /**
+     * persists an error to the message
+     * @param messageError 
+     */
     void persistMessageError(DomibusConnectorMessageError messageError);
 
-    @Nonnull List<DomibusConnectorMessageError> getMessageErrors(@Nonnull DomibusConnectorMessage message) throws Exception;
+    /**
+     * finds all errors related to the message
+     * @param message the message 
+     * @return the error list
+     * @throws PersistenceException if there are errors accessing or reading from persistence layer
+     */
+    @Nonnull List<DomibusConnectorMessageError> getMessageErrors(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
+    /**
+     * creates a MessageError from an exception and persists this message error
+     * @param message - the message the exception is related to
+     * @param ex - the exception
+     * @param source - class/service where the exception occured
+     */
     void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source); 
 
     /**

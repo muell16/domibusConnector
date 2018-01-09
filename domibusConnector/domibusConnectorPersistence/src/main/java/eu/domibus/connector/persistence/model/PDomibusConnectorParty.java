@@ -7,9 +7,9 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(DomibusConnectorPartyPK.class)
+@IdClass(PDomibusConnectorPartyPK.class)
 @Table(name = "DOMIBUS_CONNECTOR_PARTY")
-public class DomibusConnectorParty {
+public class PDomibusConnectorParty {
 
     @Id
     @Column(name = "PARTY_ID")

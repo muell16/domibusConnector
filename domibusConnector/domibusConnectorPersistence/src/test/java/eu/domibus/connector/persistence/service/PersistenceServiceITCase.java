@@ -16,7 +16,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.test.util.DomainCreator;
-import eu.domibus.connector.persistence.dao.PDomibusConnectorRepositories;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceContext;
 import java.sql.SQLException;
@@ -44,6 +43,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
 
 /**
  * Integration Test for testing persistence service

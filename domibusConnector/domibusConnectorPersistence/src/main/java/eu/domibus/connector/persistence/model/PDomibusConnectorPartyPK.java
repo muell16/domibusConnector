@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 
-public class DomibusConnectorPartyPK implements Serializable {
+public class PDomibusConnectorPartyPK implements Serializable {
 
     /**
      * 
@@ -16,10 +16,10 @@ public class DomibusConnectorPartyPK implements Serializable {
     @Column(name = "ROLE")
     private String role;
 
-    public DomibusConnectorPartyPK() {
+    public PDomibusConnectorPartyPK() {
     }
 
-    public DomibusConnectorPartyPK(String partyId, String role) {
+    public PDomibusConnectorPartyPK(String partyId, String role) {
         super();
         this.partyId = partyId;
         this.role = role;
@@ -58,7 +58,7 @@ public class DomibusConnectorPartyPK implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DomibusConnectorPartyPK other = (DomibusConnectorPartyPK) obj;
+        PDomibusConnectorPartyPK other = (PDomibusConnectorPartyPK) obj;
         if (partyId == null) {
             if (other.partyId != null)
                 return false;

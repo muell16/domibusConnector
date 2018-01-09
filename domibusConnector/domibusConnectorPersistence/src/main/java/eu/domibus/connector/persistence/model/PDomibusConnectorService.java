@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_SERVICE")
-public class DomibusConnectorService {
+public class PDomibusConnectorService {
 
     @Id
     @Column(name = "SERVICE")

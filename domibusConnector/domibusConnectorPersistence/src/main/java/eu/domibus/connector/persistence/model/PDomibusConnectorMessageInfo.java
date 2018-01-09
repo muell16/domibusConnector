@@ -18,7 +18,7 @@ import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE_INFO")
-public class DomibusConnectorMessageInfo {
+public class PDomibusConnectorMessageInfo {
 
     @Id
     @TableGenerator(name = "seqStoreMsgInfo", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE_INFO.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
@@ -27,20 +27,20 @@ public class DomibusConnectorMessageInfo {
 
     @OneToOne
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
-    private DomibusConnectorMessage message;
+    private PDomibusConnectorMessage message;
 
     @ManyToOne
     @JoinColumns(value = { 
         @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
         @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) 
     })
-    private DomibusConnectorParty from;
+    private PDomibusConnectorParty from;
 
     @ManyToOne
     @JoinColumns(value = { 
         @JoinColumn(name = "TO_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
         @JoinColumn(name = "TO_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) })
-    private DomibusConnectorParty to;
+    private PDomibusConnectorParty to;
 
     @Column(name = "ORIGINAL_SENDER")
     private String originalSender;
@@ -50,11 +50,11 @@ public class DomibusConnectorMessageInfo {
 
     @ManyToOne
     @JoinColumn(name = "SERVICE")
-    private DomibusConnectorService service;
+    private PDomibusConnectorService service;
 
     @ManyToOne
     @JoinColumn(name = "ACTION")
-    private DomibusConnectorAction action;
+    private PDomibusConnectorAction action;
 
     @Column(name = "CREATED", nullable = false)
     private Date created;
@@ -81,27 +81,27 @@ public class DomibusConnectorMessageInfo {
         this.id = id;
     }
 
-    public DomibusConnectorMessage getMessage() {
+    public PDomibusConnectorMessage getMessage() {
         return message;
     }
 
-    public void setMessage(DomibusConnectorMessage message) {
+    public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
     }
 
-    public DomibusConnectorParty getFrom() {
+    public PDomibusConnectorParty getFrom() {
         return from;
     }
 
-    public void setFrom(DomibusConnectorParty from) {
+    public void setFrom(PDomibusConnectorParty from) {
         this.from = from;
     }
 
-    public DomibusConnectorParty getTo() {
+    public PDomibusConnectorParty getTo() {
         return to;
     }
 
-    public void setTo(DomibusConnectorParty to) {
+    public void setTo(PDomibusConnectorParty to) {
         this.to = to;
     }
 
@@ -121,19 +121,19 @@ public class DomibusConnectorMessageInfo {
         this.finalRecipient = finalRecipient;
     }
 
-    public DomibusConnectorService getService() {
+    public PDomibusConnectorService getService() {
         return service;
     }
 
-    public void setService(DomibusConnectorService service) {
+    public void setService(PDomibusConnectorService service) {
         this.service = service;
     }
 
-    public DomibusConnectorAction getAction() {
+    public PDomibusConnectorAction getAction() {
         return action;
     }
 
-    public void setAction(DomibusConnectorAction action) {
+    public void setAction(PDomibusConnectorAction action) {
         this.action = action;
     }
 

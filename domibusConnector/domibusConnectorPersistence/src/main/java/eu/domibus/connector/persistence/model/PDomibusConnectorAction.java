@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_ACTION")
-public class DomibusConnectorAction implements Serializable {
+public class PDomibusConnectorAction implements Serializable {
 
     @Id
     @Column(name = "ACTION")

@@ -40,9 +40,9 @@ public class PersistenceModelTest {
         
         //test if i get a EntityManager and can execute a query...
         EntityManager bean = appContext.getBean(EntityManager.class);
-        DomibusConnectorService service = bean.find(DomibusConnectorService.class, "service");
+        PDomibusConnectorService service = bean.find(PDomibusConnectorService.class, "service");
         
-        DomibusConnectorParty party = bean.find(DomibusConnectorParty.class, new DomibusConnectorPartyPK("AT", "GW"));
+        PDomibusConnectorParty party = bean.find(PDomibusConnectorParty.class, new PDomibusConnectorPartyPK("AT", "GW"));
                 
     }
 

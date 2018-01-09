@@ -12,11 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import liquibase.Contexts;
 import liquibase.Liquibase;
@@ -237,5 +233,5 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         checkInital003DB("db_mysql", p);  
     }
     
-    
+    //TODO: oracle tests
 }

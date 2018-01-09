@@ -6,8 +6,8 @@
 
 package eu.domibus.connector.persistence.dao;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
-import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
 import java.io.FileInputStream;
 import java.sql.SQLException;
@@ -38,6 +38,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     private DomibusConnectorEvidenceDao evidenceDao;
     
     private TransactionTemplate transactionTemplate;
+    
     private DomibusConnectorMessageDao messageDao;
 
     
@@ -61,7 +62,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     @Test
     public void testFindEvidencesForMessage() {
         
-        List<DomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(73L);
+        List<PDomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(73L);
         
         assertThat(evidences).hasSize(3);
     }
@@ -111,9 +112,9 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     
     @Test
     public void testSaveEvidence() {
-        DomibusConnectorEvidence dbEvidence = new DomibusConnectorEvidence();
+        PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
         
-        DomibusConnectorMessage dbMessage = messageDao.findOne(75L);  
+        PDomibusConnectorMessage dbMessage = messageDao.findOne(75L);  
         assertThat(dbMessage).isNotNull();
         
         byte[] evidence = "Hallo Welt".getBytes();

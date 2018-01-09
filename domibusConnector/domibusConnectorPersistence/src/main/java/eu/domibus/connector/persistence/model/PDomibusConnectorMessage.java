@@ -22,17 +22,16 @@ import javax.persistence.TemporalType;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import java.io.Serializable;
 import javax.annotation.Nullable;
-import javax.persistence.JoinColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
-public class DomibusConnectorMessage implements Serializable {
+public class PDomibusConnectorMessage implements Serializable {
 
     @Id
-    @TableGenerator(name = "seqStoreMessages", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMessages")
+    @TableGenerator(name = "seqStoreMessage", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMessage")
     private Long id;
 
     @Column(name = "EBMS_MESSAGE_ID", unique = true, length = 255)
@@ -41,6 +40,9 @@ public class DomibusConnectorMessage implements Serializable {
     @Column(name = "BACKEND_MESSAGE_ID", unique = true, length = 255)
     private String backendMessageId;
 
+    @Column(name = "CONNECTOR_MESSAGE_ID", unique = true, nullable = false, length = 255)
+    private String connectorMessageId;
+    
     @Column(name = "CONVERSATION_ID", length = 255)
     private String conversationId;
 
@@ -72,14 +74,11 @@ public class DomibusConnectorMessage implements Serializable {
     private Date updated;
 
     @OneToOne(mappedBy = "message", fetch = FetchType.EAGER)
-    private DomibusConnectorMessageInfo messageInfo;
+    private PDomibusConnectorMessageInfo messageInfo;
 
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
-    private Set<DomibusConnectorEvidence> evidences;
+    private Set<PDomibusConnectorEvidence> evidences;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = true, mappedBy = "message")    
-    private PersistedMessageContent messageContent;
-    
     @PrePersist    
     public void prePersist() {
         this.updated = new Date();
@@ -178,28 +177,28 @@ public class DomibusConnectorMessage implements Serializable {
         this.updated = updated;
     }
 
-    public DomibusConnectorMessageInfo getMessageInfo() {
+    public PDomibusConnectorMessageInfo getMessageInfo() {
         return messageInfo;
     }
 
-    public void setMessageInfo(DomibusConnectorMessageInfo messageInfo) {
+    public void setMessageInfo(PDomibusConnectorMessageInfo messageInfo) {
         this.messageInfo = messageInfo;
     }
 
-    public @Nullable Set<DomibusConnectorEvidence> getEvidences() {
+    public @Nullable Set<PDomibusConnectorEvidence> getEvidences() {
         return evidences;
     }
 
-    public void setEvidences(Set<DomibusConnectorEvidence> evidences) {
+    public void setEvidences(Set<PDomibusConnectorEvidence> evidences) {
         this.evidences = evidences;
     }
 
-    public @Nullable PersistedMessageContent getMessageContent() {
-        return messageContent;
+    public String getConnectorMessageId() {
+        return connectorMessageId;
     }
 
-    public void setMessageContent(@Nullable PersistedMessageContent messageContent) {
-        this.messageContent = messageContent;
+    public void setConnectorMessageId(String connectorMessageId) {
+        this.connectorMessageId = connectorMessageId;
     }
 
     

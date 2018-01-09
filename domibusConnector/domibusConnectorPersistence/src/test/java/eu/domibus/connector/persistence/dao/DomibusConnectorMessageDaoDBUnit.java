@@ -6,7 +6,7 @@
 
 package eu.domibus.connector.persistence.dao;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
 import java.io.FileInputStream;
@@ -52,27 +52,27 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     
     @Test
     public void testFindOneMessage() {
-        DomibusConnectorMessage msg = messageDao.findOne(73L);
+        PDomibusConnectorMessage msg = messageDao.findOne(73L);
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");        
     }
     
     @Test
     public void testFindOneMessage_doesNotExist_shouldRetNull() {
-        DomibusConnectorMessage msg = messageDao.findOne(7231254123L);
+        PDomibusConnectorMessage msg = messageDao.findOne(7231254123L);
         assertThat(msg).isNull();        
     }
     
     @Test
     public void testFindOneByEbmsMessageId() {
-        DomibusConnectorMessage msg = messageDao.findOneByEbmsMessageId("c1039627-2db3-489c-af18-92b54e630b36@domibus.eu");
+        PDomibusConnectorMessage msg = messageDao.findOneByEbmsMessageId("c1039627-2db3-489c-af18-92b54e630b36@domibus.eu");
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");       
     }
     
     @Test
     public void testFindByConversationId() {
-        List<DomibusConnectorMessage> msgs = messageDao.findByConversationId("aa062b42-2d35-440a-9cb6-c6e95a8679a8@domibus.eu");
+        List<PDomibusConnectorMessage> msgs = messageDao.findByConversationId("aa062b42-2d35-440a-9cb6-c6e95a8679a8@domibus.eu");
         assertThat(msgs).hasSize(1);
         //assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");       
     }
@@ -80,26 +80,26 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     
     @Test
     public void testFindOutgoingUnconfirmedMessages() {
-        List<DomibusConnectorMessage> msgs = messageDao.findOutgoingUnconfirmedMessages();
+        List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingUnconfirmedMessages();
         assertThat(msgs).hasSize(2);
     }
     
     
     @Test
     public void testFindOutgoingMessagesNotRejectedAndWithoutDelivery() {
-        List<DomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
+        List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
         assertThat(msgs).hasSize(1);
     }
     
     @Test
     public void testFindOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD() {
-        List<DomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+        List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         assertThat(msgs).hasSize(1);
     }
     
     @Test
     public void testFindIncomingUnconfirmedMessages() {
-        List<DomibusConnectorMessage> msgs = messageDao.findIncomingUnconfirmedMessages();
+        List<PDomibusConnectorMessage> msgs = messageDao.findIncomingUnconfirmedMessages();
         assertThat(msgs).hasSize(1);
     }
     
@@ -179,7 +179,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     
     @Test
     public void testSave() {
-        DomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
+        PDomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
         message.setEbmsMessageId("ebms2");        
         message.setId(null);
         

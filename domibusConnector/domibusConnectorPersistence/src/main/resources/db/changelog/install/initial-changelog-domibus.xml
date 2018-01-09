@@ -79,6 +79,8 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
             <column name="CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="CONTENT" type="BLOB" />
+            <column name="CHECKSUM" type="${text.type}" />
+            <column name="CREATED" type="TIMESTAMP" />
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
         
@@ -89,6 +91,7 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
             </column>
+            <column name="CONNECTOR_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="FROM_PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="FROM_PARTY_ROLE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="TO_PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" />
@@ -113,6 +116,7 @@
             </column>
             <column name="EBMS_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})" ></column>
             <column name="BACKEND_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
+            <column name="CONNECTOR_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
             <column name="CONVERSATION_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>      
             <column name="DIRECTION" type="${varchar.type}(10)"></column>
             <column name="HASH_VALUE" type="${text.type}"></column>
@@ -125,33 +129,7 @@
             </column>      
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
-    
-        
-        <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_CONTENT">
-            <column name="ID" type="DECIMAL(10,0)">
-                <constraints nullable="false" />
-            </column>
-            <column name="MESSAGE_ID" type="DECIMAL(10,0)">
-                <constraints nullable="false" />
-            </column>
-            <column name="XML_CONTENT" type="${text.type}" />
-            <column name="DOC_DOCUMENT_CONTENT" type="${text.type}" />
-            <column name="DOC_DOCUMENT_NAME" type="${varchar.type}(512 ${varchar.length.type})" />
-            <column name="DOC_HASH_VALUE" type="${text.type}" />
-            <column name="SIG_DETACHED_SIGNATURE" type="${text.type}" />
-            <column name="SIG_DETACHED_SIGNATURE_NAME" type="${varchar.type}(512 ${varchar.length.type})" />
-            <column name="SIG_MIME_TYPE" type="${varchar.type}(512 ${varchar.length.type})" />
-        </createTable> 
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_CONTENT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_CONTENT" /> 
-        
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_CONTENT" 
-            baseColumnNames="MESSAGE_ID" 
-            constraintName="FK_MESSAGE_MESSAGE_CONTENT" 
-            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            referencedColumnNames="ID" 
-        />
-        
+            
         <createTable tableName="DOMIBUS_CONNECTOR_EVIDENCE">
             <column name="ID" type="DECIMAL(10,0)"> 
                 <constraints nullable="false" />

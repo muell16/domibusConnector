@@ -23,7 +23,7 @@ import javax.persistence.PreUpdate;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_EVIDENCE")
-public class DomibusConnectorEvidence {
+public class PDomibusConnectorEvidence {
 
     @Id
     @TableGenerator(name = "evidencesSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_EVIDENCE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
@@ -32,7 +32,7 @@ public class DomibusConnectorEvidence {
 
     @ManyToOne
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
-    private DomibusConnectorMessage message;
+    private PDomibusConnectorMessage message;
 
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
@@ -70,11 +70,11 @@ public class DomibusConnectorEvidence {
         this.id = id;
     }
 
-    public DomibusConnectorMessage getMessage() {
+    public PDomibusConnectorMessage getMessage() {
         return message;
     }
 
-    public void setMessage(DomibusConnectorMessage message) {
+    public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
 
         if (null != this.message.getEvidences() && !this.message.getEvidences().contains(this)) {

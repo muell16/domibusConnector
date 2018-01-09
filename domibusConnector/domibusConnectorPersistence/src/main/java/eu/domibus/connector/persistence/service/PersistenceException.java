@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service;
 
-public class PersistenceException extends Exception {
+public class PersistenceException extends RuntimeException {
 
     public PersistenceException() {
         // TODO Auto-generated constructor stub

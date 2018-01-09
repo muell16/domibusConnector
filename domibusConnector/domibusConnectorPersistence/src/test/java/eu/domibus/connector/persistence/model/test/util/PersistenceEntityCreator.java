@@ -1,14 +1,13 @@
 package eu.domibus.connector.persistence.model.test.util;
 
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
-import eu.domibus.connector.persistence.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.model.DomibusConnectorMessageError;
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
-import eu.domibus.connector.persistence.model.PersistedMessageContent;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,62 +21,62 @@ public class PersistenceEntityCreator {
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static DomibusConnectorAction createAction() {
-        DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
+    public static PDomibusConnectorAction createAction() {
+        PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("action1");
         domibusConnectorAction.setDocumentRequired(true);
         return domibusConnectorAction;
     }
     
-    public static DomibusConnectorAction createRelayREMMDAcceptanceRejectionAction() {
-        DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
+    public static PDomibusConnectorAction createRelayREMMDAcceptanceRejectionAction() {
+        PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("RelayREMMDAcceptanceRejection");
         domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
-    public static DomibusConnectorAction createDeliveryNonDeliveryToRecipientAction() {
-        DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
+    public static PDomibusConnectorAction createDeliveryNonDeliveryToRecipientAction() {
+        PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("DeliveryNonDeliveryToRecipient");
         domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
-    public static DomibusConnectorAction createRetrievalNonRetrievalToRecipientAction() {        
-        DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
+    public static PDomibusConnectorAction createRetrievalNonRetrievalToRecipientAction() {        
+        PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("RetrievalNonRetrievalToRecipient");
         domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
-    public static DomibusConnectorAction createRelayREMMDFailureAction() {        
-        DomibusConnectorAction domibusConnectorAction = new DomibusConnectorAction();
+    public static PDomibusConnectorAction createRelayREMMDFailureAction() {        
+        PDomibusConnectorAction domibusConnectorAction = new PDomibusConnectorAction();
         domibusConnectorAction.setAction("RelayREMMDFailure");
         domibusConnectorAction.setDocumentRequired(false);
         return domibusConnectorAction;
     }
     
-    public static DomibusConnectorService createServiceEPO() {
-        DomibusConnectorService service = new DomibusConnectorService();
+    public static PDomibusConnectorService createServiceEPO() {
+        PDomibusConnectorService service = new PDomibusConnectorService();
         service.setService("EPO");
         service.setServiceType("urn:e-codex:services:");
         return service;
     }
     
-    public static DomibusConnectorParty createPartyAT() {
-        DomibusConnectorParty at = new DomibusConnectorParty();
+    public static PDomibusConnectorParty createPartyAT() {
+        PDomibusConnectorParty at = new PDomibusConnectorParty();
         at.setPartyId("AT");
         at.setRole("GW");
         at.setPartyIdType("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
         return at;
     }
     
-    public static DomibusConnectorPartyPK createPartyPKforPartyAT() {
-        return new DomibusConnectorPartyPK("AT", "GW");
+    public static PDomibusConnectorPartyPK createPartyPKforPartyAT() {
+        return new PDomibusConnectorPartyPK("AT", "GW");
     }
     
-    public static DomibusConnectorEvidence createDeliveryEvidence() {
-        DomibusConnectorEvidence evidence = new DomibusConnectorEvidence();
+    public static PDomibusConnectorEvidence createDeliveryEvidence() {
+        PDomibusConnectorEvidence evidence = new PDomibusConnectorEvidence();
         evidence.setMessage(createSimpleDomibusConnectorMessage());
         evidence.setType(EvidenceType.DELIVERY);
         evidence.setId(13L);
@@ -85,8 +84,8 @@ public class PersistenceEntityCreator {
     }
     
     
-    public static DomibusConnectorEvidence createNonDeliveryEvidence() {
-        DomibusConnectorEvidence evidence = new DomibusConnectorEvidence();
+    public static PDomibusConnectorEvidence createNonDeliveryEvidence() {
+        PDomibusConnectorEvidence evidence = new PDomibusConnectorEvidence();
         evidence.setMessage(createSimpleDomibusConnectorMessage());
         evidence.setType(EvidenceType.NON_DELIVERY);
         evidence.setId(14L);
@@ -101,8 +100,8 @@ public class PersistenceEntityCreator {
      * "error source" as error source
      * @return the MessageError
      */
-    public static DomibusConnectorMessageError createMessageError() {
-        DomibusConnectorMessageError error = new DomibusConnectorMessageError();
+    public static PDomibusConnectorMessageError createMessageError() {
+        PDomibusConnectorMessageError error = new PDomibusConnectorMessageError();
         error.setDetailedText("error detail message");
         error.setErrorMessage("error message");
         error.setErrorSource("error source");
@@ -111,13 +110,13 @@ public class PersistenceEntityCreator {
     }
 
     /**
-     * Creates a default DomibusConnectorMessage, for testing purposes
-     *  it is a message with message content! and NO evidences
+     * Creates a default PDomibusConnectorMessage, for testing purposes
+  it is a message with message content! and NO evidences
      * @return - the message
      */
-    public static DomibusConnectorMessage createSimpleDomibusConnectorMessage() {
+    public static PDomibusConnectorMessage createSimpleDomibusConnectorMessage() {
         try {
-            DomibusConnectorMessage msg = new DomibusConnectorMessage();
+            PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
             msg.setBackendMessageId("national1");
             msg.setEbmsMessageId("ebms1");
             msg.setConfirmed(dateFormat.parse("2017-12-23 23:45:23"));            
@@ -125,23 +124,10 @@ public class PersistenceEntityCreator {
             msg.setHashValue("hashvalue");
             msg.setId(47L);
             msg.setEvidences(new HashSet<>());
-            msg.setMessageContent(createMessageContent());
             return msg;
         } catch (ParseException ex) {
             throw new RuntimeException("should not happen!");
         }
     }
     
-    public static PersistedMessageContent createMessageContent() {
-        PersistedMessageContent p = new PersistedMessageContent();
-        p.setDetachedSignature("detachedSignature".getBytes());
-        p.setDetachedSignatureMimeType(DetachedSignatureMimeType.PKCS7.name());
-        p.setDocument("document".getBytes());
-        p.setDocumentName("documentName");
-        p.setHashValue("hashValue");
-        p.setId(90L);
-        p.setXmlContent("xmlContent".getBytes());
-        
-        return p;        
-    }
 }

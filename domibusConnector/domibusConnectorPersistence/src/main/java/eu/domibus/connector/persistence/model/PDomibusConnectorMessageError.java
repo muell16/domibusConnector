@@ -14,7 +14,7 @@ import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MSG_ERROR")
-public class DomibusConnectorMessageError {
+public class PDomibusConnectorMessageError {
 
     @Id
     @TableGenerator(name = "seqStoreMsgError", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_ERROR.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
@@ -23,7 +23,7 @@ public class DomibusConnectorMessageError {
 
     @OneToOne
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
-    private DomibusConnectorMessage message;
+    private PDomibusConnectorMessage message;
 
     /**
      * The short message of the exception
@@ -54,11 +54,11 @@ public class DomibusConnectorMessageError {
         this.id = id;
     }
 
-    public DomibusConnectorMessage getMessage() {
+    public PDomibusConnectorMessage getMessage() {
         return message;
     }
 
-    public void setMessage(DomibusConnectorMessage message) {
+    public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
     }
 
