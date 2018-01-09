@@ -105,6 +105,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!-- security, asic related dependencies -->
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>ecodex-container</artifactId>
@@ -135,8 +136,7 @@
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-utils-apache-commons</artifactId>
-<!--                <version>5.1_ALT</version>-->
-                <version>5.2</version> <!-- test version 5.2 -->
+                <version>5.1_ALT</version>
             </dependency>
             
             <!-- MANAGED Spring dependencies -->

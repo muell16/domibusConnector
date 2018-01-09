@@ -199,9 +199,7 @@ public class DomibusSecurityContainer implements InitializingBean {
             
             
             MimeType mimeType = MimeType.fromMimeTypeString(attachment.getMimeType());
-            if (mimeType == null) {
-                mimeType = MimeType.fromFileName(attachment.getName());
-            }
+            LOGGER.debug("buildBusinessContent: detected mimeType [{}] in attachment [{}]", mimeType.getMimeTypeString(), attachment);
             
             businessContent.addAttachment(new InMemoryDocument(
                     attachment.getAttachment(), 

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.domibus.connector.security.spring;
 
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
@@ -22,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *  Tests if context is loading..
+ * code is loading external ressources (eu trusted lists)
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @RunWith(SpringJUnit4ClassRunner.class)
