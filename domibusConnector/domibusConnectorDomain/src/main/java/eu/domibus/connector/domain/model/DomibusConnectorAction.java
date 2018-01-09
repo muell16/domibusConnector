@@ -1,12 +1,14 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
+
 
 /**
  * @author riederb
  * @version 1.0
  * @created 29-Dez-2017 10:05:58
  */
-public class DomibusConnectorAction {
+public class DomibusConnectorAction implements Serializable {
 
 	private final String action;
 	private final boolean documentRequired;

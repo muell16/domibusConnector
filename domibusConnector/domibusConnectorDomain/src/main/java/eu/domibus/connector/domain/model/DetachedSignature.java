@@ -1,12 +1,14 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
+
 
 /**
  * @author riederb
  * @version 1.0
  * @created 29-Dez-2017 10:05:58
  */
-public class DetachedSignature {
+public class DetachedSignature implements Serializable {
 
 	private final byte detachedSignature[];
 	private final String detachedSignatureName;

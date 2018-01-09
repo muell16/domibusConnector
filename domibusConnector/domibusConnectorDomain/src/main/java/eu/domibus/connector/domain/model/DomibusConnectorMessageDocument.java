@@ -1,5 +1,7 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
+
 
 /**
  * Holds the printable document to a message. The document itself is a byte[]. A
@@ -10,7 +12,7 @@ package eu.domibus.connector.domain.model;
  * @version 1.0
  * @updated 29-Dez-2017 10:12:49
  */
-public class DomibusConnectorMessageDocument {
+public class DomibusConnectorMessageDocument implements Serializable  {
 
 	private final byte document[];
 	private final String documentName;

@@ -1,5 +1,7 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
+
 
 /**
  * Internal part of the {@link DomibusConnectorMessage}. All message related
@@ -9,7 +11,7 @@ package eu.domibus.connector.domain.model;
  * @version 1.0
  * @updated 29-Dez-2017 10:12:49
  */
-public class DomibusConnectorMessageError {
+public class DomibusConnectorMessageError implements Serializable {
 
 	private final String text;
 	private final String details;

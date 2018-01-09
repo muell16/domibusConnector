@@ -1,5 +1,7 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
+
 
 /**
  * This object contains an attachment for a message. With every message there can
@@ -12,7 +14,7 @@ package eu.domibus.connector.domain.model;
  * @version 1.0
  * @updated 29-Dez-2017 10:12:48
  */
-public class DomibusConnectorMessageAttachment {
+public class DomibusConnectorMessageAttachment implements Serializable {
 
 	private final String identifier;
 	private final byte attachment[];

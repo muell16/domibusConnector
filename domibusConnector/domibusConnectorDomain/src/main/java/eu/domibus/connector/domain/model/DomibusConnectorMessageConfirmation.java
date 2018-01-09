@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import java.io.Serializable;
 
 /**
  * This is an object that internally represents the evidences for a message. It
@@ -12,7 +13,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
  * @version 1.0
  * @created 29-Dez-2017 10:15:46
  */
-public class DomibusConnectorMessageConfirmation {
+public class DomibusConnectorMessageConfirmation implements Serializable {
 
 	private DomibusConnectorEvidenceType evidenceType;
 	private byte evidence[];

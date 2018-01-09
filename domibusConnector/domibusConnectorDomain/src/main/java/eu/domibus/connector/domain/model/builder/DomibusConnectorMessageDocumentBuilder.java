@@ -22,7 +22,7 @@ public class DomibusConnectorMessageDocumentBuilder {
     
     private DetachedSignature detachedSignature = null;
     
-    public static DomibusConnectorMessageDocumentBuilder build() {
+    public static DomibusConnectorMessageDocumentBuilder createBuilder() {
         return new DomibusConnectorMessageDocumentBuilder();
     }
     
@@ -45,7 +45,7 @@ public class DomibusConnectorMessageDocumentBuilder {
     }
     
         
-    public DomibusConnectorMessageDocument create() {                
+    public DomibusConnectorMessageDocument build() {                
         if (documentName == null) {
             throw new IllegalArgumentException("documentName must not be null!");
         }

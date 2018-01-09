@@ -1,5 +1,7 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
+
 
 /**
  * The DomibusConnectorMessageContent holds the main content of a message. This is
@@ -9,7 +11,7 @@ package eu.domibus.connector.domain.model;
  * @version 1.0
  * @updated 29-Dez-2017 10:12:49
  */
-public class DomibusConnectorMessageContent {
+public class DomibusConnectorMessageContent implements Serializable {
 
 	private byte xmlContent[];
 	private DomibusConnectorMessageDocument document;

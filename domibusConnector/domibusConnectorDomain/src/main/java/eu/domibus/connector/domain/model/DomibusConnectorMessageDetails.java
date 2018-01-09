@@ -15,7 +15,7 @@ public class DomibusConnectorMessageDetails {
 	private String refToMessageId;
 	private String conversationId;
 	private String originalSender;
-	private String finalRecipient;
+	private String finalRecipient;    
 	private DomibusConnectorService service;
 	private DomibusConnectorAction action;
 	private DomibusConnectorParty fromParty;

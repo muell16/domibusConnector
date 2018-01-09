@@ -21,6 +21,7 @@ public class DomibusConnectorMessage {
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<DomibusConnectorMessageAttachment>();
 	private final List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
 	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
+    private String connectorMessageId;
 
 	/**
 	 * This constructor initializes an instance of a DomibusConnectorMessage in case
@@ -29,12 +30,33 @@ public class DomibusConnectorMessage {
 	 * 
 	 * @param messageDetails    The details for message routing.
 	 * @param messageContent    The content of the message.
+     * 
+     * @deprecated: use constructor with connectorMessageId
 	 */
+    @Deprecated
 	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageContent messageContent){
 	   this.messageDetails = messageDetails;
 	   this.messageContent = messageContent;
 	}
 
+    /**
+	 * This constructor initializes an instance of a DomibusConnectorMessage in case
+	 * it is not a confirmation message. At least the messageDetails and the
+	 * messageContent must be given.
+	 * 
+     * @param connectorMessageId The internal connector message process id
+	 * @param messageDetails    The details for message routing.
+	 * @param messageContent    The content of the message.
+	 */
+	public DomibusConnectorMessage(
+            final String connectorMessageId,
+            final DomibusConnectorMessageDetails messageDetails, 
+            final DomibusConnectorMessageContent messageContent){
+        this.connectorMessageId = connectorMessageId;
+        this.messageDetails = messageDetails;
+        this.messageContent = messageContent;
+	}
+    
 	/**
 	 * This constructor initializes an instance of a DomibusConnectorMessage in case
 	 * it is a confirmation message. At least the messageDetails and the
@@ -42,11 +64,33 @@ public class DomibusConnectorMessage {
 	 * 
 	 * @param messageDetails
 	 * @param messageConfirmation
+     * 
+     * @deprecated: use constructor with connectorMessageId
 	 */
+    @Deprecated
 	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageConfirmation messageConfirmation){
 	   this.messageDetails = messageDetails;
 	   addConfirmation(messageConfirmation);
 	}
+    
+    /**
+	 * This constructor initializes an instance of a DomibusConnectorMessage in case
+	 * it is a confirmation message. At least the messageDetails and the
+	 * messageConfirmation must be given.
+	 * 
+     * @param connectorMessageId internal connector message process id
+	 * @param messageDetails
+	 * @param messageConfirmation
+	 */
+    public DomibusConnectorMessage(
+            final String connectorMessageId, 
+            final DomibusConnectorMessageDetails messageDetails, 
+            final DomibusConnectorMessageConfirmation messageConfirmation) {
+        this.connectorMessageId = connectorMessageId;
+        this.messageDetails = messageDetails;
+        addConfirmation(messageConfirmation);
+    }
+            
 
 	public DomibusConnectorMessageDetails getMessageDetails(){
 		return this.messageDetails;
@@ -100,5 +144,9 @@ public class DomibusConnectorMessage {
 	public void addError(final DomibusConnectorMessageError error){
 	   	this.messageErrors.add(error);
 	}
+
+    public String getConnectorMessageId() {
+        return connectorMessageId;
+    }
 
 }

@@ -21,7 +21,7 @@ public class DetachedSignatureBuilder {
 	private String detachedSignatureName;
 	private DetachedSignatureMimeType mimeType;
     
-    public static DetachedSignatureBuilder build() {
+    public static DetachedSignatureBuilder createBuilder() {
         return new DetachedSignatureBuilder();
     }
     
@@ -64,7 +64,7 @@ public class DetachedSignatureBuilder {
      * @throws IllegalArgumentException if an argument is missing or illegal
      * @return the created DetachedSignature
      */
-    public DetachedSignature create() {
+    public DetachedSignature build() {
         if (detachedSignature == null || detachedSignature.length < 1) {
             throw new IllegalArgumentException("");
         }
