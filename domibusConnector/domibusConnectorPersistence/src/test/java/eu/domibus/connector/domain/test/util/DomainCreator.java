@@ -87,6 +87,10 @@ public class DomainCreator {
     }
     
     public static DomibusConnectorMessage createMessage() {
+        return createMessage("defaultid");
+    }
+    
+    public static DomibusConnectorMessage createMessage(String msgId) {
         DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
@@ -98,7 +102,7 @@ public class DomainCreator {
                         
         messageContent.setDocument(messageDocument);
         
-        DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
+        DomibusConnectorMessage msg = new DomibusConnectorMessage(msgId, messageDetails, messageContent);
         msg.addConfirmation(createMessageDeliveryConfirmation());
         msg.addAttachment(createSimpleMessageAttachment());
         msg.addError(createMessageError());

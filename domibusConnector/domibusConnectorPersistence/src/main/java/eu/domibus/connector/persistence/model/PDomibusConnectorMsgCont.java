@@ -30,7 +30,7 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     @Id
     @Column(name="ID", length=512)
-    @TableGenerator(name = "seqStoreMsgContent", table = "DOMIBUS_CONNECTOR_MSG_CONT", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_CONT.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
+    @TableGenerator(name = "seqStoreMsgContent", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_CONT.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgContent")
     private Long id;
 

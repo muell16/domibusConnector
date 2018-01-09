@@ -12,6 +12,8 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
@@ -115,7 +117,7 @@ public class PersistenceServiceITCase {
         //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
         
         message.getMessageDetails().setConversationId("newconversation");
-        message.getMessageDetails().setEbmsMessageId("ebms1");
+        message.getMessageDetails().setEbmsMessageId("ebms1123");
         
         //message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());       
         
@@ -143,22 +145,51 @@ public class PersistenceServiceITCase {
 //        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
 //        assertThat(conversationId).isEqualTo("newconversation");        
     }
-        
     
+    /**
+     * tests complete message, if can be stored to DB
+     * and also loaded again from DB    
+     * 
+     * test restore evidenceMessage!
+     */
     @Test
-    public void testMergeMessageWithDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
+    public void testPersistMessageIntoDatabase_testContentPersist() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
+        String ebmsId = "ebamHUGO1";
+        DomibusConnectorMessage message = DomainCreator.createMessage("superid23");
+        message.getMessageDetails().setEbmsMessageId(ebmsId);
+        message.getMessageDetails().setBackendMessageId("fklwefa");
         
+        DomibusConnectorMessageAttachment attach1 = new DomibusConnectorMessageAttachment("hallo welt".getBytes(), "idf");        
+        message.addAttachment(attach1);
         
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType.DELIVERY, "hallowelt".getBytes());
+        message.addConfirmation(confirmation);
         
-//        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-//        DomibusConnectorMessageContent messageContent = null; //new DomibusConnectorMessageContent();
-//        DomibusConnectorMessage message = new DomibusConnectorMessage(messageDetails, messageContent);                
-        //message.setDbMessageId(null); //is a new message
-        DomibusConnectorMessage message = DomainCreator.createMessage();
         
         DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GW_TO_NAT;        
         persistenceService.persistMessageIntoDatabase(message, messageDirection);
                 
+        
+        
+        //load persisted message again from db and run checks
+        DomibusConnectorMessage findMessageByEbmsId = persistenceService.findMessageByEbmsId(ebmsId);
+        
+        DomibusConnectorMessageAttachment get = findMessageByEbmsId.getMessageAttachments().get(0);
+        assertThat(get.getAttachment()).isEqualTo(attach1);
+        
+    }
+    
+    @Test
+    public void testMergeMessageWithDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
+        DomibusConnectorMessage message = DomainCreator.createMessage("superid");
+        message.getMessageDetails().setEbmsMessageId("ebamdsafae3");
+        message.getMessageDetails().setBackendMessageId("adfsöljabafklwefa");
+        
+        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GW_TO_NAT;        
+        persistenceService.persistMessageIntoDatabase(message, messageDirection);
+                
+        //TODO: make changes to message
+        
         persistenceService.mergeMessageWithDatabase(message);
 
     }
@@ -178,7 +209,7 @@ public class PersistenceServiceITCase {
 //        MessageDetails messageDetails = new MessageDetails();
 //        MessageContent messageContent = new MessageContent();
 //        Message message = new Message(messageDetails, messageContent);
-        DomibusConnectorMessage message = DomainCreator.createMessage();
+        DomibusConnectorMessage message = DomainCreator.createMessage("myid");
 
         persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW); //create message first
                 

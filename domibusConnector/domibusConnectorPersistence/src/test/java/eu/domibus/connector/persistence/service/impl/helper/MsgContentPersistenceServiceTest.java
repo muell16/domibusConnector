@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.domibus.connector.persistence.service.impl.helper;
 
 import org.junit.Test;
@@ -14,6 +9,8 @@ import static org.junit.Assert.*;
  */
 public class MsgContentPersistenceServiceTest {
     
+    //TODO: write unit tests 
+    
     public MsgContentPersistenceServiceTest() {
     }
 
@@ -21,5 +18,11 @@ public class MsgContentPersistenceServiceTest {
     public void testLoadMsgContent() {
         fail("not finished yet");
     }
+    
+    @Test
+    public void testLoadMsgContent_withDbError() {
+        fail("not finished yet!");
+    }
+    
     
 }

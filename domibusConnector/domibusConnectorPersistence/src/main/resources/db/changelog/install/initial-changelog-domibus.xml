@@ -108,7 +108,6 @@
             </column>        
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-        
             
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE">
             <column name="ID" type="DECIMAL(10,0)">
@@ -129,6 +128,7 @@
             </column>      
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="CONNECTOR_MESSAGE_ID" constraintName="UNIQE_CONNECTOR_MESSAGE_ID" />
             
         <createTable tableName="DOMIBUS_CONNECTOR_EVIDENCE">
             <column name="ID" type="DECIMAL(10,0)"> 
@@ -218,14 +218,14 @@
             onDelete="NO ACTION" 
             onUpdate="NO ACTION" />
         
-        <addForeignKeyConstraint 
+<!--        <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
             baseColumnNames="CONTENT_TYPE" 
             constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_03" 
             referencedTableName="DOMIBUS_CONNECTOR_CONT_TYPE" 
             referencedColumnNames="MESSAGE_CONTENT_TYPE" 
             onDelete="NO ACTION" 
-            onUpdate="NO ACTION"/>
+            onUpdate="NO ACTION"/>-->
         
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
