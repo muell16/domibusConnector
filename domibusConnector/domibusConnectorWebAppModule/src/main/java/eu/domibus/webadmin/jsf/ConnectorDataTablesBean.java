@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 
@@ -27,9 +27,9 @@ public class ConnectorDataTablesBean {
 	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
-	private List<DomibusConnectorAction> actionList;
-	private List<DomibusConnectorService> serviceList;
-	private List<DomibusConnectorParty> partyList;	
+	private List<PDomibusConnectorAction> actionList;
+	private List<PDomibusConnectorService> serviceList;
+	private List<PDomibusConnectorParty> partyList;	
 	private List<String> selectedParties; // = new ArrayList<>();
 	
 	private UploadedFile pmodeFile;
@@ -61,32 +61,32 @@ public class ConnectorDataTablesBean {
 		}
 	}
 
-	public List<DomibusConnectorAction> getActionList() {
+	public List<PDomibusConnectorAction> getActionList() {
 		return actionList;
 	}
 
 
-	public void setActionList(List<DomibusConnectorAction> actionList) {
+	public void setActionList(List<PDomibusConnectorAction> actionList) {
 		this.actionList = actionList;
 	}
 
 
-	public List<DomibusConnectorService> getServiceList() {
+	public List<PDomibusConnectorService> getServiceList() {
 		return serviceList;
 	}
 
 
-	public void setServiceList(List<DomibusConnectorService> serviceList) {
+	public void setServiceList(List<PDomibusConnectorService> serviceList) {
 		this.serviceList = serviceList;
 	}
 
 
-	public List<DomibusConnectorParty> getPartyList() {
+	public List<PDomibusConnectorParty> getPartyList() {
 		return partyList;
 	}
 
 
-	public void setPartyList(List<DomibusConnectorParty> partyList) {	
+	public void setPartyList(List<PDomibusConnectorParty> partyList) {	
 		this.partyList = partyList;
 	}
 

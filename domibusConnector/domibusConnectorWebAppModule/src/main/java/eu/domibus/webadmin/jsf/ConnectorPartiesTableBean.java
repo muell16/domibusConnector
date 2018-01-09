@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 @Controller
@@ -34,17 +34,17 @@ public class ConnectorPartiesTableBean {
 	/**
 	 * list of parties - retrieved from backend
 	 */
-	private List<DomibusConnectorParty> partyList;
+	private List<PDomibusConnectorParty> partyList;
 	
 	/**
 	 * list of selected parties
 	 */
-	private List<DomibusConnectorParty> selectedParties = new ArrayList<>();
+	private List<PDomibusConnectorParty> selectedParties = new ArrayList<>();
 	
 	/**
 	 * Holds the party which is being edited by the createEditDialog
 	 */
-	private DomibusConnectorParty party;
+	private PDomibusConnectorParty party;
 
 	/**
 	 * handles if a new party is created (true) or
@@ -65,7 +65,7 @@ public class ConnectorPartiesTableBean {
 	/**
 	 * holds the reference of the old party
 	 */
-	private DomibusConnectorPartyPK oldPartyPK;
+	private PDomibusConnectorPartyPK oldPartyPK;
 	
 	
 	public void init() {
@@ -87,27 +87,27 @@ public class ConnectorPartiesTableBean {
 	}
 	
 	
-	public List<DomibusConnectorParty> getPartyList() {
+	public List<PDomibusConnectorParty> getPartyList() {
 		return partyList;
 	}
 
 
-	public void setPartyList(List<DomibusConnectorParty> partyList) {	
+	public void setPartyList(List<PDomibusConnectorParty> partyList) {	
 		this.partyList = partyList;
 	}
 
 	
-	public List<DomibusConnectorParty> getSelectedParties() {
+	public List<PDomibusConnectorParty> getSelectedParties() {
 		return selectedParties;
 	}
 
 	
-	public DomibusConnectorParty getParty() {
+	public PDomibusConnectorParty getParty() {
 		return party;
 	}
 
 	
-	public void setParty(DomibusConnectorParty party) {
+	public void setParty(PDomibusConnectorParty party) {
 		this.party = party;
 	}
 
@@ -122,7 +122,7 @@ public class ConnectorPartiesTableBean {
 	}
 	
 	
-	public void setSelectedParties(List<DomibusConnectorParty> selectedParties) {
+	public void setSelectedParties(List<PDomibusConnectorParty> selectedParties) {
 		LOG.trace("#setSelectedParties: called with [{}]",  selectedParties);
 		this.selectedParties = selectedParties;
 	}
@@ -162,7 +162,7 @@ public class ConnectorPartiesTableBean {
 		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedParties);
 		//TODO: delete DB entries
 		
-		for (DomibusConnectorParty p : selectedParties) {	
+		for (PDomibusConnectorParty p : selectedParties) {	
 			try {
 				this.pModeSupport.deleteParty(p);
 			} catch (DataIntegrityViolationException e) {
@@ -194,7 +194,7 @@ public class ConnectorPartiesTableBean {
 	
 	public void createNewParty(ActionEvent actionEvent) {
 		LOG.trace("#createNewParty: called");
-		this.party = new DomibusConnectorParty();
+		this.party = new PDomibusConnectorParty();
 		this.createNewPartyMode = true;
 	}
 	
@@ -202,7 +202,7 @@ public class ConnectorPartiesTableBean {
 	public void editParty() {
 		LOG.trace("#editParty: called with party: [{}]", this.party);
 		//TODO: handle edit...
-		this.oldPartyPK = new DomibusConnectorPartyPK(party.getPartyId(), party.getRole());
+		this.oldPartyPK = new PDomibusConnectorPartyPK(party.getPartyId(), party.getRole());
 		this.createNewPartyMode = false;		
 	}
 

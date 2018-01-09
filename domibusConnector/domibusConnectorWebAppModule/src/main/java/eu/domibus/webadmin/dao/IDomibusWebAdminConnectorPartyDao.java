@@ -2,19 +2,19 @@ package eu.domibus.webadmin.dao;
 
 import java.util.List;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 
 public interface IDomibusWebAdminConnectorPartyDao {
 
-	public abstract List<DomibusConnectorParty> getPartyList();
+	public abstract List<PDomibusConnectorParty> getPartyList();
 
-	void persistNewParty(DomibusConnectorParty party);
+	void persistNewParty(PDomibusConnectorParty party);
 
-	public abstract DomibusConnectorParty findById(DomibusConnectorPartyPK oldPartyId);
+	public abstract PDomibusConnectorParty findById(PDomibusConnectorPartyPK oldPartyId);
 
-	public abstract void update(DomibusConnectorParty dbParty);
+	public abstract void update(PDomibusConnectorParty dbParty);
 	
-	public abstract void delete(DomibusConnectorParty domibusConnectorParty);
+	public abstract void delete(PDomibusConnectorParty domibusConnectorParty);
 
 }

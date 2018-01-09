@@ -2,18 +2,18 @@ package eu.domibus.webadmin.dao;
 
 import java.util.List;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
 
 public interface IDomibusWebAdminConnectorActionDao {
 
-	public abstract List<DomibusConnectorAction> getActionList();
+	public abstract List<PDomibusConnectorAction> getActionList();
 
-	void persistNewAction(DomibusConnectorAction action);
+	void persistNewAction(PDomibusConnectorAction action);
 
-	public DomibusConnectorAction findById(String action);
+	public PDomibusConnectorAction findById(String action);
 
-	public void delete(DomibusConnectorAction action);
+	public void delete(PDomibusConnectorAction action);
 
-	public void update(DomibusConnectorAction action);
+	public void update(PDomibusConnectorAction action);
 
 }

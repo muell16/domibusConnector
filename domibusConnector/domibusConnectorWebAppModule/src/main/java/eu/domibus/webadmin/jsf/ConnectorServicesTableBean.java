@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 @Controller
@@ -33,17 +33,17 @@ public class ConnectorServicesTableBean {
 	/**
 	 * list of services - retrieved from backend
 	 */
-	private List<DomibusConnectorService> serviceList;
+	private List<PDomibusConnectorService> serviceList;
 	
 	/**
 	 * list of selected services
 	 */
-	private List<DomibusConnectorService> selectedServices = new ArrayList<>();
+	private List<PDomibusConnectorService> selectedServices = new ArrayList<>();
 	
 	/**
 	 * Holds the service which is being edited by the createEditDialog
 	 */
-	private DomibusConnectorService service;
+	private PDomibusConnectorService service;
 
 	/**
 	 * handles if a new service is created (true) or
@@ -85,32 +85,32 @@ public class ConnectorServicesTableBean {
 	}
 
 
-	public List<DomibusConnectorService> getServiceList() {
+	public List<PDomibusConnectorService> getServiceList() {
 		return serviceList;
 	}
 
 
-	public void setServiceList(List<DomibusConnectorService> serviceList) {
+	public void setServiceList(List<PDomibusConnectorService> serviceList) {
 		this.serviceList = serviceList;
 	}
 
 
-	public List<DomibusConnectorService> getSelectedServices() {
+	public List<PDomibusConnectorService> getSelectedServices() {
 		return selectedServices;
 	}
 
 
-	public void setSelectedServices(List<DomibusConnectorService> selectedServices) {
+	public void setSelectedServices(List<PDomibusConnectorService> selectedServices) {
 		this.selectedServices = selectedServices;
 	}
 
 
-	public DomibusConnectorService getService() {
+	public PDomibusConnectorService getService() {
 		return service;
 	}
 
 
-	public void setService(DomibusConnectorService service) {
+	public void setService(PDomibusConnectorService service) {
 		this.service = service;
 	}
 
@@ -173,7 +173,7 @@ public class ConnectorServicesTableBean {
 	public void confirmDeleteSelectedServices(ActionEvent serviceEvent) {
 		LOG.trace("#confirmDeleteSelectedServices: delete confirmed, calling Service to delete [{}]", selectedServices);
 		
-		for (DomibusConnectorService service : selectedServices) {	
+		for (PDomibusConnectorService service : selectedServices) {	
 			//TODO: delete Service!
 			
 			try {
@@ -201,7 +201,7 @@ public class ConnectorServicesTableBean {
  
 	public void createNewService(ActionEvent serviceEvent) {
 		LOG.trace("#createNewService: called");
-		this.service = new DomibusConnectorService();
+		this.service = new PDomibusConnectorService();
 		this.createNewServiceMode = true;
 	}
 	

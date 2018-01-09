@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 
 @Repository
@@ -18,28 +18,28 @@ public class DomibusWebAdminConnectorActionDao implements IDomibusWebAdminConnec
     private EntityManager em;
 
 	@Override
-    public List<DomibusConnectorAction> getActionList() {
-    	return em.createQuery("SELECT a FROM DomibusConnectorAction a", DomibusConnectorAction.class).getResultList();	
+    public List<PDomibusConnectorAction> getActionList() {
+    	return em.createQuery("SELECT a FROM DomibusConnectorAction a", PDomibusConnectorAction.class).getResultList();	
     }
 	
 	@Override
 	@Transactional(readOnly=false, value="transactionManager")
-	public void persistNewAction(DomibusConnectorAction action){
+	public void persistNewAction(PDomibusConnectorAction action){
 		em.persist(action);
 	}
 
 	@Override
-	public DomibusConnectorAction findById(String actionKey) {
-		return em.find(DomibusConnectorAction.class, actionKey);
+	public PDomibusConnectorAction findById(String actionKey) {
+		return em.find(PDomibusConnectorAction.class, actionKey);
 	}
 
 	@Override
-	public void delete(DomibusConnectorAction action) {
+	public void delete(PDomibusConnectorAction action) {
 		em.remove(action);		
 	}
 
 	@Override
-	public void update(DomibusConnectorAction action) {
+	public void update(PDomibusConnectorAction action) {
 		em.merge(action);		
 	}
 	

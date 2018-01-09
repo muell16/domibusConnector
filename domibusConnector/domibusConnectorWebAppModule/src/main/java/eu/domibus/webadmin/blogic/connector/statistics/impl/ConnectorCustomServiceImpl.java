@@ -16,11 +16,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
-import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
-import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorCustomService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.domibus.webadmin.commons.BLConstants;
@@ -69,9 +69,9 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
 
     @PostConstruct
     public void init() {
-        List<DomibusConnectorParty> resultListParty = domibusWebAdminConnectorPartyDao.getPartyList();
-        List<DomibusConnectorService> resultListService = domibusWebAdminConnectorServiceDao.getServiceList();
-        List<DomibusConnectorAction> resultListAction = domibusWebAdminConnectorActionDao.getActionList();
+        List<PDomibusConnectorParty> resultListParty = domibusWebAdminConnectorPartyDao.getPartyList();
+        List<PDomibusConnectorService> resultListService = domibusWebAdminConnectorServiceDao.getServiceList();
+        List<PDomibusConnectorAction> resultListAction = domibusWebAdminConnectorActionDao.getActionList();
         fromPartyList = new ArrayList<String>();
         toPartyList = new ArrayList<String>();
         serviceList = new ArrayList<String>();
@@ -80,16 +80,16 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
         toPartyList.add(BLConstants.selectorAll);
         serviceList.add(BLConstants.selectorAll);
         actionList.add(BLConstants.selectorAll);
-        for (DomibusConnectorParty domibusConnectorParty : resultListParty) {
+        for (PDomibusConnectorParty domibusConnectorParty : resultListParty) {
             fromPartyList.add(domibusConnectorParty.getPartyId());
             toPartyList.add(domibusConnectorParty.getPartyId());
         }
 
-        for (DomibusConnectorService domibusConnectorService : resultListService) {
+        for (PDomibusConnectorService domibusConnectorService : resultListService) {
             serviceList.add(domibusConnectorService.getService());
         }
 
-        for (DomibusConnectorAction domibusConnectorAction : resultListAction) {
+        for (PDomibusConnectorAction domibusConnectorAction : resultListAction) {
             actionList.add(domibusConnectorAction.getAction());
         }
     }
@@ -103,12 +103,12 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
     @Override
     public String generateCustomReport() {
 
-        List<DomibusConnectorMessageInfo> resultList = domibusMessageWebAdminDao.findMessageByDate(fromDate, toDate);
+        List<PDomibusConnectorMessageInfo> resultList = domibusMessageWebAdminDao.findMessageByDate(fromDate, toDate);
 
         customResultList = new ArrayList<MessageReportDO>();
 
         // Convert to MessageReportDO and generate Evidence History
-        for (DomibusConnectorMessageInfo domibusConnectorMessageInfo : resultList) {
+        for (PDomibusConnectorMessageInfo domibusConnectorMessageInfo : resultList) {
             MessageReportDO messageReportDO = new MessageReportDO(domibusConnectorMessageInfo);
             generateEvidenceHistory(messageReportDO);
             customResultList.add(messageReportDO);
@@ -154,18 +154,18 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
      */
     private void generateEvidenceHistory(MessageReportDO messageReportDO) {
 
-        List<DomibusConnectorEvidence> evidenceList = new ArrayList<DomibusConnectorEvidence>();
+        List<PDomibusConnectorEvidence> evidenceList = new ArrayList<PDomibusConnectorEvidence>();
 
-        Set<DomibusConnectorEvidence> evidences = messageReportDO.getMessage().getEvidences();
+        Set<PDomibusConnectorEvidence> evidences = messageReportDO.getMessage().getEvidences();
 
-        for (DomibusConnectorEvidence eCodexEvidence : evidences) {
+        for (PDomibusConnectorEvidence eCodexEvidence : evidences) {
             evidenceList.add(eCodexEvidence);
         }
 
         if (!evidenceList.isEmpty()) {
-            Comparator<DomibusConnectorEvidence> comp = new Comparator<DomibusConnectorEvidence>() {
+            Comparator<PDomibusConnectorEvidence> comp = new Comparator<PDomibusConnectorEvidence>() {
                 @Override
-                public int compare(DomibusConnectorEvidence e1, DomibusConnectorEvidence e2) {
+                public int compare(PDomibusConnectorEvidence e1, PDomibusConnectorEvidence e2) {
                     return e1.getUpdated().compareTo(e2.getUpdated());
                 }
             };
@@ -173,10 +173,10 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
             Collections.sort(evidenceList, comp);
             messageReportDO.setEvidenceList(evidenceList);
             // Set Last Evidence
-            DomibusConnectorEvidence lastEvidence = evidenceList.get(evidenceList.size() - 1);
+            PDomibusConnectorEvidence lastEvidence = evidenceList.get(evidenceList.size() - 1);
             messageReportDO.setLastEvidenceType(lastEvidence.getType().toString());
             String history = "";
-            for (DomibusConnectorEvidence eCodexEvidence : evidenceList) {
+            for (PDomibusConnectorEvidence eCodexEvidence : evidenceList) {
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 history += df.format(eCodexEvidence.getUpdated()) + " - " + eCodexEvidence.getType() + "<br/>";
             }

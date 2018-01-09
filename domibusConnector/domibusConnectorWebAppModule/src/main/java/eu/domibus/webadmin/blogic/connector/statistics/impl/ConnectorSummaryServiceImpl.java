@@ -11,7 +11,7 @@ import org.primefaces.model.chart.PieChartModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
@@ -36,8 +36,8 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
     @PostConstruct
     public void init() {
         serviceList = new ArrayList<String>();
-        List<DomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
-        for (DomibusConnectorService domibusConnectorService : resultList) {
+        List<PDomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
+        for (PDomibusConnectorService domibusConnectorService : resultList) {
             serviceList.add(domibusConnectorService.getService());
         }
     }

@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorAction;
+import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 
@@ -35,17 +35,17 @@ public class ConnectorActionsTableBean {
 	/**
 	 * list of actions - retrieved from backend
 	 */
-	private List<DomibusConnectorAction> actionList;
+	private List<PDomibusConnectorAction> actionList;
 	
 	/**
 	 * list of selected actions
 	 */
-	private List<DomibusConnectorAction> selectedActions = new ArrayList<>();
+	private List<PDomibusConnectorAction> selectedActions = new ArrayList<>();
 	
 	/**
 	 * Holds the action which is being edited by the createEditDialog
 	 */
-	private DomibusConnectorAction action;
+	private PDomibusConnectorAction action;
 
 	/**
 	 * handles if a new action is created (true) or
@@ -88,32 +88,32 @@ public class ConnectorActionsTableBean {
 	}
 
 
-	public List<DomibusConnectorAction> getActionList() {
+	public List<PDomibusConnectorAction> getActionList() {
 		return actionList;
 	}
 
 
-	public void setActionList(List<DomibusConnectorAction> actionList) {
+	public void setActionList(List<PDomibusConnectorAction> actionList) {
 		this.actionList = actionList;
 	}
 
 
-	public List<DomibusConnectorAction> getSelectedActions() {
+	public List<PDomibusConnectorAction> getSelectedActions() {
 		return selectedActions;
 	}
 
 
-	public void setSelectedActions(List<DomibusConnectorAction> selectedActions) {
+	public void setSelectedActions(List<PDomibusConnectorAction> selectedActions) {
 		this.selectedActions = selectedActions;
 	}
 
 
-	public DomibusConnectorAction getAction() {
+	public PDomibusConnectorAction getAction() {
 		return action;
 	}
 
 
-	public void setAction(DomibusConnectorAction action) {
+	public void setAction(PDomibusConnectorAction action) {
 		this.action = action;
 	}
 
@@ -179,7 +179,7 @@ public class ConnectorActionsTableBean {
 		
 		//TODO: handle confirm action delete
 		
-		for (DomibusConnectorAction action : selectedActions) {	
+		for (PDomibusConnectorAction action : selectedActions) {	
 			//TODO: delete Action!
 			try {
 				this.pModeSupport.deleteAction(action);
@@ -204,7 +204,7 @@ public class ConnectorActionsTableBean {
  
 	public void createNewAction(ActionEvent actionEvent) {
 		LOG.trace("#createNewAction: called");
-		this.action = new DomibusConnectorAction();
+		this.action = new PDomibusConnectorAction();
 		this.createNewActionMode = true;
 	}
 	

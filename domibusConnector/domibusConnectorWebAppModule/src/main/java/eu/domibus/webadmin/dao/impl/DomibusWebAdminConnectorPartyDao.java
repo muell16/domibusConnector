@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorParty;
-import eu.domibus.connector.persistence.model.DomibusConnectorPartyPK;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
+import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 
 @Repository
@@ -23,30 +23,30 @@ public class DomibusWebAdminConnectorPartyDao implements IDomibusWebAdminConnect
     
     
 	@Override
-    public List<DomibusConnectorParty> getPartyList() {
-        return em.createQuery("SELECT p FROM DomibusConnectorParty p", DomibusConnectorParty.class).getResultList();	
+    public List<PDomibusConnectorParty> getPartyList() {
+        return em.createQuery("SELECT p FROM DomibusConnectorParty p", PDomibusConnectorParty.class).getResultList();	
     }
 
 	@Override
-	public void persistNewParty(DomibusConnectorParty party){
+	public void persistNewParty(PDomibusConnectorParty party){
 		LOG.trace("#persistNewParty: [{}]", party);
 		em.persist(party);
 	}
 
 	@Override
-	public DomibusConnectorParty findById(DomibusConnectorPartyPK partyId) {
+	public PDomibusConnectorParty findById(PDomibusConnectorPartyPK partyId) {
 		LOG.trace("#findById: [{}]", partyId);
-		return em.find(DomibusConnectorParty.class, partyId);
+		return em.find(PDomibusConnectorParty.class, partyId);
 	}
 
 	@Override
-	public void update(DomibusConnectorParty dbParty) {
+	public void update(PDomibusConnectorParty dbParty) {
 		LOG.trace("#update: called with Party: [{}]", dbParty);
 		em.merge(dbParty);
 	}
 
 	@Override
-	public void delete(DomibusConnectorParty domibusConnectorParty) {
+	public void delete(PDomibusConnectorParty domibusConnectorParty) {
 		LOG.trace("#delete: called with party [{}]", domibusConnectorParty);
 		LOG.trace("#delete: party ID [{}] with role [{}]", domibusConnectorParty.getPartyId(), domibusConnectorParty.getRole());
 		em.remove(domibusConnectorParty);	

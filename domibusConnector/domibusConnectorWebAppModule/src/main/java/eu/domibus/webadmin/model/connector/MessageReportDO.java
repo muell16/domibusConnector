@@ -3,10 +3,10 @@ package eu.domibus.webadmin.model.connector;
 import java.io.Serializable;
 import java.util.List;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorEvidence;
-import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 
-public class MessageReportDO extends DomibusConnectorMessageInfo implements Serializable {
+public class MessageReportDO extends PDomibusConnectorMessageInfo implements Serializable {
 
     private static final long serialVersionUID = -5053455211577710753L;
 
@@ -14,7 +14,7 @@ public class MessageReportDO extends DomibusConnectorMessageInfo implements Seri
         super();
     }
 
-    public MessageReportDO(DomibusConnectorMessageInfo eCodexMessageInfo) {
+    public MessageReportDO(PDomibusConnectorMessageInfo eCodexMessageInfo) {
         this.setAction(eCodexMessageInfo.getAction());
         this.setCreated(eCodexMessageInfo.getCreated());
         this.setFinalRecipient(eCodexMessageInfo.getFinalRecipient());
@@ -31,7 +31,7 @@ public class MessageReportDO extends DomibusConnectorMessageInfo implements Seri
 
     private String evidenceHistory;
 
-    private List<DomibusConnectorEvidence> evidenceList;
+    private List<PDomibusConnectorEvidence> evidenceList;
 
     public String getEvidenceHistory() {
         return evidenceHistory;
@@ -41,11 +41,11 @@ public class MessageReportDO extends DomibusConnectorMessageInfo implements Seri
         this.evidenceHistory = evidenceHistory;
     }
 
-    public List<DomibusConnectorEvidence> getEvidenceList() {
+    public List<PDomibusConnectorEvidence> getEvidenceList() {
         return evidenceList;
     }
 
-    public void setEvidenceList(List<DomibusConnectorEvidence> evidenceList) {
+    public void setEvidenceList(List<PDomibusConnectorEvidence> evidenceList) {
         this.evidenceList = evidenceList;
     }
 

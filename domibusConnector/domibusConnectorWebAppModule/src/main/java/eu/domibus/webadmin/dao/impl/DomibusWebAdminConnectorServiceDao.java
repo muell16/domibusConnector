@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 
 @Repository
@@ -18,30 +18,30 @@ public class DomibusWebAdminConnectorServiceDao implements IDomibusWebAdminConne
     private EntityManager em;
 
 	@Override
-    public List<DomibusConnectorService> getServiceList() {
-        return em.createQuery("SELECT s FROM DomibusConnectorService s", DomibusConnectorService.class).getResultList();	
+    public List<PDomibusConnectorService> getServiceList() {
+        return em.createQuery("SELECT s FROM DomibusConnectorService s", PDomibusConnectorService.class).getResultList();	
     }
 	
 	@Override
 	@Transactional(readOnly=false, value="transactionManager")
-	public void persistNewService(DomibusConnectorService service){
+	public void persistNewService(PDomibusConnectorService service){
 		em.persist(service);
 	}
 
 	@Override
-	public void update(DomibusConnectorService service) {
+	public void update(PDomibusConnectorService service) {
 		em.merge(service);
 		
 	}
 
 	@Override	
 	@Transactional(readOnly=true, value="transactionManager")
-	public DomibusConnectorService findById(String service) {
-		return em.find(DomibusConnectorService.class, service);
+	public PDomibusConnectorService findById(String service) {
+		return em.find(PDomibusConnectorService.class, service);
 	}
 
 	@Override
-	public void delete(DomibusConnectorService service) {
+	public void delete(PDomibusConnectorService service) {
 		em.remove(service);
 	}
 }

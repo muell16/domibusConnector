@@ -15,8 +15,8 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
-import eu.domibus.connector.persistence.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 
@@ -53,7 +53,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     public HashMap<String, Long> countService(String service) {
         HashMap<String, Long> serviceMap = new HashMap<String, Long>();
         Query query = em.createQuery("select count(*) from DomibusConnectorMessageInfo m where m.service=:service");
-        DomibusConnectorService eCodexService = new DomibusConnectorService();
+        PDomibusConnectorService eCodexService = new PDomibusConnectorService();
         eCodexService.setService(service);
         query.setParameter("service", eCodexService);
         serviceMap.put(service, (Long) query.getSingleResult());
@@ -72,7 +72,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<DomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate) {
+    public List<PDomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate) {
         Query q;
         if(toDate != null){
         	toDate = convertToDate(toDate);

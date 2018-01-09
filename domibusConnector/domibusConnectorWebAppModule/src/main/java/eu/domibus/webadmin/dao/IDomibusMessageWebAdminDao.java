@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import eu.domibus.connector.persistence.model.DomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 
 public interface IDomibusMessageWebAdminDao {
 
@@ -14,7 +14,7 @@ public interface IDomibusMessageWebAdminDao {
 
     public HashMap<String, Long> countService(String service);
 
-    public List<DomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate);
+    public List<PDomibusConnectorMessageInfo> findMessageByDate(Date fromDate, Date toDate);
     
     public HashMap<String, Long> countUndefinedService();
 
