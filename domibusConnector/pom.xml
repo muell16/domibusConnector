@@ -7,12 +7,12 @@
 	<packaging>pom</packaging>
 	<modules>
 <!--		<module>domibusConnectorGatewayWebserviceClient</module>-->
-		<module>domibusConnectorContentMapper</module>
+<!--		<module>domibusConnectorContentMapper</module>-->
 <!--		<module>domibusConnectorNationalBackendClient</module>-->
 		<module>domibusConnectorEvidencesToolkit</module>
 		<module>domibusConnectorSecurityToolkit</module>
 		<module>domibusConnectorController</module>
-		<module>domibusConnectorCommon</module>
+<!--		<module>domibusConnectorCommon</module>-->
 		<module>domibusConnectorDistribution</module>
 		<module>domibusConnectorMonitoring</module>
 <!--		<module>domibusConnectorConfigurator</module>-->

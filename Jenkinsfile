@@ -72,7 +72,7 @@ node {
 					
 				try {					
 					stage ('Integration Test') {
-						sh 'mvn -P integration-testing,dbunit-testing verify'
+						sh 'mvn -Dmaven.test.failure.ignore=true -P integration-testing,dbunit-testing verify'
 					}
 				} catch (e) {
 						currentBuild.result = 'UNSTABLE'
