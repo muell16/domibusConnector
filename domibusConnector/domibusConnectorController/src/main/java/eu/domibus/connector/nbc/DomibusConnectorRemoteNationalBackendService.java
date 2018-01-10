@@ -19,9 +19,12 @@ import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientE
 public interface DomibusConnectorRemoteNationalBackendService {
 
     /**
-     * This method delivers a message received by the gateway. The message
-     * content is already transformed into a national format, if there is a
-     * content mapper configured and implemented.
+     * This method delivers a message received by the gateway. 
+     * 
+     * // NO THE MESSAGE IS NOT TRANSFORMED ANYMORE!
+     * //The message
+     * //content is already transformed into a national format, if there is a
+     * //content mapper configured and implemented.
      * 
      * @param message
      *            A {@link Message} object with all data concerning the message.

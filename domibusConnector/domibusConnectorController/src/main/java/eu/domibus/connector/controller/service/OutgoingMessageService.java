@@ -95,13 +95,13 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             LOGGER.error("Exception occured", ex);
         }
 
-        try {
-            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
-        } catch (DomibusConnectorNationalBackendClientException | ImplementationMissingException e) {
-            throw new DomibusConnectorMessageException(message,
-                    "Could not send submission acceptance back to national connector! ", e, this.getClass());
-        }
+//        try {
+//            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
+//            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);
+//        } catch (DomibusConnectorNationalBackendClientException | ImplementationMissingException e) {
+//            throw new DomibusConnectorMessageException(message,
+//                    "Could not send submission acceptance back to national connector! ", e, this.getClass());
+//        }
 
         try {
             persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
@@ -139,21 +139,21 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             return;
         }
 
-        try {
-            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);            
-            persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
-
-            persistenceService.rejectMessage(message);
-        } catch (DomibusConnectorNationalBackendClientException | ImplementationMissingException e) {
-            new DomibusConnectorMessageException(message, "Exception while trying to send submission rejection. ", e,
-                    this.getClass());
-            LOGGER.error("Exception while trying to send submission rejection. ", e);
-            return;
-        } catch (PersistenceException persistenceException) {
-            //TODO: exception
-            LOGGER.error("Persistence exceptoin occured while trying to send submission rejection. Rejection is not stored in Storage!", persistenceException);
-        }
+//        try {
+//            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
+//            nationalBackendClient.deliverLastEvidenceForMessage(returnMessage);            
+//            persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+//
+//            persistenceService.rejectMessage(message);
+//        } catch (DomibusConnectorNationalBackendClientException | ImplementationMissingException e) {
+//            new DomibusConnectorMessageException(message, "Exception while trying to send submission rejection. ", e,
+//                    this.getClass());
+//            LOGGER.error("Exception while trying to send submission rejection. ", e);
+//            return;
+//        } catch (PersistenceException persistenceException) {
+//            //TODO: exception
+//            LOGGER.error("Persistence exceptoin occured while trying to send submission rejection. Rejection is not stored in Storage!", persistenceException);
+//        }
 
     }
 

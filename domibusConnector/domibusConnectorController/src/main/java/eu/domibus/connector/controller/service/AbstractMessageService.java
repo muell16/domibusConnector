@@ -8,29 +8,35 @@ import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.domibus.connector.mapping.DomibusConnectorContentMapper;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractMessageService {
 
     CommonConnectorProperties connectorProperties;
-    DomibusConnectorContentMapper contentMapper;
-    DomibusConnectorRemoteNationalBackendService nationalBackendClient;
+//    DomibusConnectorContentMapper contentMapper;
+//    DomibusConnectorRemoteNationalBackendService nationalBackendClient;
 //    DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
+  
+    @Autowired
     DomibusConnectorEvidencesToolkit evidencesToolkit;
+    @Autowired
     DomibusConnectorSecurityToolkit securityToolkit;
+    @Autowired
     HashValueBuilder hashValueBuilder;
+    @Autowired
     DomibusConnectorPersistenceService persistenceService;
 
     public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
-    public void setContentMapper(DomibusConnectorContentMapper contentMapper) {
-        this.contentMapper = contentMapper;
-    }
-
-    public void setNationalBackendClient(DomibusConnectorRemoteNationalBackendService nationalBackendClient) {
-        this.nationalBackendClient = nationalBackendClient;
-    }
+//    public void setContentMapper(DomibusConnectorContentMapper contentMapper) {
+//        this.contentMapper = contentMapper;
+//    }
+//
+//    public void setNationalBackendClient(DomibusConnectorRemoteNationalBackendService nationalBackendClient) {
+//        this.nationalBackendClient = nationalBackendClient;
+//    }
 
 //    public void setGatewayWebserviceClient(DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient) {
 //        this.gatewayWebserviceClient = gatewayWebserviceClient;

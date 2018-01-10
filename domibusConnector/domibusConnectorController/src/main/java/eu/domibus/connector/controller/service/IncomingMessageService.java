@@ -79,16 +79,16 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 			createDeliveryEvidenceAndSendIt(message);
 			LOGGER.info("Connector to Connector Test message is confirmed!");
 		}else{
-			try {
-				nationalBackendClient.deliverMessage(message);
-			} catch (DomibusConnectorNationalBackendClientException e) {
-				createNonDeliveryEvidenceAndSendIt(message);
-				throw new DomibusConnectorMessageException(message, "Error delivering message to national backend client!",
-						e, this.getClass());
-			} catch (ImplementationMissingException e) {
-				createNonDeliveryEvidenceAndSendIt(message);
-				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
-			}
+//			try {
+//				nationalBackendClient.deliverMessage(message);
+//			} catch (DomibusConnectorNationalBackendClientException e) {
+//				createNonDeliveryEvidenceAndSendIt(message);
+//				throw new DomibusConnectorMessageException(message, "Error delivering message to national backend client!",
+//						e, this.getClass());
+//			} catch (ImplementationMissingException e) {
+//				createNonDeliveryEvidenceAndSendIt(message);
+//				throw new DomibusConnectorMessageException(message, e.getMessage(), e, this.getClass());
+//			}
 		}
 
 		persistenceService.setMessageDeliveredToNationalSystem(message);
