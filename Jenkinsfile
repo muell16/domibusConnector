@@ -60,20 +60,22 @@ node {
 					//sh 'mvn -DskipTests package'
 				}
 				
-				stage ('Test') {
-					try {
+
+				try {
+					stage ('Test') {
 						sh 'mvn test'
-					} catch (e) {
-						currentBuild.result = 'UNSTABLE'
 					}
+				} catch (e) {
+					currentBuild.result = 'UNSTABLE'
 				}
-												
-				stage ('Integration Test') {
-					try {
+				
+					
+				try {					
+					stage ('Integration Test') {
 						sh 'mvn -P integration-testing,dbunit-testing verify'
-					} catch (e) {
-						currentBuild.result = 'UNSTABLE'
 					}
+				} catch (e) {
+						currentBuild.result = 'UNSTABLE'
 				}
 				
 				stage ('Post') {
