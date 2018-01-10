@@ -172,11 +172,21 @@ public class PersistenceServiceITCase {
         
         
         //load persisted message again from db and run checks
-        DomibusConnectorMessage findMessageByEbmsId = persistenceService.findMessageByEbmsId(ebmsId);
+        DomibusConnectorMessage messageToCheck = persistenceService.findMessageByEbmsId(ebmsId);
         
-        DomibusConnectorMessageAttachment get = findMessageByEbmsId.getMessageAttachments().get(0);
-        assertThat(get.getAttachment()).isEqualTo(attach1);
+        assertThat(messageToCheck.getMessageContent()).isNotNull();
         
+        assertThat(messageToCheck.getMessageAttachments()).as("should contain two attachments!").hasSize(2);
+        DomibusConnectorMessageAttachment messageAttachment = messageToCheck
+                .getMessageAttachments()
+                .stream()
+                .filter(a -> "idf".equals(a.getIdentifier()))
+                .findFirst()
+                .get();
+        assertThat(messageAttachment.getAttachment())
+                .as("Attachment content [%s] should equal [%s]", messageAttachment.getAttachment(), attach1.getAttachment())
+                .containsExactly(attach1.getAttachment());
+
     }
     
     @Test

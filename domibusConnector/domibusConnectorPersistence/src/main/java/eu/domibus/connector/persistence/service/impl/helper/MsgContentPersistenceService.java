@@ -57,6 +57,24 @@ public class MsgContentPersistenceService {
     
     @Autowired
     private DomibusConnectorMessageDao msgDao;
+
+    
+    /*
+     * DAO Setter
+     */
+    
+    public void setMsgContDao(DomibusConnectorMsgContDao msgContDao) {
+        this.msgContDao = msgContDao;
+    }
+
+    public void setMsgDao(DomibusConnectorMessageDao msgDao) {
+        this.msgDao = msgDao;
+    }
+       
+    /*
+     * END DAO Setter
+     */
+    
     
     /**
      * TODO: JAVADOC!
@@ -100,19 +118,19 @@ public class MsgContentPersistenceService {
         //handle document
         List<PDomibusConnectorMsgCont> toStoreList = new ArrayList<>();
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
+        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
         if (messageContent != null) {
-            toStoreList.add(mapToMsgCont(StoreType.MESSAGE_CONTENT, messageContent));
+            toStoreList.add(mapToMsgCont(dbMessage, StoreType.MESSAGE_CONTENT, messageContent));
         }
         //handle attachments
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-            toStoreList.add(mapToMsgCont(StoreType.MESSAGE_ATTACHMENT, attachment));
+            toStoreList.add(mapToMsgCont(dbMessage, StoreType.MESSAGE_ATTACHMENT, attachment));
         }
         //handle confirmations
         for (DomibusConnectorMessageConfirmation c : message.getMessageConfirmations()) {
-            toStoreList.add(mapToMsgCont(StoreType.MESSAGE_CONFIRMATION, c));            
-        }
-        PDomibusConnectorMessage findMessageByMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-        this.msgContDao.deleteByMessage(findMessageByMessage);   //delete old contents
+            toStoreList.add(mapToMsgCont(dbMessage, StoreType.MESSAGE_CONFIRMATION, c));            
+        }        
+        this.msgContDao.deleteByMessage(dbMessage);   //delete old contents
         this.msgContDao.save(toStoreList); //save new contents
     }        
     
@@ -122,7 +140,8 @@ public class MsgContentPersistenceService {
      * 
      * 
      */
-    PDomibusConnectorMsgCont mapToMsgCont(            
+    PDomibusConnectorMsgCont mapToMsgCont(    
+            PDomibusConnectorMessage message,
             @Nonnull StoreType type, 
             @Nonnull Object object) throws PersistenceException {        
         try {
@@ -135,6 +154,7 @@ public class MsgContentPersistenceService {
             msgCont.setContentType(type.getDbString());
             msgCont.setChecksum(md5DigestAsHex);
             msgCont.setContent(toByteArray);
+            msgCont.setMessage(message);
             return msgCont;
         } catch (IOException ioe) {
             String error = String.format("storeMsgContent: A error occured during serializing [%s] object [%s] and storing it into database", type, object);

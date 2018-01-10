@@ -351,7 +351,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.verify(domibusConnectorMessageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
         
         //make sure message content is also saved to db
-        Mockito.verify(this.msgContService, Mockito.times(1)).storeMsgContent(eq(message));
+        Mockito.verify(msgContService, Mockito.times(1)).storeMsgContent(eq(message));
     }
 
     @Test
