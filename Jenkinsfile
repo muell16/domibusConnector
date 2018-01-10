@@ -65,6 +65,7 @@ node {
 						sh 'mvn test'
 					} catch (e) {
 						currentBuild.result = 'UNSTABLE'
+						result = 'FAIL'
 					}
 				}
 												
@@ -73,6 +74,7 @@ node {
 						sh 'mvn -P integration-testing,dbunit-testing verify'
 					} catch (e) {
 						currentBuild.result = 'UNSTABLE'
+						result = 'FAIL'
 					}
 				}
 				
@@ -94,7 +96,7 @@ node {
 					def scannerHome = tool 'Sonar Scanner';
 					sonarAvailable = true
 				} catch (e) {
-					//tool not found
+					//ignore tool not found 
 				}
 				if (sonarAvailable) {
 					stage('SonarQube analysis') {
