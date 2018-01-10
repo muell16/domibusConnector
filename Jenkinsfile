@@ -64,7 +64,6 @@ node {
 					try {
 						sh 'mvn test'
 					} catch (e) {
-						error('FAIL')
 						currentBuild.result = 'UNSTABLE'
 					}
 				}
