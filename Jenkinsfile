@@ -65,7 +65,7 @@ node {
 						sh 'mvn test'
 					} catch (e) {
 						currentBuild.result = 'UNSTABLE'
-						result = 'FAIL'
+						error('FAIL')
 					}
 				}
 												
@@ -74,7 +74,7 @@ node {
 						sh 'mvn -P integration-testing,dbunit-testing verify'
 					} catch (e) {
 						currentBuild.result = 'UNSTABLE'
-						result = 'FAIL'
+						error('FAIL')
 					}
 				}
 				
