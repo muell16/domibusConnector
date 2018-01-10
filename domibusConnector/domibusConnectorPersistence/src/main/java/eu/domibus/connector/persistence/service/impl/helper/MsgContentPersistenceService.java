@@ -10,7 +10,6 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont;
 import eu.domibus.connector.persistence.service.PersistenceException;
-import eu.domibus.connector.persistence.service.impl.loadstore.StoreType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,6 +27,13 @@ import org.springframework.util.DigestUtils;
 
 /**
  *
+ * Service for persisting 
+ * <ul>
+ *  <li>message content - the business pdf and xml content</li>
+ *  <li>message attachments</li>
+ *  <li>message confirmations</li>
+ * </ul>
+ * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component
@@ -53,7 +59,7 @@ public class MsgContentPersistenceService {
     private DomibusConnectorMessageDao msgDao;
     
     /**
-     * TODO!
+     * TODO: JAVADOC!
      * @param messageBuilder
      * @param dbMessage
      * @throws PersistenceException 

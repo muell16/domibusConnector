@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.persistence.service.impl.loadstore.StoreType;
+import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
