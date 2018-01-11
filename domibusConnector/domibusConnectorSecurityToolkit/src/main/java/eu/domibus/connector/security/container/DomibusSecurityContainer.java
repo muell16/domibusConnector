@@ -214,9 +214,9 @@ public class DomibusSecurityContainer implements InitializingBean {
     /**
      * Takes the messageContent (xmlDocument + document)
      * and all messageAttachments and wraps them into a asic container
-     * the generated token and the asic container
+     * the generated token xml and the asic container
      * are attached as messageAttachments again
-     * all other attachments are removed!
+     * all other attachments are removed from the message!
      * 
      * the messageContent of the message must not be null!
      * 
