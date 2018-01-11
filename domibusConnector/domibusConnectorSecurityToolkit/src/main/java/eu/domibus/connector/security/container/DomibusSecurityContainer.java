@@ -18,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-//import eu.domibus.connector.common.CommonConnectorGlobalConstants;
 
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -52,13 +51,7 @@ import javax.annotation.Nonnull;
  */
 @Component("domibusConnectorSecurityContainer")
 public class DomibusSecurityContainer implements InitializingBean {
-
-    private static final String TOKEN_XML_FILE_NAME = "Token.xml";
-
-    private static final String TOKEN_PDF_FILE_NAME = "Token.pdf";
-
-    private static final String DETACHED_SIGNATURE_DOCUMENT_NAME = "detachedSignature";
-    
+   
     public static final String MAIN_DOCUMENT_NAME = "mainDocument";
     
     public static final String ASICS_CONTAINER_IDENTIFIER = "ASIC-S";
@@ -71,6 +64,11 @@ public class DomibusSecurityContainer implements InitializingBean {
 
     public static final String CONTENT_XML_IDENTIFIER = "ContentXML";
     
+    private static final String TOKEN_XML_FILE_NAME = "Token.xml";
+
+    private static final String TOKEN_PDF_FILE_NAME = "Token.pdf";
+
+    private static final String DETACHED_SIGNATURE_DOCUMENT_NAME = "detachedSignature";
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainer.class);
     

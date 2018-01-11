@@ -152,19 +152,21 @@ public class AsicContainerCli {
                 }
                                 
                 String[] attachmentFilesPathArray = parse.getOptionValues(attachmentFilesOption.getOpt());
+                LOGGER.info("Adding following attachments: [{}]", (Object[]) attachmentFilesPathArray);
                 if (attachmentFilesPathArray != null) {
                     List<String> attachmentFilesPathList = Arrays.asList(attachmentFilesPathArray);
-                    for (String filePath : attachmentFilesPathList) {
+                    for (String filePath : attachmentFilesPathList) {                        
                         File file = getFileFromPath(filePath);
+                        LOGGER.info("adding attachment: identifier [{}] with mime type [{}]", file.getName(), MimeType.fromFile(file).getMimeTypeString());
                         businessContent.addAttachment(new InMemoryDocument(
                             readFileToByteArray(file), 
                             file.getName(),
                             MimeType.fromFile(file)
                         ));
+
                     }
                 }
-                
-                
+                                
                 ECodexContainer container = createECodexContainer(businessContent);
                 writeAsicContainer(container);
                 
