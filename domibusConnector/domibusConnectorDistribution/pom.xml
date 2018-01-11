@@ -52,11 +52,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorRunnable</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorWebAppModule</artifactId>
             <version>${project.version}</version>
