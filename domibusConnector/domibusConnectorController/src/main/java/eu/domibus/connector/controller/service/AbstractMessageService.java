@@ -11,20 +11,30 @@ import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractMessageService {
-
+//
+    @Deprecated
     CommonConnectorProperties connectorProperties;
 //    DomibusConnectorContentMapper contentMapper;
 //    DomibusConnectorRemoteNationalBackendService nationalBackendClient;
 //    DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
   
     @Autowired
-    DomibusConnectorEvidencesToolkit evidencesToolkit;
+    protected DomibusConnectorEvidencesToolkit evidencesToolkit;
+    
     @Autowired
-    DomibusConnectorSecurityToolkit securityToolkit;
+    protected DomibusConnectorSecurityToolkit securityToolkit;
+    
     @Autowired
-    HashValueBuilder hashValueBuilder;
+    protected HashValueBuilder hashValueBuilder;
+    
     @Autowired
-    DomibusConnectorPersistenceService persistenceService;
+    protected DomibusConnectorPersistenceService persistenceService;
+    
+    @Autowired
+    protected SendMessageToBackendService sendMessageToBackendService;
+    
+    @Autowired
+    protected SendMessageToGwService sendMessageToGwService;
 
     public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;

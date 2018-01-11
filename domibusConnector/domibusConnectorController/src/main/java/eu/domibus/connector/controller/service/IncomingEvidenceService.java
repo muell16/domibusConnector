@@ -16,7 +16,10 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class IncomingEvidenceService implements EvidenceService {
 
     static Logger LOGGER = LoggerFactory.getLogger(IncomingEvidenceService.class);
@@ -24,13 +27,11 @@ public class IncomingEvidenceService implements EvidenceService {
     DomibusConnectorPersistenceService persistenceService;
     DomibusConnectorRemoteNationalBackendService nationalBackendClient;
 
+    @Autowired
     public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
-    public void setNationalBackendClient(DomibusConnectorRemoteNationalBackendService nationalBackendClient) {
-        this.nationalBackendClient = nationalBackendClient;
-    }
 
     @Override
     public void handleEvidence(DomibusConnectorMessage confirmationMessage) throws DomibusConnectorControllerException,

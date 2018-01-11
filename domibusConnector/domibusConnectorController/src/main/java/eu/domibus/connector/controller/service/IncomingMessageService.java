@@ -4,9 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.domibus.connector.common.exception.ImplementationMissingException;
 import eu.domibus.connector.persistence.service.PersistenceException;
-import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -17,11 +15,11 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.mapping.exception.DomibusConnectorContentMapperException;
-import eu.domibus.connector.nbc.exception.DomibusConnectorNationalBackendClientException;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
-import java.util.logging.Level;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class IncomingMessageService extends AbstractMessageService implements MessageService {
 
 	static Logger LOGGER = LoggerFactory.getLogger(IncomingMessageService.class);
@@ -34,7 +32,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 			persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
 		} catch (PersistenceException e1) {
 			createRelayREMMDEvidenceAndSendIt(message, false);
-			LOGGER.error("Message could not be persisted!", e1);
+			LOGGER.error("handleMessage: Message could not be persisted!", e1);
 			return;
 		} 
 
@@ -79,6 +77,13 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 			createDeliveryEvidenceAndSendIt(message);
 			LOGGER.info("Connector to Connector Test message is confirmed!");
 		}else{
+            try {
+                //TODO: make async!
+                this.sendMessageToBackendService.sendMessageToBackend(message);
+            } catch (Exception e) {
+                LOGGER.error("Error while sending message [{}] to national backend adapter", message, e);
+                throw new DomibusConnectorMessageException(message, "Error delivering message to national backend client!", e, this.getClass());
+            }
 //			try {
 //				nationalBackendClient.deliverMessage(message);
 //			} catch (DomibusConnectorNationalBackendClientException e) {
@@ -184,6 +189,13 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 //					"Exception sending evidence back to sender gateway of message "
 //							+ originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
 //		}
+
+        try {
+            this.sendMessageToGwService.sendMessageToGwService(evidenceMessage);
+        } catch (Exception e) {
+            throw new DomibusConnectorMessageException(originalMessage, "Exception sending evidence back to sender gateway of message " + originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
+        }
+
 
         try {
             persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());

@@ -17,6 +17,7 @@ import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
 import eu.domibus.connector.controller.service.ReceiveMessageFromGwService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import javax.annotation.Resource;
 import org.jboss.logging.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 public class DomibusConnectorIncomingController implements ReceiveMessageFromGwService {
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorIncomingController.class);
-
 
     private MessageService incomingMessageService;
     private EvidenceService incomingEvidenceService;    
@@ -36,12 +36,12 @@ public class DomibusConnectorIncomingController implements ReceiveMessageFromGwS
     /*
     BEGIN SETTER
     */
-    @Autowired
+    @Resource(name="incomingMessageService")
     public void setIncomingMessageService(MessageService incomingMessageService) {
         this.incomingMessageService = incomingMessageService;
     }
 
-    @Autowired
+    @Resource(name="incomingEvidenceService")
     public void setIncomingEvidenceService(EvidenceService incomingEvidenceService) {
         this.incomingEvidenceService = incomingEvidenceService;
     }
