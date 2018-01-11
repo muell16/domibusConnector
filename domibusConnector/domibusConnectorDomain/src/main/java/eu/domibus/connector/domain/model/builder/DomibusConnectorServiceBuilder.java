@@ -15,7 +15,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 public class DomibusConnectorServiceBuilder {
     
     private String service;
-	private String serviceType;
+	private String serviceType = null;
     
     public static DomibusConnectorServiceBuilder createBuilder() {
         return new DomibusConnectorServiceBuilder();
@@ -34,9 +34,6 @@ public class DomibusConnectorServiceBuilder {
     public DomibusConnectorService build() {
         if (service == null) {
             throw new IllegalArgumentException("Service must be set!");
-        }
-        if (serviceType == null) {
-            throw new IllegalArgumentException("serviceType must be set!");
         }
         return new DomibusConnectorService(service, serviceType);
     }
