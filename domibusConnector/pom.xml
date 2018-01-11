@@ -16,6 +16,7 @@
 	 <module>domibusConnectorPersistence</module>
 	 <module>domibusConnectorDomain</module>
 	 <module>domibusConnectorGatewayLink</module>
+	 <module>domibusConnectorBackendLink</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>
