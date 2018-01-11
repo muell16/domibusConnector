@@ -6,23 +6,17 @@
 	<version>4.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-<!--		<module>domibusConnectorGatewayWebserviceClient</module>-->
-<!--		<module>domibusConnectorContentMapper</module>-->
-<!--		<module>domibusConnectorNationalBackendClient</module>-->
 		<module>domibusConnectorEvidencesToolkit</module>
 		<module>domibusConnectorSecurityToolkit</module>
 		<module>domibusConnectorController</module>
-<!--		<module>domibusConnectorCommon</module>-->
 		<module>domibusConnectorDistribution</module>
 		<module>domibusConnectorMonitoring</module>
-<!--		<module>domibusConnectorConfigurator</module>-->
-<!--		<module>domibusConnectorRunnable</module> -->
-<!--        <module>domibusConnectorGatewayPluginClient</module>-->
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorWebAppModule</module>
 	 <module>domibusConnectorPersistence</module>
 	 <module>domibusConnectorDomain</module>
 	 <module>domibusConnectorGatewayLink</module>
+	 <module>domibusConnectorBackendLink</module>
 	</modules>
 	<!-- Shared version number properties -->
 	<properties>

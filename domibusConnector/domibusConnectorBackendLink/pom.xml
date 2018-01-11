@@ -5,8 +5,7 @@
     <artifactId>domibusConnector</artifactId>
     <version>4.0-SNAPSHOT</version>
   </parent>
-  <name>domibusConnectorGatewayLink</name>
-  <artifactId>domibusConnectorGatewayLink</artifactId>
+  <artifactId>domibusConnectorBackendLink</artifactId>
   
   <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -100,11 +99,11 @@
                             <encoding>UTF-8</encoding>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorDeliveryService.wsdl
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl
                                     </wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorSubmissionService.wsdl
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendWebService.wsdl
                                     </wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
