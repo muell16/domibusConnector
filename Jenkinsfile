@@ -54,16 +54,18 @@ node {
 					
 			dir ('domibusConnector') {
 			
+				//TODO: install all files to local repository - only use cache for remote repos
 				stage ('Build') {
-					sh 'mvn -DskipTests=true -pl domibusConnectorDomain -am install' //package domain so other modules can load wsdl via dependency plugin
-					sh 'mvn compile'
+//					sh 'mvn -DskipTests=true -pl domibusConnectorDomain -am install'
+//					sh 'mvn compile'
+					sh 'mvn -DskipTests=true install'
 					//sh 'mvn -DskipTests package'
 				}
 				
 
 				try {
 					stage ('Test') {
-						sh 'mvn test'
+						sh 'mvn -Dmaven.test.failure.ignore=true test'
 					}
 				} catch (e) {
 					currentBuild.result = 'UNSTABLE'
