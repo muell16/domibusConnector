@@ -8,9 +8,9 @@ import eu.domibus.connector.domain.model.DomibusConnectorParty;
  */
 public class DomibusConnectorPartyBuilder {
 
-    private String partyId;
-	private String partyIdType;
-	private String role;
+    private String partyId = null;
+	private String partyIdType = null;
+	private String role = null;
     
     public static DomibusConnectorPartyBuilder createBuilder() {
         return new DomibusConnectorPartyBuilder();
@@ -36,9 +36,6 @@ public class DomibusConnectorPartyBuilder {
     public DomibusConnectorParty build() {
         if (partyId == null) {
             throw new RuntimeException("PartyId is not allowed to be null!");
-        }
-        if (partyIdType == null) {
-            throw new RuntimeException("PartyIdType is not allowed to be null!");
         }
         if (role == null) {
             throw new RuntimeException("Role is not allowed to be null!");
