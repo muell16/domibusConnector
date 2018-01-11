@@ -7,12 +7,13 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
  * @version 1.0
  * @created 02-J�n-2018 09:05:50
  */
-public interface DomibusConnectorSubmissionService {
+public interface DomibusConnectorGatewaySubmissionService {
 
 	/**
 	 * 
 	 * @param message
+	 * @throws DomibusConnectorGatewaySubmissionException 
 	 */
-	public boolean submitMessage(DomibusConnectorMessage message);
+	public String submitMessage(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException;
 
 }

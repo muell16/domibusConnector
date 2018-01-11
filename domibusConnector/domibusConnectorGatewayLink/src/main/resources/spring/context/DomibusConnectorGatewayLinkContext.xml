@@ -1,9 +1,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:http="http://cxf.apache.org/transports/http/configuration"
+	xmlns:sec="http://cxf.apache.org/configuration/security"
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd">
 
 	
 	<context:component-scan base-package="eu.domibus.connector.gateway.link" />
@@ -16,5 +22,37 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         implementor="#domibusConnectorDeliveryServiceImpl"
         address="/domibusConnectorDeliveryWebservice">
    	</jaxws:endpoint>
+   	
+   	<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">
+ 
+    <http:tlsClientParameters>
+      <sec:keyManagers keyPassword="${gateway.delivery.service.ssl.key.password}">
+        <sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"
+                      file="${gateway.delivery.service.ssl.keystore.store}"/>
+      </sec:keyManagers>
+      <sec:trustManagers>
+        <sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.truststore.password}"
+                      file="${gateway.delivery.service.ssl.truststore.store}"/>
+      </sec:trustManagers>
+      <sec:cipherSuitesFilter>
+        <!-- these filters ensure that a ciphersuite with
+             export-suitable or null encryption is used,
+             but exclude anonymous Diffie-Hellman key change as
+             this is vulnerable to man-in-the-middle attacks -->
+        <sec:include>.*_EXPORT_.*</sec:include>
+        <sec:include>.*_EXPORT1024_.*</sec:include>
+        <sec:include>.*_WITH_DES_.*</sec:include>
+        <sec:include>.*_WITH_AES_.*</sec:include>
+        <sec:include>.*_WITH_NULL_.*</sec:include>
+        <sec:exclude>.*_DH_anon_.*</sec:exclude>
+      </sec:cipherSuitesFilter>
+    </http:tlsClientParameters>
+    <!-- <http:authorization>
+      <sec:UserName>Betty</sec:UserName>
+      <sec:Password>password</sec:Password>
+    </http:authorization> -->
+    <http:client AutoRedirect="true" Connection="Keep-Alive"/>
+ 
+  </http:conduit>
 	
 </beans>

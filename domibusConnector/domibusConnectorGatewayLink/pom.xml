@@ -16,6 +16,10 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorDomain</artifactId>
+            </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorPersistence</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -137,6 +141,7 @@
         									<goal>
         										unpack-dependencies
         									</goal>
+        									<goal>unpack</goal>
         								</goals>
         							</pluginExecutionFilter>
         							<action>
