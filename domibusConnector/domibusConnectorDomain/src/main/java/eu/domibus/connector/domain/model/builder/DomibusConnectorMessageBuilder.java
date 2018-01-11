@@ -100,9 +100,9 @@ public class DomibusConnectorMessageBuilder {
      */
     public DomibusConnectorMessage build() {
         DomibusConnectorMessage message;
-        if (this.connectorMessageId == null) {
-            throw new IllegalArgumentException("connectorMessageId is required!");
-        }
+//        if (this.connectorMessageId == null) {
+//            throw new IllegalArgumentException("connectorMessageId is required!");
+//        }
         if (this.messageDetails == null) {
             throw new IllegalArgumentException("Setting message details is required!");
         }        

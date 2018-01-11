@@ -31,9 +31,8 @@ public class DomibusConnectorMessage {
 	 * @param messageDetails    The details for message routing.
 	 * @param messageContent    The content of the message.
      * 
-     * @deprecated: use constructor with connectorMessageId
+     * 
 	 */
-    @Deprecated
 	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageContent messageContent){
 	   this.messageDetails = messageDetails;
 	   this.messageContent = messageContent;
@@ -65,9 +64,8 @@ public class DomibusConnectorMessage {
 	 * @param messageDetails
 	 * @param messageConfirmation
      * 
-     * @deprecated: use constructor with connectorMessageId
+     * 
 	 */
-    @Deprecated
 	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageConfirmation messageConfirmation){
 	   this.messageDetails = messageDetails;
 	   addConfirmation(messageConfirmation);
@@ -147,6 +145,10 @@ public class DomibusConnectorMessage {
 
     public String getConnectorMessageId() {
         return connectorMessageId;
+    }
+
+    public void setConnectorMessageId(String connectorMessageId) {
+        this.connectorMessageId = connectorMessageId;
     }
 
 }
