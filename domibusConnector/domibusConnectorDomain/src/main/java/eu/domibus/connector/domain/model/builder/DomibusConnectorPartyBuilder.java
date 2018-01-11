@@ -23,7 +23,7 @@ public class DomibusConnectorPartyBuilder {
         return this;
     }
 
-    public DomibusConnectorPartyBuilder setPartyIdType(String partyIdType) {
+    public DomibusConnectorPartyBuilder withPartyIdType(String partyIdType) {
         this.partyIdType = partyIdType;
         return this;
     }

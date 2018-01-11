@@ -23,12 +23,14 @@ public class DomibusConnectorServiceBuilder {
     
     private DomibusConnectorServiceBuilder() {}
 
-    public void setService(String service) {
+    public DomibusConnectorServiceBuilder setService(String service) {
         this.service = service;
+        return this;
     }
 
-    public void setServiceType(String serviceType) {
+    public DomibusConnectorServiceBuilder withServiceType(String serviceType) {
         this.serviceType = serviceType;
+        return this;
     }
     
     public DomibusConnectorService build() {
