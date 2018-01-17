@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.exception;
 
-public class DomibusConnectorControllerException extends Exception {
+public class DomibusConnectorControllerException extends RuntimeException {
 
     /**
      * 

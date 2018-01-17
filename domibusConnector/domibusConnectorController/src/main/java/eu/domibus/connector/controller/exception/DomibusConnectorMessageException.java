@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.DomibusApplicationContextManager;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 
-public class DomibusConnectorMessageException extends Exception {
+public class DomibusConnectorMessageException extends RuntimeException {
 
     /**
      * 

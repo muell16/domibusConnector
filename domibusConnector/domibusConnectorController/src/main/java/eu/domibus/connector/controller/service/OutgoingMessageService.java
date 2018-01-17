@@ -122,6 +122,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
         	confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER,
                     errorMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
+            //TODO: refactor this - Exceptions must be thrown
             new DomibusConnectorMessageException(message, "Could not even generate submission rejection! ", e,
                     this.getClass());
             LOGGER.error("Could not even generate submission rejection! ", e);
@@ -133,6 +134,7 @@ public class OutgoingMessageService extends AbstractMessageService implements Me
             persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
                     DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
         } catch (Exception e) {
+            //TODO: refactor this - Exceptions must be thrown
             new DomibusConnectorMessageException(message, "Could not persist evidence of type SUBMISSION_REJECTION! ",
                     e, this.getClass());
             LOGGER.error("Could not persist evidence of type SUBMISSION_REJECTION! ", e);

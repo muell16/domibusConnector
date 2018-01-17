@@ -37,16 +37,14 @@ public class AuthFilter implements Filter {
             HttpSession ses = req.getSession(false);
 
             String reqURI = req.getRequestURI();
-            if (reqURI.indexOf("/login.xhtml") >= 0 || (ses != null && ses.getAttribute("username") != null)
+            if (reqURI.contains("/login.xhtml") || (ses != null && ses.getAttribute("username") != null)
                     || reqURI.contains("javax.faces.resource"))
             	
                 chain.doFilter(request, response);
             else
-
                 res.sendRedirect(req.getContextPath() + "/pages/login.xhtml");
-
-        } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
+        } catch (IOException | ServletException t) {
+            logger.error("Exceptoin occured during filtering", t);
         }
     }
 
