@@ -61,6 +61,10 @@ public interface DomibusConnectorPersistenceService {
      */
     void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
+    
+    DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
+    
+    
     /**
      * finds the message by the national id
      * the nationalId is not set if the message was received from the gw

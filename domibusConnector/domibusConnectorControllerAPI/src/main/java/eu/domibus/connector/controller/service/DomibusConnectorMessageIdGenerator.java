@@ -17,6 +17,6 @@ public interface DomibusConnectorMessageIdGenerator {
      * the maximum string length for this id is 255
      * @return the message id 
      */
-    public String generateDomibusConnectorMessageIdGenerator();
+    public String generateDomibusConnectorMessageId();
 
 }
