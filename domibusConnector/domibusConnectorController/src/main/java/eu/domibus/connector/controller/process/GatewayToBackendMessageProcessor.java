@@ -13,6 +13,17 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	@Override
 	public void processMessage(DomibusConnectorMessage message) {
 		
+		
+		//create RelayREMMDEvidence and send it back to sender
+		
+		
+		// call of security toolkit to unpack ASIC-S container
+		
+		// check for Connector 2 Connector Test
+			// if, then send back delivery evidence
+			// else, send message to backend
+		
+		// if success, mark message as delivered in database
 	}
 
 }

@@ -6,6 +6,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -24,6 +25,9 @@ public class GatewayToBackendMessageListener implements MessageListener {
 	
 	@Resource(name="GatewayToBackendMessageProcessor")
 	private DomibusConnectorMessageProcessor messageProcessor;
+	
+	@Resource(name="GatewayToBackendConfirmationProcessor")
+	private DomibusConnectorMessageProcessor confirmationProcessor;
 	
 	@Resource
 	private DomibusConnectorPersistenceService persistenceService;
@@ -45,8 +49,16 @@ public class GatewayToBackendMessageListener implements MessageListener {
 					logger.error("Message {} could not be loaded", connectorMessageId, e);
 				}
 				
-				if(connectorMessage!=null)
-					messageProcessor.processMessage(connectorMessage);
+				if(connectorMessage!=null) {
+					if(connectorMessage.getMessageContent()!=null) {
+						// as there is a message content, it cannot only be a confirmation message
+						messageProcessor.processMessage(connectorMessage);
+					}else if(!CollectionUtils.isEmpty(connectorMessage.getMessageConfirmations())) {
+						// as there is no message content, but at least one message confirmation,
+						// it is a confirmation message
+						confirmationProcessor.processMessage(connectorMessage);
+					}
+				}
 				
 			} else {
 				throw new IllegalArgumentException("Message must be of type TextMessage");

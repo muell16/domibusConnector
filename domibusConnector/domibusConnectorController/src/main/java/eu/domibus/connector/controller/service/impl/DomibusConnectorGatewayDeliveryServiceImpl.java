@@ -5,6 +5,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,11 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 	@Override
 	public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
 		
+		//Check consistence of message:
+		// Either a message content, or at least one confirmation must exist for processing
+		if(!checkMessageForProcessability(message))
+			throw new DomibusConnectorControllerException("Message cannot be processed as it contains neither message content, nor message confirmation!");
+		
 		String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
 		
 		if(StringUtils.isEmpty(connectorMessageId))
@@ -77,6 +83,20 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 		}
 
 		logger.info("Message with ID '{}' put on queue'{}'.", connectorMessageId, internalGWToControllerQueueName);
+	}
+	
+	private boolean checkMessageForProcessability(DomibusConnectorMessage message) {
+		
+		if(message == null)
+			return false;
+		
+		if(message.getMessageContent()!=null)
+			return true;
+		
+		if(!CollectionUtils.isEmpty(message.getMessageConfirmations()))
+			return true;
+		
+		return false;
 	}
 
 }
