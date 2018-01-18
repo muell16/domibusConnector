@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 public class DomibusConnectorMessageDocument implements Serializable  {
 
-	private final byte document[];
+	private final DomibusConnectorBigDataReference document;
 	private final String documentName;
 	private final DetachedSignature detachedSignature;
 	private String hashValue;
@@ -29,13 +29,13 @@ public class DomibusConnectorMessageDocument implements Serializable  {
 	 * @param detachedSignature    may be null. If the document is signed with a
 	 * detached signature, the signature parameters are given here.
 	 */
-	public DomibusConnectorMessageDocument(final byte[] document, final String documentName, final DetachedSignature detachedSignature){
+	public DomibusConnectorMessageDocument(final DomibusConnectorBigDataReference document, final String documentName, final DetachedSignature detachedSignature){
 	   this.document = document;
 	   this.documentName = documentName;
 	   this.detachedSignature = detachedSignature;
 	}
 
-	public byte[] getDocument(){
+	public DomibusConnectorBigDataReference getDocument(){
 		return this.document;
 	}
 

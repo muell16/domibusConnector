@@ -6,6 +6,7 @@
 
 package eu.domibus.connector.domain.model.builder;
 
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 
 /**
@@ -15,7 +16,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 public class DomibusConnectorMessageAttachmentBuilder {
 
     private String identifier;
-	private byte attachment[];
+	private DomibusConnectorBigDataReference attachment;
 	private String name;
 	private String mimeType;
 	private String description;
@@ -31,7 +32,7 @@ public class DomibusConnectorMessageAttachmentBuilder {
         return this;
     }
 
-    public DomibusConnectorMessageAttachmentBuilder setAttachment(byte[] attachment) {
+    public DomibusConnectorMessageAttachmentBuilder setAttachment(DomibusConnectorBigDataReference attachment) {
         this.attachment = attachment;
         return this;
     }

@@ -7,6 +7,7 @@
 package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DetachedSignature;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import javax.annotation.Nonnull;
 
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
 public class DomibusConnectorMessageDocumentBuilder {
 
 
-    private byte[] documentContent;
+    private DomibusConnectorBigDataReference documentContent;
     private String documentName;
     
     private DetachedSignature detachedSignature = null;
@@ -34,7 +35,7 @@ public class DomibusConnectorMessageDocumentBuilder {
         return this;
     }
     
-    public DomibusConnectorMessageDocumentBuilder setContent(@Nonnull byte[] documentContent) {
+    public DomibusConnectorMessageDocumentBuilder setContent(@Nonnull DomibusConnectorBigDataReference documentContent) {
         this.documentContent = documentContent;
         return this;
     }
@@ -47,10 +48,10 @@ public class DomibusConnectorMessageDocumentBuilder {
         
     public DomibusConnectorMessageDocument build() {                
         if (documentName == null) {
-            throw new IllegalArgumentException("documentName must not be null!");
+            throw new IllegalArgumentException("documentName can not be null!");
         }
-        if (documentContent == null || documentContent.length < 1) {
-            throw new IllegalArgumentException("documentContent must not be null or empty!");
+        if (documentContent == null) {
+            throw new IllegalArgumentException("documentContent can not be null!");
         }
         DomibusConnectorMessageDocument doc = new DomibusConnectorMessageDocument(documentContent, documentName, detachedSignature);
         return doc;

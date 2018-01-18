@@ -4,27 +4,19 @@
  * and open the template in the editor.
  */
 
-package eu.domibus.connector.domain.test.util;
+package eu.domibus.connector.domain.transformer.util;
 
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DetachedSignature;
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.test.util.DataHandlerCreator;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
+import javax.activation.DataHandler;
 
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomainCreator {
+public class InputStreamDataSourceTest {
 
     public static DomibusConnectorParty createPartyAT() {
         DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
@@ -67,12 +59,19 @@ public class DomainCreator {
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
         DomibusConnectorMessageAttachment attachment = 
-                new DomibusConnectorMessageAttachment("attachment".getBytes(), "identifier");       
+                new DomibusConnectorMessageAttachment(connectorBigDataReferenceFromDataSource("attachment"), "identifier");
+
         attachment.setName("name");
         attachment.setMimeType("application/garbage");
         return attachment;
     }
-    
+
+    public static DomibusConnectorBigDataReference connectorBigDataReferenceFromDataSource(String input) {
+        DataHandler dh = DataHandlerCreator.createDataHandlerFromString(input);
+        DomibusConnectorBigDataReference reference = 
+                new DomibusConnectorBigDataReferenceDataHandlerBacked(dh);        
+        return reference;
+    }
 
     public static DomibusConnectorMessage createSimpleTestMessage() {
         
@@ -95,7 +94,7 @@ public class DomainCreator {
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
                 
-        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument("documentbytes".getBytes(), "Document1.pdf", detachedSignature);
+        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
                         
         messageContent.setDocument(messageDocument);
         

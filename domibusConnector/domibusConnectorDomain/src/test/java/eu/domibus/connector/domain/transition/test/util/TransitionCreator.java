@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.transition.test.util;
 
+import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import eu.domibus.connector.domain.transition.DomibusConnectorActionType;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureMimeType;
@@ -84,12 +85,9 @@ public class TransitionCreator {
     
     public static DomibusConnectorMessageAttachmentType createMessageAttachment() {
         DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
-        //attachment.setAttachment("attachment".getBytes());
-        
-        
-        
-        
-        DataHandler dataHandler = new DataHandler("attachment".getBytes(), APPLICATION_OCTET_STREAM_MIME_TYPE);   
+
+        InputStreamDataSource ds = InputStreamDataSource.InputStreamDataSourceFromByteArray("attachment".getBytes());        
+        DataHandler dataHandler = new DataHandler(ds);   
         
         attachment.setAttachment(dataHandler);
         attachment.setDescription("description");

@@ -1,18 +1,10 @@
 package eu.domibus.connector.domain.transformer;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DetachedSignature;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
+import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.transition.DomibusConnectorActionType;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureType;
@@ -29,11 +21,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.transform.OutputKeys;
@@ -66,6 +58,10 @@ public class DomibusConnectorDomainMessageTransformer {
 
         private CannotBeMappedToTransitionException(String text) {
             super(text);
+        }
+        
+        private CannotBeMappedToTransitionException(String text, Throwable thr) {
+            super(text, thr);
         }
         
     }
@@ -180,8 +176,10 @@ public class DomibusConnectorDomainMessageTransformer {
         if (messageAttachment.getIdentifier() == null) {
             throw new CannotBeMappedToTransitionException("identifier is not allowed to be null!");
         }
-        BeanUtils.copyProperties(messageAttachment, attachmentTO);               
-        attachmentTO.setAttachment(convertByteArrayToDataHandler(messageAttachment.getAttachment(), messageAttachment.getMimeType()));
+        BeanUtils.copyProperties(messageAttachment, attachmentTO);
+
+
+        attachmentTO.setAttachment(convertBigDataReferenceToDataHandler(messageAttachment.getAttachment(), messageAttachment.getMimeType()));
         return attachmentTO;
     }
     
@@ -209,7 +207,7 @@ public class DomibusConnectorDomainMessageTransformer {
         DomibusConnectorMessageDocument document = messageContent.getDocument();
         DomibusConnectorMessageDocumentType documentTO = new DomibusConnectorMessageDocumentType();
         
-        documentTO.setDocument(convertByteArrayToDataHandler(document.getDocument(), null));
+        documentTO.setDocument(convertBigDataReferenceToDataHandler(document.getDocument(), null));
         documentTO.setDocumentName(document.getDocumentName());
         messageContentTO.setDocument(documentTO);
         
@@ -263,7 +261,26 @@ public class DomibusConnectorDomainMessageTransformer {
         DataHandler dataHandler = new DataHandler(Arrays.copyOf(array, array.length), mimeType);
         return dataHandler;
     }
-    
+
+    static @Nonnull DataHandler convertBigDataReferenceToDataHandler(@Nonnull DomibusConnectorBigDataReference bigDataReference, @Nullable String mimeType) {
+        try {
+            if (mimeType == null) {
+                mimeType = "application/octet-stream";
+            }
+            //      DataHandler dataHandler = bigDataReference.getDataHandler();
+            //        if (dataHandler == null) {
+            //            String error = "Data Source is null in bigDataReference from DomainModel!";
+            //            LOGGER.debug(error);
+            //            throw new CannotBeMappedToTransitionException(error);
+            //        }
+            InputStream inputStream = bigDataReference.getInputStream();
+            DataSource inputStreamDataSource = new InputStreamDataSource(inputStream);
+            DataHandler dataHandler = new DataHandler(inputStreamDataSource);
+            return dataHandler;
+        } catch (IOException ioe) {
+            throw new CannotBeMappedToTransitionException("A IOException occured during accessing BigDataFile Reference", ioe);
+        }
+    }
     
     static @Nonnull byte[] convertDataHandlerToByteArray(@Nonnull DataHandler dataHandler) {
         try {
@@ -410,10 +427,9 @@ public class DomibusConnectorDomainMessageTransformer {
     
     
     static @Nonnull DomibusConnectorMessageAttachment transformMessageAttachmentTransitionToDomain(final @Nonnull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
-        
-        
+
         DomibusConnectorMessageAttachment messageAttachment = new DomibusConnectorMessageAttachment(
-                convertDataHandlerToByteArray(messageAttachmentTO.getAttachment()),
+                convertDataHandlerToBigFileReference(messageAttachmentTO.getAttachment()),
                 messageAttachmentTO.getIdentifier()
         );        
         BeanUtils.copyProperties(messageAttachmentTO, messageAttachment);
@@ -469,7 +485,7 @@ public class DomibusConnectorDomainMessageTransformer {
         DomibusConnectorMessageDocument document = 
                 new DomibusConnectorMessageDocument(
                         //Arrays.copyOf(documentTO.getDocument(), documentTO.getDocument().length),
-                        convertDataHandlerToByteArray(documentTO.getDocument()),
+                        convertDataHandlerToBigFileReference(documentTO.getDocument()),
                         documentTO.getDocumentName(),
                         detachedSignature
                 ); 
@@ -478,7 +494,13 @@ public class DomibusConnectorDomainMessageTransformer {
         
         return messageContent;
     }
-    
+
+
+    static @Nonnull DomibusConnectorBigDataReference convertDataHandlerToBigFileReference(DataHandler dataHandler) {
+        DomibusConnectorBigDataReferenceDataHandlerBacked bigDataReference = new DomibusConnectorBigDataReferenceDataHandlerBacked();
+        bigDataReference.setDataHandler(dataHandler);
+        return bigDataReference;
+    }
     
     static @Nonnull DomibusConnectorMessageDetails transformMessageDetailsTransitionToDomain(final @Nonnull DomibusConnectorMessageDetailsType messageDetailsTO) {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
