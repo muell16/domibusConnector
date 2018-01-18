@@ -117,6 +117,24 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     */
     
     
+	@Override
+	public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
+		// if DB fields confirmed OR rejected are NOT NULL -> then true
+		return false;
+	}
+	
+	@Override
+	public boolean checkMessageRejected(DomibusConnectorMessage message) {
+		// if DB field rejected is NOT NULL -> then true
+		return false;
+	}
+    
     @Override
     @Transactional(readOnly = false)
     public void persistMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage message, eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection direction) throws PersistenceException {
@@ -660,11 +678,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
     }
 
-	@Override
-	public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+
+
 
 
 
