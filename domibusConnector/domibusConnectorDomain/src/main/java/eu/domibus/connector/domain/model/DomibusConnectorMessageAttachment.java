@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class DomibusConnectorMessageAttachment implements Serializable {
 
 	private final String identifier;
-	private final DomibusConnectorBigDataReference attachment;
+	private DomibusConnectorBigDataReference attachment;
 	private String name;
 	private String mimeType;
 	private String description;
@@ -41,6 +41,10 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 	public DomibusConnectorBigDataReference getAttachment(){
 		return this.attachment;
 	}
+    
+    public void setAttachment(DomibusConnectorBigDataReference attachment) {
+       this.attachment = attachment;
+    }
 
 	public String getName(){
 		return this.name;

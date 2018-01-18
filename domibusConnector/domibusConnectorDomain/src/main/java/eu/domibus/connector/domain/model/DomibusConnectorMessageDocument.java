@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 public class DomibusConnectorMessageDocument implements Serializable  {
 
-	private final DomibusConnectorBigDataReference document;
+	private DomibusConnectorBigDataReference document;
 	private final String documentName;
 	private final DetachedSignature detachedSignature;
 	private String hashValue;
@@ -39,6 +39,10 @@ public class DomibusConnectorMessageDocument implements Serializable  {
 		return this.document;
 	}
 
+    public void setDocument(DomibusConnectorBigDataReference reference) {
+        this.document = reference;
+    }
+    
 	public String getDocumentName(){
 		return this.documentName;
 	}
@@ -56,7 +60,7 @@ public class DomibusConnectorMessageDocument implements Serializable  {
 	 * @param newVal
 	 */
 	public void setHashValue(String newVal){
-		this.hashValue = hashValue;
+		this.hashValue = newVal;
 	}
 
 }

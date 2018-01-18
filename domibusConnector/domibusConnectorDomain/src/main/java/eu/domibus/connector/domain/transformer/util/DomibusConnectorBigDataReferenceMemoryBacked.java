@@ -19,10 +19,17 @@ import java.io.OutputStream;
  */
 public class DomibusConnectorBigDataReferenceMemoryBacked extends DomibusConnectorBigDataReference {
 
-    private transient final byte[] bytes;
+    private transient byte[] bytes;
+    private boolean read = false;
+    private boolean write = false;
 
     public DomibusConnectorBigDataReferenceMemoryBacked(byte[] bytes) {
+        this.read = true;
         this.bytes = bytes;
+    }
+    
+    public DomibusConnectorBigDataReferenceMemoryBacked() {
+        this.write = true;
     }
     
     @Override
@@ -32,17 +39,17 @@ public class DomibusConnectorBigDataReferenceMemoryBacked extends DomibusConnect
 
     @Override
     public OutputStream getOutputStream() throws IOException {
-        throw new IOException("not supported!");
+        return new ByteArrayOutputStream();
     }
 
     @Override
     public boolean isReadable() {
-        return true;
+        return this.read;
     }
 
     @Override
     public boolean isWriteable() {
-        return false;
+        return this.write;
     }
 
 }
