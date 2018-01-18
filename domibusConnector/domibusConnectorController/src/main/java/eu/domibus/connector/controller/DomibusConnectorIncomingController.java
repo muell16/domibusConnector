@@ -116,7 +116,7 @@ public class DomibusConnectorIncomingController implements DomibusConnectorGatew
             throw new IllegalArgumentException("Message already received for processing!");
         }
         //get process id for this message
-        String msgId = this.messageIdGenerator.generateDomibusConnectorMessageIdGenerator();
+        String msgId = this.messageIdGenerator.generateDomibusConnectorMessageId();
         
         MDC.put("messageid", msgId);
         

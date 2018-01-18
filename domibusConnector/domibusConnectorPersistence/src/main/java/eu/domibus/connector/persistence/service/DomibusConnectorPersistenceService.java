@@ -18,6 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface DomibusConnectorPersistenceService {
 
+	
+	  DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
+	  
+	  boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message);
+	  
+	  boolean checkMessageRejected(DomibusConnectorMessage message);
+	
     /**
      * stores a new message into storage
      * @param message - the message
@@ -61,6 +68,10 @@ public interface DomibusConnectorPersistenceService {
      */
     void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
+    
+  
+    
+    
     /**
      * finds the message by the national id
      * the nationalId is not set if the message was received from the gw

@@ -1,26 +1,31 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.persistence.service.impl.helper.StoreType;
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageErrorDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import java.util.ArrayList;
-import java.util.List;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
@@ -28,31 +33,9 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
-
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.DigestUtils;
 
 @org.springframework.stereotype.Service("persistenceService")
 public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorPersistenceService {
@@ -133,6 +116,24 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     * END DAO SETTER
     */
     
+    
+	@Override
+	public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
+		// if DB fields confirmed OR rejected are NOT NULL -> then true
+		return false;
+	}
+	
+	@Override
+	public boolean checkMessageRejected(DomibusConnectorMessage message) {
+		// if DB field rejected is NOT NULL -> then true
+		return false;
+	}
     
     @Override
     @Transactional(readOnly = false)
@@ -676,6 +677,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     public eu.domibus.connector.domain.model.DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction() {
         return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
     }
+
+
+
+
 
 
 
