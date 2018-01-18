@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.test.util;
 
+import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -10,32 +11,9 @@ import javax.activation.DataHandler;
 
 public class DataHandlerCreator {
 
-    public static DataHandler createDataHandlerFromString(@Nonnull  String input) {
-        DataSource ds = new DataSource() {
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return new ByteArrayInputStream(input.getBytes());
-            }
-
-            @Override
-            public OutputStream getOutputStream() throws IOException {
-                throw new IOException("this DataSource is read only!");
-            }
-
-            @Override
-            public String getContentType() {
-                return "application/octet-stream";
-            }
-
-            @Override
-            public String getName() {
-                return "Stringbasedds";
-            }
-        };
-        DataHandler dh =  new DataHandler(ds);
-        
+    public static DataHandler createDataHandlerFromString(@Nonnull String input) {
+        InputStreamDataSource ds = InputStreamDataSource.InputStreamDataSourceFromByteArray(input.getBytes());
+        DataHandler dh = new DataHandler(ds);
         return dh;
-        
     }
 }

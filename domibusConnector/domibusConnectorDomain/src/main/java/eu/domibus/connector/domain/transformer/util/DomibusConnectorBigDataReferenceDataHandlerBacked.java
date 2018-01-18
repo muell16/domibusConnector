@@ -62,5 +62,5 @@ public class DomibusConnectorBigDataReferenceDataHandlerBacked extends DomibusCo
     public boolean isWriteable() {
         return false;
     }
-    
+     
 }

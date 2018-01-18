@@ -24,29 +24,7 @@ public class DataHandlerTest {
     
     @Test
     public void testDataHandlerFromDataSource() throws IOException {
-//        DataSource ds = new DataSource() {
-//
-//            @Override
-//            public InputStream getInputStream() throws IOException {
-//                return new ByteArrayInputStream(input.getBytes());
-//            }
-//
-//            @Override
-//            public OutputStream getOutputStream() throws IOException {
-//                throw new IOException("this DataSource is read only!");
-//            }
-//
-//            @Override
-//            public String getContentType() {
-//                return "application/octet-stream";
-//            }
-//
-//            @Override
-//            public String getName() {
-//                return "Stringbasedds";
-//            }
-//        };
-        
+
         ByteArrayInputStream bin = new ByteArrayInputStream("test".getBytes());        
         InputStreamDataSource ds = new InputStreamDataSource(bin);        
         DataHandler dh = new DataHandler(ds);
