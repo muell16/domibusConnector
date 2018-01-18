@@ -3,6 +3,7 @@ package eu.domibus.connector.domain.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import javax.annotation.Nullable;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
 /**
  * Represents a reference to a storage system for big files
  */
-public abstract class DomibusConnectorBigDataReference implements DataSource {
+public abstract class DomibusConnectorBigDataReference implements DataSource, Serializable {
 
     private String storageIdReference;
 
