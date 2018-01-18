@@ -33,6 +33,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 
@@ -116,8 +117,10 @@ public class DomibusConnectorEvidencesToolkitTest {
 
         DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
                
+        DomibusConnectorBigDataReferenceMemoryBacked ref = new DomibusConnectorBigDataReferenceMemoryBacked("originalMessage".getBytes());
+        
         DomibusConnectorMessageDocument document = 
-                new DomibusConnectorMessageDocument("originalMessage".getBytes(), "documentName", null);
+                new DomibusConnectorMessageDocument(ref, "documentName", null);
         
         content.setXmlContent("originalMessage".getBytes());
         content.setDocument(document);
