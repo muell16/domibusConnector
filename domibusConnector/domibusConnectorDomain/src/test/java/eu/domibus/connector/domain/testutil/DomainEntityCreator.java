@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 
-package eu.domibus.connector.domain.transformer.util;
+package eu.domibus.connector.domain.testutil;
 
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.test.util.DataHandlerCreator;
+import eu.domibus.connector.domain.transformer.testutil.DataHandlerCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
 import javax.activation.DataHandler;
 
@@ -16,7 +16,7 @@ import javax.activation.DataHandler;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class InputStreamDataSourceTest {
+public class DomainEntityCreator {
 
     public static DomibusConnectorParty createPartyAT() {
         DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");

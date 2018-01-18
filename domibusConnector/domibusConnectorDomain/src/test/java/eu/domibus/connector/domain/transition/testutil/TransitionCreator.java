@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.transition.test.util;
+package eu.domibus.connector.domain.transition.testutil;
 
 import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import eu.domibus.connector.domain.transition.DomibusConnectorActionType;

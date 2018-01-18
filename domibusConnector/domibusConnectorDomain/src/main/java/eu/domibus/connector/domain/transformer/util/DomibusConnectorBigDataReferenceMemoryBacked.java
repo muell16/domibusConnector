@@ -19,7 +19,7 @@ import java.io.OutputStream;
  */
 public class DomibusConnectorBigDataReferenceMemoryBacked extends DomibusConnectorBigDataReference {
 
-    private final byte[] bytes;
+    private transient final byte[] bytes;
 
     public DomibusConnectorBigDataReferenceMemoryBacked(byte[] bytes) {
         this.bytes = bytes;

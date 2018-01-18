@@ -1,5 +1,6 @@
-package eu.domibus.connector.domain.test.util;
+package eu.domibus.connector.domain.transformer.testutil;
 
+import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;

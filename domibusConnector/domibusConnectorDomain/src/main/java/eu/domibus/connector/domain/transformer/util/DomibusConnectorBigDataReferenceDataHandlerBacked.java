@@ -18,7 +18,8 @@ import javax.activation.DataHandler;
  */
 public class DomibusConnectorBigDataReferenceDataHandlerBacked extends DomibusConnectorBigDataReference {
 
-    private DataHandler dataHandler;
+    
+    private transient DataHandler dataHandler;
     
     public DomibusConnectorBigDataReferenceDataHandlerBacked() {}
     
