@@ -56,13 +56,13 @@ public class IncomingMessageServiceITCase {
     }
     
     @Autowired
-    ReceiveMessageFromGwService rcvMessageFromGwService;
+    DomibusConnectorGatewayDeliveryService rcvMessageFromGwService;
     
     @MockBean
-    SendMessageToGwService sendMessageToGwService;
+    DomibusConnectorGatewaySubmissionService sendMessageToGwService;
     
     @MockBean
-    SendMessageToBackendService sendMessageToBackendService;
+    DomibusConnectorBackendSubmissionService sendMessageToBackendService;
     
 //    @MockBean
 //    DomibusConnectorPersistenceService persistenceService;
@@ -84,7 +84,7 @@ public class IncomingMessageServiceITCase {
         
         assertThat(loadMessageFrom).isNotNull();
         
-        rcvMessageFromGwService.receiveMessageFromGwService(loadMessageFrom);
+        rcvMessageFromGwService.deliverMessageFromGateway(loadMessageFrom);
         
     }
     

@@ -2,12 +2,9 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.common.CommonConnectorProperties;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-//import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.HashValueBuilder;
-import eu.domibus.connector.mapping.DomibusConnectorContentMapper;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
-import eu.domibus.connector.nbc.DomibusConnectorRemoteNationalBackendService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractMessageService {
@@ -31,10 +28,10 @@ public class AbstractMessageService {
     protected DomibusConnectorPersistenceService persistenceService;
     
     @Autowired
-    protected SendMessageToBackendService sendMessageToBackendService;
+    protected DomibusConnectorBackendSubmissionService sendMessageToBackendService;
     
     @Autowired
-    protected SendMessageToGwService sendMessageToGwService;
+    protected DomibusConnectorGatewaySubmissionService sendMessageToGwService;
 
     public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;

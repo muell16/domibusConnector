@@ -15,7 +15,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.EvidenceService;
 import eu.domibus.connector.controller.service.MessageService;
-import eu.domibus.connector.controller.service.ReceiveMessageFromGwService;
+import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import javax.annotation.Resource;
 import org.jboss.logging.MDC;
@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DomibusConnectorIncomingController implements ReceiveMessageFromGwService {
+public class DomibusConnectorIncomingController implements DomibusConnectorGatewayDeliveryService {
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorIncomingController.class);
 
@@ -110,7 +110,7 @@ public class DomibusConnectorIncomingController implements ReceiveMessageFromGwS
     }
 
     @Override
-    public void receiveMessageFromGwService(DomibusConnectorMessage message) {
+    public void deliverMessageFromGateway(DomibusConnectorMessage message) {
         
         if (message.getConnectorMessageId() != null) {
             throw new IllegalArgumentException("Message already received for processing!");

@@ -1,4 +1,4 @@
-package eu.domibus.connector.gateway.link;
+package eu.domibus.connector.controller.exception;
 
 public class DomibusConnectorGatewaySubmissionException extends Exception {
 

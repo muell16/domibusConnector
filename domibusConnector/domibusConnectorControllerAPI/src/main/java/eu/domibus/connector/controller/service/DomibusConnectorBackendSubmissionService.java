@@ -6,12 +6,15 @@
 
 package eu.domibus.connector.controller.service;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+
 /**
- *
+ * should be implemented by the Service which is delivering the messages
+ * to the backend
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public interface ReceiveMessageFromBackendService {
-    
-    public void receiveMessageFromBackendService();
+public interface DomibusConnectorBackendSubmissionService {
 
+    public void submitToBackend(DomibusConnectorMessage message);
+    
 }

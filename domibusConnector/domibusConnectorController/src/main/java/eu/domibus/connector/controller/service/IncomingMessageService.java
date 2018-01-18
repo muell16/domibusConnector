@@ -79,7 +79,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 		}else{
             try {
                 //TODO: make async!
-                this.sendMessageToBackendService.sendMessageToBackend(message);
+                this.sendMessageToBackendService.submitToBackend(message);
             } catch (Exception e) {
                 LOGGER.error("Error while sending message [{}] to national backend adapter", message, e);
                 throw new DomibusConnectorMessageException(message, "Error delivering message to national backend client!", e, this.getClass());
@@ -191,7 +191,7 @@ public class IncomingMessageService extends AbstractMessageService implements Me
 //		}
 
         try {
-            this.sendMessageToGwService.sendMessageToGwService(evidenceMessage);
+            this.sendMessageToGwService.submitToGateway(evidenceMessage);
         } catch (Exception e) {
             throw new DomibusConnectorMessageException(originalMessage, "Exception sending evidence back to sender gateway of message " + originalMessage.getMessageDetails().getEbmsMessageId(), e, this.getClass());
         }
