@@ -7,8 +7,7 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
-import java.io.InputStream;
-import java.io.OutputStream;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 /**
  * This interface describes a service for storing large amount of data
@@ -33,22 +32,18 @@ public interface DomibusConnectorBigDataPersistenceService {
      */
     public DomibusConnectorBigDataReference getReadableDataSource(DomibusConnectorBigDataReference bigDataReference);
     
-    /**
-     * returns a instance of DomibusConnectorBigDataReference,
-     * where the getOutpuStream method will return a valid outputStream
-     * 
-     * the implementation will overwrite the data referenced by the provided id
-     * 
-     * @param bigDataReference - the big data reference
-     * @return the BigDataReference with writeable OutputStream
-     */
-    public DomibusConnectorBigDataReference getWriteableDataSource(DomibusConnectorBigDataReference bigDataReference);
-    
-    
+        
     /**
      * will create a new instance of DomibusConnectorBigDataReference     
+     * @param message - the message the data is related to
      * @return the created DomibusConnectorBigDataReference with writeable OutputStream
      */
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference();
+    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message);
+    
+    /**
+     * will delete all messages related to the provides message
+     * @param message the message
+     */
+    public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message);
     
 }

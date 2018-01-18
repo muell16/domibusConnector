@@ -163,7 +163,7 @@ public class MsgContentPersistenceService {
         }        
     }
     
-    <T> T mapFromMsgCont(@Nonnull PDomibusConnectorMsgCont msgContent, Class<T> clazz) throws PersistenceException {
+    <T> T mapFromMsgCont(@Nonnull PDomibusConnectorMsgCont msgContent, Class<T> clazz) {
         ObjectInputStream inputStream;
         try {
             byte[] byteContent = msgContent.getContent();

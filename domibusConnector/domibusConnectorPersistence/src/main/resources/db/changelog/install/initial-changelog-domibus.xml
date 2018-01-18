@@ -79,10 +79,31 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
             <column name="CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="CONTENT" type="BLOB" />
-            <column name="CHECKSUM" type="${text.type}" />
+            <column name="CHECKSUM" type="${text.type}" />            
             <column name="CREATED" type="TIMESTAMP" />
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
+        
+        <createTable tableName="DOMIBUS_CONNECTOR_BIGDATA">
+            <column name="ID" type="DECIMAL(10,0)" />
+            <column name="CHECKSUM" type="${text.type}" />
+            <column name="CREATED" type="timestamp" />
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
+            <column name="LAST_ACCESS" type="timestamp" />          
+            <column name="NAME" type="${text.type}" />
+            <column name="CONTENT" type="BLOB" />
+            <column name="MIMETYPE" type="${varchar.type}(255 ${varchar.length.type})" />
+        </createTable>
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BIGDATA" columnNames="ID" /> 
+        <addForeignKeyConstraint 
+            baseTableName="DOMIBUS_CONNECTOR_BIGDATA" 
+            baseColumnNames="MESSAGE_ID" 
+            constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA" 
+            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
+            referencedColumnNames="ID" 
+            onDelete="NO ACTION" 
+            onUpdate="NO ACTION" />
+        
         
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" >
             <column name="ID" type="DECIMAL(10,0)" >

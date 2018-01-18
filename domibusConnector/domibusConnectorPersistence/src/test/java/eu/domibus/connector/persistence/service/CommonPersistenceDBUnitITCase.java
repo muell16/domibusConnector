@@ -22,22 +22,23 @@ public abstract class CommonPersistenceDBUnitITCase {
 
 
 
-    @SpringBootApplication(scanBasePackages={"eu.domibus.connector"})
+    @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
     static class TestConfiguration {
     }
 
     static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
     @BeforeClass
-    public static void InitClass() {
+    public static ConfigurableApplicationContext setUpTestDatabaseWithSpringContext() {
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
                 //.profiles("test", "db_mysql")
                 .profiles("test", "db_h2")
                 .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml")
                 ;
-        APPLICATION_CONTEXT = springAppBuilder.run();
+        ConfigurableApplicationContext applicationContext = springAppBuilder.run();
         System.out.println("APPCONTEXT IS STARTED...:" + APPLICATION_CONTEXT.isRunning());
-
+        APPLICATION_CONTEXT = applicationContext;
+        return applicationContext;
     }
 
     @AfterClass

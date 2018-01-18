@@ -19,12 +19,13 @@ import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomainCreator {
+public class DomainEntityCreatorForPersistenceTests {
 
     public static DomibusConnectorParty createPartyAT() {
         DomibusConnectorParty p = new DomibusConnectorParty("AT", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
@@ -66,8 +67,10 @@ public class DomainCreator {
     }
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
+        DomibusConnectorBigDataReferenceMemoryBacked domibusConnectorBigDataReferenceMemoryBacked = 
+                new DomibusConnectorBigDataReferenceMemoryBacked("attachment".getBytes());
         DomibusConnectorMessageAttachment attachment = 
-                new DomibusConnectorMessageAttachment("attachment".getBytes(), "identifier");       
+                new DomibusConnectorMessageAttachment(domibusConnectorBigDataReferenceMemoryBacked, "identifier");       
         attachment.setName("name");
         attachment.setMimeType("application/garbage");
         return attachment;
@@ -96,9 +99,14 @@ public class DomainCreator {
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
         messageContent.setXmlContent("xmlContent".getBytes());
         
-        DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
+        DetachedSignature detachedSignature = 
+                new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
                 
-        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument("documentbytes".getBytes(), "Document1.pdf", detachedSignature);
+        DomibusConnectorBigDataReferenceMemoryBacked docRef = 
+                new DomibusConnectorBigDataReferenceMemoryBacked("documentbytes".getBytes());
+        
+        DomibusConnectorMessageDocument messageDocument = 
+                new DomibusConnectorMessageDocument(docRef, "Document1.pdf", detachedSignature);
                         
         messageContent.setDocument(messageDocument);
         
