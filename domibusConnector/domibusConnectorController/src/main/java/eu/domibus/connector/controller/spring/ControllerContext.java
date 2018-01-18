@@ -6,8 +6,6 @@
 
 package eu.domibus.connector.controller.spring;
 
-import eu.domibus.connector.controller.DomibusConnectorIncomingController;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**

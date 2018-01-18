@@ -12,15 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
-@Component("GatewayToBackendMessageListener")
-public class GatewayToBackendMessageListener extends AbstractControllerMessageListener implements MessageListener {
-
-	private static final String queueName = "domibus.connector.internal.gateway.to.controller.queue";
+@Component("BackendToGatewayMessageListener")
+public class BackendToGatewayMessageListener extends AbstractControllerMessageListener implements MessageListener {
 	
-	@Resource(name="GatewayToBackendMessageProcessor")
+	private static final String queueName = "domibus.connector.internal.backend.to.controller.queue";
+	
+	@Resource(name="BackendToGatewayMessageProcessor")
 	private DomibusConnectorMessageProcessor messageProcessor;
 	
-	@Resource(name="GatewayToBackendConfirmationProcessor")
+	@Resource(name="BackendToGatewayConfirmationProcessor")
 	private DomibusConnectorMessageProcessor confirmationProcessor;
 	
 	@Override

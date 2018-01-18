@@ -134,6 +134,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 		// if DB field rejected is NOT NULL -> then true
 		return false;
 	}
+	
+	@Override
+	public boolean checkMessageConfirmed(DomibusConnectorMessage message) {
+		// if DB field confirmend is NOT NULL -> then true
+		return false;
+	}
     
     @Override
     @Transactional(readOnly = false)
