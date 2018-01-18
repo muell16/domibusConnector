@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.test.util.DomainCreator;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
@@ -18,8 +19,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.junit.Before;
@@ -157,7 +156,7 @@ public class MsgContentPersistenceServiceTest {
         messageContent.setXmlContent("<xmlContent></xmlContent>".getBytes());
         
         DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
-        documentBuilder.setContent("documentContent".getBytes());
+        documentBuilder.setContent(new DomibusConnectorBigDataReferenceMemoryBacked("documentContent".getBytes()));
         documentBuilder.setName("docname");
         messageContent.setDocument(documentBuilder.build());
         return messageContent;
