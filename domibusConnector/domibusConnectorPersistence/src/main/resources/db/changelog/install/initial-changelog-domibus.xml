@@ -85,7 +85,7 @@
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
         
         <createTable tableName="DOMIBUS_CONNECTOR_BIGDATA">
-            <column name="ID" type="DECIMAL(10,0)" >
+            <column name="ID" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
             <column name="CHECKSUM" type="${text.type}" />

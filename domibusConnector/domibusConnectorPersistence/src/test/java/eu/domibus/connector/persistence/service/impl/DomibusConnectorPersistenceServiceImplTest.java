@@ -10,6 +10,7 @@ package eu.domibus.connector.persistence.service.impl;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
@@ -142,10 +143,19 @@ public class DomibusConnectorPersistenceServiceImplTest {
                 .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage());
         
         
-        eu.domibus.connector.domain.model.DomibusConnectorMessage ebms1 = domibusConnectorPersistenceService.findMessageByEbmsId("ebms1");
+        DomibusConnectorMessage ebms1 = domibusConnectorPersistenceService.findMessageByEbmsId("ebms1");
         assertThat(ebms1).isNotNull();
     }
 
+    @Test
+    public void testFindMessageByConnectorMessageId() {
+        Mockito.when(domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msg72")))
+                .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage());
+        
+        DomibusConnectorMessage msg72 = domibusConnectorPersistenceService.findMessageByConnectorMessageId("msg72");
+        assertThat(msg72).isNotNull();
+    }
+    
     @Test
     public void testFindMessagesByConversationId_noResults_shouldReturnEmptyList() {
         List<eu.domibus.connector.domain.model.DomibusConnectorMessage> messageList = domibusConnectorPersistenceService.findMessagesByConversationId("conversation1");        
@@ -557,6 +567,17 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(PDomibusConnectorEvidence.class));
     }
 
+    
+    @Test
+    public void testCheckMessageConfirmedOrRejected() {
+        fail("not implemented yet!");
+    }
+    
+    @Test
+    public void testCheckMessageRejected() {
+        fail("not implemented yet!");
+    }
+    
 
     /**
      * Message Error related

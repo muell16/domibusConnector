@@ -1,25 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import liquibase.Contexts;
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
+import static org.assertj.core.api.Assertions.*;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.DataSetException;
@@ -28,19 +25,22 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.h2.store.fs.FileUtils;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.StreamUtils;
 
 /**
  *
@@ -52,6 +52,8 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
 
     //static ConfigurableApplicationContext APPLICATION_CONTEXT;
   
+    private final static byte[] TESTBYTES = "HELLO WORLD I AM A LONG BLOB OF A LOT OF DATA. AN MY END IS WITH THE DOT AT THE END OF THIS SENTENCE.".getBytes();
+    
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     
     private static File TEST_RESULTS_FOLDER;
@@ -59,6 +61,10 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
     private static ApplicationContext APPLICATION_CONTEXT;
     
     private DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
+    private DomibusConnectorPersistenceService persistenceService;
+    
+    private DataSource ds;
+    private PlatformTransactionManager transactionManager;
     
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
     static class TestConfiguration {
@@ -85,8 +91,8 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
         }
         
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
-                //.profiles("test", "db_mysql")
-                .profiles("test", "db_h2")                
+                .profiles("test", "db_mysql")
+                //.profiles("test", "db_h2")                
                 .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml",
                         "spring.datasource.url=jdbc:h2:" + testDbFile.getAbsolutePath() + "/db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE"
                         )
@@ -96,38 +102,73 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
         return applicationContext;
     }
     
-    
+
         
     @Before
     public void setUp() throws DataSetException, DatabaseUnitException, SQLException, IOException {
         bigDataPersistenceService = 
-                APPLICATION_CONTEXT.getBean(DomibusConnectorBigDataPersistenceServiceJdbcImpl.class);
+                APPLICATION_CONTEXT.getBean(DomibusConnectorBigDataPersistenceService.class);
         
-        DataSource ds = APPLICATION_CONTEXT.getBean(DataSource.class);
+        ds = APPLICATION_CONTEXT.getBean(DataSource.class);
+        transactionManager = APPLICATION_CONTEXT.getBean(PlatformTransactionManager.class);
+        persistenceService = APPLICATION_CONTEXT.getBean(DomibusConnectorPersistenceService.class);
         
         IDataSet dataSet = new FlatXmlDataSetBuilder()
                 .setColumnSensing(true)
                 .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMessage.xml").getInputStream()));
         
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);        
-        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
+        //DatabaseOperation.INSERT.execute(conn, dataSet);
         
         
     }
 
 
     @Test
+    @Ignore("not implemented yet!")
     public void testGetReadableDataSource() {
+           
+    }
+
+    @Test
+    public void testCreateDomibusConnectorBigDataReference() throws IOException, SQLException {
+        DomibusConnectorMessage message = Mockito.mock(DomibusConnectorMessage.class);
+        Mockito.when(message.getConnectorMessageId()).thenReturn("msg72");
+        
+        DomibusConnectorBigDataReference dataReference;
+        //persistenceService.findMessageByConnectorMessageId("msg72");
+//        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+//        transactionTemplate.execute((TransactionStatus status) -> {            
+            try {
+                dataReference = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+                assertThat(dataReference).isNotNull();
+
+                OutputStream outputStream = dataReference.getOutputStream();
+
+                StreamUtils.copy(TESTBYTES, outputStream);
+                outputStream.close();
+                
+//                return null;
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
+//        });
+//                
+        
+        //test if result is in database without transaction
+//        DomibusConnectorBigDataReference dataReference = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+        Connection connection = ds.getConnection();
+        PreparedStatement stm = connection.prepareStatement("SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA WHERE ID = ?");
+        stm.setString(1, dataReference.getStorageIdReference());
+        ResultSet rs = stm.executeQuery();
+        rs.next();
+        byte[] bytes = rs.getBytes("CONTENT");
+        assertThat(new String(bytes, "UTF-8")).isEqualTo(new String(TESTBYTES, "UTF-8"));
         
     }
 
     @Test
-    public void testCreateDomibusConnectorBigDataReference() {
-        
-        bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
-    }
-
-    @Test
+    @Ignore("not implemented yet!")
     public void testDeleteDomibusConnectorBigDataReference() {
     }
     

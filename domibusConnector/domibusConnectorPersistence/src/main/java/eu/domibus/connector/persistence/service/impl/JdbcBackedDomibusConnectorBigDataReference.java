@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
@@ -29,6 +23,12 @@ public class JdbcBackedDomibusConnectorBigDataReference extends DomibusConnector
     boolean readable;
     
     boolean writeable;
+    
+    private final DomibusConnectorBigDataPersistenceServiceJdbcImpl bigDataPersistenceService;
+
+    JdbcBackedDomibusConnectorBigDataReference(DomibusConnectorBigDataPersistenceServiceJdbcImpl persistenceService) {
+        this.bigDataPersistenceService = persistenceService;
+    }
     
     
     @Override

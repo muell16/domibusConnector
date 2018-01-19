@@ -153,7 +153,7 @@ public class MsgContentPersistenceService {
             String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
             msgCont.setContentType(type.getDbString());
             msgCont.setChecksum(md5DigestAsHex);
-            msgCont.setContent(toByteArray);
+            msgCont.setContent(toByteArray);            
             msgCont.setMessage(message);
             return msgCont;
         } catch (IOException ioe) {

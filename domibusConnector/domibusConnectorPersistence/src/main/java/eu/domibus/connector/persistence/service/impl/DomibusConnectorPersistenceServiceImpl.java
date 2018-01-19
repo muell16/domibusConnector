@@ -119,8 +119,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     
 	@Override
 	public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
-		// TODO Auto-generated method stub
-		return null;
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        DomibusConnectorMessage message = this.mapMessageToDomain(dbMessage);
+        return message;
 	}
 
 	@Override

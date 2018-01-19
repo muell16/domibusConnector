@@ -11,6 +11,9 @@
         </Root>
         <org.liquibase level="debug" >
             <AppenderRef ref="Console" />
-        </org.liquibase>        
+        </org.liquibase>    
+        <eu.domibus.connector.persistence level="debug" >
+            <AppenderRef ref="Console" />
+        </eu.domibus.connector.persistence>    
     </Loggers>
 </Configuration>
