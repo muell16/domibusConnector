@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
@@ -20,6 +21,9 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 	
 	@Resource
 	private DomibusConnectorPersistenceService persistenceService;
+	
+	@Resource
+	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
 	@Override
 	public void processMessage(DomibusConnectorMessage message) {
@@ -40,13 +44,14 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
                 confirmation.getEvidenceType());
 
-        //TODO deliver evidence to backend
+        backendDeliveryService.deliverMessageToBackend(message);
 
-        try {
-            persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
-        } catch (PersistenceException persistenceException) {
-        	logger.error("Persistence Exception occured", persistenceException);
-        }
+        // TODO this needs to be done by the backend link!!!
+//        try {
+//            persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
+//        } catch (PersistenceException persistenceException) {
+//        	logger.error("Persistence Exception occured", persistenceException);
+//        }
 
         boolean confirmedOrRejected = persistenceService.checkMessageConfirmedOrRejected(originalMessage);
         if (!confirmedOrRejected) {

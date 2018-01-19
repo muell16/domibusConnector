@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
@@ -38,6 +40,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	@Resource
 	private DomibusConnectorSecurityToolkit securityToolkit;
+	
+	@Resource
+	private DomibusConnectorMessageIdGenerator messageIdGenerator;
+	
+	@Resource
+	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
 	@Override
 	public void processMessage(DomibusConnectorMessage message) {
@@ -81,7 +89,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
 
-		//TODO send return message back to backend
+		backendDeliveryService.deliverMessageToBackend(returnMessage);
 
 
 		try {
@@ -121,7 +129,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
 
-		// TODO send return message to backend      
+		backendDeliveryService.deliverMessageToBackend(returnMessage);     
 
 		try {
 			persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
@@ -139,7 +147,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
 		details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
 		details.setService(originalMessage.getMessageDetails().getService());
-
+		
 		DomibusConnectorAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
 		details.setAction(action);
 

@@ -1,19 +1,12 @@
 package eu.domibus.connector.controller.service.impl;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jms.JmsException;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
@@ -25,15 +18,12 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceServi
 import eu.domibus.connector.persistence.service.PersistenceException;
 
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
-public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnectorGatewayDeliveryService {
+public class DomibusConnectorGatewayDeliveryServiceImpl extends AbstractDeliveryServiceImpl implements DomibusConnectorGatewayDeliveryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
 	
 	@Value("${domibus.connector.internal.gateway.to.controller.queue}")
 	private String internalGWToControllerQueueName;
-	
-	@Autowired
-	private JmsTemplate jmsTemplate;
 	
 	@Resource
 	private DomibusConnectorPersistenceService persistenceService;
@@ -68,23 +58,6 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 	
 	}
 	
-	private void putMessageOnMessageQueue(String connectorMessageId) {
-		logger.debug("Putting message '{}' on queue '{}'.", connectorMessageId, internalGWToControllerQueueName);
-		try {
-			jmsTemplate.send(internalGWToControllerQueueName, new MessageCreator() {
-				@Override
-				public Message createMessage(Session session) throws JMSException {
-					return session.createTextMessage(connectorMessageId);
-				}
-
-			});
-		} catch (JmsException je) {
-			logger.error("Exception putting message '{}' on queue '{}'!", connectorMessageId, internalGWToControllerQueueName);
-		}
-
-		logger.info("Message with ID '{}' put on queue'{}'.", connectorMessageId, internalGWToControllerQueueName);
-	}
-	
 	private boolean checkMessageForProcessability(DomibusConnectorMessage message) {
 		
 		if(message == null)
@@ -97,6 +70,16 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 			return true;
 		
 		return false;
+	}
+
+	@Override
+	Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	String getQueueName() {
+		return internalGWToControllerQueueName;
 	}
 
 }

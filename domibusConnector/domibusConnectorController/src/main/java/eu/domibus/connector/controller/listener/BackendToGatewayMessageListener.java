@@ -5,6 +5,8 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ public class BackendToGatewayMessageListener extends AbstractControllerMessageLi
 	
 	private static final String queueName = "domibus.connector.internal.backend.to.controller.queue";
 	
+	private static final Logger logger = LoggerFactory.getLogger(BackendToGatewayMessageListener.class);
+	
 	@Resource(name="BackendToGatewayMessageProcessor")
 	private DomibusConnectorMessageProcessor messageProcessor;
 	
@@ -27,7 +31,7 @@ public class BackendToGatewayMessageListener extends AbstractControllerMessageLi
 	@Transactional
 	@JmsListener(destination = "${"+queueName+"}") //Funktioniert das????
 	public void onMessage(Message message) {
-		handleMessage(message, queueName);
+		handleMessage(message);
 	}
 
 	@Override
@@ -40,6 +44,16 @@ public class BackendToGatewayMessageListener extends AbstractControllerMessageLi
 			// it is a confirmation message
 			confirmationProcessor.processMessage(connectorMessage);
 		}
+	}
+
+	@Override
+	Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	String getQueueName() {
+		return queueName;
 	}
 
 }
