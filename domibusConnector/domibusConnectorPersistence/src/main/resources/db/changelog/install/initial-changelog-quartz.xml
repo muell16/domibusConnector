@@ -25,16 +25,16 @@
             <column name="JOB_CLASS_NAME" type="VARCHAR(250)" >
                 <constraints nullable="false" />
             </column>
-            <column name="IS_DURABLE" type="VARCHAR(5)" >
+            <column name="IS_DURABLE" type="BOOLEAN" >
                 <constraints nullable="false" />
             </column>
-            <column name="IS_NONCONCURRENT" type="VARCHAR(5)" >
+            <column name="IS_NONCONCURRENT" type="BOOLEAN" >
                 <constraints nullable="false" />
             </column>
-            <column name="IS_UPDATE_DATA" type="VARCHAR(5)" >
+            <column name="IS_UPDATE_DATA" type="BOOLEAN" >
                 <constraints nullable="false" />
             </column>
-            <column name="REQUESTS_RECOVERY" type="VARCHAR(5)" >
+            <column name="REQUESTS_RECOVERY" type="BOOLEAN" >
                 <constraints nullable="false" />
             </column>
             <column name="JOB_DATA" type="BLOB" />
@@ -264,6 +264,9 @@
             <column name="FIRED_TIME" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+            <column name="SCHED_TIME" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
             <column name="PRIORITY" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -272,8 +275,8 @@
             </column>
             <column name="JOB_NAME" type="VARCHAR(200)"/>
             <column name="JOB_GROUP" type="VARCHAR(200)"/>
-            <column name="IS_NONCONCURRENT" type="VARCHAR(5)"/>
-            <column name="REQUESTS_RECOVERY" type="VARCHAR(5)"/>
+            <column name="IS_NONCONCURRENT" type="BOOLEAN"/>
+            <column name="REQUESTS_RECOVERY" type="BOOLEAN"/>
         </createTable>        
     </changeSet>
     <changeSet author="StephanSpindler" id="init-quartz-9.1" >
@@ -315,7 +318,7 @@
         <addPrimaryKey tableName="DCON_QRTZ_LOCKS" columnNames="SCHED_NAME,LOCK_NAME" />
     </changeSet>
         
-    <changeSet id="StephanSpindler" author="init-qaurtz-finished" >
+    <changeSet id="StephanSpindler" author="init-quartz-finished" >
         <tagDatabase tag="QUARTZ_DB " />
     </changeSet>
         
