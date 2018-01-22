@@ -8,6 +8,8 @@ package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.DomibusConnectorIncomingController;
 import eu.domibus.connector.controller.service.IncomingMessageServiceITCase.TestConfiguration;
+import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
@@ -18,8 +20,11 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import org.apache.log4j.lf5.util.StreamUtils;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +36,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -44,6 +50,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @TestPropertySource("classpath:application-test.properties")
 public class IncomingMessageServiceITCase {
 
+    public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
+    private File testResultsFolder;
+    private String testDateAsString;
     
     @SpringBootApplication(scanBasePackages = {"eu.domibus.connector"})
     static class TestConfiguration {
@@ -72,7 +81,14 @@ public class IncomingMessageServiceITCase {
     
     @Before
     public void setUp() {
-        
+        String dir = System.getenv().getOrDefault(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
+        dir = dir + "/" + IncomingMessageServiceITCase.class.getSimpleName();
+        testResultsFolder = new File(dir);
+        testResultsFolder.mkdirs();
+
+        DateFormatter simpleDateFormatter = new DateFormatter();
+        simpleDateFormatter.setPattern("yyyy-MM-dd-hh-mm");
+        testDateAsString = simpleDateFormatter.print(new Date(), Locale.ENGLISH);
     }
     
     
@@ -125,12 +141,13 @@ public class IncomingMessageServiceITCase {
         return messageBuilder.build();
     }
     
-    private byte[] loadRelativeResourceAsByteArray(String base, String relative) {
-        try {
-            return StreamUtils.getBytes(loadRelativeResource(base, relative));
-        } catch (IOException ioe) {
-            throw new RuntimeException(String.format("Ressource %s could not be copied!", base + "/" + relative), ioe);
-        }
+    private DomibusConnectorBigDataReference loadRelativeResourceAsByteArray(String base, String relative) {
+        InputStream inputStream = loadRelativeResource(base, relative);
+
+        DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+        inMemory.setInputStream(inputStream);
+        inMemory.setReadable(true);
+        return inMemory;
     }
     
     private InputStream loadRelativeResource(String base, String relative) {

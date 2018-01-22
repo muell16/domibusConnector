@@ -11,11 +11,11 @@ import javax.annotation.Nonnull;
 /**
  * Represents a reference to a storage system for big files
  */
-public abstract class DomibusConnectorBigDataReference implements DataSource, Serializable {
+public class DomibusConnectorBigDataReference implements DataSource, Serializable {
 
     private String storageIdReference;
 
-    private String contentType;
+    private String mimetype;
     
     private String name;
 
@@ -37,30 +37,43 @@ public abstract class DomibusConnectorBigDataReference implements DataSource, Se
     }
   
     @Override
-    public abstract InputStream getInputStream() throws IOException;
+    public InputStream getInputStream() throws IOException {
+        throw new IOException("not initialized yet!");
+    }
+    
     
     @Override
-    public abstract OutputStream getOutputStream() throws IOException;
+    public OutputStream getOutputStream() throws IOException {
+        throw new IOException("not initialized yet!");
+    }
 
     /**
      * Is readable if a valid input stream can be returned
      * @return - if it's readable
      */
-    public abstract boolean isReadable();
+    public boolean isReadable() { return false; }
     
     /**
      * @return is true if a writeable output stream can be returned!
      */
-    public abstract boolean isWriteable();
+    public boolean isWriteable() { return false; }
     
     @Override
     public String getContentType() {
-        return this.contentType;
+        return this.mimetype;
     }
 
     @Override
     public String getName() {
         return this.name;
+    }
+
+    public void setMimetype(String contentType) {
+        this.mimetype = contentType;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

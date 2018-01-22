@@ -20,12 +20,14 @@ import org.springframework.stereotype.Component;
 
 
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.CertificateStoreInfo;
@@ -43,7 +45,10 @@ import eu.europa.esig.dss.DigestAlgorithm;
 import eu.europa.esig.dss.EncryptionAlgorithm;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
+import java.io.OutputStream;
 import javax.annotation.Nonnull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StreamUtils;
 
 /**
  * TODO: documentation needed
@@ -76,6 +81,9 @@ public class DomibusSecurityContainer implements InitializingBean {
 
     @Resource(name="domibusConnectorContainerService")
     ECodexContainerService containerService;
+            
+    @Autowired
+    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
     
     TokenIssuer tokenIssuer;
 
@@ -157,12 +165,19 @@ public class DomibusSecurityContainer implements InitializingBean {
         BusinessContent businessContent = new BusinessContent();
 
         DSSDocument dssDocument = null;
-        if (messageContent.getDocument() != null && ArrayUtils.isNotEmpty(messageContent.getDocument().getDocument())) {
+
+        
+        
+        if (messageContent.getDocument() != null) {
+            //
+            DomibusConnectorMessageDocument document = messageContent.getDocument();
+            
+            
             //we are still assuming that the bussiness document is always a pdf!
-            String pdfName = StringUtils.isEmpty(messageContent.getDocument().getDocumentName()) ? MAIN_DOCUMENT_NAME
+            String pdfName = StringUtils.isEmpty(document.getDocumentName()) ? MAIN_DOCUMENT_NAME
                     + ".pdf"
                     : messageContent.getDocument().getDocumentName();            
-            dssDocument = new InMemoryDocument(messageContent.getDocument().getDocument(), pdfName, MimeType.PDF);
+            dssDocument = createInMemoryDocument(document.getDocument(), pdfName, MimeType.PDF);
         
         // message action does not require a document, make xml to main document
         } else if (!message.getMessageDetails().getAction().isDocumentRequired() && message.getMessageContent().getXmlContent() != null) {
@@ -199,10 +214,9 @@ public class DomibusSecurityContainer implements InitializingBean {
             MimeType mimeType = MimeType.fromMimeTypeString(attachment.getMimeType());
             LOGGER.debug("buildBusinessContent: detected mimeType [{}] in attachment [{}]", mimeType.getMimeTypeString(), attachment);
             
-            businessContent.addAttachment(new InMemoryDocument(
-                    attachment.getAttachment(), 
-                    attachment.getName(),
-                    mimeType));
+            DSSDocument dssInMemoryDoc = createInMemoryDocument(attachment.getAttachment(), attachment.getName(), mimeType);
+            
+            businessContent.addAttachment(dssInMemoryDoc);
         }
 
         return businessContent;
@@ -238,18 +252,18 @@ public class DomibusSecurityContainer implements InitializingBean {
                 	DSSDocument asicDocument = container.getAsicDocument();
                     if (asicDocument != null) {
                         try {
-                            DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(asicDocument, ASICS_CONTAINER_IDENTIFIER,
-                                    asicDocument.getName(), asicDocument.getMimeType().getMimeTypeString());
+                            DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
                             message.addAttachment(asicAttachment);
                         } catch (IOException e) {
                             throw new DomibusConnectorSecurityException(e);
                         }
                     }
                     DSSDocument tokenXML = container.getTokenXML();
+                    
                     if (tokenXML != null) {
                         try {
-                            DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(tokenXML, TOKEN_XML_IDENTIFIER,
-                                    TOKEN_XML_FILE_NAME, MimeType.XML.getMimeTypeString());
+                            tokenXML.setName(TOKEN_XML_FILE_NAME);
+                            DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
                             message.addAttachment(tokenAttachment);
                         } catch (IOException e) {
                             throw new DomibusConnectorSecurityException(e);
@@ -297,8 +311,32 @@ public class DomibusSecurityContainer implements InitializingBean {
             message.getMessageAttachments().remove(asicsAttachment);
             message.getMessageAttachments().remove(tokenXMLAttachment);
 
-            InputStream asicInputStream = new ByteArrayInputStream(asicsAttachment.getAttachment());
-            InputStream tokenStream = new ByteArrayInputStream(tokenXMLAttachment.getAttachment());
+            
+            DomibusConnectorBigDataReference asicContainerDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
+            InputStream asicInputStream;
+            try {                
+                asicInputStream = asicContainerDataRef.getInputStream();
+            } catch (IOException ioe) {                
+                throw new RuntimeException(String.format("error while initializing asicInputStream from big data reference %s", 
+                        asicContainerDataRef.getStorageIdReference()));
+            }
+            
+            DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
+            InputStream tokenStream; /// = xmlTokenDataRef.getInputStream();
+            try {
+                tokenStream = xmlTokenDataRef.getInputStream();
+            } catch (IOException ioe) {
+                throw new RuntimeException(String.format("error while initializing xmlTokenDataRef get input stream from %s",
+                        xmlTokenDataRef.getStorageIdReference()));
+            }
+                    
+//                    
+//            DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
+//            InputStream tokenStream = xmlTokenDataRef.getInputStream();
+//            
+//            InputStream asicInputStream = new ByteArrayInputStream(asicsAttachment.getAttachment());
+//            InputStream tokenStream = new ByteArrayInputStream(tokenXMLAttachment.getAttachment());
+
             try {
                 ECodexContainer container = containerService.receive(asicInputStream, tokenStream);
 
@@ -350,8 +388,15 @@ public class DomibusSecurityContainer implements InitializingBean {
                                     container.getBusinessDocument().getMimeType());
                             try {
                             	byte[] docAsBytes = IOUtils.toByteArray(container.getBusinessDocument().openStream());
-                                LOGGER.trace("recieveContainerContents: Read following byte content [{}]", IOUtils.toString(docAsBytes, "UTF8"));
-                                documentBuilder.setContent(docAsBytes);
+                                //LOGGER.trace("recieveContainerContents: Read following byte content [{}]", IOUtils.toString(docAsBytes, "UTF8"));
+                                DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+                                
+                                LOGGER.trace("copying businessDocument input stream to bigDataReference output Stream");
+                                InputStream inputStream = container.getBusinessDocument().openStream();
+                                OutputStream outputStream = bigDataRef.getOutputStream();
+                                StreamUtils.copy(inputStream, outputStream);
+                                
+                                documentBuilder.setContent(bigDataRef);
                                 
                                 LOGGER.trace("recieveContainerContents: check if MimeType.PDF [{}] equals to [{}]", 
                                         MimeType.PDF.getMimeTypeString(), container.getToken().getDocumentType());
@@ -387,8 +432,9 @@ public class DomibusSecurityContainer implements InitializingBean {
                             for (DSSDocument businessAttachment : container.getBusinessAttachments()) {
                                 try {
                                     DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(
-                                            businessAttachment, businessAttachment.getName(), businessAttachment.getName(), businessAttachment
-                                                    .getMimeType().getMimeTypeString());
+                                            message, 
+                                            businessAttachment, 
+                                            businessAttachment.getName());
 
                                     message.addAttachment(attachment);
                                 } catch (IOException e) {
@@ -400,8 +446,9 @@ public class DomibusSecurityContainer implements InitializingBean {
                         DSSDocument tokenPDF = container.getTokenPDF();
                         if (tokenPDF != null) {
                             try {
-                                DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(tokenPDF, TOKEN_PDF_IDENTIFIER, 
-                                        TOKEN_PDF_FILE_NAME, MimeType.PDF.getMimeTypeString());
+                                tokenPDF.setMimeType(MimeType.PDF);
+                                tokenPDF.setName(TOKEN_PDF_FILE_NAME);
+                                DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(message, tokenPDF, TOKEN_PDF_IDENTIFIER);
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
                                 LOGGER.error("Could not read Token PDF!", e);
@@ -411,8 +458,9 @@ public class DomibusSecurityContainer implements InitializingBean {
                         DSSDocument tokenXML = container.getTokenXML();
                         if (tokenXML != null) {
                             try {
-                                DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(tokenXML, TOKEN_XML_IDENTIFIER, 
-                                        TOKEN_XML_FILE_NAME, MimeType.XML.getMimeTypeString());
+                                tokenXML.setMimeType(MimeType.XML);
+                                tokenXML.setName(TOKEN_XML_FILE_NAME);
+                                DomibusConnectorMessageAttachment attachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER); 
                                 message.addAttachment(attachment);
                             } catch (IOException e) {
                                 LOGGER.error("Could not read Token XML!", e);
@@ -435,22 +483,63 @@ public class DomibusSecurityContainer implements InitializingBean {
         }
     }
 
-    private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DSSDocument document, String identifier, String name, String mimeType)
+    private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DomibusConnectorMessage message, DSSDocument document, String identifier) //, String name, String mimeType)
             throws IOException {
-    	
-    	byte[] byteArray = IOUtils.toByteArray(document.openStream());
-    	
-    	if(ArrayUtils.isEmpty(byteArray)){
-    		throw new DomibusConnectorSecurityException("Cannot create attachment without content data!");
-    	}
+        LOGGER.trace("convertDocumentToMessageAttachment: called");
+        
+        DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+        
+        String documentName = document.getName();
+        String mimeTypeString = document.getMimeType().getMimeTypeString();
+        
+        bigDataRef.setName(documentName);
+        bigDataRef.setMimetype(mimeTypeString);
+        
+        LOGGER.debug("Copy input stream from dss document to output stream of big data reference");
+        InputStream inputStream = document.openStream();
+        OutputStream outputStream = bigDataRef.getOutputStream();
+        StreamUtils.copy(inputStream, outputStream);
+        
+//        document.getMimeType();
+//        document.getName();
+//    	
+//    	byte[] byteArray = IOUtils.toByteArray(document.openStream());
+//    	
+//    	if(ArrayUtils.isEmpty(byteArray)){
+//    		throw new DomibusConnectorSecurityException("Cannot create attachment without content data!");
+//    	}
     	if(StringUtils.isEmpty(identifier)){
     		throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");
     	}
     	
-        DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(byteArray, identifier);
-		attachment.setName(name);
-        attachment.setMimeType(mimeType);
+        DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(bigDataRef, identifier);
+        
+		attachment.setName(documentName);
+        attachment.setMimeType(mimeTypeString);
 
         return attachment;
     }
+
+    
+    /**
+     * in later versions this method should return a streaming based DSSDocument
+     * so no conversion to an byte[] is necessary
+     * @param dataRef - the reference to the data, the reference id must be set!
+     * @param name name of the dssDocument
+     * @param mimeType mimeType of the dssDocument
+     * @return the created InMemoryDocument
+     */
+    DSSDocument createInMemoryDocument(DomibusConnectorBigDataReference dataRef, String name, MimeType mimeType) {
+        try {
+            DomibusConnectorBigDataReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
+            InputStream inputStream = readableDataSource.getInputStream();
+            byte[] content = StreamUtils.copyToByteArray(inputStream);
+            InMemoryDocument dssDocument = new InMemoryDocument(content, name, MimeType.PDF);
+            return dssDocument;
+        } catch (IOException ioe) {
+            throw new RuntimeException("error while loading data from bigDataPersistenceService", ioe);
+        }
+    }
+    
+    
 }

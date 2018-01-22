@@ -13,6 +13,7 @@ import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import java.io.ByteArrayInputStream;
 
 /**
  *
@@ -60,8 +61,11 @@ public class ConnectorControllerTestDomainCreator {
     }
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
-        DomibusConnectorMessageAttachment attachment = 
-                new DomibusConnectorMessageAttachment("attachment".getBytes(), "identifier");       
+        ByteArrayInputStream inputStream = new ByteArrayInputStream("attachment".getBytes());
+        DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+        inMemory.setInputStream(inputStream);
+        
+        DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(inMemory, "identifier");       
         attachment.setName("name");
         attachment.setMimeType("application/garbage");
         return attachment;
@@ -91,7 +95,13 @@ public class ConnectorControllerTestDomainCreator {
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
                 
-        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument("documentbytes".getBytes(), "Document1.pdf", detachedSignature);
+        
+        ByteArrayInputStream inputStream = new ByteArrayInputStream("documentbytes".getBytes());
+        DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+        inMemory.setInputStream(inputStream);
+        inMemory.setReadable(true);
+               
+        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(inMemory, "Document1.pdf", detachedSignature);
                         
         messageContent.setDocument(messageDocument);
         

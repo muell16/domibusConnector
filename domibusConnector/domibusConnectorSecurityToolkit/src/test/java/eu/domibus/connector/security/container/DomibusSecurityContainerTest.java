@@ -2,6 +2,7 @@ package eu.domibus.connector.security.container;
 
 import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
@@ -9,6 +10,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
@@ -21,18 +23,31 @@ import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.DSSDocument;
 import eu.europa.esig.dss.MimeType;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.datetime.DateFormatter;
+import org.springframework.util.StreamUtils;
 
 
 /**
@@ -44,11 +59,28 @@ public class DomibusSecurityContainerTest {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusSecurityContainerTest.class);
     
+    public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
+    private static File TEST_RESULTS_FOLDER;
+    private static Date TEST_DATE;
+    
     DomibusSecurityContainer securityContainer;
     
     //mock
-    private ECodexContainerService eCodexContainerService;
+    ECodexContainerService eCodexContainerService;
+           
+    //mock
+    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
     
+
+    @BeforeClass
+    public static void initClass() {            
+        String dir = System.getenv().getOrDefault(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
+        dir = dir + "/" + DomibusSecurityContainerTest.class.getSimpleName();
+        TEST_RESULTS_FOLDER = new File(dir);
+        TEST_RESULTS_FOLDER.mkdirs();       
+        
+        TEST_DATE = new Date();
+    }
     
     /**
      * creates a test message where only the MessageContent and the Document of the
@@ -60,9 +92,10 @@ public class DomibusSecurityContainerTest {
             DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
             DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
 
-            byte[] pdf = "pdf".getBytes();
             byte[] xml = "xml".getBytes();
+            DomibusConnectorBigDataReference pdf = createMockedBigDataReferenceFromString("pdf");
             
+                        
             DetachedSignature sig = DetachedSignatureBuilder
                     .createBuilder()
                     .setName("sig1")
@@ -71,13 +104,13 @@ public class DomibusSecurityContainerTest {
                     .build();
             
             DomibusConnectorMessageDocument document = DomibusConnectorMessageDocumentBuilder
-                    .createBuilder()
+                    .createBuilder()                    
                     .setContent(pdf)
                     .setName("Form_A")
                     .withDetachedSignature(sig)
                     .build();
             
-            content.setXmlContent(xml);
+            content.setXmlContent(xml);            
             content.setDocument(document);
             
             DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);        
@@ -87,6 +120,7 @@ public class DomibusSecurityContainerTest {
         }
     }
     
+    DateFormatter dateFormatter = new DateFormatter("yyyy-MM-dd");
     
     @Before
     public void setUp() throws Exception {
@@ -102,8 +136,17 @@ public class DomibusSecurityContainerTest {
         eCodexContainerService = Mockito.mock(ECodexContainerService.class);
         
         securityContainer.containerService = eCodexContainerService;
+       
         
-    
+        bigDataPersistenceService = Mockito.mock(DomibusConnectorBigDataPersistenceService.class);
+        
+        Mockito.when(bigDataPersistenceService.createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class)))
+                .thenReturn(new FileBackedDataRef(String.format("%s#%s", UUID.randomUUID().toString(), dateFormatter.print(TEST_DATE, Locale.ENGLISH))));
+        Mockito.when(bigDataPersistenceService.getReadableDataSource(any(DomibusConnectorBigDataReference.class)))
+                .thenReturn(new FileBackedDataRef(String.format("%s#%s", UUID.randomUUID().toString(), dateFormatter.print(TEST_DATE, Locale.ENGLISH))));
+        
+        
+        securityContainer.bigDataPersistenceService = bigDataPersistenceService;
         
     }
     
@@ -198,7 +241,9 @@ public class DomibusSecurityContainerTest {
     public void testCreateContainer_withMessageAttachments() {
         DomibusConnectorMessage testMessage = createTestMessage();
         
-        DomibusConnectorMessageAttachment attach1 = new DomibusConnectorMessageAttachment("attach1".getBytes(), "attach1");
+        DomibusConnectorBigDataReference attachDataRef = createMockedBigDataReferenceFromString("attach1");
+        
+        DomibusConnectorMessageAttachment attach1 = new DomibusConnectorMessageAttachment(attachDataRef, "attach1");
         attach1.setMimeType("application/text");
         attach1.setName("test");
         testMessage.addAttachment(attach1);
@@ -221,7 +266,8 @@ public class DomibusSecurityContainerTest {
     public void testCreateContainer_withMessageAttachmentsMimeType() {
         DomibusConnectorMessage testMessage = createTestMessage();
         
-        DomibusConnectorMessageAttachment attach1 = new DomibusConnectorMessageAttachment("attach1".getBytes(), "attach1");
+        DomibusConnectorBigDataReference attachDataRef = createMockedBigDataReferenceFromString("attach1");
+        DomibusConnectorMessageAttachment attach1 = new DomibusConnectorMessageAttachment(attachDataRef, "attach1");
         attach1.setMimeType("application/pdf"); //is not correctly converted to pdf?
         attach1.setName("test");
         testMessage.addAttachment(attach1);
@@ -238,7 +284,7 @@ public class DomibusSecurityContainerTest {
     
     
     @Test
-    public void testCreateContainer() throws ECodexException {
+    public void testCreateContainer() throws ECodexException, IOException {
         DomibusConnectorMessage testMessage = createTestMessage();
         
         ECodexContainer mockedECodexContainer = Mockito.mock(ECodexContainer.class);
@@ -269,7 +315,12 @@ public class DomibusSecurityContainerTest {
         //test xml token
         DomibusConnectorMessageAttachment xmlToken = testMessage.getMessageAttachments()
                 .stream().filter((a) -> DomibusSecurityContainer.TOKEN_XML_IDENTIFIER.equals(a.getIdentifier())).findFirst().get();
-        assertThat(xmlToken.getAttachment()).isEqualTo("<xmldoc></xmldoc>".getBytes());
+        
+        InputStream inputStream = xmlToken.getAttachment().getInputStream();
+        //byte[] attachmentBytes = StreamUtils.copyToByteArray(inputStream);
+        String attachmentBytes = IOUtils.toString(inputStream, "UTF-8");
+        
+        assertThat(attachmentBytes).isEqualTo("<xmldoc></xmldoc>");
         
         //test container
         DomibusConnectorMessageAttachment asicsContainer = testMessage.getMessageAttachments()
@@ -366,8 +417,10 @@ public class DomibusSecurityContainerTest {
         testRecieveContainerContents_initMocks();
         DomibusConnectorMessage testMessage = createTestMessage();
         
+        DomibusConnectorBigDataReference xmlContent = createMockedBigDataReferenceFromString("<xmlContent></xmlContent>");
+        
         DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment(
-                "<xmlContent></xmlContent>".getBytes(), 
+                xmlContent, 
                 DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
         
         testMessage.addAttachment(xmlTokenAttach);
@@ -387,8 +440,9 @@ public class DomibusSecurityContainerTest {
         testRecieveContainerContents_initMocks();
         DomibusConnectorMessage testMessage = createTestMessage();
         
+        DomibusConnectorBigDataReference xmlContent = createMockedBigDataReferenceFromString("<xmlContent></xmlContent>");        
         DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment(
-                "<xmlContent></xmlContent>".getBytes(), 
+                xmlContent, 
                 DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
         
         testMessage.addAttachment(xmlTokenAttach);
@@ -404,12 +458,14 @@ public class DomibusSecurityContainerTest {
         testRecieveContainerContents_initMocks();
         DomibusConnectorMessage testMessage = createTestMessage();
         
+        DomibusConnectorBigDataReference asicAttachDataRef = createMockedBigDataReferenceFromString("asiccontent");        
         DomibusConnectorMessageAttachment asicAttach = new DomibusConnectorMessageAttachment(
-                "asiccontent".getBytes(), 
+                asicAttachDataRef, 
                 DomibusSecurityContainer.ASICS_CONTAINER_IDENTIFIER);
         
+        DomibusConnectorBigDataReference xmlTokenDataRef = createMockedBigDataReferenceFromString("<xmlContent></xmlContent>");
         DomibusConnectorMessageAttachment xmlTokenAttach = new DomibusConnectorMessageAttachment(
-                "<xmlContent></xmlContent>".getBytes(), 
+                xmlTokenDataRef, 
                 DomibusSecurityContainer.TOKEN_XML_IDENTIFIER);
         
         testMessage.addAttachment(asicAttach);
@@ -425,7 +481,9 @@ public class DomibusSecurityContainerTest {
         assertThat(testMessage.getMessageContent().getXmlContent()).isNotNull();
         
         //test document
-        assertThat(IOUtils.toString(testMessage.getMessageContent().getDocument().getDocument(), "UTF8")).as("is provided").isEqualTo("superbusinessdoc");
+        //assertThat(IOUtils.toString(testMessage.getMessageContent().getDocument().getDocument(), "UTF8")).as("is provided").isEqualTo("superbusinessdoc");
+        InputStream inputStream = testMessage.getMessageContent().getDocument().getDocument().getInputStream();
+        assertThat(StreamUtils.copyToString(inputStream, Charset.forName("UTF-8"))).as("is provided").isEqualTo("superbusinessdoc");
                 
         //Test signature
         DetachedSignature detachedSignature = testMessage.getMessageContent().getDocument().getDetachedSignature();
@@ -449,6 +507,57 @@ public class DomibusSecurityContainerTest {
                 .findFirst().get();
         assertThat(xmlTokenAttachment.getAttachment()).isEqualTo("xml token".getBytes());
         
+    }
+    
+    
+    private DomibusConnectorBigDataReference createMockedBigDataReferenceFromString(String input) {
+        try {
+            DomibusConnectorBigDataReference bigDataRef = Mockito.mock(DomibusConnectorBigDataReference.class);
+            Mockito.when(bigDataRef.getInputStream()).thenReturn(new ByteArrayInputStream(input.getBytes()));            
+            return bigDataRef;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    private static class FileBackedDataRef extends DomibusConnectorBigDataReference {
+
+        private final File file;
+        
+        public FileBackedDataRef(String storageId) {
+            try {
+                this.file = new File(TEST_RESULTS_FOLDER + "/" + storageId);
+                if (!this.file.exists()) {
+                    this.file.createNewFile();
+                }
+            } catch (IOException ioe) {                
+                throw new RuntimeException(ioe);
+            }
+        }
+        
+        @Override
+        public InputStream getInputStream() throws IOException {
+            try {
+                return new FileInputStream(this.file);
+            } catch (FileNotFoundException ex) {
+                throw new IOException("cannot open stream", ex);
+            }
+        }
+        
+        @Override
+        public OutputStream getOutputStream() throws IOException {
+            try {
+                return new FileOutputStream(this.file);
+            } catch (FileNotFoundException ex) {
+                throw new IOException("cannot open stream", ex);
+            }
+        }
+        
+        @Override
+        public boolean isReadable() { return true; }
+        
+        @Override
+        public boolean isWriteable() { return true; }
     }
     
 }

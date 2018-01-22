@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.StreamUtils;
 
 /**
  * basic test of security toolkit
@@ -57,21 +58,21 @@ public class DomibusConnectorSecurityToolkitITCase {
 	private DomibusSecurityContainer securityContainer;
 
 	@Test
-	public void testSignedDoc() {
+	public void testSignedDoc() throws IOException {
 		
 		testDoc("ExamplePdfSigned.pdf", "signedResultToken");
 
 	}
 	
 	@Test
-	public void testUnsignedDoc() {
+	public void testUnsignedDoc() throws IOException {
 		
 		testDoc("ExamplePdfUnsigned.pdf", "unsignedResultToken");
 
 	}
 
 
-	private void testDoc(final String exampleName, final String resultName) {
+	private void testDoc(final String exampleName, final String resultName) throws IOException {
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
 
 		DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
@@ -97,7 +98,7 @@ public class DomibusConnectorSecurityToolkitITCase {
 		for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
 
 			if (attachment.getName().equals("Token.xml")) {
-				writeResult(resultName +".xml", attachment.getAttachment());
+				writeResult(resultName +".xml", StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream()));
 				//test xml
                 if ("signedResultToken".equals(resultName)) {
 //TODO: compare resulting xml!
@@ -113,7 +114,7 @@ public class DomibusConnectorSecurityToolkitITCase {
 
 
 			} else if (attachment.getName().equals("Token.pdf")) {
-				writeResult(resultName +".pdf", attachment.getAttachment());
+				writeResult(resultName +".pdf", StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream()));
 			}
 		}
 	}

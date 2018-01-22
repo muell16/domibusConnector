@@ -95,6 +95,11 @@
             <version>2.2.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorPersistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment -->
