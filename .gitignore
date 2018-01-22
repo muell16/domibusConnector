@@ -64,3 +64,4 @@ $Recycle.Bin
 
 #is downloaded and unpacked by maven so ignore it
 /domibusConnector/domibusConnectorGatewayLink/src/main/resources/wsdl/eu.domibus.connector.domain.transition
+/domibusConnector/domibusConnectorController/nbproject/

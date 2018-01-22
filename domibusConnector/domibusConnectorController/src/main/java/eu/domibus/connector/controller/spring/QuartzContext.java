@@ -25,7 +25,7 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 public class QuartzContext  {
 
   
-  @Autowired
+    @Autowired(required=false)
 	List<Trigger> listOfTrigger;
 
 	@Bean
