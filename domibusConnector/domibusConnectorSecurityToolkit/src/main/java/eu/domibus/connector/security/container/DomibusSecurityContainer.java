@@ -233,13 +233,15 @@ public class DomibusSecurityContainer implements InitializingBean {
      * the messageContent of the message must not be null!
      * 
      * @param message the message to process
+     * @return - the processed message (same object as passed by param message)
      */
-    public void createContainer(@Nonnull DomibusConnectorMessage message) {
-        BusinessContent businessContent = buildBusinessContent(message);
-
-        message.getMessageAttachments().clear();
-
+    public DomibusConnectorMessage createContainer(@Nonnull DomibusConnectorMessage message) {
         try {
+            LOGGER.trace("createContainer: for message [{}]", message);
+            BusinessContent businessContent = buildBusinessContent(message);
+
+            message.getMessageAttachments().clear();
+        
             ECodexContainer container = containerService.create(businessContent, tokenIssuer);
 
             
@@ -248,28 +250,25 @@ public class DomibusSecurityContainer implements InitializingBean {
             CheckResult results = containerService.check(container);
 
             if (results.isSuccessful()) {
-                if (container != null) {
+                if (container != null) {                    
                 	DSSDocument asicDocument = container.getAsicDocument();
                     if (asicDocument != null) {
-                        try {
-                            DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
-                            message.addAttachment(asicAttachment);
-                        } catch (IOException e) {
-                            throw new DomibusConnectorSecurityException(e);
-                        }
+                        LOGGER.trace("converting asicDocument [{}] to asic message attachment and appending it to message", asicDocument);                        
+                        DomibusConnectorMessageAttachment asicAttachment = convertDocumentToMessageAttachment(message, asicDocument, ASICS_CONTAINER_IDENTIFIER);
+                        message.addAttachment(asicAttachment);
+
                     }
                     DSSDocument tokenXML = container.getTokenXML();
                     
                     if (tokenXML != null) {
-                        try {
-                            tokenXML.setName(TOKEN_XML_FILE_NAME);
-                            DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
-                            message.addAttachment(tokenAttachment);
-                        } catch (IOException e) {
-                            throw new DomibusConnectorSecurityException(e);
-                        }
+                        LOGGER.trace("converting tokenXml {[{}] to message attachment and appending it to message", tokenXML);
+                        tokenXML.setName(TOKEN_XML_FILE_NAME);
+                        tokenXML.setMimeType(MimeType.XML);
+                        DomibusConnectorMessageAttachment tokenAttachment = convertDocumentToMessageAttachment(message, tokenXML, TOKEN_XML_IDENTIFIER);
+                        message.addAttachment(tokenAttachment);
                     }
                 }
+                return message;
             } else {
                 String errormessage = "\nSeveral problems prevented the container from being created:";
                 List<CheckProblem> problems = results.getProblems();
@@ -277,9 +276,11 @@ public class DomibusSecurityContainer implements InitializingBean {
                     errormessage += "\n-" + curProblem.getMessage();
                 }
                 throw new DomibusConnectorSecurityException(errormessage);
-            }
+            }            
         } catch (ECodexException e) {
-            throw new DomibusConnectorSecurityException(e);
+            throw new DomibusConnectorSecurityException("ECodex exception occured while creating container", e);
+        } catch (IOException ioe) {
+            throw new DomibusConnectorSecurityException("IOException occured while creating container", ioe);
         }
     }
 
@@ -385,9 +386,9 @@ public class DomibusSecurityContainer implements InitializingBean {
 
                         if (container.getBusinessDocument() != null) {
                             LOGGER.debug("The business document received from the container is of Mime Type {}",
-                                    container.getBusinessDocument().getMimeType());
+                                    container.getBusinessDocument().getMimeType().getMimeTypeString());
                             try {
-                            	byte[] docAsBytes = IOUtils.toByteArray(container.getBusinessDocument().openStream());
+                            	
                                 //LOGGER.trace("recieveContainerContents: Read following byte content [{}]", IOUtils.toString(docAsBytes, "UTF8"));
                                 DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
                                 
@@ -416,7 +417,8 @@ public class DomibusSecurityContainer implements InitializingBean {
                                 if (MimeType.XML.getMimeTypeString().equals(container.getToken().getDocumentType())
                                         && !message.getMessageDetails().getAction().isDocumentRequired()) {
                                     LOGGER.trace("recieveContainerContents: Writing byteContent into MessageContent.setXmlContent");
-                                    message.getMessageContent().setXmlContent(docAsBytes);
+                                    InputStream businessContent = container.getBusinessDocument().openStream();
+                                    message.getMessageContent().setXmlContent(IOUtils.toByteArray(businessContent));
                                 }
                             } catch (IOException e) {
                                 throw new DomibusConnectorSecurityException("Could not read business document!");
@@ -485,29 +487,35 @@ public class DomibusSecurityContainer implements InitializingBean {
 
     private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DomibusConnectorMessage message, DSSDocument document, String identifier) //, String name, String mimeType)
             throws IOException {
-        LOGGER.trace("convertDocumentToMessageAttachment: called");
+        LOGGER.trace("convertDocumentToMessageAttachment: called with message [{}], document [{}], identifier [{}]", message, document, identifier);
         
         DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
         
         String documentName = document.getName();
-        String mimeTypeString = document.getMimeType().getMimeTypeString();
+        String mimeTypeString = MimeType.BINARY.getMimeTypeString();
+        if (document.getMimeType() != null) {
+            mimeTypeString = document.getMimeType().getMimeTypeString();
+        }
         
         bigDataRef.setName(documentName);
         bigDataRef.setMimetype(mimeTypeString);
         
+//        LOGGER.trace("copied: [{}]", IOUtils.toString(document.openStream()));
+//        
         LOGGER.debug("Copy input stream from dss document to output stream of big data reference");
         InputStream inputStream = document.openStream();
         OutputStream outputStream = bigDataRef.getOutputStream();
-        StreamUtils.copy(inputStream, outputStream);
+        int bytesCopied = StreamUtils.copy(inputStream, outputStream);
         
-//        document.getMimeType();
-//        document.getName();
-//    	
-//    	byte[] byteArray = IOUtils.toByteArray(document.openStream());
-//    	
-//    	if(ArrayUtils.isEmpty(byteArray)){
-//    		throw new DomibusConnectorSecurityException("Cannot create attachment without content data!");
-//    	}
+       
+        
+        
+        
+        if (bytesCopied == 0) {
+            throw new DomibusConnectorSecurityException("Cannot create attachment with empty content!");
+            //TODO: delete bigDataRef from database!
+        }
+
     	if(StringUtils.isEmpty(identifier)){
     		throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");
     	}
@@ -517,6 +525,8 @@ public class DomibusSecurityContainer implements InitializingBean {
 		attachment.setName(documentName);
         attachment.setMimeType(mimeTypeString);
 
+        LOGGER.trace("attachment created with bigDataRef [{}], and identifier [{}], name [{}], mimeTypeString [{}]", bigDataRef, identifier, documentName, mimeTypeString);
+        
         return attachment;
     }
 

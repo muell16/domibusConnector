@@ -44,6 +44,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.datetime.DateFormatter;
@@ -120,7 +122,7 @@ public class DomibusSecurityContainerTest {
         }
     }
     
-    DateFormatter dateFormatter = new DateFormatter("yyyy-MM-dd");
+    DateFormatter dateFormatter = new DateFormatter("yyyy-MM-dd-hh-mm");
     
     @Before
     public void setUp() throws Exception {
@@ -141,13 +143,22 @@ public class DomibusSecurityContainerTest {
         bigDataPersistenceService = Mockito.mock(DomibusConnectorBigDataPersistenceService.class);
         
         Mockito.when(bigDataPersistenceService.createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class)))
-                .thenReturn(new FileBackedDataRef(String.format("%s#%s", UUID.randomUUID().toString(), dateFormatter.print(TEST_DATE, Locale.ENGLISH))));
+                .thenAnswer(this::createNewFileBackedDataRef);
+                
+        //.thenReturn(new FileBackedDataRef(String.format("%s_%s", dateFormatter.print(TEST_DATE, Locale.ENGLISH), UUID.randomUUID().toString())));
         Mockito.when(bigDataPersistenceService.getReadableDataSource(any(DomibusConnectorBigDataReference.class)))
-                .thenReturn(new FileBackedDataRef(String.format("%s#%s", UUID.randomUUID().toString(), dateFormatter.print(TEST_DATE, Locale.ENGLISH))));
+                .then(this::createNewFileBackedDataRef);
         
         
         securityContainer.bigDataPersistenceService = bigDataPersistenceService;
         
+    }
+    
+    private FileBackedDataRef createNewFileBackedDataRef(InvocationOnMock invocation) {
+        return new FileBackedDataRef(
+                        String.format("%s_%s",
+                                dateFormatter.print(TEST_DATE, Locale.ENGLISH),
+                                UUID.randomUUID().toString()));
     }
     
     /**
@@ -300,32 +311,36 @@ public class DomibusSecurityContainerTest {
         Mockito.when(asicAttachmentDoc.getMimeType()).thenReturn(MimeType.BINARY);
         Mockito.when(asicAttachmentDoc.openStream()).thenReturn(new ByteArrayInputStream("input".getBytes()));
         
-        DSSDocument asicXmlTokenDocu = Mockito.mock(DSSDocument.class);
-        Mockito.when(asicXmlTokenDocu.getName()).thenReturn("someTokenName");
-        Mockito.when(asicXmlTokenDocu.getMimeType()).thenReturn(MimeType.XML);
-        Mockito.when(asicXmlTokenDocu.openStream()).thenReturn(new ByteArrayInputStream("<xmldoc></xmldoc>".getBytes()));
+        DSSDocument asicXmlTokenDoc = Mockito.mock(DSSDocument.class);
+        Mockito.when(asicXmlTokenDoc.getName()).thenReturn("someTokenName");
+        Mockito.when(asicXmlTokenDoc.getMimeType()).thenReturn(MimeType.XML);
+        Mockito.when(asicXmlTokenDoc.openStream()).thenReturn(new ByteArrayInputStream("<xmldoc></xmldoc>".getBytes()));
                 
         Mockito.when(mockedECodexContainer.getAsicDocument()).thenReturn(asicAttachmentDoc); //todo return useful asicDoc
-        Mockito.when(mockedECodexContainer.getTokenXML()).thenReturn(asicXmlTokenDocu);
+        Mockito.when(mockedECodexContainer.getTokenXML()).thenReturn(asicXmlTokenDoc);
         
         securityContainer.createContainer(testMessage);
          
         assertThat(testMessage.getMessageAttachments()).hasSize(2); //2 attachments asicContainer, xmlToken
+                               
+        //test container
+        DomibusConnectorMessageAttachment asicsContainer = testMessage.getMessageAttachments()
+                .stream().filter((a) -> DomibusSecurityContainer.ASICS_CONTAINER_IDENTIFIER.equals(a.getIdentifier())).findFirst().get();
+        InputStream asicsContainerInputStream = asicsContainer.getAttachment().getInputStream();
+        assertThat(IOUtils.toString(asicsContainerInputStream)).isEqualTo("input");
+        
+        
         
         //test xml token
         DomibusConnectorMessageAttachment xmlToken = testMessage.getMessageAttachments()
                 .stream().filter((a) -> DomibusSecurityContainer.TOKEN_XML_IDENTIFIER.equals(a.getIdentifier())).findFirst().get();
         
         InputStream inputStream = xmlToken.getAttachment().getInputStream();
-        //byte[] attachmentBytes = StreamUtils.copyToByteArray(inputStream);
-        String attachmentBytes = IOUtils.toString(inputStream, "UTF-8");
-        
+        String attachmentBytes = IOUtils.toString(inputStream, "UTF-8");        
         assertThat(attachmentBytes).isEqualTo("<xmldoc></xmldoc>");
         
-        //test container
-        DomibusConnectorMessageAttachment asicsContainer = testMessage.getMessageAttachments()
-                .stream().filter((a) -> DomibusSecurityContainer.ASICS_CONTAINER_IDENTIFIER.equals(a.getIdentifier())).findFirst().get();
-        assertThat(asicsContainer.getAttachment()).isEqualTo("input".getBytes());
+        
+
         
     }
     
@@ -498,15 +513,26 @@ public class DomibusSecurityContainerTest {
         DomibusConnectorMessageAttachment pdfTokenAttachment = testMessage.getMessageAttachments().stream()
                 .filter( a -> DomibusSecurityContainer.TOKEN_PDF_IDENTIFIER.equals(a.getIdentifier()))
                 .findFirst().get();
-        assertThat(pdfTokenAttachment.getAttachment()).isEqualTo("pdf token".getBytes());
-        
+        assertThat(getStringFromBigDataStorageReference(pdfTokenAttachment.getAttachment()))
+                .isEqualTo("pdf token");
+                
                         
         //test xml token
         DomibusConnectorMessageAttachment xmlTokenAttachment = testMessage.getMessageAttachments().stream()
                 .filter( a -> DomibusSecurityContainer.TOKEN_XML_IDENTIFIER.equals(a.getIdentifier()))
                 .findFirst().get();
-        assertThat(xmlTokenAttachment.getAttachment()).isEqualTo("xml token".getBytes());
-        
+        assertThat(getStringFromBigDataStorageReference(xmlTokenAttachment.getAttachment()))
+                .isEqualTo("xml token");
+                
+    }
+    
+    private String getStringFromBigDataStorageReference(DomibusConnectorBigDataReference ref) {
+        try {
+            InputStream inputStream = ref.getInputStream();
+            return IOUtils.toString(inputStream);            
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
     
