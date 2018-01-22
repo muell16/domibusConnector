@@ -42,6 +42,7 @@ public class BigDataWithMessagePersistenceService {
     
     
     public DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message) {
+        LOGGER.trace("persistAllBigFilesFromMessage: message [{}]", message);
         try {
             for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {                   
                 DomibusConnectorBigDataReference readFrom = attachment.getAttachment();
@@ -61,16 +62,17 @@ public class BigDataWithMessagePersistenceService {
     }
     
     public DomibusConnectorMessage loadAllBigFilesFromMessage(DomibusConnectorMessage message) {
+        LOGGER.trace("loadAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
             DomibusConnectorBigDataReference activeRead = attachment.getAttachment();
             DomibusConnectorBigDataReference activatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(activeRead);
-            //attachment.setAttachment(activatedRead);
+            attachment.setAttachment(activatedRead);
         }
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (containsMainDocument(messageContent)) {
             DomibusConnectorBigDataReference docRefresRead = messageContent.getDocument().getDocument();
             DomibusConnectorBigDataReference docActivatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(docRefresRead);
-            //messageContent.getDocument().setDocument(docActivatedRead);
+            messageContent.getDocument().setDocument(docActivatedRead);
         }
         
         return message;

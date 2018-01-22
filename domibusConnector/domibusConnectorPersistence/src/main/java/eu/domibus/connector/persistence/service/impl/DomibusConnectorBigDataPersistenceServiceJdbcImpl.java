@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 import javax.sql.DataSource;
 import javax.annotation.PostConstruct;
@@ -36,17 +37,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements DomibusConnectorBigDataPersistenceService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceJdbcImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceJdbcImpl.class);
     
     private static final String TABLE_NAME = "DOMIBUS_CONNECTOR_BIGDATA";
-    private static final String COL_ID = "ID";
-    private static final String COL_CHECKSUM = "CHECKSUM";
-    private static final String COL_CREATED = "CREATED";
-    private static final String COL_MESSAGE_ID = "MESSAGE_ID";
-    private static final String COL_LAST_ACCESS = "LAST_ACCESS";
     private static final String COL_NAME = "NAME";
     private static final String COL_MIMETYPE = "mimetype";
     private static final String COL_CONTENT = "CONTENT";
+    private static final String COL_LAST_ACCESS = "LAST_ACCESS";
     
     private static final String INSERT_INTO = "INSERT INTO DOMIBUS_CONNECTOR_BIGDATA(ID, CREATED, MESSAGE_ID, LAST_ACCESS) "
                     + "VALUES (?, ?, ?, ?)";
@@ -54,8 +51,6 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements Domibu
     private static final String QUERY_BY_ID = "SELECT ID, CREATED, MESSAGE_ID, LAST_ACCESS, NAME, MIMETYPE, CONTENT FROM " + TABLE_NAME + " WHERE ID = ?";
     
     private static final String DELETE_ALL_BY_MESSAGE_ID = "DELETE FROM " + TABLE_NAME +  " WHERE MESSAGE_ID = ?";
-    
-    private static final String UPDATE_BLOB = "UPDATE " + TABLE_NAME + "  SET CONTENT = ? WHERE ID = ?";
     
     @Autowired
     private DataSource dataSource;
@@ -91,32 +86,30 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements Domibu
         
         JdbcBackedDomibusConnectorBigDataReference reference = new JdbcBackedDomibusConnectorBigDataReference(this);
         
-        try {
-            Connection conn = this.dataSource.getConnection();
-            PreparedStatement queryForBigDataStm = conn.prepareStatement(QUERY_BY_ID);
+         try (  Connection conn = this.dataSource.getConnection(); 
+                PreparedStatement queryForBigDataStm = conn.prepareStatement(QUERY_BY_ID, ResultSet.FETCH_FORWARD, ResultSet.CONCUR_UPDATABLE)) {
             queryForBigDataStm.setString(1, storageReference);
-            ResultSet resultSet = queryForBigDataStm.executeQuery();
-            
-            resultSet.next();
-            byte[] bytes = resultSet.getBytes(COL_CONTENT);
-            InputStream is = new ByteArrayInputStream(bytes);
-            String mimetype = resultSet.getString(COL_MIMETYPE);
-            String name = resultSet.getString(COL_NAME);
-            
-            reference.setInputStream(is);
-            reference.setReadable(true);
-            reference.setStorageIdReference(storageReference);
-            reference.setName(name);
-            reference.setMimetype(mimetype);
-            
-            //TODO: update last access field!
-            
-            return reference;
-            
+            try (ResultSet resultSet = queryForBigDataStm.executeQuery()) {
+                resultSet.next();
+                byte[] bytes = resultSet.getBytes(COL_CONTENT);
+                InputStream is = new ByteArrayInputStream(bytes);
+                String mimetype = resultSet.getString(COL_MIMETYPE);
+                String name = resultSet.getString(COL_NAME);
+                
+                reference.setInputStream(is);
+                reference.setReadable(true);
+                reference.setStorageIdReference(storageReference);
+                reference.setName(name);
+                reference.setMimetype(mimetype);
+                
+                //TODO: update last access field!
+                resultSet.updateDate(COL_LAST_ACCESS, new java.sql.Date((new Date()).getTime()));
+            }
             
         } catch (SQLException sqle) {
             throw new PersistenceException("SQLException occured in getReadableDataSource during loading bigData from database", sqle);
         }
+         return reference;
         
 
     }
@@ -128,21 +121,20 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements Domibu
         JdbcBackedDomibusConnectorBigDataReference reference = new JdbcBackedDomibusConnectorBigDataReference(this);
         reference.setStorageIdReference(UUID.randomUUID().toString());
 
-        try {
-        
-            Connection connection = this.dataSource.getConnection();            
-            PreparedStatement stm = connection.prepareStatement(INSERT_INTO);
+
+        try (   Connection connection = this.dataSource.getConnection(); 
+                PreparedStatement stm = connection.prepareStatement(INSERT_INTO)) {
 
             reference.setOutputStream(new JdbcBackedOutputStream(reference.getStorageIdReference()));
-            
+
             stm.setString(1, reference.getStorageIdReference());
             stm.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
             stm.setLong(3, dbMessage.getId());
             stm.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
 
             stm.executeUpdate();
-            stm.close();
-            
+
+
         } catch (SQLException sqlException) {
             throw new PersistenceException("SQLException occured during creating BigData Entry in Database", sqlException);
         }
@@ -156,9 +148,9 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements Domibu
         LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data related to message {}", message);
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
         
-        try {
-            Connection connection = dataSource.getConnection();
-            PreparedStatement stm = connection.prepareStatement(DELETE_ALL_BY_MESSAGE_ID);
+        try (   Connection connection = dataSource.getConnection(); 
+                PreparedStatement stm = connection.prepareStatement(DELETE_ALL_BY_MESSAGE_ID)) {
+
             stm.setLong(1, dbMessage.getId());
             int deletedRows = stm.executeUpdate();
             LOGGER.debug("Deleted {} rows of big data content", deletedRows);
@@ -174,17 +166,17 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements Domibu
     
     private void writeOutputStreamToDatabase(final JdbcBackedOutputStream outputStream) throws IOException {    
         LOGGER.trace("writeOutputStreamToDatabase: called with outputStream");
-        try {
-            String storageReference = outputStream.getStorageReference();
-            Connection connection = dataSource.getConnection();
+        String storageReference = outputStream.getStorageReference();
+        
             
-            PreparedStatement stm = connection.prepareStatement("UPDATE DOMIBUS_CONNECTOR_BIGDATA SET CONTENT=? WHERE ID=?");
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement stm = connection.prepareStatement("UPDATE DOMIBUS_CONNECTOR_BIGDATA SET CONTENT=? WHERE ID=?")) {
+
             stm.setString(2, storageReference);
             stm.setBytes(1, outputStream.toByteArray());    //TODO: avoid byte array Output Stream
-            stm.executeUpdate();            
-            stm.close();
-            connection.close();
-            
+            stm.executeUpdate();
+
+
         } catch (SQLException sqle) {
             throw new IOException("SQLException occured during writing stream into database!", sqle);
         }                   

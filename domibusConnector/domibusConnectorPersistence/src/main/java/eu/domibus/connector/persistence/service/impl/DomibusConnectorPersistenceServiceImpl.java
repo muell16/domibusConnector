@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
@@ -40,8 +41,8 @@ import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenc
 @org.springframework.stereotype.Service("persistenceService")
 public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorPersistenceService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceServiceImpl.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceServiceImpl.class);
+
     private static final String RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT = "RetrievalNonRetrievalToRecipient";
     private static final String DELIVERY_NON_DELIVERY_TO_RECIPIENT = "DeliveryNonDeliveryToRecipient";
     private static final String RELAY_REMMD_FAILURE = "RelayREMMDFailure";
@@ -49,31 +50,28 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Autowired
     private DomibusConnectorMessageDao messageDao;
-    
+
     @Autowired
     private DomibusConnectorEvidenceDao evidenceDao;
-    
+
     @Autowired
     private DomibusConnectorActionDao actionDao;
-    
+
     @Autowired
     private DomibusConnectorServiceDao serviceDao;
-    
+
     @Autowired
     private DomibusConnectorPartyDao partyDao;
-    
+
     @Autowired
     private DomibusConnectorMessageInfoDao messageInfoDao;
-    
+
     @Autowired
     private DomibusConnectorMessageErrorDao messageErrorDao;
-    
-//    @Autowired
-//    private DomibusConnectorMsgContDao msgContDao;
 
     @Autowired
     private MsgContentPersistenceService msgContentService;
-    
+
     /*
      * DAO SETTER  
      */
@@ -104,76 +102,74 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     public void setMessageErrorDao(DomibusConnectorMessageErrorDao messageErrorDao) {
         this.messageErrorDao = messageErrorDao;
     }
-    
+
 //    public void setMsgContDao(DomibusConnectorMsgContDao msgContDao) {
 //        this.msgContDao = msgContDao;
 //    }
-    
     public void setMsgContentService(MsgContentPersistenceService msgContService) {
         this.msgContentService = msgContService;
     }
+
     /*
     * END DAO SETTER
-    */
-    
-    
-	@Override
-	public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
+     */
+
+    @Override
+    public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
         DomibusConnectorMessage message = this.mapMessageToDomain(dbMessage);
         return message;
-	}
+    }
 
-	@Override
-	public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
-		// if DB fields confirmed OR rejected are NOT NULL -> then true
-		return false;
-	}
-	
-	@Override
-	public boolean checkMessageRejected(DomibusConnectorMessage message) {
-		// if DB field rejected is NOT NULL -> then true
-		return false;
-	}
-	
-	@Override
-	public boolean checkMessageConfirmed(DomibusConnectorMessage message) {
-		// if DB field confirmend is NOT NULL -> then true
-		return false;
-	}
-    
+    @Override
+    public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
+        // if DB fields confirmed OR rejected are NOT NULL -> then true
+        return false;
+    }
+
+    @Override
+    public boolean checkMessageRejected(DomibusConnectorMessage message) {
+        // if DB field rejected is NOT NULL -> then true
+        return false;
+    }
+
+    @Override
+    public boolean checkMessageConfirmed(DomibusConnectorMessage message) {
+        // if DB field confirmend is NOT NULL -> then true
+        return false;
+    }
+
     @Override
     @Transactional(readOnly = false)
-    public void persistMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage message, eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection direction) throws PersistenceException {
+    public void persistMessageIntoDatabase(DomibusConnectorMessage message, eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection direction) throws PersistenceException {
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
 
-        dbMessage.setDirection(eu.domibus.connector.persistence.model.enums.MessageDirection.valueOf(direction.name()));                
+        dbMessage.setDirection(eu.domibus.connector.persistence.model.enums.MessageDirection.valueOf(direction.name()));
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
         dbMessage.setConnectorMessageId(message.getConnectorMessageId());
-        
+
         try {
             dbMessage = messageDao.save(dbMessage);
         } catch (DuplicateKeyException cve) {
-            String error = String.format("Message already persisted! The domibusConnectorMessageId [{}] already exist.", 
+            String error = String.format("Message already persisted! The domibusConnectorMessageId [%s] already exist.",
                     dbMessage.getConnectorMessageId());
             LOGGER.error(error);
             throw new PersistenceException(error, cve);
         }
 
         PDomibusConnectorMessageInfo dbMessageInfo = new PDomibusConnectorMessageInfo();
-        dbMessageInfo.setMessage(dbMessage);       
+        dbMessageInfo.setMessage(dbMessage);
         dbMessageInfo.setCreated(new Date());
         dbMessageInfo.setUpdated(new Date());
         mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), dbMessageInfo);
-        
+
         this.msgContentService.storeMsgContent(message);
-        
-        
+
         try {
             dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
         } catch (Exception e) {
@@ -181,35 +177,33 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
             throw new PersistenceException("Could not persist message info into database. ", e);
         }
 
-        dbMessage.setMessageInfo(dbMessageInfo);       
+        dbMessage.setMessageInfo(dbMessageInfo);
     }
 
-    void mapMessageDetailsToDbMessageInfoPersistence(eu.domibus.connector.domain.model.DomibusConnectorMessageDetails messageDetails, PDomibusConnectorMessageInfo dbMessageInfo) {
+    void mapMessageDetailsToDbMessageInfoPersistence(DomibusConnectorMessageDetails messageDetails, PDomibusConnectorMessageInfo dbMessageInfo) {
         PDomibusConnectorAction persistenceAction = this.mapActionToPersistence(messageDetails.getAction());
         dbMessageInfo.setAction(persistenceAction);
-                
+
         PDomibusConnectorService persistenceService = this.mapServiceToPersistence(messageDetails.getService());
         dbMessageInfo.setService(persistenceService);
-        
+
         dbMessageInfo.setFinalRecipient(messageDetails.getFinalRecipient());
         dbMessageInfo.setOriginalSender(messageDetails.getOriginalSender());
-        
-        PDomibusConnectorParty from = this.mapPartyToPersistence(messageDetails.getFromParty());        
+
+        PDomibusConnectorParty from = this.mapPartyToPersistence(messageDetails.getFromParty());
         dbMessageInfo.setFrom(from);
         PDomibusConnectorParty to = this.mapPartyToPersistence(messageDetails.getToParty());
         dbMessageInfo.setTo(to);
     }
 
-    
-    
-    
-    
     /**
-     * Tries to find a message by ebmsId or backendId
-     * @param message
+     * Tries to find a message by domibusConnectorMessageId
+     *
+     * @param message - the message to which the storage data should be found,
+     * message need a domibusConnectorMessageId set
      * @return the found message or null
      */
-    PDomibusConnectorMessage findMessageByMessage(@Nonnull eu.domibus.connector.domain.model.DomibusConnectorMessage message) {
+    PDomibusConnectorMessage findMessageByMessage(@Nonnull DomibusConnectorMessage message) {
         String connectorMessageId = message.getConnectorMessageId();
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
         if (dbMessage == null) {
@@ -217,69 +211,68 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         return dbMessage;
     }
-    
-    
+
     /**
-     * {@inheritDoc }     
+     * {@inheritDoc }
      */
     @Override
     @Transactional
-    public void mergeMessageWithDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage message) throws PersistenceException {
+    public void mergeMessageWithDatabase(DomibusConnectorMessage message) throws PersistenceException {
 
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
-            String error = String.format("No db message found for domain message %s in storage!\n"
+            String error = String.format("No db message found for domain message %s in storage!%n"
                     + "Can only merge a message wich has already been persisted", message);
             LOGGER.error(error + "\nThrowing exception!");
             throw new PersistenceException(error);
         }
-        
+
         dbMessage.getMessageInfo();
-        
+
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         if (messageInfo == null) {
             messageInfo = new PDomibusConnectorMessageInfo();
             dbMessage.setMessageInfo(messageInfo);
         }
 
-        eu.domibus.connector.domain.model.DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
-        
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
+
         if (messageDetails != null) {
-            mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), messageInfo);            
+            mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), messageInfo);
             messageInfoDao.save(messageInfo);
         }
-                
+
         this.msgContentService.storeMsgContent(message);
-        
+
         this.messageDao.save(dbMessage);
     }
 
     /**
-     * {@inheritDoc }      
+     * {@inheritDoc }
      */
     @Override
     @Transactional
-    public void setMessageDeliveredToGateway(eu.domibus.connector.domain.model.DomibusConnectorMessage message) {
+    public void setMessageDeliveredToGateway(DomibusConnectorMessage message) {
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         messageDao.setMessageDeliveredToGateway(dbMessage.getId());
     }
 
     /**
-     * {@inheritDoc }      
+     * {@inheritDoc }
      */
     @Override
     @Transactional
-    public void setMessageDeliveredToNationalSystem(eu.domibus.connector.domain.model.DomibusConnectorMessage message) {
+    public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         messageDao.setMessageDeliveredToBackend(dbMessage.getId());
     }
 
     /**
-     * {@inheritDoc }      
+     * {@inheritDoc }
      */
     @Override
     @Transactional
-    public void setEvidenceDeliveredToGateway(@Nonnull eu.domibus.connector.domain.model.DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+    public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
         //messageDao.mergeMessage(message.getDbMessage());
         this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
@@ -293,11 +286,11 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     }
 
     /**
-     * {@inheritDoc }      
+     * {@inheritDoc }
      */
     @Override
     @Transactional
-    public void setEvidenceDeliveredToNationalSystem(@Nonnull eu.domibus.connector.domain.model.DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+    public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
 //        messageDao.mergeMessage(message.getDbMessage());
         this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
@@ -308,33 +301,34 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
     }
 
-    private @Nullable PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) {
+    private @Nullable
+    PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) {
         for (PDomibusConnectorEvidence evidence : evidences) {
             if (evidence.getType().name().equals(evidenceType.name())) {
                 return evidence;
             }
-        }       
+        }
         return null;
     }
 
     /**
-     * {@inheritDoc }      
+     * {@inheritDoc }
      */
     @Override
     @Transactional
-    public void persistEvidenceForMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage message, byte[] evidence, eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) {   
+    public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, byte[] evidence, eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) {
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
             throw new IllegalArgumentException("The dbMessage must exist in db!");
         }
 
         PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
-        
+
         //DomibusConnectorMessage dbMessage = messageDao.findOne(message.getDbMessageId());
         if (dbMessage == null) {
             throw new IllegalStateException(String.format("The provided message [%d] does not exist in storage!", message));
         }
-        
+
         dbEvidence.setMessage(dbMessage);
         dbEvidence.setEvidence(new String(evidence));
         dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.valueOf(evidenceType.name()));
@@ -345,10 +339,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional(readOnly = true)
-    public eu.domibus.connector.domain.model.DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
+    public DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
 
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
+        DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
 
         return message;
 
@@ -356,63 +350,63 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional(readOnly = true)
-    public eu.domibus.connector.domain.model.DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
+    public DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
 
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
+        DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
 
         return message;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<eu.domibus.connector.domain.model.DomibusConnectorMessage> findMessagesByConversationId(String conversationId) {
+    public List<DomibusConnectorMessage> findMessagesByConversationId(String conversationId) {
         List<PDomibusConnectorMessage> dbMessages = messageDao.findByConversationId(conversationId);
         return mapDBMessagesToDTO(dbMessages);
     }
 
-	private List<eu.domibus.connector.domain.model.DomibusConnectorMessage> mapDBMessagesToDTO(List<PDomibusConnectorMessage> dbMessages) {        
-		if (dbMessages != null && !dbMessages.isEmpty()) {
-            List<eu.domibus.connector.domain.model.DomibusConnectorMessage> messages = new ArrayList<>(dbMessages.size());
+    private List<DomibusConnectorMessage> mapDBMessagesToDTO(List<PDomibusConnectorMessage> dbMessages) {
+        if (dbMessages != null && !dbMessages.isEmpty()) {
+            List<DomibusConnectorMessage> messages = new ArrayList<>(dbMessages.size());
             for (PDomibusConnectorMessage dbMessage : dbMessages) {
                 messages.add(mapMessageToDomain(dbMessage));
             }
             return messages;
         }
         return new ArrayList<>();
-	}
+    }
 
     @Override
     @Transactional(readOnly = true)
-    public List<eu.domibus.connector.domain.model.DomibusConnectorMessage> findOutgoingUnconfirmedMessages() {
+    public List<DomibusConnectorMessage> findOutgoingUnconfirmedMessages() {
         List<PDomibusConnectorMessage> dbMessages = messageDao.findOutgoingUnconfirmedMessages();
         return mapDBMessagesToDTO(dbMessages);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
-    public List<eu.domibus.connector.domain.model.DomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery() {
+    public List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery() {
         List<PDomibusConnectorMessage> dbMessages = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
         return mapDBMessagesToDTO(dbMessages);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
-    public List<eu.domibus.connector.domain.model.DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD() {
+    public List<DomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD() {
         List<PDomibusConnectorMessage> dbMessages = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         return mapDBMessagesToDTO(dbMessages);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<eu.domibus.connector.domain.model.DomibusConnectorMessage> findIncomingUnconfirmedMessages() {
+    public List<DomibusConnectorMessage> findIncomingUnconfirmedMessages() {
         List<PDomibusConnectorMessage> dbMessages = messageDao.findIncomingUnconfirmedMessages();
         return mapDBMessagesToDTO(dbMessages);
     }
 
     @Override
     @Transactional
-    public void confirmMessage(eu.domibus.connector.domain.model.DomibusConnectorMessage message) {
+    public void confirmMessage(DomibusConnectorMessage message) {
         if (message == null) {
             throw new IllegalArgumentException("Argument message must be not null! Cannot confirm null!");
         }
@@ -423,7 +417,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         int confirmed = messageDao.confirmMessage(dbMessage.getId());
         if (confirmed == 1) {
             LOGGER.debug("Message {} successfully confirmed in db", message);
-        } else if (confirmed < 1) {            
+        } else if (confirmed < 1) {
             throw new RuntimeException("message not confirmed!");
         } else {
             throw new IllegalStateException("Multiple messages confirmed! This should not happen! Maybe DB corrupted? Duplicate IDs?");
@@ -432,7 +426,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void rejectMessage(eu.domibus.connector.domain.model.DomibusConnectorMessage message) {
+    public void rejectMessage(DomibusConnectorMessage message) {
         if (message == null) {
             throw new IllegalArgumentException("Argument message must be not null! Cannot reject null!");
         }
@@ -443,43 +437,43 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         int rejected = messageDao.rejectMessage(dbMessage.getId());
         if (rejected == 1) {
             LOGGER.debug("Message {} successfully marked as rejected in persistence", message);
-        } else if (rejected < 1) {            
+        } else if (rejected < 1) {
             throw new RuntimeException("message not confirmed!");
         } else {
             throw new IllegalStateException("Multiple messages marked as rejected! This should not happen! Maybe DB corrupted? Duplicate IDs?");
         }
-        
+
     }
 
     /**
-     * Maps database messages (PDomibusConnectorMessage) to the
- according representation in Domain layer (Message)
+     * Maps database messages (PDomibusConnectorMessage) to the according
+     * representation in Domain layer (Message)
+     *
      * @param dbMessage - the database message
      * @return - the mapped message
      */
-    private eu.domibus.connector.domain.model.DomibusConnectorMessage mapMessageToDomain(PDomibusConnectorMessage dbMessage) {
+    private DomibusConnectorMessage mapMessageToDomain(PDomibusConnectorMessage dbMessage) {
         if (dbMessage == null) {
             return null;
         }
         DomibusConnectorMessageBuilder messageBuilder = DomibusConnectorMessageBuilder.createBuilder();
-        eu.domibus.connector.domain.model.DomibusConnectorMessageDetails details = new eu.domibus.connector.domain.model.DomibusConnectorMessageDetails();
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         details.setEbmsMessageId(dbMessage.getEbmsMessageId());
         details.setBackendMessageId(dbMessage.getBackendMessageId());
         details.setConversationId(dbMessage.getConversationId());
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         details.setRefToMessageId(RELAY_REMMD_FAILURE);
-        
-        
+
         if (messageInfo != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorAction action = this.mapActionToDomain(messageInfo.getAction());            
+            eu.domibus.connector.domain.model.DomibusConnectorAction action = this.mapActionToDomain(messageInfo.getAction());
             details.setAction(action);
-            
+
             eu.domibus.connector.domain.model.DomibusConnectorService service = this.mapServiceToDomain(messageInfo.getService());
             details.setService(service);
-            
+
             details.setFinalRecipient(messageInfo.getFinalRecipient());
             details.setOriginalSender(messageInfo.getOriginalSender());
-            
+
             eu.domibus.connector.domain.model.DomibusConnectorParty fromParty = this.mapPartyToDomain(messageInfo.getFrom());
             details.setFromParty(fromParty);
             eu.domibus.connector.domain.model.DomibusConnectorParty toParty = this.mapPartyToDomain(messageInfo.getTo());
@@ -487,14 +481,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         messageBuilder.setMessageDetails(details);
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
-        
-        
-        this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
-        
 
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = messageBuilder.build();
+        this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
+
+        DomibusConnectorMessage message = messageBuilder.build();
         return message;
-        
+
 //        //message is neither an message with content or an evidence message, illegal state throw exception
 //        String error = String.format("Should not end up here! Message content or evidence for message with db id [%s] cannot be found! "
 //                + "This message is inconsistent in database!", dbMessage.getId());
@@ -502,13 +494,11 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 //        throw new RuntimeException(error);
     }
 
-
-
     @Override
     @Transactional
-    public void persistMessageError(eu.domibus.connector.domain.model.DomibusConnectorMessageError messageError) {
+    public void persistMessageError(DomibusConnectorMessageError messageError) {
         PDomibusConnectorMessageError dbError = new PDomibusConnectorMessageError();
-        
+
         dbError.setErrorMessage(messageError.getText());
         dbError.setDetailedText(messageError.getDetails());
         dbError.setErrorSource(messageError.getSource());
@@ -518,7 +508,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void persistMessageErrorFromException(eu.domibus.connector.domain.model.DomibusConnectorMessage message, Throwable ex, Class<?> source) {   
+    public void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source) {
         if (message == null) {
             throw new IllegalArgumentException("message is not allowed to be null!");
         }
@@ -532,17 +522,17 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
         if (message == null || dbMessage == null) {
             LOGGER.error("persistMessageErrorFromException: failed because ");
-            throw new RuntimeException (
+            throw new RuntimeException(
                     "Message Error cannot be stored as the message object, or its database reference is null!");
         }
         if (dbMessage == null) {
             throw new RuntimeException(
-                String.format("No entry for message [%d] has been found in database! Persist message first!", message));
+                    String.format("No entry for message [%d] has been found in database! Persist message first!", message));
         }
 
         PDomibusConnectorMessageError error = new PDomibusConnectorMessageError();
         error.setErrorMessage(ex.getMessage());
-        error.setDetailedText(ExceptionUtils.getStackTrace(ex));        
+        error.setDetailedText(ExceptionUtils.getStackTrace(ex));
         error.setErrorSource(source.getName());
         error.setMessage(dbMessage);
 
@@ -550,7 +540,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     }
 
     @Override
-    public List<eu.domibus.connector.domain.model.DomibusConnectorMessageError> getMessageErrors(eu.domibus.connector.domain.model.DomibusConnectorMessage message) throws PersistenceException {
+    public List<DomibusConnectorMessageError> getMessageErrors(DomibusConnectorMessage message) throws PersistenceException {
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
         if (dbMessage == null) {
             //no message reference
@@ -558,11 +548,11 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         List<PDomibusConnectorMessageError> dbErrorsForMessage = this.messageErrorDao.findByMessage(dbMessage.getId());
         if (!CollectionUtils.isEmpty(dbErrorsForMessage)) {
-            List<eu.domibus.connector.domain.model.DomibusConnectorMessageError> messageErrors = new ArrayList<>(dbErrorsForMessage.size());
+            List<DomibusConnectorMessageError> messageErrors = new ArrayList<>(dbErrorsForMessage.size());
 
             for (PDomibusConnectorMessageError dbMsgError : dbErrorsForMessage) {
-                eu.domibus.connector.domain.model.DomibusConnectorMessageError msgError = 
-                        new eu.domibus.connector.domain.model.DomibusConnectorMessageError(
+                DomibusConnectorMessageError msgError
+                        = new DomibusConnectorMessageError(
                                 dbMsgError.getErrorMessage(),
                                 dbMsgError.getDetailedText(),
                                 dbMsgError.getErrorSource()
@@ -576,15 +566,15 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     }
 
     @Override
-    public eu.domibus.connector.domain.model.DomibusConnectorAction getAction(String action) {        
+    public eu.domibus.connector.domain.model.DomibusConnectorAction getAction(String action) {
         PDomibusConnectorAction findOne = actionDao.findOne(action);
         return mapActionToDomain(findOne);
     }
 
     eu.domibus.connector.domain.model.DomibusConnectorAction mapActionToDomain(PDomibusConnectorAction persistenceAction) {
         if (persistenceAction != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorAction action = 
-                    new eu.domibus.connector.domain.model.DomibusConnectorAction(
+            eu.domibus.connector.domain.model.DomibusConnectorAction action
+                    = new eu.domibus.connector.domain.model.DomibusConnectorAction(
                             persistenceAction.getAction(),
                             persistenceAction.isDocumentRequired()
                     );
@@ -592,20 +582,20 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         return null;
     }
-    
+
     PDomibusConnectorAction mapActionToPersistence(eu.domibus.connector.domain.model.DomibusConnectorAction action) {
         if (action != null) {
             PDomibusConnectorAction persistenceAction = new PDomibusConnectorAction();
-            BeanUtils.copyProperties(action, persistenceAction);        
+            BeanUtils.copyProperties(action, persistenceAction);
             return persistenceAction;
         }
         return null;
     }
-    
+
     eu.domibus.connector.domain.model.DomibusConnectorService mapServiceToDomain(PDomibusConnectorService persistenceService) {
         if (persistenceService != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorService service = 
-                    new eu.domibus.connector.domain.model.DomibusConnectorService(
+            eu.domibus.connector.domain.model.DomibusConnectorService service
+                    = new eu.domibus.connector.domain.model.DomibusConnectorService(
                             persistenceService.getService(),
                             persistenceService.getServiceType()
                     );
@@ -613,7 +603,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         return null;
     }
-    
+
     PDomibusConnectorService mapServiceToPersistence(eu.domibus.connector.domain.model.DomibusConnectorService service) {
         if (service != null) {
             PDomibusConnectorService persistenceService = new PDomibusConnectorService();
@@ -622,27 +612,26 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         return null;
     }
-    
-    
+
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorService getService(String service) {
         PDomibusConnectorService srv = serviceDao.findOne(service);
-        return mapServiceToDomain(srv);        
+        return mapServiceToDomain(srv);
     }
 
     eu.domibus.connector.domain.model.DomibusConnectorParty mapPartyToDomain(PDomibusConnectorParty persistenceParty) {
         if (persistenceParty != null) {
-            eu.domibus.connector.domain.model.DomibusConnectorParty p = 
-                    new eu.domibus.connector.domain.model.DomibusConnectorParty(
+            eu.domibus.connector.domain.model.DomibusConnectorParty p
+                    = new eu.domibus.connector.domain.model.DomibusConnectorParty(
                             persistenceParty.getPartyId(),
                             persistenceParty.getPartyIdType(),
                             persistenceParty.getRole()
-                    );            
+                    );
             return p;
         }
         return null;
     }
-    
+
     PDomibusConnectorParty mapPartyToPersistence(eu.domibus.connector.domain.model.DomibusConnectorParty party) {
         if (party != null) {
             PDomibusConnectorParty persistenceParty = new PDomibusConnectorParty();
@@ -651,10 +640,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
         return null;
     }
-    
+
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorParty getParty(String partyId, String role) {
-        PDomibusConnectorPartyPK pk = new PDomibusConnectorPartyPK(partyId, role);        
+        PDomibusConnectorPartyPK pk = new PDomibusConnectorPartyPK(partyId, role);
         PDomibusConnectorParty party = partyDao.findOne(pk);
         return mapPartyToDomain(party);
     }
@@ -684,15 +673,5 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     public eu.domibus.connector.domain.model.DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction() {
         return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
     }
-
-
-
-
-
-
-
-   
-
-
 
 }
