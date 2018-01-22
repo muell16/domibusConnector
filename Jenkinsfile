@@ -76,7 +76,7 @@ node {
 
 				try {
 					stage ('Test') {
-						sh 'mvn -Dmaven.test.failure.ignore=true test' //ignore test failures to execute ALL tests
+						sh 'mvn -fn -Dmaven.test.failure.ignore=true test' //ignore test failures to execute ALL tests
 						sh 'mvn test' //TODO find better solution to fail this step if test failures occure
 					}
 				} catch (e) {
