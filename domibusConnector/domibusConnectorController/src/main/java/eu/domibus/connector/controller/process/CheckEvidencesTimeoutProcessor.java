@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller;
+package eu.domibus.connector.controller.process;
 
 import java.util.Date;
 import java.util.List;
@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
@@ -20,13 +21,13 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-//import eu.domibus.connector.persistence.model.DomibusConnectorAction;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 
-public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusConnectorController {
+@Component
+public class CheckEvidencesTimeoutProcessor {
 
-	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorCheckEvidencesTimeoutController.class);
+	static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessor.class);
 
 	@Value("${:0}")
 	private long relayREMMDTimeout;
@@ -43,8 +44,7 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
 	@Resource
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	
-	@Override
-	public void execute() throws DomibusConnectorControllerException {
+	public void checkEvidencesTimeout() throws DomibusConnectorControllerException {
 			LOGGER.debug("Job for checking evidence timeouts triggered.");
 					Date start = new Date();
 
@@ -176,5 +176,5 @@ public class DomibusConnectorCheckEvidencesTimeoutController implements DomibusC
             //TODO: handle exception
 		}
 	}
-	
+
 }
