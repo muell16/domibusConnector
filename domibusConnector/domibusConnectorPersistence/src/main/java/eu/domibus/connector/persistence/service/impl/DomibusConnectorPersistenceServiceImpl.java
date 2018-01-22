@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
