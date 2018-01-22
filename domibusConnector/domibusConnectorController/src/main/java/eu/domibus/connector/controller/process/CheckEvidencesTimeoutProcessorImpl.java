@@ -25,9 +25,9 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceServi
 import eu.domibus.connector.persistence.service.PersistenceException;
 
 @Component
-public class CheckEvidencesTimeoutProcessor {
+public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimoutProcessor {
 
-	static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessor.class);
+	static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
 
 	@Value("${:0}")
 	private long relayREMMDTimeout;
@@ -44,6 +44,7 @@ public class CheckEvidencesTimeoutProcessor {
 	@Resource
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	
+    @Override
 	public void checkEvidencesTimeout() throws DomibusConnectorControllerException {
 			LOGGER.debug("Job for checking evidence timeouts triggered.");
 					Date start = new Date();
