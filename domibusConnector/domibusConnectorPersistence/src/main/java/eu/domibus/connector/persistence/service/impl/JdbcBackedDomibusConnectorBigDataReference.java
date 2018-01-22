@@ -66,7 +66,5 @@ public class JdbcBackedDomibusConnectorBigDataReference extends DomibusConnector
     public void setWriteable(boolean writeable) {
         this.writeable = writeable;
     }
-    
-    
 
 }

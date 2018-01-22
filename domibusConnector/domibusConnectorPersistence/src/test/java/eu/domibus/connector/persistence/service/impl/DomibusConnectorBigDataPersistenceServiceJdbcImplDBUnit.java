@@ -8,19 +8,24 @@ import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersisten
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import javax.sql.DataSource;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import static org.assertj.core.api.Assertions.*;
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
+import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.h2.store.fs.FileUtils;
@@ -53,6 +58,8 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
     //static ConfigurableApplicationContext APPLICATION_CONTEXT;
   
     private final static byte[] TESTBYTES = "HELLO WORLD I AM A LONG BLOB OF A LOT OF DATA. AN MY END IS WITH THE DOT AT THE END OF THIS SENTENCE.".getBytes();
+    
+    private final static String TESTDATA1_ID = "ee56d9df-349c-4cb9-900c-324602644c98";
     
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     
@@ -115,18 +122,31 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
         
         IDataSet dataSet = new FlatXmlDataSetBuilder()
                 .setColumnSensing(true)
-                .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMessage.xml").getInputStream()));
+                .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorBigData.xml").getInputStream()));
         
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);        
-        //DatabaseOperation.INSERT.execute(conn, dataSet);
+        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
         
         
     }
 
 
     @Test
-    @Ignore("not implemented yet!")
-    public void testGetReadableDataSource() {
+    public void testGetReadableDataSource() throws IOException {
+        //DomibusConnectorMessage message = Mockito.mock(DomibusConnectorMessage.class);
+        //Mockito.when(message.getConnectorMessageId()).thenReturn("msg72");
+        
+        String storageReference = TESTDATA1_ID;
+        
+        DomibusConnectorBigDataReference dataReference = new DomibusConnectorBigDataReference();
+        dataReference.setStorageIdReference(storageReference);
+        
+        DomibusConnectorBigDataReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataReference);
+        
+        InputStream inputStream = readableDataSource.getInputStream();
+        byte[] data = StreamUtils.copyToByteArray(inputStream);
+        
+        assertThat(new String(data, "UTF-8")).isEqualTo(new String(TESTBYTES, "UTF-8"));
            
     }
 
@@ -136,27 +156,16 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
         Mockito.when(message.getConnectorMessageId()).thenReturn("msg72");
         
         DomibusConnectorBigDataReference dataReference;
-        //persistenceService.findMessageByConnectorMessageId("msg72");
-//        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-//        transactionTemplate.execute((TransactionStatus status) -> {            
-            try {
-                dataReference = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
-                assertThat(dataReference).isNotNull();
+        dataReference = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+        assertThat(dataReference).isNotNull();
 
-                OutputStream outputStream = dataReference.getOutputStream();
+        OutputStream outputStream = dataReference.getOutputStream();
 
-                StreamUtils.copy(TESTBYTES, outputStream);
-                outputStream.close();
-                
-//                return null;
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-//        });
-//                
+        StreamUtils.copy(TESTBYTES, outputStream);
+        outputStream.close();
+
         
-        //test if result is in database without transaction
-//        DomibusConnectorBigDataReference dataReference = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+        //test if result is in database 
         Connection connection = ds.getConnection();
         PreparedStatement stm = connection.prepareStatement("SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA WHERE ID = ?");
         stm.setString(1, dataReference.getStorageIdReference());
@@ -168,8 +177,24 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
     }
 
     @Test
-    @Ignore("not implemented yet!")
-    public void testDeleteDomibusConnectorBigDataReference() {
+    public void testDeleteDomibusConnectorBigDataReference() throws SQLException, AmbiguousTableNameException, DataSetException {
+        DomibusConnectorMessage message = Mockito.mock(DomibusConnectorMessage.class);
+        Mockito.when(message.getConnectorMessageId()).thenReturn("msg72");
+        
+        bigDataPersistenceService.deleteDomibusConnectorBigDataReference(message);
+        
+        
+         //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("domibus_connector_bigdata", "SELECT * FROM domibus_connector_bigdata");
+       
+        ITable domibusConnectorTable = dataSet.getTable("domibus_connector_bigdata");
+        int rowCount = domibusConnectorTable.getRowCount();
+
+        assertThat(rowCount).as("all data references to message with id 72 must be deleted").isEqualTo(1);
+        
+        
     }
     
 }
