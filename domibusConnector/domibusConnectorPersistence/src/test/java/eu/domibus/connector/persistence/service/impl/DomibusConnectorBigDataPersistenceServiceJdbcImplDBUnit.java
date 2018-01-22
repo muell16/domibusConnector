@@ -98,8 +98,8 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImplDBUnit {
         }
         
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
-                .profiles("test", "db_mysql")
-                //.profiles("test", "db_h2")                
+//                .profiles("test", "db_mysql")
+                .profiles("test", "db_h2")                
                 .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml",
                         "spring.datasource.url=jdbc:h2:" + testDbFile.getAbsolutePath() + "/db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE"
                         )
