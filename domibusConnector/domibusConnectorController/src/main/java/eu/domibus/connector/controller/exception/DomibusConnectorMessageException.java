@@ -1,8 +1,6 @@
 package eu.domibus.connector.controller.exception;
 
-import eu.domibus.connector.controller.DomibusApplicationContextManager;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 
 public class DomibusConnectorMessageException extends RuntimeException {
 
@@ -35,9 +33,9 @@ public class DomibusConnectorMessageException extends RuntimeException {
     }
 
     private void storeException(DomibusConnectorMessage message, Throwable cause, Class<?> source) {
-        DomibusConnectorPersistenceService persistenceService = (DomibusConnectorPersistenceService) DomibusApplicationContextManager
-                .getApplicationContext().getBean("persistenceService");
-            persistenceService.persistMessageErrorFromException(message, cause, source);
+//        DomibusConnectorPersistenceService persistenceService = (DomibusConnectorPersistenceService) DomibusApplicationContextManager
+//                .getApplicationContext().getBean("persistenceService");
+//            persistenceService.persistMessageErrorFromException(message, cause, source);
         
     }
 

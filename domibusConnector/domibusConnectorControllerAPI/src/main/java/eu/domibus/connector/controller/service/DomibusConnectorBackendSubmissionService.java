@@ -15,6 +15,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
  */
 public interface DomibusConnectorBackendSubmissionService {
 
-    public void submitToBackend(DomibusConnectorMessage message);
+    public void submitToController(DomibusConnectorMessage message);
     
 }

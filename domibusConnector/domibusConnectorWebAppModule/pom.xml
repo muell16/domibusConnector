@@ -198,7 +198,7 @@
     <dependencies>
 
 
-        <dependency>
+       <!--  <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorCommon</artifactId>
             <exclusions>
@@ -207,7 +207,7 @@
                     <artifactId>c3p0</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency> -->
 
         <!--JSF -->
         <dependency>

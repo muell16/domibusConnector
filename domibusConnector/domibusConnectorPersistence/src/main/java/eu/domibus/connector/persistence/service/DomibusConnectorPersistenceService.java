@@ -24,6 +24,8 @@ public interface DomibusConnectorPersistenceService {
 	  boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message);
 	  
 	  boolean checkMessageRejected(DomibusConnectorMessage message);
+	  
+	  boolean checkMessageConfirmed(DomibusConnectorMessage message);
 	
     /**
      * stores a new message into storage

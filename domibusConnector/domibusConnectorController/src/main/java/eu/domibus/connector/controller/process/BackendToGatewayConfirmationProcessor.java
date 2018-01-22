@@ -1,12 +1,15 @@
-package eu.domibus.connector.controller.service;
+package eu.domibus.connector.controller.process;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-//import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClient;
-import eu.domibus.connector.common.gwc.DomibusConnectorGatewayWebserviceClientException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
@@ -15,45 +18,38 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.PersistenceException;
 
-public class OutgoingEvidenceService implements EvidenceService {
+@Component("BackendToGatewayConfirmationProcessor")
+public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMessageProcessor {
 
-    static Logger LOGGER = LoggerFactory.getLogger(OutgoingEvidenceService.class);
-
-    DomibusConnectorPersistenceService persistenceService;
-    //DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient;
-    DomibusConnectorEvidencesToolkit evidencesToolkit;
-
-    public void setPersistenceService(DomibusConnectorPersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
-//    public void setGatewayWebserviceClient(DomibusConnectorGatewayWebserviceClient gatewayWebserviceClient) {
-//        this.gatewayWebserviceClient = gatewayWebserviceClient;
-//    }
-
-    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
-        this.evidencesToolkit = evidencesToolkit;
-    }
-
-    @Override
-    public void handleEvidence(DomibusConnectorMessage confirmationMessage) throws DomibusConnectorControllerException,
-            DomibusConnectorMessageException {
-        String messageID = confirmationMessage.getMessageDetails().getRefToMessageId();
+	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayConfirmationProcessor.class);
+	
+	@Resource
+	private DomibusConnectorPersistenceService persistenceService;
+	
+	@Resource
+	private DomibusConnectorEvidencesToolkit evidencesToolkit;
+	
+	@Resource
+	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
+	
+	@Override
+	public void processMessage(DomibusConnectorMessage message) {
+		String messageID = message.getMessageDetails().getRefToMessageId();
 
         DomibusConnectorMessage originalMessage = persistenceService.findMessageByEbmsId(messageID);
-        DomibusConnectorEvidenceType evidenceType = confirmationMessage.getMessageConfirmations().get(0).getEvidenceType();
+        DomibusConnectorEvidenceType evidenceType = message.getMessageConfirmations().get(0).getEvidenceType();
 
         DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         DomibusConnectorAction action = createEvidenceAction(evidenceType);
         details.setAction(action);
-        details.setService(confirmationMessage.getMessageDetails().getService());
+        details.setService(message.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
         details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-        details.setFromParty(confirmationMessage.getMessageDetails().getFromParty());
-        details.setToParty(confirmationMessage.getMessageDetails().getToParty());
+        details.setFromParty(message.getMessageDetails().getFromParty());
+        details.setToParty(message.getMessageDetails().getToParty());
 
         DomibusConnectorMessageConfirmation confirmation = null;
         try {
@@ -69,30 +65,28 @@ public class OutgoingEvidenceService implements EvidenceService {
 
         DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, confirmation);
 
-        //TODO: replace with new Message send service!
-//        try {
-//            gatewayWebserviceClient.sendMessage(evidenceMessage);
-//        } catch (DomibusConnectorGatewayWebserviceClientException gwse) {
-//            throw new DomibusConnectorMessageException(originalMessage, "Could not send Evidence Message to Gateway! ",
-//                    gwse, this.getClass());
-//        }
+        try {
+			gwSubmissionService.submitToGateway(evidenceMessage);
+		} catch (DomibusConnectorGatewaySubmissionException gwse) {
+			throw new DomibusConnectorMessageException(originalMessage, "Could not send Evidence Message to Gateway! ",
+                  gwse, this.getClass());
+		}
+
 
         try {
             persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
         } catch(PersistenceException persistenceException) {
-            //TODO: exception
             LOGGER.error("persistence Exception occured", persistenceException);
         }
 
-        //TODO!
-        //if (originalMessage.getDbMessage().getConfirmed() == null) {        
-        //    persistenceService.confirmMessage(originalMessage);
-        //}
+        if (!persistenceService.checkMessageConfirmed(originalMessage)) {        
+            persistenceService.confirmMessage(originalMessage);
+        }
 
         LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(), originalMessage);
-    }
-
-    private DomibusConnectorMessageConfirmation generateEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage originalMessage)
+	}
+	
+	private DomibusConnectorMessageConfirmation generateEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage originalMessage)
             throws DomibusConnectorEvidencesToolkitException, DomibusConnectorMessageException {
             return evidencesToolkit.createEvidence(type, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
         

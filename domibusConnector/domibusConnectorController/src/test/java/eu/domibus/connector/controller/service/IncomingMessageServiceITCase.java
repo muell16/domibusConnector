@@ -6,28 +6,17 @@
 
 package eu.domibus.connector.controller.service;
 
-import eu.domibus.connector.controller.DomibusConnectorIncomingController;
-import eu.domibus.connector.controller.service.IncomingMessageServiceITCase.TestConfiguration;
+
 import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import java.io.File;
+import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 import org.apache.log4j.lf5.util.StreamUtils;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +29,16 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import eu.domibus.connector.controller.service.IncomingMessageServiceITCase.TestConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 
 /**
  *
@@ -75,9 +74,9 @@ public class IncomingMessageServiceITCase {
     
 //    @MockBean
 //    DomibusConnectorPersistenceService persistenceService;
-    
-    @Autowired
-    DomibusConnectorIncomingController domibusConnectorController;
+//    
+//    @Autowired
+//    DomibusConnectorIncomingController domibusConnectorController;
     
     @Before
     public void setUp() {

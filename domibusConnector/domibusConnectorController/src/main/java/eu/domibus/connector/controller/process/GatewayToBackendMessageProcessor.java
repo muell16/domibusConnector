@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -51,6 +52,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	@Resource
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	
+	@Resource
+	private DomibusConnectorBackendDeliveryService backendDeliveryService;
+	
 	@Override
 	public void processMessage(DomibusConnectorMessage message) {
 		
@@ -72,12 +76,13 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			createDeliveryEvidenceAndSendIt(message);
 			LOGGER.info("Connector to Connector Test message {} is confirmed!", message.getConnectorMessageId());
 		}else{
-			//TODO deliver message to backend
+			backendDeliveryService.deliverMessageToBackend(message);
 		}
 
-		persistenceService.setMessageDeliveredToNationalSystem(message);
+		 // TODO this needs to be done by the backend link!!!
+//		persistenceService.setMessageDeliveredToNationalSystem(message);
 
-		LOGGER.info("Successfully processed message from GW to NAT.", message);
+		LOGGER.info("Successfully processed message {} from GW to backend.", message.getConnectorMessageId());
 	}
 	
 	private boolean isConnector2ConnectorTest(DomibusConnectorMessage message) {

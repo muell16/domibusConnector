@@ -6,23 +6,16 @@
 
 package eu.domibus.connector.controller.spring;
 
-import eu.domibus.connector.controller.DomibusConnectorIncomingController;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Configures Controller Context
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
+@Import(value = { QuartzContext.class })
 public class ControllerContext {
 
-    
-//    @Bean
-//    public DomibusConnectorIncomingController domibusConnectorIncomingController() {
-//        
-//        return new DomibusConnectorIncomingController();
-//    }
-    
-    
+
 }
