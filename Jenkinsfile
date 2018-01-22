@@ -83,14 +83,14 @@ node {
 					currentBuild.result = 'UNSTABLE'
 				}
 				
-				/*	
+					
 				try {					
 					stage ('Integration Test') {
 						sh 'mvn -Dmaven.test.failure.ignore=true -P integration-testing,dbunit-testing verify'
 					}
 				} catch (e) {
 						currentBuild.result = 'UNSTABLE'
-				} */
+				} 
 				
 				stage ('Post') {
 					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
