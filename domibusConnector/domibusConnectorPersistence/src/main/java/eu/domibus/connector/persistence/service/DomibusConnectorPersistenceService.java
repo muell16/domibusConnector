@@ -193,9 +193,10 @@ public interface DomibusConnectorPersistenceService {
 
     /**
      * persists an error to the message
-     * @param messageError 
+     * @param connectorMessageId the connectorMessageId
+     * @param messageError the message error
      */
-    void persistMessageError(DomibusConnectorMessageError messageError);
+    void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError);
 
     /**
      * finds all errors related to the message

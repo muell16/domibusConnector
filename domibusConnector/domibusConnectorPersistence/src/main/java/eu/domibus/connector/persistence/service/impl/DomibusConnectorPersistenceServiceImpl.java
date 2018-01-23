@@ -494,7 +494,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     @Transactional
-    public void persistMessageError(DomibusConnectorMessageError messageError) {
+    public void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError) {
         PDomibusConnectorMessageError dbError = new PDomibusConnectorMessageError();
 
         dbError.setErrorMessage(messageError.getText());

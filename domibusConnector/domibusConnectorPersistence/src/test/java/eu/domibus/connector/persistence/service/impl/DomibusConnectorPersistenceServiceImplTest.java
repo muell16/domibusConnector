@@ -601,7 +601,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
                     }
         });
         
-        domibusConnectorPersistenceService.persistMessageError(messageError);
+        domibusConnectorPersistenceService.persistMessageError("msg72", messageError);
                 
         Mockito.verify(this.domibusConnectorMessageErrorDao, Mockito.times(1)).save(any(PDomibusConnectorMessageError.class));
         
