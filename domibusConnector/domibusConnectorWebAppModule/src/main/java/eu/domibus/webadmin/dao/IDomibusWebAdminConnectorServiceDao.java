@@ -4,6 +4,7 @@ import java.util.List;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 
+@Deprecated //will be moved to persistence
 public interface IDomibusWebAdminConnectorServiceDao {
 
 	public abstract List<PDomibusConnectorService> getServiceList();

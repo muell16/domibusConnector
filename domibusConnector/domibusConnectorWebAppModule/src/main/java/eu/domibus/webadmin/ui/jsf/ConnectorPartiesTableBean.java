@@ -1,5 +1,8 @@
-package eu.domibus.webadmin.jsf;
+package eu.domibus.webadmin.ui.jsf;
 
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
+import eu.domibus.connector.domain.model.helper.CopyHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +18,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 @Controller
@@ -34,17 +35,17 @@ public class ConnectorPartiesTableBean {
 	/**
 	 * list of parties - retrieved from backend
 	 */
-	private List<PDomibusConnectorParty> partyList;
+	private List<DomibusConnectorParty> partyList;
 	
 	/**
 	 * list of selected parties
 	 */
-	private List<PDomibusConnectorParty> selectedParties = new ArrayList<>();
+	private List<DomibusConnectorParty> selectedParties = new ArrayList<>();
 	
 	/**
 	 * Holds the party which is being edited by the createEditDialog
 	 */
-	private PDomibusConnectorParty party;
+	private DomibusConnectorParty party;
 
 	/**
 	 * handles if a new party is created (true) or
@@ -65,7 +66,7 @@ public class ConnectorPartiesTableBean {
 	/**
 	 * holds the reference of the old party
 	 */
-	private PDomibusConnectorPartyPK oldPartyPK;
+	private DomibusConnectorParty oldParty;
 	
 	
 	public void init() {
@@ -87,27 +88,27 @@ public class ConnectorPartiesTableBean {
 	}
 	
 	
-	public List<PDomibusConnectorParty> getPartyList() {
+	public List<DomibusConnectorParty> getPartyList() {
 		return partyList;
 	}
 
 
-	public void setPartyList(List<PDomibusConnectorParty> partyList) {	
+	public void setPartyList(List<DomibusConnectorParty> partyList) {	
 		this.partyList = partyList;
 	}
 
 	
-	public List<PDomibusConnectorParty> getSelectedParties() {
+	public List<DomibusConnectorParty> getSelectedParties() {
 		return selectedParties;
 	}
 
 	
-	public PDomibusConnectorParty getParty() {
+	public DomibusConnectorParty getParty() {
 		return party;
 	}
 
 	
-	public void setParty(PDomibusConnectorParty party) {
+	public void setParty(DomibusConnectorParty party) {
 		this.party = party;
 	}
 
@@ -122,7 +123,7 @@ public class ConnectorPartiesTableBean {
 	}
 	
 	
-	public void setSelectedParties(List<PDomibusConnectorParty> selectedParties) {
+	public void setSelectedParties(List<DomibusConnectorParty> selectedParties) {
 		LOG.trace("#setSelectedParties: called with [{}]",  selectedParties);
 		this.selectedParties = selectedParties;
 	}
@@ -162,7 +163,7 @@ public class ConnectorPartiesTableBean {
 		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedParties);
 		//TODO: delete DB entries
 		
-		for (PDomibusConnectorParty p : selectedParties) {	
+		for (DomibusConnectorParty p : selectedParties) {	
 			try {
 				this.pModeSupport.deleteParty(p);
 			} catch (DataIntegrityViolationException e) {
@@ -194,7 +195,11 @@ public class ConnectorPartiesTableBean {
 	
 	public void createNewParty(ActionEvent actionEvent) {
 		LOG.trace("#createNewParty: called");
-		this.party = new PDomibusConnectorParty();
+		this.party = DomibusConnectorPartyBuilder.createBuilder()
+                .setPartyId(" ")
+                .setRole(" ")
+                .build();
+                
 		this.createNewPartyMode = true;
 	}
 	
@@ -202,7 +207,7 @@ public class ConnectorPartiesTableBean {
 	public void editParty() {
 		LOG.trace("#editParty: called with party: [{}]", this.party);
 		//TODO: handle edit...
-		this.oldPartyPK = new PDomibusConnectorPartyPK(party.getPartyId(), party.getRole());
+		this.oldParty = CopyHelper.copyParty(this.party);
 		this.createNewPartyMode = false;		
 	}
 
@@ -241,10 +246,10 @@ public class ConnectorPartiesTableBean {
 			}
 		} else {
 			//TODO: save change...
-			this.pModeSupport.updateParty(this.oldPartyPK, this.party);
+			this.pModeSupport.updateParty(this.oldParty, this.party);
 		}
 		this.party = null;		
-		this.oldPartyPK = null;
+		this.oldParty = null;
 	}
 		
 }

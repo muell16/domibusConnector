@@ -198,17 +198,6 @@
     <dependencies>
 
 
-       <!--  <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorCommon</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>c3p0</groupId>
-                    <artifactId>c3p0</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency> -->
-
         <!--JSF -->
         <dependency>
             <groupId>com.sun.faces</groupId>
@@ -303,7 +292,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
+            <artifactId>spring-data-jpa</artifactId>           
         </dependency>
 
         <!-- logging -->

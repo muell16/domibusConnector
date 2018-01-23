@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 
-@Repository
+//@Repository
 public class DomibusWebAdminConnectorActionDao implements IDomibusWebAdminConnectorActionDao {
 
     @PersistenceContext //(unitName = "domibus.connector")

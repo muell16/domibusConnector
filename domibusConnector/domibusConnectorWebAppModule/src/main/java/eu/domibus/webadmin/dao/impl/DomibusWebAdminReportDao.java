@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import eu.domibus.webadmin.dao.IDomibusWebAdminReportDao;
-import eu.domibus.webadmin.model.connector.PeriodEntryDO;
+import eu.domibus.webadmin.persistence.model.PeriodEntryDO;
 
 @Repository
 public class DomibusWebAdminReportDao extends JdbcDaoSupport implements IDomibusWebAdminReportDao, InitializingBean {

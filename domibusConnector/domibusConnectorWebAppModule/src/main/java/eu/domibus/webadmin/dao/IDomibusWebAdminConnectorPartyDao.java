@@ -5,6 +5,7 @@ import java.util.List;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 
+@Deprecated //will be moved to persistence
 public interface IDomibusWebAdminConnectorPartyDao {
 
 	public abstract List<PDomibusConnectorParty> getPartyList();

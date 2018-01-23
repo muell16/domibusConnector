@@ -2,7 +2,7 @@ package eu.domibus.webadmin.blogic.connector.statistics;
 
 import java.util.List;
 
-import eu.domibus.webadmin.model.connector.MessageReportDO;
+import eu.domibus.webadmin.persistence.model.MessageReportDO;
 
 public interface IConnectorCustomService {
 

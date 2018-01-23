@@ -1,5 +1,8 @@
-package eu.domibus.webadmin.jsf;
+package eu.domibus.webadmin.ui.jsf;
 
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -27,9 +30,9 @@ public class ConnectorDataTablesBean {
 	@Autowired
 	private IConnectorPModeSupport pModeSupport;
 	
-	private List<PDomibusConnectorAction> actionList;
-	private List<PDomibusConnectorService> serviceList;
-	private List<PDomibusConnectorParty> partyList;	
+	private List<DomibusConnectorAction> actionList;
+	private List<DomibusConnectorService> serviceList;
+	private List<DomibusConnectorParty> partyList;	
 	private List<String> selectedParties; // = new ArrayList<>();
 	
 	private UploadedFile pmodeFile;
@@ -61,32 +64,32 @@ public class ConnectorDataTablesBean {
 		}
 	}
 
-	public List<PDomibusConnectorAction> getActionList() {
+	public List<DomibusConnectorAction> getActionList() {
 		return actionList;
 	}
 
 
-	public void setActionList(List<PDomibusConnectorAction> actionList) {
+	public void setActionList(List<DomibusConnectorAction> actionList) {
 		this.actionList = actionList;
 	}
 
 
-	public List<PDomibusConnectorService> getServiceList() {
+	public List<DomibusConnectorService> getServiceList() {
 		return serviceList;
 	}
 
 
-	public void setServiceList(List<PDomibusConnectorService> serviceList) {
+	public void setServiceList(List<DomibusConnectorService> serviceList) {
 		this.serviceList = serviceList;
 	}
 
 
-	public List<PDomibusConnectorParty> getPartyList() {
+	public List<DomibusConnectorParty> getPartyList() {
 		return partyList;
 	}
 
 
-	public void setPartyList(List<PDomibusConnectorParty> partyList) {	
+	public void setPartyList(List<DomibusConnectorParty> partyList) {	
 		this.partyList = partyList;
 	}
 

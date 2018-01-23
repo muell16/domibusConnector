@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJdbcImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

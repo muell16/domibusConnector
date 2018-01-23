@@ -1,5 +1,8 @@
-package eu.domibus.webadmin.jsf;
+package eu.domibus.webadmin.ui.jsf;
 
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
+import eu.domibus.connector.domain.model.helper.CopyHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,17 +38,17 @@ public class ConnectorActionsTableBean {
 	/**
 	 * list of actions - retrieved from backend
 	 */
-	private List<PDomibusConnectorAction> actionList;
+	private List<DomibusConnectorAction> actionList;
 	
 	/**
 	 * list of selected actions
 	 */
-	private List<PDomibusConnectorAction> selectedActions = new ArrayList<>();
+	private List<DomibusConnectorAction> selectedActions = new ArrayList<>();
 	
 	/**
 	 * Holds the action which is being edited by the createEditDialog
 	 */
-	private PDomibusConnectorAction action;
+	private DomibusConnectorAction action;
 
 	/**
 	 * handles if a new action is created (true) or
@@ -64,9 +67,9 @@ public class ConnectorActionsTableBean {
 	private String editDialogConfirmButtonText = "";
 
 	/**
-	 * holds the db key of the old action
+	 * holds the old action
 	 */
-	private String oldActionPK;
+	private DomibusConnectorAction oldAction;
 	
 	
 	@PostConstruct
@@ -88,32 +91,32 @@ public class ConnectorActionsTableBean {
 	}
 
 
-	public List<PDomibusConnectorAction> getActionList() {
+	public List<DomibusConnectorAction> getActionList() {
 		return actionList;
 	}
 
 
-	public void setActionList(List<PDomibusConnectorAction> actionList) {
+	public void setActionList(List<DomibusConnectorAction> actionList) {
 		this.actionList = actionList;
 	}
 
 
-	public List<PDomibusConnectorAction> getSelectedActions() {
+	public List<DomibusConnectorAction> getSelectedActions() {
 		return selectedActions;
 	}
 
 
-	public void setSelectedActions(List<PDomibusConnectorAction> selectedActions) {
+	public void setSelectedActions(List<DomibusConnectorAction> selectedActions) {
 		this.selectedActions = selectedActions;
 	}
 
 
-	public PDomibusConnectorAction getAction() {
+	public DomibusConnectorAction getAction() {
 		return action;
 	}
 
 
-	public void setAction(PDomibusConnectorAction action) {
+	public void setAction(DomibusConnectorAction action) {
 		this.action = action;
 	}
 
@@ -148,13 +151,13 @@ public class ConnectorActionsTableBean {
 	}
 
 
-	public String getOldActionPK() {
-		return oldActionPK;
+	public DomibusConnectorAction getOldAction() {
+		return oldAction;
 	}
 
 
-	public void setOldActionPK(String oldActionPK) {
-		this.oldActionPK = oldActionPK;
+	public void setOldAction(DomibusConnectorAction oldActionPK) {
+		this.oldAction = oldActionPK;
 	}
 
 	
@@ -179,8 +182,8 @@ public class ConnectorActionsTableBean {
 		
 		//TODO: handle confirm action delete
 		
-		for (PDomibusConnectorAction action : selectedActions) {	
-			//TODO: delete Action!
+		for (DomibusConnectorAction action : selectedActions) {	
+
 			try {
 				this.pModeSupport.deleteAction(action);
 			} catch (DataIntegrityViolationException e) {
@@ -204,7 +207,7 @@ public class ConnectorActionsTableBean {
  
 	public void createNewAction(ActionEvent actionEvent) {
 		LOG.trace("#createNewAction: called");
-		this.action = new PDomibusConnectorAction();
+		this.action = new DomibusConnectorAction("", false);
 		this.createNewActionMode = true;
 	}
 	
@@ -213,7 +216,7 @@ public class ConnectorActionsTableBean {
 	public void editAction() {
 		LOG.trace("#editAction: called with action: [{}]", this.action);
 		//TODO: handle edit...
-		this.oldActionPK = this.action.getAction();
+		this.oldAction = CopyHelper.copyAction(action);
 		this.createNewActionMode = false;		
 	}
 
@@ -260,7 +263,7 @@ public class ConnectorActionsTableBean {
 		} else {
 			//TODO: save change...
 			try {
-				this.pModeSupport.updateAction(oldActionPK, action);
+				this.pModeSupport.updateAction(oldAction, action);
 			} catch (Exception e) {
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Error!", "Updating action failed" );
@@ -274,7 +277,7 @@ public class ConnectorActionsTableBean {
 			
 		}
 		this.action = null;		
-		this.oldActionPK = null;
+		this.oldAction = null;
 	}
 		
 }

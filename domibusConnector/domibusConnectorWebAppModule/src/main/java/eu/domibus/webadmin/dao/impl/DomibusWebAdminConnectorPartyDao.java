@@ -13,7 +13,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 
-@Repository
+//@Repository
 public class DomibusWebAdminConnectorPartyDao implements IDomibusWebAdminConnectorPartyDao{
 
 	private final static Logger LOG = LoggerFactory.getLogger(DomibusWebAdminConnectorPartyDao.class);

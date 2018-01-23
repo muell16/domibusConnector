@@ -1,5 +1,8 @@
-package eu.domibus.webadmin.jsf;
+package eu.domibus.webadmin.ui.jsf;
 
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
+import eu.domibus.connector.domain.model.helper.CopyHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +18,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
 
 @Controller
@@ -33,17 +35,17 @@ public class ConnectorServicesTableBean {
 	/**
 	 * list of services - retrieved from backend
 	 */
-	private List<PDomibusConnectorService> serviceList;
+	private List<DomibusConnectorService> serviceList;
 	
 	/**
 	 * list of selected services
 	 */
-	private List<PDomibusConnectorService> selectedServices = new ArrayList<>();
+	private List<DomibusConnectorService> selectedServices = new ArrayList<>();
 	
 	/**
 	 * Holds the service which is being edited by the createEditDialog
 	 */
-	private PDomibusConnectorService service;
+	private DomibusConnectorService service;
 
 	/**
 	 * handles if a new service is created (true) or
@@ -64,7 +66,7 @@ public class ConnectorServicesTableBean {
 	/**
 	 * holds the db key of the old service
 	 */
-	private String oldServicePK;
+	private DomibusConnectorService oldService;
 	
 	
 	public void init() {
@@ -85,32 +87,32 @@ public class ConnectorServicesTableBean {
 	}
 
 
-	public List<PDomibusConnectorService> getServiceList() {
+	public List<DomibusConnectorService> getServiceList() {
 		return serviceList;
 	}
 
 
-	public void setServiceList(List<PDomibusConnectorService> serviceList) {
+	public void setServiceList(List<DomibusConnectorService> serviceList) {
 		this.serviceList = serviceList;
 	}
 
 
-	public List<PDomibusConnectorService> getSelectedServices() {
+	public List<DomibusConnectorService> getSelectedServices() {
 		return selectedServices;
 	}
 
 
-	public void setSelectedServices(List<PDomibusConnectorService> selectedServices) {
+	public void setSelectedServices(List<DomibusConnectorService> selectedServices) {
 		this.selectedServices = selectedServices;
 	}
 
 
-	public PDomibusConnectorService getService() {
+	public DomibusConnectorService getService() {
 		return service;
 	}
 
 
-	public void setService(PDomibusConnectorService service) {
+	public void setService(DomibusConnectorService service) {
 		this.service = service;
 	}
 
@@ -145,13 +147,13 @@ public class ConnectorServicesTableBean {
 	}
 
 
-	public String getOldServicePK() {
-		return oldServicePK;
+	public DomibusConnectorService getOldServicePK() {
+		return oldService;
 	}
 
 
-	public void setOldServicePK(String oldServicePK) {
-		this.oldServicePK = oldServicePK;
+	public void setOldServicePK(DomibusConnectorService oldServicePK) {
+		this.oldService = oldServicePK;
 	}
 
 	
@@ -173,7 +175,7 @@ public class ConnectorServicesTableBean {
 	public void confirmDeleteSelectedServices(ActionEvent serviceEvent) {
 		LOG.trace("#confirmDeleteSelectedServices: delete confirmed, calling Service to delete [{}]", selectedServices);
 		
-		for (PDomibusConnectorService service : selectedServices) {	
+		for (DomibusConnectorService service : selectedServices) {	
 			//TODO: delete Service!
 			
 			try {
@@ -201,7 +203,10 @@ public class ConnectorServicesTableBean {
  
 	public void createNewService(ActionEvent serviceEvent) {
 		LOG.trace("#createNewService: called");
-		this.service = new PDomibusConnectorService();
+		this.service = DomibusConnectorServiceBuilder
+                .createBuilder()
+                .setService(" ")
+                .build();
 		this.createNewServiceMode = true;
 	}
 	
@@ -209,7 +214,7 @@ public class ConnectorServicesTableBean {
  
 	public void editService() {
 		LOG.trace("#editService: called with service: [{}]", this.service);
-		this.oldServicePK = this.service.getService();
+		this.oldService = CopyHelper.copyService(this.service);
 		this.createNewServiceMode = false;		
 	}
 
@@ -260,7 +265,7 @@ public class ConnectorServicesTableBean {
 		
 			//TODO: save change...
 			try {
-				this.pModeSupport.updateService(oldServicePK, service);
+				this.pModeSupport.updateService(oldService, service);
 			} catch (Exception e) {
 				FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, 
 						"Error!", "Updating service failed" );
@@ -274,7 +279,7 @@ public class ConnectorServicesTableBean {
 		
 		
 		this.service = null;		
-		this.oldServicePK = null;
+		this.oldService = null;
 	}
 		
 }

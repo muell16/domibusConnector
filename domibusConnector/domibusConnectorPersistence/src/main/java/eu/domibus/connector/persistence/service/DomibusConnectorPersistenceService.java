@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional
-public interface DomibusConnectorPersistenceService {
+public interface DomibusConnectorPersistenceService extends DomibusConnectorPartyPersistenceService, 
+        DomibusConnectorActionPersistenceService, 
+        DomibusConnectorServicePersistenceService {
 
 	
 	  DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
@@ -173,23 +175,6 @@ public interface DomibusConnectorPersistenceService {
      * @param message - the message
      */
     void rejectMessage(DomibusConnectorMessage message);
-
-    DomibusConnectorAction getAction(String action);
-
-    DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction();
-
-    DomibusConnectorAction getRelayREMMDFailure();
-
-    DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction();
-
-    DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
-
-    DomibusConnectorService getService(String service);
-
-    DomibusConnectorParty getParty(String partyId, String role);
-
-    DomibusConnectorParty getPartyByPartyId(String partyId);
-
 
     /**
      * persists an error to the message

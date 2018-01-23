@@ -3,8 +3,9 @@ package eu.domibus.webadmin.dao;
 import java.util.Date;
 import java.util.List;
 
-import eu.domibus.webadmin.model.connector.PeriodEntryDO;
+import eu.domibus.webadmin.persistence.model.PeriodEntryDO;
 
+@Deprecated //will be moved to persistence
 public interface IDomibusWebAdminReportDao {
 
 	List<PeriodEntryDO> loadReportWithEvidences(Date fromDate, Date toDate);

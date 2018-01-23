@@ -28,7 +28,7 @@ import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
 import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
-import eu.domibus.webadmin.model.connector.MessageReportDO;
+import eu.domibus.webadmin.persistence.model.MessageReportDO;
 
 @Service
 public class ConnectorCustomServiceImpl implements IConnectorCustomService, Serializable {

@@ -4,38 +4,40 @@ import java.util.List;
 
 import org.primefaces.model.UploadedFile;
 
-import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
-import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
 
 public interface IConnectorPModeSupport {
 
 	void importFromPModeFile(UploadedFile pmodeFile);
 
-	List<PDomibusConnectorParty> getPartyList();
 
-	List<PDomibusConnectorAction> getActionList();
-
-	List<PDomibusConnectorService> getServiceList();
-
-	void createParty(PDomibusConnectorParty party);
+	DomibusConnectorParty createParty(DomibusConnectorParty party);
 	
-	void updateParty(PDomibusConnectorPartyPK oldPartyId, PDomibusConnectorParty updatedParty);
+    List<DomibusConnectorParty> getPartyList();
+    
+	DomibusConnectorParty updateParty(DomibusConnectorParty oldParty, DomibusConnectorParty updatedParty);
 	
-	void deleteParty(PDomibusConnectorParty p);
+	void deleteParty(DomibusConnectorParty p);
+    
 
-	void createAction(PDomibusConnectorAction action);	
+	DomibusConnectorAction createAction(DomibusConnectorAction action);	
 
-	void updateAction(String oldActionPK, PDomibusConnectorAction action);
+	DomibusConnectorAction updateAction(DomibusConnectorAction oldAction, DomibusConnectorAction action);
 	
-	void deleteAction(PDomibusConnectorAction action);
+    List<DomibusConnectorAction> getActionList();
+       
+	void deleteAction(DomibusConnectorAction action);
+    
 
-	void createService(PDomibusConnectorService service);
+	DomibusConnectorService createService(DomibusConnectorService service);
 
-	void updateService(String oldServicePK, PDomibusConnectorService service);
+    List<DomibusConnectorService> getServiceList();
+    
+	DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService service);
 
-	void deleteService(PDomibusConnectorService service);
+	void deleteService(DomibusConnectorService service);
 
 	
 }

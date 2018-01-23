@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.jsf;
+package eu.domibus.webadmin.ui.jsf;
 
 import java.io.IOException;
 import java.io.OutputStream;

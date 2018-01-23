@@ -32,272 +32,265 @@ import eu.domibus.configuration.Configuration.BusinessProcesses.Process.Initiato
 import eu.domibus.configuration.Configuration.BusinessProcesses.Process.ResponderParties.ResponderParty;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Services.Service;
-import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
-import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
+import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 import eu.domibus.webadmin.blogic.connector.pmode.IConnectorPModeSupport;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
+import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
 
 @org.springframework.stereotype.Service
 public class ConnectorPModeSupportImpl implements IConnectorPModeSupport {
-	
-	protected final static Logger LOG = LoggerFactory.getLogger(ConnectorPModeSupportImpl.class); 
-	
-	private IDomibusWebAdminConnectorActionDao actionDao;
-	
-	private IDomibusWebAdminConnectorServiceDao serviceDao;
-	
-	private IDomibusWebAdminConnectorPartyDao partyDao;
 
-	@Autowired
-	public ConnectorPModeSupportImpl(IDomibusWebAdminConnectorActionDao actionDao,
-			IDomibusWebAdminConnectorServiceDao serviceDao,
-			IDomibusWebAdminConnectorPartyDao partyDao) {
-		this.actionDao = actionDao;
-		this.serviceDao = serviceDao;
-		this.partyDao = partyDao;
-	}
-	
+    protected final static Logger LOGGER = LoggerFactory.getLogger(ConnectorPModeSupportImpl.class);
+
+    @Autowired
+    private DomibusConnectorActionPersistenceService actionPersistenceService;
+
+    @Autowired
+    private DomibusConnectorServicePersistenceService servicePersistenceService;
+
+    @Autowired
+    private DomibusConnectorPartyPersistenceService partyPersistenceService;
+
+    // SETTER //
+    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
+        this.actionPersistenceService = actionPersistenceService;
+    }
+
+    public void setServicePersistenceService(DomibusConnectorServicePersistenceService servicePersistenceService) {
+        this.servicePersistenceService = servicePersistenceService;
+    }
+
+    public void setPartyPersistenceService(DomibusConnectorPartyPersistenceService partyPersistenceService) {
+        this.partyPersistenceService = partyPersistenceService;
+    }
+
     /**
      * {@inheritDoc}
-     * 
+     *
      */
-	@Override
-    @Transactional(readOnly=false)
-	public void importFromPModeFile(UploadedFile pmodeFile) {
+    @Override
+    @Transactional(readOnly = false)
+    public void importFromPModeFile(UploadedFile pmodeFile) {
         if (pmodeFile == null) {
             throw new IllegalArgumentException("pModeFile is not allowed to be null!");
         }
-		LOG.debug("Starting import of PModes from File "+ pmodeFile.getFileName());
-		Configuration pmodes = null;
-		try {
-			pmodes = (Configuration) byteArrayToXmlObject(pmodeFile.getContents(), Configuration.class, Configuration.class);
-		} catch (Exception e) {
-			LOG.error("Cannot load provided pmode file!", e);
+        LOGGER.debug("Starting import of PModes from File " + pmodeFile.getFileName());
+        Configuration pmodes = null;
+        try {
+            pmodes = (Configuration) byteArrayToXmlObject(pmodeFile.getContents(), Configuration.class, Configuration.class);
+        } catch (Exception e) {
+            LOGGER.error("Cannot load provided pmode file!", e);
             throw new RuntimeException(e);
-		}
-		
-		importServices(pmodes);
-		
-		importActions(pmodes);
-		
-		importParties(pmodes);
-		
-	}
+        }
 
-	private void importServices(Configuration pmodes) {
-		Map<String, PDomibusConnectorService> services = new HashMap<String, PDomibusConnectorService>();
-		for(PDomibusConnectorService dbService:getServiceList()){
-			services.put(dbService.getService(), dbService);
-		}
-		
-		for(Service service:pmodes.getBusinessProcesses().getServices().getService()){
-			if(!services.containsKey(service.getValue())){
-				PDomibusConnectorService newService = new PDomibusConnectorService();
-				newService.setService(service.getValue());
-				newService.setServiceType(service.getType());
-				this.serviceDao.persistNewService(newService);
-                services.put(service.getValue(), newService);
-			}
-		}
-	}
+        importServices(pmodes);
 
-	private void importActions(Configuration pmodes) {
-		HashSet<String> actions = new HashSet<String>();
-		for(PDomibusConnectorAction dbAction:getActionList()){
-			actions.add(dbAction.getAction());
-		}
-		
-		for(Action action:pmodes.getBusinessProcesses().getActions().getAction()){
-			if(!actions.contains(action.getValue())){
-				PDomibusConnectorAction newAction = new PDomibusConnectorAction();
-				newAction.setAction(action.getValue());
-				newAction.setDocumentRequired(true);
-				this.actionDao.persistNewAction(newAction);
-                actions.add(action.getValue());
-			}
-		}
-	}
-        
-	private void importParties(Configuration pmodes) {
-		Map<String, String> roles = new HashMap<String,String>();
-		for(Role role:pmodes.getBusinessProcesses().getRoles().getRole()){
-			roles.put(role.getName(), role.getValue());
-		}
-		
-		Map<String,String> partyIdTypes = new HashMap<String, String>();
-		for(PartyIdType type: pmodes.getBusinessProcesses().getParties().getPartyIdTypes().getPartyIdType()){
-			partyIdTypes.put(type.getName(), type.getValue());
-		}
-		
-		Map<String,Identifier> partyIdentifiers = new HashMap<String,Identifier>();
-		for(Party party:pmodes.getBusinessProcesses().getParties().getParty()){
-			if(!CollectionUtils.isEmpty(party.getIdentifier())&& party.getIdentifier().get(0)!=null){
-				partyIdentifiers.put(party.getName(), party.getIdentifier().get(0));
-			}
-		}
+        importActions(pmodes);
 
-		Map<String,Map<String,PDomibusConnectorParty>> dbParties = new HashMap<String,Map<String,PDomibusConnectorParty>>();
-		for(final PDomibusConnectorParty dbParty:getPartyList()){
-			if(!dbParties.containsKey(dbParty.getPartyId())){
-				dbParties.put(dbParty.getPartyId(), new HashMap<String,PDomibusConnectorParty>());
-			}
-			dbParties.get(dbParty.getPartyId()).put(dbParty.getRole(), dbParty);
-		}
-		
-		for(eu.domibus.configuration.Configuration.BusinessProcesses.Process process:pmodes.getBusinessProcesses().getProcess()){
-			String initiatorRole = roles.get(process.getInitiatorRole());
-			String responderRole = roles.get(process.getResponderRole());
-			for(InitiatorParty iParty:process.getInitiatorParties().getInitiatorParty()){
-				checkAndCreateParty(partyIdTypes, partyIdentifiers, dbParties, initiatorRole, iParty.getName());
-			}
-			for(ResponderParty rParty:process.getResponderParties().getResponderParty()){
-				checkAndCreateParty(partyIdTypes, partyIdentifiers, dbParties, responderRole, rParty.getName());
-			}
-		}
-		
-	}
+        importParties(pmodes);
+    }
 
-	private void checkAndCreateParty(Map<String, String> partyIdTypes, Map<String, Identifier> partyIdentifiers,
-            Map<String, Map<String, PDomibusConnectorParty>> dbParties, String role, String partyName) {
-            Identifier pId = partyIdentifiers.get(partyName);
-            if(!(dbParties.containsKey(pId.getPartyId()) && dbParties.get(pId.getPartyId()).containsKey(role))){
-		PDomibusConnectorParty newParty = new PDomibusConnectorParty();
-		newParty.setPartyId(pId.getPartyId());
-		newParty.setPartyIdType(partyIdTypes.get(pId.getPartyIdType()));
-		newParty.setRole(role);
-                this.partyDao.persistNewParty(newParty);
-                
-                //TODO: put persisted newParty into dbParties
-                Map<String, PDomibusConnectorParty> partyRoleMape = dbParties.getOrDefault(pId.getPartyId(), new HashMap<>());
-                partyRoleMape.put(role, newParty);
-                dbParties.put(pId.getPartyId(), partyRoleMape);
-                
-                //dbParties.put(newParty.getPartyId(), rolePartyMap);
+    private void importServices(Configuration pmodes) {
+        Map<String, DomibusConnectorService> services = new HashMap<String, DomibusConnectorService>();
+        for (DomibusConnectorService srv : getServiceList()) {
+            services.put(srv.getService(), srv);
+        }
+
+        for (Service configServiceEntry : pmodes.getBusinessProcesses().getServices().getService()) {
+            if (!services.containsKey(configServiceEntry.getValue())) {
+                DomibusConnectorService newService = DomibusConnectorServiceBuilder.createBuilder()
+                        .setService(configServiceEntry.getValue())
+                        .withServiceType(configServiceEntry.getType())
+                        .build();
+
+                newService = this.servicePersistenceService.persistNewService(newService);
+                services.put(configServiceEntry.getValue(), newService);
+
             }
-	}
+        }
+    }
 
-	 public static Object byteArrayToXmlObject(final byte[] xmlAsBytes, final Class<?> instantiationClazz,
-	            final Class<?>... initializationClasses) throws Exception {
+    private void importActions(Configuration pmodes) {
+        HashSet<String> actions = new HashSet<String>();
+        for (DomibusConnectorAction dbAction : getActionList()) {
+            actions.add(dbAction.getAction());
+        }
 
-	        try {
-	            ByteArrayInputStream bis = new ByteArrayInputStream(xmlAsBytes);
+        for (Action configurationActionEntry : pmodes.getBusinessProcesses().getActions().getAction()) {
+            if (!actions.contains(configurationActionEntry.getValue())) {
+                DomibusConnectorAction newAction = DomibusConnectorActionBuilder.createBuilder()
+                        .setAction(configurationActionEntry.getValue())
+                        .withDocumentRequired(true) //TODO: is true really default here?
+                        .build();
 
-	            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	            factory.setNamespaceAware(true);
-	            Document document = factory.newDocumentBuilder().parse(bis);
+                newAction = this.actionPersistenceService.persistNewAction(newAction);
+                actions.add(newAction.getAction());
+            }
+        }
+    }
 
-	            JAXBContext ctx = JAXBContext.newInstance(initializationClasses);
+    private void importParties(Configuration pmodes) {
+        Map<String, String> roles = new HashMap<String, String>();
+        for (Role role : pmodes.getBusinessProcesses().getRoles().getRole()) {
+            roles.put(role.getName(), role.getValue());
+        }
 
-	            Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        Map<String, String> partyIdTypes = new HashMap<String, String>();
+        for (PartyIdType type : pmodes.getBusinessProcesses().getParties().getPartyIdTypes().getPartyIdType()) {
+            partyIdTypes.put(type.getName(), type.getValue());
+        }
 
-	            JAXBElement<?> jaxbElement = unmarshaller.unmarshal(document, instantiationClazz);
-	            return jaxbElement.getValue();
-	        } catch (JAXBException | SAXException | IOException | ParserConfigurationException e) {
-	            throw new Exception("Exception parsing byte[] to " + instantiationClazz.getName(), e);
-	        }
+        Map<String, Identifier> partyIdentifiers = new HashMap<String, Identifier>();
+        for (Party party : pmodes.getBusinessProcesses().getParties().getParty()) {
+            if (!CollectionUtils.isEmpty(party.getIdentifier()) && party.getIdentifier().get(0) != null) {
+                partyIdentifiers.put(party.getName(), party.getIdentifier().get(0));
+            }
+        }
 
-	    }
-	
-	 @Override
-	 public List<PDomibusConnectorParty> getPartyList(){
-		 return partyDao.getPartyList();
-	 }
-	 
-	 @Override
-	 public List<PDomibusConnectorAction> getActionList(){
-		 return actionDao.getActionList();
-	 }
-	 
-	 @Override
-	 public List<PDomibusConnectorService> getServiceList(){
-		 return serviceDao.getServiceList();
-	 }
-	 
-		public void setActionDao(IDomibusWebAdminConnectorActionDao actionDao) {
-			this.actionDao = actionDao;
-		}
+        Map<String, Map<String, DomibusConnectorParty>> dbParties = new HashMap<String, Map<String, DomibusConnectorParty>>();
+        for (final DomibusConnectorParty dbParty : getPartyList()) {
+            if (!dbParties.containsKey(dbParty.getPartyId())) {
+                dbParties.put(dbParty.getPartyId(), new HashMap<String, DomibusConnectorParty>());
+            }
+            dbParties.get(dbParty.getPartyId()).put(dbParty.getRole(), dbParty);
+        }
 
-	
-		public void setServiceDao(IDomibusWebAdminConnectorServiceDao serviceDao) {
-			this.serviceDao = serviceDao;
-		}
+        for (eu.domibus.configuration.Configuration.BusinessProcesses.Process process : pmodes.getBusinessProcesses().getProcess()) {
+            String initiatorRole = roles.get(process.getInitiatorRole());
+            String responderRole = roles.get(process.getResponderRole());
+            for (InitiatorParty iParty : process.getInitiatorParties().getInitiatorParty()) {
+                checkAndCreateParty(partyIdTypes, partyIdentifiers, dbParties, initiatorRole, iParty.getName());
+            }
+            for (ResponderParty rParty : process.getResponderParties().getResponderParty()) {
+                checkAndCreateParty(partyIdTypes, partyIdentifiers, dbParties, responderRole, rParty.getName());
+            }
+        }
 
-	
-		public void setPartyDao(IDomibusWebAdminConnectorPartyDao partyDao) {
-			this.partyDao = partyDao;
-		}
+    }
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void deleteParty(PDomibusConnectorParty p) {
-			LOG.trace("#deleteParty: called, use partyDao to delete");
-			//domibusConnectorParty is detached so find first, and then delete...
-			this.partyDao.delete(this.partyDao.findById(new PDomibusConnectorPartyPK(p.getPartyId(), p.getRole())));			
-		}
+    private void checkAndCreateParty(Map<String, String> partyIdTypes, Map<String, Identifier> partyIdentifiers,
+            Map<String, Map<String, DomibusConnectorParty>> dbParties, String role, String partyName) {
+        Identifier pId = partyIdentifiers.get(partyName);
+        if (!(dbParties.containsKey(pId.getPartyId()) && dbParties.get(pId.getPartyId()).containsKey(role))) {
+            DomibusConnectorParty newParty = DomibusConnectorPartyBuilder.createBuilder()
+                    .setPartyId(pId.getPartyId())
+                    .setRole(role)
+                    .withPartyIdType(partyIdTypes.get(pId.getPartyIdType()))
+                    .build();
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void updateParty(PDomibusConnectorPartyPK oldPartyId, PDomibusConnectorParty updatedParty) {
-			PDomibusConnectorParty dbParty = this.partyDao.findById(oldPartyId);
-//			altering PK components is not allowed!			
-//			dbParty.setPartyId(updatedParty.getPartyId());
-//			dbParty.setRole(updatedParty.getRole());
-			dbParty.setPartyIdType(updatedParty.getPartyIdType());
-			this.partyDao.update(dbParty);			
-		}
+            newParty = this.partyPersistenceService.persistNewParty(newParty);
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void createParty(PDomibusConnectorParty party) {
-			this.partyDao.persistNewParty(party);
-		}
+            Map<String, DomibusConnectorParty> partyRoleMape = dbParties.getOrDefault(pId.getPartyId(), new HashMap<>());
+            partyRoleMape.put(role, newParty);
+            dbParties.put(pId.getPartyId(), partyRoleMape);
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void deleteAction(PDomibusConnectorAction action) {
-			LOG.trace("deleteAction: delete Action [{}]", action);
-			this.actionDao.delete(
-					this.actionDao.findById(action.getAction()));
-			
-		}
+        }
+    }
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void createAction(PDomibusConnectorAction action) {
-			this.actionDao.persistNewAction(action);			
-		}
+    public static Object byteArrayToXmlObject(final byte[] xmlAsBytes, final Class<?> instantiationClazz,
+            final Class<?>... initializationClasses) throws Exception {
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void updateAction(String oldActionPK, PDomibusConnectorAction action) {
-			LOG.trace("updateAction: updateAction with");			
-			this.actionDao.update(action);			
-		}
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(xmlAsBytes);
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void createService(PDomibusConnectorService service) {
-			LOG.trace("createService: with service [{}]", service);
-			this.serviceDao.persistNewService(service);			
-		}
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            Document document = factory.newDocumentBuilder().parse(bis);
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void updateService(String oldServicePK, PDomibusConnectorService service) {
-			LOG.trace("updateService: with new service [{}]", service);
-			this.serviceDao.update(service);			
-		}
+            JAXBContext ctx = JAXBContext.newInstance(initializationClasses);
 
-		@Override
-		@Transactional(readOnly=false, value="transactionManager")
-		public void deleteService(PDomibusConnectorService service) {
-			LOG.trace("deleteService: with service [{}]", service);
-			PDomibusConnectorService dbService = this.serviceDao.findById(service.getService());
-			this.serviceDao.delete(dbService);
-		}
-		
+            Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+            JAXBElement<?> jaxbElement = unmarshaller.unmarshal(document, instantiationClazz);
+            return jaxbElement.getValue();
+        } catch (JAXBException | SAXException | IOException | ParserConfigurationException e) {
+            throw new Exception("Exception parsing byte[] to " + instantiationClazz.getName(), e);
+        }
+
+    }
+
+    @Override
+    public List<DomibusConnectorParty> getPartyList() {
+        return this.partyPersistenceService.getPartyList();
+    }
+
+    @Override
+    public List<DomibusConnectorAction> getActionList() {
+        return this.actionPersistenceService.getActionList();
+    }
+
+    @Override
+    public List<DomibusConnectorService> getServiceList() {
+        return this.servicePersistenceService.getServiceList();
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public void deleteParty(DomibusConnectorParty p) {
+        LOGGER.trace("#deleteParty: called, use partyDao to delete");
+        this.partyPersistenceService.deleteParty(p);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public DomibusConnectorParty updateParty(DomibusConnectorParty oldParty, DomibusConnectorParty updatedParty) {
+        LOGGER.trace("#updateParty: called, update party [{}] to party [{}]", oldParty, updatedParty);
+        return this.partyPersistenceService.updateParty(oldParty, updatedParty);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public DomibusConnectorParty createParty(DomibusConnectorParty party) {
+        LOGGER.trace("#createParty: called with party [{}]", party);
+        return this.partyPersistenceService.persistNewParty(party);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public void deleteAction(DomibusConnectorAction action) {
+        LOGGER.trace("deleteAction: delete Action [{}]", action);
+        this.actionPersistenceService.deleteAction(action);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public DomibusConnectorAction createAction(DomibusConnectorAction action) {
+        LOGGER.trace("#createAction: called with action [{}]", action);
+        return this.actionPersistenceService.persistNewAction(action);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public DomibusConnectorAction updateAction(DomibusConnectorAction oldAction, DomibusConnectorAction action) {
+        LOGGER.trace("updateAction: updateAction with oldAction [{}] and new action [{}]", oldAction, action);
+        return this.actionPersistenceService.updateAction(oldAction, action);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public DomibusConnectorService createService(DomibusConnectorService service) {
+        LOGGER.trace("createService: with service [{}]", service);
+        return this.servicePersistenceService.persistNewService(service);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService service) {
+        LOGGER.trace("updateService: with new service [{}]", service);
+        return this.servicePersistenceService.updateService(oldService, service);
+    }
+
+    @Override
+    @Transactional(readOnly = false, value = "transactionManager")
+    public void deleteService(DomibusConnectorService service) {
+        LOGGER.trace("deleteService: with service [{}]", service);
+        this.servicePersistenceService.deleteService(service);
+    }
+
 }

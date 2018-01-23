@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.model.connector;
+package eu.domibus.webadmin.persistence.model;
 
 import java.io.Serializable;
 import java.util.List;

@@ -26,12 +26,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
 import eu.domibus.configuration.Configuration;
-import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.model.PDomibusConnectorService;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorActionDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorPartyDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
+import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 
 /**
  *
@@ -40,13 +41,13 @@ import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
 public class ConnectorPModeSupportImplTest {
     
     @Mock
-    IDomibusWebAdminConnectorServiceDao serviceDao;
+    DomibusConnectorServicePersistenceService serviceDao;
     
     @Mock
-    IDomibusWebAdminConnectorPartyDao partyDao;
+    DomibusConnectorPartyPersistenceService partyDao;
     
     @Mock
-    IDomibusWebAdminConnectorActionDao actionDao;
+    DomibusConnectorActionPersistenceService actionDao;
     
     @InjectMocks
     ConnectorPModeSupportImpl pmodeSupportImpl;
@@ -56,8 +57,12 @@ public class ConnectorPModeSupportImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+                
+        this.pmodeSupportImpl = new ConnectorPModeSupportImpl();
+        this.pmodeSupportImpl.setActionPersistenceService(actionDao);
+        this.pmodeSupportImpl.setPartyPersistenceService(partyDao);
+        this.pmodeSupportImpl.setServicePersistenceService(serviceDao);
         
-        this.pmodeSupportImpl = new ConnectorPModeSupportImpl(actionDao, serviceDao, partyDao);
     }
     
     @After
@@ -123,11 +128,11 @@ public class ConnectorPModeSupportImplTest {
         this.pmodeSupportImpl.importFromPModeFile(uploadedPmode);
 
         //there are 2 parties in the pmode xml
-        Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(PDomibusConnectorParty.class));
+        Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
         //there are 5 services in the pmode xml
-        Mockito.verify(serviceDao, Mockito.times(5)).persistNewService(Mockito.any(PDomibusConnectorService.class));
+        Mockito.verify(serviceDao, Mockito.times(5)).persistNewService(Mockito.any(DomibusConnectorService.class));
         //there are 19 actions in the pmode xml one duplicate
-        Mockito.verify(actionDao, Mockito.times(18)).persistNewAction(Mockito.any(PDomibusConnectorAction.class));                        
+        Mockito.verify(actionDao, Mockito.times(18)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
         /**
@@ -146,11 +151,11 @@ public class ConnectorPModeSupportImplTest {
         this.pmodeSupportImpl.importFromPModeFile(uploadedPmode);
 
         //there are 2 parties in the pmode xml
-        Mockito.verify(partyDao, Mockito.times(12)).persistNewParty(Mockito.any(PDomibusConnectorParty.class));
+        Mockito.verify(partyDao, Mockito.times(12)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
         //there are 5 services in the pmode xml
-        Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(PDomibusConnectorService.class));
+        Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(DomibusConnectorService.class));
         //there are 17 actions in the pmode xml, one is a duplicate
-        Mockito.verify(actionDao, Mockito.times(16)).persistNewAction(Mockito.any(PDomibusConnectorAction.class));                        
+        Mockito.verify(actionDao, Mockito.times(16)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
     
@@ -165,10 +170,12 @@ public class ConnectorPModeSupportImplTest {
         UploadedFile uploadedPmode = uploadedFileHelperFactory(classPathResource);
               
         //simulate existing Service
-        PDomibusConnectorService s1 = new PDomibusConnectorService();
-        s1.setService("BR");
-        s1.setServiceType("urn:e-codex:services:");
-        List<PDomibusConnectorService> serviceList = new ArrayList<>();
+        DomibusConnectorService s1 = DomibusConnectorServiceBuilder.createBuilder()
+                .setService("BR")
+                .withServiceType("urn:e-codex:services:")
+                .build();
+        
+        List<DomibusConnectorService> serviceList = new ArrayList<>();
         serviceList.add(s1);        
         Mockito.when(serviceDao.getServiceList()).thenReturn(serviceList);
         
@@ -179,11 +186,11 @@ public class ConnectorPModeSupportImplTest {
         this.pmodeSupportImpl.importFromPModeFile(uploadedPmode);
 
         //there are 2 parties in the pmode xml
-        Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(PDomibusConnectorParty.class));
+        Mockito.verify(partyDao, Mockito.times(2)).persistNewParty(Mockito.any(DomibusConnectorParty.class));
         //there are 5 services in the pmode xml
-        Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(PDomibusConnectorService.class));
+        Mockito.verify(serviceDao, Mockito.times(4)).persistNewService(Mockito.any(DomibusConnectorService.class));
         //there are 19 actions in the pmode xml one duplicate
-        Mockito.verify(actionDao, Mockito.times(18)).persistNewAction(Mockito.any(PDomibusConnectorAction.class));                        
+        Mockito.verify(actionDao, Mockito.times(18)).persistNewAction(Mockito.any(DomibusConnectorAction.class));                        
     }
     
     

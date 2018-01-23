@@ -28,14 +28,14 @@ import org.springframework.web.WebApplicationInitializer;
 @EnableAutoConfiguration(exclude={ //activates pre defined configurations provided by spring 
 //    LiquibaseAutoConfiguration.class
 })
-@ImportResource({        
-//    "classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml",
-    "classpath:/spring/context/DomibusConnectorSecurityToolkitContext.xml",
-	"classpath:/spring/context/DomibusConnectorContentMapperContext.xml",
-	"classpath:/spring/context/DomibusConnectorNationalBackendClientContext.xml",
-	"classpath:/spring/context/DomibusConnectorMonitoringContext.xml",
-	"classpath:/spring/context/quartz-context.xml"
-})
+//@ImportResource({        
+////    "classpath:/spring/context/domibusconnector/DomibusConnectorCommonContext.xml",
+//    "classpath:/spring/context/DomibusConnectorSecurityToolkitContext.xml",
+//	"classpath:/spring/context/DomibusConnectorContentMapperContext.xml",
+//	"classpath:/spring/context/DomibusConnectorNationalBackendClientContext.xml",
+//	"classpath:/spring/context/DomibusConnectorMonitoringContext.xml",
+//	"classpath:/spring/context/quartz-context.xml"
+//})
 public class WebRunner extends SpringBootServletInitializer implements WebApplicationInitializer {
 
     private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);

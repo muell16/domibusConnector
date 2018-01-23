@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.domibus.webadmin.commons.BLConstants;
-import eu.domibus.webadmin.model.connector.MessageReportDO;
+import eu.domibus.webadmin.persistence.model.MessageReportDO;
 
 @Component
 public class ConnectorMessageFilter implements IConnectorMessageFilter {

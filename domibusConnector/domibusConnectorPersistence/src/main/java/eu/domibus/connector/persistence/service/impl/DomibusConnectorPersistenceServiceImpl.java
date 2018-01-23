@@ -1,8 +1,11 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -670,6 +673,95 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction() {
         return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
+    }
+
+    @Override
+    public DomibusConnectorParty persistNewParty(DomibusConnectorParty newParty) {
+        PDomibusConnectorParty dbParty = this.mapPartyToPersistence(newParty);
+        dbParty = this.partyDao.save(dbParty);
+        return this.mapPartyToDomain(dbParty);
+    }
+
+    @Override
+    public List<DomibusConnectorParty> getPartyList() {
+        final List<DomibusConnectorParty> parties = new ArrayList<>();
+        this.partyDao.findAll().forEach((dbParty) -> {
+            DomibusConnectorParty p = this.mapPartyToDomain(dbParty);
+            parties.add(p);
+        });
+        return parties;
+    }
+
+    @Override
+    public void deleteParty(DomibusConnectorParty party) {
+        PDomibusConnectorParty dbParty = this.mapPartyToPersistence(party);
+        this.partyDao.delete(dbParty);
+    }
+
+    @Override
+    public DomibusConnectorParty updateParty(DomibusConnectorParty oldParty, DomibusConnectorParty newParty) {
+        PDomibusConnectorParty newDbParty = this.mapPartyToPersistence(newParty);
+        PDomibusConnectorParty updatedParty = this.partyDao.save(newDbParty);
+        return this.mapPartyToDomain(updatedParty);        
+    }
+
+    @Override
+    public DomibusConnectorAction persistNewAction(DomibusConnectorAction action) {
+        PDomibusConnectorAction dbAction = this.mapActionToPersistence(action);
+        dbAction = this.actionDao.save(dbAction);
+        return this.mapActionToDomain(dbAction);
+    }
+
+    @Override
+    public List<DomibusConnectorAction> getActionList() {
+        List<DomibusConnectorAction> actions = new ArrayList<>();
+        for (PDomibusConnectorAction dbAction : this.actionDao.findAll()) {
+            actions.add(this.mapActionToDomain(dbAction));
+        }        
+        return actions;
+    }
+
+    @Override
+    public DomibusConnectorAction updateAction(DomibusConnectorAction oldAction, DomibusConnectorAction newAction) {
+        PDomibusConnectorAction newDbAction = this.mapActionToPersistence(newAction);
+        newDbAction = this.actionDao.save(newDbAction);
+        return this.mapActionToDomain(newDbAction);
+    }
+
+    @Override
+    public void deleteAction(DomibusConnectorAction deleteAction) {
+        PDomibusConnectorAction del = this.mapActionToPersistence(deleteAction);
+        this.actionDao.delete(del);        
+    }
+
+    @Override
+    public DomibusConnectorService persistNewService(DomibusConnectorService newService) {
+        PDomibusConnectorService dbService = this.mapServiceToPersistence(newService);
+        dbService = this.serviceDao.save(dbService);
+        return this.mapServiceToDomain(dbService);
+    }
+
+    @Override
+    public List<DomibusConnectorService> getServiceList() {
+        List<DomibusConnectorService> services = new ArrayList<>();
+        for (PDomibusConnectorService dbService : this.serviceDao.findAll()) {
+            DomibusConnectorService srv = this.mapServiceToDomain(dbService);
+            services.add(srv);
+        }
+        return services;
+    }
+
+    @Override
+    public DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService newService) {
+        PDomibusConnectorService dbService = this.mapServiceToPersistence(newService);
+        dbService = this.serviceDao.save(dbService);
+        return this.mapServiceToDomain(dbService);
+    }
+
+    @Override
+    public void deleteService(DomibusConnectorService service) {
+        PDomibusConnectorService dbService = this.mapServiceToPersistence(service);
+        this.serviceDao.delete(dbService);
     }
 
 }

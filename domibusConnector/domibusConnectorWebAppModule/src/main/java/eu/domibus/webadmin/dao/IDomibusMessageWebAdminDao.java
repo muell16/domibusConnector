@@ -6,6 +6,7 @@ import java.util.List;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 
+@Deprecated //will be moved to persistence
 public interface IDomibusMessageWebAdminDao {
 
     public Long countOutgoingMessages();

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.webadmin.commons.Util;
 import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
-import eu.domibus.webadmin.model.connector.DomibusWebAdminUser;
+import eu.domibus.webadmin.persistence.model.DomibusWebAdminUser;
 
 @Repository("domibusWebAdminUserDao")
 @Transactional(readOnly=true, value="transactionManager")

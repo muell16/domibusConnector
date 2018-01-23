@@ -22,6 +22,7 @@ import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
 
 @Repository
 @Transactional(readOnly=true, value="transactionManager")
+@Deprecated
 public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Serializable {
 
     private static final long serialVersionUID = 6927282911714964185L;

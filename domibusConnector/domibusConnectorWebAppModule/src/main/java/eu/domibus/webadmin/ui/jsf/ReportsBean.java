@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.jsf;
+package eu.domibus.webadmin.ui.jsf;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -27,8 +27,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.dao.IDomibusWebAdminReportDao;
-import eu.domibus.webadmin.model.connector.PeriodDO;
-import eu.domibus.webadmin.model.connector.PeriodEntryDO;
+import eu.domibus.webadmin.persistence.model.PeriodDO;
+import eu.domibus.webadmin.persistence.model.PeriodEntryDO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller("reportsBean")
