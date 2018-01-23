@@ -321,15 +321,11 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, byte[] evidence, eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) {
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
-            throw new IllegalArgumentException("The dbMessage must exist in db!");
+            throw new IllegalStateException(String.format("The provided message [%s] does not exist in storage!", message));
         }
 
         PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
 
-        //DomibusConnectorMessage dbMessage = messageDao.findOne(message.getDbMessageId());
-        if (dbMessage == null) {
-            throw new IllegalStateException(String.format("The provided message [%d] does not exist in storage!", message));
-        }
 
         dbEvidence.setMessage(dbMessage);
         dbEvidence.setEvidence(new String(evidence));
@@ -522,14 +518,14 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
                     "Message Error cannot be stored as the Class object given as source is null!");
         }
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
-        if (message == null || dbMessage == null) {
+        if (message == null) {
             LOGGER.error("persistMessageErrorFromException: failed because ");
             throw new RuntimeException(
                     "Message Error cannot be stored as the message object, or its database reference is null!");
         }
         if (dbMessage == null) {
             throw new RuntimeException(
-                    String.format("No entry for message [%d] has been found in database! Persist message first!", message));
+                    String.format("No entry for message [%s] has been found in database! Persist message first!", message));
         }
 
         PDomibusConnectorMessageError error = new PDomibusConnectorMessageError();
