@@ -8,35 +8,43 @@ public class DomibusConnectorMessageException extends RuntimeException {
      * 
      */
     private static final long serialVersionUID = 2899706995862182574L;
+   
+    private DomibusConnectorMessage domibusConnectorMessage;
+    private Class<?> source;
 
     public DomibusConnectorMessageException() {
     }
 
     public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source) {
         super();
-        storeException(message, this, source);
+        this.domibusConnectorMessage = message;
+        this.source = source;
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, Throwable cause, Class<?> source) {
+    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, Throwable cause) {
         super(cause);
-        storeException(message, this, source);
+        this.domibusConnectorMessage = message;
+        this.source = source;
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, String text, Class<?> source) {
+    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, String text) {
         super(text);
-        storeException(message, this, source);
+        this.domibusConnectorMessage = message;
+        this.source = source;
     }
 
-    public DomibusConnectorMessageException(DomibusConnectorMessage message, String text, Throwable cause, Class<?> source) {
+    public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, Throwable cause, String text) {
         super(text, cause);
-        storeException(message, this, source);
+        this.domibusConnectorMessage = message;
+        this.source = source;        
     }
 
-    private void storeException(DomibusConnectorMessage message, Throwable cause, Class<?> source) {
-//        DomibusConnectorPersistenceService persistenceService = (DomibusConnectorPersistenceService) DomibusApplicationContextManager
-//                .getApplicationContext().getBean("persistenceService");
-//            persistenceService.persistMessageErrorFromException(message, cause, source);
-        
+    public DomibusConnectorMessage getDomibusConnectorMessage() {
+        return domibusConnectorMessage;
     }
 
+    public Class<?> getSource() {
+        return source;
+    }
+    
 }

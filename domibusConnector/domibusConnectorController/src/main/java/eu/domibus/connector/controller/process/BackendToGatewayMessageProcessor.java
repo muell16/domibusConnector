@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
@@ -54,8 +55,13 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		try {
 			securityToolkit.buildContainer(message);
 		} catch (DomibusConnectorSecurityException se) {
-			createSubmissionRejectionAndReturnIt(message, se.getMessage());
-			throw new DomibusConnectorMessageException(message, se.getMessage(), se, this.getClass());
+			createSubmissionRejectionAndReturnIt(message, se.getMessage());			
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText(se.getMessage())
+                    .setSource(this.getClass())
+                    .setCause(se)
+                    .buildAndThrow();
 		}
 
 		DomibusConnectorMessageConfirmation confirmation = null;
@@ -67,16 +73,24 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
 			createSubmissionRejectionAndReturnIt(message, ete.getMessage());
-			throw new DomibusConnectorMessageException(message,
-					"Could not generate evidence submission acceptance! ", ete, this.getClass());
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not generate evidence submission acceptance! ")
+                    .setSource(this.getClass())
+                    .setCause(ete)
+                    .buildAndThrow();
 		}
 
 		try {
 			gwSubmissionService.submitToGateway(message);
 		} catch (DomibusConnectorGatewaySubmissionException e) {
 			createSubmissionRejectionAndReturnIt(message, e.getMessage());
-			throw new DomibusConnectorMessageException(message,
-					"Could not submit message to gateway! ", e, this.getClass());
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not submit message to gateway! ")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .buildAndThrow();
 		}
 
 		persistenceService.setMessageDeliveredToGateway(message);
@@ -110,10 +124,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER,
 					errorMessage);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
-			new DomibusConnectorMessageException(message, "Could not even generate submission rejection! ", e,
-					this.getClass());
-			LOGGER.error("Could not even generate submission rejection! ", e);
-			return;
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not even generate submission rejection! ")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
 		}
 
 		try {
@@ -121,10 +137,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
 					DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
 		} catch (Exception e) {
-			new DomibusConnectorMessageException(message, "Could not persist evidence of type SUBMISSION_REJECTION! ",
-					e, this.getClass());
-			LOGGER.error("Could not persist evidence of type SUBMISSION_REJECTION! ", e);
-			return;
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not persist evidence of type SUBMISSION_REJECTION! ")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();            
 		}
 
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);

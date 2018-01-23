@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -34,9 +35,13 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         if (isMessageAlreadyRejected(originalMessage)) {
             persistenceService.rejectMessage(originalMessage);
-            throw new DomibusConnectorMessageException(originalMessage, "Received evidence of type "
-                    + confirmation.getEvidenceType().toString() + " for an already rejected Message with ebms ID "
-                    + refToMessageID, this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Received evidence of type " + confirmation.getEvidenceType().toString() + 
+                            " for an already rejected Message with ebms ID " + refToMessageID)
+                    .setSource(this.getClass())
+                    .build();	
+            
         }
 
         originalMessage.addConfirmation(confirmation);

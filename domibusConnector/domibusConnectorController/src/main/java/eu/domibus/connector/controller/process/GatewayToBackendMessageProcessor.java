@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
@@ -97,8 +98,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		try {
 			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY,originalMessage, null, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
-			throw new DomibusConnectorMessageException(originalMessage,
-					"Error creating Delivery evidence for message!", e, this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Error creating Delivery evidence for message!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
 		}
 
 		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
@@ -115,8 +120,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		try {
 			nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage,DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
-			throw new DomibusConnectorMessageException(originalMessage,
-					"Error creating NonDelivery evidence for message!", e, this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Error creating NonDelivery evidence for message!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
 		}
 
 		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
@@ -133,8 +142,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			messageConfirmation = isAcceptance ? evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null)
 					: evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
-			throw new DomibusConnectorMessageException(originalMessage,
-					"Error creating RelayREMMD evidence for message!", e, this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Error creating RelayREMMD evidence for message!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
 		}
 
 		DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
@@ -168,7 +181,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         try {
             this.gwSubmissionService.submitToGateway(evidenceMessage);
         } catch (Exception e) {
-            throw new DomibusConnectorMessageException(originalMessage, "Exception sending confirmation message '"+originalMessage.getConnectorMessageId()+"' back to gateway ", e, this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Exception sending confirmation message '" + originalMessage.getConnectorMessageId() + "' back to gateway ")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
         }
 
 

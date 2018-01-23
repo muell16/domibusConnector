@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -55,8 +56,12 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         try {
             confirmation = generateEvidence(evidenceType, originalMessage);
         } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw new DomibusConnectorMessageException(originalMessage, "Could not handle Evidence to Message "
-                    + messageID, e, this.getClass());
+            DomibusConnectorMessageExceptionBuilder.createBuilder()                    
+                    .setMessage(originalMessage)
+                    .setText("Could not handle Evidence to Message " + messageID)
+                    .setCause(e)
+                    .setSource(this.getClass())
+                    .buildAndThrow();
         }
 
         originalMessage.addConfirmation(confirmation);
@@ -68,8 +73,12 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         try {
 			gwSubmissionService.submitToGateway(evidenceMessage);
 		} catch (DomibusConnectorGatewaySubmissionException gwse) {
-			throw new DomibusConnectorMessageException(originalMessage, "Could not send Evidence Message to Gateway! ",
-                  gwse, this.getClass());
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Could not send Evidence Message to Gateway!")
+                    .setSource(this.getClass())
+                    .setCause(gwse)
+                    .buildAndThrow();			
 		}
 
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -121,8 +122,12 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimoutP
 		try {
 			relayRemMDFailure = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
-			throw new DomibusConnectorMessageException(originalMessage,
-					"Error creating RelayREMMDFailure for message!", e, this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Error creating RelayREMMDFailure for message!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();             
 		}
 
 		DomibusConnectorAction action = persistenceService.getRelayREMMDFailure();
@@ -139,8 +144,12 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimoutP
 		try {
 			nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
-			throw new DomibusConnectorMessageException(originalMessage, "Error creating NonDelivery for message!", e,
-					this.getClass());
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Error creating NonDelivery for message!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
 		}
 
 		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
