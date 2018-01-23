@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -63,4 +64,11 @@ public class DomibusConnectorMessageDocument implements Serializable  {
 		this.hashValue = newVal;
 	}
 
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("documentName", this.documentName);
+        return builder.toString();        
+    }
+    
 }

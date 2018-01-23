@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import java.io.Serializable;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * This is an object that internally represents the evidences for a message. It
@@ -64,4 +65,11 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 		this.evidence = evidence;
 	}
 
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("evidenceType", this.evidenceType);
+        return builder.toString();        
+    }
+    
 }

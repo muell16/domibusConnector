@@ -1,5 +1,7 @@
 package eu.domibus.connector.domain.model;
 
+import org.springframework.core.style.ToStringCreator;
+
 
 /**
  * Holds the routing information for the {@link DomibusConnectorMessage}. The data
@@ -144,5 +146,16 @@ public class DomibusConnectorMessageDetails {
 	public void setToParty(DomibusConnectorParty toParty){
 		this.toParty = toParty;
 	}
+    
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("ebmsMessageId", this.ebmsMessageId);
+        builder.append("backendMessageId", this.backendMessageId);
+        builder.append("originalSender", this.originalSender);
+        builder.append("finalRecipient", this.finalRecipient);
+        builder.append("conversationId", this.conversationId);
+        return builder.toString();        
+    }
 
 }

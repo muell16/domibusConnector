@@ -7,6 +7,7 @@ import java.io.Serializable;
 import javax.annotation.Nullable;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * Represents a reference to a storage system for big files
@@ -76,4 +77,10 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
         this.name = name;
     }
     
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("storageReference", this.getStorageIdReference());
+        return builder.toString();        
+    }
 }

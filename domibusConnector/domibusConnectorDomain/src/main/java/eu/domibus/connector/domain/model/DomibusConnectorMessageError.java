@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -40,5 +41,14 @@ public class DomibusConnectorMessageError implements Serializable {
 	public String getSource(){
 		return this.source;
 	}
+    
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("errorText", this.text);
+        builder.append("source", this.source);
+        builder.append("details", this.details);
+        return builder.toString();        
+    }
 
 }

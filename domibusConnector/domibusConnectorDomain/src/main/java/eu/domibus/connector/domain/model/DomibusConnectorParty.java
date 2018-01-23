@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -37,5 +38,13 @@ public class DomibusConnectorParty implements Serializable {
 	public String getRole(){
 		return this.role;
 	}
+    
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("partyId", this.partyId);
+        builder.append("role", this.role);
+        return builder.toString();        
+    }
 
 }

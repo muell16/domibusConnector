@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+import org.springframework.core.style.ToStringCreator;
 
 
 /**
@@ -31,4 +32,12 @@ public class DomibusConnectorService implements Serializable {
 		return this.serviceType;
 	}
 
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("service", this.service);
+        builder.append("serviceType", this.serviceType);
+        return builder.toString();        
+    }
+    
 }
