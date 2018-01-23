@@ -126,7 +126,7 @@
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-utils-apache-commons</artifactId>
-                <version>5.2</version>
+                <version>5.1_ALT</version>
             </dependency>
             
             <!-- MANAGED Spring dependencies -->
