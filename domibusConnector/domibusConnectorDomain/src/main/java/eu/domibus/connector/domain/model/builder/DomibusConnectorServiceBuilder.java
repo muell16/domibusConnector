@@ -40,4 +40,10 @@ public class DomibusConnectorServiceBuilder {
         return new DomibusConnectorService(service, serviceType);
     }
 
+    public DomibusConnectorServiceBuilder copyPropertiesFrom(DomibusConnectorService service) {
+        this.service = service.getService();
+        this.serviceType = service.getServiceType();
+        return this;
+    }
+
 }

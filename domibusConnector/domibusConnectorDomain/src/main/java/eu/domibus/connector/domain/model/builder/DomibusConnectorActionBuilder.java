@@ -34,8 +34,11 @@ public class DomibusConnectorActionBuilder {
         return new DomibusConnectorAction(action, documentRequired);
     }
 
+    public DomibusConnectorActionBuilder copyPropertiesFrom(DomibusConnectorAction action) {
+        this.action = action.getAction();
+        this.documentRequired = action.isDocumentRequired();
+        return this;
+    }
 
-    
-    
-    
+
 }

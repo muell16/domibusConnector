@@ -42,6 +42,12 @@ public class DomibusConnectorPartyBuilder {
         }
         return new DomibusConnectorParty(partyId, partyIdType, role);
     }
-    
-    
+
+    public DomibusConnectorPartyBuilder copyPropertiesFrom(DomibusConnectorParty party) {
+        this.partyId = party.getPartyId();
+        this.partyIdType = party.getPartyIdType();
+        this.role = party.getRole();
+        return this;
+    }
+        
 }
