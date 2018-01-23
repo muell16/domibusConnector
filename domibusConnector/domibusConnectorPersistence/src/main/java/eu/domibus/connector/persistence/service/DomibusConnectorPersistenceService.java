@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface DomibusConnectorPersistenceService extends DomibusConnectorPartyPersistenceService, 
         DomibusConnectorActionPersistenceService, 
-        DomibusConnectorServicePersistenceService {
+        DomibusConnectorServicePersistenceService,
+        DomibusConnectorEvidencePersistenceService,
+        DomibusConnectorMessageErrorPersistenceService {
 
 	
 	  DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
@@ -63,19 +65,8 @@ public interface DomibusConnectorPersistenceService extends DomibusConnectorPart
      */
     void mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
-    /**
-     * Creates the evidence in storage
-     * 
-     * @param message - the message related to the evidence
-     * @param evidence - the evidence as byte[]
-     * @param evidenceType - the type of the evidence
-     */
-    void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
-    
-  
-    
-    
+
     /**
      * finds the message by the national id
      * the nationalId is not set if the message was received from the gw
@@ -91,34 +82,6 @@ public interface DomibusConnectorPersistenceService extends DomibusConnectorPart
      */
     DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId);
 
-    /**
-     * Merges the message into the storage @see #mergeMessageWithDatabase
-     * and updates the delivered to gateway 
-     * field with the current time of the corresponding
-     * evidence (the corresponding evidence is identified by the evidence type)
-     * 
-     * @param message - the message
-     * @param evidenceType - the evidenceType
-     * @throws eu.domibus.connector.persistence.service.PersistenceException - if the message could not be updated
-     * in storage
-     * 
-     * 
-     */
-    void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
-
-    /**
-     * Merges the message into the storage @see #mergeMessageWithDatabase
-     * and updates the delivered to national_backend 
-     * field with the current time of the corresponding
-     * evidence (the corresponding evidence is identified by the evidence type)
-     * 
-     * @param message - the message
-     * @param evidenceType - the evidenceType
-     * @throws eu.domibus.connector.persistence.service.PersistenceException - if the message
-     * could not be updated in storage
-     * 
-     */
-    void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
     /**
      * Marks the message as delivered to the gateway
@@ -176,28 +139,6 @@ public interface DomibusConnectorPersistenceService extends DomibusConnectorPart
      */
     void rejectMessage(DomibusConnectorMessage message);
 
-    /**
-     * persists an error to the message
-     * @param connectorMessageId the connectorMessageId
-     * @param messageError the message error
-     */
-    void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError);
-
-    /**
-     * finds all errors related to the message
-     * @param message the message 
-     * @return the error list
-     * @throws PersistenceException if there are errors accessing or reading from persistence layer
-     */
-    @Nonnull List<DomibusConnectorMessageError> getMessageErrors(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
-
-    /**
-     * creates a MessageError from an exception and persists this message error
-     * @param message - the message the exception is related to
-     * @param ex - the exception
-     * @param source - class/service where the exception occured
-     */
-    void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source); 
 
     /**
      * 
