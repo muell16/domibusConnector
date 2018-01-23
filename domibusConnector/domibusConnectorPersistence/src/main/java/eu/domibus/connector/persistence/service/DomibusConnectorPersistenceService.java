@@ -2,13 +2,8 @@ package eu.domibus.connector.persistence.service;
 
 import javax.annotation.Nonnull;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
 
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
