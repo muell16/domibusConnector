@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import java.util.List;
 import java.util.ArrayList;
+import org.springframework.core.style.ToStringCreator;
 
 /**
  * This domain object contains all data of a message. At least the {@link
@@ -151,4 +152,11 @@ public class DomibusConnectorMessage {
         this.connectorMessageId = connectorMessageId;
     }
 
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("connectorMessageId", this.connectorMessageId);        
+        return builder.toString();        
+    }
+    
 }
