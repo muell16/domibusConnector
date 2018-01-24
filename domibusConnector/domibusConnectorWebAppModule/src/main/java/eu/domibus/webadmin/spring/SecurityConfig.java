@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.runner;
+package eu.domibus.webadmin.spring;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import eu.domibus.webadmin.runner.springsupport.DomibusWebAdminUserAuthenticationProvider;
+import eu.domibus.webadmin.spring.support.DomibusWebAdminUserAuthenticationProvider;
 
 /**
  * Configures Spring Security

@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.runner.springsupport;
+package eu.domibus.webadmin.spring.support;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;

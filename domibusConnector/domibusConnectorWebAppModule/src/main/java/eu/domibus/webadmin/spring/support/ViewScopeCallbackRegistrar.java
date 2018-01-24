@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.runner.springsupport;
+package eu.domibus.webadmin.spring.support;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,6 @@
 package eu.domibus.webadmin.runner;
 
+import eu.domibus.webadmin.spring.WebRunner;
 import eu.domibus.test.db.TestDatabase;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.runner;
+package eu.domibus.webadmin.spring;
 
 import javax.sql.DataSource;
 

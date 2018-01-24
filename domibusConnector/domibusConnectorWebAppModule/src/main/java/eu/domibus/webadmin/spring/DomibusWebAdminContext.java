@@ -1,8 +1,8 @@
-package eu.domibus.webadmin.runner;
+package eu.domibus.webadmin.spring;
 
 import com.sun.faces.config.ConfigureListener;
 import com.sun.faces.config.FacesInitializer;
-import eu.domibus.webadmin.runner.springsupport.ViewScope;
+import eu.domibus.webadmin.spring.support.ViewScope;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
