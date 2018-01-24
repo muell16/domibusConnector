@@ -73,7 +73,7 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
             logger.error(e);
         }
 
-        return "/pages/configuration.xhtml";
+        return "configuration.xhtml";
     }
 
     public IConnectorMonitoringService getConnectorMonitoringService() {
