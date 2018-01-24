@@ -86,8 +86,8 @@ public class DomibusConnectorBigDataPersistenceServiceJdbcImpl implements Domibu
         
         JdbcBackedDomibusConnectorBigDataReference reference = new JdbcBackedDomibusConnectorBigDataReference(this);
         
-         try (  Connection conn = this.dataSource.getConnection(); 
-                PreparedStatement queryForBigDataStm = conn.prepareStatement(QUERY_BY_ID, ResultSet.FETCH_FORWARD, ResultSet.CONCUR_UPDATABLE)) {
+         try (  Connection conn = this.dataSource.getConnection();                 
+                PreparedStatement queryForBigDataStm = conn.prepareStatement(QUERY_BY_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE)) {
             queryForBigDataStm.setString(1, storageReference);
             try (ResultSet resultSet = queryForBigDataStm.executeQuery()) {
                 resultSet.next();
