@@ -30,7 +30,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorServicePersisten
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorCustomService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorMessageFilter;
 import eu.domibus.webadmin.commons.BLConstants;
-import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusMessageWebAdminDao;
 
 import eu.domibus.webadmin.persistence.model.MessageReportDO;
 
@@ -162,7 +162,7 @@ public class ConnectorCustomServiceImpl implements IConnectorCustomService, Seri
 
         }
 
-        return "/pages/connector-statistics.xhtml";
+        return "connector-statistics.xhtml";
     }
 
     /**

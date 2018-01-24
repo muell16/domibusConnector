@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorSummaryService;
-import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusMessageWebAdminDao;
 
 
 @Component
