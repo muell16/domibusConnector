@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.webadmin.commons.Util;
-import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusWebAdminUserDao;
 import eu.domibus.webadmin.persistence.model.DomibusWebAdminUser;
 
 @Repository("domibusWebAdminUserDao")

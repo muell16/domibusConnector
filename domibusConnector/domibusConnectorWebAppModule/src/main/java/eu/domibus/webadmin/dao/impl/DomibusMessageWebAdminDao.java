@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
-import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusMessageWebAdminDao;
 
 @Repository
 @Transactional(readOnly=true, value="transactionManager")

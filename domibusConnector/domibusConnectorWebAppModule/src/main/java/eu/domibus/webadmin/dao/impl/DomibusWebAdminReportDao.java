@@ -22,7 +22,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import eu.domibus.webadmin.dao.IDomibusWebAdminReportDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusWebAdminReportDao;
 import eu.domibus.webadmin.persistence.model.PeriodEntryDO;
 
 @Repository
