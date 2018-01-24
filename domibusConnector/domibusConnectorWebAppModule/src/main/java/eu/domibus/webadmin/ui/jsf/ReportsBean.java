@@ -26,7 +26,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import eu.domibus.webadmin.dao.IDomibusWebAdminReportDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusWebAdminReportDao;
 import eu.domibus.webadmin.persistence.model.PeriodDO;
 import eu.domibus.webadmin.persistence.model.PeriodEntryDO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +106,7 @@ public class ReportsBean implements Serializable {
 
         this.reportGenerated = true;
 
-        return "/pages/reports.xhtml";
+        return "reports.xhtml";
     }
 
     public void postProcessExcel(Object document) {
@@ -285,7 +285,7 @@ public class ReportsBean implements Serializable {
 
     public String start(AjaxBehaviorEvent abe) {
 
-        return "/pages/reports.xhtml";
+        return "reports.xhtml";
     }
 
     public Date getFromDate() {

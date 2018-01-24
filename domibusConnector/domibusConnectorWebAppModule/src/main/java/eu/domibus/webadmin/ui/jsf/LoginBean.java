@@ -22,7 +22,7 @@ import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringService;
 import eu.domibus.webadmin.commons.Util;
-import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusWebAdminUserDao;
 
 @Controller("loginBean")
 @Scope("session")
@@ -94,7 +94,7 @@ public class LoginBean implements Serializable {
                 // invalidate session, and redirect to other pages
                 // message = "Invalid Login. Please Try Again!";
                 loggedIn = false;
-                return "/pages/login.xhtml";
+                return "login.xhtml";
             }
 
         } catch (BadCredentialsException badCred) {
@@ -103,14 +103,14 @@ public class LoginBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid Login!", "Please Try Again!"));
 
             loggedIn = false;
-            return "/pages/login.xhtml";
+            return "login.xhtml";
 
         } catch (Exception e) {
             logger.error("loginProject: exception occured", e);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error!", "See Log!"));
             loggedIn = false;
-            return "/pages/login.xhtml";
+            return "login.xhtml";
         }
     }
 
@@ -120,7 +120,7 @@ public class LoginBean implements Serializable {
 
         SecurityContextHolder.getContext().setAuthentication(null);
 
-        return "/pages/login.xhtml";
+        return "login.xhtml";
     }
 
     public String getMessage() {

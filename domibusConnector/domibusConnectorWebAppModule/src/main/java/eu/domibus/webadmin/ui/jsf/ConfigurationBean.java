@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 
 import eu.domibus.webadmin.commons.JmxConnector;
 import eu.domibus.webadmin.commons.WebAdminProperties;
-import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
+import eu.domibus.webadmin.persistence.dao.IDomibusWebAdminUserDao;
 
 @Controller("configurationBean")
 @Scope("session")
@@ -98,7 +98,7 @@ public class ConfigurationBean implements Serializable {
             chooseMonitoringType = false;
         }
 
-        return "/pages/configuration.xhtml";
+        return "configuration.xhtml";
     }
 
     public String testMonitoring() {
@@ -150,7 +150,7 @@ public class ConfigurationBean implements Serializable {
             monitoringTestStatus = "ERROR";
         }
 
-        return "/pages/configuration.xhtml";
+        return "configuration.xhtml";
     }
 
     public String saveMonitoringConfiguration() {
@@ -176,7 +176,7 @@ public class ConfigurationBean implements Serializable {
             chooseMonitoringType = true;
         }
 
-        return "/pages/configuration.xhtml";
+        return "configuration.xhtml";
     }
 
     public String saveJobConfiguration() {
@@ -193,7 +193,7 @@ public class ConfigurationBean implements Serializable {
         webAdminProperties.saveProperty("monitoring.timer.interval",
                 String.valueOf(webAdminProperties.getMonitoringTimerInterval()));
 
-        return "/pages/configuration.xhtml";
+        return "configuration.xhtml";
     }
 
     public String addUser() {
@@ -202,18 +202,18 @@ public class ConfigurationBean implements Serializable {
             if (domibusWebAdminUserDao.checkIfUserExists(user)) {
                 userAction = "User already exists!";
                 saveUserDisplay = true;
-                return "/pages/configuration.xhtml";
+                return "configuration.xhtml";
             }
 
             domibusWebAdminUserDao.insertUser(user, password);
             userAction = "User successfully added!";
             saveUserDisplay = true;
-            return "/pages/configuration.xhtml";
+            return "configuration.xhtml";
 
         } catch (Exception e) {
             saveUserDisplay = true;
             userAction = "Error while inserting user: " + e;
-            return "/pages/configuration.xhtml";
+            return "configuration.xhtml";
         }
 
     }
@@ -224,24 +224,24 @@ public class ConfigurationBean implements Serializable {
             if (loggedInUser.equals(user)) {
                 userAction = "Cannot delete logged in user!";
                 saveUserDisplay = true;
-                return "/pages/configuration.xhtml";
+                return "configuration.xhtml";
             }
 
             if (!domibusWebAdminUserDao.checkIfUserExists(user)) {
                 userAction = "User does not exist!";
                 saveUserDisplay = true;
-                return "/pages/configuration.xhtml";
+                return "configuration.xhtml";
             }
 
             domibusWebAdminUserDao.deleteUser(user);
             userAction = "User successfully deleted!";
             saveUserDisplay = true;
-            return "/pages/configuration.xhtml";
+            return "configuration.xhtml";
 
         } catch (Exception e) {
             saveUserDisplay = true;
             userAction = "Error while deleting user: " + e;
-            return "/pages/configuration.xhtml";
+            return "configuration.xhtml";
         }
 
     }
@@ -251,17 +251,17 @@ public class ConfigurationBean implements Serializable {
             if (!loggedInUser.equals(user)) {
                 userAction = "You can only change the logged in user's password!";
                 saveUserDisplay = true;
-                return "/pages/configuration.xhtml";
+                return "configuration.xhtml";
             }
 
             domibusWebAdminUserDao.updateUserPassword(user, password);
             userAction = "Password successfully changed!";
             saveUserDisplay = true;
-            return "/pages/configuration.xhtml";
+            return "configuration.xhtml";
         } catch (Exception e) {
             saveUserDisplay = true;
             userAction = "Error while deleting user: " + e;
-            return "/pages/configuration.xhtml";
+            return "configuration.xhtml";
         }
     }
 

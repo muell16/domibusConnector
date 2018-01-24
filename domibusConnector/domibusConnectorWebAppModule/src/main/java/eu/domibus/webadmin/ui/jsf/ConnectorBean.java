@@ -64,7 +64,7 @@ public class ConnectorBean implements Serializable {
             customSelected = true;
         }
 
-        return "/pages/connector-statistics.xhtml";
+        return "connector-statistics.xhtml";
     }
     
     public void init(){
@@ -81,7 +81,7 @@ public class ConnectorBean implements Serializable {
     	summarySelected = false;
     	connectorCustomService.generateCustomReport();
     	
-    	return "/pages/connector-statistics.xhtml";
+    	return "connector-statistics.xhtml";
     }
 
     public boolean isSummarySelected() {
