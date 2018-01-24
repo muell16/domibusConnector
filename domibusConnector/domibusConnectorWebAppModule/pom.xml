@@ -27,7 +27,7 @@
         <release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
         <properties.output.dir>${documentation.output.dir}properties</properties.output.dir>
         <pmode.xsd.resources.path>src/main/resources/pmode/domibus_3_2_4</pmode.xsd.resources.path>
-        <start-class>eu.domibus.webadmin.runner.WebRunner</start-class>
+        <start-class>eu.domibus.webadmin.spring.WebRunner</start-class>
     </properties>
 
     <profiles>
@@ -44,7 +44,7 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
-                            <mainClass>eu.domibus.webadmin.runner.WebRunner</mainClass>
+                            <mainClass>eu.domibus.webadmin.spring.WebRunner</mainClass>
                         </configuration>
                     </plugin>                    
                 </plugins>                

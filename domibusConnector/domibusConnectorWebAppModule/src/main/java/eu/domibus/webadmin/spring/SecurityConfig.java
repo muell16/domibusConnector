@@ -25,8 +25,8 @@ import eu.domibus.webadmin.spring.support.DomibusWebAdminUserAuthenticationProvi
  * @author spindlest
  *
  */
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);

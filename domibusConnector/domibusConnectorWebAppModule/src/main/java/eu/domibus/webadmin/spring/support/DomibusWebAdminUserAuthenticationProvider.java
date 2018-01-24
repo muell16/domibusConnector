@@ -1,5 +1,6 @@
 package eu.domibus.webadmin.spring.support;
 
+import eu.domibus.webadmin.persistence.dao.IDomibusWebAdminUserDao;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.webadmin.dao.IDomibusWebAdminUserDao;
+
 
 /**
  * uses the IDomibusWebAdminUserDao to get the users from DB
