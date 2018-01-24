@@ -92,11 +92,11 @@ public class MonitoringTask implements ApplicationContextAware, InitializingBean
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        SimpleTriggerImpl simpleTriggerBean = (SimpleTriggerImpl) ctx.getBean("simpleMonitoringTrigger");
-        if (webAdminProperties.getMonitoringTimerInterval() != null
-                && webAdminProperties.getMonitoringTimerInterval() > Long.valueOf(60000)) {
-            simpleTriggerBean.setRepeatInterval(webAdminProperties.getMonitoringTimerInterval());
-        }
+//        //SimpleTriggerImpl simpleTriggerBean = (SimpleTriggerImpl) ctx.getBean("simpleMonitoringTrigger");
+//        if (webAdminProperties.getMonitoringTimerInterval() != null
+//                && webAdminProperties.getMonitoringTimerInterval() > Long.valueOf(60000)) {
+//            simpleTriggerBean.setRepeatInterval(webAdminProperties.getMonitoringTimerInterval());
+//        }
 
     }
 

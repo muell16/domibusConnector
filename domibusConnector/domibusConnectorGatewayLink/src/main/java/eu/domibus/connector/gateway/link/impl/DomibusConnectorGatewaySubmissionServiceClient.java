@@ -16,7 +16,7 @@ import eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS;
 @Component
 public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusConnectorGatewaySubmissionService {
 	
-	@Resource
+	@Resource(name="gwSubmissionClient")
 	DomibusConnectorSubmissionWS submissionClient;
 
 	@Override

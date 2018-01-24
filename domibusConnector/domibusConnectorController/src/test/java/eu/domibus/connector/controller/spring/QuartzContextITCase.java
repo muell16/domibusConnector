@@ -35,13 +35,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration( classes={QuartzContextITCase.TestContextConfiguration.class})
-//@TestPropertySource(locations = {"classpath:application-test.properties"}, properties={
-//    "connector.check.messages.period.ms=100",
-//    "connector.use.evidences.timeout=true"
-//})
-//@Profile("test")
 public class QuartzContextITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(QuartzContextITCase.class);
@@ -87,9 +80,6 @@ public class QuartzContextITCase {
     
     @Before
     public void setUp() {
-//        quartzContext = APPLICATION_CONTEXT.getBean(QuartzContext.class);
-//        checkEvidencesProcessor = APPLICATION_CONTEXT.getBean(CheckEvidencesTimeoutProcessor.class);
-//        dataSource = APPLICATION_CONTEXT.getBean(DataSource.class);
     }
     
     QuartzContext quartzContext;

@@ -1,5 +1,6 @@
 package eu.domibus.webadmin.blogic.connector.statistics.impl;
 
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 import eu.domibus.webadmin.blogic.connector.statistics.IConnectorSummaryService;
 import eu.domibus.webadmin.dao.IDomibusMessageWebAdminDao;
-import eu.domibus.webadmin.dao.IDomibusWebAdminConnectorServiceDao;
+
 
 @Component
 public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Serializable {
@@ -31,13 +33,13 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
     private IDomibusMessageWebAdminDao domibusMessageWebAdminDao;
 
     @Autowired
-    private IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao;
+    private DomibusConnectorServicePersistenceService domibusWebAdminConnectorServiceDao;
 
     @PostConstruct
     public void init() {
         serviceList = new ArrayList<String>();
-        List<PDomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
-        for (PDomibusConnectorService domibusConnectorService : resultList) {
+        List<DomibusConnectorService> resultList = domibusWebAdminConnectorServiceDao.getServiceList();
+        for (DomibusConnectorService domibusConnectorService : resultList) {
             serviceList.add(domibusConnectorService.getService());
         }
     }
@@ -115,15 +117,6 @@ public class ConnectorSummaryServiceImpl implements IConnectorSummaryService, Se
     public void setDomibusMessageWebAdminDao(
             IDomibusMessageWebAdminDao domibusMessageWebAdminDao) {
         this.domibusMessageWebAdminDao = domibusMessageWebAdminDao;
-    }
-
-    public IDomibusWebAdminConnectorServiceDao getDomibusWebAdminConnectorServiceDao() {
-        return domibusWebAdminConnectorServiceDao;
-    }
-
-    public void setDomibusWebAdminConnectorServiceDao(
-            IDomibusWebAdminConnectorServiceDao domibusWebAdminConnectorServiceDao) {
-        this.domibusWebAdminConnectorServiceDao = domibusWebAdminConnectorServiceDao;
     }
 
 }
