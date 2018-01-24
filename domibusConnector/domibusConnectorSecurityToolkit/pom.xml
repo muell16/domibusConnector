@@ -14,6 +14,11 @@
             <version>${project.version}</version>	
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorPersistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>ecodex-container</artifactId>
             <exclusions>
@@ -104,8 +109,10 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorPersistence</artifactId>
+            <artifactId>domibusConnectorDomain</artifactId>
             <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

@@ -1,9 +1,13 @@
 package eu.domibus.connector.security;
 
+import eu.domibus.connector.domain.testutil.DomibusConnectorBigDataReferenceGetSetBased;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +23,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.util.StreamUtils;
 
 /**
  * basic test of security toolkit
@@ -36,10 +41,16 @@ import org.springframework.util.StreamUtils;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class})
-@TestPropertySource("classpath:test.properties")
+@TestPropertySource(locations={"classpath:test.properties"}, 
+        properties= {   "liquibase.change-log=classpath:/db/changelog/install/initial-4.0.xml",
+                        "spring.jpa.show-sql=true",
+                        "spring.datasource.url=jdbc:h2:mem:testdb",
+                        "spring.datasource.username=sa",
+                        "spring.datasource.driver-class-name=org.h2.Driver",
+})
 public class DomibusConnectorSecurityToolkitITCase {
 
-    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"})
+    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"}) //, "eu.domibus.connector.persistence"})
     public static class TestContextConfiguration {
 
         @Bean
@@ -47,6 +58,13 @@ public class DomibusConnectorSecurityToolkitITCase {
                 propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
         }
+                    
+        @Bean
+        public static DomibusConnectorBigDataPersistenceService bigDataPersistenceService() {
+            DomibusConnectorBigDataPersistenceServicePassthroughImpl service = new DomibusConnectorBigDataPersistenceServicePassthroughImpl();
+            return Mockito.spy(service);            
+        }
+        
     }
     
     
@@ -54,6 +72,10 @@ public class DomibusConnectorSecurityToolkitITCase {
 
 	public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
 
+    //mock
+    @Autowired
+    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
+    
 	@Resource
 	private DomibusSecurityContainer securityContainer;
 
@@ -77,46 +99,43 @@ public class DomibusConnectorSecurityToolkitITCase {
 
 		DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
-        //TODO!
-		//content.setPdfDocument(readRessource(exampleName));
-		
+        
+        DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder()
+                .setName("myDocument.pdf")
+                .setContent(readRessource(exampleName));
+		content.setDocument(documentBuilder.build());
+        
 		DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 
-		try {
-			securityContainer.createContainer(message);
+		
+        securityContainer.createContainer(message);
+		assertThat(message.getMessageAttachments()).as("there must be some attachments").isNotEmpty();
 
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			e.printStackTrace();
-		}
-
-		assertThat(message.getMessageAttachments()).isNotEmpty();
-		//Assert.notEmpty(message.getAttachments());
-
-		securityContainer.recieveContainerContents(message);
-
-		for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-
-			if (attachment.getName().equals("Token.xml")) {
-				writeResult(resultName +".xml", StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream()));
-				//test xml
-                if ("signedResultToken".equals(resultName)) {
-//TODO: compare resulting xml!
-//                    Assert.assertThat(attachment.getAttachment(),
-//                            isSimilarTo("control xml").withNodeMatcher(
-//                                    new DefaultNodeMatcher(ElementSelectors.byName)));
-                } else if ("unsignedResultToken".equals(resultName)) {
-
-                } else {
-                    throw new IllegalStateException("should not end up here! Passed unsupported result name!");
-                }
-
-
-
-			} else if (attachment.getName().equals("Token.pdf")) {
-				writeResult(resultName +".pdf", StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream()));
-			}
-		}
+// TODO: put this code in a second test:
+//		securityContainer.recieveContainerContents(message);
+//
+//		for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
+//
+//			if (attachment.getName().equals("Token.xml")) {
+//				writeResult(resultName +".xml", StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream()));
+//				//test xml
+//                if ("signedResultToken".equals(resultName)) {
+////TODO: compare resulting xml!
+////                    Assert.assertThat(attachment.getAttachment(),
+////                            isSimilarTo("control xml").withNodeMatcher(
+////                                    new DefaultNodeMatcher(ElementSelectors.byName)));
+//                } else if ("unsignedResultToken".equals(resultName)) {
+//
+//                } else {
+//                    throw new IllegalStateException("should not end up here! Passed unsupported result name!");
+//                }
+//
+//
+//
+//			} else if (attachment.getName().equals("Token.pdf")) {
+//				writeResult(resultName +".pdf", StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream()));
+//			}
+//		}
 	}
 
 	private static String getTestFilesDir() {
@@ -133,17 +152,16 @@ public class DomibusConnectorSecurityToolkitITCase {
 
 	}
 
-	private static byte[] readRessource(final String name) {
+	private static DomibusConnectorBigDataReference readRessource(final String name) {
 		try {
-
+            DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
 			File file = new File(getRessourceFolder() + "examples/" + name);
 
 			FileInputStream fileInputStream = new FileInputStream(file);
-			byte[] data = new byte[(int) file.length()];
-			fileInputStream.read(data);
-			fileInputStream.close();
 
-			return data;
+            dataRef.setInputStream(fileInputStream);
+
+			return dataRef;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
