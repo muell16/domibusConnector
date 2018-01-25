@@ -12,7 +12,7 @@ http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schema
 http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd">
 
 	
-	<context:component-scan base-package="eu.domibus.connector.gateway.link" />
+<!--	<context:component-scan base-package="eu.domibus.connector.gateway.link" />-->
 		
 	<jaxws:client id="submissionClient" serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"
 		address="${gateway.submission.endpoint.address}" />
