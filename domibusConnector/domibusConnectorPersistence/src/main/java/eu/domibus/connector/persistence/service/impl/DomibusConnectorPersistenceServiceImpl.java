@@ -126,20 +126,20 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
-        // if DB fields confirmed OR rejected are NOT NULL -> then true
-        return false;
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+        return this.messageDao.checkMessageConfirmedOrRejected(dbMessage.getId());        
     }
 
     @Override
     public boolean checkMessageRejected(DomibusConnectorMessage message) {
-        // if DB field rejected is NOT NULL -> then true
-        return false;
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+        return this.messageDao.checkMessageRejected(dbMessage.getId());
     }
 
     @Override
     public boolean checkMessageConfirmed(DomibusConnectorMessage message) {
-        // if DB field confirmend is NOT NULL -> then true
-        return false;
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+        return this.messageDao.checkMessageConfirmed(dbMessage.getId());        
     }
 
     @Override

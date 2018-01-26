@@ -20,6 +20,7 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -180,6 +181,61 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         
         messageDao.save(message);
                 
+    }
+//    
+//    // if DB fields confirmed OR rejected are NOT NULL -> then true
+//    @Query("SELECT case when (count(m) > 0) then true else false end "
+//            + "FROM PDomibusConnectorMessage m "
+//            + "WHERE m.id = ?1 AND m.confirmed is not null OR m.rejected is not null")
+//    public boolean checkMessageConfirmedOrRejected(Long messageId);    
+
+    @Test
+    public void testCheckMessageConfirmedOrRejected_shouldBeFalse() {
+        long id = 655L;        
+        boolean rejectedOrConfirmed = messageDao.checkMessageConfirmedOrRejected(id);
+        
+        assertThat(rejectedOrConfirmed).isFalse();
+    }
+    
+    @Test
+    public void testCheckMessageConfirmedOrRejected_shouldBeTrue() {
+        long id = 65L;        
+        boolean rejectedOrConfirmed = messageDao.checkMessageConfirmedOrRejected(id);
+        
+        assertThat(rejectedOrConfirmed).isTrue();
+    }
+    
+    
+    
+//    // if DB field rejected is NOT NULL -> then true
+//    @Query("SELECT case when (count(m) > 0) then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.rejected is not null")
+//    public boolean checkMessageRejected(Long messageId);     
+    @Test
+    public void checkMessageRejected_shouldBeTrue() {
+        long id = 65L;
+        boolean rejected = messageDao.checkMessageRejected(id);
+
+        assertThat(rejected).isTrue();
+    }
+    
+    @Test
+    public void checkMessageRejected_shouldBeFalse() {
+        long id = 655L;
+        boolean rejected = messageDao.checkMessageRejected(id);
+
+        assertThat(rejected).isFalse();
+    }
+    
+    
+//    // if DB field confirmend is NOT NULL -> then true
+//    @Query("SELECT case when (count(m) > 0)  then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.confirmed is not null")
+//    public boolean checkMessageConfirmed(Long messageId);
+    @Test
+    public void checkMessageConfirmed_shouldBeFalse() {
+        long id = 59L;
+        boolean confirmed = messageDao.checkMessageConfirmed(id);
+        
+        assertThat(confirmed).isTrue();
     }
     
 }

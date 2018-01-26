@@ -24,34 +24,48 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     
     public List<PDomibusConnectorMessage> findByConversationId(String conversationId);
     
-    @Query("select m from PDomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = 'NAT_TO_GW' and m.deliveredToGateway is not null ")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null ")
     public List<PDomibusConnectorMessage> findOutgoingUnconfirmedMessages();
         
-    @Query("select m from PDomibusConnectorMessage m where m.rejected is null and m.direction = 'NAT_TO_GW' and m.deliveredToGateway is not null "
-        + "and not exists (select 1 from PDomibusConnectorEvidence e where e.message = m and (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null "
+        + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
     
-    @Query("select m from PDomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = 'NAT_TO_GW' and m.deliveredToGateway is not null "
-        + "and not exists (select 1 from PDomibusConnectorEvidence e where e.message = m and (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null "
+        + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         
-    @Query("select m from PDomibusConnectorMessage m where m.confirmed is null and m.rejected is null and m.direction = 'GW_TO_NAT' and m.deliveredToGateway is not null")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'GW_TO_NAT' AND m.deliveredToGateway is not null")
     public List<PDomibusConnectorMessage> findIncomingUnconfirmedMessages();
         
+    // if DB fields confirmed OR rejected are NOT NULL -> then true
+    @Query("SELECT case when (count(m) > 0) then true else false end "
+            + "FROM PDomibusConnectorMessage m "
+            + "WHERE m.id = ?1 AND (m.confirmed is not null OR m.rejected is not null)")
+    public boolean checkMessageConfirmedOrRejected(Long messageId);    
+
+    // if DB field rejected is NOT NULL -> then true
+    @Query("SELECT case when (count(m) > 0) then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.rejected is not null")
+    public boolean checkMessageRejected(Long messageId);     
+    
+    // if DB field confirmend is NOT NULL -> then true
+    @Query("SELECT case when (count(m) > 0)  then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.confirmed is not null")
+    public boolean checkMessageConfirmed(Long messageId);
+    
     @Modifying
-    @Query("update PDomibusConnectorMessage m set confirmed=CURRENT_TIMESTAMP, rejected=NULL where m.id = ?1")
+    @Query("update PDomibusConnectorMessage m set confirmed=CURRENT_TIMESTAMP, rejected=NULL WHERE m.id = ?1")
     public int confirmMessage(Long messageId);
     
     @Modifying
-    @Query("update PDomibusConnectorMessage m set rejected=CURRENT_TIMESTAMP, confirmed=NULL where m.id = ?1")
+    @Query("update PDomibusConnectorMessage m set rejected=CURRENT_TIMESTAMP, confirmed=NULL WHERE m.id = ?1")
     public int rejectMessage(Long messageId);
 
     @Modifying
-    @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP where m.id = ?")
+    @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP WHERE m.id = ?")
     public int setMessageDeliveredToGateway(Long dbMessageId);
     
     @Modifying
-    @Query("update PDomibusConnectorMessage m set m.deliveredToNationalSystem=CURRENT_TIMESTAMP where m.id = ?")
+    @Query("update PDomibusConnectorMessage m set m.deliveredToNationalSystem=CURRENT_TIMESTAMP WHERE m.id = ?")
     public int setMessageDeliveredToBackend(Long dbMessageId);
     
     
