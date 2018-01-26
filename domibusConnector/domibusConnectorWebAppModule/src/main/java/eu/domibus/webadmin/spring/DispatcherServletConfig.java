@@ -36,10 +36,10 @@ public class DispatcherServletConfig {
         }
 
         // Create and register the DispatcherServlet
-        String dispatcherServletMapping = "/" + webAdminProperties.getServletPath() + "/*";
+        String dispatcherServletMapping = webAdminProperties.getServletPath() + "*";
         LOGGER.debug("create and register the Dispatcher Servlet on mapping [{}]", dispatcherServletMapping);
         DispatcherServlet dispatcherServlet = new DispatcherServlet(webApplicationContext);
-
+        dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
         ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(dispatcherServlet, dispatcherServletMapping);
 
         //ServletRegistration.Dynamic registration = servletRegistrationBean.//servletContext.addServlet(webAdminProperties.getServletPath(), dispatcherServlet);

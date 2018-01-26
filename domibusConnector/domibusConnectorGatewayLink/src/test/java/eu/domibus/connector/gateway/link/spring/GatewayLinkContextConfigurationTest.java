@@ -31,7 +31,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- *
+ * a simple test to check if the webservice (DomibusConnectorDeliveryWS) is published and reachable
+ * with the current spring configuration
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
 
@@ -46,7 +47,6 @@ public class GatewayLinkContextConfigurationTest {
     }
     
     @LocalServerPort //use with WebEnvironment.RANDOM_PORT
-//    @Value("${server.port}")
     int port;
     
     @Value("${spring.webservices.path}")
@@ -61,26 +61,17 @@ public class GatewayLinkContextConfigurationTest {
     
     @Test
     public void testCallSoapService() throws InterruptedException, MalformedURLException {
-        //TODO: write tests, load SoapUI - Tests?
-        //Tets if context loads...
-//        System.out.println("LOCAL PORT: " + port);
-       
-        //test if WebService is reachable!
-        
         
         String publish = gatewayLinkWsServiceProperties.getPublishAddress(); 
         
         String url = "http://localhost:" + port + webservicesPath + publish;
         System.out.println("URL " + url);
-        String serviceName = gatewayLinkWsServiceProperties.getName();
         
         System.out.println("sleep started server port " + port);
         Thread.sleep(3000);
         System.out.println("sleep ended, calling service");        
         
-        //String nameSpace = DomibusConnectorDeliveryWSService.DomibusConnectorDeliveryWebService.getNamespaceURI();
         URL wsdlURL = new URL(url + "?wsdl"); 
-        //QName SERVICE_NAME = new QName(nameSpace, serviceName);
         QName SERVICE_NAME = DomibusConnectorDeliveryWSService.DomibusConnectorDeliveryWebService;
         
         MTOMFeature mtom = new MTOMFeature();

@@ -17,7 +17,7 @@ public class DomibusWebAdminProperties {
     
     private boolean enabled = true;
 
-    private String servletPath = "/webadmin";
+    private String servletPath = "/webadmin/";
 
     public boolean isEnabled() {
         return enabled;

@@ -2,6 +2,7 @@ package eu.domibus.webadmin.spring;
 
 import com.sun.faces.config.ConfigureListener;
 import com.sun.faces.config.FacesInitializer;
+import eu.domibus.webadmin.spring.support.CustomResourceHandler;
 import eu.domibus.webadmin.spring.support.ViewScope;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
+import javax.faces.application.ResourceHandler;
 import javax.faces.webapp.FacesServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -26,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.jsf.el.SpringBeanFacesELResolver;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 /**
  * Configuration/Context for domibusWebAdmin
@@ -55,10 +58,10 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
      * configure servletRegistration to listen
     */
     @Bean
-    public ServletRegistrationBean servletRegistrationBean() {
+    public ServletRegistrationBean facesServletRegistrationBean() {
     	LOG.trace("servletRegistrationBean: called");
-        FacesServlet servlet = new FacesServlet();
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "*.jsf", "*.xhtml"); 
+        FacesServlet servlet = new FacesServlet();       
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "/admin/*"); 
         servletRegistrationBean.setLoadOnStartup(1);
         //servletRegistrationBean.addUrlMappings("/*");        
         return servletRegistrationBean;
@@ -70,7 +73,7 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
     @Bean
     public FilterRegistrationBean uploadFilter() {    	    	
     	FileUploadFilter filter = new FileUploadFilter();    	
-    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, servletRegistrationBean());    	
+    	FilterRegistrationBean filterRegistration = new FilterRegistrationBean(filter, facesServletRegistrationBean());    	
 	return filterRegistration;    	
     }
     
@@ -90,8 +93,12 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
         public void contextInitialized(ServletContextEvent sce) {
             super.contextInitialized(sce);
             ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
-            Application app = factory.getApplication();            
-            app.addELResolver(new SpringBeanFacesELResolver());            
+            Application app = factory.getApplication();     
+            //add EL Resolver to resolve spring-beans in jsf tags
+            app.addELResolver(new SpringBeanFacesELResolver());  
+            //wrap resource handler to use spring controller views
+            ResourceHandler wrappedResourceHandler = app.getResourceHandler();
+            app.setResourceHandler(new CustomResourceHandler(wrappedResourceHandler));
         }
     }
     
@@ -140,9 +147,5 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
         facesInitializer.onStartup(clazz, servletContext);
     }
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
 
 }
