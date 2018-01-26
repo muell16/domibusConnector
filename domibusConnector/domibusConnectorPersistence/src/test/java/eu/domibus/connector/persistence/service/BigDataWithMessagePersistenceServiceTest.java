@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.service;
 
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
