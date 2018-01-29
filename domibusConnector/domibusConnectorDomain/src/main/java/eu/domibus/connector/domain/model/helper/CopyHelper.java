@@ -71,6 +71,9 @@ public class CopyHelper {
     }
     
     public static DomibusConnectorMessageAttachment copyAttachment(DomibusConnectorMessageAttachment attachment) {
+        if (attachment == null) {
+            return null;
+        }
         DomibusConnectorMessageAttachment copy = DomibusConnectorMessageAttachmentBuilder.createBuilder()
                 .copyPropertiesFrom(attachment)
                 .build();
