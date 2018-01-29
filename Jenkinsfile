@@ -80,8 +80,12 @@ node {
 
 				try {
 					stage ('Test') {
-						sh 'mvn -fn test' //ignore test failures to execute ALL tests and fail never
-						sh 'mvn test' //execute tests again to get failure: TODO find better solution to fail this step if test failures occure
+						//sh 'mvn -fn test' //ignore test failures to execute ALL tests and fail never
+						//sh 'mvn test' //execute tests again to get failure: TODO find better solution to fail this step if test failures occure
+						//using failsafe plugin for unitTests to run all unit tests and fail afterwards
+						sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:integration-test'''
+						sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:verify'''
+				
 					}
 				} catch (e) {
 					currentBuild.result = 'FAILURE'
@@ -92,9 +96,10 @@ node {
 					//-dmaven.test.failure.ignore=true
 					stage ('Integration Test') {
 						sh 'mvn -P integration-testing,dbunit-testing verify'
+						sh 'mvn -P integration-testing,dbunit-testing failsafe:verify' //verify executed tests
 					}
 				} catch (e) {
-						currentBuild.result = 'UNSTABLE'
+					currentBuild.result = 'UNSTABLE'
 				} 
 				
 				stage ('Post') {
