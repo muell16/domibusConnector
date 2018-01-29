@@ -290,8 +290,9 @@
 
     </dependencyManagement>
     
-    <profiles>
+    <profiles>        
         <profile>
+        <!--  activates long running integration tests -->
             <id>integration-testing</id>
             <build>
                 <plugins>
@@ -320,6 +321,7 @@
             </build>
         </profile>
         <profile>
+        <!--  starts during integration-test phase long running database tests -->
             <id>dbunit-testing</id>
             <build>
                 <plugins>
@@ -544,6 +546,17 @@
                         </goals>                            
                     </execution>-->
                 </executions>                    
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>                    
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>                
             </plugin>
         </plugins>
     </build>

@@ -5,7 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
-import eu.domibus.connector.gateway.link.spring.GatewayLinkContextConfigurationTest.TestConfiguration;
+import eu.domibus.connector.gateway.link.spring.GatewayLinkContextConfigurationITCase.TestConfiguration;
 import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWS;
 import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWSService;
 import java.net.MalformedURLException;
@@ -29,6 +29,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
+import static org.mockito.Matchers.any;
 
 /**
  * a simple test to check if the webservice (DomibusConnectorDeliveryWS) is published and reachable
@@ -37,9 +38,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 
 @RunWith(SpringRunner.class)
-@Import(GatewayLinkContextConfigurationTest.TestConfiguration.class)
+@Import(GatewayLinkContextConfigurationITCase.TestConfiguration.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class GatewayLinkContextConfigurationTest {
+public class GatewayLinkContextConfigurationITCase {
     
     @SpringBootApplication(scanBasePackages="eu.domibus.connector.gateway.link")
     public static class TestConfiguration {
@@ -68,7 +69,7 @@ public class GatewayLinkContextConfigurationTest {
         System.out.println("URL " + url);
         
         System.out.println("sleep started server port " + port);
-        Thread.sleep(3000);
+        Thread.sleep(300);
         System.out.println("sleep ended, calling service");        
         
         URL wsdlURL = new URL(url + "?wsdl"); 

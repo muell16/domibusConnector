@@ -571,6 +571,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
 
     
     @Test
+    @Ignore("not implemented yet!")
     public void testCheckMessageConfirmedOrRejected() {
         DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
         msg.setConnectorMessageId("msg71");
@@ -586,6 +587,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
     }
     
     @Test
+    @Ignore("not implemented yet!")
     public void testCheckMessageRejected() {
         DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
         msg.setConnectorMessageId("msg71");

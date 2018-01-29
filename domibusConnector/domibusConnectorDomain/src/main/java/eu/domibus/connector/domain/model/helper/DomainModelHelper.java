@@ -11,7 +11,11 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 public class DomainModelHelper {
 
     public static boolean isEvidenceMessage(DomibusConnectorMessage message) {
-        throw new RuntimeException("not implemented yet!");
+    	if(message.getMessageContent()!=null) {
+    		return false;
+    	}
+    	return true;
+//        throw new RuntimeException("not implemented yet!");
     }
     
 }
