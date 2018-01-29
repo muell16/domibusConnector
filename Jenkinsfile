@@ -99,7 +99,9 @@ node {
 						sh 'mvn -P integration-testing,dbunit-testing failsafe:verify' //verify executed tests
 					}
 				} catch (e) {
-					currentBuild.result = 'UNSTABLE'
+					if (currentBuild.result == 'SUCCESS') {
+						currentBuild.result = 'UNSTABLE'
+					}
 				} 
 				
 				stage ('Post') {
