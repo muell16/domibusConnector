@@ -80,7 +80,7 @@ node {
 
 				try {
 					stage ('Test') {
-						sh 'mvn -fn -Dmaven.test.failure.ignore=true test' //ignore test failures to execute ALL tests and fail never
+						sh 'mvn -fn test' //ignore test failures to execute ALL tests and fail never
 						sh 'mvn test' //execute tests again to get failure: TODO find better solution to fail this step if test failures occure
 					}
 				} catch (e) {
@@ -89,8 +89,9 @@ node {
 				
 					
 				try {					
+					//-dmaven.test.failure.ignore=true
 					stage ('Integration Test') {
-						sh 'mvn -Dmaven.test.failure.ignore=true -P integration-testing,dbunit-testing verify'
+						sh 'mvn -P integration-testing,dbunit-testing verify'
 					}
 				} catch (e) {
 						currentBuild.result = 'UNSTABLE'
