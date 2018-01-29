@@ -569,11 +569,13 @@ public class DomibusConnectorPersistenceServiceImplTest {
 
     
     @Test
+    @Ignore("not implemented yet!")
     public void testCheckMessageConfirmedOrRejected() {
         fail("not implemented yet!");
     }
     
     @Test
+    @Ignore("not implemented yet!")
     public void testCheckMessageRejected() {
         fail("not implemented yet!");
     }

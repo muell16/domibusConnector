@@ -545,6 +545,19 @@
                     </execution>-->
                 </executions>                    
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>                    
+                    <execution>
+                        <id>build-test-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>                
+            </plugin>
         </plugins>
     </build>
     
