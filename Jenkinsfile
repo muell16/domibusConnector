@@ -105,13 +105,14 @@ node {
 				} 
 				
 				stage ('Post') {
-					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
+					//if (currentBuild.result == null || currentBuild.result != 'FAILURE') 
+					{
 						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
-						try {
-							jacoco() //ignore failures
-						} catch (e) {
-							
-						}
+						//try {
+						jacoco() 
+						//} catch (e) {
+						//	
+						//}
 					}
 				}
 				
