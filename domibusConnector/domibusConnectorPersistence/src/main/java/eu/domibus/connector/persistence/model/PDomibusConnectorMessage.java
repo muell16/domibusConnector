@@ -24,6 +24,7 @@ import java.io.Serializable;
 import javax.annotation.Nullable;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import org.springframework.core.style.ToStringCreator;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE")
@@ -201,6 +202,15 @@ public class PDomibusConnectorMessage implements Serializable {
         this.connectorMessageId = connectorMessageId;
     }
 
-    
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this)
+                .append("dbId", this.id)
+                .append("connectorMessageid", this.connectorMessageId)
+                .append("ebmsId", this.ebmsMessageId)
+                .append("backendMessageId", this.backendMessageId)
+                .append("deliveredToGw", this.deliveredToGateway);                
+        return builder.toString();        
+    }
     
 }

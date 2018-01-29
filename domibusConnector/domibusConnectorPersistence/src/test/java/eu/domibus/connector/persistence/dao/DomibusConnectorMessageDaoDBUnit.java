@@ -174,20 +174,29 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     }
     
     @Test
-    public void testSave() {
+    public void testSave() throws SQLException, AmbiguousTableNameException, DataSetException {
         PDomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
         message.setEbmsMessageId("ebms2");        
         message.setId(null);
+        message.setConnectorMessageId("msg201");
         
-        messageDao.save(message);
+        PDomibusConnectorMessage savedMessage = messageDao.save(message);
+        
+        assertThat(savedMessage).isNotNull();
+        assertThat(savedMessage.getId()).isNotNull();
+        
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=" + savedMessage.getId());
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        
+        String connectorMessageId = (String) domibusConnectorTable.getValue(0, "CONNECTOR_MESSAGE_ID");
+        assertThat(connectorMessageId).isEqualTo("msg201");
                 
     }
-//    
-//    // if DB fields confirmed OR rejected are NOT NULL -> then true
-//    @Query("SELECT case when (count(m) > 0) then true else false end "
-//            + "FROM PDomibusConnectorMessage m "
-//            + "WHERE m.id = ?1 AND m.confirmed is not null OR m.rejected is not null")
-//    public boolean checkMessageConfirmedOrRejected(Long messageId);    
+
 
     @Test
     public void testCheckMessageConfirmedOrRejected_shouldBeFalse() {

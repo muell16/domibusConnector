@@ -12,7 +12,7 @@
         <org.liquibase level="debug" >
             <AppenderRef ref="Console" />
         </org.liquibase>    
-        <eu.domibus.connector.persistence level="debug" >
+        <eu.domibus.connector.persistence level="trace" >
             <AppenderRef ref="Console" />
         </eu.domibus.connector.persistence>    
     </Loggers>

@@ -11,6 +11,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
@@ -334,7 +335,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         
         //message.setDbMessageId(null);
         
-        eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation messageConfirmation = new eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation();
+        DomibusConnectorMessageConfirmation messageConfirmation = new DomibusConnectorMessageConfirmation();
         messageConfirmation.setEvidence("MYEVIDENCE".getBytes());
         messageConfirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         

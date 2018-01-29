@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,14 +40,10 @@ import org.springframework.util.DigestUtils;
 @Component
 public class MsgContentPersistenceService {
 
-//    static interface LoadFromMsgContHandler<T> {
-//        default public int loadFromPriority() {
-//            return 100;
-//        }
+        
+//    public interface LoadFromMsgContHandler<T> {
 //        
-//        public T loadFromMsgCont(PDomibusConnectorMsgCont msgCont);
-//        
-//        public boolean canLoadFrom(PDomibusConnectorMsgCont msgCont);
+//        public T loadFromMsgCont(PDomibusConnectorMsgCont msgCont) throws CannotLoadException;
 //        
 //    }
     
@@ -133,6 +130,11 @@ public class MsgContentPersistenceService {
         this.msgContDao.deleteByMessage(dbMessage);   //delete old contents
         this.msgContDao.save(toStoreList); //save new contents
     }        
+    
+//    void writeMessageObjectToStream(ObjectOutputStream outputStream, DomibusConnectorMessageContent content) {
+//        outputStream.
+//    }
+    
     
     /**
      * Takes a StoreType and a Object

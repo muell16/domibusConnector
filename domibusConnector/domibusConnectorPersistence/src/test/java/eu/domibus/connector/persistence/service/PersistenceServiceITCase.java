@@ -112,40 +112,38 @@ public class PersistenceServiceITCase {
     
     @Test
     public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-//        MessageDetails messageDetails = new MessageDetails();
-//        MessageContent messageContent = new MessageContent();
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        String connectorMessageId = "msg0021";
+
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
         //message.setDbMessageId(null);
         //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         
-        message.getMessageDetails().setConversationId("newconversation");
-        message.getMessageDetails().setEbmsMessageId("ebms1123");
+        messageDetails.setConversationId("conversation421");
+        messageDetails.setEbmsMessageId("ebms421");
+        messageDetails.setBackendMessageId("backend421");
+        
         
         //message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());       
         
         
-        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+        DomibusConnectorMessage persistedMessage = persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
         
-        //assertThat(message.getDbMessageId()).isNotNull();
-        //TODO: test db if entity is there!         
-        
-        
-        //long messageId = message.getDbMessageId();
-        //assertThat(messageId).isNotNull();
-        
-        //TODO: check db changes
+        assertThat(persistedMessage).isNotNull();
+
         //check result in DB
-//        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
-//        QueryDataSet dataSet = new QueryDataSet(conn);
-//        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=%s", messageId));
-//       
-//        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
-//        
-//        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
-//        assertThat(ebmsId).isEqualTo("ebms1");
-//        
-//        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
-//        assertThat(conversationId).isEqualTo("newconversation");        
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", 
+                String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE CONNECTOR_MESSAGE_ID='%s'", connectorMessageId));
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        
+        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
+        assertThat(ebmsId).isEqualTo("ebms421");
+        
+        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
+        assertThat(conversationId).isEqualTo("conversation421");        
     }
     
     /**

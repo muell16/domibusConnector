@@ -100,18 +100,20 @@ public interface DomibusConnectorMessagePersistenceService {
      *
      *
      * @param message - the message
+     * @return the message with eventually updated fields
      * @throws PersistenceException
      */
-    void mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
+    DomibusConnectorMessage mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
     /**
      * stores a new message into storage
      * @param message - the message
      * @param direction - direction of the message
+     * @return the message with eventually updated fields
      * @throws PersistenceException - in case of failures with persistence
      *
      */
-    void persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
+    DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
     //TODO: improve Exceptions
     /**
