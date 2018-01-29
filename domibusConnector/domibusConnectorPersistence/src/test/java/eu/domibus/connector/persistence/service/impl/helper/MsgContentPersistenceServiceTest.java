@@ -117,7 +117,7 @@ public class MsgContentPersistenceServiceTest {
     @Test
     public void testMapToMsgCont_withMessageContent() {       
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        PDomibusConnectorMsgCont mapToMsgCont = this.msgContService.mapToMsgCont(dbMessage, StoreType.MESSAGE_CONTENT, createTestMessageContent());
+        PDomibusConnectorMsgCont mapToMsgCont = this.msgContService.serializeObjectIntoMsgCont(dbMessage, StoreType.MESSAGE_CONTENT, createTestMessageContent());
         
         assertThat(mapToMsgCont.getContent()).isNotNull();
         assertThat(mapToMsgCont.getContentType()).isEqualTo(StoreType.MESSAGE_CONTENT.getDbString());

@@ -1,10 +1,15 @@
 package eu.domibus.connector.persistence.service.impl.helper;
 
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageContentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.domain.model.helper.CopyHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
@@ -22,6 +27,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
@@ -39,13 +45,6 @@ import org.springframework.util.DigestUtils;
  */
 @Component
 public class MsgContentPersistenceService {
-
-        
-//    public interface LoadFromMsgContHandler<T> {
-//        
-//        public T loadFromMsgCont(PDomibusConnectorMsgCont msgCont) throws CannotLoadException;
-//        
-//    }
     
     private final static Logger LOGGER = LoggerFactory.getLogger(MsgContentPersistenceService.class);
     
@@ -74,7 +73,7 @@ public class MsgContentPersistenceService {
     
     
     /**
-     * TODO: JAVADOC!
+     * loads Message Content from Database, deserializes the stored objects back to java objects, and puts them back into the message
      * @param messageBuilder
      * @param dbMessage
      * @throws PersistenceException 
@@ -117,32 +116,59 @@ public class MsgContentPersistenceService {
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
         if (messageContent != null) {
-            toStoreList.add(mapToMsgCont(dbMessage, StoreType.MESSAGE_CONTENT, messageContent));
+            toStoreList.add(mapToDb(dbMessage, messageContent));
         }
         //handle attachments
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-            toStoreList.add(mapToMsgCont(dbMessage, StoreType.MESSAGE_ATTACHMENT, attachment));
+            toStoreList.add(mapContent(dbMessage, attachment));
         }
         //handle confirmations
         for (DomibusConnectorMessageConfirmation c : message.getMessageConfirmations()) {
-            toStoreList.add(mapToMsgCont(dbMessage, StoreType.MESSAGE_CONFIRMATION, c));            
+            toStoreList.add(mapContent(dbMessage, c));            
         }        
         this.msgContDao.deleteByMessage(dbMessage);   //delete old contents
         this.msgContDao.save(toStoreList); //save new contents
     }        
     
-//    void writeMessageObjectToStream(ObjectOutputStream outputStream, DomibusConnectorMessageContent content) {
-//        outputStream.
-//    }
+    PDomibusConnectorMsgCont mapToDb(PDomibusConnectorMessage message, DomibusConnectorMessageContent content) {
+        //change BigDocumentRefernce with the plain implementation to make sure it is serializeable!
+        DomibusConnectorMessageContent copiedMessageContent = CopyHelper.copyMessageContent(content);
+        if (content.getDocument() != null) {            
+            DomibusConnectorBigDataReference plainRef = createBigDataReferenceCopy(content.getDocument().getDocument());            
+            copiedMessageContent.getDocument().setDocument(plainRef);
+        }  
+        return serializeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT, copiedMessageContent);                
+    }
+    
+    PDomibusConnectorMsgCont mapContent(PDomibusConnectorMessage message, DomibusConnectorMessageAttachment attachment) {        
+        DomibusConnectorMessageAttachment copy = CopyHelper.copyAttachment(attachment);
+        DomibusConnectorBigDataReference bigDataReferenceCopy = createBigDataReferenceCopy(copy.getAttachment());
+        copy.setAttachment(bigDataReferenceCopy);
+        return serializeObjectIntoMsgCont(message, StoreType.MESSAGE_ATTACHMENT, attachment);
+    }
+    
+    PDomibusConnectorMsgCont mapContent(PDomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {       
+        return serializeObjectIntoMsgCont(message, StoreType.MESSAGE_CONFIRMATION, confirmation);
+    }
+    
+    private DomibusConnectorBigDataReference createBigDataReferenceCopy(DomibusConnectorBigDataReference toCopy) {
+        if (toCopy == null) {
+            return null;
+        }
+        DomibusConnectorBigDataReference plainRef = new DomibusConnectorBigDataReference();
+        BeanUtils.copyProperties(toCopy, plainRef);
+        return plainRef;
+    }
     
     
     /**
      * Takes a StoreType and a Object
-     * maps that object into @see eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont
+     * serializes the object and
+     * writes that into @see eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont
      * 
      * 
      */
-    PDomibusConnectorMsgCont mapToMsgCont(    
+    PDomibusConnectorMsgCont serializeObjectIntoMsgCont(    
             PDomibusConnectorMessage message,
             @Nonnull StoreType type, 
             @Nonnull Object object) throws PersistenceException {        
