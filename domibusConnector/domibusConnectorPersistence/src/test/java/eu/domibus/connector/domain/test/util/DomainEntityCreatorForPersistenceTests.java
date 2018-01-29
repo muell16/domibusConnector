@@ -47,6 +47,11 @@ public class DomainEntityCreatorForPersistenceTests {
         return s;
     }
     
+    public static DomibusConnectorService createServiceUnknown() {
+        DomibusConnectorService s = new DomibusConnectorService("UNKNOWN", "UNKNOWN!!!urn:e-codex:services:");
+        return s;
+    }
+    
     public static DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation() {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
         confirmation.setEvidence("EVIDENCE1_DELIVERY".getBytes());

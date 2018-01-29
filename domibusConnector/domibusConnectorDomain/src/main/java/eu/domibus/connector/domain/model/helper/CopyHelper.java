@@ -21,24 +21,36 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 public class CopyHelper {
 
     public static DomibusConnectorAction copyAction(DomibusConnectorAction action) {
+        if (action == null) {
+            return null;
+        }
         return DomibusConnectorActionBuilder.createBuilder()
                 .copyPropertiesFrom(action)
                 .build();                
     }
     
     public static DomibusConnectorParty copyParty(DomibusConnectorParty party) {
+        if (party == null) {
+            return null;
+        }
         return DomibusConnectorPartyBuilder.createBuilder()
                 .copyPropertiesFrom(party)
                 .build();
     }
     
     public static DomibusConnectorService copyService(DomibusConnectorService service) {
+        if (service == null) {
+            return null;
+        }
         return DomibusConnectorServiceBuilder.createBuilder()
                 .copyPropertiesFrom(service)
                 .build();
     }
     
     public static DomibusConnectorMessageContent copyMessageContent(DomibusConnectorMessageContent content) {
+        if (content == null) {
+            return null;
+        }
         DomibusConnectorMessageContent copy = DomibusConnectorMessageContentBuilder
                 .createBuilder()
                 .copyPropertiesForm(content)
@@ -47,6 +59,9 @@ public class CopyHelper {
     }
 
     public static DomibusConnectorMessageDocument copyDocument(DomibusConnectorMessageDocument document) {
+        if (document == null) {
+            return null;
+        }
         DomibusConnectorMessageDocument copy = DomibusConnectorMessageDocumentBuilder.createBuilder()
                 .setContent(document.getDocument())
                 .setName(document.getDocumentName())

@@ -34,12 +34,16 @@ import org.springframework.util.DigestUtils;
 
 /**
  *
- * Service for persisting 
+ * Service for persisting message content like:
  * <ul>
  *  <li>message content - the business pdf and xml content</li>
  *  <li>message attachments</li>
  *  <li>message confirmations</li>
  * </ul>
+ * 
+ * For persisting the java objects are serialized and stored into database, 
+ * bigDataReference fields are replaced by plain BigDataReference objects
+ * to make sure that the BigDataReferenceObject can be persisted
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
@@ -141,17 +145,17 @@ public class MsgContentPersistenceService {
     }
     
     PDomibusConnectorMsgCont mapContent(PDomibusConnectorMessage message, DomibusConnectorMessageAttachment attachment) {        
-        DomibusConnectorMessageAttachment copy = CopyHelper.copyAttachment(attachment);
-        DomibusConnectorBigDataReference bigDataReferenceCopy = createBigDataReferenceCopy(copy.getAttachment());
-        copy.setAttachment(bigDataReferenceCopy);
-        return serializeObjectIntoMsgCont(message, StoreType.MESSAGE_ATTACHMENT, attachment);
+        DomibusConnectorMessageAttachment copiedAttachment = CopyHelper.copyAttachment(attachment);
+        DomibusConnectorBigDataReference bigDataReferenceCopy = createBigDataReferenceCopy(copiedAttachment.getAttachment());
+        copiedAttachment.setAttachment(bigDataReferenceCopy);
+        return serializeObjectIntoMsgCont(message, StoreType.MESSAGE_ATTACHMENT, copiedAttachment);
     }
     
     PDomibusConnectorMsgCont mapContent(PDomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {       
         return serializeObjectIntoMsgCont(message, StoreType.MESSAGE_CONFIRMATION, confirmation);
     }
     
-    private DomibusConnectorBigDataReference createBigDataReferenceCopy(DomibusConnectorBigDataReference toCopy) {
+    DomibusConnectorBigDataReference createBigDataReferenceCopy(DomibusConnectorBigDataReference toCopy) {
         if (toCopy == null) {
             return null;
         }
