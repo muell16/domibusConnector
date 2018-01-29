@@ -3,6 +3,7 @@ package eu.domibus.connector.domain.testutil;
 
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.transformer.testutil.DataHandlerCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
 import javax.activation.DataHandler;
@@ -129,6 +130,14 @@ public class DomainEntityCreator {
     public static DomibusConnectorMessageError createMessageError() {
         DomibusConnectorMessageError error = new DomibusConnectorMessageError("error message", "error detail message", "error source");     
         return error;
+    }
+
+    public static DomibusConnectorMessageAttachment createMessageAttachment() {
+                
+        return DomibusConnectorMessageAttachmentBuilder.createBuilder()
+                .setAttachment(connectorBigDataReferenceFromDataSource("attachment"))
+                .setIdentifier("identifier")
+                .build(); 
     }
     
 }

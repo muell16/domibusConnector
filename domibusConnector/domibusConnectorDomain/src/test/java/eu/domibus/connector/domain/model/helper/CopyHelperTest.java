@@ -1,0 +1,52 @@
+
+package eu.domibus.connector.domain.model.helper;
+
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
+import eu.domibus.connector.domain.model.DomibusConnectorParty;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import org.junit.Test;
+import static org.assertj.core.api.Assertions.*;
+
+/**
+ *
+ * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ */
+public class CopyHelperTest {
+
+    @Test
+    public void testCopyParty() {
+        DomibusConnectorParty partyAT = DomainEntityCreator.createPartyAT();
+        DomibusConnectorParty copiedParty = CopyHelper.copyParty(partyAT);
+        
+        assertThat(copiedParty).isEqualToComparingFieldByFieldRecursively(partyAT);
+    }
+    
+    @Test
+    public void testCopyAction() {
+        DomibusConnectorAction action = DomainEntityCreator.createActionForm_A();
+        DomibusConnectorAction copiedAction = CopyHelper.copyAction(action);
+        
+        assertThat(copiedAction).isEqualToComparingFieldByFieldRecursively(action);
+    }
+            
+
+    @Test
+    public void testCopyService() {
+        DomibusConnectorService service = DomainEntityCreator.createServiceEPO();
+        DomibusConnectorService copiedService = CopyHelper.copyService(service);
+        
+        assertThat(copiedService).isEqualToComparingFieldByFieldRecursively(service);
+    }
+    
+    @Test
+    public void testCopyMessageAttachment() {
+        DomibusConnectorMessageAttachment attachment = DomainEntityCreator.createMessageAttachment();
+        DomibusConnectorMessageAttachment copiedAttachment = CopyHelper.copyAttachment(attachment);
+        
+        assertThat(copiedAttachment).isEqualToComparingFieldByFieldRecursively(attachment);        
+    }
+    
+    
+}

@@ -46,6 +46,15 @@ public class DomibusConnectorMessageAttachmentBuilder {
         this.description = description;
         return this;
     }
+    
+    public DomibusConnectorMessageAttachmentBuilder copyPropertiesFrom(DomibusConnectorMessageAttachment attachment) {
+        this.attachment = attachment.getAttachment();
+        this.description = attachment.getDescription();
+        this.identifier = attachment.getIdentifier();
+        this.mimeType = attachment.getMimeType();
+        this.name = attachment.getName();
+        return this;
+    }
 
     public DomibusConnectorMessageAttachment build() {
         if (this.attachment == null) {
@@ -61,4 +70,6 @@ public class DomibusConnectorMessageAttachmentBuilder {
         return domibusConnectorMessageAttachment;
     }
 
+    
+    
 }

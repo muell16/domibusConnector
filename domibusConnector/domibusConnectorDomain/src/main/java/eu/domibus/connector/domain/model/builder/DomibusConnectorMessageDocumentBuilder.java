@@ -40,6 +40,12 @@ public class DomibusConnectorMessageDocumentBuilder {
         return this;
     }
     
+    public DomibusConnectorMessageDocumentBuilder copyPropertiesFrom(DomibusConnectorMessageDocument doc) {
+        this.detachedSignature = doc.getDetachedSignature();
+        this.documentContent = doc.getDocument();
+        this.documentName = doc.getDocumentName();
+        return this;
+    }
         
     public DomibusConnectorMessageDocument build() {                
         if (documentName == null) {

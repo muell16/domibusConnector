@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.annotation.Nullable;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
@@ -83,4 +84,31 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
         builder.append("storageReference", this.getStorageIdReference());
         return builder.toString();        
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.storageIdReference);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DomibusConnectorBigDataReference other = (DomibusConnectorBigDataReference) obj;
+        if (!Objects.equals(this.storageIdReference, other.storageIdReference)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
