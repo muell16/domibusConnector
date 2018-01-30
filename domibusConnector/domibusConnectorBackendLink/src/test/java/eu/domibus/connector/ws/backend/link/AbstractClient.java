@@ -23,6 +23,7 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JStaxOutInterceptor;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
@@ -85,8 +86,12 @@ public abstract class AbstractClient {
         //properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
         // Callback used to retrieve password for given user.
         outProps.put(WSHandlerConstants.PW_CALLBACK_REF, getClientPasswordCallback());
-        WSS4JStaxOutInterceptor outInterceptor = new WSS4JStaxOutInterceptor(outProps);
-        outInterceptor.setAllowMTOM(false);
+        outProps.put(WSHandlerConstants.EXPAND_XOP_INCLUDE_FOR_SIGNATURE, true);
+        //WSS4JStaxOutInterceptor https://ws.apache.org/wss4j/streaming.html
+        
+        WSS4JOutInterceptor outInterceptor = new WSS4JOutInterceptor(outProps);
+        
+        
         return outInterceptor;
     }
 }

@@ -30,6 +30,7 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JStaxInInterceptor;
 import org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JStaxOutInterceptor;
+import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JStaxInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JStaxOutInterceptor;
 import org.apache.wss4j.common.WSS4JConstants;
@@ -105,8 +106,8 @@ public class WSBackendLinkContextConfiguration {
         props.put(WSHandlerConstants.PW_CALLBACK_REF, passwordCallback());
 
         
-        
-        WSS4JStaxInInterceptor inInterceptor = new WSS4JStaxInInterceptor(props);        
+        //WSS4JStaxInInterceptor 
+        WSS4JInInterceptor inInterceptor = new WSS4JInInterceptor(props);        
         
         //TODO: set properties on interceptor
         return inInterceptor;
