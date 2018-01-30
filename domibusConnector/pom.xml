@@ -38,12 +38,12 @@
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
         <!-- if necessary overwrite proxy settings in local settings.xml -->
-        <https.proxy.enabled>false</https.proxy.enabled>
+        <!-- <https.proxy.enabled>false</https.proxy.enabled>
         <https.proxy.host/>
         <https.proxy.port/>
         <http.proxy.enabled>false</http.proxy.enabled>
         <http.proxy.host/>
-        <http.proxy.port/>            
+        <http.proxy.port/> -->            
     </properties>
 
     <scm>
@@ -290,8 +290,9 @@
 
     </dependencyManagement>
     
-    <profiles>
+    <profiles>        
         <profile>
+        <!--  activates long running integration tests -->
             <id>integration-testing</id>
             <build>
                 <plugins>
@@ -320,6 +321,7 @@
             </build>
         </profile>
         <profile>
+        <!--  starts during integration-test phase long running database tests -->
             <id>dbunit-testing</id>
             <build>
                 <plugins>
@@ -550,8 +552,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>                    
                     <execution>
-                        <id>build-test-jar</id>
-                        <phase>package</phase>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
