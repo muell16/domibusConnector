@@ -11,7 +11,9 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
@@ -333,7 +335,7 @@ public class DomibusConnectorPersistenceServiceImplTest {
         
         //message.setDbMessageId(null);
         
-        eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation messageConfirmation = new eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation();
+        DomibusConnectorMessageConfirmation messageConfirmation = new DomibusConnectorMessageConfirmation();
         messageConfirmation.setEvidence("MYEVIDENCE".getBytes());
         messageConfirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         
@@ -571,22 +573,45 @@ public class DomibusConnectorPersistenceServiceImplTest {
     @Test
     @Ignore("not implemented yet!")
     public void testCheckMessageConfirmedOrRejected() {
-        fail("not implemented yet!");
+        DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
+        msg.setConnectorMessageId("msg71");
+        mockFindMessageByConnectorMessageId("msg71");
+        
+        Mockito.when(this.domibusConnectorMessageDao.checkMessageConfirmedOrRejected(eq(47L)))
+                .thenReturn(false);
+        
+        boolean confirmedOrRejected = serviceImpl.checkMessageConfirmedOrRejected(msg);
+        
+        assertThat(confirmedOrRejected).isFalse();
+        
     }
     
     @Test
     @Ignore("not implemented yet!")
     public void testCheckMessageRejected() {
-        fail("not implemented yet!");
+        DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
+        msg.setConnectorMessageId("msg71");
+        mockFindMessageByConnectorMessageId("msg71");
+        
+        Mockito.when(domibusConnectorMessageDao.checkMessageRejected(eq(47L)))
+                .thenReturn(false);
+        
+        boolean messageRejected = this.serviceImpl.checkMessageRejected(msg); //this.domibusConnectorMessageDao.isMessageRejected(msg);
+        
+        assertThat(messageRejected).isFalse();
     }
     
+    private void mockFindMessageByConnectorMessageId(String messageId) {
+        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq(messageId)))
+                .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()); 
+    }
 
     /**
      * Message Error related
      */
     @Test    
     public void testPersistMessageError() {        
-        eu.domibus.connector.domain.model.DomibusConnectorMessageError messageError = DomainEntityCreatorForPersistenceTests.createMessageError();
+        DomibusConnectorMessageError messageError = DomainEntityCreatorForPersistenceTests.createMessageError();
         
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         Mockito.when(this.domibusConnectorMessageDao.findOne(eq(47L))).thenReturn(dbMessage);

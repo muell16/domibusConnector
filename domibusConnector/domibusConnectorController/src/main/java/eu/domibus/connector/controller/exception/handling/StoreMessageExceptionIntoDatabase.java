@@ -14,6 +14,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StoreMessageExceptionIntoDatabase {
 
-    public boolean passException();
+    /**
+     * 
+     * @return should the exception thrown again after it has been stored
+     * into the database?
+     */
+    public boolean passException() default false;
     
 }

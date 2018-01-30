@@ -88,7 +88,8 @@ public class DomibusConnectorMessageAttachment implements Serializable {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("identifier", this.identifier);
         builder.append("name", this.name);
-        builder.append("mimeType", this.mimeType);        
+        builder.append("mimeType", this.mimeType);     
+        builder.append("dataReference", this.attachment);
         return builder.toString();        
     }
     

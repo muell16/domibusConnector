@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
@@ -126,28 +127,29 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
-        // if DB fields confirmed OR rejected are NOT NULL -> then true
-        return false;
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+        return this.messageDao.checkMessageConfirmedOrRejected(dbMessage.getId());        
     }
 
     @Override
     public boolean checkMessageRejected(DomibusConnectorMessage message) {
-        // if DB field rejected is NOT NULL -> then true
-        return false;
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+        return this.messageDao.checkMessageRejected(dbMessage.getId());
     }
 
     @Override
     public boolean checkMessageConfirmed(DomibusConnectorMessage message) {
-        // if DB field confirmend is NOT NULL -> then true
-        return false;
+        PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
+        return this.messageDao.checkMessageConfirmed(dbMessage.getId());        
     }
 
     @Override
     @Transactional(readOnly = false)
-    public void persistMessageIntoDatabase(DomibusConnectorMessage message, eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection direction) throws PersistenceException {
+    public DomibusConnectorMessage persistMessageIntoDatabase(DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException {
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
+        LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
 
         dbMessage.setDirection(eu.domibus.connector.persistence.model.enums.MessageDirection.valueOf(direction.name()));
@@ -157,6 +159,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         dbMessage.setConnectorMessageId(message.getConnectorMessageId());
 
         try {
+            LOGGER.trace("#persistMessageIntoDatabase: Saving message [{}] into storage", dbMessage);
             dbMessage = messageDao.save(dbMessage);
         } catch (DuplicateKeyException cve) {
             String error = String.format("Message already persisted! The domibusConnectorMessageId [%s] already exist.",
@@ -181,6 +184,8 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         }
 
         dbMessage.setMessageInfo(dbMessageInfo);
+        
+        return message;
     }
 
     void mapMessageDetailsToDbMessageInfoPersistence(DomibusConnectorMessageDetails messageDetails, PDomibusConnectorMessageInfo dbMessageInfo) {
@@ -220,7 +225,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
      */
     @Override
     @Transactional
-    public void mergeMessageWithDatabase(DomibusConnectorMessage message) throws PersistenceException {
+    public DomibusConnectorMessage mergeMessageWithDatabase(DomibusConnectorMessage message) throws PersistenceException {
 
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
@@ -248,6 +253,8 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         this.msgContentService.storeMsgContent(message);
 
         this.messageDao.save(dbMessage);
+        
+        return message;
     }
 
     /**

@@ -1,16 +1,19 @@
 
-package eu.domibus.connector.persistence.service;
+package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.PersistenceException;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 
 /**
  * Facade Service to make it easier to persist all big data of 
@@ -18,7 +21,7 @@ import org.springframework.util.StreamUtils;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Service
-public class BigDataWithMessagePersistenceService {
+public class BigDataWithMessagePersistenceService implements DomibusConnectorPersistAllBigDataOfMessageService {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(BigDataWithMessagePersistenceService.class);
     
@@ -26,16 +29,13 @@ public class BigDataWithMessagePersistenceService {
     private DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl;
     
     // START GETTER / SETTER //
-    public DomibusConnectorBigDataPersistenceService getBigDataPersistenceServiceImpl() {
-        return bigDataPersistenceServiceImpl;
-    }
-
     public void setBigDataPersistenceServiceImpl(DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl) {
         this.bigDataPersistenceServiceImpl = bigDataPersistenceServiceImpl;
     }
     // ENDE GETTER / SETTER //
     
     
+    @Override
     public DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message) {
         LOGGER.trace("persistAllBigFilesFromMessage: message [{}]", message);
         try {
@@ -56,6 +56,7 @@ public class BigDataWithMessagePersistenceService {
         }
     }
     
+    @Override
     public DomibusConnectorMessage loadAllBigFilesFromMessage(DomibusConnectorMessage message) {
         LOGGER.trace("loadAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {

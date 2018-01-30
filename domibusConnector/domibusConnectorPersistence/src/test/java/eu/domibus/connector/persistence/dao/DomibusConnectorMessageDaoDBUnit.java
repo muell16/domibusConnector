@@ -20,6 +20,7 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -173,13 +174,77 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     }
     
     @Test
-    public void testSave() {
+    public void testSave() throws SQLException, AmbiguousTableNameException, DataSetException {
         PDomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
         message.setEbmsMessageId("ebms2");        
         message.setId(null);
+        message.setConnectorMessageId("msg201");
         
-        messageDao.save(message);
+        PDomibusConnectorMessage savedMessage = messageDao.save(message);
+        
+        assertThat(savedMessage).isNotNull();
+        assertThat(savedMessage.getId()).isNotNull();
+        
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=" + savedMessage.getId());
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        
+        String connectorMessageId = (String) domibusConnectorTable.getValue(0, "CONNECTOR_MESSAGE_ID");
+        assertThat(connectorMessageId).isEqualTo("msg201");
                 
+    }
+
+
+    @Test
+    public void testCheckMessageConfirmedOrRejected_shouldBeFalse() {
+        long id = 655L;        
+        boolean rejectedOrConfirmed = messageDao.checkMessageConfirmedOrRejected(id);
+        
+        assertThat(rejectedOrConfirmed).isFalse();
+    }
+    
+    @Test
+    public void testCheckMessageConfirmedOrRejected_shouldBeTrue() {
+        long id = 65L;        
+        boolean rejectedOrConfirmed = messageDao.checkMessageConfirmedOrRejected(id);
+        
+        assertThat(rejectedOrConfirmed).isTrue();
+    }
+    
+    
+    
+//    // if DB field rejected is NOT NULL -> then true
+//    @Query("SELECT case when (count(m) > 0) then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.rejected is not null")
+//    public boolean checkMessageRejected(Long messageId);     
+    @Test
+    public void checkMessageRejected_shouldBeTrue() {
+        long id = 65L;
+        boolean rejected = messageDao.checkMessageRejected(id);
+
+        assertThat(rejected).isTrue();
+    }
+    
+    @Test
+    public void checkMessageRejected_shouldBeFalse() {
+        long id = 655L;
+        boolean rejected = messageDao.checkMessageRejected(id);
+
+        assertThat(rejected).isFalse();
+    }
+    
+    
+//    // if DB field confirmend is NOT NULL -> then true
+//    @Query("SELECT case when (count(m) > 0)  then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.confirmed is not null")
+//    public boolean checkMessageConfirmed(Long messageId);
+    @Test
+    public void checkMessageConfirmed_shouldBeFalse() {
+        long id = 59L;
+        boolean confirmed = messageDao.checkMessageConfirmed(id);
+        
+        assertThat(confirmed).isTrue();
     }
     
 }

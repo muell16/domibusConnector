@@ -19,21 +19,14 @@ import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
-import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
-import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceContext;
 import java.sql.SQLException;
-import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.*;
 import javax.sql.DataSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
@@ -41,13 +34,10 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.hibernate.TransientPropertyValueException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 /**
  * Integration Test for testing persistence service
@@ -112,41 +102,69 @@ public class PersistenceServiceITCase {
     
     @Test
     public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-//        MessageDetails messageDetails = new MessageDetails();
-//        MessageContent messageContent = new MessageContent();
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        String connectorMessageId = "msg0021";
+
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
         //message.setDbMessageId(null);
         //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         
-        message.getMessageDetails().setConversationId("newconversation");
-        message.getMessageDetails().setEbmsMessageId("ebms1123");
+        messageDetails.setConversationId("conversation421");
+        messageDetails.setEbmsMessageId("ebms421");
+        messageDetails.setBackendMessageId("backend421");
+                     
+        DomibusConnectorParty fromPartyAT = DomainEntityCreatorForPersistenceTests.createPartyAT();
+        DomibusConnectorParty toPartyDE = DomainEntityCreatorForPersistenceTests.createPartyDE();
+        messageDetails.setFromParty(fromPartyAT);
+        messageDetails.setToParty(toPartyDE);
         
-        //message.getMessageContent().setDetachedSignature("HalloWelt".getBytes());       
+                
+        DomibusConnectorMessage persistedMessage = persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
         
-        
-        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
-        
-        //assertThat(message.getDbMessageId()).isNotNull();
-        //TODO: test db if entity is there!         
-        
-        
-        //long messageId = message.getDbMessageId();
-        //assertThat(messageId).isNotNull();
-        
-        //TODO: check db changes
+        assertThat(persistedMessage).isNotNull();
+
         //check result in DB
-//        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
-//        QueryDataSet dataSet = new QueryDataSet(conn);
-//        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=%s", messageId));
-//       
-//        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
-//        
-//        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
-//        assertThat(ebmsId).isEqualTo("ebms1");
-//        
-//        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
-//        assertThat(conversationId).isEqualTo("newconversation");        
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", 
+                String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE CONNECTOR_MESSAGE_ID='%s'", connectorMessageId));
+       
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        
+        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
+        assertThat(ebmsId).isEqualTo("ebms421");
+        
+        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
+        assertThat(conversationId).isEqualTo("conversation421");        
     }
+    
+    /*
+     * test that, the persist throws an exception if an service is used which is not 
+     * configured in database!
+     *   
+     * TODO: improve specification to throw more specific exception!   
+     *
+     */
+    @Test(expected=InvalidDataAccessApiUsageException.class) //(expected=TransientPropertyValueException.class)
+    public void testPersistMessageIntoDatabase_serviceNotInDatabase_shouldThrowException() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
+        String connectorMessageId = "msg0021";
+
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
+        //message.setDbMessageId(null);
+        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
+        
+        messageDetails.setConversationId("conversation421");
+        messageDetails.setEbmsMessageId("ebms421");
+        messageDetails.setBackendMessageId("backend421");
+        
+        DomibusConnectorService serviceUnkown = DomainEntityCreatorForPersistenceTests.createServiceUnknown();
+        messageDetails.setService(serviceUnkown); //set Unknown service
+
+        //should throw exception, because UknownService is not configured in DB!
+        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+    }
+    
     
     /**
      * tests complete message, if can be stored to DB

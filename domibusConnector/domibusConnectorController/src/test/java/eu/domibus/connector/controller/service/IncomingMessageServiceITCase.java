@@ -2,6 +2,7 @@
 package eu.domibus.connector.controller.service;
 
 
+import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import java.io.File;
@@ -34,6 +35,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachme
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
+import java.io.ByteArrayInputStream;
+import java.util.UUID;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  *
@@ -42,6 +46,7 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={TestConfiguration.class})
 @TestPropertySource("classpath:application-test.properties")
+@Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 public class IncomingMessageServiceITCase {
 
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
@@ -87,14 +92,16 @@ public class IncomingMessageServiceITCase {
     
     
     @Test
-    public void testReceiveMessageFromGw() throws IOException {
-        
-        //messageBuilder.setMessageDetails(loadMessageDetailsFromPropertyFile("/testmessages/msg1/message.properties"));
+    public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException {        
         DomibusConnectorMessage loadMessageFrom = loadMessageFrom("/testmessages/msg1/");
         
         assertThat(loadMessageFrom).isNotNull();
         
         rcvMessageFromGwService.deliverMessageFromGateway(loadMessageFrom);
+        
+        
+        //TODO: check database!
+        //TODO: check jms queue!
         
     }
     
@@ -136,12 +143,17 @@ public class IncomingMessageServiceITCase {
     }
     
     private DomibusConnectorBigDataReference loadRelativeResourceAsByteArray(String base, String relative) {
-        InputStream inputStream = loadRelativeResource(base, relative);
+        try {
+            InputStream inputStream = loadRelativeResource(base, relative);
 
-        DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
-        inMemory.setInputStream(inputStream);
-        inMemory.setReadable(true);
-        return inMemory;
+            DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+            inMemory.setInputStream(new ByteArrayInputStream(StreamUtils.getBytes(inputStream)));
+            inMemory.setReadable(true);
+            inMemory.setStorageIdReference(UUID.randomUUID().toString());
+            return inMemory;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
     
     private InputStream loadRelativeResource(String base, String relative) {

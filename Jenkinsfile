@@ -41,6 +41,7 @@ node {
 			def RELEASE = false
 			def HOTFIX = false			
 			def releaseVersion = ""
+			def hotfixVersion = ""
 			stage ('Initialize') {
 				sh '''
 					echo "PATH = ${PATH}"
@@ -48,14 +49,12 @@ node {
 					echo "HOTFIX = ${HOTFIX}"
 					echo "RELEASE = ${RELEASE}"					
 				'''
-				
+				//check if its an release branch
 				if ( scmInfo.GIT_BRANCH.startsWith("origin/release/") ) {
 					RELEASE = true 
-					releaseVersion = scmInfo.GIT_BRANCH.substring(7,15)
 				}
 				if (scmInfo.GIT_BRANCH.startsWith("origin/hotfix/")) {
 					HOTFIX = true
-					hotfixVersion = scmInfo.GIT_BRANCH.substring(7,14)
 				}
 						
 				try {
@@ -68,8 +67,8 @@ node {
 				//TODO: always clean up workspace!
 			}
 			
-			//FAILURE, SUCCESS, UNSTABLE
 					
+			//chdir to project directory and execute maven tasks					
 			dir ('domibusConnector') {
 			
 				//TODO: install all files to local repository - only use cache for remote repos
@@ -81,31 +80,40 @@ node {
 
 				try {
 					stage ('Test') {
-						sh 'mvn -fn -Dmaven.test.failure.ignore=true test' //ignore test failures to execute ALL tests
-						sh 'mvn test' //TODO find better solution to fail this step if test failures occure
+						//sh 'mvn -fn test' //ignore test failures to execute ALL tests and fail never
+						//sh 'mvn test' //execute tests again to get failure: TODO find better solution to fail this step if test failures occure
+						//using failsafe plugin for unitTests to run all unit tests and fail afterwards
+						sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:integration-test'''
+						sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:verify'''
+				
 					}
 				} catch (e) {
-					currentBuild.result = 'UNSTABLE'
+					currentBuild.result = 'FAILURE'
 				}
 				
 					
 				try {					
+					//-dmaven.test.failure.ignore=true
 					stage ('Integration Test') {
-						sh 'mvn -Dmaven.test.failure.ignore=true -P integration-testing,dbunit-testing verify'
+						sh 'mvn -P integration-testing,dbunit-testing verify'
+						sh 'mvn -P integration-testing,dbunit-testing failsafe:verify' //verify executed tests
 					}
 				} catch (e) {
+					if (currentBuild.result == 'SUCCESS') {
 						currentBuild.result = 'UNSTABLE'
+					}
 				} 
 				
 				stage ('Post') {
-					if (currentBuild.result == null || currentBuild.result != 'FAILURE') {
+					//if (currentBuild.result == null || currentBuild.result != 'FAILURE') 
+					//{
 						junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
-						try {
-							jacoco() //ignore failures
-						} catch (e) {
-							
-						}
-					}
+						//try {
+						jacoco() 
+						//} catch (e) {
+						//	
+						//}
+					//}
 				}
 				
 				
