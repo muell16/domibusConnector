@@ -85,9 +85,8 @@ public class TransitionCreator {
     
     public static DomibusConnectorMessageAttachmentType createMessageAttachment() {
         DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
-
-        InputStreamDataSource ds = InputStreamDataSource.InputStreamDataSourceFromByteArray("attachment".getBytes());        
-        DataHandler dataHandler = new DataHandler(ds);   
+             
+        DataHandler dataHandler = new DataHandler("attachment".getBytes(), "application/octet-stream");   
         
         attachment.setAttachment(dataHandler);
         attachment.setDescription("description");
