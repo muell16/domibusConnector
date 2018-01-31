@@ -322,7 +322,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                         asicContainerDataRef.getStorageIdReference()));
             }
             
-            DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
+            DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(tokenXMLAttachment.getAttachment());
             InputStream tokenStream; /// = xmlTokenDataRef.getInputStream();
             try {
                 tokenStream = xmlTokenDataRef.getInputStream();
