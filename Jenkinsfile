@@ -2,7 +2,7 @@ node {
 
 	List MY_ENV = []
 	try {
-		configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
+		configFileProvider([configFile(fileId: '-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
 			
 					
 			new File(env.PROXY_ENV).eachLine { line ->			
