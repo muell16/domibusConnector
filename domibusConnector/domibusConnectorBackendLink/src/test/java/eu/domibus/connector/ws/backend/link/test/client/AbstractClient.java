@@ -66,31 +66,59 @@ import org.xml.sax.SAXException;
 //    HibernateJpaAutoConfiguration.class,
 //    EmbeddedServletContainerAutoConfiguration.class})
 //@Configuration
-public class AbstractClient {
+public abstract class AbstractClient {
 
-    public static void startSpringApplication(String... properties) {
+    protected abstract ClientPasswordCallback getClientPasswordCallback();
+
+    protected abstract String getUser();
+
+//    public static void startSpringApplication(String... properties) {
+//        try {
+//            SpringApplicationBuilder builder = new SpringApplicationBuilder();
+//            SpringApplication springApp = builder.bannerMode(Banner.Mode.OFF)
+//                    .sources(AbstractClient.class)                
+//                    .properties(properties)
+//                    .web(false)
+//                    .build();
+//
+//            ConfigurableApplicationContext appContext = springApp.run();   
+//
+//            SendMessageService sendMessageService = appContext.getBean(SendMessageService.class);
+//            sendMessageService.initializeAndSendMessage();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+//    
+//    @Bean
+//    public static PropertySourcesPlaceholderConfigurer
+//            propertySourcesPlaceholderConfigurer() {
+//        return new PropertySourcesPlaceholderConfigurer();
+//    }
+    
+    
+    protected void initializeAndSendMessage() {
+        SendMessageServiceImpl sendMessageServiceImpl = new SendMessageServiceImpl();
+        
+        
+        
+    }
+    
+    
+    Properties loadProperties() {
         try {
-            SpringApplicationBuilder builder = new SpringApplicationBuilder();
-            SpringApplication springApp = builder.bannerMode(Banner.Mode.OFF)
-                    .sources(AbstractClient.class)                
-                    .properties(properties)
-                    .web(false)
-                    .build();
-
-            ConfigurableApplicationContext appContext = springApp.run();   
-
-            SendMessageService sendMessageService = appContext.getBean(SendMessageService.class);
-            sendMessageService.sendMessage();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            InputStream inputStream = getClass().getResourceAsStream("application.properties");
+            if (inputStream == null) {
+                throw new RuntimeException("cannot read properties - input stream is null!");
+            }
+            Properties props = new Properties();
+            props.load(inputStream);
+            return props;
+        } catch (IOException ioe) {
+            throw new RuntimeException("cannot read properties!");
         }
     }
     
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer
-            propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
+    
     
 }

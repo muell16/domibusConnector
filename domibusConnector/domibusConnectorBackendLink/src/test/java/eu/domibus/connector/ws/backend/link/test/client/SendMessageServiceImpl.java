@@ -179,6 +179,41 @@ public class SendMessageServiceImpl implements SendMessageService {
             throw new RuntimeException("Loading Policy failed", e);
         }
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getWebservicesPath() {
+        return webservicesPath;
+    }
+
+    public void setWebservicesPath(String webservicesPath) {
+        this.webservicesPath = webservicesPath;
+    }
+
+    public String getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(String serverPort) {
+        this.serverPort = serverPort;
+    }
+    
+    
+    
     
     
 }

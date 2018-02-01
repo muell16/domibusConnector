@@ -35,21 +35,19 @@ import org.apache.wss4j.dom.handler.WSHandlerConstants;
 public class BackendClientAlice extends AbstractClient {
 
     public static void main(String[] args) throws MalformedURLException {
-        AbstractClient.startSpringApplication("ws.username=alice", "ws.password=test");
+      
         
     }
     
+
+    @Override
+    protected ClientPasswordCallback getClientPasswordCallback() {
+        return new ClientPasswordCallback("alice", "test");
+    }
+
+    @Override
+    protected String getUser() {
+        return "alice";
+    }
     
-        
-//    
-//    @Override
-//    protected ClientPasswordCallback getClientPasswordCallback() {
-//        return new ClientPasswordCallback("alice", "test");
-//    }
-//
-//    @Override
-//    protected String getUser() {
-//        return "alice";
-//    }
-//    
 }
