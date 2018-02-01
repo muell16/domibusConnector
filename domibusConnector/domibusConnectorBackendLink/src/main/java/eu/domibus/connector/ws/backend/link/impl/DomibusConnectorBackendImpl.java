@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Service
+@Service("connectorBackendImpl")
 public class DomibusConnectorBackendImpl implements DomibusConnectorBackendWebService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBackendWebService.class);
@@ -35,6 +35,8 @@ public class DomibusConnectorBackendImpl implements DomibusConnectorBackendWebSe
     public DomibsConnectorAcknowledgementType submitMessage(DomibusConnectorMessageType submitMessageRequest) {
         //TODO: submit message
         LOGGER.debug("#submitMessage: message: [{}]", submitMessageRequest);
+        
+        
         
         //TODO: get user, password, certificate
         //System.out.println("HALLO WELT I RCV A MESSAGE!");

@@ -153,7 +153,7 @@ public class WSBackendLinkContextConfigurationITCase {
         // for hashed password use:
         //properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
         // Callback used to retrieve password for given user.
-        outProps.put(WSHandlerConstants.PW_CALLBACK_REF,  new ClientPasswordCallback("test"));
+        outProps.put(WSHandlerConstants.PW_CALLBACK_REF,  new ClientPasswordCallback("bob", "test"));
         
         outInterceptors.add(outInterceptor);
         
