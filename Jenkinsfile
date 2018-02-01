@@ -22,6 +22,7 @@ node {
 		 
 				echo "scm : ${scmInfo}"
 				echo "${scmInfo.GIT_COMMIT}"
+				
 			}
 					
 				
@@ -52,7 +53,8 @@ node {
 						echo "PATH = ${PATH}"
 						echo "M2_HOME = ${M2_HOME}"   
 						echo "HOTFIX = ${HOTFIX}"
-						echo "RELEASE = ${RELEASE}"					
+						echo "RELEASE = ${RELEASE}"	
+					    env
 					'''
 					//check if its an release branch
 					if ( scmInfo.GIT_BRANCH.startsWith("origin/release/") ) {
