@@ -1,5 +1,5 @@
 node {
-	configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
+	configFileProvider([configFile(fileId: 'ProxyEnv', variable: 'PROXY_ENV')]) {
 		
 		List MY_ENV = []
 		
