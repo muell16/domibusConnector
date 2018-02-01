@@ -1,11 +1,18 @@
 node {
-	configFileProvider([configFile(fileId: 'ProxyEnv', variable: 'PROXY_ENV')]) {
-		
-		List MY_ENV = []
-		
-		new File(env.PROXY_ENV).eachLine { line ->			
-			MY_ENV.add(line)
-		}
+
+	List MY_ENV = []
+	try {
+		configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
+			
+					
+			new File(env.PROXY_ENV).eachLine { line ->			
+				MY_ENV.add(line)
+			}
+			
+		} //END CONFIG FILE PROVIDER PROXY_ENV
+	} catch(e) {
+		//do nothing if file not found...
+	}
    
 				
 		MY_ENV.add("GIT_SSL_NO_VERIFY=true")
@@ -247,6 +254,6 @@ node {
 		}  //end withEnv(GIT_ENV)
 	
 	
-	} //END CONFIG FILE PROVIDER PROXY_ENV
+	
     
 }
