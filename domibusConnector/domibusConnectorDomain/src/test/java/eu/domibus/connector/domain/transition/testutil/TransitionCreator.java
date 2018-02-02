@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
 import java.io.ByteArrayInputStream;
 import javax.activation.DataHandler;
 import javax.xml.transform.stream.StreamSource;
+import org.apache.cxf.attachment.ByteDataSource;
 
 /**
  * Helper class to create TransitionModel Objects for testing 
@@ -44,7 +45,7 @@ public class TransitionCreator {
         
         DomibusConnectorMessageDocumentType document = new DomibusConnectorMessageDocumentType();
         
-        DataHandler dataHandler = new DataHandler("document".getBytes(), "application/octet-stream");        
+        DataHandler dataHandler = new DataHandler(new ByteDataSource("document".getBytes(), "application/octet-stream"));        
         document.setDocument(dataHandler);
         //document.setDocument(value);
         document.setDocumentName("documentName");
@@ -86,7 +87,7 @@ public class TransitionCreator {
     public static DomibusConnectorMessageAttachmentType createMessageAttachment() {
         DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
              
-        DataHandler dataHandler = new DataHandler("attachment".getBytes(), "application/octet-stream");   
+        DataHandler dataHandler = new DataHandler(new ByteDataSource("attachment".getBytes(), "application/octet-stream"));   
         
         attachment.setAttachment(dataHandler);
         attachment.setDescription("description");

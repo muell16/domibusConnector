@@ -1,5 +1,4 @@
-
-package eu.domibus.connector.ws.backend.link.test.client;
+package eu.domibus.connector.ws.backend.linktest.client;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -42,6 +41,7 @@ import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.neethi.Policy;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -50,9 +50,11 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.xml.sax.SAXException;
 
@@ -60,65 +62,62 @@ import org.xml.sax.SAXException;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-//@SpringBootApplication(scanBasePackages="eu.domibus.connector.ws.backend.link.test.client", exclude= {
-//    DataSourceAutoConfiguration.class, 
-//    DataSourceTransactionManagerAutoConfiguration.class, 
-//    HibernateJpaAutoConfiguration.class,
-//    EmbeddedServletContainerAutoConfiguration.class})
-//@Configuration
-public abstract class AbstractClient {
+@SpringBootApplication(scanBasePackageClasses = CommonBackendClient.class, exclude = {
+    DataSourceAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class,
+    HibernateJpaAutoConfiguration.class,
+    EmbeddedServletContainerAutoConfiguration.class})
+@Configuration
+@ImportResource("classpath:/test/testclient.xml")
+public class CommonBackendClient {
 
-    protected abstract ClientPasswordCallback getClientPasswordCallback();
+    public static ApplicationContext startSpringApplication(String... properties) {
 
-    protected abstract String getUser();
+        SpringApplicationBuilder builder = new SpringApplicationBuilder();
+        SpringApplication springApp = builder.bannerMode(Banner.Mode.OFF)
+                .sources(CommonBackendClient.class)
+                .properties(properties)
+                .web(false)
+                .build();
 
-//    public static void startSpringApplication(String... properties) {
+        ConfigurableApplicationContext appContext = springApp.run();
+        
+        return appContext;
+
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer
+            propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+            
+            
+//    protected void initializeAndSendMessage() {
+//        SendMessageServiceImpl sendMessageServiceImpl = new SendMessageServiceImpl();
+//
+//        Properties props = loadProperties();
+//
+//        sendMessageServiceImpl.setPassword("test");
+//        sendMessageServiceImpl.setUsername("bob");
+//
+//        sendMessageServiceImpl.sendMessage();
+//
+//    }
+//
+//    Properties loadProperties() {
 //        try {
-//            SpringApplicationBuilder builder = new SpringApplicationBuilder();
-//            SpringApplication springApp = builder.bannerMode(Banner.Mode.OFF)
-//                    .sources(AbstractClient.class)                
-//                    .properties(properties)
-//                    .web(false)
-//                    .build();
-//
-//            ConfigurableApplicationContext appContext = springApp.run();   
-//
-//            SendMessageService sendMessageService = appContext.getBean(SendMessageService.class);
-//            sendMessageService.initializeAndSendMessage();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
+//            InputStream inputStream = getClass().getResourceAsStream("/application.properties");
+//            if (inputStream == null) {
+//                throw new RuntimeException("cannot read properties - input stream is null!");
+//            }
+//            Properties props = new Properties();
+//            props.load(inputStream);
+//            return props;
+//        } catch (IOException ioe) {
+//            throw new RuntimeException("cannot read properties!");
 //        }
 //    }
-//    
-//    @Bean
-//    public static PropertySourcesPlaceholderConfigurer
-//            propertySourcesPlaceholderConfigurer() {
-//        return new PropertySourcesPlaceholderConfigurer();
-//    }
-    
-    
-    protected void initializeAndSendMessage() {
-        SendMessageServiceImpl sendMessageServiceImpl = new SendMessageServiceImpl();
-        
-        
-        
-    }
-    
-    
-    Properties loadProperties() {
-        try {
-            InputStream inputStream = getClass().getResourceAsStream("application.properties");
-            if (inputStream == null) {
-                throw new RuntimeException("cannot read properties - input stream is null!");
-            }
-            Properties props = new Properties();
-            props.load(inputStream);
-            return props;
-        } catch (IOException ioe) {
-            throw new RuntimeException("cannot read properties!");
-        }
-    }
-    
-    
-    
+
 }

@@ -1,5 +1,5 @@
 
-package eu.domibus.connector.ws.backend.link.test.client;
+package eu.domibus.connector.ws.backend.linktest.client;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -57,31 +57,37 @@ public class SendMessageServiceImpl implements SendMessageService {
     
     
     @Override
-    public void sendMessage() throws MalformedURLException {
+    public void sendMessage() {
         
-        WSBackendLinkConfigurationProperties backendLinkConfigurationProperties = new WSBackendLinkConfigurationProperties();
-        String publish = backendLinkConfigurationProperties.getBackendPublishAddress();
-        String url = "http://localhost:" + serverPort + webservicesPath + publish;
-        
-        JaxWsProxyFactoryBean jaxWsProxyFactoryBean
-                = new JaxWsProxyFactoryBean();
-        jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorBackendWebService.class);
-        jaxWsProxyFactoryBean.setAddress(url);
-        jaxWsProxyFactoryBean.setWsdlURL(url+ "?wsdl");
-        jaxWsProxyFactoryBean.setProperties(new HashMap<>());
-        jaxWsProxyFactoryBean.getProperties().put("ws-security.username", "bob");
-        jaxWsProxyFactoryBean.getProperties().put("ws-security.password", "test");
-        
+            WSBackendLinkConfigurationProperties backendLinkConfigurationProperties = new WSBackendLinkConfigurationProperties();
+            String publish = backendLinkConfigurationProperties.getBackendPublishAddress();
+            String url = "http://localhost:" + serverPort + webservicesPath + publish;
+
+            JaxWsProxyFactoryBean jaxWsProxyFactoryBean
+                    = new JaxWsProxyFactoryBean();
+            jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorBackendWebService.class);
+            
+            MTOMFeature mtom = new MTOMFeature();
+            
+            
     
-        
-        
-//        requestContext
-        DomibusConnectorBackendWebService domibusConnectorBackendWebService = (DomibusConnectorBackendWebService)jaxWsProxyFactoryBean.create();
-        
-        DomibusConnectorMessageType msg = TransitionCreator.createMessage();
-        DomibsConnectorAcknowledgementType response = domibusConnectorBackendWebService.submitMessage(msg);
-        System.out.println("RESPONSE result: " + response.isResult());
-        
+            jaxWsProxyFactoryBean.setAddress(url);
+            jaxWsProxyFactoryBean.setWsdlURL(url+ "?wsdl");
+            jaxWsProxyFactoryBean.setProperties(new HashMap<>());
+            jaxWsProxyFactoryBean.getProperties().put("ws-security.username", "bob");
+            jaxWsProxyFactoryBean.getProperties().put("ws-security.password", "test");
+
+
+
+
+    //        requestContext
+            DomibusConnectorBackendWebService domibusConnectorBackendWebService = (DomibusConnectorBackendWebService)jaxWsProxyFactoryBean.create();
+
+            DomibusConnectorMessageType msg = TransitionCreator.createMessage();
+            DomibsConnectorAcknowledgementType response = domibusConnectorBackendWebService.submitMessage(msg);
+            System.out.println("RESPONSE result: " + response.isResult());
+
+    }
         
 //        
 //        
@@ -137,8 +143,8 @@ public class SendMessageServiceImpl implements SendMessageService {
 //
 //        DomibusConnectorMessageType msg = TransitionCreator.createMessage();
 //        DomibsConnectorAcknowledgementType response = backendWebServiceClient.submitMessage(msg);
-//        System.out.println("RESPONSE result: " + response.isResult());
-    }
+////        System.out.println("RESPONSE result: " + response.isResult());
+//    }
 
     
 

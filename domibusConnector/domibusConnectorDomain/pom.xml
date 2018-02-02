@@ -112,5 +112,9 @@
             <artifactId>commons-io</artifactId>
             <type>jar</type>
         </dependency>-->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+        </dependency>
     </dependencies>    
 </project>

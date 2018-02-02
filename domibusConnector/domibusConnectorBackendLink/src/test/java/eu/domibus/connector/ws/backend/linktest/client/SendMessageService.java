@@ -1,5 +1,5 @@
 
-package eu.domibus.connector.ws.backend.link.test.client;
+package eu.domibus.connector.ws.backend.linktest.client;
 
 import java.net.MalformedURLException;
 

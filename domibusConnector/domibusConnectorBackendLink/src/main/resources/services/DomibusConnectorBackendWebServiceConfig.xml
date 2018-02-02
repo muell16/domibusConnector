@@ -20,14 +20,15 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
         <cxf:features>
             <p:policies/>
             <cxf:logging/>
+            
         </cxf:features>
     </cxf:bus>
     
     
     <jaxws:endpoint id="connectorBackendWS"
                     implementor="#connectorBackendImpl"
-
                     address="/backend"
+                    
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
                     xmlns:s="http://service.jaxws.cxf.apache.org/service"
                                                            
@@ -42,10 +43,18 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
                    value="etc/truststore.properties"/>
             <entry key="security.encryption.username"
                    value="useReqSigCert"/>-->
-                   
-            <entry key="ws-security.callback-handler" value-ref="myPasswordCallback"/>
+            
+            <entry key="security.signature.properties" value="eu/domibus/connector/ws/backend/link/ws/decrypt.properties"/>
+            <entry key="security.signature.username" value="connector" />
+
+            <entry key="security.encryption.properties" value="eu/domibus/connector/ws/backend/link/ws/decrypt.properties" />           
+            <entry key="security.encryption.username" value="bob" />
+            
+
             <entry key="security.callback-handler" value-ref="myPasswordCallback"/>
-                   
+
+            <entry key="mtom-enabled" value="true" />
+            <entry key="security.store.bytes.in.attachment" value="true" />
 <!--                   <entry key="ws-security.ut.validator" value="eu.domibus.connector.ws.backend.link.spring.MyUsernameTokenValidator" />-->
         </jaxws:properties>
          <jaxws:features>

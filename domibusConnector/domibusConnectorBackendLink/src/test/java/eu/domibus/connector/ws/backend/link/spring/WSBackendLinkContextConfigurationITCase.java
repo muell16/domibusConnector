@@ -2,24 +2,35 @@
 package eu.domibus.connector.ws.backend.link.spring;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
+import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureMimeType;
+import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import static eu.domibus.connector.domain.transition.testutil.TransitionCreator.createMessageDetails;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWSService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
+import eu.domibus.connector.ws.backend.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import javax.activation.DataHandler;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.MTOMFeature;
+import org.apache.cxf.attachment.ByteDataSource;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
@@ -49,6 +60,7 @@ import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -60,7 +72,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @Import(WSBackendLinkContextConfigurationITCase.TestConfiguration.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(properties= {"server.port=8093"}, webEnvironment = WebEnvironment.DEFINED_PORT)
 public class WSBackendLinkContextConfigurationITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkContextConfigurationITCase.class);
@@ -75,21 +87,15 @@ public class WSBackendLinkContextConfigurationITCase {
     
     @Value("${spring.webservices.path}")
     String webservicesPath;
-//
-//    @Autowired
-//    GatewayLinkWsServiceProperties gatewayLinkWsServiceProperties;
-//    
-//    @MockBean
-//    DomibusConnectorGatewayDeliveryService controllerDeliveryService;
     
     @Autowired
     DomibusConnectorBackendWebService backendWebService;
     
     @Autowired
     WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
-    
-//    @Before
-//    public void setUp() {
+        
+    @Before
+    public void setUp() {
 //        Mockito.when(backendWebService.submitMessage(any(DomibusConnectorMessageType.class))).thenAnswer(new Answer<DomibsConnectorAcknowledgementType> () {
 //            @Override
 //            public DomibsConnectorAcknowledgementType answer(InvocationOnMock invocation) throws Throwable {
@@ -98,70 +104,33 @@ public class WSBackendLinkContextConfigurationITCase {
 //                answer.setResult(true);
 //                return answer;
 //            }
-//        });        
-//    }
-    
-    
-    @Test
-    public void testCallSoapService() throws InterruptedException, MalformedURLException {
-        
-        String publish = backendLinkConfigurationProperties.getBackendPublishAddress(); 
-        
-        String url = "http://localhost:" + port + webservicesPath + publish;
-        System.out.println("URL " + url);
-        
-        System.out.println("sleep started server port " + port);
-        Thread.sleep(30);
-        System.out.println("sleep ended, calling service");        
-        
-        URL wsdlURL = new URL(url + "?wsdl"); 
-        QName serviceName = DomibusConnectorBackendWSService.DomibusConnectorBackendWebService;
-                            
-        MTOMFeature mtom = new MTOMFeature();
+//        });
 
-        Service service = Service.create(wsdlURL, serviceName, mtom);
-        
-        
-        DomibusConnectorBackendWebService backendWebServiceClient = service.getPort(DomibusConnectorBackendWebService.class);
-        org.apache.cxf.endpoint.Client client = ClientProxy.getClient(backendWebServiceClient);
-        org.apache.cxf.endpoint.Endpoint cxfEndpoint = client.getEndpoint();
-        cxfEndpoint.getOutInterceptors().addAll(configureOutgoingInterceptors());
-        
+
+    }
+    
+    
+    /**
+     * builds a test client via new spring ctx and calls the server
+     */
+    @Test
+    public void testCallBackendService_submitMessage() {
+        ApplicationContext clientCtx = CommonBackendClient.startSpringApplication(
+                "connector.backend.ws.username=bob", 
+                "connector.backend.ws.password=test",                
+                "connector.backend.ws.address=http://localhost:" + port + "/services/backend"
+        );
+
+        DomibusConnectorBackendWebService domibusConnectorBackendWebService = clientCtx.getBean("backendClient", DomibusConnectorBackendWebService.class);
+
         DomibusConnectorMessageType msg = TransitionCreator.createMessage();
-        
-        DomibsConnectorAcknowledgementType response = backendWebServiceClient.submitMessage(msg);
-        
+        DomibsConnectorAcknowledgementType response = domibusConnectorBackendWebService.submitMessage(msg);
         System.out.println("RESPONSE result: " + response.isResult());
         
-        assertThat(response.isResult()).isTrue();
-                
+        assertThat(response).isNotNull();
+        
     }
-    
-    private  List<Interceptor<? extends Message>> configureOutgoingInterceptors() {
-        List<Interceptor<? extends Message>> outInterceptors = new ArrayList<>();
-        
-        
-        WSS4JStaxOutInterceptor outInterceptor = new PolicyBasedWSS4JStaxOutInterceptor();
-        outInterceptor.setAllowMTOM(true);   
-        
-        Properties outProps = new Properties();
-        outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-        // Specify our username
-        outProps.put(WSHandlerConstants.USER, "test");
-        // Password type : plain text
-        outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-        // for hashed password use:
-        //properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
-        // Callback used to retrieve password for given user.
-        outProps.put(WSHandlerConstants.PW_CALLBACK_REF,  new ClientPasswordCallback("bob", "test"));
-        
-        outInterceptors.add(outInterceptor);
-        
-        return outInterceptors;
-    }
-    
-    
-    
+
     
 }
 
