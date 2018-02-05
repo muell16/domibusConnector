@@ -346,13 +346,21 @@
             </exclusions>
         </dependency>
 
-        <!--  TEST DEPENDENCIES -->
+<!--        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>-->
+
 
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
+
+        <!--  TEST DEPENDENCIES -->
+
+
 
         <!-- required by primefaces for file-upload -->
         <dependency>
@@ -406,14 +414,6 @@
             <artifactId>log4j-web</artifactId>
         </dependency>
         <!-- required for weblogic -->
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-        </dependency>
 <!--         end of weblogic req -->
         <dependency>
             <groupId>${project.groupId}</groupId>
