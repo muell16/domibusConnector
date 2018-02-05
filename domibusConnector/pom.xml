@@ -130,15 +130,32 @@
                 <artifactId>dss-utils-apache-commons</artifactId>
                 <version>5.1_ALT</version>
             </dependency>
-            
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.57</version>
+                <type>jar</type>
+            </dependency>
+                        
             <!-- MANAGED Spring dependencies -->
             
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.5.7.RELEASE</version>
+                <version>1.5.8.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             
@@ -197,6 +214,19 @@
                 <version>${org.apache.cxf.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>    
+                <version>2.0.5</version>
+            </dependency>
+            <!-- handle not matching dependencies in apache cxf package -->
+            <dependency>
+                <!-- overwrite dependency version in org.apache.neethi:neethi and org.apache.cxf:cxf-core -->
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>woodstox-core-asl</artifactId>
+                <version>4.4.1</version>
+            </dependency>
+            <dependency>
+                <!-- overwrite dependency version in org.apache.neethi:neethi:3.0.3 and org.apache.santuario:xmlsec -->
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
                 <version>3.2.1</version>
@@ -204,7 +234,6 @@
 
 		
             <!-- Other dependencies -->
-
             <dependency>
                 <groupId>c3p0</groupId>
                 <artifactId>c3p0</artifactId>
@@ -285,7 +314,14 @@
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
                 <version>2.5.4</version>
-            </dependency>                     
+            </dependency>    
+            
+             <!-- google code findbugs annotations -->                 
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>3.0.2</version>                
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
@@ -557,6 +593,33 @@
                         </goals>
                     </execution>
                 </executions>                
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <rules>
+                        <dependencyConvergence>
+                        </dependencyConvergence>
+                        <bannedDependencies>
+                            <searchTransitive>true</searchTransitive>
+                            <excludes>
+<!--                                <exclude>commons-logging:commons-logging</exclude>-->
+                                <exclude>ch.qos.logback:logback-classic</exclude>
+                                <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>                     
+                            </excludes>
+                        </bannedDependencies>
+                    </rules>
+                </configuration>
             </plugin>
         </plugins>
     </build>
