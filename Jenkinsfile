@@ -73,7 +73,7 @@ node {
 			
 				//TODO: install all files to local repository - only use cache for remote repos
 				stage ('Build') {
-					sh 'mvn -DskipTests=true install'
+					sh 'mvn -DskipTests=true clean install'
 					//sh 'mvn -DskipTests package'
 				}
 				
