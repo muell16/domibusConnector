@@ -42,15 +42,15 @@ import org.springframework.test.context.TestPropertySource;
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class})
-@TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"}, 
+@ContextConfiguration(classes={DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class})
+@TestPropertySource(locations={"classpath:test.properties", "classpath:test-auth.properties"}, 
         properties= {   "liquibase.change-log=classpath:/db/changelog/install/initial-4.0.xml",
                         "spring.jpa.show-sql=true",
                         "spring.datasource.url=jdbc:h2:mem:testdb",
                         "spring.datasource.username=sa",
                         "spring.datasource.driver-class-name=org.h2.Driver",
 })
-public class DomibusConnectorSecurityToolkitITCase {
+public class DomibusConnectorSecurityToolkitAuthITCase {
 
     @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"}) //, "eu.domibus.connector.persistence"})
     public static class TestContextConfiguration {
@@ -70,7 +70,7 @@ public class DomibusConnectorSecurityToolkitITCase {
     }
     
     
-	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityToolkitITCase.class);
+	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityToolkitAuthITCase.class);
 
 	public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
 
@@ -83,24 +83,18 @@ public class DomibusConnectorSecurityToolkitITCase {
 	
 	@Resource
 	private DomibusConnectorSecurityToolkit securityToolkit;
-
-	@Test
-	public void testSignedDoc() throws IOException {
-		
-		testDoc("ExamplePdfSigned.pdf", "signedResultToken");
-
-	}
 	
 	@Test
-	public void testUnsignedDoc() throws IOException {
+	public void testAuthSignedDoc() throws IOException {
 		
-		testDoc("ExamplePdfUnsigned.pdf", "unsignedResultToken");
+		testDoc("ExamplePdfUnsigned.pdf", "authenticationResultToken");
 
 	}
 
 
 	private void testDoc(final String exampleName, final String resultName) throws IOException {
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+		details.setOriginalSender("TestUser");
 
 		DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
@@ -124,13 +118,11 @@ public class DomibusConnectorSecurityToolkitITCase {
 			if (attachment.getName().equals("Token.xml")) {
 				writeResult(resultName +".xml", StreamUtils.copyToByteArray(result.getInputStream()));
 				//test xml
-                if ("signedResultToken".equals(resultName)) {
+                if ("authenticationResultToken".equals(resultName)) {
 //TODO: compare resulting xml!
 //                    Assert.assertThat(attachment.getAttachment(),
 //                            isSimilarTo("control xml").withNodeMatcher(
 //                                    new DefaultNodeMatcher(ElementSelectors.byName)));
-                } else if ("unsignedResultToken".equals(resultName)) {
-
                 } else {
                     throw new IllegalStateException("should not end up here! Passed unsupported result name!");
                 }
@@ -145,7 +137,7 @@ public class DomibusConnectorSecurityToolkitITCase {
 
 	private static String getTestFilesDir() {
 		String dir = System.getProperty(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "." + File.separator + "target" + File.separator + "testfileresults" + File.separator);
-		dir = dir + DomibusConnectorSecurityToolkitITCase.class.getSimpleName();
+		dir = dir + DomibusConnectorSecurityToolkitAuthITCase.class.getSimpleName();
 		return dir;
 	}
 

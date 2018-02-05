@@ -19,6 +19,7 @@ node {
 		
 		withEnv(MY_ENV) {
 			stage ("Checkout") {
+				cleanWs()
 				scmInfo = checkout([
 						$class: 'GitSCM',
 						branches: scm.branches,
