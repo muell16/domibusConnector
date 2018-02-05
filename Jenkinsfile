@@ -56,6 +56,8 @@ node {
 				def HOTFIX = false			
 				def releaseVersion = ""
 				def hotfixVersion = ""
+				def buildShouldFail = false
+				def buildShouldUnstable = false
 				stage ('Initialize') {
 					sh '''
 						echo "PATH = ${PATH}"
@@ -103,7 +105,8 @@ node {
 					
 						}
 					} catch (e) {
-						currentBuild.result = 'FAILURE'
+						//currentBuild.result = 'FAILURE'
+						buildShouldFail = true
 					}
 					
 						
@@ -114,9 +117,7 @@ node {
 							sh 'mvn -P integration-testing,dbunit-testing failsafe:verify' //verify executed tests
 						}
 					} catch (e) {
-						if (currentBuild.result == 'SUCCESS') {
-							currentBuild.result = 'UNSTABLE'
-						}
+						buildShouldUnstable = true
 					} 
 					
 					stage ('Post') {
@@ -180,6 +181,12 @@ node {
 					
 					} */
 				
+					if (buildShouldUnstable) {
+						currentBuild.result = 'UNSTABLE'
+					}
+					if (buildShouldFail) {
+						currentBuild.result = 'FAILURE'
+					}
 					
 					
 					if (RELEASE || HOTFIX )  {
