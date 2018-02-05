@@ -88,7 +88,7 @@ node {
 				
 					//TODO: install all files to local repository - only use cache for remote repos
 					stage ('Build') {
-						sh 'mvn -DskipTests=true install'
+						sh 'mvn -DskipTests=true clean install'
 						//sh 'mvn -DskipTests package'
 					}
 					
@@ -120,15 +120,9 @@ node {
 					} 
 					
 					stage ('Post') {
-						//if (currentBuild.result == null || currentBuild.result != 'FAILURE') 
-						//{
-							junit '**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
-							//try {
-							jacoco() 
-							//} catch (e) {
-							//	
-							//}
-						//}
+						junit '**/test-reports/*.xml,**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
+						
+						jacoco() 
 					}
 					
 					
