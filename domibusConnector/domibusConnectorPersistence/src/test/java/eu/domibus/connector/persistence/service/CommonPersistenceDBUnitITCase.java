@@ -21,14 +21,20 @@ public abstract class CommonPersistenceDBUnitITCase {
     static class TestConfiguration {
     }
 
-    static ConfigurableApplicationContext APPLICATION_CONTEXT;
+    protected static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
-    
     public static ConfigurableApplicationContext setUpTestDatabaseWithSpringContext() {
-        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
+        return setUpTestDatabaseWithSpringContext(TestConfiguration.class);
+    }
+    
+    
+    public static ConfigurableApplicationContext setUpTestDatabaseWithSpringContext(Class ...sources) {
+        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
                 //.profiles("test", "db_mysql")
+                .sources(sources)
+                .web(false)
                 .profiles("test", "db_h2")
-                .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml")
+                .properties("liquibase.change-log=classpath:/db/changelog/install/initial-4.0.xml")
                 ;
         ConfigurableApplicationContext applicationContext = springAppBuilder.run();
         System.out.println("APPCONTEXT IS STARTED...:" + applicationContext.isRunning());       

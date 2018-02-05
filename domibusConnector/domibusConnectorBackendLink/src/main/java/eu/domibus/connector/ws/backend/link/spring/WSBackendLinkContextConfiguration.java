@@ -1,6 +1,9 @@
 
 package eu.domibus.connector.ws.backend.link.spring;
 
+import eu.domibus.connector.backend.persistence.dao.BackendPersistenceDaoPackage;
+import eu.domibus.connector.backend.persistence.model.BackendPersistenceModelPackage;
+import eu.domibus.connector.backend.persistence.spring.BackendPersistenceConfig;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import java.io.IOException;
@@ -54,10 +57,12 @@ import org.apache.wss4j.dom.validate.UsernameTokenValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.xml.sax.SAXException;
 
 /**
@@ -65,6 +70,7 @@ import org.xml.sax.SAXException;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
+@Import(BackendPersistenceConfig.class)
 @ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
 public class WSBackendLinkContextConfiguration {
 
@@ -79,123 +85,5 @@ public class WSBackendLinkContextConfiguration {
     @Autowired
     WSBackendLinkConfigurationProperties wsBackendLinkConfigurationProperties;
     
-    
-//    @Bean    
-    public Endpoint endpoint() {       
-        
-        MTOMFeature mtom = new MTOMFeature();
-        WSPolicyFeature wsPolicyFeature = new WSPolicyFeature(this.createPolicy());
-        
-        //bus.getProperties().put("ws-security.ut.validator", new MUsernameTokenValidator());
-//        bus.setProperties(configureWsProperties());
-
-        String publishAddress = wsBackendLinkConfigurationProperties.getBackendPublishAddress();
-        
-        WebServiceFeature[] webServiceFeatures = new WebServiceFeature[] {mtom, wsPolicyFeature};
-                
-        QName backendWebServiceName = DomibusConnectorBackendWSService.DomibusConnectorBackendWebService;               
-        String wsdl = DomibusConnectorBackendWSService.WSDL_LOCATION.toString();
-        
-        EndpointImpl endpointImpl = new EndpointImpl(bus, backendWebService, null, wsdl, webServiceFeatures);        
-                                
-        endpointImpl.setServiceName(backendWebServiceName);
-        endpointImpl.setProperties(configureWsProperties());
-        
-        LOGGER.info("publishing endpoint [{}] to [{}]", endpointImpl, publishAddress);
-     
-        endpointImpl.publish(publishAddress); 
-        
-        return endpointImpl;
-    }
-   
-    Map<String, Object> configureWsProperties() {
-        Map<String, Object> outProps = new HashMap<>();
-        
-
-//        outProps.put("ws-security.username", getUser());
-        outProps.put("ws-security.callback-handler", passwordCallback());
-//        outProps.put("ws-security.validate.token", true);
-//        outProps.put("ws-security.ut.validator", new MyUsernameTokenValidator());
-        
-        return outProps;
-    }
-    
-    
-//    private Interceptor<? extends Message> configureIncomingUsernameTokenInterceptor() {
-//        
-//        Map<String,Object> props = new HashMap<>();
-//        props.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-//        props.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-//        props.put(WSHandlerConstants.PW_CALLBACK_REF, passwordCallback());
-//
-//        
-//        //WSS4JStaxInInterceptor 
-//        //WSS4JInInterceptor inInterceptor = new WSS4JInInterceptor(props);        
-//        WSS4JStaxInInterceptor inInterceptor = new WSS4JStaxInInterceptor();
-//        
-//        
-//        //TODO: set properties on interceptor
-//        return inInterceptor;
-//    }
-//    
-//    private  List<Interceptor<? extends Message>> configureOutgoingInterceptors() {
-//        List<Interceptor<? extends Message>> outInterceptors = new ArrayList<>();
-//        
-//        
-//        WSS4JStaxOutInterceptor outInterceptor = new WSS4JStaxOutInterceptor();
-//        outInterceptor.setAllowMTOM(true);                  
-//        outInterceptors.add(outInterceptor);
-//        
-//        return outInterceptors;
-//    }
-    
-
-//    @Bean("gwSubmissionClient")
-//    public DomibusConnectorSubmissionWS domibusConnectorSubmissionWSClient() {
-//        DomibusConnectorSubmissionWSService domibusConnectorSubmissionWSService = new DomibusConnectorSubmissionWSService();
-//                
-//        MTOMFeature mtom = new MTOMFeature();
-//        
-//        DomibusConnectorSubmissionWS serviceClient = domibusConnectorSubmissionWSService.getPort(DomibusConnectorSubmissionWS.class, mtom);
-//               
-//        return serviceClient;
-//    }                           
-    
-    
-    @Bean("myPasswordCallback")
-    public CallbackHandler passwordCallback() {
-        return new BackendPasswordCallback();
-    }
-
-        
-    private static class BackendPasswordCallback implements CallbackHandler {
-
-        @Override
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
-            LOGGER.debug("BackendPasswordCallback called with user: [{}]", pc.getIdentifier());
-            System.out.println("HANDLING PASSWORD CALLBACK....");
-            if ("bob".equals(pc.getIdentifier()))  {
-                pc.setPassword("test"); //password is compared later with client
-            }            
-        }        
-    }
-    
-
-    
-    Policy createPolicy() {
-        try {
-            InputStream inputStream = getClass().getResourceAsStream("/wsdl/backend.policy.xml");
-            if (inputStream == null) {
-                throw new IOException("Input Stream is null!");
-            }
-            PolicyBuilder policyBuilder = new PolicyBuilderImpl();
-            Policy policy = policyBuilder.getPolicy(inputStream);
-
-            return policy;
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            throw new RuntimeException("Loading Policy failed", e);
-        }
-    }
     
 }

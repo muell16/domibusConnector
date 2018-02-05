@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import java.util.List;
 import java.util.ArrayList;
+import javax.annotation.Nullable;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -23,6 +24,9 @@ public class DomibusConnectorMessage {
 	private final List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
 	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
     private String connectorMessageId;
+    
+    //the backend client name the message is received from or should be delivered to
+    private String connectorBackendClientName;
 
 	/**
 	 * This constructor initializes an instance of a DomibusConnectorMessage in case
@@ -152,6 +156,14 @@ public class DomibusConnectorMessage {
         this.connectorMessageId = connectorMessageId;
     }
 
+    public @Nullable String getConnectorBackendClientName() {
+        return connectorBackendClientName;
+    }
+
+    public void setConnectorBackendClientName(@Nullable String connectorBackendClientName) {
+        this.connectorBackendClientName = connectorBackendClientName;
+    }
+    
     @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);

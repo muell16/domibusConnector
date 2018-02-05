@@ -191,13 +191,15 @@
                 <constraints nullable="false" />
             </column>
             <column name="BACKEND_KEY_PASS" type="${varchar.type}(255 ${varchar.length.type})" >
-                <constraints nullable="false" />
+<!--                <constraints nullable="false" />-->
             </column>
             <column name="BACKEND_SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" >
-                <constraints nullable="false" />
+<!--                <constraints nullable="false" />-->
             </column>
-            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >                
-            </column>
+<!--            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >                -->
+            <!--</column>-->
+            <column name="BACKEND_DESCRIPTION" type="${text.type}"  />
+            <column name="BACKEND_PUSH_ADDRESS" type="${text.type}" />
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_BACK_01" />
     
@@ -220,9 +222,9 @@
         
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_KEY_ALIAS" constraintName="UN_DOMIBUS_CONNECTOR_BACK_02" />
         
-        <createIndex tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" indexName="IXFK_DOMIBUS_CONN_DOMIBUS01"  >
+<!--        <createIndex tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" indexName="IXFK_DOMIBUS_CONN_DOMIBUS01"  >
             <column name="SERVICE" />
-        </createIndex>
+        </createIndex>-->
     
         
         <addForeignKeyConstraint 
