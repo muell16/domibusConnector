@@ -2,6 +2,7 @@ package eu.domibus.webadmin.runner;
 
 import eu.domibus.webadmin.spring.WebRunner;
 import eu.domibus.test.db.TestDatabase;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @WebAppConfiguration
 @Import({TestDatabase.class})
 @Transactional
+@Ignore
 public class WebRunnerContextTest {
 
 
