@@ -120,9 +120,12 @@ node {
 					} 
 					
 					stage ('Post') {
-						junit '**/test-reports/*.xml,**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
-						
-						jacoco() 
+						try {
+							junit '**/test-reports/*.xml,**/surefire-reports/*.xml,**/failsafe-reports/*.xml,**/dbunit-reports/*.xml'  //publish test reports
+						} catch() {}
+						try {
+							jacoco() 
+						} catch() {}
 					}
 					
 					
