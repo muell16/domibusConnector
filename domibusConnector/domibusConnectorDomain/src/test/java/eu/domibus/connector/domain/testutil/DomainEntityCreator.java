@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.transformer.testutil.DataHandlerCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
+import java.io.ByteArrayInputStream;
 import javax.activation.DataHandler;
 
 /**
@@ -64,8 +65,11 @@ public class DomainEntityCreator {
 
     public static DomibusConnectorBigDataReference connectorBigDataReferenceFromDataSource(String input) {
         DataHandler dh = DataHandlerCreator.createDataHandlerFromString(input);
-        DomibusConnectorBigDataReference reference = 
-                new DomibusConnectorBigDataReferenceDataHandlerBacked(dh);        
+        DomibusConnectorBigDataReferenceGetSetBased reference = 
+                new DomibusConnectorBigDataReferenceGetSetBased();  
+        reference.setBytes(input.getBytes());
+        reference.setReadable(true);
+        reference.setInputStream(new ByteArrayInputStream(reference.getBytes()));
         return reference;
     }
 

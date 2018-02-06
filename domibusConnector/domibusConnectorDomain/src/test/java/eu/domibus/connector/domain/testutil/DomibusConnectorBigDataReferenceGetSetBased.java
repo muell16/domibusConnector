@@ -13,6 +13,8 @@ import java.io.OutputStream;
  */
 public class DomibusConnectorBigDataReferenceGetSetBased extends DomibusConnectorBigDataReference {
 
+    byte[] bytes;
+    
     InputStream inputStream;
     
     OutputStream outputStream;
@@ -55,6 +57,14 @@ public class DomibusConnectorBigDataReferenceGetSetBased extends DomibusConnecto
 
     public void setWriteable(boolean writeable) {
         this.writeable = writeable;
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
     }
 
 }
