@@ -2,7 +2,6 @@ package eu.domibus.connector.controller.spring;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.process.CheckEvidencesTimeoutProcessorImpl;
-import eu.domibus.connector.controller.process.CheckEvidencesTimoutProcessor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,6 +29,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import eu.domibus.connector.controller.process.CheckEvidencesTimeoutProcessor;
 
 /**
  *
@@ -57,7 +57,7 @@ public class QuartzContextITCase {
         }
                 
         @Bean
-        public CheckEvidencesTimoutProcessor checkEvidencesTimeoutProcessor() {
+        public CheckEvidencesTimeoutProcessor checkEvidencesTimeoutProcessor() {
             return () -> {
                 int callNr = JOB_CALL_COUNT.addAndGet(1);
                 LOGGER.info("checkEvidencesTimeout called [{}] time on mocked CheckEvidencesTimoutProcessor!", callNr);

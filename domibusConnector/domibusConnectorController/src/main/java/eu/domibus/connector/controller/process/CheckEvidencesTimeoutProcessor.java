@@ -7,7 +7,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public interface CheckEvidencesTimoutProcessor {
+public interface CheckEvidencesTimeoutProcessor {
 
     void checkEvidencesTimeout() throws DomibusConnectorControllerException;
 

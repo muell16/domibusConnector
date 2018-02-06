@@ -13,16 +13,16 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.process.CheckEvidencesTimeoutProcessorImpl;
-import eu.domibus.connector.controller.process.CheckEvidencesTimoutProcessor;
 import eu.domibus.connector.controller.spring.QuartzContext;
 import org.springframework.context.annotation.Configuration;
+import eu.domibus.connector.controller.process.CheckEvidencesTimeoutProcessor;
 
 @Configuration("checkEvidencesTimeoutJobConfiguration")
 @ConditionalOnProperty(name = "connector.use.evidences.timeout", havingValue="true")
 public class CheckEvidencesTimeoutJob implements Job {
 
 	@Autowired
-	private CheckEvidencesTimoutProcessor processor;
+	private CheckEvidencesTimeoutProcessor processor;
 	
 	@Value("${connector.check.messages.period.ms}")
     private long repeatInterval;

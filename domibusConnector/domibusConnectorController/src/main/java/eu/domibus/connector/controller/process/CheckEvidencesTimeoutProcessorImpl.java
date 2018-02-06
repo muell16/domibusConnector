@@ -26,7 +26,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceServi
 import eu.domibus.connector.persistence.service.PersistenceException;
 
 @Component
-public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimoutProcessor {
+public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
 
 	static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
 
