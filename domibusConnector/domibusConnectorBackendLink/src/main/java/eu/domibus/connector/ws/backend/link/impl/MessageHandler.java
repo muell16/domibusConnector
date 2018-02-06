@@ -9,6 +9,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
  */
 public interface MessageHandler {
 
-    public DomibusConnectorMessage handle(DomibusConnectorMessage message);
+    public DomibusConnectorMessage handleMessage(DomibusConnectorMessage message);
     
 }

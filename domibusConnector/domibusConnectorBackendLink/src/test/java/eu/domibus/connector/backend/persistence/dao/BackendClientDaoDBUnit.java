@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.backend.persistence.dao;
 
-import eu.domibus.connector.backend.persistence.model.BackendClient;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
@@ -66,23 +66,23 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     
     @Test
     public void testFindOneBackendByBackendName() {
-        BackendClient backendClientBob = backendClientDao.findOneBackendByBackendName("bob");
+        BackendClientInfo backendClientBob = backendClientDao.findOneBackendByBackendName("bob");
         assertThat(backendClientBob).isNotNull();
     }
     
     @Test
     public void testFindByServices_service() {
-        List<BackendClient> backendClients = backendClientDao.findByServices_service("EPO");
+        List<BackendClientInfo> backendClients = backendClientDao.findByServices_service("EPO");
         
         assertThat(backendClients).as("should containe exact one element!").hasSize(1);
-        BackendClient clientBob = backendClients.get(0);
+        BackendClientInfo clientBob = backendClients.get(0);
         assertThat(clientBob.getBackendName()).as("must be client bob").isEqualTo("bob");
     }
     
     
     @Test
     public void testFindByServices_service_shouldContain2Elements() {
-        List<BackendClient> backendClients = backendClientDao.findByServices_service("LOCAL-CONNECTOR-TEST");        
+        List<BackendClientInfo> backendClients = backendClientDao.findByServices_service("LOCAL-CONNECTOR-TEST");        
         assertThat(backendClients).as("should containe exact one element!").hasSize(2);    
     }
 

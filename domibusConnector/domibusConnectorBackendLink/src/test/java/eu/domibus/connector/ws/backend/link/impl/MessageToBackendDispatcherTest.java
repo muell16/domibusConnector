@@ -2,7 +2,7 @@
 package eu.domibus.connector.ws.backend.link.impl;
 
 import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
-import eu.domibus.connector.backend.persistence.model.BackendClient;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import java.util.ArrayList;
@@ -34,38 +34,38 @@ public class MessageToBackendDispatcherTest {
     
     @Test
     public void testSetBackendNameInMessageHandling() {
-        BackendClient backendClientBob = new BackendClient();
+        BackendClientInfo backendClientBob = new BackendClientInfo();
         backendClientBob.setBackendName("bob");
-        List<BackendClient> backendClientsList = new ArrayList<>();
+        List<BackendClientInfo> backendClientsList = new ArrayList<>();
         backendClientsList.add(backendClientBob);
         Mockito.when(backendClientDao.findByServices_service(eq("EPO"))).thenReturn(backendClientsList);
         
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
 
-        message = messageToBackendDispatcher.handle(message);
+        message = messageToBackendDispatcher.handleMessage(message);
         
         assertThat(message.getConnectorBackendClientName()).isEqualTo("bob");
     }
     
     @Test(expected=IllegalStateException.class)
     public void testSetBackendNameInMessageHandling_noBackends_shouldThrowIllegalStateException() {
-        List<BackendClient> backendClientsList = new ArrayList<>();
+        List<BackendClientInfo> backendClientsList = new ArrayList<>();
         Mockito.when(backendClientDao.findByServices_service(eq("EPO"))).thenReturn(backendClientsList);
         
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
 
-        message = messageToBackendDispatcher.handle(message);
+        message = messageToBackendDispatcher.handleMessage(message);
     }
     
     @Test(expected=IllegalStateException.class)
     public void testSetBackendNameInMessageHandling_moreThanOneBackend_shouldThrowIllegalStateException() {
-        List<BackendClient> backendClientsList = new ArrayList<>();
+        List<BackendClientInfo> backendClientsList = new ArrayList<>();
                 
-        BackendClient backendClientBob = new BackendClient();
+        BackendClientInfo backendClientBob = new BackendClientInfo();
         backendClientBob.setBackendName("bob");
         backendClientsList.add(backendClientBob);
                 
-        BackendClient backendClientAlice = new BackendClient();
+        BackendClientInfo backendClientAlice = new BackendClientInfo();
         backendClientAlice.setBackendName("alice");
         backendClientsList.add(backendClientAlice);
         
@@ -73,7 +73,7 @@ public class MessageToBackendDispatcherTest {
         
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
 
-        message = messageToBackendDispatcher.handle(message);
+        message = messageToBackendDispatcher.handleMessage(message);
         
         assertThat(message.getConnectorBackendClientName()).isEqualTo("bob");
     }

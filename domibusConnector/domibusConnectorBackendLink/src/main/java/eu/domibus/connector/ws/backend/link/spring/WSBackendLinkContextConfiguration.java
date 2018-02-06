@@ -63,6 +63,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jms.annotation.EnableJms;
 import org.xml.sax.SAXException;
 
 /**
@@ -72,18 +73,19 @@ import org.xml.sax.SAXException;
 @Configuration
 @Import(BackendPersistenceConfig.class)
 @ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
+@EnableJms
 public class WSBackendLinkContextConfiguration {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkContextConfiguration.class);
     
-    @Autowired
-    private Bus bus;
-
-    @Autowired
-    private DomibusConnectorBackendWebService backendWebService;
-    
-    @Autowired
-    WSBackendLinkConfigurationProperties wsBackendLinkConfigurationProperties;
+//    @Autowired
+//    private Bus bus;
+//
+//    @Autowired
+//    private DomibusConnectorBackendWebService backendWebService;
+//    
+//    @Autowired
+//    WSBackendLinkConfigurationProperties wsBackendLinkConfigurationProperties;
     
     
 }

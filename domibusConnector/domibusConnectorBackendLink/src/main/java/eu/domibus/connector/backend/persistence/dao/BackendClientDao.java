@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.backend.persistence.dao;
 
-import eu.domibus.connector.backend.persistence.model.BackendClient;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @Transactional
-public interface BackendClientDao extends CrudRepository<BackendClient, Long> {
+public interface BackendClientDao extends CrudRepository<BackendClientInfo, Long> {
 
-    public BackendClient findOneBackendByBackendName(String name);
+    public BackendClientInfo findOneBackendByBackendName(String name);
 
-    public List<BackendClient> findByServices_service(String service);
+    public List<BackendClientInfo> findByServices_service(String service);
     
 }

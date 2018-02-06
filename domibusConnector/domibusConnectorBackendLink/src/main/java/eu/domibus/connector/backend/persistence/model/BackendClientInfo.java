@@ -20,7 +20,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="DOMIBUS_CONNECTOR_BACKEND_INFO")
-public class BackendClient {
+public class BackendClientInfo {
 
     @Id
     private Long id;
@@ -105,4 +105,8 @@ public class BackendClient {
         this.services = services;
     }
   
+    public boolean isPushBackend() {
+        return backendPushAddress != null;
+    }
+    
 }

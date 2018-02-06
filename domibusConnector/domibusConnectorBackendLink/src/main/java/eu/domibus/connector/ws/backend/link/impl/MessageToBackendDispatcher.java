@@ -2,7 +2,7 @@
 package eu.domibus.connector.ws.backend.link.impl;
 
 import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
-import eu.domibus.connector.backend.persistence.model.BackendClient;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import java.util.List;
@@ -28,9 +28,9 @@ public class MessageToBackendDispatcher implements MessageHandler {
 
     
     @Override
-    public DomibusConnectorMessage handle(DomibusConnectorMessage message) {
+    public DomibusConnectorMessage handleMessage(DomibusConnectorMessage message) {
         DomibusConnectorService service = message.getMessageDetails().getService();
-        List<BackendClient> findByServices_service = backendClientDao.findByServices_service(service.getService());
+        List<BackendClientInfo> findByServices_service = backendClientDao.findByServices_service(service.getService());
         
         if (findByServices_service.size() > 1) {
             String error = String.format("There is more than one backend configured for receiving messages with this service [%s]!", service.getService());
@@ -41,7 +41,7 @@ public class MessageToBackendDispatcher implements MessageHandler {
             LOGGER.error("Throwing exception because: {}", error);
             throw new IllegalStateException(error);
         }
-        BackendClient backendClient = findByServices_service.get(0);
+        BackendClientInfo backendClient = findByServices_service.get(0);
         
         message.setConnectorBackendClientName(backendClient.getBackendName());
         
