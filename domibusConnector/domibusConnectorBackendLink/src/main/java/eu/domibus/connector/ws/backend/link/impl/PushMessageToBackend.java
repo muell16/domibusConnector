@@ -7,6 +7,6 @@ package eu.domibus.connector.ws.backend.link.impl;
  */
 public interface PushMessageToBackend {
 
-    public void push(String CONNECTOR_MESSAGE_ID);
+    public void push(String connectorMessageId);
 
 }
