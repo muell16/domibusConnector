@@ -37,6 +37,15 @@
         <javax.ws.rs>1.1.1</javax.ws.rs>
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
+        
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+
+        <jacoco.outputDir>${project.build.directory}/jacoco</jacoco.outputDir>
+        <jacoco.out.ut.file>jacoco-ut.exec</jacoco.out.ut.file>
+        <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
+        <sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
+        <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
         <!-- if necessary overwrite proxy settings in local settings.xml -->
         <!-- <https.proxy.enabled>false</https.proxy.enabled>
         <https.proxy.host/>
@@ -343,6 +352,48 @@
     <profiles>        
         <profile>
         <!--  activates long running integration tests -->
+            <id>unit-testing-with-failsafe</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                            <skipTests>true</skipTests>
+                        </configuration>                        
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>${jacoco.agent.ut.arg}</argLine>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/IT*.java</exclude>
+                                <exclude>**/*IT.java</exclude>
+                                <exclude>**/*ITCase.java</exclude>
+                            </excludes>
+                            <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>executeUnitTests</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+        <!--  activates long running integration tests -->
             <id>integration-testing</id>
             <build>
                 <plugins>
@@ -357,6 +408,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>${jacoco.agent.it.arg}</argLine>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>executeITCases</id>
@@ -380,7 +434,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
-                            <skipTests>true</skipTests>
+                            <skipTests>true</skipTests>                            
                         </configuration>                        
                     </plugin>
                     <plugin>
@@ -394,6 +448,7 @@
                                 </goals>
                                 <phase>integration-test</phase>
                                 <configuration>
+                                    <argLine>${jacoco.agent.it.arg}</argLine>
                                     <includes>
                                         <include>**/*DBUnit.java</include>
                                     </includes>
@@ -563,9 +618,40 @@
                         <exclude>**/*.pdf</exclude>
                         <exclude>**/*.zip</exclude>
                     </excludes>
-                </configuration>        
+                </configuration>   
                 <executions>
+<!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info
+                    to be passed to the JVM hosting the code being tested. -->
                     <execution>
+                        <id>prepare-ut-agent</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${sonar.jacoco.reportPath}</destFile>
+                            <propertyName>jacoco.agent.ut.arg</propertyName>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+<!--<!– Prepares a variable, jacoco.agent.it.arg, that contains the info
+                    to be passed to the JVM hosting the code being tested. –>-->
+                    <execution>
+                        <id>prepare-it-agent</id>
+<!--<!– moved to package phase to be sure all pre-integration test have
+                        it already set to bring up environments with jacoco agent as JVM params –>-->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${sonar.jacoco.itReportPath}</destFile>
+                            <propertyName>jacoco.agent.it.arg</propertyName>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+
+<!--                    <execution>
                         <id>default-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
@@ -582,7 +668,7 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                    </execution>                        
+                    </execution>                        -->
                     <!--                        <execution>
                         <id>default-report-integration</id>
                         <goals>

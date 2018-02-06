@@ -100,9 +100,12 @@ node {
 							//sh 'mvn -fn test' //ignore test failures to execute ALL tests and fail never
 							//sh 'mvn test' //execute tests again to get failure: TODO find better solution to fail this step if test failures occure
 							//using failsafe plugin for unitTests to run all unit tests and fail afterwards
-							sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:integration-test'''
-							sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:verify'''
-					
+							//sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:integration-test'''
+							//sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:verify'''
+							sh '''mvn -DfailIfNoTests=false -Punit-testing-with-failsafe failsafe:integration-test'''
+							sh '''mvn -DfailIfNoTests=false -Dunit-testing-with-failsafe failsafe:verify'''
+
+						
 						}
 					} catch (e) {
 						//currentBuild.result = 'FAILURE'
