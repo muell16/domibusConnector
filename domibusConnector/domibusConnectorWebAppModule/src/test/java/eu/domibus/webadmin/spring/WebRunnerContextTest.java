@@ -1,4 +1,4 @@
-package eu.domibus.webadmin.runner;
+package eu.domibus.webadmin.spring;
 
 import eu.domibus.webadmin.spring.WebRunner;
 import eu.domibus.test.db.TestDatabase;
