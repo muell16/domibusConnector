@@ -63,6 +63,13 @@ public class PersistenceEntityCreator {
         return service;
     }
     
+    public static PDomibusConnectorService createServicePing() {
+        PDomibusConnectorService service = new PDomibusConnectorService();
+        service.setService("Ping");
+        service.setServiceType("urn:e-codex:services:");
+        return service;
+    }
+    
     public static PDomibusConnectorParty createPartyAT() {
         PDomibusConnectorParty at = new PDomibusConnectorParty();
         at.setPartyId("AT");
@@ -130,5 +137,7 @@ public class PersistenceEntityCreator {
             throw new RuntimeException("should not happen!");
         }
     }
+
+
     
 }
