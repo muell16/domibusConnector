@@ -2,7 +2,19 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%style{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{${web:logColor}}" />
+<!--            <PatternLayout pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{%X{COLOR}}" />-->
+            <PatternLayout>
+                <ScriptPatternSelector defaultPattern="%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n">
+                    <Script name="ColorSelector" language="javascript"><![CDATA[
+                        var result = logEvent.getContextMap().get("COLOR");
+                        result;                  
+                    ]]></Script>                                        
+                    <PatternMatch key="YELLOW" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{yellow}"/>       
+                    <PatternMatch key="CYAN" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{cyan}"/>       
+                    <PatternMatch key="GREEN" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{green}"/>   
+                    <PatternMatch key="BLUE" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{blue}"/>        
+                </ScriptPatternSelector>
+            </PatternLayout>
         </Console>
     </Appenders>
     <Loggers>

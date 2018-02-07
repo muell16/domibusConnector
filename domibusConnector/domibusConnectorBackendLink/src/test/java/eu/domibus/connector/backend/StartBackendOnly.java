@@ -34,9 +34,10 @@ public class StartBackendOnly {
         SpringApplication springApplication = new SpringApplicationBuilder()
                 .sources(TestBackendContext.class)
                 .profiles(profiles)
-                .profiles(properties)
+                .properties(properties)
                 .build();
         
+
         ConfigurableApplicationContext run = springApplication.run();
         return run;
     }
