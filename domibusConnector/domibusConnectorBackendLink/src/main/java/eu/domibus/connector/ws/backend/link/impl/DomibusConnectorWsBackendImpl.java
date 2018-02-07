@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.ws.backend.link.impl;
 
+import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
@@ -31,7 +32,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBackendWebService.class);
     
-    @Autowired
+    @Resource
     private WebServiceContext webServiceContext;
     
     @Autowired

@@ -30,15 +30,17 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 
 /**
  *
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueIT.TestConfig.class})
+@ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class})
 @TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue"})
-public class ToBackendClientJmsBasedWaitQueueIT {
+public class ToBackendClientJmsBasedWaitQueueITCase {
 
     @EnableJms
     @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class, LiquibaseAutoConfiguration.class})
@@ -56,7 +58,7 @@ public class ToBackendClientJmsBasedWaitQueueIT {
     JmsTemplate jmsTemplate;
     
     @MockBean
-    PushMessageToBackend pushMessageToBackend;
+    PushMessageToBackendClient pushMessageToBackend;
         
     @Test
     public void testPutMessageOnQueue() throws InterruptedException {
@@ -130,7 +132,7 @@ public class ToBackendClientJmsBasedWaitQueueIT {
             String msgId = invocation.getArgumentAt(0, String.class);
             messageIds.add(msgId);
             return null;
-        }).when(pushMessageToBackend).push(any(String.class));
+        }).when(pushMessageToBackend).push(any(String.class), any(String.class));
         
         
         DomibusConnectorMessage msg = DomainEntityCreator.createMessage();

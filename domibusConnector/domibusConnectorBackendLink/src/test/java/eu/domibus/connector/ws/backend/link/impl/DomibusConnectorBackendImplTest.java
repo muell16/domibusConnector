@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.ws.backend.link.impl;
 
+import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;

@@ -16,7 +16,9 @@ import org.springframework.context.ApplicationContext;
 public class BackendClientBob extends CommonBackendClient {
 
     public static void main(String[] args) throws MalformedURLException {
-        ApplicationContext ctx = BackendClientBob.startSpringApplication("ws.username=bob", "ws.password=test");
+        String[] springProps = new String[] {"ws.backendclient.name=bob", "ws.backendclient.cn=bob", "ws.backendclient.password=test"};
+        String[] springProfiles = new String[] {"ws-backendclient-client"};
+        ApplicationContext ctx = BackendClientBob.startSpringApplication(springProfiles, springProps);
         
         DomibusConnectorBackendWebService domibusConnectorBackendWebService = ctx.getBean("backendClient", DomibusConnectorBackendWebService.class);
 

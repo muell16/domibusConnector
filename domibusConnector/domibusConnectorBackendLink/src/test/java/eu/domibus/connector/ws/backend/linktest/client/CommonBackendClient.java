@@ -3,6 +3,7 @@ package eu.domibus.connector.ws.backend.linktest.client;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import eu.domibus.connector.ws.backend.link.spring.ClientPasswordCallback;
 import eu.domibus.connector.ws.backend.link.spring.WSBackendLinkConfigurationProperties;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
@@ -12,15 +13,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.MTOMFeature;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.CXFBusFactory;
@@ -42,6 +47,7 @@ import org.apache.neethi.Policy;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -54,6 +60,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.xml.sax.SAXException;
@@ -66,58 +73,30 @@ import org.xml.sax.SAXException;
     DataSourceAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     HibernateJpaAutoConfiguration.class,
-    EmbeddedServletContainerAutoConfiguration.class})
+})
 @Configuration
 @ImportResource("classpath:/test/testclient.xml")
 public class CommonBackendClient {
 
-    public static ApplicationContext startSpringApplication(String... properties) {
+    public static ApplicationContext startSpringApplication(String[] profiles, String[] properties) {
 
+        boolean web = false;
+        if (ArrayUtils.contains(profiles, "ws-backendclient-server")) {
+            web = true;
+        }
+        
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         SpringApplication springApp = builder.bannerMode(Banner.Mode.OFF)
                 .sources(CommonBackendClient.class)
                 .properties(properties)
-                .web(false)
+                .profiles(profiles)
+                .web(web)
                 .build();
 
         ConfigurableApplicationContext appContext = springApp.run();
         
         return appContext;
-
     }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer
-            propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
-            
-            
-//    protected void initializeAndSendMessage() {
-//        SendMessageServiceImpl sendMessageServiceImpl = new SendMessageServiceImpl();
-//
-//        Properties props = loadProperties();
-//
-//        sendMessageServiceImpl.setPassword("test");
-//        sendMessageServiceImpl.setUsername("bob");
-//
-//        sendMessageServiceImpl.sendMessage();
-//
-//    }
-//
-//    Properties loadProperties() {
-//        try {
-//            InputStream inputStream = getClass().getResourceAsStream("/application.properties");
-//            if (inputStream == null) {
-//                throw new RuntimeException("cannot read properties - input stream is null!");
-//            }
-//            Properties props = new Properties();
-//            props.load(inputStream);
-//            return props;
-//        } catch (IOException ioe) {
-//            throw new RuntimeException("cannot read properties!");
-//        }
-//    }
-
+    
+  
 }

@@ -1,6 +1,10 @@
 
 package eu.domibus.connector.backend.domain.model;
 
+import java.util.Objects;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.core.style.ToStringCreator;
+
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -57,6 +61,39 @@ public class DomibusConnectorBackendClientInfo {
         this.backendKeyPass = backendKeyPass;
     }
     
+    @Override
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("backendName", this.backendName);
+        builder.append("backendAlias", this.backendKeyAlias);
+        builder.append("backendPushAddress", this.backendPushAddress);
+        return builder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(this.backendName);
+        return builder.toHashCode();        
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DomibusConnectorBackendClientInfo other = (DomibusConnectorBackendClientInfo) obj;
+        if (!Objects.equals(this.backendName, other.backendName)) {
+            return false;
+        }
+        return true;
+    }
     
-    
+            
 }

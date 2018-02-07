@@ -71,7 +71,7 @@ import org.xml.sax.SAXException;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
-@Import(BackendPersistenceConfig.class)
+//@Import(BackendPersistenceConfig.class)
 @ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
 @EnableJms
 public class WSBackendLinkContextConfiguration {

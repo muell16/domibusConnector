@@ -5,8 +5,8 @@ package eu.domibus.connector.ws.backend.link.impl;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public interface PushMessageToBackend {
+public interface PushMessageToBackendClient {
 
-    public void push(String connectorMessageId);
+    public void push(String connectorMessageId, String backendClientName);
 
 }

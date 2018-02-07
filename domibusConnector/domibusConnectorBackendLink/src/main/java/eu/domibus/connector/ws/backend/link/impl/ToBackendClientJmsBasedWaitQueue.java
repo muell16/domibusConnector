@@ -30,7 +30,7 @@ import static org.springframework.jms.support.destination.JmsDestinationAccessor
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component
-public class ToBackendClientJmsBasedWaitQueue {
+public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientWaitQueue {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(ToBackendClientJmsBasedWaitQueue.class);
     
@@ -56,11 +56,12 @@ public class ToBackendClientJmsBasedWaitQueue {
     private long receiveTimeout;
     
     @Autowired
-    private PushMessageToBackend pushMessageToBackendCallback;
+    private PushMessageToBackendClient pushMessageToBackendCallback;
        
     @Autowired
     private JmsTemplate jmsTemplate;
 
+    @Override
     public void putMessageInWaitingQueue(final DomibusConnectorMessage message, final BackendClientInfo backendClientInfo) {
         
         final String backendClientName = message.getConnectorBackendClientName();
@@ -81,9 +82,11 @@ public class ToBackendClientJmsBasedWaitQueue {
     @JmsListener(destination=WAIT_QUEUE_PROPERTY_NAME, selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
     public void pushToBackend(Message msg) throws JMSException {        
         String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
-        pushMessageToBackendCallback.push(connectorMessageId);
+        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
+        pushMessageToBackendCallback.push(connectorMessageId, backendName);
     }
 
+    @Override
     public List<String> getConnectorMessageIdForBackend(String backendName) {
         List<String> waitingMessageIds = new ArrayList<>();
         try {            

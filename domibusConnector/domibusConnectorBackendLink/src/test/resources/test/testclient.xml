@@ -29,14 +29,15 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
                 address="${connector.backend.ws.address}" >
          
          <jaxws:properties>
-            <entry key="security.username" value="${connector.backend.ws.username}" />
-            <entry key="security.password" value="${connector.backend.ws.password}" />            
+<!--            <entry key="security.username" value="bob" />
+            <entry key="security.password" value="test" />            -->
             <entry key="security.encryption.properties" value="encrypt.properties" />
             <entry key="security.signature.properties" value="encrypt.properties" />
             <entry key="security.encryption.username" value="connector" />
             <entry key="security.signature.username" value="bob" />
             
-<!--            <entry key="mtom-enabled" value="true"/>-->
+            <entry key="security.encryption.properties" value="encrypt.properties" />
+<!--            <entry key="mtom-enabled" value="true"/> -->
                         
          </jaxws:properties>
          <jaxws:features>

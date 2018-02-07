@@ -1,5 +1,5 @@
 
-package eu.domibus.connector.ws.backend.link.impl;
+package eu.domibus.connector.backend.persistence.service;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import javax.annotation.Nullable;
