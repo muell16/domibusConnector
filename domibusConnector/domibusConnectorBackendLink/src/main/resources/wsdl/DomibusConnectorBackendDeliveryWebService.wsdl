@@ -9,7 +9,8 @@
 	<wsdl:import
 		namespace="transition.domain.connector.domibus.eu"
 		location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
-    
+   
+        
     
         <!-- Policy for UsernameToken with plaintext password, sent from client to
         server only -->

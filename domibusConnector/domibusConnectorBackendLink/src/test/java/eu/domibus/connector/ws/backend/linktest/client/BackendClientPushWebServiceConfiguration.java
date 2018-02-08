@@ -3,12 +3,14 @@ package eu.domibus.connector.ws.backend.linktest.client;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWSService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Resource;
+import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
@@ -28,6 +31,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @Profile("ws-backendclient-server")
+@ImportResource("classpath:/test/testclient_pushdelivery.xml")
 public class BackendClientPushWebServiceConfiguration {
 
     @Bean
@@ -45,6 +49,11 @@ public class BackendClientPushWebServiceConfiguration {
     @Bean("backendDeliveryWebService")
     public DomibusConnectorBackendDeliveryWebService domibusConnectorBackendDeliveryWebService() {
         return new DummyDomibusConnectorBackendDeliveryWebServiceImpl();
+    }
+    
+    @Bean("backendDeliveryWebServiceName")
+    public QName serviceName() {
+        return DomibusConnectorBackendDeliveryWSService.DomibusConnectorBackendDeliveryWebService;
     }
 
     private static class DummyDomibusConnectorBackendDeliveryWebServiceImpl implements DomibusConnectorBackendDeliveryWebService {

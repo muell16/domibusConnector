@@ -19,8 +19,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
     <cxf:bus>
         <cxf:features>
             <p:policies/>
-            <cxf:logging/>
-            
+            <cxf:logging/>            
         </cxf:features>
     </cxf:bus>
     
@@ -28,12 +27,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
     <jaxws:endpoint id="connectorBackendWS"
                     implementor="#connectorBackendImpl"
                     address="/backend"
-                    
+       
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
                     xmlns:s="http://service.jaxws.cxf.apache.org/service"
                                                            
     >
-        
+        <!--      not working!: why?               wsdlLocation="/wsdl/DomibusConnectorBackendWebService.wsdl" -->
         <jaxws:properties>
             
             <entry key="security.signature.properties" value="eu/domibus/connector/ws/backend/link/ws/decrypt.properties" />
