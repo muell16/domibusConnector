@@ -146,7 +146,7 @@ node {
 							//try {
 								//JU 3.0 SonarQube Server
 								// requires SonarQube Scanner 2.8+
-								
+								sh "mvn test" //run unit tests again so sonar can detect them
 								withSonarQubeEnv {
 									//sh "${scannerHome}/bin/sonar-scanner"
 									def projectPostfix = scmInfo.GIT_BRANCH.replace("/", ":")

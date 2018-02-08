@@ -17,7 +17,7 @@ public class ConnectorStarter {
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplicationBuilder()        
                 .sources(ConnectorStarter.class)        
-                .profiles("connector", "mysql")      
+                .profiles("connector", "embedded")      
                 .build();
         
         springApplication.run(args);
