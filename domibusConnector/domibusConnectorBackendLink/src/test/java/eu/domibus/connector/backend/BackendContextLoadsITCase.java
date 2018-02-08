@@ -14,7 +14,7 @@ public class BackendContextLoadsITCase {
     
     @Test
     public void testContextLoads() {
-        ConfigurableApplicationContext startUpSpringApplication = StartBackendOnly.startUpSpringApplication(new String[] {}, new String[] {});
+        ConfigurableApplicationContext startUpSpringApplication = StartBackendOnly.startUpSpringApplication(new String[] {}, new String[] {"server.port=0"});
         assertThat(startUpSpringApplication).isNotNull();
     }
     

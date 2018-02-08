@@ -11,6 +11,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -47,7 +48,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     @Import(ToBackendClientJmsBasedWaitQueue.class)
     public final static class TestConfig {    
     }
-    
+        
     @Value("${connector.backend.internal.wait-queue.name}")
     String waitQueueName;
     
@@ -126,7 +127,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     }
     
     @Test
-    public void testPushToBackend() {
+    public void testPushToBackend() throws InterruptedException {
         final List<String> messageIds = new ArrayList<>();
         Mockito.doAnswer((Answer<Void>) (InvocationOnMock invocation) -> {
             String msgId = invocation.getArgumentAt(0, String.class);
@@ -153,6 +154,8 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
         
         msg.setConnectorMessageId("msg3");   
         waitQueue.putMessageInWaitingQueue(msg, backendClientAlice);
+        
+        Thread.sleep(2000);
         
         //there are 3 messages send to queue 2 push message wich should be in the messageIds List now
         assertThat(messageIds).hasSameElementsAs(Arrays.asList(new String[] {"msg2", "msg3"}));

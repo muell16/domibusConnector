@@ -2,58 +2,20 @@
 package eu.domibus.connector.ws.backend.link.spring;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
-import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureMimeType;
-import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
-import static eu.domibus.connector.domain.transition.testutil.TransitionCreator.createMessageDetails;
-import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWSService;
-import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import eu.domibus.connector.ws.backend.linktest.client.CommonBackendClient;
-import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import javax.activation.DataHandler;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.MTOMFeature;
-import org.apache.cxf.attachment.ByteDataSource;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JStaxOutInterceptor;
-import org.apache.cxf.ws.security.wss4j.WSS4JStaxOutInterceptor;
-import org.apache.wss4j.common.ext.WSPasswordCallback;
-import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
@@ -61,11 +23,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -123,18 +82,6 @@ public class WSBackendLinkContextConfigurationITCase {
         
     @Before
     public void setUp() {
-        
-//        Mockito.when(backendWebService.submitMessage(any(DomibusConnectorMessageType.class))).thenAnswer(new Answer<DomibsConnectorAcknowledgementType> () {
-//            @Override
-//            public DomibsConnectorAcknowledgementType answer(InvocationOnMock invocation) throws Throwable {
-//                LOGGER.info("Message rcv: [{}]", invocation.getArgumentAt(0, DomibusConnectorMessageType.class));
-//                DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
-//                answer.setResult(true);
-//                return answer;
-//            }
-//        });
-
-
     }
     
     
@@ -143,8 +90,8 @@ public class WSBackendLinkContextConfigurationITCase {
      */
     @Test
     public void testCallBackendService_submitMessage() {
-        String[] springProps = new String[] {               
-            "ws.client.username=bob",
+        String[] springProps = new String[] {       
+            "ws.backendclient.name=bob",
             "connector.backend.ws.address=http://localhost:" + port + "/services/backend"
         };
         String[] springProfiles = new String[] {"ws-backend-client"};
