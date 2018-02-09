@@ -1,5 +1,6 @@
 node {
 
+	def mavenProperties = "";
 	List MY_ENV = []
 	try {
 		configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
@@ -10,13 +11,16 @@ node {
 			lines.each { line ->		
 				echo "adding ${line} to env"
 				MY_ENV.add(line)
+				mavenProperties = mavenProperties + " -D${line}"
 			}
+			mavenProperties = mavenProperties + " "
 			
 		} //END CONFIG FILE PROVIDER PROXY_ENV
 	} catch(e) {
 		//do nothing if file not found...
 	}
    
+	
 				
 		MY_ENV.add("GIT_SSL_NO_VERIFY=true")
 		
@@ -45,6 +49,10 @@ node {
 				mvnHome = tool name: 'MAVEN 3.3.x'
 			} catch (e) {			
 				mvnHome = tool name: 'MAVEN'			
+			}
+		 
+			def mvn (String arg) {
+				sh 'mvn ${mavenProperties} ${arg}'
 			}
 		 
 			/* Set JAVA_HOME, and special PATH variables. */
@@ -95,7 +103,8 @@ node {
 				
 					//TODO: install all files to local repository - only use cache for remote repos
 					stage ('Build') {
-						sh 'mvn -DskipTests=true clean install'
+						//sh 'mvn -DskipTests=true clean install'
+						mvn '-DskipTests=true clean install'
 						//sh 'mvn -DskipTests package'
 					}
 					
