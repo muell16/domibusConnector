@@ -17,7 +17,7 @@ import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 @Service
 public class DomibusConnectorTechnicalValidationServiceFactory {
 	
-	@Value("${token.issuer.aes.value:null}")
+	@Value("${token.issuer.aes.value:#{null}}")
     AdvancedSystemType advancedElectronicSystem;
 	
 	@Resource(name="domibusConnectorEnvironmentConfiguration")

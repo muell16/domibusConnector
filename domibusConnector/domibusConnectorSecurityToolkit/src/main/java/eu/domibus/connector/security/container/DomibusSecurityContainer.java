@@ -87,22 +87,22 @@ public class DomibusSecurityContainer implements InitializingBean {
     
     TokenIssuer tokenIssuer;
 
-    @Value("${connector.security.keystore.path:null}")
+    @Value("${connector.security.keystore.path:#{null}}")
     String javaKeyStorePath;
-    @Value("${connector.security.keystore.password:null}")
+    @Value("${connector.security.keystore.password:#{null}}")
     String javaKeyStorePassword;
-    @Value("${connector.security.key.alias:null}")
+    @Value("${connector.security.key.alias:#{null}}")
     String keyAlias;
-    @Value("${connector.security.key.password:null}")
+    @Value("${connector.security.key.password:#{null}}")
     String keyPassword;
     
-    @Value("${token.issuer.country:null}")
+    @Value("${token.issuer.country:#{null}}")
     String country;
     
-    @Value("${token.issuer.service.provider:null}")
+    @Value("${token.issuer.service.provider:#{null}}")
     String serviceProvider;
     
-    @Value("${token.issuer.aes.value:null}")
+    @Value("${token.issuer.aes.value:#{null}}") 
     AdvancedSystemType advancedElectronicSystem;
 
     public ECodexContainerService getContainerService() {

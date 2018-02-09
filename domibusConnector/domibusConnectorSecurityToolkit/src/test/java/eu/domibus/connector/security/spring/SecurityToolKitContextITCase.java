@@ -5,14 +5,13 @@ import javax.annotation.Resource;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -26,18 +25,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( classes={SecurityToolKitContextITCase.TestContextConfiguration.class})
 @TestPropertySource(locations={"classpath:test.properties"}, 
-        properties= {   "liquibase.change-log=classpath:/db/changelog/install/initial-4.0.xml",
-                        "spring.jpa.show-sql=true",
-                        "spring.datasource.url=jdbc:h2:mem:testdb",
-                        "spring.datasource.username=sa",
-                        "spring.datasource.driver-class-name=org.h2.Driver",
-})
+        properties={"liquibase.enabled=false"}
+)
 public class SecurityToolKitContextITCase {
 
     @EnableAutoConfiguration(exclude = {
-//        DataSourceAutoConfiguration.class, 
-//        DataSourceTransactionManagerAutoConfiguration.class, 
-//        HibernateJpaAutoConfiguration.class
+        DataSourceAutoConfiguration.class, 
+        DataSourceTransactionManagerAutoConfiguration.class, 
+        HibernateJpaAutoConfiguration.class
     })
     @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security", "eu.domibus.connector.persistence"})
     public static class TestContextConfiguration {
@@ -46,7 +41,8 @@ public class SecurityToolKitContextITCase {
         public static PropertySourcesPlaceholderConfigurer
                 propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
-        }               
+        }       
+                
     }
     
     @Resource
