@@ -52,7 +52,7 @@ node {
 			}
 		 
 			def mvn = { arg ->
-				sh 'mvn ${mavenProperties} ${arg}'
+				sh "mvn ${mavenProperties} ${arg}"
 			}
 		 
 			/* Set JAVA_HOME, and special PATH variables. */
