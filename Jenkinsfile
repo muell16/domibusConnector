@@ -17,7 +17,7 @@ node {
 				
 		MY_ENV.add("GIT_SSL_NO_VERIFY=true")
 		
-		echo "env: MY_ENV"
+		echo "env: ${MY_ENV}"
 
 		withEnv(MY_ENV) {
 			stage ("Checkout") {
