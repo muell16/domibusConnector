@@ -52,6 +52,7 @@ node {
 				mvnHome = tool name: 'MAVEN'			
 			}
 		 
+			//create a function mvn with maven properties appended on mvn call
 			def mvn = { arg ->
 				sh "mvn ${mavenProperties} ${arg}"
 			}
@@ -93,20 +94,16 @@ node {
 						sh 'docker ps'
 					} catch (e) {
 						docker_available = false
-					}
-							
-					//TODO: always clean up workspace!
+					}							
 				}
 				
 						
 				//chdir to project directory and execute maven tasks					
 				dir ('domibusConnector') {
 				
-					//TODO: install all files to local repository - only use cache for remote repos
-					stage ('Build') {
-						//sh 'mvn -DskipTests=true clean install'
+					//run build install - there are side effects if running multiple jobs, because they all use the same local maven repo
+					stage ('Build') {						
 						mvn '-DskipTests=true clean install'
-						//sh 'mvn -DskipTests package'
 					}
 					
 
@@ -117,8 +114,8 @@ node {
 							//using failsafe plugin for unitTests to run all unit tests and fail afterwards
 							//sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:integration-test'''
 							//sh '''mvn -DfailIfNoTests=false -Dit.test="**/*Test.java" -D'reportsDirectory=${project.build.directory}/test-reports' failsafe:verify'''
-							sh '''mvn -DfailIfNoTests=false -Punit-testing-with-failsafe failsafe:integration-test'''
-							sh '''mvn -DfailIfNoTests=false -Dunit-testing-with-failsafe failsafe:verify'''
+							mvn '''-DfailIfNoTests=false -Punit-testing-with-failsafe failsafe:integration-test'''
+							mvn '''-DfailIfNoTests=false -Dunit-testing-with-failsafe failsafe:verify'''
 
 						
 						}
@@ -131,8 +128,8 @@ node {
 					try {					
 						//-dmaven.test.failure.ignore=true
 						stage ('Integration Test') {
-							sh 'mvn -P integration-testing,dbunit-testing verify'
-							sh 'mvn -P integration-testing,dbunit-testing failsafe:verify' //verify executed tests
+							mvn '-P integration-testing,dbunit-testing verify'
+							mvn '-P integration-testing,dbunit-testing failsafe:verify' //verify executed tests
 						}
 					} catch (e) {
 						buildShouldUnstable = true
@@ -165,7 +162,7 @@ node {
 								withSonarQubeEnv {
 									//sh "${scannerHome}/bin/sonar-scanner"
 									def projectPostfix = scmInfo.GIT_BRANCH.replace("/", ":")
-									sh "mvn -Dsonar.branch=${scmInfo.GIT_BRANCH} org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar"
+									mvn "-Dsonar.branch=${scmInfo.GIT_BRANCH} org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar"
 								}
 							//} catch (e) {
 							
