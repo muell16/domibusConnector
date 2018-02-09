@@ -4,11 +4,11 @@ node {
 	try {
 		configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
 			
-			sh "cat ${PROXY_ENV}"
+			
 					
 			def lines = new File(PROXY_ENV)
 			lines.each { line ->		
-				echo "adding line : ${line}"
+				echo "adding ${line} to env"
 				MY_ENV.add(line)
 			}
 			
