@@ -51,7 +51,7 @@ node {
 				mvnHome = tool name: 'MAVEN'			
 			}
 		 
-			def mvn  { arg ->
+			def mvn = { arg ->
 				sh 'mvn ${mavenProperties} ${arg}'
 			}
 		 
