@@ -6,8 +6,8 @@ node {
 			
 			sh "cat ${PROXY_ENV}"
 					
-			def lines = new File(PROXY_ENV).readLines()
-			lines.eachLine { line ->		
+			def lines = new File(PROXY_ENV)
+			lines.each { line ->		
 				echo "adding line : ${line}"
 				MY_ENV.add(line)
 			}
