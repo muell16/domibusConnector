@@ -10,13 +10,14 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliverySe
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 @Component("DomibusConnectorBackendDeliveryServiceImpl")
-public class DomibusConnectorBackendDeliveryServiceImpl extends AbstractDeliveryServiceImpl implements DomibusConnectorBackendDeliveryService {
+public class DomibusConnectorBackendSubmissionServiceImpl extends AbstractDomibusConnectorControllerAPIServiceImpl
+		implements DomibusConnectorBackendDeliveryService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorBackendSubmissionServiceImpl.class);
+	
+	@Value("${domibus.connector.internal.backend.to.controller.queue}")
+	private String internalBackendToControllerQueueName;
 
-	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorBackendDeliveryServiceImpl.class);
-	
-	@Value("${domibus.connector.internal.controller.to.backend.queue}")
-	private String internalControllerToBackendQueueName;
-	
 	@Override
 	public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
 		putMessageOnMessageQueue(message.getConnectorMessageId());
@@ -29,7 +30,7 @@ public class DomibusConnectorBackendDeliveryServiceImpl extends AbstractDelivery
 
 	@Override
 	String getQueueName() {
-		return internalControllerToBackendQueueName;
+		return internalBackendToControllerQueueName;
 	}
 
 }
