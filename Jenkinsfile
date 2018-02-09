@@ -14,6 +14,7 @@ node {
 				mavenProperties = mavenProperties + " -D${line}"
 			}
 			mavenProperties = mavenProperties + " "
+			println "maven properties are: ${mavenProperties}"
 			
 		} //END CONFIG FILE PROVIDER PROXY_ENV
 	} catch(e) {
