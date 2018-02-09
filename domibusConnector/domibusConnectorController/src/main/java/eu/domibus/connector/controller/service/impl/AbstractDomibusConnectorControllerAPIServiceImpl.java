@@ -10,7 +10,7 @@ import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
-public abstract class AbstractDeliveryServiceImpl {
+public abstract class AbstractDomibusConnectorControllerAPIServiceImpl {
 
 	@Autowired
 	private JmsTemplate jmsTemplate;
