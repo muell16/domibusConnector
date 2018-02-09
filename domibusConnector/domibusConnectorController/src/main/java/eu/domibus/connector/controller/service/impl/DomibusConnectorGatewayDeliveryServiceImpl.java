@@ -23,7 +23,7 @@ import org.slf4j.MDC;
 
 
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
-public class DomibusConnectorGatewayDeliveryServiceImpl extends AbstractDeliveryServiceImpl implements DomibusConnectorGatewayDeliveryService {
+public class DomibusConnectorGatewayDeliveryServiceImpl extends AbstractDomibusConnectorControllerAPIServiceImpl implements DomibusConnectorGatewayDeliveryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
 	
