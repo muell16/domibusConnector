@@ -28,6 +28,9 @@ import java.io.IOException;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.TestPropertySource;
@@ -44,15 +47,16 @@ import org.springframework.test.context.TestPropertySource;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"}, 
-        properties= {   "liquibase.change-log=classpath:/db/changelog/install/initial-4.0.xml",
-                        "spring.jpa.show-sql=true",
-                        "spring.datasource.url=jdbc:h2:mem:testdb",
-                        "spring.datasource.username=sa",
-                        "spring.datasource.driver-class-name=org.h2.Driver",
+        properties= {   "liquibase.enabled=false"
 })
 public class DomibusConnectorSecurityToolkitITCase {
 
-    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"}) //, "eu.domibus.connector.persistence"})
+
+    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security"}, exclude = {
+        DataSourceAutoConfiguration.class, 
+        DataSourceTransactionManagerAutoConfiguration.class, 
+        HibernateJpaAutoConfiguration.class
+    })
     public static class TestContextConfiguration {
 
         @Bean
