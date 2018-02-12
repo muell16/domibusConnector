@@ -1,0 +1,15 @@
+node {
+
+	println("hallo welt")
+	//git url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git'
+	
+	checkout scm
+	sh "ls -ls"
+	
+	//checkout([$class: 'GitSCM', branches: [[name: 'feature/prep_alpha_release']], doGenerateSubmoduleConfigurations: false, extensions: [], gitTool: 'Default', submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'IT-NRW GIT Repo', url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git']]])
+	
+	jobDsl targets: 'createjobs'
+	
+}
+
+

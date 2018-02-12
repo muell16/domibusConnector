@@ -1,0 +1,65 @@
+node {
+
+	println("start release")
+
+		
+	stage("checkout") {
+		cleanWs()
+		sh 'git config --global credential.helper cache'
+		sh 'git config --global push.default simple'
+		def scm = checkout([$class: 'GitSCM', branches: [[name: 'development']], doGenerateSubmoduleConfigurations: false, extensions: [], gitTool: 'Default', submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'IT-NRW GIT Repo', url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git']]])		
+	}
+	
+	stage("determine version number") {
+		gitDescribe = sh(returnStdout: true, script: 'git describe').trim();
+		println("GIT DESCRIBE IS ${gitDescribe}")
+		
+
+		def vers = gitDescribe.split("-")[0];
+		if (vers[0] == 'v') {
+			vers = vers.substring(1, vers.length)
+		}
+		(major, minor, patch) = vers.tokenize(".")
+		
+		def postfix = ""
+		//TODO: if _ in patch increment last number in patch else increment minor number
+		if (patch.contains("_")) {
+			m = patch =~ /(\d+?)_(\[A-Za-z]+?)(\d+?)/
+			def patchnumber = m[0][0]
+			def match1 = m[1][0]
+			def postfixnumber = 0
+			if (m.length() > 1) {
+				//contains number
+				postfixnumber = (m[2][0] as Integer) + 1
+			}
+			postfix = match1 + postfixnumber
+			patch = patchnumber + "_" + match1 + postfixnumber
+		} else {	
+			minor = (minor as Integer) + 1
+		}
+		 
+		
+		releaseVersion = "${major}.${minor}.${patch}"
+			
+		
+		def userInput = input(
+			id: 'userInput', message: 'Let\'s release?', parameters: [
+			[$class: 'TextParameterDefinition', defaultValue: releaseVersion, description: 'New Release Version Suggestion', name: 'rel']
+		])
+		
+		println("user input is ${userInput}")
+		
+		releaseVersion = userInput
+	
+	}
+	
+	stage("create branch") {
+	
+		sh "git checkout -b release/v${releaseVersion}"
+		
+		sh "git push -f origin release/v${releaseVersion}"
+	}
+	
+	
+	
+}
