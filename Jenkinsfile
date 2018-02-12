@@ -1,5 +1,8 @@
 node {
 
+	
+
+
 		def mavenProperties = "";
 		List MY_ENV = []
 		try {
@@ -252,8 +255,7 @@ node {
 							
 							echo "STARTING DEPLOY"
 							//sh 'mvn deploy'
-													
-
+												
 						}
 						
 						stage ("repo cleanup") {
