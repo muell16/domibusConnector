@@ -51,6 +51,8 @@ node {
 	
 	stage("create branch") {
 	
+		git checkout -b "release/v${releaseVersion}"
+	
 	}
 	
 	
