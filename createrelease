@@ -45,13 +45,16 @@ node {
 			[$class: 'TextParameterDefinition', defaultValue: releaseVersion, description: 'New Release Version Suggestion', name: 'rel']
 		])
 		
-		releaseVersion = userInput['rel']
+		println("user input is ${userInput}")
+		
+		releaseVersion = userInput
 	
 	}
 	
 	stage("create branch") {
 	
-		git checkout -b "release/v${releaseVersion}"
+		sh "git checkout -b 'release/v${releaseVersion}'"
+		
 	
 	}
 	
