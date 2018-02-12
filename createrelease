@@ -1,9 +1,11 @@
 node {
 
+	println("start release")
+
 	//def scm
-	step("checkout") {
-		checkout([$class: 'GitSCM', branches: [[name: 'development']], doGenerateSubmoduleConfigurations: false, extensions: [], gitTool: 'Default', submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'IT-NRW GIT Repo', url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git']]])
-	}
+//	step("checkout") {
+//		checkout([$class: 'GitSCM', branches: [[name: 'development']], doGenerateSubmoduleConfigurations: false, extensions: [], gitTool: 'Default', submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'IT-NRW GIT Repo', url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git']]])
+	//}
 	
 	
 	
