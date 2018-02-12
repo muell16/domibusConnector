@@ -53,9 +53,9 @@ node {
 	
 	stage("create branch") {
 	
-		sh "git checkout -b 'release/v${releaseVersion}'"
+		sh "git checkout -b release/v${releaseVersion}"
 		
-	
+		sh "git push -f origin release/v${releaseVersion}"
 	}
 	
 	

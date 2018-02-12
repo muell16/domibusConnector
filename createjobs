@@ -29,7 +29,16 @@ pipelineJob('WebConnectorFolder/startRelease') {
 	description('creates a new release branch from webconnector development branch')
 	displayName('start release')
 
-
+	scm {
+	    git {
+            remote('https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git')
+            credentialsId('IT-NRW GIT Repo')
+			extensions {
+				wipeOutWorkspace()
+			}
+        }
+	}
+	
 	
 	definition {
         cps {
@@ -37,13 +46,7 @@ pipelineJob('WebConnectorFolder/startRelease') {
             sandbox()
         }
 	}
-//		scm {
-//			git {
-//				remote('https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git')
-//				credentialsId('IT-NRW GIT Repo')
-//			}
-//		}
-//    
+ 
 	
 
 }
