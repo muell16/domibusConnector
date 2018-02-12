@@ -216,7 +216,8 @@ node {
 								gitDescribe = sh(returnStdout: true, script: 'git describe').trim();
 								echo "GIT DESCRIBE IS ${gitDescribe}"
 								//input(message: 'Release Nr')
-								def vers = gitDescribe.split("-")[0];
+								def verssplit = gitDescribe.split("-")[0..-2];
+								def vers = gitDescribe.replace(verssplit[0] + "-" + verssplit[1], "")								
 								if (vers[0] == 'v') {
 									vers = vers.substring(1, vers.length)
 								}

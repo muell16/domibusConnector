@@ -14,8 +14,9 @@ node {
 		gitDescribe = sh(returnStdout: true, script: 'git describe').trim();
 		println("GIT DESCRIBE IS ${gitDescribe}")
 		
-
-		def vers = gitDescribe.split("-")[0];
+		def verssplit = gitDescribe.split("-")[0..-2];
+		def vers = gitDescribe.replace(verssplit[0] + "-" + verssplit[1], "")
+		
 		if (vers[0] == 'v') {
 			vers = vers.substring(1, vers.length)
 		}
@@ -24,7 +25,7 @@ node {
 		def postfix = ""
 		//TODO: if _ in patch increment last number in patch else increment minor number
 		if (patch.contains("_")) {
-			m = patch =~ /(\d+?)_(\[A-Za-z]+?)(\d+?)/
+			m = patch =~ /(\d+?)-(\[A-Za-z]+?)(\d+?)/
 			def patchnumber = m[0][0]
 			def match1 = m[1][0]
 			def postfixnumber = 0
@@ -33,7 +34,7 @@ node {
 				postfixnumber = (m[2][0] as Integer) + 1
 			}
 			postfix = match1 + postfixnumber
-			patch = patchnumber + "_" + match1 + postfixnumber
+			patch = patchnumber + "-" + match1 + postfixnumber
 		} else {	
 			minor = (minor as Integer) + 1
 		}
