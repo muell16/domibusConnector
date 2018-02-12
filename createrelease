@@ -27,7 +27,7 @@ node {
 		def postfixnumber = 0
 		if (m.length() > 1) {
 			//contains number
-			def postfixnumber = (m[2][0] as Integer) + 1
+			postfixnumber = (m[2][0] as Integer) + 1
 		}
 		postfix = match1 + postfixnumber
 		patch = patchnumber + "_" + match1 + postfixnumber
