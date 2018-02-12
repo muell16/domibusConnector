@@ -3,7 +3,7 @@ node {
 		def mavenProperties = "";
 		List MY_ENV = []
 		try {
-			configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
+			configFileProvider([configFile(fileId: 'proxy_environment', variable: 'PROXY_ENV')]) {
 				
 										
 				def lines = new File(PROXY_ENV)
@@ -239,7 +239,7 @@ node {
 						stage ("REALLY DEPLOY?") {
 							input(message: 'Start tag, deploy for version: ${releaseVersion}?', ok: 'Yes') //press abort raises exception
 							//parameters: [booleanParam(defaultValue: true, 
-							//description: 'If you presse yes, deployment to nexus starts',name: 'Yes?')])
+							//description: 'If you press yes, deployment to nexus starts',name: 'Yes?')])
 						}
 						
 						stage ("DEPLOY and TAG Release") {    
