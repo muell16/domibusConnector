@@ -1,6 +1,6 @@
+
 folder("WebConnectorFolder") {
-	description("Contains Jobs for WebConnector")
-	
+	description("Contains Jobs for WebConnector")	
 }
 
 multibranchPipelineJob('WebConnectorFolder/WebConnector') {
