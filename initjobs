@@ -1,10 +1,10 @@
 node {
 
 	println("hallo welt")
-
+	git url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git'
 	sh "ls -ls"
 	
-	scm checkout
+	
 	
 	jobDsl targets: 'createjobs'
 	
