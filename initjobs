@@ -1,5 +1,7 @@
 node {
 
+	println("hallo welt")
+
 	jobDsl targets: 'createjobs'
 	
 }
