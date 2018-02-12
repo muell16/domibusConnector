@@ -32,7 +32,7 @@ node {
 		postfix = match1 + postfixnumber
 		patch = patchnumber + "_" + match1 + postfixnumber
 	} else {	
-		minor = minor + 1
+		minor = (minor as Integer) + 1
 	}
 	 
 	
