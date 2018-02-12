@@ -2,10 +2,11 @@ node {
 
 	println("start release")
 
-	
-	
+		
 	stage("checkout") {
 		cleanWs()
+		sh 'git config --global credential.helper cache'
+		sh 'git config --global push.default simple'
 		def scm = checkout([$class: 'GitSCM', branches: [[name: 'development']], doGenerateSubmoduleConfigurations: false, extensions: [], gitTool: 'Default', submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'IT-NRW GIT Repo', url: 'https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git']]])		
 	}
 	
