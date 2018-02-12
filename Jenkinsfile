@@ -1,25 +1,24 @@
 node {
 
-	def mavenProperties = "";
-	List MY_ENV = []
-	try {
-		configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
-			
-			
-					
-			def lines = new File(PROXY_ENV)
-			lines.each { line ->		
-				echo "adding ${line} to env"
-				MY_ENV.add(line)
-				mavenProperties = mavenProperties + " -D${line}"
-			}
-			mavenProperties = mavenProperties + " "
-			println "maven properties are: ${mavenProperties}"
-			
-		} //END CONFIG FILE PROVIDER PROXY_ENV
-	} catch(e) {
-		//do nothing if file not found...
-	}
+		def mavenProperties = "";
+		List MY_ENV = []
+		try {
+			configFileProvider([configFile(fileId: 'af809edf-1b5e-4536-800c-b887b861483c', variable: 'PROXY_ENV')]) {
+				
+										
+				def lines = new File(PROXY_ENV)
+				lines.each { line ->		
+					echo "adding ${line} to env"
+					MY_ENV.add(line)
+					mavenProperties = mavenProperties + " -D${line}"
+				}
+				mavenProperties = mavenProperties + " "
+				println "maven properties are: ${mavenProperties}"
+				
+			} //END CONFIG FILE PROVIDER PROXY_ENV
+		} catch(e) {
+			//do nothing if file not found...
+		}
    
 	
 				
@@ -81,6 +80,8 @@ node {
 						echo "RELEASE = ${RELEASE}"	
 					    env
 					'''
+					mvn '-v'
+					
 					//check if its an release branch
 					if ( scmInfo.GIT_BRANCH.startsWith("origin/release/") ) {
 						RELEASE = true 
