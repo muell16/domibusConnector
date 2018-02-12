@@ -34,7 +34,7 @@ pipelineJob('WebConnectorFolder/startRelease') {
 			branch("development")
             remote {
 				url('https://secure.e-codex.eu/gitblit/r/e-CODEX/WP5/connector.git')
-				credentialsId('IT-NRW GIT Repo')
+				credentials('IT-NRW GIT Repo')
 			}
             
 			extensions {
