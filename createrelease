@@ -28,16 +28,24 @@ node {
 		def postfix = ""
 		// if - in patch increment last number in patch else increment minor number
 		if (patch.contains("-")) {
-			m = patch =~ /(\d+?)-(\[A-Za-z]+?)(\d+?)/
-			def patchnumber = m[0][0]
-			def match1 = m[1][0]
+			def m = patch =~ /(?<p>\d+)-(?<t>[A-Za-z]+)(?<n>\d+)?/
+			println("m: ${m}")
+			def p = m.getGroup("p")
+			println("p: ${p}")
+			def t = m.getGroup("t")
+			println("t: ${t}")
+			def n = m.getGroup("n")
+			println("n: ${n}")			
+			//def patchnumber = m[0][0]
+			//def match1 = m[1][0]
 			def postfixnumber = 0
-			if (m.length() > 1) {
+			if (m.length() > 2) {
 				//contains number
 				postfixnumber = (m[2][0] as Integer) + 1
 			}
 			postfix = match1 + postfixnumber
 			patch = patchnumber + "-" + match1 + postfixnumber
+			m = null //
 		} else {	
 			minor = (minor as Integer) + 1
 		}
