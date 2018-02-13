@@ -75,6 +75,7 @@ node {
 				def hotfixVersion = ""
 				def buildShouldFail = false
 				def buildShouldUnstable = false
+				def versionName = ""
 				stage ('Initialize') {
 					sh '''
 						echo "PATH = ${PATH}"
@@ -87,10 +88,12 @@ node {
 					
 					//check if its an release branch
 					if ( scmInfo.GIT_BRANCH.startsWith("origin/release/") ) {
-						RELEASE = true 
+						RELEASE = true
+						versionName = scmInfo.GIT_BRANCH[15...-1]
 					}
 					if (scmInfo.GIT_BRANCH.startsWith("origin/hotfix/")) {
 						HOTFIX = true
+						versionName = scmInfo.GIT_BRANCH[14...-1]
 					}
 							
 					try {
@@ -104,6 +107,21 @@ node {
 						
 				//chdir to project directory and execute maven tasks					
 				dir ('domibusConnector') {
+					if (RELEASE || HOTFIX ) {
+						stage("INIT Release / Hotfix") {
+							versionName = versionName.split("_")[0] //split branch version name from additional text 
+							//(major, minor, patch) = versionName.tokenize(".")
+							
+							releaseVersion = versionName
+							hotfixVersion = versionName
+
+							println("setting Version to ${versionName}-SNAPSHOT")
+							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}-SNAPSHOT"
+														
+						}
+					}
+				
+				
 				
 					//run build install - there are side effects if running multiple jobs, because they all use the same local maven repo
 					stage ('Build') {						
@@ -209,34 +227,15 @@ node {
 					
 					
 					if (RELEASE || HOTFIX )  {
-						stage("INIT Release / Hotfix") {
-							if (HOTFIX) {
-								//TODO: increment hotfix number from last tag on master
-								//sh 'git pull --tags'
-								gitDescribe = sh(returnStdout: true, script: 'git describe').trim();
-								echo "GIT DESCRIBE IS ${gitDescribe}"
-								//input(message: 'Release Nr')
-								def verssplit = gitDescribe.split("-")[0..-2];
-								def vers = gitDescribe.replace(verssplit[0] + "-" + verssplit[1], "")								
-								if (vers[0] == 'v') {
-									vers = vers.substring(1, vers.length)
-								}
-								(major, minor, patch) = vers.tokenize(".")
-								patch = patch + 1
-								releaseVersion = "${major}.${minor}.${patch}"
-							}
-						
-						   
-							echo "releasing to version ${releaseVersion}"
-							
-							echo "TODO: check correct release version...does not exist yet on nexus/repo!"
-						}
+
 						//TODO: if release...start release prepare...
 						//increment version number: MAJOR, MINOR, PATCH according to BRANCH NAME or just check?
 						 
-						stage ("do Release Checks....") {                
-							echo "TODO: do tests..."
-						}    
+						//stage ("do Release Checks....") {                
+						//	echo "TODO: do tests..."
+						//	TODO: check if this version does not exist yet in nexus repo
+						//}    
+						
 							
 						
 						def deployRelease = "false"
@@ -247,15 +246,15 @@ node {
 						}
 						
 						stage ("DEPLOY and TAG Release") {    
-							echo "CHANGING VERSION NUMBER"
-							sh 'mvn build-helper:parse-version versions:set -DnewVersion=${releaseVersion}'
+							println "CHANGING VERSION NUMBER"
+							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
 
 							echo "TAGGING REPOSITORY"						
 							sh 'git tag v${releaseVersion}'						
 							sh 'git push --tags'
 							
 							echo "STARTING DEPLOY"
-							//sh 'mvn deploy'
+							sh 'mvn deploy'
 												
 						}
 						
