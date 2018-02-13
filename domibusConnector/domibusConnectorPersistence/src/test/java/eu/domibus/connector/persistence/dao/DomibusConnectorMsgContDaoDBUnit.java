@@ -2,9 +2,9 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
+
 import java.sql.SQLException;
-import java.util.Date;
+
 import static org.assertj.core.api.Assertions.*;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;

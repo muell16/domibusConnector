@@ -20,6 +20,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,10 +65,11 @@ public class PersistenceServiceITCase {
 
     @BeforeClass
     public static void InitClass() {
+        String dbName = UUID.randomUUID().toString().substring(0,10);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
                 //.profiles("test", "db_mysql")
                 .profiles("test", "db_h2")
-                .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml")
+                .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml", "spring.datasource.url=jdbc:h2:mem:" + dbName)
                 ;
         APPLICATION_CONTEXT = springAppBuilder.run();
         System.out.println("APPCONTEXT IS STARTED...:" + APPLICATION_CONTEXT.isRunning());

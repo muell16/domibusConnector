@@ -2,10 +2,8 @@
 package eu.domibus.connector.backend.persistence.dao;
 
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
-import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
-import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
-import static eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase.setUpTestDatabaseWithSpringContext;
+import eu.domibus.connector.persistence.dao.CommonPersistenceDBUnitITCase;
+import static eu.domibus.connector.persistence.dao.CommonPersistenceDBUnitITCase.setUpTestDatabaseWithSpringContext;
 import java.util.List;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
@@ -18,8 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  *

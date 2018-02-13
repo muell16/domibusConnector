@@ -3,8 +3,7 @@ package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
-import eu.domibus.connector.persistence.service.CommonPersistenceDBUnitITCase;
-import java.io.FileInputStream;
+
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.jpa.repository.Query;
 
 /**
  *
