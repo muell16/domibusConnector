@@ -1,3 +1,8 @@
+//
+// this dsl job file creates a folder for the jobs 
+// creates a pipelineJob for creating a releaes branch
+// creates a multibranchPipelineJob for building each branch
+//
 
 folder("WebConnectorFolder") {
 	description("Contains Jobs for WebConnector")	

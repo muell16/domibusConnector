@@ -1,7 +1,16 @@
+//
+// JENKINS PIPELINE JOB FILE
+//
+// requirements: 
+// required plugins: jenkins pipeline plugin, git plugin, clean workspace plugin, configFileProviderPlugin
+// required tools: MAVEN 3.3.x, JAVA 8
+// loads a external file with name proxy_environment (a list with properties and passes them to maven)
+// requires multiple exceptions from scripting sandbox
+//
+//
+//
+
 node {
-
-	
-
 
 		def mavenProperties = "";
 		List MY_ENV = []

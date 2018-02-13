@@ -1,3 +1,7 @@
+//
+// JENKINS JOBFILE for creating other jobs from createjobs jobDsl file
+//
+
 node {
 
 	println("hallo welt")

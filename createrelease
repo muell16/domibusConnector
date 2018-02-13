@@ -1,3 +1,11 @@
+// JENKINS JOBFILE for creating a release branch
+//
+// creates a release: determines release name based on last tag of development branch,
+// increments minor number and asks user for release number,
+// creates a branch from development with release prefix and pushes it back to the repo
+//
+//
+
 node {
 
 	println("start release")
