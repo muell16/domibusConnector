@@ -244,7 +244,7 @@ node {
 						def deployRelease = "false"
 						stage ("REALLY DEPLOY?") {
 							timeout(time: 15, unit: 'MINUTES') {
-								input(message: 'Start tag, deploy for version: ${releaseVersion}?', ok: 'Yes') //press abort raises exception
+								input(message: "Start tag, deploy for version: ${releaseVersion}?", ok: 'Yes') //press abort raises exception
 								//parameters: [booleanParam(defaultValue: true, 
 								//description: 'If you press yes, deployment to nexus starts',name: 'Yes?')])
 							}
