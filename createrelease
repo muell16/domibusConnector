@@ -24,27 +24,28 @@ node {
 			vers = vers.substring(1, vers.length)
 		}
 		(major, minor, patch) = vers.tokenize(".") //split tag name into versions...
+		println("tokenized: ${major}.${minor}.${patch}")
 		
 		def postfix = ""
+		println("patchnr is ${patch}")
 		// if - in patch increment last number in patch else increment minor number
 		if (patch.contains("-")) {
 			def m = patch =~ /(\d+)-([A-Za-z]+)(\d+)?/
 			println("m: ${m}")
-			def p = m.group(0)
+			def p = m[0][1]
 			println("p: ${p}")
-			def t = m.group(1)
+			def t = m[0][2]
 			println("t: ${t}")
-			def n = m.group(2)
-			println("n: ${n}")			
-			//def patchnumber = m[0][0]
-			//def match1 = m[1][0]
+
+			def ptext = m[0][2]
+			def patchnumber = m[0][1]
 			def postfixnumber = 0
-			if (m.length() > 2) {
+			if (m[0].size() > 3  && (m[0][3] != null) {
 				//contains number
-				postfixnumber = (m[2][0] as Integer) + 1
+				postfixnumber = (m[0][3] as Integer) + 1
 			}
-			postfix = match1 + postfixnumber
-			patch = patchnumber + "-" + match1 + postfixnumber
+			postfix = "${ptext}${postfixnumber}"
+			patch = patchnumber + "-" + ptext + postfixnumber
 			m = null //
 		} else {	
 			minor = (minor as Integer) + 1
