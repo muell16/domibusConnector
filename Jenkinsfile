@@ -89,11 +89,11 @@ node {
 					//check if its an release branch
 					if ( scmInfo.GIT_BRANCH.startsWith("origin/release/") ) {
 						RELEASE = true
-						versionName = scmInfo.GIT_BRANCH[15...-1]
+						versionName = scmInfo.GIT_BRANCH[15..-1]
 					}
 					if (scmInfo.GIT_BRANCH.startsWith("origin/hotfix/")) {
 						HOTFIX = true
-						versionName = scmInfo.GIT_BRANCH[14...-1]
+						versionName = scmInfo.GIT_BRANCH[14..-1]
 					}
 							
 					try {
