@@ -226,7 +226,7 @@ node {
 					}
 					
 					
-					if (RELEASE || HOTFIX )  {
+					if (!buildShouldFail && RELEASE || HOTFIX )  {
 
 						//TODO: if release...start release prepare...
 						//increment version number: MAJOR, MINOR, PATCH according to BRANCH NAME or just check?
@@ -236,25 +236,30 @@ node {
 						//	TODO: check if this version does not exist yet in nexus repo
 						//}    
 						
+						if (buildShouldUnstable) {
+							releaseVersion = releaseVersion + "-UNSTABLE"
+						}
 							
 						
 						def deployRelease = "false"
 						stage ("REALLY DEPLOY?") {
-							input(message: 'Start tag, deploy for version: ${releaseVersion}?', ok: 'Yes') //press abort raises exception
-							//parameters: [booleanParam(defaultValue: true, 
-							//description: 'If you press yes, deployment to nexus starts',name: 'Yes?')])
+							timeout(time: 15, unit: 'MINUTES') {
+								input(message: 'Start tag, deploy for version: ${releaseVersion}?', ok: 'Yes') //press abort raises exception
+								//parameters: [booleanParam(defaultValue: true, 
+								//description: 'If you press yes, deployment to nexus starts',name: 'Yes?')])
+							}
 						}
 						
 						stage ("DEPLOY and TAG Release") {    
 							println "CHANGING VERSION NUMBER"
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
-
+							
+							echo "STARTING DEPLOY"
+							mvn "clean deploy"
+							
 							echo "TAGGING REPOSITORY"						
 							sh 'git tag v${releaseVersion}'						
 							sh 'git push --tags'
-							
-							echo "STARTING DEPLOY"
-							sh 'mvn deploy'
 												
 						}
 						
@@ -266,6 +271,23 @@ node {
 							
 							//switch to master branch    
 							//sh "git branch -d ${scmInfo.GIT_BRANCH}" //delete release branch (only local!)
+
+							if (RELEASE || HOTFIX) {
+								
+								println("merge feature branch into master branch and push")
+								sh "git checkout master"
+								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
+								sh "git push"
+								
+								println("merge feature branch into development branch and push")
+								sh "git checkout development"
+								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
+								sh "git push"
+								
+								println("delete old feature branch in remote repo")
+								sh "git push origin :${scmInfo.GIT_BRANCH}"
+							}
+							
 						}                
 					}     
 							
