@@ -14,17 +14,20 @@ node {
 		gitDescribe = sh(returnStdout: true, script: 'git describe').trim();
 		println("GIT DESCRIBE IS ${gitDescribe}")
 		
-		def verssplit = gitDescribe.split("-")[0..-2];
-		def vers = gitDescribe.replace(verssplit[0] + "-" + verssplit[1], "")
+		//remove -23-gbdsaed postfix from git describe output, to extract the tag name of the first parent (see git describe documentation)
+		def verssplit = gitDescribe.split("-")[-2..-1];
+		println("verssplit is ${verssplit}")
+		def vers = gitDescribe.replace("-" + verssplit[0] + "-" + verssplit[1], "")
+		println("vers is ${vers}") //tag name is in vers
 		
 		if (vers[0] == 'v') {
 			vers = vers.substring(1, vers.length)
 		}
-		(major, minor, patch) = vers.tokenize(".")
+		(major, minor, patch) = vers.tokenize(".") //split tag name into versions...
 		
 		def postfix = ""
-		//TODO: if _ in patch increment last number in patch else increment minor number
-		if (patch.contains("_")) {
+		// if - in patch increment last number in patch else increment minor number
+		if (patch.contains("-")) {
 			m = patch =~ /(\d+?)-(\[A-Za-z]+?)(\d+?)/
 			def patchnumber = m[0][0]
 			def match1 = m[1][0]
