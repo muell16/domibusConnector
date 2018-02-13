@@ -3,7 +3,7 @@
 //
 // requirements: 
 // required plugins: jenkins pipeline plugin, git plugin, clean workspace plugin, configFileProviderPlugin
-// required tools: MAVEN 3.3.x, JAVA 8
+// required tools: MAVEN 3.5.x, JAVA 8
 // loads a external file with name proxy_environment (a list with properties and passes them to maven)
 // requires multiple exceptions from scripting sandbox
 //
@@ -58,7 +58,7 @@ node {
 			String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
 			def mvnHome
 			try {
-				mvnHome = tool name: 'MAVEN 3.3.x'
+				mvnHome = tool name: 'MAVEN 3.5.x'
 			} catch (e) {			
 				mvnHome = tool name: 'MAVEN'			
 			}
