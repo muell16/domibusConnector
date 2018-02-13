@@ -40,7 +40,7 @@ node {
 			def ptext = m[0][2]
 			def patchnumber = m[0][1]
 			def postfixnumber = 0
-			if (m[0].size() > 3  && (m[0][3] != null) {
+			if (m[0].size() > 3  && m[0][3] != null) {
 				//contains number
 				postfixnumber = (m[0][3] as Integer) + 1
 			}
