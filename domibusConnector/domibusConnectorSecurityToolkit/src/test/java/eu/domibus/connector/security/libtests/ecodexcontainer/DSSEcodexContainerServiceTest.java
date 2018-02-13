@@ -34,7 +34,7 @@ import org.springframework.util.StreamUtils;
  * Exploration tests for DSSEcodexContainerService
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Ignore("test is failing in ci server")
+//@Ignore("test is failing in ci server")
 public class DSSEcodexContainerServiceTest {
 
     private Properties properties;
