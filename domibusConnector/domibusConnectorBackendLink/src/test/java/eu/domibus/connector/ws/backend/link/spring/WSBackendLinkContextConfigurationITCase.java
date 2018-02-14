@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @Import(WSBackendLinkContextConfigurationITCase.TestConfiguration.class)
-@SpringBootTest(properties= {"server.port=8093"}, webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(properties= {"server.port=0"}, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class WSBackendLinkContextConfigurationITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkContextConfigurationITCase.class);
