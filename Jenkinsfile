@@ -39,7 +39,7 @@ node {
 		
 			//create a function mvn with maven properties appended on mvn call
 			mvn = { arg ->
-					sh "mvn -Djavax.net.ssl.trustStore=${truststore} -s ${MAVEN_SETTINGS} ${arg}"
+					sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustAnchors=${truststore} -s ${MAVEN_SETTINGS} ${arg}"
 			}
 		
 			 
