@@ -26,10 +26,10 @@ node {
 				truststore = TRUSTSTORE
 			}
 			sh "cp ${TRUSTSTORE} truststore.jks"
-		
-			//sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
+					
 			sh "ls -la"
 			truststore = pwd() + "/truststore.jks"
+			sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
 		} catch(e) {
 			//ignore if not available
 		}
@@ -64,7 +64,9 @@ node {
 			MY_ENV.add("PATH+MVN=${jdktool}/bin:${mvnHome}/bin")
 			MY_ENV.add("M2_HOME=${mvnHome}")
 			MY_ENV.add("JAVA_HOME=${jdktool}")
-			//MY_ENV.add("MAVEN_OPTS=-Djavax.net.ssl.trustStore=${truststore}")
+			if (truststore != "") {
+				MY_ENV.add("MAVEN_OPTS=-Djavax.net.ssl.trustStore=${truststore}")
+			}
 			
 			//nrwcerts.truststore.jks
 			
