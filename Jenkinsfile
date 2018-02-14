@@ -24,7 +24,7 @@ node {
 		}
 
 		sh "ls -la"
-		truststore = pwd() + /"truststore.jks"
+		truststore = pwd() + "/truststore.jks"
 		
 			List MY_ENV = []
 			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
