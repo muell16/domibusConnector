@@ -22,11 +22,11 @@ node {
 		def truststore = ""
 		withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
 			truststore = TRUSTSTORE
-			sh "cp ${TRUSTSTORE} truststore.jks"
-		}
+		//	sh "cp ${TRUSTSTORE} truststore.jks"
+		
 
-		sh "ls -la"
-		truststore = pwd() + "/truststore.jks"
+		//sh "ls -la"
+		//truststore = pwd() + "/truststore.jks"
 		
 			List MY_ENV = []
 			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
@@ -315,5 +315,5 @@ node {
 	
 	
 	} //end configFile MAVEN_SETTINGS
-    
+    } //end credentials secret file trust store
 }
