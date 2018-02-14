@@ -70,8 +70,8 @@ node {
 							userRemoteConfigs: scm.userRemoteConfigs,
 					])
 			 
-					echo "scm : ${scmInfo}"
-					echo "${scmInfo.GIT_COMMIT}"
+					println "scm : ${scmInfo}"
+					println "${scmInfo.GIT_COMMIT}"
 					
 				}
 
@@ -85,11 +85,12 @@ node {
 				def buildShouldUnstable = false
 				def versionName = ""
 				stage ('Initialize') {
+					
+					println "PATH = ${PATH}"
+					println "M2_HOME = ${M2_HOME}"   
+					println "HOTFIX = ${HOTFIX}"
+					println "RELEASE = ${RELEASE}"	
 					sh '''
-						echo "PATH = ${PATH}"
-						echo "M2_HOME = ${M2_HOME}"   
-						echo "HOTFIX = ${HOTFIX}"
-						echo "RELEASE = ${RELEASE}"	
 					    env
 					'''
 					mvn '-v'
