@@ -24,9 +24,9 @@ node {
 		try {
 			withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
 				truststore = TRUSTSTORE
+				sh "cp ${TRUSTSTORE} truststore.jks"
 			}
-			sh "cp ${TRUSTSTORE} truststore.jks"
-					
+								
 			sh "ls -la"
 			truststore = pwd() + "/truststore.jks"
 			sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
@@ -120,13 +120,7 @@ node {
 					if (versionName != "" && versionName[0] == "v") {
 						versionName = versionName[1..-1]
 					}
-							
-					try {
-						docker_available = true
-						sh 'docker ps'
-					} catch (e) {
-						docker_available = false
-					}							
+													
 				}
 				
 						
