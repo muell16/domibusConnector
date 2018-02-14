@@ -12,6 +12,8 @@
 
 node {
 
+	cleanWs()
+
 		def mavenProperties = "";
 		
 		//load config file maven-settings (settings.xml) from jenkins managed files and use it 
@@ -58,7 +60,7 @@ node {
 			
 			withEnv(MY_ENV) {
 				stage ("Checkout") {
-					cleanWs()
+					
 					scmInfo = checkout([
 							$class: 'GitSCM',
 							branches: scm.branches,
