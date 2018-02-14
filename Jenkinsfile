@@ -18,9 +18,13 @@ node {
 		configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'MAVEN_SETTINGS')]) {
 		
 		def truststore = ""
-		configFileProvider([configFile(fileId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {	
+		withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
 			truststore = TRUSTSTORE
+			sh "cp ${TRUSTSTORE} truststore.jks"
 		}
+
+		sh "ls -la"
+		truststore = "truststore.jks"
 		
 			List MY_ENV = []
 			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
@@ -28,6 +32,7 @@ node {
 			String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
 			def mvnHome
 			
+			sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
 				
 			try {
 				mvnHome = tool name: 'MAVEN 3.5.x'
@@ -35,11 +40,11 @@ node {
 				mvnHome = tool name: 'MAVEN'			
 			}
 		
-		def mvn
+			def mvn
 		
 			//create a function mvn with maven properties appended on mvn call
 			mvn = { arg ->
-					sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustAnchors=${truststore} -s ${MAVEN_SETTINGS} ${arg}"
+				sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustAnchors=${truststore} -s ${MAVEN_SETTINGS} ${arg}"
 			}
 		
 			 
@@ -85,6 +90,7 @@ node {
 					    env
 					'''
 					mvn '-v'
+					sh 'java -version'
 					
 					//check if its an release branch
 					if ( scmInfo.GIT_BRANCH.startsWith("origin/release/") ) {
