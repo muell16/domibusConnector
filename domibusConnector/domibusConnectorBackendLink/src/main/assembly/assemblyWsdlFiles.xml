@@ -1,5 +1,5 @@
 <assembly>
-	<id>transition</id>
+	<id>wsdl</id>
 	<formats>
 		<format>zip</format>
 		<format>dir</format>
