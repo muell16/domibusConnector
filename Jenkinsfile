@@ -13,48 +13,13 @@
 node {
 
 		def mavenProperties = "";
-		List MY_ENV = []
-		try {
-			configFileProvider([configFile(fileId: 'proxy_environment', variable: 'PROXY_ENV')]) {
-				
-										
-				def lines = new File(PROXY_ENV)
-				lines.each { line ->		
-					echo "adding ${line} to env"
-					MY_ENV.add(line)
-					mavenProperties = mavenProperties + " -D${line}"
-				}
-				mavenProperties = mavenProperties + " "
-				println "maven properties are: ${mavenProperties}"
-				
-			} //END CONFIG FILE PROVIDER PROXY_ENV
-		} catch(e) {
-			//do nothing if file not found...
-		}
-   
-	
-				
-		MY_ENV.add("GIT_SSL_NO_VERIFY=true")
 		
-		echo "env: ${MY_ENV}"
+		
+		configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'MAVEN_SETTINGS')]) {
+			
+			List MY_ENV = []
+			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
 
-		withEnv(MY_ENV) {
-			stage ("Checkout") {
-				cleanWs()
-				scmInfo = checkout([
-						$class: 'GitSCM',
-						branches: scm.branches,
-						doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-						extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
-						userRemoteConfigs: scm.userRemoteConfigs,
-				])
-		 
-				echo "scm : ${scmInfo}"
-				echo "${scmInfo.GIT_COMMIT}"
-				
-			}
-					
-				
 			String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
 			def mvnHome
 			try {
@@ -62,22 +27,38 @@ node {
 			} catch (e) {			
 				mvnHome = tool name: 'MAVEN'			
 			}
-		 
+			 
 			//create a function mvn with maven properties appended on mvn call
 			def mvn = { arg ->
-				sh "mvn ${mavenProperties} ${arg}"
+					sh "mvn -s ${MAVEN_SETTINGS} ${arg}"
 			}
-		 
-			/* Set JAVA_HOME, and special PATH variables. */
-			List javaEnv = [
-				"PATH+MVN=${jdktool}/bin:${mvnHome}/bin",
-				"M2_HOME=${mvnHome}",
-				"JAVA_HOME=${jdktool}",
-			]
-
-			def boolean docker_available = false
+			 
+			/* Set JAVA_HOME, and special PATH variables. */			
+			MY_ENV.add("PATH+MVN=${jdktool}/bin:${mvnHome}/bin")
+			MY_ENV.add("M2_HOME=${mvnHome}")
+			MY_ENV.add("JAVA_HOME=${jdktool}")
 			
-			withEnv(javaEnv) {
+			
+			
+			
+			withEnv(MY_ENV) {
+				stage ("Checkout") {
+					cleanWs()
+					scmInfo = checkout([
+							$class: 'GitSCM',
+							branches: scm.branches,
+							doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+							extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
+							userRemoteConfigs: scm.userRemoteConfigs,
+					])
+			 
+					echo "scm : ${scmInfo}"
+					echo "${scmInfo.GIT_COMMIT}"
+					
+				}
+
+				def boolean docker_available = false
+				
 				def RELEASE = false
 				def HOTFIX = false			
 				def releaseVersion = ""
@@ -294,6 +275,9 @@ node {
 								println("merge feature branch into development branch and push")
 								sh "git checkout development"
 								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
+								
+								//TODO: increment version number and add -SNAPSHOT
+								
 								sh "git push"
 								
 								println("delete old feature branch in remote repo")
@@ -307,10 +291,9 @@ node {
 				} //end dir ('domibusConnector')	
 										
 					
-			} // end withEnv(javaEnv)
-		}  //end withEnv(GIT_ENV)
+		}  //end withEnv(MY_ENV)
 	
 	
-	
+	} //end configFile MAVEN_SETTINGS
     
 }
