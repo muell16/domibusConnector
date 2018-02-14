@@ -46,7 +46,7 @@ node {
 		
 			//create a function mvn with maven properties appended on mvn call
 			mvn = { arg ->
-				sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustAnchors=${truststore} -s ${MAVEN_SETTINGS} ${arg}"
+				sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS -s ${MAVEN_SETTINGS} ${arg}"
 			}
 		
 			 
@@ -54,6 +54,7 @@ node {
 			MY_ENV.add("PATH+MVN=${jdktool}/bin:${mvnHome}/bin")
 			MY_ENV.add("M2_HOME=${mvnHome}")
 			MY_ENV.add("JAVA_HOME=${jdktool}")
+			MY_ENV.add("MAVEN_OPTS="-Djavax.net.ssl.trustStore=${truststore}")
 			
 			//nrwcerts.truststore.jks
 			
@@ -253,16 +254,11 @@ node {
 							
 						
 						def deployRelease = "false"
-						stage ("REALLY DEPLOY?") {
-							try {
-								timeout(time: 15, unit: 'MINUTES') {
-									input(message: "Start tag, deploy for version: ${releaseVersion}?", ok: 'Yes') //press abort raises exception
-									//parameters: [booleanParam(defaultValue: true, 
-									//description: 'If you press yes, deployment to nexus starts',name: 'Yes?')])
-								}
-							} catch (e) {								
-								currentBuild.result = 'ABORTED'
-								return
+						stage ("REALLY DEPLOY?") {							
+							timeout(time: 15, unit: 'MINUTES') {
+								input(message: "Start tag, deploy for version: ${releaseVersion}?", ok: 'Yes') //press abort raises exception
+								//parameters: [booleanParam(defaultValue: true, 
+								//description: 'If you press yes, deployment to nexus starts',name: 'Yes?')])
 							}
 						}
 						
