@@ -9,7 +9,11 @@
 		<!-- ==================== Copying TransitionModel.xsd ================= -->
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources/wsdl/</directory>            
-			<outputDirectory>/wsdl/</outputDirectory>            
+			<outputDirectory>/wsdl/</outputDirectory>
+            <includes>
+                <include>**/*.wsdl</include>
+                <include>**/*.policy.xml</include>
+            </includes>        
 		</fileSet>			
 	</fileSets>
 </assembly>
