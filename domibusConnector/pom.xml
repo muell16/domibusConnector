@@ -46,13 +46,14 @@
         <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
         <sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
-        <!-- if necessary overwrite proxy settings in local settings.xml -->
-        <!-- <https.proxy.enabled>false</https.proxy.enabled>
-        <https.proxy.host/>
-        <https.proxy.port/>
+        <!-- if a proxy is used during build or test configure this properties by overwriting them in your settings.xml file -->
+        <https.proxy.enabled>false</https.proxy.enabled>
         <http.proxy.enabled>false</http.proxy.enabled>
-        <http.proxy.host/>
-        <http.proxy.port/> -->           
+        <!-- keep this empty properties! -->
+        <https.proxy.host></https.proxy.host>
+        <http.proxy.host></http.proxy.host>
+        <http.proxy.port></http.proxy.port>
+        <https.proxy.port></https.proxy.port>          
         <spring.boot.version>1.5.8.RELEASE</spring.boot.version> 
     </properties>
 
