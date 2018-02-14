@@ -117,7 +117,7 @@ node {
 						HOTFIX = true
 						versionName = scmInfo.GIT_BRANCH[14..-1]
 					}
-					if (versionName[0] == "v") {
+					if (versionName != "" && versionName[0] == "v") {
 						versionName = versionName[1..-1]
 					}
 							
