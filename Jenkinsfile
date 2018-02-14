@@ -14,31 +14,37 @@ node {
 
 		def mavenProperties = "";
 		
-		
+		//load config file maven-settings (settings.xml) from jenkins managed files and use it 
 		configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'MAVEN_SETTINGS')]) {
 			
+		
 			List MY_ENV = []
 			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
 
 			String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
 			def mvnHome
+			
+				
 			try {
 				mvnHome = tool name: 'MAVEN 3.5.x'
 			} catch (e) {			
 				mvnHome = tool name: 'MAVEN'			
 			}
-			 
+		
+		def mvn
+		configFileProvider([configFile(fileId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
 			//create a function mvn with maven properties appended on mvn call
-			def mvn = { arg ->
-					sh "mvn -s ${MAVEN_SETTINGS} ${arg}"
+			mvn = { arg ->
+					sh "mvn -Djavax.net.ssl.trustStore=${TRUSTSTORE} -s ${MAVEN_SETTINGS} ${arg}"
 			}
+		}
 			 
 			/* Set JAVA_HOME, and special PATH variables. */			
 			MY_ENV.add("PATH+MVN=${jdktool}/bin:${mvnHome}/bin")
 			MY_ENV.add("M2_HOME=${mvnHome}")
 			MY_ENV.add("JAVA_HOME=${jdktool}")
 			
-			
+			//nrwcerts.truststore.jks
 			
 			
 			withEnv(MY_ENV) {
