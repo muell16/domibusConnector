@@ -19,14 +19,20 @@ node {
 		//load config file maven-settings (settings.xml) from jenkins managed files and use it 
 		configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'MAVEN_SETTINGS')]) {
 		
+		
 		def truststore = ""
-		withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
-			truststore = TRUSTSTORE
-		//	sh "cp ${TRUSTSTORE} truststore.jks"
+		try {
+			withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
+				truststore = TRUSTSTORE
+			}
+			sh "cp ${TRUSTSTORE} truststore.jks"
 		
 
-		//sh "ls -la"
-		//truststore = pwd() + "/truststore.jks"
+			sh "ls -la"
+			truststore = pwd() + "/truststore.jks"
+		} catch(e) {
+			//ignore if not available
+		}
 		
 			List MY_ENV = []
 			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
@@ -46,7 +52,11 @@ node {
 		
 			//create a function mvn with maven properties appended on mvn call
 			mvn = { arg ->
-				sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.debug=all -Djavax.net.ssl.trustStoreType=JKS -s ${MAVEN_SETTINGS} ${arg}"
+				if (truststore != "") {
+					sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS -s ${MAVEN_SETTINGS} ${arg}"
+				} else {
+					sh "mvn -s ${MAVEN_SETTINGS} ${arg}"
+				}
 			}
 		
 			 
@@ -54,7 +64,7 @@ node {
 			MY_ENV.add("PATH+MVN=${jdktool}/bin:${mvnHome}/bin")
 			MY_ENV.add("M2_HOME=${mvnHome}")
 			MY_ENV.add("JAVA_HOME=${jdktool}")
-			MY_ENV.add("MAVEN_OPTS=-Djavax.net.ssl.trustStore=${truststore}")
+			//MY_ENV.add("MAVEN_OPTS=-Djavax.net.ssl.trustStore=${truststore}")
 			
 			//nrwcerts.truststore.jks
 			
@@ -315,5 +325,5 @@ node {
 	
 	
 	} //end configFile MAVEN_SETTINGS
-    } //end credentials secret file trust store
+    
 }
