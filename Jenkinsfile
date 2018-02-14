@@ -27,7 +27,7 @@ node {
 			}
 			sh "cp ${TRUSTSTORE} truststore.jks"
 		
-
+			//sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
 			sh "ls -la"
 			truststore = pwd() + "/truststore.jks"
 		} catch(e) {
@@ -40,7 +40,7 @@ node {
 			String jdktool = tool name: "JAVA 8", type: 'hudson.model.JDK'
 			def mvnHome
 			
-			sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
+
 				
 			try {
 				mvnHome = tool name: 'MAVEN 3.5.x'
