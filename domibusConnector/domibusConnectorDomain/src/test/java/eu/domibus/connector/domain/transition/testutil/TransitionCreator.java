@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageDetailsType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
 import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
 import java.io.ByteArrayInputStream;
@@ -27,6 +28,21 @@ public class TransitionCreator {
 
     public static String APPLICATION_OCTET_STREAM_MIME_TYPE = "application/octet-stream";
     
+    public static DomibusConnectorMessagesType createMessages() {
+        DomibusConnectorMessagesType messages = new DomibusConnectorMessagesType();
+        messages.getMessages().add(createMessage());
+        return messages;
+    }
+    
+    public static DomibusConnectorMessageType createEpoMessage() {
+        DomibusConnectorMessageType message = new DomibusConnectorMessageType();
+        message.setMessageDetails(createEpoMessageDetails());
+        message.setMessageContent(createMessageContent()); 
+        message.getMessageAttachments().add(createMessageAttachment());
+                
+        return message;
+    }
+            
     public static DomibusConnectorMessageType createMessage() {
         DomibusConnectorMessageType message = new DomibusConnectorMessageType();        
         message.setMessageDetails(createMessageDetails());
@@ -114,6 +130,29 @@ public class TransitionCreator {
         return messageDetails;        
     }
     
+    public static DomibusConnectorMessageDetailsType createEpoMessageDetails() {
+        DomibusConnectorMessageDetailsType messageDetails = new DomibusConnectorMessageDetailsType();
+        
+//        messageDetails.setBackendMessageId("backendMessageId");
+        messageDetails.setConversationId("conversation21");
+        messageDetails.setFinalRecipient("finalRecipient");
+        messageDetails.setOriginalSender("originalSender");
+        messageDetails.setRefToMessageId("refToMessageId");
+        
+        messageDetails.setAction(createActionFormA());
+        messageDetails.setService(createServiceEpo());
+        messageDetails.setFromParty(createPartyDE());
+        messageDetails.setToParty(createPartyAT());
+        
+        return messageDetails;        
+    }
+    
+    public static DomibusConnectorActionType createActionFormA() {
+        DomibusConnectorActionType action = new DomibusConnectorActionType();
+        action.setAction("Form_A");        
+        return action;
+    }
+    
     public static DomibusConnectorActionType createAction() {
         DomibusConnectorActionType action = new DomibusConnectorActionType();
         action.setAction("action");        
@@ -124,6 +163,13 @@ public class TransitionCreator {
         DomibusConnectorServiceType service = new DomibusConnectorServiceType();
         service.setService("service");
         service.setServiceType("serviceType");
+        return service;        
+    }
+    
+    public static DomibusConnectorServiceType createServiceEpo() {
+        DomibusConnectorServiceType service = new DomibusConnectorServiceType();
+        service.setService("EPO");
+        service.setServiceType("urn:e-codex:services:");
         return service;        
     }
     
