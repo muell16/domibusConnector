@@ -16,9 +16,16 @@ node {
 
 		def mavenProperties = "";
 		
+		def MAVEN_SETTINGS = ""
+		try {
 		//load config file maven-settings (settings.xml) from jenkins managed files and use it 
-		configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'MAVEN_SETTINGS')]) {
-		
+			configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'maven_settings')]) {
+				sh "cp ${maven_settings} maven_settings.xml"
+				MAVEN_SETTINGS = pwd() + "/maven_settings.xml"				
+			}
+		} catch (e) {
+			//ignore if not available!
+		}
 		
 		def truststore = ""
 		try {
@@ -52,11 +59,14 @@ node {
 		
 			//create a function mvn with maven properties appended on mvn call
 			mvn = { arg ->
-				if (truststore != "") {
-					sh "mvn -Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS -s ${MAVEN_SETTINGS} ${arg}"
-				} else {
-					sh "mvn -s ${MAVEN_SETTINGS} ${arg}"
+				if (MAVEN_SETTINGS != "") {
+					arg = "-s ${MAVEN_SETTINGS} ${arg}"
 				}
+				if (truststore != "") {
+					arg = "-Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS ${arg}"
+				}
+				
+				sh "mvn ${arg}"
 			}
 		
 			 
@@ -320,6 +330,5 @@ node {
 		}  //end withEnv(MY_ENV)
 	
 	
-	} //end configFile MAVEN_SETTINGS
     
 }
