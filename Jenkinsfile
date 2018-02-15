@@ -14,34 +14,12 @@ node {
 
 	cleanWs()
 
-		def mavenProperties = "";
+
 		
-		def MAVEN_SETTINGS = ""
-		try {
-		//load config file maven-settings (settings.xml) from jenkins managed files and use it 
-			configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'maven_settings')]) {
-				sh "cp ${maven_settings} maven_settings.xml"
-				MAVEN_SETTINGS = pwd() + "/maven_settings.xml"				
-			}
-		} catch (e) {
-			//ignore if not available!
-		}
 		
-		def truststore = ""
-		try {
-			withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
-				truststore = TRUSTSTORE
-				sh "cp ${TRUSTSTORE} truststore.jks"
-			}
-								
-			sh "ls -la"
-			truststore = pwd() + "/truststore.jks"
-			sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
-		} catch(e) {
-			//ignore if not available
-		}
 		
 		sh "ls -la"
+		
 		
 		
 			List MY_ENV = []
@@ -62,6 +40,31 @@ node {
 		
 			//create a function mvn with maven properties appended on mvn call
 			mvn = { arg ->
+				def MAVEN_SETTINGS = ""
+				try {
+				//load config file maven-settings (settings.xml) from jenkins managed files and use it 
+					configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'maven_settings')]) {
+						sh "cp ${maven_settings} maven_settings.xml"
+						MAVEN_SETTINGS = "maven_settings.xml"				
+					}
+				} catch (e) {
+					//ignore if not available!
+				}
+				
+				def truststore = ""
+				try {
+					withCredentials([file(credentialsId: 'nrwcerts.truststore.jks', variable: 'TRUSTSTORE')]) {
+						truststore = TRUSTSTORE
+						sh "cp ${TRUSTSTORE} truststore.jks"
+					}
+															
+					truststore = "truststore.jks"
+					//sh "${jdktool}/bin/keytool -list -keystore ${truststore}"
+				} catch(e) {
+					//ignore if not available
+				}
+			
+				sh "ls -la"
 				if (MAVEN_SETTINGS != "") {
 					arg = "-s ${MAVEN_SETTINGS} ${arg}"
 				}
