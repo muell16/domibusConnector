@@ -32,13 +32,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
                     xmlns:s="http://service.jaxws.cxf.apache.org/service"
                                                            
     >
-        <!--      not working!: why?               wsdlLocation="/wsdl/DomibusConnectorBackendWebService.wsdl" -->
+
         <jaxws:properties>
             
             <entry key="security.signature.properties" value="eu/domibus/connector/ws/backend/link/ws/decrypt.properties" />
             <entry key="security.signature.username" value="connector" />
             <entry key="security.encryption.username" value="bob" />
-<!--            <entry key="security.callback-handler" value-ref="myPasswordCallback"/>-->
             <entry key="security.encryption.properties" value="eu/domibus/connector/ws/backend/link/ws/decrypt.properties" />
 
             <entry key="mtom-enabled" value="true" />
