@@ -80,9 +80,7 @@ node {
 			MY_ENV.add("PATH+MVN=${jdktool}/bin:${mvnHome}/bin")
 			MY_ENV.add("M2_HOME=${mvnHome}")
 			MY_ENV.add("JAVA_HOME=${jdktool}")
-			if (truststore != "") {
-				MY_ENV.add("MAVEN_OPTS=-Djavax.net.ssl.trustStore=${truststore}")
-			}
+
 			
 			//nrwcerts.truststore.jks
 			
