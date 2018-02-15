@@ -62,7 +62,7 @@
     </scm>
     <ciManagement>
         <system>Jenkins</system>
-        <url>https://www.e-codex.eu/jenkins/job/domibusWebConnector/</url>
+        <url>https://secure.e-codex.eu/jenkins/view/domibusConnector/job/domibusWebConnector</url>
     </ciManagement>
 
     <distributionManagement>
