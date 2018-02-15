@@ -21,7 +21,10 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import javax.activation.DataHandler;
+import org.apache.cxf.helpers.IOUtils;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Ignore;
@@ -104,19 +107,29 @@ public class DomibusConnectorDomainMessageTransformerTest {
     }
     
     @Test
-    public void testTransformMessageAttachmentDomainToTransition() {
+    public void testTransformMessageAttachmentDomainToTransition() throws IOException {
         DomibusConnectorMessageAttachment messageAttachment = DomainEntityCreator.createSimpleMessageAttachment();
         
         DomibusConnectorMessageAttachmentType attachmentTO = 
                 DomibusConnectorDomainMessageTransformer.transformMessageAttachmentDomainToTransition(messageAttachment);
-        
-        //assertThat(attachmentTO.getAttachment()).isEqualTo("attachment".getBytes());
-        assertThat(attachmentTO.getAttachment()).isNotNull(); //TODO: better check!
+                                
+        assertThat(attachmentTO.getAttachment()).isNotNull(); //TODO: better check!        
         assertThat(attachmentTO.getIdentifier()).isEqualTo("identifier");
+        compareDataHandlerContent(attachmentTO.getAttachment(), "attachment");      
         
         assertThat(attachmentTO.getMimeType()).isEqualTo("application/garbage");
         assertThat(attachmentTO.getName()).isEqualTo("name");
         
+    }
+    
+    private void compareDataHandlerContent(DataHandler dh, String content) {       
+        try {
+            InputStream is = dh.getInputStream();
+            byte[] attachmentBytes = IOUtils.readBytesFromStream(is);
+            assertThat(new String(attachmentBytes, "UTF-8")).isEqualTo(content);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
     
     
@@ -139,6 +152,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         assertThat(messageContentTO).as("message content is set in test entity!").isNotNull();
         //assertThat(messageContentTO.getXmlContent()).isEqualTo(domainMessage.getMessageContent().getXmlContent());
         assertThat(messageContentTO.getXmlContent()).isNotNull(); //TODO better check?
+        
         assertThat(messageContentTO.getDocument()).as("document of messageContent must be mapped!").isNotNull();                
     }
     
@@ -150,9 +164,9 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessageContentType messageContentTO = 
                 DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(domainMessage.getMessageContent());        
         DomibusConnectorMessageDocumentType document = messageContentTO.getDocument();
-        
-        //TODO: better check!
+                
         assertThat(document.getDocument()).isNotNull();
+        compareDataHandlerContent(document.getDocument(), "documentbytes");
         //assertThat(document.getDocument()).isEqualTo("documentbytes".getBytes());
         assertThat(document.getDocumentName()).isEqualTo("Document1.pdf");
         assertThat(document.getDetachedSignature()).as("detached signature must not be null!").isNotNull();

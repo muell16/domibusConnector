@@ -63,13 +63,14 @@ public class DomainEntityCreator {
         return attachment;
     }
 
-    public static DomibusConnectorBigDataReference connectorBigDataReferenceFromDataSource(String input) {
-        DataHandler dh = DataHandlerCreator.createDataHandlerFromString(input);
+    public static DomibusConnectorBigDataReference connectorBigDataReferenceFromDataSource(String input) {        
         DomibusConnectorBigDataReferenceGetSetBased reference = 
-                new DomibusConnectorBigDataReferenceGetSetBased();  
+                new DomibusConnectorBigDataReferenceGetSetBased();
+        
         reference.setBytes(input.getBytes());
         reference.setReadable(true);
-        reference.setInputStream(new ByteArrayInputStream(reference.getBytes()));
+        reference.setInputStream(new ByteArrayInputStream(input.getBytes()));
+        
         return reference;
     }
 
