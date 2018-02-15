@@ -76,12 +76,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>nexus-public</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
