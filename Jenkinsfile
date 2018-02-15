@@ -41,6 +41,9 @@ node {
 			//ignore if not available
 		}
 		
+		sh "ls -la"
+		
+		
 			List MY_ENV = []
 			MY_ENV.add("GIT_SSL_NO_VERIFY=true")		
 
