@@ -8,9 +8,11 @@ import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.ws.backend.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
+import java.security.Security;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +64,11 @@ public class WSBackendLinkContextConfigurationITCase {
             };
         }
         
+    }
+    
+    @BeforeClass
+    public static void beforeClass() {
+        Security.setProperty("crypto.policy", "unlimited");
     }
     
     //mock backend impl
