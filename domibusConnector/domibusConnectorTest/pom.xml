@@ -9,4 +9,7 @@
     <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>
     <artifactId>domibusConnectorTest</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>domibusConnectorStarter</module>
+    </modules>
 </project>

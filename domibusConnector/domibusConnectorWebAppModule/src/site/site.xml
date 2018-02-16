@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="domibus Web Connector">
+<project name="domibusWebConnector">
   <bannerLeft>
     <name>e-CODEX making Justice Faster</name>
     <src>images/logo_ecodex_0.png</src>
 <!--    <href>http://maven.apache.org/</href>-->
   </bannerLeft>
-  <!--
-  <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
-  </bannerRight>-->
+
+
   <body>
     <links>
       <item name="E-Codex Project" href="https://www.e-codex.eu/" />
     </links>
 
-    <menu name="Documentation">
+    <menu name="domibus WebConnector">
       <item name="Introduction" href="index.html"/>
       <item name="Deploy on Tomcat" href="tomcat_deploy.html"/>
       <item name="Deploy on Weblogic" href="weblogic_deploy.html" />
     </menu>
+    
+    <footer></footer> <!-- empty footer -->
+    
   </body>
 </project>

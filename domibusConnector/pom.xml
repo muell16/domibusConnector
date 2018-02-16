@@ -18,7 +18,6 @@
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
-        <module>domibusConnectorStarter</module>
         <module>domibusConnectorTest</module>
     </modules>
     <!-- Shared version number properties -->
