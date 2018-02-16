@@ -17,7 +17,7 @@ Copy the domibusConnectorTomcatStarter.war file to a location where the applicat
 webapps folder (or any other folder where tomcat is auto deploying from). Because tomcat will automatically deploy it and you cannot
 define a custom context for this application anymore. Remember this path!
 
-Open your tomcat home directory. And put the domibusConnectorWebAppModule.xml into [engine]/[hostname]/ (usually this path will be \<your tomcat root path\>/Catalina/localhost/). 
+Open your tomcat home directory. And put the domibusConnectorWebAppModule.xml into <your tomcat root path\>/Catalina/localhost/. 
 Edit the xml and change the data-source according to your needs. Don't forget to
 put the according jdbc driver jar into the tomcat libs folder.
 
@@ -42,4 +42,4 @@ context and are available to the starting application.
                 maxWait="-1"/>   
     </Context>
 
-docBase ist the path to the war to deploy
+The attribute 'docBase' contains the path of the war file, which should be deployed in this context.

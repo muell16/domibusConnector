@@ -13,7 +13,7 @@ Setup your database by executing provided Database scripts.
 
 ### Configuration
 The application is configured with reasonable defaults. But if you really need to change some configuration you can inject configuration 
-by passing them as System Environment variables or by configuring them in the context [Tomcat Deployment Chapter](./tomcat_deploy). 
+by passing them as System Environment variables or by configuring them in the context [Tomcat Deployment Chapter](./tomcat_deploy.html). 
 
 For further information see [spring common-application-properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 But be aware that we have only tested changing the in this documentation named configuration properties.
