@@ -213,15 +213,16 @@ public class DomibusConnectorDomainMessageTransformer {
         
         //map signature type of document
         DetachedSignature detachedSignature = document.getDetachedSignature();
-        DomibusConnectorDetachedSignatureType detachedSignatureTypeTO = new DomibusConnectorDetachedSignatureType();
-        detachedSignatureTypeTO.setDetachedSignature(
-                Arrays.copyOf(detachedSignature.getDetachedSignature(), detachedSignature.getDetachedSignature().length));
-        detachedSignatureTypeTO.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
-        detachedSignatureTypeTO.setMimeType(
-                DomibusConnectorDomainDetachedSignatureEnumTransformer
-                        .transformDetachedSignatureMimeTypeDomainToTransition(detachedSignature.getMimeType()));
-        documentTO.setDetachedSignature(detachedSignatureTypeTO);
-        
+        if (detachedSignature != null) {
+            DomibusConnectorDetachedSignatureType detachedSignatureTypeTO = new DomibusConnectorDetachedSignatureType();
+            detachedSignatureTypeTO.setDetachedSignature(
+                    Arrays.copyOf(detachedSignature.getDetachedSignature(), detachedSignature.getDetachedSignature().length));
+            detachedSignatureTypeTO.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
+            detachedSignatureTypeTO.setMimeType(
+                    DomibusConnectorDomainDetachedSignatureEnumTransformer
+                            .transformDetachedSignatureMimeTypeDomainToTransition(detachedSignature.getMimeType()));
+            documentTO.setDetachedSignature(detachedSignatureTypeTO);
+        }
         return messageContentTO;
     }
     

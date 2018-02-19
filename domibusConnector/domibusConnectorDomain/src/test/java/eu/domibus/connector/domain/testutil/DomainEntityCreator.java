@@ -4,9 +4,11 @@ package eu.domibus.connector.domain.testutil;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.transformer.testutil.DataHandlerCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import javax.activation.DataHandler;
 
 /**
@@ -144,5 +146,26 @@ public class DomainEntityCreator {
                 .setIdentifier("identifier")
                 .build(); 
     }
+
+    public static DomibusConnectorMessageDocument createDocumentWithNoSignature() {
+        DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
+                .setName("name")
+                .setContent(connectorBigDataReferenceFromDataSource("document"))
+                .build();
+        return doc;
+    }
+    
+    public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoSignature()  {
+        try {
+            DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+            messageContent.setXmlContent("xmlContent".getBytes("UTF-8"));
+            messageContent.setDocument(createDocumentWithNoSignature());
+                        
+            return messageContent;
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     
 }

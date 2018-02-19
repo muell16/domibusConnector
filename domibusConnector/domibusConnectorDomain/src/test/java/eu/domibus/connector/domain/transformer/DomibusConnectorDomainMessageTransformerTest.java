@@ -8,6 +8,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageContentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.CannotBeMappedToTransitionException;
 import static eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.transformDomainToTransition;
@@ -178,6 +180,18 @@ public class DomibusConnectorDomainMessageTransformerTest {
         assertThat(detachedSignature.getMimeType().name()).isEqualTo(DetachedSignatureMimeType.BINARY.name());
     }
     
+    @Test
+    public void testTransformMessageContentDomainToTransition_noDetachedSignature() {
+        DomibusConnectorMessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoSignature();
+        
+        DomibusConnectorMessageContentType messageContentTO = DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(messageContent);        
+                
+        assertThat(messageContentTO).as("message content is set in test entity!").isNotNull();
+        //assertThat(messageContentTO.getXmlContent()).isEqualTo(domainMessage.getMessageContent().getXmlContent());
+        assertThat(messageContentTO.getXmlContent()).isNotNull(); //TODO better check?
+        
+        assertThat(messageContentTO.getDocument()).as("document of messageContent must be mapped!").isNotNull();                
+    }
     
     
     @Test
@@ -186,11 +200,11 @@ public class DomibusConnectorDomainMessageTransformerTest {
         
         DomibusConnectorMessageDetailsType messageDetailsType = DomibusConnectorDomainMessageTransformer.transformMessageDetailsDomainToTransition(messageDetails);
                 
-        assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped").isNotNull();
-        assertThat(messageDetailsType.getConversationId()).as("conversationId must be mapped!").isNotNull();
-        assertThat(messageDetailsType.getFinalRecipient()).as("finalRecipient must be mapped!").isNotNull();
-        assertThat(messageDetailsType.getOriginalSender()).as("originalSender must be mapped!").isNotNull();
-        assertThat(messageDetailsType.getRefToMessageId()).as("RefToMessageId must be mapped!").isNotNull();
+        assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped").isEqualTo("national1");
+        assertThat(messageDetailsType.getConversationId()).as("conversationId must be mapped!").isEqualTo("conversation1");
+        assertThat(messageDetailsType.getFinalRecipient()).as("finalRecipient must be mapped!").isEqualTo("finalRecipient");
+        assertThat(messageDetailsType.getOriginalSender()).as("originalSender must be mapped!").isEqualTo("originalSender");
+        assertThat(messageDetailsType.getRefToMessageId()).as("RefToMessageId must be mapped!").isEqualTo("refToMessageId");
         assertThat(messageDetailsType.getAction()).as("Action must be mapped!").isNotNull();
         assertThat(messageDetailsType.getFromParty()).as("FromParty must be mapped!").isNotNull();
         assertThat(messageDetailsType.getToParty()).as("toParty must be mapped!").isNotNull();
