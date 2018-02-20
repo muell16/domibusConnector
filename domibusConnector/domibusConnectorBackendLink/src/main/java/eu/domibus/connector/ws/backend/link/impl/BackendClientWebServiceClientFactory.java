@@ -2,6 +2,7 @@
 package eu.domibus.connector.ws.backend.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +19,14 @@ import org.apache.cxf.ws.policy.PolicyBuilderImpl;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 /**
- *
+ * Creates a web service client for pushing messages to backend client
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component
@@ -32,38 +34,20 @@ public class BackendClientWebServiceClientFactory {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BackendClientWebServiceClientFactory.class);
     
-    @Value("${connector.backend.ws.security.encryption.properties:'/eu/domibus/connector/ws/backend/link/ws/decrypt.properties'}")
-    private ClassPathResource encryptPropertiesFileLocation;
+    @Autowired
+    WsPolicyLoader policyUtil;
     
-    //TODO: maybe this fits better in own factory: wsClientFactory?
+    @Value("${connector.backend.ws.security.encryption.properties:'/eu/domibus/connector/ws/backend/link/ws/decrypt.properties'}")
+    ClassPathResource encryptPropertiesFileLocation;
+    
+    
     public DomibusConnectorBackendDeliveryWebService createWsClient(DomibusConnectorBackendClientInfo backendClientInfoByName) {
         LOGGER.debug("#createWsClient: creating WS endpoint for backendClient [{}]", backendClientInfoByName);
         String pushAddress = backendClientInfoByName.getBackendPushAddress();
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorBackendDeliveryWebService.class);
-        jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl");
-        
-        
-        WSPolicyFeature policyFeature = new WSPolicyFeature();
-        policyFeature.setEnabled(true);
-        
-        //
-        InputStream is = getClass().getResourceAsStream("/wsdl/backend.policy.xml");
-        if (is == null) {
-            throw new RuntimeException("error!");
-        }
-        //        Policy policy = policyBuilder.getPolicy(is);
-        List<Element> policyElements = new ArrayList<Element>();
-        try {
-            policyElements.add(StaxUtils.read(is).getDocumentElement());
-        } catch (XMLStreamException ex) {
-            throw new RuntimeException("cannot parse policy: /wsdl/backend.policy.xml");
-        }
-        policyFeature.getPolicyElements().addAll(policyElements);
-        
-        
-        
-        jaxWsProxyFactoryBean.setFeatures(Arrays.asList(new Feature[]{policyFeature}));
+       
+        jaxWsProxyFactoryBean.setFeatures(Arrays.asList(new Feature[]{policyUtil.loadPolicyFeature()}));
         jaxWsProxyFactoryBean.setAddress(pushAddress);
         jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl");
         Properties encryptionProperties = loadEncryptionProperties();

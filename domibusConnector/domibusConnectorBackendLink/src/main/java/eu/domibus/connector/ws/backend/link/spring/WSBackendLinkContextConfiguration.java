@@ -4,6 +4,8 @@ package eu.domibus.connector.ws.backend.link.spring;
 import eu.domibus.connector.backend.persistence.dao.BackendPersistenceDaoPackage;
 import eu.domibus.connector.backend.persistence.model.BackendPersistenceModelPackage;
 import eu.domibus.connector.backend.persistence.spring.BackendPersistenceConfig;
+import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
+import eu.domibus.connector.ws.backend.link.impl.DomibusConnectorWsBackendImpl;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import java.io.IOException;
@@ -58,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -72,7 +75,7 @@ import org.xml.sax.SAXException;
  */
 @Configuration
 //@Import(BackendPersistenceConfig.class)
-@ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
+//@ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
 @EnableJms
 public class WSBackendLinkContextConfiguration {
 
@@ -86,6 +89,41 @@ public class WSBackendLinkContextConfiguration {
 //    
 //    @Autowired
 //    WSBackendLinkConfigurationProperties wsBackendLinkConfigurationProperties;
+    
+    @Autowired
+    ApplicationContext applicationContext;
+    
+    @Autowired
+    DomibusConnectorWsBackendImpl domibusConnectorBackendImpl;
+    
+    @Autowired
+    WsPolicyLoader wsPolicyLoader;
+    
+    @Bean
+    // <jaxws:endpoint id="helloWorld" implementor="demo.spring.service.HelloWorldImpl" address="/HelloWorld"/>
+    public EndpointImpl helloService() {
+        Bus bus = (Bus) applicationContext.getBean(Bus.DEFAULT_BUS_ID);
+        Object implementor = domibusConnectorBackendImpl;
+        EndpointImpl endpoint = new EndpointImpl(bus, implementor);
+        endpoint.publish("/backend");
+        
+        Map<String, Object> props = new HashMap<>();
+        props.put("security.signature.properties", "eu/domibus/connector/ws/backend/link/ws/decrypt.properties");
+        props.put("security.signature.username", "connector");
+        props.put("security.encryption.properties", "eu/domibus/connector/ws/backend/link/ws/decrypt.properties");
+        props.put("mtom-enabled", "true");
+        props.put("security.store.bytes.in.attachment", "true");
+        
+        endpoint.setProperties(props);
+        
+        List<Feature> features = new ArrayList<>();
+        features.add(wsPolicyLoader.loadPolicyFeature());        
+        endpoint.setFeatures(features);
+        
+        return endpoint;
+    }
+ 
+    
     
     
 }
