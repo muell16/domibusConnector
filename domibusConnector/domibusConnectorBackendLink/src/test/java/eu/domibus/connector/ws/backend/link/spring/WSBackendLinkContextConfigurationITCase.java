@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.ws.backend.link.spring;
 
+import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
@@ -41,7 +42,9 @@ public class WSBackendLinkContextConfigurationITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkContextConfigurationITCase.class);
     
-    @SpringBootApplication(scanBasePackages={"eu.domibus.connector.ws.backend.link.spring", }, exclude = {
+    @SpringBootApplication(scanBasePackages={"eu.domibus.connector.ws.backend.link.spring", }, 
+            scanBasePackageClasses= {WsPolicyLoader.class},
+            exclude = {
         DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})    
     public static class TestConfiguration {     
         
