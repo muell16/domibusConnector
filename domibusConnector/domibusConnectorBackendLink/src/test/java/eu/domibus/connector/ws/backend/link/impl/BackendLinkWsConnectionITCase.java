@@ -2,10 +2,16 @@
 package eu.domibus.connector.ws.backend.link.impl;
 
 import eu.domibus.connector.backend.StartBackendOnly;
+import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.ws.backend.linktest.client.CommonBackendClient;
+import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -22,9 +28,9 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
-public class AbstractBackendITTestHelper {
+public class BackendLinkWsConnectionITCase {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(AbstractBackendITTestHelper.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(BackendLinkWsConnectionITCase.class);
     
     static ConfigurableApplicationContext backendApplicationContext;
     
@@ -106,18 +112,18 @@ public class AbstractBackendITTestHelper {
         Thread.sleep(3000);
     }
     
-//    @Test
-////    @Ignore //This test shuold be moved to other class
-//    public void testSubmitMessageToBackendService() throws InterruptedException {
-//
-//        //send message from bob to connector
-//        DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
-//        
-//        DomibusConnectorMessageType msg = TransitionCreator.createMessage();
-//        DomibsConnectorAcknowledgementType submitMessage = bobClientEndpoint.submitMessage(msg);
-//        assertThat(submitMessage).isNotNull();
-//      
-//    }
+    @Test
+//    @Ignore //This test shuold be moved to other class
+    public void testSubmitMessageToBackendService() throws InterruptedException {
+
+        //send message from bob to connector
+        DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
+        
+        DomibusConnectorMessageType msg = TransitionCreator.createMessage();
+        DomibsConnectorAcknowledgementType submitMessage = bobClientEndpoint.submitMessage(msg);
+        assertThat(submitMessage).isNotNull();
+      
+    }
     
     
 

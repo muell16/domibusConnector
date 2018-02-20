@@ -4,6 +4,7 @@ package eu.domibus.connector.domain.testutil;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.transformer.testutil.DataHandlerCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
@@ -44,14 +45,14 @@ public class DomainEntityCreator {
     
     public static DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation() {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
-        confirmation.setEvidence("EVIDENCE1_DELIVERY".getBytes());
+        confirmation.setEvidence("<EVIDENCE1_DELIVERY/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         return confirmation;
     }
     
     public static DomibusConnectorMessageConfirmation createMessageNonDeliveryConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
-        confirmation.setEvidence("EVIDENCE1_NON_DELIVERY".getBytes());
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();        
+        confirmation.setEvidence("<EVIDENCE1_NON_DELIVERY/>".getBytes());
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.NON_DELIVERY);
         return confirmation;
     }
@@ -74,6 +75,19 @@ public class DomainEntityCreator {
         reference.setInputStream(new ByteArrayInputStream(input.getBytes()));
         
         return reference;
+    }
+    
+    public static DomibusConnectorMessage createEvidenceNonDeliveryMessage() {
+        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
+        DomibusConnectorMessageConfirmation nonDeliveryConfirmation = createMessageNonDeliveryConfirmation();
+        
+        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                .setConnectorMessageId("id1")
+                .setMessageDetails(messageDetails)
+                .addConfirmation(nonDeliveryConfirmation)
+                .build();
+        
+        return msg;
     }
 
     public static DomibusConnectorMessage createSimpleTestMessage() {

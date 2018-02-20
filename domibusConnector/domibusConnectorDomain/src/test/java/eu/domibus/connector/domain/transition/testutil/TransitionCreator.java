@@ -16,7 +16,11 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
 import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.cxf.attachment.ByteDataSource;
 
@@ -61,7 +65,8 @@ public class TransitionCreator {
         
         DomibusConnectorMessageDocumentType document = new DomibusConnectorMessageDocumentType();
         
-        DataHandler dataHandler = new DataHandler(new ByteDataSource("document".getBytes(), "application/octet-stream"));        
+        //DataHandler dataHandler = new DataHandler(new ByteDataSource("document".getBytes(), "application/octet-stream"));        
+        DataHandler dataHandler = new DataHandler(new MyDataSource("document"));
         document.setDocument(dataHandler);
         //document.setDocument(value);
         document.setDocumentName("documentName");
@@ -189,4 +194,35 @@ public class TransitionCreator {
         return party;
     }
     
+    
+    private static class MyDataSource implements DataSource {
+
+        private final String data;
+
+        public MyDataSource(String string) {
+            this.data = string;
+        }
+        
+        @Override
+        public InputStream getInputStream() throws IOException {
+            System.out.println("GET INPUT STREAM!");
+            return new ByteArrayInputStream(data.getBytes("UTF-8"));
+        }
+
+        @Override
+        public OutputStream getOutputStream() throws IOException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String getContentType() {
+            return "application/octet-stream";
+        }
+
+        @Override
+        public String getName() {
+            return "aName";
+        }
+        
+    }
 }

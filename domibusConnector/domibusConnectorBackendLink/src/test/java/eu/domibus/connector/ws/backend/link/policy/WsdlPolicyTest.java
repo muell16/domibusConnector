@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class WsdlPolicyTests {
+public class WsdlPolicyTest {
     
     
     @Test
