@@ -107,7 +107,7 @@ public class DomainEntityCreator {
         DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
         
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-        messageContent.setXmlContent("xmlContent".getBytes());
+        messageContent.setXmlContent("<xmlContent/>".getBytes());
         
         DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
                 
@@ -172,8 +172,20 @@ public class DomainEntityCreator {
     public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoSignature()  {
         try {
             DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
-            messageContent.setXmlContent("xmlContent".getBytes("UTF-8"));
+            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
             messageContent.setDocument(createDocumentWithNoSignature());
+                        
+            return messageContent;
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static DomibusConnectorMessageContent createMessageContentWithDocumentWithNoPdfDocument() {
+        try {
+            DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+            messageContent.setXmlContent("<xmlContent/>".getBytes("UTF-8"));
+            messageContent.setDocument(null);
                         
             return messageContent;
         } catch (UnsupportedEncodingException ex) {

@@ -27,7 +27,7 @@ public class StartBackendOnly {
     private final static Logger LOGGER = LoggerFactory.getLogger(StartBackendOnly.class);
     
     public static void main(String[] args) {
-        startUpSpringApplication(new String[]{}, new String[]{});
+        startUpSpringApplication(new String[]{}, new String[] {"server.port=8079"});
     }
     
     public static ConfigurableApplicationContext startUpSpringApplication(String[] profiles, String[] properties) {

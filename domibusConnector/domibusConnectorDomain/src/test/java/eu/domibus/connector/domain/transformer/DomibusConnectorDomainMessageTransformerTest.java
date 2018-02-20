@@ -193,6 +193,19 @@ public class DomibusConnectorDomainMessageTransformerTest {
         assertThat(messageContentTO.getDocument()).as("document of messageContent must be mapped!").isNotNull();                
     }
     
+    @Test
+    public void testTransformMessageContentDomainToTransition_noPdfDocument() {
+        DomibusConnectorMessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoPdfDocument();
+        
+        DomibusConnectorMessageContentType messageContentTO = DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(messageContent);        
+                
+        assertThat(messageContentTO).as("message content is set in test entity!").isNotNull();
+        //assertThat(messageContentTO.getXmlContent()).isEqualTo(domainMessage.getMessageContent().getXmlContent());
+        assertThat(messageContentTO.getXmlContent()).isNotNull(); //TODO better check?
+        
+        assertThat(messageContentTO.getDocument()).as("document of messageContent must be null!").isNull();                
+    }
+    
     
     @Test
     public void testTransformMessageDetailsDomainToTransition() { 

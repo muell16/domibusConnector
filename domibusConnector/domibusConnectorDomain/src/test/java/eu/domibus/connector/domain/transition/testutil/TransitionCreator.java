@@ -205,7 +205,6 @@ public class TransitionCreator {
         
         @Override
         public InputStream getInputStream() throws IOException {
-            System.out.println("GET INPUT STREAM!");
             return new ByteArrayInputStream(data.getBytes("UTF-8"));
         }
 

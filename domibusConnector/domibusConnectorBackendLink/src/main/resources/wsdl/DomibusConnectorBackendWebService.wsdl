@@ -9,7 +9,6 @@
 	<wsdl:import
 		namespace="transition.domain.connector.domibus.eu"
 		location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
-
 	<wsdl:types>
 	<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
 			xmlns:tns="http://connector.domibus.eu/ws/backend/webservice"
@@ -84,25 +83,7 @@
 		</wsdl:port>
 	</wsdl:service>
     
-<!--    <wsp:Policy wsu:Id="UsernameToken" xmlns:wsu=
-     "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-                    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
-                    xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
-            <wsp:ExactlyOne>
-                <wsp:All>
-                     Empty <TransportBinding/> element required due to bug in CXF 2.2.6 
-                    <sp:TransportBinding/>
-                    <sp:SupportingTokens>
-                        <wsp:Policy>
-                            <sp:UsernameToken sp:IncludeToken=".../IncludeToken/AlwaysToRecipient">
-                                <wsp:Policy>
-                                </wsp:Policy>
-                            </sp:UsernameToken>
-                        </wsp:Policy>
-                    </sp:SupportingTokens>
-                </wsp:All>
-            </wsp:ExactlyOne>
-        </wsp:Policy>-->
+
     
     
 </wsdl:definitions>

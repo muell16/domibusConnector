@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -204,25 +205,35 @@ public class DomibusConnectorDomainMessageTransformer {
         messageContentTO.setXmlContent(streamSource);
         
         //maps Document of messageContent
-        DomibusConnectorMessageDocument document = messageContent.getDocument();
+        @Nullable DomibusConnectorMessageDocument document = messageContent.getDocument();
         DomibusConnectorMessageDocumentType documentTO = new DomibusConnectorMessageDocumentType();
-        
-        documentTO.setDocument(convertBigDataReferenceToDataHandler(document.getDocument(), null));
-        documentTO.setDocumentName(document.getDocumentName());
-        messageContentTO.setDocument(documentTO);
-        
-        //map signature type of document
-        DetachedSignature detachedSignature = document.getDetachedSignature();
-        if (detachedSignature != null) {
-            DomibusConnectorDetachedSignatureType detachedSignatureTypeTO = new DomibusConnectorDetachedSignatureType();
-            detachedSignatureTypeTO.setDetachedSignature(
-                    Arrays.copyOf(detachedSignature.getDetachedSignature(), detachedSignature.getDetachedSignature().length));
-            detachedSignatureTypeTO.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
-            detachedSignatureTypeTO.setMimeType(
-                    DomibusConnectorDomainDetachedSignatureEnumTransformer
-                            .transformDetachedSignatureMimeTypeDomainToTransition(detachedSignature.getMimeType()));
-            documentTO.setDetachedSignature(detachedSignatureTypeTO);
+
+        if (document != null) {
+            DomibusConnectorBigDataReference docDataRef = document.getDocument();
+            documentTO.setDocument(convertBigDataReferenceToDataHandler(docDataRef, null));
+            documentTO.setDocumentName(document.getDocumentName());
+            messageContentTO.setDocument(documentTO);
+
+            //map signature type of document
+            DetachedSignature detachedSignature = document.getDetachedSignature();
+            if (detachedSignature != null) {
+                DomibusConnectorDetachedSignatureType detachedSignatureTypeTO = new DomibusConnectorDetachedSignatureType();
+                detachedSignatureTypeTO.setDetachedSignature(
+                        Arrays.copyOf(detachedSignature.getDetachedSignature(), detachedSignature.getDetachedSignature().length));
+                detachedSignatureTypeTO.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
+                detachedSignatureTypeTO.setMimeType(
+                        DomibusConnectorDomainDetachedSignatureEnumTransformer
+                        .transformDetachedSignatureMimeTypeDomainToTransition(detachedSignature.getMimeType()));
+                documentTO.setDetachedSignature(detachedSignatureTypeTO);
+            } else {
+                LOGGER.debug("#transformMessageContentDomainToTransition: no detached signature to map!");
+            }
+        } else {
+            LOGGER.debug("#transformMessageContentDomainToTransition: document contains no document data");
         }
+
+
+        
         return messageContentTO;
     }
     
@@ -264,7 +275,7 @@ public class DomibusConnectorDomainMessageTransformer {
     }
 
     static @Nonnull DataHandler convertBigDataReferenceToDataHandler(@Nonnull DomibusConnectorBigDataReference bigDataReference, @Nullable String mimeType) {
-        try {
+//        try {
             if (mimeType == null) {
                 mimeType = "application/octet-stream";
             }
@@ -274,13 +285,14 @@ public class DomibusConnectorDomainMessageTransformer {
             //            LOGGER.debug(error);
             //            throw new CannotBeMappedToTransitionException(error);
             //        }
-            InputStream inputStream = bigDataReference.getInputStream();
-            DataSource inputStreamDataSource = new InputStreamDataSource(inputStream);
-            DataHandler dataHandler = new DataHandler(inputStreamDataSource);
+            
+            //InputStream inputStream = bigDataReference.getInputStream();
+            //DataSource inputStreamDataSource = new InputStreamDataSource(inputStream);
+            DataHandler dataHandler = new DataHandler(bigDataReference);
             return dataHandler;
-        } catch (IOException ioe) {
-            throw new CannotBeMappedToTransitionException("A IOException occured during accessing BigDataFile Reference", ioe);
-        }
+//        } catch (IOException ioe) {
+//            throw new CannotBeMappedToTransitionException("A IOException occured during accessing BigDataFile Reference", ioe);
+//        }
     }
     
     static @Nonnull byte[] convertDataHandlerToByteArray(@Nonnull DataHandler dataHandler) {
@@ -468,30 +480,30 @@ public class DomibusConnectorDomainMessageTransformer {
         //maps Document of messageContent
         DomibusConnectorMessageDocumentType documentTO = messageContentTO.getDocument();
         
-        
-        //maps signature of document     
-        DomibusConnectorDetachedSignatureType detachedSignatureTO = documentTO.getDetachedSignature();
-        
-        DetachedSignature detachedSignature = new DetachedSignature(
-                Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
-                detachedSignatureTO.getDetachedSignatureName(),
-//                eu.domibus.connector.domain.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
-                DomibusConnectorDomainDetachedSignatureEnumTransformer
-                        .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
-        );
-        
-        
-        
-        //maps Document of messageContent
-        DomibusConnectorMessageDocument document = 
-                new DomibusConnectorMessageDocument(
-                        //Arrays.copyOf(documentTO.getDocument(), documentTO.getDocument().length),
-                        convertDataHandlerToBigFileReference(documentTO.getDocument()),
-                        documentTO.getDocumentName(),
-                        detachedSignature
-                ); 
-        messageContent.setDocument(document);
-        
+        if (documentTO != null) {
+            //maps signature of document     
+            DomibusConnectorDetachedSignatureType detachedSignatureTO = documentTO.getDetachedSignature();
+
+            DetachedSignature detachedSignature = new DetachedSignature(
+                    Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
+                    detachedSignatureTO.getDetachedSignatureName(),
+    //                eu.domibus.connector.domain.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
+                    DomibusConnectorDomainDetachedSignatureEnumTransformer
+                            .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
+            );
+
+
+
+            //maps Document of messageContent
+            DomibusConnectorMessageDocument document = 
+                    new DomibusConnectorMessageDocument(
+                            //Arrays.copyOf(documentTO.getDocument(), documentTO.getDocument().length),
+                            convertDataHandlerToBigFileReference(documentTO.getDocument()),
+                            documentTO.getDocumentName(),
+                            detachedSignature
+                    ); 
+            messageContent.setDocument(document);
+        }
         
         return messageContent;
     }
@@ -537,5 +549,5 @@ public class DomibusConnectorDomainMessageTransformer {
         
         return messageDetails;
     }
-    
+          
 }

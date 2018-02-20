@@ -59,6 +59,7 @@ import org.apache.wss4j.dom.validate.UsernameTokenValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -75,34 +76,29 @@ import org.xml.sax.SAXException;
  */
 @Configuration
 //@Import(BackendPersistenceConfig.class)
-//@ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
+@ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
 @EnableJms
 public class WSBackendLinkContextConfiguration {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkContextConfiguration.class);
+
     
-//    @Autowired
-//    private Bus bus;
-//
-//    @Autowired
-//    private DomibusConnectorBackendWebService backendWebService;
-//    
-//    @Autowired
-//    WSBackendLinkConfigurationProperties wsBackendLinkConfigurationProperties;
+    
     
     @Autowired
     ApplicationContext applicationContext;
     
     @Autowired
-    DomibusConnectorWsBackendImpl domibusConnectorBackendImpl;
+    @Qualifier("connectorBackendImpl")
+    DomibusConnectorBackendWebService domibusConnectorBackendImpl;
     
     @Autowired
     WsPolicyLoader wsPolicyLoader;
     
-    @Bean
-    // <jaxws:endpoint id="helloWorld" implementor="demo.spring.service.HelloWorldImpl" address="/HelloWorld"/>
-    public EndpointImpl helloService() {
+//    @Bean
+    public EndpointImpl connectorBackendWebService() {
         Bus bus = (Bus) applicationContext.getBean(Bus.DEFAULT_BUS_ID);
+        
         Object implementor = domibusConnectorBackendImpl;
         EndpointImpl endpoint = new EndpointImpl(bus, implementor);
         endpoint.publish("/backend");
@@ -117,8 +113,12 @@ public class WSBackendLinkContextConfiguration {
         endpoint.setProperties(props);
         
         List<Feature> features = new ArrayList<>();
-        features.add(wsPolicyLoader.loadPolicyFeature());        
+        WSPolicyFeature wsPolicyFeature = wsPolicyLoader.loadPolicyFeature();
+        LOGGER.debug("adding WSPolicy feature [{}] to endpoint [{}]", wsPolicyFeature, endpoint);
+        features.add(wsPolicyFeature);        
         endpoint.setFeatures(features);
+        
+        LOGGER.debug("publish endpoint [{}]", endpoint);
         
         return endpoint;
     }
