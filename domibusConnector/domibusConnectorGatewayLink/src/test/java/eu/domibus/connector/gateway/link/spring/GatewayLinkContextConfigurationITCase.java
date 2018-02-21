@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import static org.mockito.Matchers.any;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * a simple test to check if the webservice (DomibusConnectorDeliveryWS) is published and reachable
@@ -40,6 +41,7 @@ import static org.mockito.Matchers.any;
 @RunWith(SpringRunner.class)
 @Import(GatewayLinkContextConfigurationITCase.TestConfiguration.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles({"gw-ws-link"})
 public class GatewayLinkContextConfigurationITCase {
     
     @SpringBootApplication(scanBasePackages="eu.domibus.connector.gateway.link")
@@ -65,7 +67,7 @@ public class GatewayLinkContextConfigurationITCase {
         
         String publish = gatewayLinkWsServiceProperties.getPublishAddress(); 
         
-        String url = "http://localhost:" + port + webservicesPath + publish;
+        String url = "http://localhost:" + port + webservicesPath + "/" + publish;
         System.out.println("URL " + url);
         
         System.out.println("sleep started server port " + port);

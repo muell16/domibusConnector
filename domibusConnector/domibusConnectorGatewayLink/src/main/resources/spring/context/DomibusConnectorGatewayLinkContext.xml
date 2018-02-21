@@ -11,13 +11,23 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
 http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd">
 
-	
-<!--	<context:component-scan base-package="eu.domibus.connector.gateway.link" />-->
+
 		
-	<jaxws:client id="submissionClient" serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"
-		address="${gateway.submission.endpoint.address}" />
+    <cxf:bus>
+        <cxf:features>     
+            <p:policies />
+        </cxf:features>
+    </cxf:bus>
+        
+	<jaxws:client 
+        bus="#gwBus"
+        id="gwSubmissionClient" 
+        serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"
+		address="${gateway.submission.endpoint.address}" 
+    />
 		
 	<jaxws:endpoint
+        bus="#gwBus"
 		id="domibusConnectorDeliveryServiceEndpoint"
         implementor="#domibusConnectorDeliveryServiceImpl"
         address="/domibusConnectorDeliveryWebservice">

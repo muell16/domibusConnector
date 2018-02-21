@@ -16,20 +16,23 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
 >
 
     
-<!--    <cxf:bus>
-        <cxf:features>       
+    <cxf:bus>
+        <cxf:features>     
+             <p:policies />
         </cxf:features>
-    </cxf:bus>-->
+    </cxf:bus>
     
     
     <jaxws:endpoint id="connectorBackendWS"
                     implementor="#connectorBackendImpl"
-                    address="/backend"
-       
+                    address="backend"   
+                    publish="backend"
+                    serviceName="s:DomibusConnectorBackendWSService"    
+                    wsdlLocation="wsdl/DomibusConnectorBackendWebService.wsdl"
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
-                    xmlns:s="http://service.jaxws.cxf.apache.org/service"
-                                                           
+                    xmlns:s="http://connector.domibus.eu/ws/backend/webservice"                                                           
     >
+        
         <jaxws:features>
             <p:policies>
                 <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>

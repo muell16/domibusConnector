@@ -86,9 +86,7 @@
             </sp:EncryptedParts> 
         </wsp:All>
     </wsp:ExactlyOne>
-    
-    
-    
+
 </wsp:Policy>  
     
     

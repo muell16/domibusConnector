@@ -10,8 +10,11 @@
 		namespace="transition.domain.connector.domibus.eu"
 		location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
    
-        
-    
+<!--    <wsdl:import 
+        namespace="http://schemas.xmlsoap.org/ws/2004/09/policy"
+        location="./backend.policy.xml" 
+    />     -->
+       
         <!-- Policy for UsernameToken with plaintext password, sent from client to
         server only -->
 <!--        <wsp:Policy wsu:Id="UsernameToken" xmlns:wsu=

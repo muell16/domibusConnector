@@ -1,89 +1,180 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <wsdl:definitions
-	xmlns:tns="http://connector.domibus.eu/ws/backend/webservice"
-	xmlns:dct="transition.domain.connector.domibus.eu"
-	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
-	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:xmime="http://www.w3.org/2005/05/xmlmime" name="DomibusConnectorBackendWebService"
-	targetNamespace="http://connector.domibus.eu/ws/backend/webservice">
-	<wsdl:import
-		namespace="transition.domain.connector.domibus.eu"
-		location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
-	<wsdl:types>
-	<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
-			xmlns:tns="http://connector.domibus.eu/ws/backend/webservice"
-			attributeFormDefault="unqualified" elementFormDefault="unqualified"
-			targetNamespace="http://connector.domibus.eu/ws/backend/webservice">
-		<xsd:complexType name="EmptyRequestType">
-                    <xsd:sequence>
-                    </xsd:sequence>
-                </xsd:complexType>
-                </xsd:schema>
-	</wsdl:types>
+    xmlns:tns="http://connector.domibus.eu/ws/backend/webservice"
+    xmlns:dct="transition.domain.connector.domibus.eu"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime" name="DomibusConnectorBackendWebService"
+    targetNamespace="http://connector.domibus.eu/ws/backend/webservice">
+    <wsdl:import
+        namespace="transition.domain.connector.domibus.eu"
+        location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
+    <wsdl:types>
+        <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+                    xmlns:tns="http://connector.domibus.eu/ws/backend/webservice"
+                    attributeFormDefault="unqualified" elementFormDefault="unqualified"
+                    targetNamespace="http://connector.domibus.eu/ws/backend/webservice">
+            <xsd:complexType name="EmptyRequestType">
+                <xsd:sequence>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
 
-	<wsdl:message name="submitMessageRequest">
-		<wsdl:part name="submitMessageRequest" type="dct:DomibusConnectorMessageType"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="submitMessageResponse">
-		<wsdl:part name="submitMessageResponse" type="dct:DomibsConnectorAcknowledgementType"></wsdl:part>
-	</wsdl:message>
-	<wsdl:message name="requestMessagesRequest">
-		<wsdl:part name="requestMessagesRequest" type="tns:EmptyRequestType">
-		</wsdl:part>
+    <wsdl:message name="submitMessageRequest">
+        <wsdl:part name="submitMessageRequest" type="dct:DomibusConnectorMessageType"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="submitMessageResponse">
+        <wsdl:part name="submitMessageResponse" type="dct:DomibsConnectorAcknowledgementType"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="requestMessagesRequest">
+        <wsdl:part name="requestMessagesRequest" type="tns:EmptyRequestType">
+        </wsdl:part>
 		
-	</wsdl:message>
-	<wsdl:message name="requestMessagesResponse">
-		<wsdl:part name="requestMessagesResponse" type="dct:DomibusConnectorMessagesType"></wsdl:part>
-	</wsdl:message>
+    </wsdl:message>
+    <wsdl:message name="requestMessagesResponse">
+        <wsdl:part name="requestMessagesResponse" type="dct:DomibusConnectorMessagesType"></wsdl:part>
+    </wsdl:message>
 	
-	<wsdl:portType name="DomibusConnectorBackendWebService">
-		<wsdl:operation name="submitMessage">
-			<wsdl:input message="tns:submitMessageRequest"></wsdl:input>
-			<wsdl:output message="tns:submitMessageResponse"></wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="requestMessages">
-			<wsdl:input message="tns:requestMessagesRequest"></wsdl:input>
-			<wsdl:output message="tns:requestMessagesResponse"></wsdl:output>
-		</wsdl:operation>
-	</wsdl:portType>
+    <wsdl:portType name="DomibusConnectorBackendWebService">
+        <wsdl:operation name="submitMessage">
+            <wsdl:input message="tns:submitMessageRequest"></wsdl:input>
+            <wsdl:output message="tns:submitMessageResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="requestMessages">
+            <wsdl:input message="tns:requestMessagesRequest"></wsdl:input>
+            <wsdl:output message="tns:requestMessagesResponse"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
 
-	<wsdl:binding name="DomibusConnectorBackendWSBinding"
-		type="tns:DomibusConnectorBackendWebService">
-<!--        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+    <wsdl:binding name="DomibusConnectorBackendWSBinding"
+                  type="tns:DomibusConnectorBackendWebService">
+        <!--        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
         URI="#UsernameToken"/>-->
-		<soap12:binding style="document"
-			transport="http://schemas.xmlsoap.org/soap/http" />
-		<wsdl:operation name="submitMessage">
-			<soap12:operation soapAction="" style="document" />
-			<wsdl:input>
-				<soap12:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap12:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="requestMessages">
-			<soap12:operation soapAction="" style="document" />
-			<wsdl:input>
-				<soap12:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap12:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-	</wsdl:binding>
+        <soap12:binding style="document"
+                        transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="submitMessage">
+            <soap12:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="requestMessages">
+            <soap12:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
 
 
 
-	<wsdl:service name="DomibusConnectorBackendWSService">
-		<wsdl:port binding="tns:DomibusConnectorBackendWSBinding"
-			name="DomibusConnectorBackendWebService">
-			<soap12:address
-				location="http://connector.domibus.eu/ws/backend/webservice" />
-		</wsdl:port>
-	</wsdl:service>
+    <wsdl:service name="DomibusConnectorBackendWSService">
+        <wsdl:port binding="tns:DomibusConnectorBackendWSBinding"
+                   name="DomibusConnectorBackendWebService">
+            <soap12:address
+                location="http://connector.domibus.eu/ws/backend/webservice" />
+        </wsdl:port>
+    </wsdl:service>
     
 
+
+    <wsp:Policy  wsu:Id="DomibusBackendPolicy" 
+                xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                xmlns:wsp="http://www.w3.org/ns/ws-policy"
+                xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"
+    
+                xsi:schemaLocation="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702 http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/ws-securitypolicy-1.2.xsd
+    https://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd
+    http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization/optimizedmimeserialization-policy.xsd
+    http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"> 
+   
+
+        <wsp:ExactlyOne>
+            <wsp:All>          
+                <wsoma:OptimizedMimeSerialization />            
+                <!--            <sp:SignedEncryptedSupportingTokens>
+                    <wsp:Policy>
+                        <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssUsernameToken10/>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SignedEncryptedSupportingTokens>-->
+                <!--            <sp:SupportingTokens>
+                    <wsp:Policy>
+                        <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SupportingTokens>-->
+                <sp:AsymmetricBinding>
+                    <wsp:Policy>
+                        <sp:InitiatorToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:InitiatorToken>
+                        <sp:RecipientToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:RecipientToken>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic256/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                    </wsp:Policy>
+                </sp:AsymmetricBinding>
+                <sp:Wss11>
+                    <wsp:Policy>
+                        <!--                    <sp:MustSupportRefKeyIdentifier/>-->
+                        <sp:MustSupportRefKeyIdentifier />
+                        <sp:MustSupportRefIssuerSerial />
+                        <sp:MustSupportRefThumbprint />
+                        <sp:MustSupportRefEncryptedKey />
+                        <sp:RequireSignatureConfirmation />
+                        <sp:MustSupportRefEmbeddedToken />
+                    </wsp:Policy>
+                </sp:Wss11>
+
+                <sp:SignedParts>
+                    <sp:Body/>
+                </sp:SignedParts>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts> 
+            </wsp:All>
+        </wsp:ExactlyOne>
+
+    </wsp:Policy>  
+    
     
     
 </wsdl:definitions>
