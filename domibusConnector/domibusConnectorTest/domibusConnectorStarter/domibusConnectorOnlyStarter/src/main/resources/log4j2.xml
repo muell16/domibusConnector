@@ -6,14 +6,14 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="info" additivity="false">
             <AppenderRef ref="Console" />
         </Root>
-        <org.liquibase level="debug" >
+        <Logger name="org.liquibase" level="debug" additivity="false" >
             <AppenderRef ref="Console" />
-        </org.liquibase>    
-        <eu.domibus.connector.persistence level="debug" >
+        </Logger>    
+        <Logger name="eu.domibus.connector" level="debug" additivity="false">
             <AppenderRef ref="Console" />
-        </eu.domibus.connector.persistence>    
+        </Logger>    
     </Loggers>
 </Configuration>
