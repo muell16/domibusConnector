@@ -72,11 +72,8 @@ public class GatewayLinkContextConfiguration {
         String publishAddress = gatewayLinkPublishedServiceProperties.getPublishAddress();
         endpointImpl.setAddress(publishAddress);
         endpointImpl.publish(publishAddress);
-                
-        System.out.println("PUBLISHING " + endpointImpl);
-        
-        LOGGER.info("publishing endpoint [{}] to [{}]", endpointImpl, publishAddress);
 
+        LOGGER.info("publishing endpoint [{}] to [{}]", endpointImpl, publishAddress);
                                 
         return endpointImpl;
     }
