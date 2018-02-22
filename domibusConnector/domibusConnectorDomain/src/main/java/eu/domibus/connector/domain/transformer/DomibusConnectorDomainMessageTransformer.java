@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.transformer;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
 import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -481,28 +482,24 @@ public class DomibusConnectorDomainMessageTransformer {
         DomibusConnectorMessageDocumentType documentTO = messageContentTO.getDocument();
         
         if (documentTO != null) {
+            DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
             //maps signature of document     
             DomibusConnectorDetachedSignatureType detachedSignatureTO = documentTO.getDetachedSignature();
 
-            DetachedSignature detachedSignature = new DetachedSignature(
-                    Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
-                    detachedSignatureTO.getDetachedSignatureName(),
-    //                eu.domibus.connector.domain.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
-                    DomibusConnectorDomainDetachedSignatureEnumTransformer
-                            .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
-            );
-
-
-
-            //maps Document of messageContent
-            DomibusConnectorMessageDocument document = 
-                    new DomibusConnectorMessageDocument(
-                            //Arrays.copyOf(documentTO.getDocument(), documentTO.getDocument().length),
-                            convertDataHandlerToBigFileReference(documentTO.getDocument()),
-                            documentTO.getDocumentName(),
-                            detachedSignature
-                    ); 
-            messageContent.setDocument(document);
+            if (detachedSignatureTO != null) {
+                DetachedSignature detachedSignature = new DetachedSignature(
+                        Arrays.copyOf(detachedSignatureTO.getDetachedSignature(), detachedSignatureTO.getDetachedSignature().length),
+                        detachedSignatureTO.getDetachedSignatureName(),
+        //                eu.domibus.connector.domain.model.DetachedSignatureMimeType.valueOf(detachedSignatureTO.getMimeType().name())
+                        DomibusConnectorDomainDetachedSignatureEnumTransformer
+                                .transformDetachedSignatureMimeTypeTransitionToDomain(detachedSignatureTO.getMimeType())
+                );
+                documentBuilder.withDetachedSignature(detachedSignature);
+            }
+            documentBuilder.setContent(convertDataHandlerToBigFileReference(documentTO.getDocument()));
+            documentBuilder.setName( documentTO.getDocumentName());
+            
+            messageContent.setDocument(documentBuilder.build());
         }
         
         return messageContent;

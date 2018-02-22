@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageContentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
@@ -236,10 +237,64 @@ public class DomibusConnectorDomainMessageTransformerTest {
         assertThat(domainMessage.getMessageContent()).as("message content must not be null!").isNotNull();
         assertThat(domainMessage.getMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);        
         assertThat(domainMessage.getMessageErrors()).as("message errors contains 1!").hasSize(1);        
-        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);        
-        
+        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);                
     }
     
+    @Test
+    public void testTransformTransitionToDomain_withMessageContentNull() {
+        DomibusConnectorMessageType transitionMessage = TransitionCreator.createMessage();
+        transitionMessage.setMessageContent(null);
+        
+        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(transitionMessage);
+        
+        assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageContent()).as("message content must be null!").isNull();
+        assertThat(domainMessage.getMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);        
+        assertThat(domainMessage.getMessageErrors()).as("message errors contains 1!").hasSize(1);        
+        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);                
+    }
+    
+    @Test
+    public void testTransformMessageContentTransitionToDomain() {
+        DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
+        
+        DomibusConnectorMessageContent messageContent = DomibusConnectorDomainMessageTransformer.transformMessageContentTransitionToDomain(messageContentTO);
+        
+        assertThat(messageContent).isNotNull();
+        assertThat(messageContent.getXmlContent()).isNotNull(); //TODO compare byte[]
+        assertThat(messageContent.getDocument()).isNotNull();
+        
+        DomibusConnectorMessageDocument document = messageContent.getDocument();
+        assertThat(document.getDocument()).isNotNull();
+        assertThat(document.getDetachedSignature()).isNotNull();
+    }
+    
+    @Test
+    public void testTransformMessageContentTransitionToDomain_withDocumentNull() {
+        DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
+        messageContentTO.setDocument(null);
+        
+        DomibusConnectorMessageContent messageContent = DomibusConnectorDomainMessageTransformer.transformMessageContentTransitionToDomain(messageContentTO);
+        
+        assertThat(messageContent).isNotNull();
+        assertThat(messageContent.getXmlContent()).isNotNull(); //TODO compare byte[]
+        assertThat(messageContent.getDocument()).isNull();
+    }
+
+    @Test
+    public void testTransformMessageContentTransitionToDomain_withDocumentDetachedSignatureNull() {
+        DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
+        messageContentTO.getDocument().setDetachedSignature(null);
+        
+        DomibusConnectorMessageContent messageContent = DomibusConnectorDomainMessageTransformer.transformMessageContentTransitionToDomain(messageContentTO);
+        
+        assertThat(messageContent).isNotNull();
+        assertThat(messageContent.getXmlContent()).isNotNull();
+        assertThat(messageContent.getDocument().getDetachedSignature()).isNull();
+    }
+    
+
     @Test
     public void testTransformMessageDetailsTransitionToDomain() {
         DomibusConnectorMessageDetailsType messageDetailsTO = TransitionCreator.createMessageDetails();
