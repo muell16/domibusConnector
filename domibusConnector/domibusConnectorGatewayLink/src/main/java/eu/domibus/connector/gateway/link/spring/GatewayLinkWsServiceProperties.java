@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "gateway.link.ws.service")
 public class GatewayLinkWsServiceProperties {
 
-    private String address = "delivermessage";
+    private String address = "/delivermessage";
     
     private String name = "DeliverMessage";
     

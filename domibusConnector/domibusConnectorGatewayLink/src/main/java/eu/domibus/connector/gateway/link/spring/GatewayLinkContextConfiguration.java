@@ -42,26 +42,30 @@ public class GatewayLinkContextConfiguration {
     @Autowired
     private GatewayLinkWsServiceProperties gatewayLinkPublishedServiceProperties;
     
-    @Bean("gwBus")
-    public SpringBus springBusGwLinkWs() {
-        SpringBus bus = new SpringBus();
-        bus.setId("gwBus");
-        return bus;
-    }
+    @Autowired
+    Bus bus;
     
-    @Bean
-    public ServletRegistrationBean gwLinkWsServlet() {
-        CXFServlet cxfServlet = new CXFServlet();
-        cxfServlet.setBus(springBusGwLinkWs());
- 
-        ServletRegistrationBean servletBean = new ServletRegistrationBean(cxfServlet, "/services/gw/*");
-        servletBean.setName("gwLinkWsServlet");
-        return servletBean;
-    }
+    
+//    @Bean("gwBus")
+//    public SpringBus springBusGwLinkWs() {
+//        SpringBus bus = new SpringBus();
+//        bus.setId("gwBus");
+//        return bus;
+//    }
+//    
+//    @Bean
+//    public ServletRegistrationBean gwLinkWsServlet() {
+//        CXFServlet cxfServlet = new CXFServlet();
+//        cxfServlet.setBus(springBusGwLinkWs());
+// 
+//        ServletRegistrationBean servletBean = new ServletRegistrationBean(cxfServlet, "/services/gw/*");
+//        servletBean.setName("gwLinkWsServlet");
+//        return servletBean;
+//    }
     
     @Bean("messageDeliveryEndpoint")
     public Endpoint endpoint() {               
-        EndpointImpl endpointImpl = new EndpointImpl(springBusGwLinkWs(), deliveryMessageToCxfServerPort);        
+        EndpointImpl endpointImpl = new EndpointImpl(bus, deliveryMessageToCxfServerPort);        
                 
         QName SERVICE_NAME = DomibusConnectorDeliveryWSService.DomibusConnectorDeliveryWebService; 
         endpointImpl.setServiceName(SERVICE_NAME);
