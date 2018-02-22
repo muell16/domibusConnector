@@ -8,6 +8,7 @@ import eu.domibus.connector.backend.persistence.model.testutil.BackendPersistenc
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
+import static org.mockito.Matchers.eq;
 import org.mockito.Mockito;
 
 /**
@@ -31,6 +32,33 @@ public class BackendClientInfoPersistenceServiceImplTest {
 
     @Test
     public void testMapDbEntityToDomainEntity() {
+        BackendClientInfo bob = createBackendClientInfoBob();
+        
+        DomibusConnectorBackendClientInfo domainBackendInfo = service.mapDbEntityToDomainEntity(bob);
+     
+        assertThat(domainBackendInfo.getBackendDescription()).isEqualTo("description");
+        assertThat(domainBackendInfo.getBackendKeyAlias()).isEqualTo("keyalias");
+        assertThat(domainBackendInfo.getBackendKeyPass()).isEqualTo("keypass");
+        assertThat(domainBackendInfo.getBackendName()).isEqualTo("backendname");
+        assertThat(domainBackendInfo.getBackendPushAddress()).isEqualTo("backendpushaddress");                
+    }
+    
+    @Test
+    public void testMapDbEntityToDomainEntity_entityIsNull_shouldReturnNull() {
+        DomibusConnectorBackendClientInfo domainBackendInfo = service.mapDbEntityToDomainEntity(null);
+        assertThat(domainBackendInfo).isNull();
+    }
+    
+    @Test
+    public void test() {
+        BackendClientInfo bob = createBackendClientInfoBob();
+        Mockito.when(backendClientDao.findOneBackendByBackendName(eq("bob"))).thenReturn(bob);
+        DomibusConnectorBackendClientInfo backendClientInfoByName = service.getBackendClientInfoByName("bob");
+        
+        assertThat(backendClientInfoByName).isNotNull();        
+    }
+    
+    private BackendClientInfo createBackendClientInfoBob() {
         BackendClientInfo bob = BackendPersistenceEntityCreator.createBackendClientInfoBob();
         bob.setBackendDescription("description");
         bob.setBackendKeyAlias("keyalias");
@@ -39,14 +67,7 @@ public class BackendClientInfoPersistenceServiceImplTest {
         bob.setBackendPushAddress("backendpushaddress");
         bob.setId(20L);
         
-        DomibusConnectorBackendClientInfo domainBackendInfo = service.mapDbEntityToDomainEntity(bob);
-     
-        assertThat(domainBackendInfo.getBackendDescription()).isEqualTo("description");
-        assertThat(domainBackendInfo.getBackendKeyAlias()).isEqualTo("keyalias");
-        assertThat(domainBackendInfo.getBackendKeyPass()).isEqualTo("keypass");
-        assertThat(domainBackendInfo.getBackendName()).isEqualTo("backendname");
-        assertThat(domainBackendInfo.getBackendPushAddress()).isEqualTo("backendpushaddress");
-                
+        return bob;
     }
 
 }
