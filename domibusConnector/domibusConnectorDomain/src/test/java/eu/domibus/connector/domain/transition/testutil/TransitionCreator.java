@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.transition.testutil;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
 import eu.domibus.connector.domain.transition.DomibusConnectorActionType;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
@@ -57,6 +58,15 @@ public class TransitionCreator {
                 
         return message;
     }
+    
+    public static DomibusConnectorMessageType createEvidenceNonDeliveryMessage() {
+        DomibusConnectorMessageType message = new DomibusConnectorMessageType();        
+        message.setMessageDetails(createMessageDetails());
+        message.getMessageConfirmations().add(createMessageConfirmationType_NON_DELIVERY());
+        
+        return message;
+    }
+    
 
     public static DomibusConnectorMessageContentType createMessageContent() {
         DomibusConnectorMessageContentType messageContent = new DomibusConnectorMessageContentType();
@@ -193,7 +203,8 @@ public class TransitionCreator {
         party.setRole("GW");
         return party;
     }
-    
+
+
     
     private static class MyDataSource implements DataSource {
 
