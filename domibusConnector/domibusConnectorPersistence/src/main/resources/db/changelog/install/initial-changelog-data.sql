@@ -45,9 +45,11 @@ INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('RelayREMMDFailure', 0);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('DeliveryNonDeliveryToRecipient', 0);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('RetrievalNonRetrievalToRecipient', 0);
 INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('Test_Form', 0);
+INSERT INTO DOMIBUS_CONNECTOR_ACTION VALUES ('TEST-ping-connector', 0);
 
 ----------------------- Values for DOMIBUS_CONNECTOR_SERVICE ------------------------------
 
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('EPO', 'urn:e-codex:services:');
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('SmallClaims', 'urn:e-codex:services:');
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('Connector-TEST', 'urn:e-codex:services:');
+INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('TEST-ping-connector', 'urn:e-codex:services:');

@@ -96,7 +96,7 @@ public class TransitionCreator {
     public static DomibusConnectorMessageConfirmationType createMessageConfirmationType_DELIVERY() {
         DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
         confirmation.setConfirmation(new StreamSource(new ByteArrayInputStream("<DELIVERY></DELIVERY>".getBytes())));
-        confirmation.setConfirmationType(DomibusConnectorConfirmationType.DELIVERY);
+        confirmation.setConfirmationType(DomibusConnectorConfirmationType.DELIVERY);        
         return confirmation;
     }
     
