@@ -47,8 +47,9 @@ public class ReceiveMessageFromBackendService implements DomibusConnectorBackend
         MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, message.getConnectorMessageId());
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
         LOGGER.debug("#submitToController: message persisted");
-        bigDataPersistence.persistAllBigFilesFromMessage(message);
-        LOGGER.debug("#submitToController: message data persisted");
+        message = bigDataPersistence.persistAllBigFilesFromMessage(message);
+        LOGGER.debug("#submitToController: message [{}] data persisted", message);
+        message = messagePersistenceService.mergeMessageWithDatabase(message);
 
 
         LOGGER.debug("#submitToController: message.getMessageDetails().getService() [{}]", message.getMessageDetails().getService());

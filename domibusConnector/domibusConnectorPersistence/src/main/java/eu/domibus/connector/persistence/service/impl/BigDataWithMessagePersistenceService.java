@@ -47,14 +47,16 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
                 OutputStream outStream = writeTo.getOutputStream();
                 StreamUtils.copy(readFrom.getInputStream(), outStream);
                 outStream.close();
+                attachment.setAttachment(writeTo);
             }
             DomibusConnectorMessageContent messageContent = message.getMessageContent();
-            if (containsMainDocument(messageContent)) {
+            if (hasMainDocument(messageContent)) {
                 DomibusConnectorBigDataReference docReadFrom = messageContent.getDocument().getDocument();
                 DomibusConnectorBigDataReference docWriteTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message);
                 OutputStream outStream = docWriteTo.getOutputStream();
                 StreamUtils.copy(docReadFrom.getInputStream(), outStream);
                 outStream.close();
+                messageContent.getDocument().setDocument(docWriteTo);
             }
             return message;
         } catch (IOException ioe) {
@@ -71,7 +73,7 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
             attachment.setAttachment(activatedRead);
         }
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
-        if (containsMainDocument(messageContent)) {
+        if (hasMainDocument(messageContent)) {
             DomibusConnectorBigDataReference docRefresRead = messageContent.getDocument().getDocument();
             DomibusConnectorBigDataReference docActivatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(docRefresRead);
             messageContent.getDocument().setDocument(docActivatedRead);
@@ -80,7 +82,7 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
         return message;
     }
         
-    private boolean containsMainDocument(DomibusConnectorMessageContent content) {
+    private boolean hasMainDocument(DomibusConnectorMessageContent content) {
         return content != null && content.getDocument() != null && content.getDocument().getDocument() != null;
     }
  

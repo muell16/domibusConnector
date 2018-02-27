@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StreamUtils;
 
 import javax.persistence.EntityManager;
@@ -121,7 +122,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
             OutputStream outputStream = new DbBackedOutputStream(bigData);
             reference.setOutputStream(outputStream);
-
+            reference.setStorageIdReference(Long.toString(bigData.getId()));
             return reference;
 
 
@@ -139,13 +140,19 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
     }
 
     private void writeOutputStreamToDatabase(final DbBackedOutputStream dbBackedOutputStream) {
-        LOGGER.debug("#writeOutputStreamToDatabase: outputStream: [{}]", dbBackedOutputStream);
+        LOGGER.trace("#writeOutputStreamToDatabase: outputStream: [{}]", dbBackedOutputStream);
         PDomibusConnectorBigData data = dbBackedOutputStream.getStorageReference();
 
-        Session hibernateSession = entityManager.unwrap(Session.class);
-        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(dbBackedOutputStream.toByteArray());
-        data.setContent(blob);
-        bigDataDao.save(data);
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute( (status) -> {
+            Session hibernateSession = entityManager.unwrap(Session.class);
+            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(dbBackedOutputStream.toByteArray());
+            data.setContent(blob);
+            bigDataDao.save(data);
+            return null;
+        });
+
+
 
     }
 

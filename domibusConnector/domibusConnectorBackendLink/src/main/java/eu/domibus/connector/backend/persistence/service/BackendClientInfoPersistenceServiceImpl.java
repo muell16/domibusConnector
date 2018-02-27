@@ -5,6 +5,8 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import javax.annotation.Nullable;
+
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -37,7 +39,17 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         LOGGER.debug("#getBackendClientInfoByName: returning backendClientInfo: [{}]", clientInfo);
         return clientInfo;
     }
-    
+
+    @Nullable
+    @Override
+    public DomibusConnectorBackendClientInfo getBackendClientInfoByServiceName(DomibusConnectorService service) {
+        if (service == null) {
+            return null;
+        }
+        BackendClientInfo dbBackendInfo = backendClientDao.findByServices_service(service.getService()).stream().findFirst().orElseGet(null);
+        return mapDbEntityToDomainEntity(dbBackendInfo);
+    }
+
     @Nullable DomibusConnectorBackendClientInfo mapDbEntityToDomainEntity(@Nullable BackendClientInfo dbBackendInfo) {        
         if (dbBackendInfo == null) {            
             return null;

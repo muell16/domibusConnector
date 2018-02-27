@@ -3,8 +3,9 @@ package eu.domibus.connector.backend.persistence.dao;
 
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.persistence.dao.CommonPersistenceDBUnitITCase;
-import static eu.domibus.connector.persistence.dao.CommonPersistenceDBUnitITCase.setUpTestDatabaseWithSpringContext;
 import java.util.List;
+
+import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.dbunit.database.DatabaseDataSourceConnection;
@@ -30,7 +31,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     
     @BeforeClass
     public static void beforeClass() {
-        APPLICATION_CONTEXT = setUpTestDatabaseWithSpringContext(BackendClientDaoDBUnit.TestConfiguration.class);
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(BackendClientDaoDBUnit.TestConfiguration.class);
     }
     
 

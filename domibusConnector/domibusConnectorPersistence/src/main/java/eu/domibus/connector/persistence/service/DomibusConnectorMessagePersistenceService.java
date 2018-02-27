@@ -115,6 +115,7 @@ public interface DomibusConnectorMessagePersistenceService {
      */
     DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException;
 
+
     //TODO: improve Exceptions
     /**
      * marks the message as rejected

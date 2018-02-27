@@ -18,10 +18,16 @@ public class SetupPersistenceContext {
 
     @BeforeClass
     public static ConfigurableApplicationContext startApplicationContext() {
+        return startApplicationContext(SetupPersistenceContext.class);
+    }
+
+
+    public static ConfigurableApplicationContext startApplicationContext(Class<?>... sources) {
         ConfigurableApplicationContext applicationContext;
         String dbName = UUID.randomUUID().toString().substring(0,10);
-        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(SetupPersistenceContext.class)
+        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
                 //.profiles("test", "db_mysql")
+                .sources(sources)
                 .web(false)
                 .profiles("test", "db_h2")
                 .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml", "spring.datasource.url=jdbc:h2:mem:" + dbName)
@@ -31,6 +37,4 @@ public class SetupPersistenceContext {
         System.out.println("APPCONTEXT IS STARTED...:" + applicationContext.isRunning());
         return applicationContext;
     }
-
-
 }

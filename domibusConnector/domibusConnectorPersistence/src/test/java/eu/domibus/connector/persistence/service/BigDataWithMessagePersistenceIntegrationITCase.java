@@ -83,6 +83,9 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
                 //message is in db
 
                 domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
+
+                assertThat(domibusConnectorMessage.getMessageContent().getDocument().getDocument().getStorageIdReference()).isNotNull();
+
                 return null;
             }
         );
