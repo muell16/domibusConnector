@@ -8,6 +8,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import java.io.IOException;
+import java.io.OutputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +44,17 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
             for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {                   
                 DomibusConnectorBigDataReference readFrom = attachment.getAttachment();
                 DomibusConnectorBigDataReference writeTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message);
-                StreamUtils.copy(readFrom.getInputStream(), writeTo.getOutputStream());                
+                OutputStream outStream = writeTo.getOutputStream();
+                StreamUtils.copy(readFrom.getInputStream(), outStream);
+                outStream.close();
             }
             DomibusConnectorMessageContent messageContent = message.getMessageContent();
             if (containsMainDocument(messageContent)) {
                 DomibusConnectorBigDataReference docReadFrom = messageContent.getDocument().getDocument();
                 DomibusConnectorBigDataReference docWriteTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message);
-                StreamUtils.copy(docReadFrom.getInputStream(), docWriteTo.getOutputStream());
+                OutputStream outStream = docWriteTo.getOutputStream();
+                StreamUtils.copy(docReadFrom.getInputStream(), outStream);
+                outStream.close();
             }
             return message;
         } catch (IOException ioe) {

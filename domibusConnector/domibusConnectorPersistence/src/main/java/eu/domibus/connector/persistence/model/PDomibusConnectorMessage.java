@@ -31,6 +31,7 @@ import org.springframework.core.style.ToStringCreator;
 public class PDomibusConnectorMessage implements Serializable {
 
     @Id
+    @Column(name="ID")
     @TableGenerator(name = "seqStoreMessage", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMessage")
     private Long id;

@@ -17,7 +17,8 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
 
     
     <cxf:bus>
-        <cxf:features>     
+        <cxf:features>
+            <!--<cxf:logging />-->
              <p:policies />
         </cxf:features>
     </cxf:bus>

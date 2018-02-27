@@ -4,6 +4,7 @@ package eu.domibus.connector.persistence.dao;
 import javax.sql.DataSource;
 
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,39 +20,12 @@ import java.util.UUID;
  */
 public abstract class CommonPersistenceDBUnitITCase {
 
-
-
-    @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
-    static class TestConfiguration {
-    }
-
     protected static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
-    public static ConfigurableApplicationContext setUpTestDatabaseWithSpringContext() {
-        return setUpTestDatabaseWithSpringContext(TestConfiguration.class);
-    }
-    
-    
-    public static ConfigurableApplicationContext setUpTestDatabaseWithSpringContext(Class ...sources) {
-        String dbName = UUID.randomUUID().toString().substring(0,10);
-        //the random name of the database is generated to ensure that the database is not reused between the test classes
-        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
-                //.profiles("test", "db_mysql")
-                .sources(sources)
-                .web(false)
-                .profiles("test", "db_h2")
-                .properties("liquibase.change-log=classpath:/db/changelog/install/initial-4.0.xml", "spring.datasource.url=jdbc:h2:mem:" + dbName)
-                ;
-        ConfigurableApplicationContext applicationContext = springAppBuilder.run();
-        System.out.println("APPCONTEXT IS STARTED...:" + applicationContext.isRunning());       
-        return applicationContext;
-    }
-    
     @BeforeClass
     public static void beforeClass() {
-        APPLICATION_CONTEXT = setUpTestDatabaseWithSpringContext();
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext();
     }
-    
 
     @AfterClass
     public static void afterClass() {
@@ -73,8 +47,4 @@ public abstract class CommonPersistenceDBUnitITCase {
         this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
     }
 
-
-    
-    
-    
 }

@@ -1,0 +1,18 @@
+package eu.domibus.connector.persistence.dao;
+
+import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Repository
+@Transactional
+public interface DomibusConnectorBigDataDao extends CrudRepository<PDomibusConnectorBigData, Long> {
+
+    public List<PDomibusConnectorBigData> findAllByMessage(PDomibusConnectorMessage msg);
+
+
+}

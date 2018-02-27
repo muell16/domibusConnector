@@ -4,10 +4,13 @@ package eu.domibus.connector.ws.backend.link.impl;
 import eu.domibus.connector.backend.StartBackendOnly;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.ws.backend.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import static org.assertj.core.api.Assertions.*;
+
+import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -123,6 +126,17 @@ public class BackendLinkWsConnectionITCase {
         DomibsConnectorAcknowledgementType submitMessage = bobClientEndpoint.submitMessage(msg);
         assertThat(submitMessage).isNotNull();
       
+    }
+
+    @Test
+    public void testRequestMessages() {
+        DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
+
+        EmptyRequestType emptyRequest = new EmptyRequestType();
+
+        DomibusConnectorMessagesType domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
+
+        assertThat(domibusConnectorMessagesType.getMessages()).hasSize(0);
     }
     
     

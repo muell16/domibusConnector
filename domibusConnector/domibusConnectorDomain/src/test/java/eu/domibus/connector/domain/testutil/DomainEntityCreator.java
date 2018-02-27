@@ -121,6 +121,27 @@ public class DomainEntityCreator {
         msg.addError(createMessageError());
         return msg;
     }
+
+    public static DomibusConnectorMessage createEpoMessage() {
+        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
+
+        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+        messageContent.setXmlContent("<xmlContent/>".getBytes());
+
+        DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
+
+        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
+        messageContent.setDocument(messageDocument);
+
+        DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
+                .addAttachment(createSimpleMessageAttachment())
+                .setMessageDetails(messageDetails)
+                .setMessageContent(messageContent)
+                .setConnectorMessageId("MSG1")
+                .build();
+
+        return message;
+    }
     
     public static DomibusConnectorMessageDetails createDomibusConnectorMessageDetails() {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
@@ -193,5 +214,6 @@ public class DomainEntityCreator {
         }
     }
 
-    
+
+
 }
