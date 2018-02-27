@@ -49,7 +49,7 @@ public class WSBackendLinkContextConfiguration {
 
     @Bean
     public IntegrationFlow fromConnectorToBackendFlow() {
-        IntegrationFlows.from("backend.fromconnector")
+        return IntegrationFlows.from("backend.fromconnector")
                 .transform( (DomibusConnectorMessage msg) -> {
                     DomibusConnectorBackendMessage backendMessage = new DomibusConnectorBackendMessage();
                     backendMessage.setDomibusConnectorMessage(msg);
@@ -62,9 +62,7 @@ public class WSBackendLinkContextConfiguration {
                 })
                 .channel("backend.jmsqueue")
                 .get();
-
-
-
+        
     }
 
 
