@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.ws.backend.link.spring;
 
+import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,12 @@ public class WSBackendLinkContextConfigurationITCase {
             exclude = {
         DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})    
     public static class TestConfiguration {     
+        
+        @Bean
+        BackendClientInfoPersistenceService backendClientInfoPersistenceService() {
+            BackendClientInfoPersistenceService mock = Mockito.mock(BackendClientInfoPersistenceService.class);
+            return mock;
+        }
         
         
         @Bean("connectorBackendImpl")

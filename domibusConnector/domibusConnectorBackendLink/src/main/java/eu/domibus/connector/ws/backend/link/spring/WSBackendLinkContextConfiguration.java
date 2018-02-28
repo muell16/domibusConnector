@@ -62,7 +62,7 @@ public class WSBackendLinkContextConfiguration {
                 })
                 .channel("backend.jmsqueue")
                 .get();
-        
+
     }
 
 

@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 import javax.jms.Message;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
+import javax.validation.constraints.Null;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,8 +58,9 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     @Value("${connector.backend.internal.wait-queue.receive-timeout:10}")
     private long receiveTimeout;
     
-    @Autowired
-    private PushMessageToBackendClient pushMessageToBackendCallback;
+    @Autowired(required = false) //can be null if there is no push impl
+    private @Nullable
+    PushMessageToBackendClient pushMessageToBackendCallback;
        
     @Autowired
     private JmsTemplate jmsTemplate;
