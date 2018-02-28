@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootApplication(
-    scanBasePackages={"eu.domibus.connector.ws.backend.link", "eu.domibus.connector.backend", "eu.domibus.connector.persistence"},
+    scanBasePackages={"eu.domibus.connector.backend.ws", "eu.domibus.connector.backend", "eu.domibus.connector.persistence"},
     exclude = {
 //        DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class
     }

@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.backend.domain.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.core.style.ToStringCreator;
@@ -9,7 +10,7 @@ import org.springframework.core.style.ToStringCreator;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorBackendClientInfo {
+public class DomibusConnectorBackendClientInfo implements Serializable {
 
     private String backendName;
 

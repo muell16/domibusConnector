@@ -1,10 +1,7 @@
 
 package eu.domibus.connector.backend.ws.link.spring;
 
-import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
@@ -12,12 +9,11 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
-import eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
+import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import java.security.Security;
 
-import net.shibboleth.utilities.java.support.annotation.Prototype;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Matchers.any;
@@ -41,7 +37,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**

@@ -3,7 +3,9 @@ package eu.domibus.connector.backend.domain.model;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import org.springframework.core.style.ToStringCreator;
 
-public class DomibusConnectorBackendMessage {
+import java.io.Serializable;
+
+public class DomibusConnectorBackendMessage implements Serializable {
 
     private DomibusConnectorMessage domibusConnectorMessage;
 

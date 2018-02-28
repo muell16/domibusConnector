@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import javax.annotation.Nullable;
@@ -16,7 +17,7 @@ import org.springframework.core.style.ToStringCreator;
  * @version 1.0
  * @updated 29-Dez-2017 10:12:48
  */
-public class DomibusConnectorMessage {
+public class DomibusConnectorMessage implements Serializable {
 
 	private final DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
@@ -168,7 +169,7 @@ public class DomibusConnectorMessage {
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("connectorMessageId", this.connectorMessageId);        
-        return builder.toString();        
-    }
+        return builder.toString();
+}
     
 }

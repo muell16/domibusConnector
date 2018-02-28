@@ -2,6 +2,8 @@ package eu.domibus.connector.domain.model;
 
 import org.springframework.core.style.ToStringCreator;
 
+import java.io.Serializable;
+
 
 /**
  * Holds the routing information for the {@link DomibusConnectorMessage}. The data
@@ -10,7 +12,7 @@ import org.springframework.core.style.ToStringCreator;
  * @version 1.0
  * @updated 29-Dez-2017 10:12:49
  */
-public class DomibusConnectorMessageDetails {
+public class DomibusConnectorMessageDetails implements Serializable {
 
 	private String backendMessageId;
 	private String ebmsMessageId;
