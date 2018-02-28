@@ -94,6 +94,9 @@ public class DomibusConnectorBackendClientInfo {
         }
         return true;
     }
-    
-            
+
+
+    public boolean isPushBackend() {
+        return this.backendPushAddress != null;
+    }
 }

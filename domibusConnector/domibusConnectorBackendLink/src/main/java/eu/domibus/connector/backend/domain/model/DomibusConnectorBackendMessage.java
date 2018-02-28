@@ -1,12 +1,20 @@
 package eu.domibus.connector.backend.domain.model;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import org.springframework.core.style.ToStringCreator;
 
 public class DomibusConnectorBackendMessage {
 
     private DomibusConnectorMessage domibusConnectorMessage;
 
     private DomibusConnectorBackendClientInfo backendClientInfo;
+
+    public DomibusConnectorBackendMessage() {}
+
+    public DomibusConnectorBackendMessage(DomibusConnectorMessage message, DomibusConnectorBackendClientInfo clientInfo) {
+        this.domibusConnectorMessage = message;
+        this.backendClientInfo = clientInfo;
+    }
 
     public DomibusConnectorMessage getDomibusConnectorMessage() {
         return domibusConnectorMessage;
@@ -24,4 +32,10 @@ public class DomibusConnectorBackendMessage {
         this.backendClientInfo = backendClientInfo;
     }
 
+    public String toString() {
+        ToStringCreator builder = new ToStringCreator(this);
+        builder.append("message", this.domibusConnectorMessage);
+        builder.append("backendClient", this.backendClientInfo);
+        return builder.toString();
+    }
 }
