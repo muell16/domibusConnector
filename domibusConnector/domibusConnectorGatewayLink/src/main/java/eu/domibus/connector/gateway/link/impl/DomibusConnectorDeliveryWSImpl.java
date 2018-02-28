@@ -10,10 +10,10 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWS;
+import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 
 @Component("domibusConnectorDeliveryServiceImpl")
-public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorDeliveryWS {
+public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDeliveryWebService {
 
 	@Resource
 	private DomibusConnectorGatewayDeliveryService controllerService;
