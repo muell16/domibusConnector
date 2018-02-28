@@ -19,6 +19,7 @@
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
         <module>domibusConnectorTest</module>
+        <module>domibusConnectorAPI</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -81,6 +82,11 @@
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorDomain</artifactId>
+                <version>${project.version}</version> 
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorAPI</artifactId>
                 <version>${project.version}</version> 
             </dependency>
             <!-- E-CODEX LIBRARIES -->
