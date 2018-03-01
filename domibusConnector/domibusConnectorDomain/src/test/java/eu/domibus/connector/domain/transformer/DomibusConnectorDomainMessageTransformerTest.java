@@ -215,6 +215,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessageDetailsType messageDetailsType = DomibusConnectorDomainMessageTransformer.transformMessageDetailsDomainToTransition(messageDetails);
                 
         assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped").isEqualTo("national1");
+        assertThat(messageDetailsType.getEbmsMessageId()).as("ebmsMessageId must be mapped").isEqualTo("ebms1");
         assertThat(messageDetailsType.getConversationId()).as("conversationId must be mapped!").isEqualTo("conversation1");
         assertThat(messageDetailsType.getFinalRecipient()).as("finalRecipient must be mapped!").isEqualTo("finalRecipient");
         assertThat(messageDetailsType.getOriginalSender()).as("originalSender must be mapped!").isEqualTo("originalSender");
