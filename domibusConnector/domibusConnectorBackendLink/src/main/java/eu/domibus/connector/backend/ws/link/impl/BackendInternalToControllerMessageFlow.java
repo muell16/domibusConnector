@@ -1,13 +1,13 @@
+package eu.domibus.connector.backend.ws.link.impl;
 
-package eu.domibus.connector.controller.service.impl;
-
+import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
+import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,32 +15,47 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * 
- */
 @Service
-public class ReceiveMessageFromBackendService implements DomibusConnectorBackendSubmissionService {
+public class BackendInternalToControllerMessageFlow implements DomibusConnectorBackendInternalDeliverToController {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ReceiveMessageFromBackendService.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackendInternalToControllerMessageFlow.class);
+
+    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+
+    private BigDataWithMessagePersistenceService bigDataPersistence;
+
+    private DomibusConnectorMessageIdGenerator messageIdGenerator;
+
+    private DomibusConnectorBackendDeliveryService toBackendDeliveryService;
+
+    //setter
     @Autowired
-    DomibusConnectorMessageIdGenerator messageIdGenerator;
-    
+    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
+
     @Autowired
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
-        
+    public void setBigDataPersistence(BigDataWithMessagePersistenceService bigDataPersistence) {
+        this.bigDataPersistence = bigDataPersistence;
+    }
+
     @Autowired
-    DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence;
-            
+    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
+        this.messageIdGenerator = messageIdGenerator;
+    }
+
     @Autowired
-    DomibusConnectorBackendDeliveryService toBackendDeliveryService;
-            
+    public void setToBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
+        this.toBackendDeliveryService = backendDeliveryService;
+    }
+
+
     @Override
-    public void submitToController(DomibusConnectorMessage message) {
+    public void submitToController(DomibusConnectorBackendMessage backendMessage) {
         LOGGER.error("#submitToController: not yet implemented!");
 
-        LOGGER.debug("#submitToController: message [{}]", message);
+        LOGGER.debug("#submitToController: message [{}]", backendMessage);
+        DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
 
         message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         LOGGER.debug("#submitToController: start to process message with message id [{}]", message.getConnectorMessageId());
@@ -58,12 +73,12 @@ public class ReceiveMessageFromBackendService implements DomibusConnectorBackend
         if (testPingConnectorMessage.equals(message.getMessageDetails().getService().getService())) {
             LOGGER.debug("#submitToController: message is " + testPingConnectorMessage + " so just sending message back to backend!");
             toBackendDeliveryService.deliverMessageToBackend(message);
-            
+
             //also generate evidences?
         } else {
             LOGGER.debug("#submitToController: 'normal' message.....");
         }
-        
+
         //TODO: put message on internal queue for further processing
     }
 
