@@ -272,6 +272,8 @@ public class PersistenceServiceITCase {
 //        MessageContent messageContent = new MessageContent();
 //        Message message = new Message(messageDetails, messageContent);
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("myid");
+        message.getMessageDetails().setBackendMessageId("71321");
+        message.getMessageDetails().setEbmsMessageId("ebmnsdsaf2123");
 
         persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW); //create message first
                 

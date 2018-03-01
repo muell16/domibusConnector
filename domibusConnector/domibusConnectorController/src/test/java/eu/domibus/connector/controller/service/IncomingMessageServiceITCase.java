@@ -2,6 +2,7 @@
 package eu.domibus.connector.controller.service;
 
 
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
@@ -9,9 +10,8 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
+
 import org.apache.log4j.lf5.util.StreamUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 import java.io.ByteArrayInputStream;
-import java.util.UUID;
+
 import org.springframework.test.context.jdbc.Sql;
 
 /**
@@ -57,9 +57,24 @@ public class IncomingMessageServiceITCase {
     static class TestConfiguration {
 
         @Bean
-        public static PropertySourcesPlaceholderConfigurer
-                propertySourcesPlaceholderConfigurer() {
+        public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
+        }
+
+        @Bean("tobackenddeliveredmessages")
+        public List<DomibusConnectorMessage> createDeliveryList() {
+            return Collections.synchronizedList(new ArrayList<>());
+        }
+
+        @Bean
+        public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
+            return new DomibusConnectorBackendDeliveryService() {
+
+                @Override
+                public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+                    createDeliveryList().add(message);
+                }
+            };
         }
     }
     
