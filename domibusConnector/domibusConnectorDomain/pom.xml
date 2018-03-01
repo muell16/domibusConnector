@@ -23,53 +23,12 @@
     			<skipTests>true</skipTests>
     		</properties>
     	</profile>
-   	</profiles>
-   	
+    </profiles>
+
 
     
     <build>
         <plugins>
-<!--            <plugin>
-            	<groupId>org.jvnet.jaxb2.maven2</groupId>
-                    <artifactId>maven-jaxb2-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>court-database</id>
-                            <configuration>
-                                 <forceRegenerate>true</forceRegenerate> 
-                                <schemaDirectory>src/main/resources/eu.domibus.connector.domain.transition</schemaDirectory>
-                                <schemaIncludes>
-                                    <include>DomibusConnectorTransitionModel.xsd</include>
-                                </schemaIncludes>
-                                <generateDirectory>src/main/java</generateDirectory>
-                                <strict>true</strict>
-                                <extension>true</extension>
-                                <args><arg>-no-header</arg></args>
-                            </configuration>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <configuration>
-                        <descriptors>
-                            <descriptor>src/main/assembly/assemblyTransitionModel.xml</descriptor>
-                        </descriptors>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>create-domain-assemblies</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -87,6 +46,13 @@
     	<dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorAPI</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -110,14 +76,8 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
             <type>jar</type>
         </dependency>
-<!--        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <type>jar</type>
-        </dependency>-->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-core</artifactId>

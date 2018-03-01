@@ -6,7 +6,7 @@
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
-		<!-- ==================== Copying TransitionModel.xsd ================= -->
+		<!-- ==================== Copying TransitionModel.xsd AND wsdl ================= -->
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources/wsdl/</directory>            
 			<outputDirectory>/wsdl/</outputDirectory>
