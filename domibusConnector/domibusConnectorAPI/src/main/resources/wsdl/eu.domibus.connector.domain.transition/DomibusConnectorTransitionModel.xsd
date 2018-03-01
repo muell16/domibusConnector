@@ -26,6 +26,7 @@
 	<xs:complexType name="DomibusConnectorMessageDetailsType">
 		<xs:sequence>
 			<xs:element name="backendMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ebmsMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="refToMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="conversationId" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="originalSender" type="xs:string" minOccurs="1" maxOccurs="1"/>

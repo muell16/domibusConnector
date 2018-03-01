@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="backendMessageId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="ebmsMessageId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="refToMessageId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="conversationId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="originalSender" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomibusConnectorMessageDetailsType", propOrder = {
     "backendMessageId",
+    "ebmsMessageId",
     "refToMessageId",
     "conversationId",
     "originalSender",
@@ -49,6 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 public class DomibusConnectorMessageDetailsType {
 
     protected String backendMessageId;
+    protected String ebmsMessageId;
     protected String refToMessageId;
     protected String conversationId;
     @XmlElement(required = true)
@@ -86,6 +89,30 @@ public class DomibusConnectorMessageDetailsType {
      */
     public void setBackendMessageId(String value) {
         this.backendMessageId = value;
+    }
+
+    /**
+     * Ruft den Wert der ebmsMessageId-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEbmsMessageId() {
+        return ebmsMessageId;
+    }
+
+    /**
+     * Legt den Wert der ebmsMessageId-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEbmsMessageId(String value) {
+        this.ebmsMessageId = value;
     }
 
     /**
