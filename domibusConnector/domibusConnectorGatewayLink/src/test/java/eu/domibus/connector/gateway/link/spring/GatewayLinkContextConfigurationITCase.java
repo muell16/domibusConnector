@@ -1,24 +1,16 @@
 package eu.domibus.connector.gateway.link.spring;
 
-import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
-import eu.domibus.connector.gateway.link.spring.GatewayLinkContextConfigurationITCase.TestConfiguration;
-import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWS;
-import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWSService;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.MTOMFeature;
-import static org.assertj.core.api.Assertions.*;
+
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,10 +19,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import static org.mockito.Matchers.any;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
+import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWSService;
+import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 
 /**
  * a simple test to check if the webservice (DomibusConnectorDeliveryWS) is published and reachable
@@ -75,13 +72,13 @@ public class GatewayLinkContextConfigurationITCase {
         System.out.println("sleep ended, calling service");        
         
         URL wsdlURL = new URL(url + "?wsdl"); 
-        QName SERVICE_NAME = DomibusConnectorDeliveryWSService.DomibusConnectorDeliveryWebService;
+        QName SERVICE_NAME = DomibusConnectorGatewayDeliveryWSService.DomibusConnectorDeliveryWebService;
         
         MTOMFeature mtom = new MTOMFeature();
 
         Service service = Service.create(wsdlURL, SERVICE_NAME, mtom);
 
-        DomibusConnectorDeliveryWS client = service.getPort(DomibusConnectorDeliveryWS.class);
+        DomibusConnectorGatewayDeliveryWebService client = service.getPort(DomibusConnectorGatewayDeliveryWebService.class);
         
         DomibusConnectorMessageType msg = TransitionCreator.createMessage();
         

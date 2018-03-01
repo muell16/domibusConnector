@@ -18,6 +18,10 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorDomain</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
@@ -183,7 +187,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution>
+                    <!-- <execution>
                         <id>unpack-transition-model</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -203,10 +207,10 @@
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
-                    </execution>
+                    </execution> -->
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <executions>
@@ -232,7 +236,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <!--assemble wsdl files-->          
                 <groupId>org.apache.maven.plugins</groupId>
