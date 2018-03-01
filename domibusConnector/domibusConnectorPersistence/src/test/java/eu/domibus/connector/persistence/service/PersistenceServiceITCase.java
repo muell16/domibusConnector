@@ -18,6 +18,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -131,6 +132,39 @@ public class PersistenceServiceITCase {
         
         String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
         assertThat(conversationId).isEqualTo("conversation421");        
+    }
+
+    /**
+     * Test if an the test EpoMessage can be persisted into database
+     *
+     */
+    @Test
+    public void testPersistEpoMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
+        String connectorMessageId = "msgid8972_epo";
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        epoMessage.setConnectorMessageId(connectorMessageId);
+
+        epoMessage.getMessageDetails().setEbmsMessageId("ebms9000");
+        epoMessage.getMessageDetails().setConversationId("conversation4000");
+
+        epoMessage = persistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GW_TO_NAT);
+
+        assertThat(epoMessage).isNotNull();
+
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE",
+                String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE CONNECTOR_MESSAGE_ID='%s'", connectorMessageId));
+
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+
+        String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
+        assertThat(ebmsId).isEqualTo("ebms9000");
+
+        String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
+        assertThat(conversationId).isEqualTo("conversation4000");
+
     }
     
     /*
