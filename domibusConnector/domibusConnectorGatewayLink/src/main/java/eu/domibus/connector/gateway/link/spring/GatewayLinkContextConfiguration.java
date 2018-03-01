@@ -1,10 +1,11 @@
 
 package eu.domibus.connector.gateway.link.spring;
 
-import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWS;
-import eu.domibus.connector.ws.delivery.service.DomibusConnectorDeliveryWSService;
-import eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS;
-import eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWSService;
+
+import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWSService;
+import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
+import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWSService;
+import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.soap.MTOMFeature;
@@ -31,7 +32,7 @@ public class GatewayLinkContextConfiguration {
     private final static Logger LOGGER = LoggerFactory.getLogger(GatewayLinkContextConfiguration.class);
     
     @Autowired
-    private DomibusConnectorDeliveryWS deliveryMessageToCxfServerPort;
+    private DomibusConnectorGatewayDeliveryWebService deliveryMessageToCxfServerPort;
     
     @Autowired
     private GatewayLinkWsServiceProperties gatewayLinkPublishedServiceProperties;
@@ -44,7 +45,7 @@ public class GatewayLinkContextConfiguration {
     public Endpoint endpoint() {               
         EndpointImpl endpointImpl = new EndpointImpl(bus, deliveryMessageToCxfServerPort);        
                 
-        QName SERVICE_NAME = DomibusConnectorDeliveryWSService.DomibusConnectorDeliveryWebService; 
+        QName SERVICE_NAME = DomibusConnectorGatewayDeliveryWSService.DomibusConnectorDeliveryWebService; 
         endpointImpl.setServiceName(SERVICE_NAME);
         
         SOAPBinding binding = (SOAPBinding)endpointImpl.getBinding();
@@ -61,12 +62,12 @@ public class GatewayLinkContextConfiguration {
     
 
     @Bean("gwSubmissionClient")
-    public DomibusConnectorSubmissionWS domibusConnectorSubmissionWSClient() {
-        DomibusConnectorSubmissionWSService domibusConnectorSubmissionWSService = new DomibusConnectorSubmissionWSService();
+    public DomibusConnectorGatewaySubmissionWebService domibusConnectorSubmissionWSClient() {
+        DomibusConnectorGatewaySubmissionWSService domibusConnectorSubmissionWSService = new DomibusConnectorGatewaySubmissionWSService();
                 
         MTOMFeature mtom = new MTOMFeature();
         
-        DomibusConnectorSubmissionWS serviceClient = domibusConnectorSubmissionWSService.getPort(DomibusConnectorSubmissionWS.class, mtom);
+        DomibusConnectorGatewaySubmissionWebService serviceClient = domibusConnectorSubmissionWSService.getPort(DomibusConnectorGatewaySubmissionWebService.class, mtom);
                
         return serviceClient;
                                 

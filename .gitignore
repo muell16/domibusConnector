@@ -67,3 +67,8 @@ $Recycle.Bin
 /domibusConnector/domibusConnectorController/nbproject/
 /domibusConnector/domibusConnectorGatewayLink/nbproject/
 /domibusConnector/domibusConnectorBackendLink/nbproject/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/domain/transition/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/backend/webservice/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/backend/delivery/webservice/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/gateway/delivery/webservice/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/gateway/submission/webservice/
