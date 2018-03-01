@@ -190,14 +190,10 @@
             <column name="BACKEND_KEY_ALIAS" type="${varchar.type}(255 ${varchar.length.type})" >
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_KEY_PASS" type="${varchar.type}(255 ${varchar.length.type})" >
-<!--                <constraints nullable="false" />-->
-            </column>
-            <column name="BACKEND_SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" >
-<!--                <constraints nullable="false" />-->
-            </column>
-<!--            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >                -->
-            <!--</column>-->
+            <column name="BACKEND_KEY_PASS" type="${varchar.type}(255 ${varchar.length.type})" ></column>
+            <column name="BACKEND_SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" ></column>
+            <column name="BACKEND_ENABLED" type="BOOLEAN" defaultValueBoolean="true" />
+            <column name="BACKEND_DEFAULT" type="BOOLEAN" defaultValueBoolean="false" />
             <column name="BACKEND_DESCRIPTION" type="${text.type}"  />
             <column name="BACKEND_PUSH_ADDRESS" type="${text.type}" />
         </createTable>
