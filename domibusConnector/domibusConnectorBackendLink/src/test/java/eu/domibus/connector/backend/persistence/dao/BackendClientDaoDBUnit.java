@@ -63,13 +63,13 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     
     @Test
     public void testFindOneBackendByBackendName() {
-        BackendClientInfo backendClientBob = backendClientDao.findOneBackendByBackendName("bob");
+        BackendClientInfo backendClientBob = backendClientDao.findOneBackendByBackendNameAndEnabledIsTrue("bob");
         assertThat(backendClientBob).isNotNull();
     }
     
     @Test
     public void testFindByServices_service() {
-        List<BackendClientInfo> backendClients = backendClientDao.findByServices_service("EPO");
+        List<BackendClientInfo> backendClients = backendClientDao.findByServices_serviceAndEnabledIsTrue("EPO");
         
         assertThat(backendClients).as("should containe exact one element!").hasSize(1);
         BackendClientInfo clientBob = backendClients.get(0);
@@ -79,7 +79,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     
     @Test
     public void testFindByServices_service_shouldContain2Elements() {
-        List<BackendClientInfo> backendClients = backendClientDao.findByServices_service("LOCAL-CONNECTOR-TEST");        
+        List<BackendClientInfo> backendClients = backendClientDao.findByServices_serviceAndEnabledIsTrue("LOCAL-CONNECTOR-TEST");
         assertThat(backendClients).as("should containe exact one element!").hasSize(2);    
     }
 

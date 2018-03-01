@@ -2,6 +2,9 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.StartBackendOnly;
+import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
+import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -13,6 +16,7 @@ import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import org.junit.*;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import static org.assertj.core.api.Assertions.*;
@@ -23,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import javax.sql.DataSource;
+import java.util.UUID;
 
 /**
  *
@@ -48,19 +55,24 @@ public class BackendLinkWsConnectionITCase {
     public static void beforeClass() {
         setUpBackend();
         
-        bobApplicationContext = setUpClientBob(getBackendServiceWsAddress(backendApplicationContext));
-        aliceApplicationContext = setUpClientAlice(getBackendServiceWsAddress(backendApplicationContext));
+//        bobApplicationContext = setUpClientBob(getBackendServiceWsAddress(backendApplicationContext));
+//        aliceApplicationContext = setUpClientAlice(getBackendServiceWsAddress(backendApplicationContext));
         
         LOGGER.info("SERVER ADDRESS " +  getBackendServiceWsAddress(backendApplicationContext));
-        LOGGER.info("CLIENT BOB ADDRESS " + getBackendClientPushServiceAddress(bobApplicationContext));
+//        LOGGER.info("CLIENT BOB ADDRESS " + getBackendClientPushServiceAddress(bobApplicationContext));
                 
     }
     
     //setup and start connector backend
     private static void setUpBackend() {
         MDC.put("COLOR", "GREEN");
-        String[] backendProfiles = new String[] {};
-        String[] backendProperties = new String[] {"server.port=0", "logging.config=classpath:log4j2-test.xml"};
+        String dbName = UUID.randomUUID().toString().substring(0,10);
+        String[] backendProfiles = new String[] {"test", "db_h2"};
+        String[] backendProperties = new String[] {"server.port=0",
+                "logging.config=classpath:log4j2-test.xml",
+                "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
+                "spring.datasource.url=jdbc:h2:mem:" + dbName};
+
         backendApplicationContext = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
         
         //local.server.port of backend link
@@ -106,7 +118,7 @@ public class BackendLinkWsConnectionITCase {
     public void setUp() throws InterruptedException {
         System.out.println("###########################RUN TEST#######################################");
         System.out.println("SERVER ADDRESS: " +  getBackendServiceWsAddress(backendApplicationContext));
-        System.out.println("CLIENT BOB ADDRESS: " + getBackendClientPushServiceAddress(bobApplicationContext));
+//        System.out.println("CLIENT BOB ADDRESS: " + getBackendClientPushServiceAddress(bobApplicationContext));
         System.out.println("wait 3 seconds....");
         Thread.sleep(3000);
     }
@@ -118,8 +130,7 @@ public class BackendLinkWsConnectionITCase {
         Thread.sleep(3000);
     }
     
-    @Test
-//    @Ignore //This test shuold be moved to other class
+//    @Test
     public void testSubmitMessageToBackendService() throws InterruptedException {
 
         //send message from bob to connector
@@ -131,7 +142,7 @@ public class BackendLinkWsConnectionITCase {
       
     }
 
-    @Test
+//    @Test
     public void testRequestMessages() {
         DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
 
@@ -146,12 +157,13 @@ public class BackendLinkWsConnectionITCase {
      * test complete message flow in backend, when controller hands over
      * message to backend for backend delivery
      */
-    @Ignore("test fails with transient exception")
     @Test
     public void testSendMessageFromConnectorToBackend() {
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
         epoMessage.setConnectorMessageId("msgid1");
 
+
+        BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
         DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
         BigDataWithMessagePersistenceService bigDataPersistence = backendApplicationContext.getBean(BigDataWithMessagePersistenceService.class);
 
@@ -161,8 +173,6 @@ public class BackendLinkWsConnectionITCase {
         DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
 
         messageToBackend.deliverMessageToBackend(epoMessage);
-
-
 
     }
 

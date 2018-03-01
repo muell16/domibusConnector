@@ -6,6 +6,7 @@ import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersist
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,12 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
         backendMessage.setDomibusConnectorMessage(message);
 
         LOGGER.debug("#deliverMessageToBackend: determine correct backendClient");
+        DomibusConnectorService service = message.getMessageDetails().getService();
         DomibusConnectorBackendClientInfo backendClientInfoByServiceName =
-                backendClientInfoPersistenceService.getBackendClientInfoByServiceName(message.getMessageDetails().getService());
+                backendClientInfoPersistenceService.getBackendClientInfoByServiceName(service);
+        if (backendClientInfoByServiceName == null) {
+            throw new RuntimeException(String.format("No backend found to handle service with name [%s]", service));
+        }
         backendMessage.setBackendClientInfo(backendClientInfoByServiceName);
 
 

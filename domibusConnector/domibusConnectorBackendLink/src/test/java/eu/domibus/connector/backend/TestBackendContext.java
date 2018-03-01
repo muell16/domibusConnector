@@ -2,13 +2,17 @@
 package eu.domibus.connector.backend;
 
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,10 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootApplication(
-    scanBasePackages={"eu.domibus.connector.backend.ws", "eu.domibus.connector.backend", "eu.domibus.connector.persistence"},
-    exclude = {
-//        DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class
-    }
+    scanBasePackages={"eu.domibus.connector.backend", "eu.domibus.connector.persistence"}
 )  
 @Configuration
 public class TestBackendContext {
@@ -32,7 +33,13 @@ public class TestBackendContext {
     public List<DomibusConnectorMessage> createList() {
         return Collections.synchronizedList(new ArrayList());
     }
-    
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomibusConnectorMessageIdGenerator domibusConnectorMessageIdGenerator() {
+        return () -> UUID.randomUUID().toString();
+    }
+
     
     @Bean
     public DomibusConnectorBackendSubmissionService dummySubmissionService() {

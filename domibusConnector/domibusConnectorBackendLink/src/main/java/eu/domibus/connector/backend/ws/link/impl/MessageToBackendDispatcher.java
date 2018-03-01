@@ -30,7 +30,7 @@ public class MessageToBackendDispatcher implements MessageHandler {
     @Override
     public DomibusConnectorMessage handleMessage(DomibusConnectorMessage message) {
         DomibusConnectorService service = message.getMessageDetails().getService();
-        List<BackendClientInfo> findByServices_service = backendClientDao.findByServices_service(service.getService());
+        List<BackendClientInfo> findByServices_service = backendClientDao.findByServices_serviceAndEnabledIsTrue(service.getService());
         
         if (findByServices_service.size() > 1) {
             String error = String.format("There is more than one backend configured for receiving messages with this service [%s]!", service.getService());

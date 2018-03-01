@@ -1,6 +1,8 @@
 
 package eu.domibus.connector.backend.ws.link.impl;
 
+import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
+import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.backend.ws.link.impl.MessageToBackendClientWaitQueue;
 import eu.domibus.connector.backend.ws.link.impl.DomibusConnectorWsBackendImpl;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
@@ -49,8 +51,8 @@ public class DomibusConnectorBackendImplTest {
     DomibusConnectorMessagePersistenceService messagePersistenceService;
     
     DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
-    
-    DomibusConnectorBackendSubmissionService backendSubmissionService;
+
+    DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
     
     @Before
     public void setUp() {
@@ -73,9 +75,10 @@ public class DomibusConnectorBackendImplTest {
         ((BigDataWithMessagePersistenceService)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);        
         domibusConnectorBackendImpl.setDomibusConnectorPersistAllBigDataOfMessageService(domibusConnectorPersistAllBigDataOfMessageService);
                 
-        backendSubmissionService = Mockito.mock(DomibusConnectorBackendSubmissionService.class);
+        backendSubmissionService = Mockito.mock(DomibusConnectorBackendInternalDeliverToController.class);
         domibusConnectorBackendImpl.setBackendSubmissionService(backendSubmissionService);
-        
+
+
         backendWebService = domibusConnectorBackendImpl;
     }
 
@@ -121,11 +124,11 @@ public class DomibusConnectorBackendImplTest {
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                DomibusConnectorMessage argumentAt = invocation.getArgumentAt(0, DomibusConnectorMessage.class);
-                argumentAt.setConnectorMessageId(UUID.randomUUID().toString());
+                DomibusConnectorBackendMessage argumentAt = invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class);
+                argumentAt.getDomibusConnectorMessage().setConnectorMessageId(UUID.randomUUID().toString());
                 return null;
             }
-        }).when(backendSubmissionService).submitToController(any(DomibusConnectorMessage.class));
+        }).when(backendSubmissionService).submitToController(any(DomibusConnectorBackendMessage.class));
         
         Mockito.when(webServiceContext.getUserPrincipal()).thenReturn(createUserPrinicipal("bob"));
         Mockito.when(backendClientInfoPersistenceService.getBackendClientInfoByName(Mockito.eq("bob")))

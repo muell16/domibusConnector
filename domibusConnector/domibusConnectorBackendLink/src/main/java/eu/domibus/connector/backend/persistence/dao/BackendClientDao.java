@@ -16,8 +16,8 @@ import org.springframework.stereotype.Repository;
 @Transactional
 public interface BackendClientDao extends CrudRepository<BackendClientInfo, Long> {
 
-    public BackendClientInfo findOneBackendByBackendName(String name);
+    public BackendClientInfo findOneBackendByBackendNameAndEnabledIsTrue(String name);
 
-    public List<BackendClientInfo> findByServices_service(String service);
+    public List<BackendClientInfo> findByServices_serviceAndEnabledIsTrue(String service);
     
 }

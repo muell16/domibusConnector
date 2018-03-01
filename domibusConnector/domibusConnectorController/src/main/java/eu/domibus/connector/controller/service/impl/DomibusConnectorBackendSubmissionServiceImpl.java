@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.service.impl;
 
+import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,17 +12,13 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 @Component("DomibusConnectorBackendDeliveryServiceImpl")
 public class DomibusConnectorBackendSubmissionServiceImpl extends AbstractDomibusConnectorControllerAPIServiceImpl
-		implements DomibusConnectorBackendDeliveryService {
+		implements DomibusConnectorBackendSubmissionService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorBackendSubmissionServiceImpl.class);
 	
 	@Value("${domibus.connector.internal.backend.to.controller.queue}")
 	private String internalBackendToControllerQueueName;
 
-	@Override
-	public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
-		putMessageOnMessageQueue(message.getConnectorMessageId());
-	}
 
 	@Override
 	Logger getLogger() {
@@ -31,6 +28,11 @@ public class DomibusConnectorBackendSubmissionServiceImpl extends AbstractDomibu
 	@Override
 	String getQueueName() {
 		return internalBackendToControllerQueueName;
+	}
+
+	@Override
+	public void submitToController(DomibusConnectorMessage message) {
+		putMessageOnMessageQueue(message.getConnectorMessageId());
 	}
 
 }

@@ -39,6 +39,15 @@ public class BackendClientInfo {
     
     @Column(name="BACKEND_KEY_PASS")
     private String backendKeyPass;
+
+    @Column(name="BACKEND_ENABLED")
+    private boolean enabled;
+
+    @Column(name="BACKEND_DEFAULT")
+    private boolean defaultBackend;
+
+    @Column(name="BACKEND_SERVICE_TYPE")
+    private String backendServiceType;
     
     
     @ManyToMany(fetch=FetchType.EAGER)
@@ -108,5 +117,28 @@ public class BackendClientInfo {
     public boolean isPushBackend() {
         return backendPushAddress != null;
     }
-    
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isDefaultBackend() {
+        return defaultBackend;
+    }
+
+    public void setDefaultBackend(boolean defaultBackend) {
+        this.defaultBackend = defaultBackend;
+    }
+
+    public String getBackendServiceType() {
+        return backendServiceType;
+    }
+
+    public void setBackendServiceType(String backendServiceType) {
+        this.backendServiceType = backendServiceType;
+    }
 }

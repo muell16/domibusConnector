@@ -39,7 +39,7 @@ public class MessageToBackendDispatcherTest {
         backendClientBob.setBackendName("bob");
         List<BackendClientInfo> backendClientsList = new ArrayList<>();
         backendClientsList.add(backendClientBob);
-        Mockito.when(backendClientDao.findByServices_service(eq("EPO"))).thenReturn(backendClientsList);
+        Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO"))).thenReturn(backendClientsList);
         
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
 
@@ -51,7 +51,7 @@ public class MessageToBackendDispatcherTest {
     @Test(expected=IllegalStateException.class)
     public void testSetBackendNameInMessageHandling_noBackends_shouldThrowIllegalStateException() {
         List<BackendClientInfo> backendClientsList = new ArrayList<>();
-        Mockito.when(backendClientDao.findByServices_service(eq("EPO"))).thenReturn(backendClientsList);
+        Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO"))).thenReturn(backendClientsList);
         
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
 
@@ -70,7 +70,7 @@ public class MessageToBackendDispatcherTest {
         backendClientAlice.setBackendName("alice");
         backendClientsList.add(backendClientAlice);
         
-        Mockito.when(backendClientDao.findByServices_service(eq("EPO"))).thenReturn(backendClientsList);
+        Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO"))).thenReturn(backendClientsList);
         
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
 

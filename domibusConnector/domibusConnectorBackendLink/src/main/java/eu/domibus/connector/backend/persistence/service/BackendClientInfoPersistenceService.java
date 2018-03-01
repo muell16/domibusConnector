@@ -19,4 +19,7 @@ public interface BackendClientInfoPersistenceService {
     public @Nullable DomibusConnectorBackendClientInfo getBackendClientInfoByName(String backendName);
 
     public @Nullable DomibusConnectorBackendClientInfo getBackendClientInfoByServiceName(DomibusConnectorService service);
+
+    public DomibusConnectorBackendClientInfo save(DomibusConnectorBackendClientInfo backendClientInfo);
+
 }

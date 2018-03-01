@@ -1,8 +1,10 @@
 
 package eu.domibus.connector.backend.ws.link.impl;
 
+import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -34,44 +36,44 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     
     @Resource
     private WebServiceContext webServiceContext;
-    
-    @Autowired
+
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
-    
-    @Autowired
+
     private MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
-    
-    @Autowired
+
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-    
-    @Autowired
+
     private DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
 
-    @Autowired
-    private DomibusConnectorBackendSubmissionService backendSubmissionService;
+    private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
     
     //setter
     public void setWsContext(WebServiceContext webServiceContext) {
         this.webServiceContext = webServiceContext;
     }
 
+    @Autowired
     public void setBackendClientInfoPersistenceService(BackendClientInfoPersistenceService backendClientInfoPersistenceService) {
         this.backendClientInfoPersistenceService = backendClientInfoPersistenceService;
     }
 
+    @Autowired
     public void setMessageToBackendClientWaitQueue(MessageToBackendClientWaitQueue messageToBackendClientWaitQueue) {
         this.messageToBackendClientWaitQueue = messageToBackendClientWaitQueue;
     }
 
+    @Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
+    @Autowired
     public void setDomibusConnectorPersistAllBigDataOfMessageService(DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService) {
         this.domibusConnectorPersistAllBigDataOfMessageService = domibusConnectorPersistAllBigDataOfMessageService;
     }
 
-    public void setBackendSubmissionService(DomibusConnectorBackendSubmissionService backendSubmissionService) {
+    @Autowired
+    public void setBackendSubmissionService(DomibusConnectorBackendInternalDeliverToController backendSubmissionService) {
         this.backendSubmissionService = backendSubmissionService;
     }
 
@@ -112,8 +114,11 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
             DomibusConnectorMessage transitionMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(submitMessageRequest);
             transitionMessage.setConnectorBackendClientName(backendClientInfoByName.getBackendName());
-        
-            backendSubmissionService.submitToController(transitionMessage);
+
+            DomibusConnectorBackendMessage backendMessage = new DomibusConnectorBackendMessage();
+            backendMessage.setDomibusConnectorMessage(transitionMessage);
+
+            backendSubmissionService.submitToController(backendMessage);
                        
             answer.setResult(true);
             answer.setMessageId(transitionMessage.getConnectorMessageId());

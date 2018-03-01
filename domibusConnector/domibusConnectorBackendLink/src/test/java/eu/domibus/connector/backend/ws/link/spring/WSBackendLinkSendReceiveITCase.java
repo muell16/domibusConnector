@@ -44,11 +44,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
  */
 @RunWith(SpringRunner.class)
-@Import(WSBackendLinkContextConfigurationITCase.TestConfiguration.class)
+@Import(WSBackendLinkSendReceiveITCase.TestConfiguration.class)
 @SpringBootTest(properties= {"server.port=0"}, webEnvironment = WebEnvironment.RANDOM_PORT)
-public class WSBackendLinkContextConfigurationITCase {
+public class WSBackendLinkSendReceiveITCase {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkContextConfigurationITCase.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkSendReceiveITCase.class);
     
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.backend.ws.link.spring", },
             scanBasePackageClasses= {WsPolicyLoader.class},
@@ -145,10 +145,10 @@ public class WSBackendLinkContextConfigurationITCase {
         assertThat(response.isResult()).isTrue();
     }
 
-    @Test
-    public void testSendMessageToBackend() {
-
-    }
+//    @Test
+//    public void testSendMessageToBackend() {
+//
+//    }
 
     
 }

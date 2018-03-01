@@ -14,7 +14,9 @@ public class BackendContextLoadsITCase {
     
     @Test
     public void testContextLoads() {
-        ConfigurableApplicationContext startUpSpringApplication = StartBackendOnly.startUpSpringApplication(new String[] {}, new String[] {"server.port=0" });
+        ConfigurableApplicationContext startUpSpringApplication =
+                StartBackendOnly.startUpSpringApplication(new String[] {}, new String[]
+                        {"server.port=0", "liquibase.enabled=false" });
         assertThat(startUpSpringApplication).isNotNull();
     }
     
