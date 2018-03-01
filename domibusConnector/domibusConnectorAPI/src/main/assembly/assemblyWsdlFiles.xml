@@ -12,7 +12,7 @@
 			<outputDirectory>/wsdl/</outputDirectory>
             <includes>
                 <include>**/*.wsdl</include>
-                <include>**/*.policy.xml</include>
+                <include>**/*.xsd</include>
             </includes>        
 		</fileSet>			
 	</fileSets>
