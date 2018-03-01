@@ -56,6 +56,13 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
         this.webServiceClientFactory = webServiceClientFactory;
     }
 
+
+    public void push(String connectorMessageId, String backendClientName) {
+        DomibusConnectorMessage message = this.messagePersistenceService.findMessageByConnectorMessageId(connectorMessageId);
+        DomibusConnectorBackendClientInfo backendClientInfo = this.backendClientPersistenceService.getBackendClientInfoByName(backendClientName);
+        push(new DomibusConnectorBackendMessage(message, backendClientInfo));
+    }
+    
     @Override
     public void push(DomibusConnectorBackendMessage backendMessage) {
         LOGGER.debug("#push: push message [{}]", backendMessage);
@@ -91,7 +98,9 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
             throw new RuntimeException(ex);
         }
     }
-    
+
+
+
 
 //    public void push(String connectorMessageId, String backendClientName) {
 //

@@ -34,6 +34,7 @@ import static org.springframework.jms.support.destination.JmsDestinationAccessor
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@Component
 public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientWaitQueue {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(ToBackendClientJmsBasedWaitQueue.class);
@@ -47,8 +48,6 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     private final static String CONNECTOR_BACKEND_IS_PUSH_BACKEND = "CONNECTOR_BACKEND_IS_PUSH_BACKEND";
     
     private final static String BACKEND_CLIENT_DELIVERY_RETRIES = "BACKEND_CLIENT_DELIVERY_RETRIES";
-
-    private final static String BACKEND_MESSAGE_PROPERTY_NAME = "BACKEND_CLIENT_MESSAGE_PROPERTY";
     
     private final static String WAIT_QUEUE_PROPERTY_NAME = "${connector.backend.internal.wait-queue.name}";
     
@@ -61,9 +60,9 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     @Value("${connector.backend.internal.wait-queue.receive-timeout:10}")
     private long receiveTimeout;
     
-    @Autowired(required = false) //can be null if there is no push impl
-    private @Nullable
-    PushMessageToBackendClient pushMessageToBackendCallback;
+//    @Autowired(required = false) //can be null if there is no push impl
+//    private @Nullable
+//    PushMessageToBackendClient pushMessageToBackendCallback;
        
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -92,21 +91,17 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
             msg.setStringProperty(CONNECTOR_MESSAGE_ID, connectorMessageId);
             msg.setBooleanProperty(CONNECTOR_BACKEND_IS_PUSH_BACKEND, backendClientInfo.isPushBackend());                
             msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
-            msg.setObjectProperty(BACKEND_MESSAGE_PROPERTY_NAME, backendMessage);
             LOGGER.trace("Send message [{}] to queue [{}]", msg, waitQueueName);
             return msg;          
         });                
     }
         
-    @JmsListener(destination=WAIT_QUEUE_PROPERTY_NAME, selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
-    public void pushToBackend(Message msg) throws JMSException {
-        LOGGER.trace("#pushToBackend: rcv message [{}]", msg);
-        DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObjectProperty(BACKEND_MESSAGE_PROPERTY_NAME);
-
-
-
-        pushMessageToBackendCallback.push(backendMessage);
-    }
+//    @JmsListener(destination=WAIT_QUEUE_PROPERTY_NAME, selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
+//    public void pushToBackend(Message msg) throws JMSException {
+//        String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
+//        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
+//        //pushMessageToBackendCallback.push(connectorMessageId, backendName);
+//    }
 
     @Override
     public List<String> getConnectorMessageIdForBackend(String backendName) {

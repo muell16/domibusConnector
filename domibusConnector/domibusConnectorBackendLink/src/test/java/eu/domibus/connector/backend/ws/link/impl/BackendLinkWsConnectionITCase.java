@@ -2,19 +2,22 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.StartBackendOnly;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import org.junit.*;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import static org.assertj.core.api.Assertions.*;
 
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -138,7 +141,29 @@ public class BackendLinkWsConnectionITCase {
 
         assertThat(domibusConnectorMessagesType.getMessages()).hasSize(0);
     }
-    
-    
+
+    /**
+     * test complete message flow in backend, when controller hands over
+     * message to backend for backend delivery
+     */
+    @Ignore("test fails with transient exception")
+    @Test
+    public void testSendMessageFromConnectorToBackend() {
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        epoMessage.setConnectorMessageId("msgid1");
+
+        DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
+        BigDataWithMessagePersistenceService bigDataPersistence = backendApplicationContext.getBean(BigDataWithMessagePersistenceService.class);
+
+        persistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GW_TO_NAT);
+        bigDataPersistence.persistAllBigFilesFromMessage(epoMessage);
+
+        DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
+
+        messageToBackend.deliverMessageToBackend(epoMessage);
+
+
+
+    }
 
 }
