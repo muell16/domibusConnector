@@ -67,6 +67,14 @@
                                     <wsdl>src/main/resources/wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl
                                     </wsdl>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl
+                                    </wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendWebService.wsdl
+                                    </wsdl>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                         <goals>
@@ -94,7 +102,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -104,7 +112,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>                        
+            </plugin> -->                        
         </plugins>
         <pluginManagement>
             <plugins>
