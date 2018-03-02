@@ -70,11 +70,11 @@ public class DeliverMessageFromControllerToBackendServiceTest {
         Mockito.when(messagePersistenceService.findMessagesByConversationId(eq("conversation1")))
                 .thenReturn(messages);
 
-        Mockito.when(backendClientInfoPersistenceService.getBackendClientInfoByName(eq("alice")))
+        Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(eq("alice")))
                 .thenReturn(createBackendClientInfoAlice());
 
         //if service epo, then send backend bob back
-        Mockito.when(backendClientInfoPersistenceService.getBackendClientInfoByService(
+        Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByService(
                 eq(DomainEntityCreator.createServiceEPO())))
                 .thenReturn(createBackendClientInfoBob());
 
@@ -84,7 +84,7 @@ public class DeliverMessageFromControllerToBackendServiceTest {
         relatedMessage.getMessageDetails().setConnectorBackendClientName("catrina");
         Mockito.when(messagePersistenceService.findMessageByConnectorMessageId(eq("msg2"))).thenReturn(relatedMessage);
 
-        Mockito.when(backendClientInfoPersistenceService.getBackendClientInfoByName(eq("catrina"))).thenReturn(createBackendClientInfoCatrina());
+        Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(eq("catrina"))).thenReturn(createBackendClientInfoCatrina());
 
         Mockito.when(backendClientInfoPersistenceService.getDefaultBackendClientInfo()).thenReturn(createBackendClientInfoDefault());
 

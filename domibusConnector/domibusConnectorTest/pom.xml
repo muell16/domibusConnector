@@ -10,6 +10,7 @@
     <artifactId>domibusConnectorTest</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>domibusConnectorStarter</module>
+        <module>domibusConnectorOnlyStarter</module>
+        <module>DomibusConnectorTestSuite</module>
     </modules>
 </project>

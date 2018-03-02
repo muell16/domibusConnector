@@ -6,7 +6,6 @@ import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersist
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -140,7 +139,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new RuntimeException(error);            
         }
-        DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getBackendClientInfoByName(backendName);
+        DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);

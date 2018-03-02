@@ -59,7 +59,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
 
     public void push(String connectorMessageId, String backendClientName) {
         DomibusConnectorMessage message = this.messagePersistenceService.findMessageByConnectorMessageId(connectorMessageId);
-        DomibusConnectorBackendClientInfo backendClientInfo = this.backendClientPersistenceService.getBackendClientInfoByName(backendClientName);
+        DomibusConnectorBackendClientInfo backendClientInfo = this.backendClientPersistenceService.getEnabledBackendClientInfoByName(backendClientName);
         push(new DomibusConnectorBackendMessage(message, backendClientInfo));
     }
     
@@ -108,7 +108,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
 //        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(connectorMessageId);
 //
 //        //load get backend address, cert,
-//        DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientPersistenceService.getBackendClientInfoByName(backendClientName);
+//        DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientPersistenceService.getEnabledBackendClientInfoByName(backendClientName);
 //
 //
 //    }

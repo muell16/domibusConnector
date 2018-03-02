@@ -4,25 +4,21 @@ package eu.domibus.connector.backend.ws.link.impl;
 import eu.domibus.connector.backend.StartBackendOnly;
 import eu.domibus.connector.backend.TestBackendContext;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import org.junit.*;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWebServiceConfiguration;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 
-import static eu.domibus.connector.backend.TestBackendContext.SUBMITTED_MESSAGES_LIST_BEAN_NAME;
 import static org.assertj.core.api.Assertions.*;
 
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
@@ -32,7 +28,6 @@ import org.slf4j.MDC;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,8 +61,13 @@ public class BackendLinkWsConnectionITCase {
         aliceApplicationContext = setUpClientAlice(getBackendServiceWsAddress(backendApplicationContext));
         
         LOGGER.info("SERVER ADDRESS " +  getBackendServiceWsAddress(backendApplicationContext));
-//        LOGGER.info("CLIENT BOB ADDRESS " + getBackendClientPushServiceAddress(bobApplicationContext));
+        LOGGER.info("CLIENT BOB ADDRESS " + getBackendClientPushServiceAddress(bobApplicationContext));
                 
+    }
+
+    @AfterClass
+    public static void afterClass() throws InterruptedException {
+//        Thread.sleep(60000);
     }
     
     //setup and start connector backend
@@ -78,6 +78,8 @@ public class BackendLinkWsConnectionITCase {
         String[] backendProperties = new String[] {"server.port=0",
                 "logging.config=classpath:log4j2-test.xml",
                 "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
+                "spring.h2.console.enabled=true",
+                "spring.h2.console.path=/h2-console"
                 //"liquibase.enabled=true",
 //                "spring.datasource.url=jdbc:h2:mem:" + dbName
         };

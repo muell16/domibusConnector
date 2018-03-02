@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Service
+@Transactional
 public class BackendClientInfoPersistenceServiceImpl implements BackendClientInfoPersistenceService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BackendClientInfoPersistenceServiceImpl.class); 
@@ -33,21 +35,33 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
     public void setBackendClientDao(BackendClientDao backendClientDao) {
         this.backendClientDao = backendClientDao;
     }
-    
+
+
     @Override
     public @Nullable DomibusConnectorBackendClientInfo getBackendClientInfoByName(String backendName) {
         if (backendName == null) {
             throw new IllegalArgumentException("backendName is not allowed to be null!");
         }
-        BackendClientInfo dbBackendInfo = backendClientDao.findOneBackendByBackendNameAndEnabledIsTrue(backendName);
+        BackendClientInfo dbBackendInfo = backendClientDao.findOneBackendByBackendName(backendName);
         DomibusConnectorBackendClientInfo clientInfo = mapDbEntityToDomainEntity(dbBackendInfo);
         LOGGER.debug("#getBackendClientInfoByName: returning backendClientInfo: [{}]", clientInfo);
         return clientInfo;
     }
 
+    @Override
+    public @Nullable DomibusConnectorBackendClientInfo getEnabledBackendClientInfoByName(String backendName) {
+        if (backendName == null) {
+            throw new IllegalArgumentException("backendName is not allowed to be null!");
+        }
+        BackendClientInfo dbBackendInfo = backendClientDao.findOneBackendByBackendNameAndEnabledIsTrue(backendName);
+        DomibusConnectorBackendClientInfo clientInfo = mapDbEntityToDomainEntity(dbBackendInfo);
+        LOGGER.debug("#getEnabledBackendClientInfoByName: returning backendClientInfo: [{}]", clientInfo);
+        return clientInfo;
+    }
+
     @Nullable
     @Override
-    public DomibusConnectorBackendClientInfo getBackendClientInfoByService(DomibusConnectorService service) {
+    public DomibusConnectorBackendClientInfo getEnabledBackendClientInfoByService(DomibusConnectorService service) {
         if (service == null) {
             return null;
         }

@@ -6,9 +6,6 @@
         <artifactId>domibusConnectorTest</artifactId>
         <version>4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>domibusConnectorStarter</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>domibusConnectorOnlyStarter</module>
-    </modules>
+    <artifactId>DomibusConnectorTestSuite</artifactId>
+    <packaging>jar</packaging>
 </project>

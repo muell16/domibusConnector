@@ -80,7 +80,13 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     @Test
     public void testFindByServices_service_shouldContain2Elements() {
         List<BackendClientInfo> backendClients = backendClientDao.findByServices_serviceAndEnabledIsTrue("LOCAL-CONNECTOR-TEST");
-        assertThat(backendClients).as("should containe exact one element!").hasSize(2);    
+        assertThat(backendClients).as("should containe exact two elements!").hasSize(2);
+    }
+
+    @Test
+    public void testFindOneEnabledBackendByBackendName() {
+        BackendClientInfo notEnabled = backendClientDao.findOneBackendByBackendNameAndEnabledIsTrue("not_enabled");
+        assertThat(notEnabled).isNull();
     }
 
 }

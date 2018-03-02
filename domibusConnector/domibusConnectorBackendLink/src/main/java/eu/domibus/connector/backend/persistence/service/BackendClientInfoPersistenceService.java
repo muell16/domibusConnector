@@ -13,19 +13,22 @@ import javax.annotation.Nullable;
  */
 public interface BackendClientInfoPersistenceService {
 
+    @Nullable
+    DomibusConnectorBackendClientInfo getBackendClientInfoByName(String backendName);
+
     /**
      * Returns null if no backend with this name has been found
      * @param backendName the backend name
      * @return the backendInfo
      */
-    public @Nullable DomibusConnectorBackendClientInfo getBackendClientInfoByName(String backendName);
+    public @Nullable DomibusConnectorBackendClientInfo getEnabledBackendClientInfoByName(String backendName);
 
     /**
      *
      * @param service - the service
      * @return - the backend which is configured to handle this service
      */
-    public @Nullable DomibusConnectorBackendClientInfo getBackendClientInfoByService(DomibusConnectorService service);
+    public @Nullable DomibusConnectorBackendClientInfo getEnabledBackendClientInfoByService(DomibusConnectorService service);
 
     /**
      * save a backendClientInfo

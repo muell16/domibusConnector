@@ -1,8 +1,6 @@
 package eu.domibus.connector.backend.persistence.service;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
-import eu.domibus.connector.backend.persistence.dao.BackendClientDaoDBUnit;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseDataSourceConnection;
@@ -77,10 +75,54 @@ public class BackendClientInfoPersistenceServiceITCase {
     }
 
     @Test
-    public void findByName() {
-        DomibusConnectorBackendClientInfo alice = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
-        assertThat(alice).isNotNull();
+    public void testLoadUpdate() throws SQLException, DataSetException {
+        DomibusConnectorBackendClientInfo backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
 
+        backendClientInfo.setDefaultBackend(true);
+        backendClientInfo.setBackendPushAddress("my-push-address");
+        backendClientInfo.setBackendKeyAlias("key-alias");
+
+        backendClientInfoPersistenceService.save(backendClientInfo);
+
+        //check db
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
+        ITable queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'alice'");
+
+        BigDecimal id = (BigDecimal) queryAlice.getValue(0, "id");
+        assertThat(id).isEqualTo(BigDecimal.valueOf(90));
+        String name = (String) queryAlice.getValue(0, "backend_name");
+        assertThat(name).isEqualTo("alice");
+
+        //load again from db
+        backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
+        assertThat(backendClientInfo).isNotNull();
+
+//        backendClientInfo.setDefaultBackend(true);
+//        backendClientInfo.setBackendPushAddress("my-push-address");
+//        backendClientInfo.setBackendKeyAlias("key-alias");
+//
+//        backendClientInfoPersistenceService.save(backendClientInfo);
+//
+//        //check db
+//        conn = new DatabaseDataSourceConnection(dataSource);
+//        queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'alice'");
+//
+//        id = (BigDecimal) queryAlice.getValue(0, "id");
+//        assertThat(id).isEqualTo(BigDecimal.valueOf(90));
+
+    }
+
+
+    @Test
+    public void findEnabledByName() {
+        DomibusConnectorBackendClientInfo alice = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName("alice");
+        assertThat(alice).isNotNull();
+    }
+
+    @Test
+    public void findEnabledByName_isNotEnabled_shouldReturnNull() {
+        DomibusConnectorBackendClientInfo notEnabledBackend = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName("not_enabled");
+        assertThat(notEnabledBackend).isNull();
     }
 
 

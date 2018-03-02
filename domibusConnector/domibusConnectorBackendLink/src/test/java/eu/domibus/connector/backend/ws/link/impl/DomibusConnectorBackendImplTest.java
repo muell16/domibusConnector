@@ -3,12 +3,8 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
-import eu.domibus.connector.backend.ws.link.impl.MessageToBackendClientWaitQueue;
-import eu.domibus.connector.backend.ws.link.impl.DomibusConnectorWsBackendImpl;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -18,7 +14,6 @@ import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersisten
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServiceMemoryImpl;
-import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import java.security.Principal;
 import java.util.Arrays;
@@ -30,7 +25,6 @@ import org.junit.Before;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import org.mockito.Mockito;
-import org.mockito.invocation.Invocation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -87,7 +81,7 @@ public class DomibusConnectorBackendImplTest {
     @Test
     public void testRequestMessages() {
         Mockito.when(webServiceContext.getUserPrincipal()).thenReturn(createUserPrinicipal("bob"));
-        Mockito.when(backendClientInfoPersistenceService.getBackendClientInfoByName(Mockito.eq("bob")))
+        Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(Mockito.eq("bob")))
                 .thenReturn(backendClientInfoBob());
         Mockito.when(messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(Mockito.eq("bob")))
                 .thenReturn(Arrays.asList(new String[]{"msg1", "msg2"}));
@@ -131,7 +125,7 @@ public class DomibusConnectorBackendImplTest {
         }).when(backendSubmissionService).submitToController(any(DomibusConnectorBackendMessage.class));
         
         Mockito.when(webServiceContext.getUserPrincipal()).thenReturn(createUserPrinicipal("bob"));
-        Mockito.when(backendClientInfoPersistenceService.getBackendClientInfoByName(Mockito.eq("bob")))
+        Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(Mockito.eq("bob")))
                 .thenReturn(backendClientInfoBob());
         
         DomibusConnectorMessageType transitionMessage = TransitionCreator.createMessage();

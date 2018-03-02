@@ -70,7 +70,7 @@ public class WSBackendLinkSendReceiveITCase {
         BackendClientInfoPersistenceService backendClientInfoPersistenceService() {
 
             BackendClientInfoPersistenceService mock = Mockito.mock(BackendClientInfoPersistenceService.class);
-            Mockito.when(mock.getBackendClientInfoByService(any(DomibusConnectorService.class))).thenReturn(defaultBackendClientInfo());
+            Mockito.when(mock.getEnabledBackendClientInfoByService(any(DomibusConnectorService.class))).thenReturn(defaultBackendClientInfo());
             return mock;
         }
         

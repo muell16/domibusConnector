@@ -116,7 +116,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
         // 3 Service
         DomibusConnectorService service = msg.getMessageDetails().getService();
         backendClientInfo =
-                backendClientInfoPersistenceService.getBackendClientInfoByService(service);
+                backendClientInfoPersistenceService.getEnabledBackendClientInfoByService(service);
         if (backendClientInfo != null) {
             return backendClientInfo;
         }
@@ -139,7 +139,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
                 throw new IllegalStateException(String.format("Referenced message id=[%s] does not exist!", refToMessageId));
             }
             String connectorBackendClientName = referencedMessage.getMessageDetails().getConnectorBackendClientName();
-            DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getBackendClientInfoByName(connectorBackendClientName);
+            DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
             return backendClientInfoByServiceName;
         } else {
             LOGGER.debug("#getBackendClientInfoByRefToMessageIdOrReturnNull: refToMessageId is null returning null!");
@@ -153,7 +153,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
             List<DomibusConnectorMessage> messagesByConversationId = messagePersistenceService.findMessagesByConversationId(conversationId);
             if (messagesByConversationId.size() > 0) {
                 String connectorBackendClientName = messagesByConversationId.get(0).getMessageDetails().getConnectorBackendClientName();
-                DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getBackendClientInfoByName(connectorBackendClientName);
+                DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
                 return backendClientInfoByServiceName;
             } else {
                 LOGGER.debug("#getBackendClientInfoByConversationIdOrReturnNull: no messages found for conversationId [{}]", conversationId);
