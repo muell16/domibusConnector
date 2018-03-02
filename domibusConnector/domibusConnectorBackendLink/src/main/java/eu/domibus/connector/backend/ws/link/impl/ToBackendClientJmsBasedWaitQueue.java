@@ -83,7 +83,8 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
 
         final String backendClientName = message.getMessageDetails().getConnectorBackendClientName();
         final String connectorMessageId = message.getConnectorMessageId();
-                                
+        LOGGER.debug("#putMessageInWaitingQueue: put message id [{}] for backendClientName [{}] in waiting queue [{}]",
+                connectorMessageId, backendClientName, waitQueueName);
         jmsTemplate.send(waitQueueName, (Session session) -> {
             Message msg = session.createMessage();
             msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
@@ -91,7 +92,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
             msg.setStringProperty(CONNECTOR_MESSAGE_ID, connectorMessageId);
             msg.setBooleanProperty(CONNECTOR_BACKEND_IS_PUSH_BACKEND, backendClientInfo.isPushBackend());                
             msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
-            LOGGER.trace("Send message [{}] to queue [{}]", msg, waitQueueName);
+            LOGGER.trace("#putMessageInWaitingQueue: Send message [{}] to queue [{}]", msg, waitQueueName);
             return msg;          
         });                
     }
@@ -105,6 +106,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
 
     @Override
     public List<String> getConnectorMessageIdForBackend(String backendName) {
+        LOGGER.debug("#getConnectorMessageIdForBackend: lookup waiting messages on queue [{}] for backendName [{}]", waitQueueName, backendName);
         List<String> waitingMessageIds = new ArrayList<>();
         try {            
             jmsTemplate.setReceiveTimeout(receiveTimeout);
@@ -123,7 +125,8 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         } catch (JMSException jmsException) {
             LOGGER.error("A jms exception occured during reading messages from waiting queue [{}]", waitQueueName);
             throw new org.springframework.jms.UncategorizedJmsException(jmsException);
-        }    
+        }
+        LOGGER.trace("#getConnectorMessageIdForBackend: found follwing message ids [{}] on queue [{}]", waitingMessageIds, waitQueueName);
         return waitingMessageIds;
     }
     

@@ -9,10 +9,10 @@
 
 
 INSERT INTO DOMIBUS_CONNECTOR_BACKEND_INFO (ID, BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_KEY_PASS, BACKEND_SERVICE_TYPE, BACKEND_DESCRIPTION, BACKEND_PUSH_ADDRESS, BACKEND_ENABLED)
-    VALUES (1, 'bob', 'bob', null, 'pull', 'a description', null, true);
+    VALUES (1, 'bob', 'bob', null, 'pull', 'a description', null, 'TRUE');
 
 INSERT INTO DOMIBUS_CONNECTOR_BACKEND_INFO (ID, BACKEND_NAME, BACKEND_KEY_ALIAS, BACKEND_KEY_PASS, BACKEND_SERVICE_TYPE, BACKEND_DESCRIPTION, BACKEND_PUSH_ADDRESS, BACKEND_ENABLED)
-    VALUES (2, 'alice', 'alice', null, 'push', 'a description', null, true);
+    VALUES (2, 'alice', 'alice', null, 'push', 'a description', null, 'TRUE');
 
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('ALICE', 'urn:e-codex:services:');
 

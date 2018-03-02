@@ -83,7 +83,6 @@ public class BackendClientInfoPersistenceServiceImplTest {
 
         DomibusConnectorService service = new DomibusConnectorService("EPO-Service", "");
         DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendInfoPersistenceService.getEnabledBackendClientInfoByService(service);
-
     }
 
 

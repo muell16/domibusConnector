@@ -67,13 +67,13 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         }
         List<BackendClientInfo>  backendInfos = backendClientDao.findByServices_serviceAndEnabledIsTrue(service.getService());
         if (backendInfos.size() == 0) {
-            LOGGER.debug("Found no backend to handle service [{}]", service.getService());
+            LOGGER.debug("#getEnabledBackendClientInfoByService: Found no backend to handle service [{}]", service.getService());
             return null;
         } else if (backendInfos.size() == 1){
             BackendClientInfo dbBackendInfo = backendInfos.get(0);
             return mapDbEntityToDomainEntity(dbBackendInfo);
         } else {
-            throw new IllegalStateException(String.format("Found more than one Backend wich can handle service [%s]", service.getService()));
+            throw new IllegalStateException(String.format("#getEnabledBackendClientInfoByService: Found more than one Backend wich can handle service [%s]", service.getService()));
         }
     }
 

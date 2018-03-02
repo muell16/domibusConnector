@@ -21,7 +21,10 @@
         <Root level="info">
             <AppenderRef ref="Console" />
         </Root>
-        <Logger  name="eu.domibus.connector.ws.backend" level="trace" additivity="false">
+        <Logger  name="eu.domibus.connector" level="debug" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger  name="eu.domibus.connector.backend" level="trace" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>  
         <Logger name="org.apache.cxf" level="debug" additivity="false" >

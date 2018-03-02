@@ -102,28 +102,38 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
         DomibusConnectorBackendClientInfo backendClientInfo;
 
         // 1 RefToMessageId
-        backendClientInfo = getBackendClientInfoByRefToMessageIdOrReturnNull(msg.getMessageDetails().getRefToMessageId());
+        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
+        backendClientInfo = getBackendClientInfoByRefToMessageIdOrReturnNull(refToMessageId);
         if (backendClientInfo != null) {
+            LOGGER.debug("#getBackendClientForMessage: used refToMessageId [{}] to determine backend [{}]", refToMessageId, backendClientInfo);
             return backendClientInfo;
         }
+        LOGGER.debug("#getBackendClientForMessage: refToMessageId [{}] not used to determine backend ", refToMessageId);
+
 
         // 2 ConversationId
-        backendClientInfo = getBackendClientInfoByConversationIdOrReturnNull(msg.getMessageDetails().getConversationId());
+        String conversationId = msg.getMessageDetails().getConversationId();
+        backendClientInfo = getBackendClientInfoByConversationIdOrReturnNull(conversationId);
         if (backendClientInfo != null) {
+            LOGGER.debug("#getBackendClientForMessage: used conversationId [{}] to determine backend [{}]", conversationId, backendClientInfo);
             return backendClientInfo;
         }
+        LOGGER.debug("#getBackendClientForMessage: conversationId [{}] not used to determine backend ", conversationId);
 
         // 3 Service
         DomibusConnectorService service = msg.getMessageDetails().getService();
         backendClientInfo =
                 backendClientInfoPersistenceService.getEnabledBackendClientInfoByService(service);
         if (backendClientInfo != null) {
+            LOGGER.debug("#getBackendClientForMessage: used service [{}] to determine backend [{}]", service, backendClientInfo);
             return backendClientInfo;
         }
+        LOGGER.debug("#getBackendClientForMessage: service [{}] not used to determine backend ", service);
 
         // 4 defaultBackend
         backendClientInfo = backendClientInfoPersistenceService.getDefaultBackendClientInfo();
         if (backendClientInfo != null) {
+            LOGGER.debug("#getBackendClientForMessage: default backend to determine backend [{}]", backendClientInfo);
             return backendClientInfo;
         }
 
@@ -152,7 +162,12 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
             LOGGER.trace("#getBackendClientInfoByConversationIdOrReturnNull: try to find message by conversationId");
             List<DomibusConnectorMessage> messagesByConversationId = messagePersistenceService.findMessagesByConversationId(conversationId);
             if (messagesByConversationId.size() > 0) {
-                String connectorBackendClientName = messagesByConversationId.get(0).getMessageDetails().getConnectorBackendClientName();
+                DomibusConnectorMessage message = messagesByConversationId.get(0);
+                String connectorBackendClientName = message.getMessageDetails().getConnectorBackendClientName();
+                if (connectorBackendClientName == null) {
+                    LOGGER.warn("Message [{}] has no backendClientName set!", message);
+                    return null;
+                }
                 DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
                 return backendClientInfoByServiceName;
             } else {

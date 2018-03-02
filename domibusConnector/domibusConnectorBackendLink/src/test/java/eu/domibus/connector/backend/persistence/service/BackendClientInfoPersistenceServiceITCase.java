@@ -1,6 +1,7 @@
 package eu.domibus.connector.backend.persistence.service;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseDataSourceConnection;
@@ -97,19 +98,6 @@ public class BackendClientInfoPersistenceServiceITCase {
         backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
         assertThat(backendClientInfo).isNotNull();
 
-//        backendClientInfo.setDefaultBackend(true);
-//        backendClientInfo.setBackendPushAddress("my-push-address");
-//        backendClientInfo.setBackendKeyAlias("key-alias");
-//
-//        backendClientInfoPersistenceService.save(backendClientInfo);
-//
-//        //check db
-//        conn = new DatabaseDataSourceConnection(dataSource);
-//        queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'alice'");
-//
-//        id = (BigDecimal) queryAlice.getValue(0, "id");
-//        assertThat(id).isEqualTo(BigDecimal.valueOf(90));
-
     }
 
 
@@ -123,6 +111,14 @@ public class BackendClientInfoPersistenceServiceITCase {
     public void findEnabledByName_isNotEnabled_shouldReturnNull() {
         DomibusConnectorBackendClientInfo notEnabledBackend = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName("not_enabled");
         assertThat(notEnabledBackend).isNull();
+    }
+
+    @Test
+    public void findEnabledByService() {
+        DomibusConnectorService service = new DomibusConnectorService("EPO", "service_type");
+
+        DomibusConnectorBackendClientInfo notEnabledBackend = backendClientInfoPersistenceService.getEnabledBackendClientInfoByService(service);
+        assertThat(notEnabledBackend).isNotNull();
     }
 
 
