@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model;
 
 import org.springframework.core.style.ToStringCreator;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 
@@ -14,16 +15,24 @@ import java.io.Serializable;
  */
 public class DomibusConnectorMessageDetails implements Serializable {
 
+	@Nullable
 	private String backendMessageId;
+	@Nullable
 	private String ebmsMessageId;
+	@Nullable
 	private String refToMessageId;
+	@Nullable
 	private String conversationId;
 	private String originalSender;
-	private String finalRecipient;    
+	private String finalRecipient;
 	private DomibusConnectorService service;
 	private DomibusConnectorAction action;
 	private DomibusConnectorParty fromParty;
 	private DomibusConnectorParty toParty;
+
+	//the backend client name the message is received from or should be delivered to
+	@Nullable
+	private String connectorBackendClientName;
 
 	public DomibusConnectorMessageDetails(){
 
@@ -148,8 +157,17 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	public void setToParty(DomibusConnectorParty toParty){
 		this.toParty = toParty;
 	}
-    
-    @Override
+
+	@Nullable
+	public String getConnectorBackendClientName() {
+		return connectorBackendClientName;
+	}
+
+	public void setConnectorBackendClientName(@Nullable String connectorBackendClientName) {
+		this.connectorBackendClientName = connectorBackendClientName;
+	}
+
+	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("ebmsMessageId", this.ebmsMessageId);

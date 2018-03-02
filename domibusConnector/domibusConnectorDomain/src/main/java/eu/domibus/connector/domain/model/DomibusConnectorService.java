@@ -39,5 +39,19 @@ public class DomibusConnectorService implements Serializable {
         builder.append("serviceType", this.serviceType);
         return builder.toString();        
     }
-    
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DomibusConnectorService that = (DomibusConnectorService) o;
+
+		return service != null ? service.equals(that.service) : that.service == null;
+	}
+
+	@Override
+	public int hashCode() {
+		return service != null ? service.hashCode() : 0;
+	}
 }
