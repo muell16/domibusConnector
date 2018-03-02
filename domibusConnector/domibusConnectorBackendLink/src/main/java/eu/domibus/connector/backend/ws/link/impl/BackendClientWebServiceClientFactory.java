@@ -39,8 +39,16 @@ public class BackendClientWebServiceClientFactory {
     
     @Value("${connector.backend.ws.security.encryption.properties:'/eu/domibus/connector/ws/backend/link/ws/decrypt.properties'}")
     ClassPathResource encryptPropertiesFileLocation;
-    
-    
+
+    //setter
+    public void setPolicyUtil(WsPolicyLoader policyUtil) {
+        this.policyUtil = policyUtil;
+    }
+
+    public void setEncryptPropertiesFileLocation(ClassPathResource encryptPropertiesFileLocation) {
+        this.encryptPropertiesFileLocation = encryptPropertiesFileLocation;
+    }
+
     public DomibusConnectorBackendDeliveryWebService createWsClient(DomibusConnectorBackendClientInfo backendClientInfoByName) {
         LOGGER.debug("#createWsClient: creating WS endpoint for backendClient [{}]", backendClientInfoByName);
         String pushAddress = backendClientInfoByName.getBackendPushAddress();

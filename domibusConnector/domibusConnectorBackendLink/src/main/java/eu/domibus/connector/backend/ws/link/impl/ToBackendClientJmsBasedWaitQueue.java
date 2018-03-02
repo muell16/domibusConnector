@@ -81,7 +81,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
             throw new IllegalArgumentException("#putMessageInWaitingQueue: backendClientInfo must not be null in backendMessage!");
         }
 
-        final String backendClientName = message.getConnectorBackendClientName();
+        final String backendClientName = message.getMessageDetails().getConnectorBackendClientName();
         final String connectorMessageId = message.getConnectorMessageId();
                                 
         jmsTemplate.send(waitQueueName, (Session session) -> {

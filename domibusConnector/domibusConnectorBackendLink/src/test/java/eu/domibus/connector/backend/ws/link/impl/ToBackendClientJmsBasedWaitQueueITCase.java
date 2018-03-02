@@ -74,7 +74,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     @Test
     public void testPutMessageOnQueue() throws InterruptedException {
         DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
-        msg.setConnectorBackendClientName("bob");
+        msg.getMessageDetails().setConnectorBackendClientName("bob");
         
         DomibusConnectorBackendClientInfo backendClientInfo = new DomibusConnectorBackendClientInfo();
         backendClientInfo.setBackendName("bob");
@@ -94,7 +94,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     @Test
     public void testGetConnectorMessageIdForBackend() throws InterruptedException {
         DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
-        msg.setConnectorBackendClientName("bob");
+        msg.getMessageDetails().setConnectorBackendClientName("bob");
         msg.setConnectorMessageId("msg1");
         
         DomibusConnectorBackendClientInfo backendClientBob = new DomibusConnectorBackendClientInfo();

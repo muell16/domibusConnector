@@ -47,7 +47,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
 
     @Nullable
     @Override
-    public DomibusConnectorBackendClientInfo getBackendClientInfoByServiceName(DomibusConnectorService service) {
+    public DomibusConnectorBackendClientInfo getBackendClientInfoByService(DomibusConnectorService service) {
         if (service == null) {
             return null;
         }
@@ -71,6 +71,13 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         BackendClientInfo dbBackendClientInfo = this.mapDomainEntityToDbEntity(backendClientInfo);
         dbBackendClientInfo = this.backendClientDao.save(dbBackendClientInfo);
         return this.mapDbEntityToDomainEntity(dbBackendClientInfo);
+    }
+
+    @Nonnull
+    @Override
+    public DomibusConnectorBackendClientInfo getDefaultBackendClientInfo() {
+        BackendClientInfo defaultBackend = backendClientDao.findOneByDefaultBackendIsTrue();
+        return mapDbEntityToDomainEntity(defaultBackend);
     }
 
     @Nullable
