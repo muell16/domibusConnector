@@ -22,6 +22,8 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
 
     private String backendKeyPass;
 
+    private boolean defaultBackend;
+
     public String getBackendName() {
         return backendName;
     }
@@ -61,7 +63,15 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
     public void setBackendKeyPass(String backendKeyPass) {
         this.backendKeyPass = backendKeyPass;
     }
-    
+
+    public boolean isDefaultBackend() {
+        return defaultBackend;
+    }
+
+    public void setDefaultBackend(boolean defaultBackend) {
+        this.defaultBackend = defaultBackend;
+    }
+
     @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);

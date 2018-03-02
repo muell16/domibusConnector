@@ -43,7 +43,8 @@ public class BackendClientInfoPersistenceServiceImplTest {
         assertThat(domainBackendInfo.getBackendKeyAlias()).isEqualTo("keyalias");
         assertThat(domainBackendInfo.getBackendKeyPass()).isEqualTo("keypass");
         assertThat(domainBackendInfo.getBackendName()).isEqualTo("backendname");
-        assertThat(domainBackendInfo.getBackendPushAddress()).isEqualTo("backendpushaddress");                
+        assertThat(domainBackendInfo.getBackendPushAddress()).isEqualTo("backendpushaddress");
+        assertThat(domainBackendInfo.isDefaultBackend()).isTrue();
     }
     
     @Test
@@ -94,6 +95,7 @@ public class BackendClientInfoPersistenceServiceImplTest {
         bob.setBackendKeyPass("keypass");
         bob.setBackendName("backendname");
         bob.setBackendPushAddress("backendpushaddress");
+        bob.setDefaultBackend(true);
         bob.setId(20L);
         
         return bob;

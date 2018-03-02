@@ -123,7 +123,7 @@ public class DomainEntityCreator {
     }
 
     public static DomibusConnectorMessage createEpoMessage() {
-        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorMessageDetails();
+        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageDetails();
 
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
         messageContent.setXmlContent("<xmlContent/>".getBytes());
@@ -141,6 +141,23 @@ public class DomainEntityCreator {
                 .build();
 
         return message;
+    }
+
+    public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageDetails() {
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        messageDetails.setConversationId(null);      //first message no conversation set yet!
+        messageDetails.setEbmsMessageId("ebms1");
+        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
+        messageDetails.setFinalRecipient("finalRecipient");
+        messageDetails.setOriginalSender("originalSender");
+        messageDetails.setRefToMessageId(null);     //is the first message
+
+        messageDetails.setAction(createActionForm_A());
+        messageDetails.setService(createServiceEPO());
+        messageDetails.setToParty(createPartyAT());
+        messageDetails.setFromParty(createPartyDE());
+
+        return messageDetails;
     }
     
     public static DomibusConnectorMessageDetails createDomibusConnectorMessageDetails() {

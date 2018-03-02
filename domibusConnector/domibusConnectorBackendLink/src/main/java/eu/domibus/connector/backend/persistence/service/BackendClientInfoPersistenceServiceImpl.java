@@ -68,7 +68,9 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         if (backendClientInfo == null) {
             throw new IllegalArgumentException("backendClientInfo is not allowed to be null!");
         }
+        BackendClientInfo oldDbBackendClientInfo = this.backendClientDao.findOneByBackendName(backendClientInfo.getBackendName());
         BackendClientInfo dbBackendClientInfo = this.mapDomainEntityToDbEntity(backendClientInfo);
+        dbBackendClientInfo.setId(oldDbBackendClientInfo.getId());
         dbBackendClientInfo = this.backendClientDao.save(dbBackendClientInfo);
         return this.mapDbEntityToDomainEntity(dbBackendClientInfo);
     }

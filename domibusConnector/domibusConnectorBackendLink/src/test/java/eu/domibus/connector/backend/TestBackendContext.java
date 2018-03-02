@@ -27,7 +27,8 @@ import org.springframework.context.annotation.Configuration;
 public class TestBackendContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TestBackendContext.class);
-    
+
+    public static final String SUBMITTED_MESSAGES_LIST_BEAN_NAME = "submittedMessages";
     
     @Bean("submittedMessages")
     public List<DomibusConnectorMessage> createList() {

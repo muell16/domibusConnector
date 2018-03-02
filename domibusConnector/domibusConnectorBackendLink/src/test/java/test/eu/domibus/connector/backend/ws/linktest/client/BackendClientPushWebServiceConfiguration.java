@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -34,13 +35,17 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @ImportResource("classpath:/test/testclient_pushdelivery.xml")
 public class BackendClientPushWebServiceConfiguration {
 
+    public static final String PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME = "deliveredMessagesListBean";
+
     @Bean
+    @ConditionalOnMissingBean
     public static PropertySourcesPlaceholderConfigurer
             propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean("deliveredMessages")
+
+    @Bean(PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME)
     public List<DomibusConnectorMessageType> domibusConnectorMessageTypeList() {
         return Collections.synchronizedList(new ArrayList<DomibusConnectorMessageType>());
     }

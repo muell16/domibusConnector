@@ -3,6 +3,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
+import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,17 +37,17 @@ public class BackendClientWebServiceClientFactory {
     
     @Autowired
     WsPolicyLoader policyUtil;
-    
-    @Value("${connector.backend.ws.security.encryption.properties:'/eu/domibus/connector/ws/backend/link/ws/decrypt.properties'}")
-    ClassPathResource encryptPropertiesFileLocation;
+
+    @Autowired
+    WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
 
     //setter
     public void setPolicyUtil(WsPolicyLoader policyUtil) {
         this.policyUtil = policyUtil;
     }
 
-    public void setEncryptPropertiesFileLocation(ClassPathResource encryptPropertiesFileLocation) {
-        this.encryptPropertiesFileLocation = encryptPropertiesFileLocation;
+    public void setBackendLinkConfigurationProperties(WSBackendLinkConfigurationProperties backendLinkConfigurationProperties) {
+        this.backendLinkConfigurationProperties = backendLinkConfigurationProperties;
     }
 
     public DomibusConnectorBackendDeliveryWebService createWsClient(DomibusConnectorBackendClientInfo backendClientInfoByName) {
@@ -57,7 +58,7 @@ public class BackendClientWebServiceClientFactory {
        
         jaxWsProxyFactoryBean.setFeatures(Arrays.asList(new Feature[]{policyUtil.loadPolicyFeature()}));
         jaxWsProxyFactoryBean.setAddress(pushAddress);
-        jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl");
+        jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl"); //maybe load own wsdl instead of remote one?
         Properties encryptionProperties = loadEncryptionProperties();
         Properties signatureProperties = loadEncryptionProperties();
         HashMap<String, Object> props = new HashMap<>();
@@ -74,15 +75,14 @@ public class BackendClientWebServiceClientFactory {
     private Properties loadEncryptionProperties() {
         try {
             Properties props = new Properties();
-            //InputStream is = encryptPropertiesFileLocation.getInputStream();
-            InputStream is = getClass().getResourceAsStream("/eu/domibus/connector/ws/backend/link/ws/decrypt.properties");
+            InputStream is = backendLinkConfigurationProperties.getEncryptionProperties().getInputStream();
             if (is == null) {
-                throw new RuntimeException("is is null!");
+                throw new RuntimeException("Encryption properties cannot be read!");
             }
             props.load(is);
             return props;
         } catch (IOException ioe) {
-            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", encryptPropertiesFileLocation);
+            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", backendLinkConfigurationProperties.getEncryptionProperties());
             LOGGER.error("IOException: ", ioe);
             throw new RuntimeException(ioe);
         }

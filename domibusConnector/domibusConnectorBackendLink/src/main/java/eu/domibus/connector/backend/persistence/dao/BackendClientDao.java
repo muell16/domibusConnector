@@ -21,4 +21,6 @@ public interface BackendClientDao extends CrudRepository<BackendClientInfo, Long
     public List<BackendClientInfo> findByServices_serviceAndEnabledIsTrue(String service);
 
     public BackendClientInfo findOneByDefaultBackendIsTrue();
+
+    public BackendClientInfo findOneByBackendName(String backendName);
 }
