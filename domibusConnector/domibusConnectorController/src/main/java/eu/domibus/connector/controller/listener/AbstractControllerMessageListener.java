@@ -23,25 +23,25 @@ public abstract class AbstractControllerMessageListener {
 				TextMessage msg = (TextMessage) message;
 
 				String connectorMessageId = msg.getText();
-				getLogger().info("received messageID {} from queue {}.", connectorMessageId, getQueueName());
+				getLogger().info("received messageID [{}] from queue [{}].", connectorMessageId, getQueueName());
 				DomibusConnectorMessage connectorMessage = null;
 				try {
 					connectorMessage = persistenceService.findMessageByConnectorMessageId(connectorMessageId);
 				} catch (PersistenceException e) {
-					getLogger().error("Message {} could not be loaded from database!", connectorMessageId, e);
+					getLogger().error("Message [{}] could not be loaded from database!", connectorMessageId, e);
 				}
 				
 				if(connectorMessage!=null) {
 					startProcessing(connectorMessage);
 				}else {
-					getLogger().error("Message {} is null!");
+					getLogger().error("Message [{}] is null!");
 				}
 				
 			} else {
 				throw new IllegalArgumentException("Message must be of type TextMessage");
 			}
 		} catch (JMSException e) {
-			getLogger().error("Exception receiving message from queue {}.", getQueueName());
+			getLogger().error("Exception receiving message from queue [{}].", getQueueName());
 		}
 	}
 	

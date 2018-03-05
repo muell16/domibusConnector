@@ -11,6 +11,18 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorGatewayLink</artifactId>
+            <version>${project.version}</version>        
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorGatewayLink</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>            
+        </dependency>
     </dependencies>
     <parent>
         <groupId>eu.domibus.connector</groupId>

@@ -23,15 +23,13 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
         </cxf:features>
     </cxf:bus>
         
-	<jaxws:client 
-        bus="#gwBus"
+	<jaxws:client
         id="gwSubmissionClient" 
-        serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"
+        serviceClass="eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService"
 		address="${gateway.submission.endpoint.address}" 
     />
 		
 	<jaxws:endpoint
-        bus="#gwBus"
 		id="domibusConnectorDeliveryServiceEndpoint"
         implementor="#domibusConnectorDeliveryServiceImpl"
         address="/domibusConnectorDeliveryWebservice">
