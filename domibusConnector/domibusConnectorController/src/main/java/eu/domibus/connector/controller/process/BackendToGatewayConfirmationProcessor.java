@@ -2,8 +2,11 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
+import eu.domibus.connector.persistence.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
@@ -19,28 +22,63 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
 
+/**
+ * Takes an confirmation message from backend
+ * and creates a new confirmation of the same confirmation type
+ * and sends it to the gw
+ *
+ */
 @Component("BackendToGatewayConfirmationProcessor")
 public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMessageProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayConfirmationProcessor.class);
-	
-	@Resource
-	private DomibusConnectorPersistenceService persistenceService;
-	
-	@Resource
-	private DomibusConnectorEvidencesToolkit evidencesToolkit;
-	
-	@Resource
-	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	
-	@Override
-	public void processMessage(DomibusConnectorMessage message) {
-		String messageID = message.getMessageDetails().getRefToMessageId();
 
-        DomibusConnectorMessage originalMessage = persistenceService.findMessageByEbmsId(messageID);
+	private DomibusConnectorActionPersistenceService actionPersistenceService;
+
+    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+
+    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+
+	private DomibusConnectorEvidencesToolkit evidencesToolkit;
+
+	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
+
+    //setter
+    @Autowired
+    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
+        this.actionPersistenceService = actionPersistenceService;
+    }
+
+    @Autowired
+    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
+
+    @Autowired
+    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+        this.evidencePersistenceService = evidencePersistenceService;
+    }
+
+    @Autowired
+    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
+        this.evidencesToolkit = evidencesToolkit;
+    }
+
+    @Autowired
+    public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
+        this.gwSubmissionService = gwSubmissionService;
+    }
+
+    @Override
+	public void processMessage(DomibusConnectorMessage message) {
+        if (!DomainModelHelper.isEvidenceMessage(message)) {
+            throw new IllegalArgumentException("The message is not an evidence message!");
+        }
+
+		String messageID = message.getMessageDetails().getRefToMessageId();
+        LOGGER.debug("#processMessage: refToMessageId is [{}]", messageID);
+        DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(messageID);
         DomibusConnectorEvidenceType evidenceType = message.getMessageConfirmations().get(0).getEvidenceType();
 
         DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
@@ -65,7 +103,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         }
 
         originalMessage.addConfirmation(confirmation);
-        persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
+        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
                 evidenceType);
 
         DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, confirmation);
@@ -83,13 +121,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
 
         try {
-            persistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
+            evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
         } catch(PersistenceException persistenceException) {
             LOGGER.error("persistence Exception occured", persistenceException);
         }
 
-        if (!persistenceService.checkMessageConfirmed(originalMessage)) {        
-            persistenceService.confirmMessage(originalMessage);
+        if (!messagePersistenceService.checkMessageConfirmed(originalMessage)) {
+            messagePersistenceService.confirmMessage(originalMessage);
         }
 
         LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(), originalMessage);
@@ -104,13 +142,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
         switch (type) {
         case DELIVERY:
-            return persistenceService.getDeliveryNonDeliveryToRecipientAction();
+            return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
         case NON_DELIVERY:
-            return persistenceService.getDeliveryNonDeliveryToRecipientAction();
+            return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
         case RETRIEVAL:
-            return persistenceService.getRetrievalNonRetrievalToRecipientAction();
+            return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
         case NON_RETRIEVAL:
-            return persistenceService.getRetrievalNonRetrievalToRecipientAction();
+            return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
         default:
             throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
         }

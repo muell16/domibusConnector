@@ -2,8 +2,11 @@ package eu.domibus.connector.controller.service.impl;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -23,23 +26,41 @@ import org.slf4j.MDC;
 
 
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
-public class DomibusConnectorGatewayDeliveryServiceImpl extends AbstractDomibusConnectorControllerAPIServiceImpl implements DomibusConnectorGatewayDeliveryService {
+public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnectorGatewayDeliveryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
-	
-	@Value("${domibus.connector.internal.gateway.to.controller.queue}")
-	private String internalGWToControllerQueueName;
-	
-	@Resource
+
+	private PutMessageOnQueue putMessageOnQueue;
+
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
-	
-    @Resource
+
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService;
-            
-	@Resource
+
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
-	
-	@Override
+
+	//setter
+    @Autowired
+    @Qualifier(PutMessageOnQueue.GATEWAY_TO_CONTROLLER_QUEUE)
+    public void setPutMessageOnQueue(PutMessageOnQueue putMessageOnQueue) {
+        this.putMessageOnQueue = putMessageOnQueue;
+    }
+
+    @Autowired
+    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
+
+    @Autowired
+    public void setBigDataOfMessagePersistenceService(DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService) {
+        this.bigDataOfMessagePersistenceService = bigDataOfMessagePersistenceService;
+    }
+
+    @Autowired
+    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
+        this.messageIdGenerator = messageIdGenerator;
+    }
+
+    @Override
 	public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
 		
 		//Check consistence of message:
@@ -66,9 +87,8 @@ public class DomibusConnectorGatewayDeliveryServiceImpl extends AbstractDomibusC
         } catch (PersistenceException e) {
             throw new DomibusConnectorControllerException("Big data of message could not be persisted!", e);
         }
-		
-		putMessageOnMessageQueue(connectorMessageId);
-	
+		putMessageOnQueue.putMessageOnMessageQueue(message);
+
 	}
 	
 	private boolean checkMessageForProcessability(DomibusConnectorMessage message) {
@@ -85,14 +105,5 @@ public class DomibusConnectorGatewayDeliveryServiceImpl extends AbstractDomibusC
 		return false;
 	}
 
-	@Override
-	Logger getLogger() {
-		return logger;
-	}
-
-	@Override
-	String getQueueName() {
-		return internalGWToControllerQueueName;
-	}
 
 }

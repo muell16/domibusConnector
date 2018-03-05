@@ -143,6 +143,54 @@ public class DomainEntityCreator {
         return message;
     }
 
+    public static DomibusConnectorMessage createEpoMessageFormAFromGw() {
+        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageFormAFromGW();
+
+        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent(); //TODO: should be a asic container
+        messageContent.setXmlContent("<xmlContent/>".getBytes());
+
+        DetachedSignature detachedSignature = new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
+
+        DomibusConnectorMessageDocument messageDocument = new DomibusConnectorMessageDocument(connectorBigDataReferenceFromDataSource("documentbytes"), "Document1.pdf", detachedSignature);
+        messageContent.setDocument(messageDocument);
+
+        DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
+                .addAttachment(createSimpleMessageAttachment())
+                .setMessageDetails(messageDetails)
+                .setMessageContent(messageContent)
+                .build();
+
+        return message;
+    }
+
+    public static DomibusConnectorMessage createDeliveryEvidenceForMessage(DomibusConnectorMessage message) {
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
+
+        //messageDetails.setConversationId(null);      //first message no conversation set yet!
+        messageDetails.setEbmsMessageId(null); //message from backend
+        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
+        messageDetails.setFinalRecipient(null);
+        messageDetails.setOriginalSender(null);
+        messageDetails.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());     //reference the previous message
+
+        messageDetails.setAction(createActionForm_A());
+        messageDetails.setService(createServiceEPO());
+        messageDetails.setToParty(createPartyAT());
+        messageDetails.setFromParty(createPartyDE());
+
+        DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageDeliveryConfirmation();
+
+        //messageDeliveryConfirmation.setEvidence(); //TODO: load correct xml
+
+        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                .setMessageDetails(messageDetails)
+                .addConfirmation(messageDeliveryConfirmation)
+                .build();
+
+        return msg;
+    }
+
+
     public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageDetails() {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
         messageDetails.setConversationId(null);      //first message no conversation set yet!
@@ -159,7 +207,24 @@ public class DomainEntityCreator {
 
         return messageDetails;
     }
-    
+
+    public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageFormAFromGW() {
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        messageDetails.setConversationId(null);      //first message no conversation set yet!
+        messageDetails.setEbmsMessageId("ebms5123");
+        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
+        messageDetails.setFinalRecipient("finalRecipient");
+        messageDetails.setOriginalSender("originalSender");
+        messageDetails.setRefToMessageId(null);     //is the first message
+
+        messageDetails.setAction(createActionForm_A());
+        messageDetails.setService(createServiceEPO());
+        messageDetails.setToParty(createPartyAT());
+        messageDetails.setFromParty(createPartyDE());
+
+        return messageDetails;
+    }
+
     public static DomibusConnectorMessageDetails createDomibusConnectorMessageDetails() {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
         messageDetails.setConversationId("conversation1");
