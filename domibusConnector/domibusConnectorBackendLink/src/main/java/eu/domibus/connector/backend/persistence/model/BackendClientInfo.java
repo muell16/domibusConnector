@@ -37,7 +37,7 @@ public class BackendClientInfo {
     @Column(name="BACKEND_KEY_ALIAS")
     private String backendKeyAlias;
     
-    @Column(name="BACKEND_KEY_PASS")
+    @Column(name="BACKEND_KEY_PASS", nullable=true)
     private String backendKeyPass;
 
     @Column(name="BACKEND_ENABLED")

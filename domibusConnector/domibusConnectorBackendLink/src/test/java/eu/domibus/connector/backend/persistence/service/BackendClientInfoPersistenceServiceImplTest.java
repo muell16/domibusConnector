@@ -52,6 +52,8 @@ public class BackendClientInfoPersistenceServiceImplTest {
         DomibusConnectorBackendClientInfo domainBackendInfo = backendInfoPersistenceService.mapDbEntityToDomainEntity(null);
         assertThat(domainBackendInfo).isNull();
     }
+
+    //TODO: test mapping from domainToDbEntity
     
     @Test
     public void testGetBackendClientInfoByName() {

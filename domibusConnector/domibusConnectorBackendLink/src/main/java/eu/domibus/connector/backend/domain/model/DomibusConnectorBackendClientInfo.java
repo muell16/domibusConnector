@@ -24,6 +24,8 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
 
     private boolean defaultBackend;
 
+    private boolean enabled;
+
     public String getBackendName() {
         return backendName;
     }
@@ -106,8 +108,17 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
         return true;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public boolean isPushBackend() {
         return this.backendPushAddress != null;
     }
+
+
 }

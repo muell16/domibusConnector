@@ -111,6 +111,8 @@ public class DeliverMessageFromControllerToBackendServiceTest {
 
         assertThat(toClientPushedMessages).hasSize(0);
         assertThat(waitQueueMessages).hasSize(1);
+        DomibusConnectorBackendMessage msg = waitQueueMessages.get(0);
+        assertThat(msg.getDomibusConnectorMessage().getMessageDetails().getConnectorBackendClientName()).isEqualTo("alice");
     }
 
     @Test

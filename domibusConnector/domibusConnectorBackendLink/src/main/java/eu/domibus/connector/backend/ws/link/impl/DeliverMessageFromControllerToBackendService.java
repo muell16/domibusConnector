@@ -64,9 +64,10 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
 
         DomibusConnectorBackendClientInfo backendClientInfo = getBackendClientForMessage(message);
         backendMessage.setBackendClientInfo(backendClientInfo);
+        message.getMessageDetails().setConnectorBackendClientName(backendClientInfo.getBackendName());
 
 
-        LOGGER.debug("#deliverMessageToBackend: decide message [{}] is push message", backendMessage);
+        LOGGER.debug("#deliverMessageToBackend: decide message [{}] is push message: [{}]", backendMessage, backendMessage.getBackendClientInfo().isPushBackend());
         if (backendMessage.getBackendClientInfo().isPushBackend()) {
             if (pushMessageToBackendClient == null) { throw new IllegalStateException("The client is configured as push client, but no push service is available!"); }
             LOGGER.debug("#deliverMessageToBackend: pushing message to backend client");

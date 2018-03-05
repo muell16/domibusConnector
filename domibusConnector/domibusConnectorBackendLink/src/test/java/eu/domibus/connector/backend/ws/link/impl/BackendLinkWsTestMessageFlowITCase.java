@@ -74,7 +74,7 @@ public class BackendLinkWsTestMessageFlowITCase {
 
     @AfterClass
     public static void afterClass() throws InterruptedException {
-//        Thread.sleep(60000);
+//        Thread.sleep(120000);
     }
     
     //setup and start connector backend
@@ -86,9 +86,9 @@ public class BackendLinkWsTestMessageFlowITCase {
                 "logging.config=classpath:log4j2-test.xml",
                 "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
                 "spring.h2.console.enabled=true",
-                "spring.h2.console.path=/h2-console"
+                "spring.h2.console.path=/h2-console",
                 //"liquibase.enabled=true",
-//                "spring.datasource.url=jdbc:h2:mem:" + dbName
+                "spring.datasource.url=jdbc:h2:mem:" + dbName //use random db name to avoid reusing db between tests
         };
 
         backendApplicationContext = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
@@ -107,7 +107,8 @@ public class BackendLinkWsTestMessageFlowITCase {
         MDC.remove("COLOR");
         return ctx;
     }
-    
+
+    //setup and start application context for client alice
     private static ApplicationContext setUpClientAlice(String backendAddress) {
         MDC.put("COLOR", "CYAN");
         String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
@@ -220,6 +221,7 @@ public class BackendLinkWsTestMessageFlowITCase {
      * test complete message flow in backend, when controller hands over
      * message to backend for backend delivery, backend is pulling message...
      */
+    @Ignore("not working because embedded broker is closed before queue is queried")
     @Test
     public void testSendMessageFromConnectorToBackend_withPull() throws InterruptedException {
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
@@ -242,7 +244,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         messageToBackend.deliverMessageToBackend(message); //message should be on queue
 
 
-        Thread.sleep(3000); //to be sure wait a little bit before calling backendService
+        //Thread.sleep(3000); //to be sure wait a little bit before calling backendService
 
         //ok client bob is now trying to fetch message
         DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
