@@ -2,9 +2,11 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.persistence.service.*;
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
@@ -21,35 +23,69 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
+/**
+ * Takes a message from backend and creates evidences for it
+ * and also wraps it into an asic container and delivers the
+ * message to the gw
+ */
 @Component("BackendToGatewayMessageProcessor")
 public class BackendToGatewayMessageProcessor implements DomibusConnectorMessageProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessor.class);
 
-	@Resource
-	private DomibusConnectorPersistenceService persistenceService;
+	private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
-	@Resource
+	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+
+	private DomibusConnectorActionPersistenceService actionPersistenceService;
+
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 
-	@Resource
 	private DomibusConnectorEvidencesToolkit evidencesToolkit;
 
-	@Resource
 	private DomibusConnectorSecurityToolkit securityToolkit;
-	
-	@Resource
-	private DomibusConnectorMessageIdGenerator messageIdGenerator;
-	
-	@Resource
+
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
-	@Override
+    @Autowired
+    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
+
+    @Autowired
+    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+        this.evidencePersistenceService = evidencePersistenceService;
+    }
+
+    @Autowired
+    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
+        this.actionPersistenceService = actionPersistenceService;
+    }
+
+    @Autowired
+    public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
+        this.gwSubmissionService = gwSubmissionService;
+    }
+
+    @Autowired
+    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
+        this.evidencesToolkit = evidencesToolkit;
+    }
+
+    @Autowired
+    public void setSecurityToolkit(DomibusConnectorSecurityToolkit securityToolkit) {
+        this.securityToolkit = securityToolkit;
+    }
+
+    @Autowired
+    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
+        this.backendDeliveryService = backendDeliveryService;
+    }
+
+    @Override
 	public void processMessage(DomibusConnectorMessage message) {
 		
 		try {
@@ -67,11 +103,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		DomibusConnectorMessageConfirmation confirmation = null;
 		try {
 			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+			LOGGER.debug("#processMessage: created confirmation [{}] for message [{}]", confirmation, message);
 			// immediately persist new evidence into database
-			persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
-					DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation);
 
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
+		    LOGGER.error("Could not generate evidence [{}] for message [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 			createSubmissionRejectionAndReturnIt(message, ete.getMessage());
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -93,9 +130,9 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .buildAndThrow();
 		}
 
-		persistenceService.setMessageDeliveredToGateway(message);
+		messagePersistenceService.setMessageDeliveredToGateway(message);
 		try {
-			persistenceService.setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
+            evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
 		} catch (PersistenceException ex) {
 			//TODO: handle exception    
 			LOGGER.error("Exception occured", ex);
@@ -107,7 +144,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 
 		try {
-			persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
 		} catch (PersistenceException ex) {
 			//TODO: handle exception    
 			LOGGER.error("Exception occured", ex);
@@ -134,8 +171,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 		try {
 			// immediately persist new evidence into database
-			persistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(),
-					DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation);
 		} catch (Exception e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -150,9 +186,9 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		backendDeliveryService.deliverMessageToBackend(returnMessage);     
 
 		try {
-			persistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
 
-			persistenceService.rejectMessage(message);
+			messagePersistenceService.rejectMessage(message);
 
 		} catch (PersistenceException persistenceException) {
 			//TODO: exception
@@ -161,12 +197,21 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	}
 
+    /**
+     * prepares an evidence message for sending back to the backend
+     *  for this purpose the action is set to SubmissionAcceptanceRejection
+     *  which is the action for submission -acceptance and -rejection evidences
+     *
+     * @param confirmation the confirmation to send back
+     * @param originalMessage the message the confirmation belongs to
+     * @return the created evidence message
+     */
 	private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageConfirmation confirmation, DomibusConnectorMessage originalMessage) {
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
 		details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
 		details.setService(originalMessage.getMessageDetails().getService());
-		
-		DomibusConnectorAction action = persistenceService.getAction("SubmissionAcceptanceRejection");
+
+		DomibusConnectorAction action = actionPersistenceService.getAction("SubmissionAcceptanceRejection");
 		details.setAction(action);
 
 		DomibusConnectorMessage returnMessage = new DomibusConnectorMessage(details, confirmation);

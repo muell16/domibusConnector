@@ -56,6 +56,20 @@ public class DomainEntityCreator {
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.NON_DELIVERY);
         return confirmation;
     }
+
+    public static DomibusConnectorMessageConfirmation createMessageSubmissionAcceptanceConfirmation() {
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+        confirmation.setEvidence("<EVIDENCE1_SUBMISSION_ACCEPTANCE/>".getBytes());
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+        return confirmation;
+    }
+
+    public static DomibusConnectorMessageConfirmation createMessageSubmissionRejectionConfirmation() {
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+        confirmation.setEvidence("<EVIDENCE1_SUBMISSION_REJECT/>".getBytes());
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
+        return confirmation;
+    }
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
         DomibusConnectorMessageAttachment attachment = 
@@ -89,6 +103,7 @@ public class DomainEntityCreator {
         
         return msg;
     }
+
 
     public static DomibusConnectorMessage createSimpleTestMessage() {
         

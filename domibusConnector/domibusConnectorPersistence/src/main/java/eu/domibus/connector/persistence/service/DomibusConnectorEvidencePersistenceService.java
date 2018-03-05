@@ -1,7 +1,10 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -19,6 +22,10 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
+    default void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
+        persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(), confirmation.getEvidenceType());
+    }
+
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
      * and updates the delivered to gateway
@@ -34,6 +41,11 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
+    default void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
+        setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
+    }
+
+
     /**
      * Merges the message into the storage @see #mergeMessageWithDatabase
      * and updates the delivered to national_backend
@@ -47,5 +59,9 @@ public interface DomibusConnectorEvidencePersistenceService {
      *
      */
     void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
+
+    default void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
+        setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
+    }
 
 }
