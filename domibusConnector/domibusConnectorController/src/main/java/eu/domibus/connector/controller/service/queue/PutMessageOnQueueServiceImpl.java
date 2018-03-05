@@ -24,12 +24,10 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
     private String queueName;
 
     //setter
-    @Autowired
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
 
-    @Autowired
     public void setQueueName(String queueName) {
         this.queueName = queueName;
     }
