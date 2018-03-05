@@ -111,16 +111,18 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         
             DomibusConnectorBackendClientInfo backendClientInfoByName = checkBackendClient();
 
-            DomibusConnectorMessage transitionMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(submitMessageRequest);
-            transitionMessage.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getBackendName());
+            DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(submitMessageRequest);
+            msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getBackendName());
+            LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getBackendName());
 
             DomibusConnectorBackendMessage backendMessage = new DomibusConnectorBackendMessage();
-            backendMessage.setDomibusConnectorMessage(transitionMessage);
+            backendMessage.setDomibusConnectorMessage(msg);
+            backendMessage.setBackendClientInfo(backendClientInfoByName);
 
             backendSubmissionService.submitToController(backendMessage);
                        
             answer.setResult(true);
-            answer.setMessageId(transitionMessage.getConnectorMessageId());
+            answer.setMessageId(msg.getConnectorMessageId());
             
             
         } catch (DomibusConnectorControllerException e) {

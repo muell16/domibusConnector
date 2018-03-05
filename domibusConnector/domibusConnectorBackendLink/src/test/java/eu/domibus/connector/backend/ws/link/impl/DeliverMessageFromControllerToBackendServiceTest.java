@@ -171,6 +171,19 @@ public class DeliverMessageFromControllerToBackendServiceTest {
 
     }
 
+    @Test
+    public void testGetBackendClientForMessage_bySetBackendNameInMessageDetails() {
+        DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
+        message.getMessageDetails().setRefToMessageId(null); //first message
+        message.getMessageDetails().setConversationId(null); //first message
+
+        message.getMessageDetails().setConnectorBackendClientName("bob");
+
+        DomibusConnectorBackendClientInfo backendClientForMessage = deliverMessageFromControllerToBackendService.getBackendClientForMessage(message);
+
+        assertThat(backendClientForMessage).isEqualToComparingFieldByField(createBackendClientInfoBob());
+    }
+
 
 
     private DomibusConnectorBackendClientInfo createBackendClientInfoBob() {

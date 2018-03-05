@@ -81,6 +81,8 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
     /**
      * Determine correct backend by following strategy
      *
+     *  0) BackendId:            The message details contains a backendIdName, then this is used!
+     *
      *  1) RefToMessageId:      The message is related (usually its a evidence message) to a previous message. The relation is expressed by
      *                          referencing the previous messageId in the refToMessageId property.
      *                          Load this previous message and set the backendClient to the same as the previous message.
@@ -101,6 +103,17 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
         LOGGER.debug("#getBackendClientForMessage: determine correct backendClient");
 
         DomibusConnectorBackendClientInfo backendClientInfo;
+
+        String backendConnectorClientName = msg.getMessageDetails().getConnectorBackendClientName();
+        if (backendConnectorClientName != null) {
+            backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName(backendConnectorClientName);
+            if (backendClientInfo != null) {
+                LOGGER.debug("#getBackendClientForMessage: used connectorBackendClientName [{}] in messageDetails to determine backend [{}]!",
+                        msg.getMessageDetails().getConnectorBackendClientName(), backendClientInfo);
+                return backendClientInfo;
+            }
+            LOGGER.debug("#getBackendClientForMessage: connectorBackendClientName is not set in messageDetails!");
+        }
 
         // 1 RefToMessageId
         String refToMessageId = msg.getMessageDetails().getRefToMessageId();
