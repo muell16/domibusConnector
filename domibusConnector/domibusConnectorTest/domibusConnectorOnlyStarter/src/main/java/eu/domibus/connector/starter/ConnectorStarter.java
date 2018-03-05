@@ -19,7 +19,11 @@ public class ConnectorStarter {
     public static ConfigurableApplicationContext runSpringApplication(String[] args) {
         SpringApplication springApplication = new SpringApplicationBuilder()
                 .sources(ConnectorStarter.class)
-                .profiles("connector", "embedded", "gw-ws-link", "backend-ws-link")
+                .profiles("connector",
+                        "embedded",     //use embedded database
+                        "gw-ws-link",   //use gw link webservice based impl
+                        "backend-ws-link" //use backend webservice based implementation
+                )
                 .build();
 
         ConfigurableApplicationContext appContext = springApplication.run(args);
