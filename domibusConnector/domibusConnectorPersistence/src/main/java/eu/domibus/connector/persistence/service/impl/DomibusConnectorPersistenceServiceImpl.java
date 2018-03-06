@@ -8,6 +8,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -329,7 +331,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
      */
     @Override
     @Transactional
-    public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, byte[] evidence, DomibusConnectorEvidenceType evidenceType) {        
+    public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
             throw new IllegalStateException(String.format("The provided message [%s] does not exist in storage!", message));
@@ -337,12 +339,23 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
         PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
 
-        dbEvidence.setMessage(dbMessage);              
-        dbEvidence.setEvidence(new String(evidence)); //TODO: determine encoding, or if PDomibusConnectorEvidence can use byte[]?
+        dbEvidence.setMessage(dbMessage);
+        dbEvidence.setEvidence(convertByteArrayToString(evidence));
         dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.valueOf(evidenceType.name()));
         dbEvidence.setDeliveredToGateway(null);
         dbEvidence.setDeliveredToNationalSystem(null);
         evidenceDao.save(dbEvidence);
+    }
+
+    private @Nullable String convertByteArrayToString(@Nullable byte[] bytes) {
+        try {
+            if (bytes == null) {
+                return null;
+            }
+            return new String(bytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

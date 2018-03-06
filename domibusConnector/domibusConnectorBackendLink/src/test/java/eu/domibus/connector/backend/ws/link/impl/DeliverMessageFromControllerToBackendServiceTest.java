@@ -79,10 +79,18 @@ public class DeliverMessageFromControllerToBackendServiceTest {
                 .thenReturn(createBackendClientInfoBob());
 
         //relatedMessage with id msg2, has backendClient name catrina
-        DomibusConnectorMessage relatedMessage = DomainEntityCreator.createMessage();
-        relatedMessage.setConnectorMessageId("msg2");
-        relatedMessage.getMessageDetails().setConnectorBackendClientName("catrina");
-        Mockito.when(messagePersistenceService.findMessageByConnectorMessageId(eq("msg2"))).thenReturn(relatedMessage);
+        DomibusConnectorMessage relatedEbmsMessage = DomainEntityCreator.createMessage();
+        relatedEbmsMessage.setConnectorMessageId("msg2");
+        relatedEbmsMessage.getMessageDetails().setConnectorBackendClientName("catrina");
+        relatedEbmsMessage.getMessageDetails().setEbmsMessageId("ebms_msg2");
+        Mockito.when(messagePersistenceService.findMessageByEbmsId(eq("ebms_msg2"))).thenReturn(relatedEbmsMessage);
+
+        //relatedMessage with id msg2, has backendClient name catrina
+        DomibusConnectorMessage relatedNationalMessage = DomainEntityCreator.createMessage();
+        relatedNationalMessage.setConnectorMessageId("msg2");
+        relatedNationalMessage.getMessageDetails().setConnectorBackendClientName("catrina");
+        relatedNationalMessage.getMessageDetails().setBackendMessageId("backend_msg2");
+        Mockito.when(messagePersistenceService.findMessageByNationalId(eq("backend_msg2"))).thenReturn(relatedNationalMessage);
 
         Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(eq("catrina"))).thenReturn(createBackendClientInfoCatrina());
 
@@ -93,7 +101,7 @@ public class DeliverMessageFromControllerToBackendServiceTest {
     @Test
     public void testDeliverMessageToBackend_usePushBackend() {
         DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
-        message.getMessageDetails().setRefToMessageId("msg2");
+        message.getMessageDetails().setRefToMessageId("backend_msg2");
 
         deliverMessageFromControllerToBackendService.deliverMessageToBackend(message);
 
@@ -116,14 +124,25 @@ public class DeliverMessageFromControllerToBackendServiceTest {
     }
 
     @Test
-    public void testGetBackendClientForMessage_byRefToMessageId() {
+    public void testGetBackendClientForMessage_byRefToMessageId_nationalBackendId() {
         DomibusConnectorMessage message = DomainEntityCreator.createEvidenceNonDeliveryMessage();
-        message.getMessageDetails().setRefToMessageId("msg2"); //msg is related to msg2
+        message.getMessageDetails().setRefToMessageId("backend_msg2"); //msg is related to msg2
         message.getMessageDetails().setConversationId(null);
 
         DomibusConnectorBackendClientInfo backendClientForMessage = deliverMessageFromControllerToBackendService.getBackendClientForMessage(message);
         assertThat(backendClientForMessage).isNotNull();
     }
+
+    @Test
+    public void testGetBackendClientForMessage_byRefToMessageId_ebmsId() {
+        DomibusConnectorMessage message = DomainEntityCreator.createEvidenceNonDeliveryMessage();
+        message.getMessageDetails().setRefToMessageId("ebms_msg2"); //msg is related to msg2
+        message.getMessageDetails().setConversationId(null);
+
+        DomibusConnectorBackendClientInfo backendClientForMessage = deliverMessageFromControllerToBackendService.getBackendClientForMessage(message);
+        assertThat(backendClientForMessage).isNotNull();
+    }
+
 
     @Test(expected = IllegalStateException.class)
     public void testGetBackendClientForMessage_byRefToMessageId_referencedMessageDoesNotExist() {

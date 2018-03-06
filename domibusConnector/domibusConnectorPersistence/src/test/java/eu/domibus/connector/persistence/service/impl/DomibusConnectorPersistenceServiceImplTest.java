@@ -563,12 +563,43 @@ public class DomibusConnectorPersistenceServiceImplTest {
                         assertThat(evidence.getDeliveredToNationalSystem()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
                         assertThat(evidence.getMessage()).isNotNull();
+                        assertThat(evidence.getEvidence()).isEqualTo("EVIDENCE1");
                         return evidence;
                     }
         });
         
         domibusConnectorPersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
         
+        Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(PDomibusConnectorEvidence.class));
+    }
+
+    @Test
+    public void testPersistEvidenceForMessageIntoDatabase_evidenceBytesAreNull() {
+        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        //message.setDbMessageId(47L);
+
+        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
+
+        byte[] evidence = null;
+
+        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+
+        Mockito.when(this.domibusConnectorEvidenceDao.save(any(PDomibusConnectorEvidence.class)))
+                .thenAnswer(new Answer<PDomibusConnectorEvidence>() {
+                    @Override
+                    public PDomibusConnectorEvidence answer(InvocationOnMock invocation) throws Throwable {
+                        PDomibusConnectorEvidence evidence = invocation.getArgumentAt(0, PDomibusConnectorEvidence.class);
+                        assertThat(evidence.getDeliveredToGateway()).isNull();
+                        assertThat(evidence.getDeliveredToNationalSystem()).isNull();
+                        assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
+                        assertThat(evidence.getMessage()).isNotNull();
+                        assertThat(evidence.getEvidence()).isNull();
+                        return evidence;
+                    }
+                });
+
+        domibusConnectorPersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
+
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(PDomibusConnectorEvidence.class));
     }
 

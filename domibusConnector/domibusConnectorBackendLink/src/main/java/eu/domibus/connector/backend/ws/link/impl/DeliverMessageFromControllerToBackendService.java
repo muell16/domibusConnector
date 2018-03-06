@@ -84,7 +84,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
      *  0) BackendId:            The message details contains a backendIdName, then this is used!
      *
      *  1) RefToMessageId:      The message is related (usually its a evidence message) to a previous message. The relation is expressed by
-     *                          referencing the previous messageId in the refToMessageId property.
+     *                          referencing the ebmsId OR nationalId of the previous message in the refToMessageId property.
      *                          Load this previous message and set the backendClient to the same as the previous message.
      *
      *  2) ConversationId:      The message is related to a previous message. The relation is expressed by the same conversationId
@@ -158,9 +158,12 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
     private DomibusConnectorBackendClientInfo getBackendClientInfoByRefToMessageIdOrReturnNull(String refToMessageId) {
         if (refToMessageId != null) {
             LOGGER.trace("#getBackendClientInfoByRefToMessageIdOrReturnNull: try to find message by refToMessageId [{}]", refToMessageId);
-            DomibusConnectorMessage referencedMessage = messagePersistenceService.findMessageByConnectorMessageId(refToMessageId);
+            DomibusConnectorMessage referencedMessage = messagePersistenceService.findMessageByEbmsId(refToMessageId);
             if (referencedMessage == null) {
-                throw new IllegalStateException(String.format("Referenced message id=[%s] does not exist!", refToMessageId));
+                referencedMessage = messagePersistenceService.findMessageByNationalId(refToMessageId);
+            }
+            if (referencedMessage == null) {
+                throw new IllegalStateException(String.format("Referenced message with ebmsid or nationalBackendId [%s] does not exist!", refToMessageId));
             }
             String connectorBackendClientName = referencedMessage.getMessageDetails().getConnectorBackendClientName();
             DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
