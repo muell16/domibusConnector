@@ -42,6 +42,9 @@ public class PDomibusConnectorMessage implements Serializable {
     @Column(name = "BACKEND_MESSAGE_ID", unique = true, length = 255)
     private String backendMessageId;
 
+    @Column(name = "BACKEND_NAME", unique = true, length = 255)
+    private String backendName;
+
     @Column(name = "CONNECTOR_MESSAGE_ID", unique = true, nullable = false, length = 255)
     private String connectorMessageId;
     
@@ -201,6 +204,14 @@ public class PDomibusConnectorMessage implements Serializable {
 
     public void setConnectorMessageId(String connectorMessageId) {
         this.connectorMessageId = connectorMessageId;
+    }
+
+    public String getBackendName() {
+        return backendName;
+    }
+
+    public void setBackendName(String backendName) {
+        this.backendName = backendName;
     }
 
     @Override

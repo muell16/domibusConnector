@@ -157,6 +157,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
         dbMessage.setConnectorMessageId(message.getConnectorMessageId());
+        dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
 
         try {
             LOGGER.trace("#persistMessageIntoDatabase: Saving message [{}] into storage", dbMessage);
@@ -235,7 +236,13 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
             throw new PersistenceException(error);
         }
 
-        dbMessage.getMessageInfo();
+
+        dbMessage.setConversationId(message.getMessageDetails().getConversationId());
+        dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
+        dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
+        dbMessage.setConnectorMessageId(message.getConnectorMessageId());
+        dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
+
 
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         if (messageInfo == null) {
@@ -462,6 +469,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         details.setEbmsMessageId(dbMessage.getEbmsMessageId());
         details.setBackendMessageId(dbMessage.getBackendMessageId());
         details.setConversationId(dbMessage.getConversationId());
+        details.setConnectorBackendClientName(dbMessage.getBackendName());
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         details.setRefToMessageId(RELAY_REMMD_FAILURE);
 

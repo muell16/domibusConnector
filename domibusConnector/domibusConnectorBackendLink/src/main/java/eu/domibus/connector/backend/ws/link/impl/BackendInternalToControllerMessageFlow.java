@@ -3,6 +3,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -28,6 +29,8 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     private DomibusConnectorBackendDeliveryService toBackendDeliveryService;
 
+    private DomibusConnectorBackendSubmissionService backendToControllerSubmissionService;
+
     //setter
     @Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
@@ -49,13 +52,19 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         this.toBackendDeliveryService = backendDeliveryService;
     }
 
+    @Autowired
+    public void setBackendToControllerSubmissionService(DomibusConnectorBackendSubmissionService toControllerSubmissionService) {
+        this.backendToControllerSubmissionService = toControllerSubmissionService;
+    }
+
 
     @Override
     public void submitToController(DomibusConnectorBackendMessage backendMessage) {
-        LOGGER.error("#submitToController: not yet implemented!");
+
 
         LOGGER.debug("#submitToController: message [{}]", backendMessage);
         DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
+        message.getMessageDetails().setConnectorBackendClientName(backendMessage.getBackendClientInfo().getBackendName());
 
         message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
         LOGGER.debug("#submitToController: start to process message with message id [{}]", message.getConnectorMessageId());
@@ -77,6 +86,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
             //also generate evidences?
         } else {
             LOGGER.debug("#submitToController: 'normal' message.....");
+            backendToControllerSubmissionService.submitToController(message);
         }
 
         //TODO: put message on internal queue for further processing

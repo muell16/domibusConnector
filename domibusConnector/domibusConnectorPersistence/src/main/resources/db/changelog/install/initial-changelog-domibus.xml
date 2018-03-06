@@ -131,6 +131,7 @@
             </column>
             <column name="EBMS_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})" ></column>
             <column name="BACKEND_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
+            <column name="BACKEND_NAME" type="${varchar.type}(255 ${varchar.length.type})"></column>
             <column name="CONNECTOR_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
             <column name="CONVERSATION_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>      
             <column name="DIRECTION" type="${varchar.type}(10)"></column>
@@ -144,7 +145,7 @@
             </column>      
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="CONNECTOR_MESSAGE_ID" constraintName="UNIQE_CONNECTOR_MESSAGE_ID" />
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="CONNECTOR_MESSAGE_ID" constraintName="UNIQUE_CONNECTOR_MESSAGE_ID" />
             
         <createTable tableName="DOMIBUS_CONNECTOR_EVIDENCE">
             <column name="ID" type="DECIMAL(10,0)"> 
@@ -217,10 +218,7 @@
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_NAME" constraintName="UN_DOMIBUS_CONNECTOR_BACK_01" /> 
         
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_KEY_ALIAS" constraintName="UN_DOMIBUS_CONNECTOR_BACK_02" />
-        
-<!--        <createIndex tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" indexName="IXFK_DOMIBUS_CONN_DOMIBUS01"  >
-            <column name="SERVICE" />
-        </createIndex>-->
+
     
         
         <addForeignKeyConstraint 
@@ -231,16 +229,7 @@
             referencedColumnNames="ID" 
             onDelete="NO ACTION" 
             onUpdate="NO ACTION" />
-        
-<!--        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
-            baseColumnNames="CONTENT_TYPE" 
-            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_03" 
-            referencedTableName="DOMIBUS_CONNECTOR_CONT_TYPE" 
-            referencedColumnNames="MESSAGE_CONTENT_TYPE" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"/>-->
-        
+
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
             baseColumnNames="MESSAGE_ID" 

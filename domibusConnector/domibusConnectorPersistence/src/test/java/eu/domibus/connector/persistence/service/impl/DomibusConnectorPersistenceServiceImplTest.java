@@ -27,6 +27,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createDeliveryEvidence;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createNonDeliveryEvidence;
@@ -343,8 +344,8 @@ public class DomibusConnectorPersistenceServiceImplTest {
         
         message.getMessageDetails().setEbmsMessageId("ebmsid");
         message.getMessageDetails().setConversationId("conversation1");
-        
-        
+        message.getMessageDetails().setConnectorBackendClientName("BOB");
+        message.getMessageDetails().setBackendMessageId("backendid1");
         
         Mockito.when(domibusConnectorMessageDao.save(any(PDomibusConnectorMessage.class)))
                 .then(new Answer<PDomibusConnectorMessage>() {
@@ -352,10 +353,12 @@ public class DomibusConnectorPersistenceServiceImplTest {
                     public PDomibusConnectorMessage answer(InvocationOnMock invocation) throws Throwable {
                         PDomibusConnectorMessage message = invocation.getArgumentAt(0, PDomibusConnectorMessage.class);
                         
-                        //TODO: check mapping
+                        //TODO: complete mapping check
                         assertThat(message.getEbmsMessageId()).isEqualTo("ebmsid");
                         assertThat(message.getConversationId()).isEqualTo("conversation1");
-                        
+                        assertThat(message.getBackendName()).isEqualTo("BOB");
+                        assertThat(message.getBackendMessageId()).isEqualTo("backendid1");
+                        assertThat(message.getDirection()).isEqualTo(MessageDirection.NAT_TO_GW);
                         return message;
                     }                    
                 });

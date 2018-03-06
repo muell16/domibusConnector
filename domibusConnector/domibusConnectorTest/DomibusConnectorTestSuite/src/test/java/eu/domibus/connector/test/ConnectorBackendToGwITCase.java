@@ -1,5 +1,6 @@
 package eu.domibus.connector.test;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
@@ -179,7 +180,7 @@ public class ConnectorBackendToGwITCase {
     }
 
     @Test
-    public void testSendEpoMessageFromBackendBobToGw() {
+    public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
         DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
         epoMessage.getMessageDetails().setConversationId(null);
         epoMessage.getMessageDetails().setRefToMessageId(null);
@@ -188,6 +189,15 @@ public class ConnectorBackendToGwITCase {
         DomibsConnectorAcknowledgementType acknowledgementType = bobBackendClient.submitMessage(epoMessage);
 
         assertThat(acknowledgementType.isResult()).isTrue();
+
+        Thread.sleep(20000);
+
+        System.out.println("size " + toGwSubmittedMessages.size());
+
+        for (DomibusConnectorMessageType t : toGwSubmittedMessages) {
+            System.out.println("message rcv: " + t);
+        }
+
     }
 
 
