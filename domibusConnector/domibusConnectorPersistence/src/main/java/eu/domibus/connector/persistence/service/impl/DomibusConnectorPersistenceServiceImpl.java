@@ -334,7 +334,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
      */
     @Override
     @Transactional
-    public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
+    public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, @Nonnull byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
+        if (evidence == null) {
+            throw new IllegalArgumentException("evidence is not allowed to be null!");
+        }
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
             throw new IllegalStateException(String.format("The provided message [%s] does not exist in storage!", message));

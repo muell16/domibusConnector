@@ -81,7 +81,13 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 		default:
 			break;
     	}
-    	
+
+    	if (evidence == null) {
+    	    //fail if the evidence couldn't be created! So illegal null evidences aren't used in the connector!
+            //TODO: make this error more transparent
+    	    throw new DomibusConnectorEvidencesToolkitException("Evidence could not be created by evidenceToolkit impl");
+        }
+
     	DomibusConnectorMessageConfirmation confirmation = buildConfirmation(type, evidence);
     	
     	

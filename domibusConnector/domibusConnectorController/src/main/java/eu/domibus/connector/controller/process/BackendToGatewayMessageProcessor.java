@@ -216,8 +216,15 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
      */
 	private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageConfirmation confirmation, DomibusConnectorMessage originalMessage) {
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-		details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
-		details.setService(originalMessage.getMessageDetails().getService());
+        DomibusConnectorMessageDetails originalMessageDetails = originalMessage.getMessageDetails();
+
+		details.setRefToMessageId(originalMessageDetails.getBackendMessageId());
+		details.setService(originalMessageDetails.getService());
+		details.setFinalRecipient(originalMessageDetails.getFinalRecipient());
+		details.setOriginalSender(originalMessageDetails.getOriginalSender());
+		details.setAction(originalMessageDetails.getAction());
+		details.setFromParty(originalMessageDetails.getFromParty());
+		details.setToParty(originalMessageDetails.getToParty());
 
 		DomibusConnectorAction action = actionPersistenceService.getAction("SubmissionAcceptanceRejection");
 		details.setAction(action);
