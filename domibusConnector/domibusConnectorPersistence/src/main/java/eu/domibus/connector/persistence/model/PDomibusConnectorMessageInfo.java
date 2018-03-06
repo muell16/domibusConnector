@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -151,6 +153,13 @@ public class PDomibusConnectorMessageInfo {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("id", id);
+        return toString.build();
     }
 
 }

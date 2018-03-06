@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.sql.Blob;
 import java.util.Date;
@@ -77,5 +79,13 @@ public class PDomibusConnectorBigData {
 
     public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("id", this.id);
+        toString.append("referencedMessage", this.message.getId());
+        return toString.build();
     }
 }

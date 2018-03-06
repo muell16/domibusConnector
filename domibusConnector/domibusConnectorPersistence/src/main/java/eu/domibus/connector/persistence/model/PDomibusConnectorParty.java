@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -46,4 +48,12 @@ public class PDomibusConnectorParty {
         this.partyIdType = partyIdType;
     }
 
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("id", partyId);
+        toString.append("role", role);
+        toString.append("idType", partyIdType);
+        return toString.build();
+    }
 }

@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -87,6 +89,14 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("id", this.id);
+        toString.append("messageId", this.getMessage().getId());
+        return toString.build();
     }
 
 }

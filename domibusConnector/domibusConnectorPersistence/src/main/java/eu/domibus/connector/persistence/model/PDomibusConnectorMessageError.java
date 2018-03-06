@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -92,6 +94,16 @@ public class PDomibusConnectorMessageError {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("message", message);
+        toString.append("errorMessage", errorMessage);
+        toString.append("detailedText", detailedText);
+        toString.append("errorSource", errorSource);
+        return toString.build();
     }
 
 }

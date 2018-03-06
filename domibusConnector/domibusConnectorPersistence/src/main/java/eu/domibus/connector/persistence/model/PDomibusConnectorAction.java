@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +33,14 @@ public class PDomibusConnectorAction implements Serializable {
 
     public void setDocumentRequired(boolean pdfRequired) {
         this.documentRequired = pdfRequired;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("action", action);
+        toString.append("documentRequired", documentRequired);
+        return toString.build();
     }
 
 }

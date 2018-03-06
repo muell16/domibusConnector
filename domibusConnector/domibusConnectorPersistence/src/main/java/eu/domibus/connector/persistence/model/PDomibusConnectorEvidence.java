@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -120,5 +122,15 @@ public class PDomibusConnectorEvidence {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder toString = new ToStringBuilder(this);
+        toString.append("id", this.id);
+        toString.append("evidence", this.evidence);
+        toString.append("deliveredToGw", this.deliveredToGateway);
+        toString.append("deliveredToNationalSystem", this.deliveredToNationalSystem);
+        return toString.build();
     }
 }
