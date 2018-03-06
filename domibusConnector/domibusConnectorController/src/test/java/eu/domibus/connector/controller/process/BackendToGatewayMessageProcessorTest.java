@@ -25,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -75,6 +76,7 @@ public class BackendToGatewayMessageProcessorTest {
         backendToGatewayMessageProcessor.setMessagePersistenceService(messagePersistenceService);
         backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);
         backendToGatewayMessageProcessor.setSecurityToolkit(securityToolkit);
+        backendToGatewayMessageProcessor.setMessageIdGenerator(() -> UUID.randomUUID().toString());
 
         Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));

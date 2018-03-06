@@ -46,14 +46,14 @@ import static org.mockito.Matchers.eq;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class})
-@TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue", "spring.activemq.packages.trustAll=true"})
+@TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue",
+        "spring.activemq.packages.trusted=eu.domibus.connector.backend.domain.model,eu.domibus.connector.domain.model,java.util,eu.domibus.connector.domain.testutil,eu.domibus.connector.domain.enums"})
 public class ToBackendClientJmsBasedWaitQueueITCase {
 
     @EnableJms
     @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class, LiquibaseAutoConfiguration.class})
     @Import(ToBackendClientJmsBasedWaitQueue.class)
     public final static class TestConfig {
-
 
     }
         
