@@ -3,32 +3,20 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
-import org.springframework.stereotype.Component;
+import javax.jms.*;
 
-import javax.jms.Message;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
-import javax.validation.constraints.Null;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.BrowserCallback;
-import org.springframework.jms.core.MessagePostProcessor;
-import static org.springframework.jms.support.destination.JmsDestinationAccessor.RECEIVE_TIMEOUT_NO_WAIT;
 
 /**
  *
@@ -60,9 +48,9 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     @Value("${connector.backend.internal.wait-queue.receive-timeout:10}")
     private long receiveTimeout;
     
-//    @Autowired(required = false) //can be null if there is no push impl
-//    private @Nullable
-//    PushMessageToBackendClient pushMessageToBackendCallback;
+    @Autowired(required = false) //can be null if there is no push impl
+    private @Nullable
+    PushMessageToBackendClient pushMessageToBackendCallback;
        
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -86,7 +74,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         LOGGER.debug("#putMessageInWaitingQueue: put message id [{}] for backendClientName [{}] in waiting queue [{}]",
                 connectorMessageId, backendClientName, waitQueueName);
         jmsTemplate.send(waitQueueName, (Session session) -> {
-            Message msg = session.createMessage();
+            Message msg = session.createObjectMessage(backendMessage);
             msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
             msg.setStringProperty(BACKEND_CLIENT_NAME, backendClientName);
             msg.setStringProperty(CONNECTOR_MESSAGE_ID, connectorMessageId);
@@ -97,37 +85,41 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         });                
     }
         
-//    @JmsListener(destination=WAIT_QUEUE_PROPERTY_NAME, selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
-//    public void pushToBackend(Message msg) throws JMSException {
-//        String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
-//        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
-//        //pushMessageToBackendCallback.push(connectorMessageId, backendName);
-//    }
+    @JmsListener(destination=WAIT_QUEUE_PROPERTY_NAME, selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
+    public void pushToBackend(ObjectMessage msg) throws JMSException {
+        LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
+        String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
+        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
+        DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
+        pushMessageToBackendCallback.push(backendMessage);
+    }
 
     @Override
-    public List<String> getConnectorMessageIdForBackend(String backendName) {
+    public List<DomibusConnectorMessage> getConnectorMessageIdForBackend(String backendName) {
         LOGGER.debug("#getConnectorMessageIdForBackend: lookup waiting messages on queue [{}] for backendName [{}]", waitQueueName, backendName);
-        List<String> waitingMessageIds = new ArrayList<>();
+        List<DomibusConnectorMessage> waitingMessages = new ArrayList<>();
         try {            
             jmsTemplate.setReceiveTimeout(receiveTimeout);
 
-            Message receiveSelected = null;
+            ObjectMessage receiveSelected = null;
             do {
-                String selector = String.format("%s = '%s'", BACKEND_CLIENT_NAME, backendName);
+                String selector = String.format("%s = '%s' AND %s = FALSE", BACKEND_CLIENT_NAME, backendName, CONNECTOR_BACKEND_IS_PUSH_BACKEND);
                 LOGGER.debug("#getConnectorMessageIdForBackend: try to receiveSelected message from queue [{}] with selector [{}]", waitQueueName, selector);
-                receiveSelected = jmsTemplate.receiveSelected(waitQueueName, selector);            
+                receiveSelected = (ObjectMessage) jmsTemplate.receiveSelected(waitQueueName, selector);
+                LOGGER.trace("#getConnectorMessageIdForBackend: received message [{}]", receiveSelected);
                 if (receiveSelected != null) {
-                    String connectorMessageId = receiveSelected.getStringProperty(CONNECTOR_MESSAGE_ID);
-                    waitingMessageIds.add(connectorMessageId);
-                }            
+                    DomibusConnectorBackendMessage msg = (DomibusConnectorBackendMessage) receiveSelected.getObject();
+                    LOGGER.trace("#getConnectorMessageIdForBackend: got message [{}] from queue [{}]", msg, waitQueueName);
+                    waitingMessages.add(msg.getDomibusConnectorMessage());
+                }
             } while (receiveSelected != null);
             
         } catch (JMSException jmsException) {
             LOGGER.error("A jms exception occured during reading messages from waiting queue [{}]", waitQueueName);
             throw new org.springframework.jms.UncategorizedJmsException(jmsException);
         }
-        LOGGER.trace("#getConnectorMessageIdForBackend: found follwing message ids [{}] on queue [{}]", waitingMessageIds, waitQueueName);
-        return waitingMessageIds;
+        LOGGER.trace("#getConnectorMessageIdForBackend: found follwing message ids [{}] on queue [{}]", waitingMessages, waitQueueName);
+        return waitingMessages;
     }
     
 }

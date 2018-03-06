@@ -15,9 +15,9 @@ public class DomibusConnectorBigDataReferenceGetSetBased extends DomibusConnecto
 
     byte[] bytes;
     
-    InputStream inputStream;
-    
-    OutputStream outputStream;
+    transient InputStream inputStream;
+
+    transient OutputStream outputStream;
     
     boolean readable;
     

@@ -1,13 +1,11 @@
 package eu.domibus.connector.controller.service.impl;
 
-import javax.annotation.Resource;
-
+import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -19,10 +17,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
-import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import org.slf4j.MDC;
 
 
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
@@ -69,12 +64,12 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 			throw new DomibusConnectorControllerException("Message cannot be processed as it contains neither message content, nor message confirmation!");
 		
 		String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
-		MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId);
-        
+
 		if(StringUtils.isEmpty(connectorMessageId))
 			throw new DomibusConnectorControllerException("domibus connector message ID not generated!");
 		
 		message.setConnectorMessageId(connectorMessageId);
+        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message);
 		
 		try {
 			messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);

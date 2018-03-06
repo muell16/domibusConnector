@@ -84,13 +84,14 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         return retrieveWaitingMessagesFromQueue;
     }
     
-    private DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) {        
+    DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) {
         DomibusConnectorMessagesType messagesType = new DomibusConnectorMessagesType();
         
-        List<String> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
-        messageIds.stream().map((msgId) -> messagePersistenceService.findMessageByConnectorMessageId(msgId)).forEach((message) -> {
-            messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
-        });
+        List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
+        messageIds.stream()
+                .forEach((message) -> {
+                    messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
+                });
                 
         return messagesType;
     }

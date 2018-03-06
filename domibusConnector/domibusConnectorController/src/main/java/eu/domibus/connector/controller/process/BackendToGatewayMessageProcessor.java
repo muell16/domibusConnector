@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
@@ -50,6 +51,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
+	private DomibusConnectorMessageIdGenerator messageIdGenerator;
+
     @Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
@@ -83,6 +86,11 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
     @Autowired
     public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
         this.backendDeliveryService = backendDeliveryService;
+    }
+
+    @Autowired
+    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
+        this.messageIdGenerator = messageIdGenerator;
     }
 
     @Override
@@ -182,7 +190,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-
+        returnMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
 		backendDeliveryService.deliverMessageToBackend(returnMessage);     
 
 		try {
@@ -215,6 +223,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		details.setAction(action);
 
 		DomibusConnectorMessage returnMessage = new DomibusConnectorMessage(details, confirmation);
+        returnMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
 
 		return returnMessage;
 	}

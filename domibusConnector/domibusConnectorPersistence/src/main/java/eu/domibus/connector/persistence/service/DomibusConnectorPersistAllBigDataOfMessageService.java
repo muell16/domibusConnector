@@ -3,6 +3,8 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
+import javax.annotation.Nonnull;
+
 /**
  * Takes a message and persists all big data of this message into
  * storage
@@ -22,7 +24,7 @@ public interface DomibusConnectorPersistAllBigDataOfMessageService {
      * @param message - the message
      * @return the message with storage references (ready to read)
      */
-    DomibusConnectorMessage loadAllBigFilesFromMessage(DomibusConnectorMessage message);
+    @Nonnull DomibusConnectorMessage loadAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message);
 
     /**
      * 
@@ -36,6 +38,6 @@ public interface DomibusConnectorPersistAllBigDataOfMessageService {
      * @return the message, with refreshed storage references (ready to read)
      * 
      */
-    DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message);
+    @Nonnull DomibusConnectorMessage persistAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message);
 
 }

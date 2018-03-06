@@ -57,6 +57,10 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
 
     @Override
     public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+        if (message.getConnectorMessageId() == null) {
+            throw new RuntimeException("cannot handle message without message id");
+        }
+
         LOGGER.debug("#deliverMessageToBackend: message [{}]", message);
         DomibusConnectorBackendMessage backendMessage = new DomibusConnectorBackendMessage();
         backendMessage.setDomibusConnectorMessage(message);

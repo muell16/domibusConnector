@@ -151,6 +151,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
+        if (message.getConnectorMessageId() == null) {
+            throw new IllegalArgumentException("connectorMessageId (getConnectorMessageId()) must be set!");
+        }
         LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
 

@@ -46,15 +46,13 @@ import static org.mockito.Matchers.eq;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class})
-@TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue"})
-@Ignore("TODO: repair test!")
+@TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue", "spring.activemq.packages.trustAll=true"})
 public class ToBackendClientJmsBasedWaitQueueITCase {
 
     @EnableJms
     @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class, LiquibaseAutoConfiguration.class})
     @Import(ToBackendClientJmsBasedWaitQueue.class)
     public final static class TestConfig {
-
 
 
     }
@@ -93,35 +91,45 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     
     @Test
     public void testGetConnectorMessageIdForBackend() throws InterruptedException {
-        DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
-        msg.getMessageDetails().setConnectorBackendClientName("bob");
-        msg.setConnectorMessageId("msg1");
-        
+
+
         DomibusConnectorBackendClientInfo backendClientBob = new DomibusConnectorBackendClientInfo();
         backendClientBob.setBackendName("bob"); //no push backend
 
-        DomibusConnectorBackendMessage backendMessage = new DomibusConnectorBackendMessage(msg, backendClientBob);
-        waitQueue.putMessageInWaitingQueue(backendMessage);
-        
-        msg.setConnectorMessageId("msg2");
-        DomibusConnectorBackendMessage backendMessage2 = new DomibusConnectorBackendMessage(msg, backendClientBob);
-        waitQueue.putMessageInWaitingQueue(backendMessage2);
-        
-        msg.setConnectorMessageId("msg3");
-        msg.setConnectorMessageId("alice");
-        DomibusConnectorBackendClientInfo backendClientAlice = new DomibusConnectorBackendClientInfo();
-        DomibusConnectorBackendMessage backendMessage3 = new DomibusConnectorBackendMessage(msg, backendClientAlice);
 
+        DomibusConnectorMessage msg1 = DomainEntityCreator.createMessage();
+        msg1.getMessageDetails().setConnectorBackendClientName("bob");
+        msg1.setConnectorMessageId("msg1");
+        DomibusConnectorBackendMessage backendMessage = new DomibusConnectorBackendMessage(msg1, backendClientBob);
+        waitQueue.putMessageInWaitingQueue(backendMessage);
+
+
+        DomibusConnectorMessage msg2 = DomainEntityCreator.createMessage();
+        msg2.getMessageDetails().setConnectorBackendClientName("bob");
+        msg2.setConnectorMessageId("msg2");
+        DomibusConnectorBackendMessage backendMessage2 = new DomibusConnectorBackendMessage(msg2, backendClientBob);
+        waitQueue.putMessageInWaitingQueue(backendMessage2);
+
+        DomibusConnectorMessage msg3 = DomainEntityCreator.createMessage();
+        msg3.setConnectorMessageId("msg3");
+        msg3.setConnectorMessageId("alice");
+        DomibusConnectorBackendClientInfo backendClientAlice = new DomibusConnectorBackendClientInfo();
         backendClientAlice.setBackendName("alice"); //no push backend
-        backendClientAlice.setBackendPushAddress("pushAddress");        
+        backendClientAlice.setBackendPushAddress("pushAddress");
+
+        DomibusConnectorBackendMessage backendMessage3 = new DomibusConnectorBackendMessage(msg1, backendClientAlice);
+
         waitQueue.putMessageInWaitingQueue(backendMessage3);
         
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         //there are 3 messages on queue (2 from backend bob, 1 from backend alice)
-        List<String> connectorMessageIdsForBackend = waitQueue.getConnectorMessageIdForBackend("bob");
-                
+        List<DomibusConnectorMessage> fetchedMessages = waitQueue.getConnectorMessageIdForBackend("bob");
+
 //        assertThat(connectorMessageIdsForBackend).hasSize(2);
-        assertThat(connectorMessageIdsForBackend).hasSameElementsAs(Arrays.asList(new String[] {"msg1", "msg2"}));
+//        assertThat(fetchedMessages).hasSameElementsAs(Arrays.asList(new DomibusConnectorMessage[] {msg1, msg2}));
+        assertThat(fetchedMessages).hasSize(2);
+
+
     }
 
     
@@ -144,43 +152,42 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
         assertThat(receiveSelected).isNotNull();
     }
 
-// push is not done by wait queue
-//    @Test
-//    public void testPushToBackend() throws InterruptedException {
-//        final List<String> messageIds = new ArrayList<>();
-//        Mockito.doAnswer((Answer<Void>) (InvocationOnMock invocation) -> {
-//            DomibusConnectorBackendMessage msg = invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class);
-//            String msgId = msg.getDomibusConnectorMessage().getConnectorMessageId();
-//            messageIds.add(msgId);
-//            return null;
-//        }).when(pushMessageToBackend).push(any(DomibusConnectorBackendMessage.class));
-//
-//
-//        DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
-//        msg.setConnectorBackendClientName("bob");
-//        msg.setConnectorMessageId("msg1");
-//
-//        DomibusConnectorBackendClientInfo backendClientBob = new DomibusConnectorBackendClientInfo();
-//        backendClientBob.setBackendName("bob"); //no push backend
-//
-//        waitQueue.putMessageInWaitingQueue(new DomibusConnectorBackendMessage(msg, backendClientBob));
-//
-//        DomibusConnectorBackendClientInfo backendClientAlice = new DomibusConnectorBackendClientInfo();
-//        backendClientAlice.setBackendName("alice"); //no push backend
-//        backendClientAlice.setBackendPushAddress("pushAddress");
-//
-//        msg.setConnectorMessageId("msg2");
-//        waitQueue.putMessageInWaitingQueue(new DomibusConnectorBackendMessage(msg, backendClientAlice));
-//
-//        msg.setConnectorMessageId("msg3");
-//        waitQueue.putMessageInWaitingQueue(new DomibusConnectorBackendMessage(msg, backendClientAlice));
-//
-//        Thread.sleep(2000);
-//
-//        //there are 3 messages send to queue 2 push message wich should be in the messageIds List now
-//        assertThat(messageIds).hasSameElementsAs(Arrays.asList(new String[] {"msg2", "msg3"}));
-//
-//    }
+    @Test
+    public void testPushToBackend() throws InterruptedException {
+        final List<String> messageIds = new ArrayList<>();
+        Mockito.doAnswer((Answer<Void>) (InvocationOnMock invocation) -> {
+            DomibusConnectorBackendMessage msg = invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class);
+            String msgId = msg.getDomibusConnectorMessage().getConnectorMessageId();
+            messageIds.add(msgId);
+            return null;
+        }).when(pushMessageToBackend).push(any(DomibusConnectorBackendMessage.class));
+
+
+        DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
+        msg.getMessageDetails().setConnectorBackendClientName("bob");
+        msg.setConnectorMessageId("msg1");
+
+        DomibusConnectorBackendClientInfo backendClientBob = new DomibusConnectorBackendClientInfo();
+        backendClientBob.setBackendName("bob"); //no push backend
+
+        waitQueue.putMessageInWaitingQueue(new DomibusConnectorBackendMessage(msg, backendClientBob));
+
+        DomibusConnectorBackendClientInfo backendClientAlice = new DomibusConnectorBackendClientInfo();
+        backendClientAlice.setBackendName("alice"); //no push backend
+        backendClientAlice.setBackendPushAddress("pushAddress");
+
+        msg.setConnectorMessageId("msg2");
+        waitQueue.putMessageInWaitingQueue(new DomibusConnectorBackendMessage(msg, backendClientAlice));
+
+        msg.setConnectorMessageId("msg3");
+        waitQueue.putMessageInWaitingQueue(new DomibusConnectorBackendMessage(msg, backendClientAlice));
+
+        Thread.sleep(2000);
+
+        //there are 3 messages send to queue 2 push message wich should be in the messageIds List now
+        assertThat(messageIds).hasSameElementsAs(Arrays.asList(new String[] {"msg2", "msg3"}));
+
+    }
 
 
 }

@@ -5,11 +5,16 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
+import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
 import org.slf4j.Logger;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
+import org.springframework.util.CollectionUtils;
+
+import static eu.domibus.connector.controller.helper.SetMessageOnLoggingContext.putConnectorMessageIdOnMDC;
 
 public abstract class AbstractControllerMessageListener {
 	
@@ -23,6 +28,7 @@ public abstract class AbstractControllerMessageListener {
 				TextMessage msg = (TextMessage) message;
 
 				String connectorMessageId = msg.getText();
+				SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(connectorMessageId);
 				getLogger().info("received messageID [{}] from queue [{}].", connectorMessageId, getQueueName());
 				DomibusConnectorMessage connectorMessage = null;
 				try {
@@ -45,10 +51,28 @@ public abstract class AbstractControllerMessageListener {
 		}
 	}
 	
-	abstract void startProcessing(DomibusConnectorMessage connectorMessage);
+	void startProcessing(DomibusConnectorMessage connectorMessage) {
+		try {
+			if (connectorMessage.getMessageContent() != null) {
+				// as there is a message content, it cannot only be a confirmation message
+				getMessageProcessor().processMessage(connectorMessage);
+			} else if (!CollectionUtils.isEmpty(connectorMessage.getMessageConfirmations())) {
+				// as there is no message content, but at least one message confirmation,
+				// it is a confirmation message
+				getConfirmationProcessor().processMessage(connectorMessage);
+			}
+		} catch (Exception e) {
+			getLogger().error("#startProcessing: Exception occured ", e);
+			//TODO: put message on error queue or reprocess?
+		}
+	}
 	
 	abstract Logger getLogger();
 	
 	abstract String getQueueName();
+
+	abstract DomibusConnectorMessageProcessor getMessageProcessor();
+
+	abstract DomibusConnectorMessageProcessor getConfirmationProcessor();
 
 }

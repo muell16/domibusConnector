@@ -12,7 +12,7 @@
         <Logger name="org.liquibase" level="trace"  >
             <AppenderRef ref="Console" />
         </Logger>    
-        <Logger name="eu.domibus.connector" level="debug" additivity="false">
+        <Logger name="eu.domibus.connector" level="trace" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>    
     </Loggers>

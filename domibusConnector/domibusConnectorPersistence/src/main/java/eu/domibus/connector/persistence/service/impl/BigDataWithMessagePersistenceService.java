@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 
+import javax.annotation.Nonnull;
+
 /**
  * Facade Service to make it easier to persist all big data of 
  * a message
@@ -65,7 +67,7 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
     }
     
     @Override
-    public DomibusConnectorMessage loadAllBigFilesFromMessage(DomibusConnectorMessage message) {
+    public DomibusConnectorMessage loadAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message) {
         LOGGER.trace("loadAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
             DomibusConnectorBigDataReference activeRead = attachment.getAttachment();

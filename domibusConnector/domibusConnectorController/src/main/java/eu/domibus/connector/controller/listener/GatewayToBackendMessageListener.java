@@ -35,18 +35,6 @@ public class GatewayToBackendMessageListener extends AbstractControllerMessageLi
 	}
 
 	@Override
-	void startProcessing(DomibusConnectorMessage connectorMessage) {
-		if(connectorMessage.getMessageContent()!=null) {
-			// as there is a message content, it cannot only be a confirmation message
-			messageProcessor.processMessage(connectorMessage);
-		}else if(!CollectionUtils.isEmpty(connectorMessage.getMessageConfirmations())) {
-			// as there is no message content, but at least one message confirmation,
-			// it is a confirmation message
-			confirmationProcessor.processMessage(connectorMessage);
-		}
-	}
-
-	@Override
 	Logger getLogger() {
 		return logger;
 	}
@@ -54,6 +42,16 @@ public class GatewayToBackendMessageListener extends AbstractControllerMessageLi
 	@Override
 	String getQueueName() {
 		return queueName;
+	}
+
+	@Override
+	DomibusConnectorMessageProcessor getMessageProcessor() {
+		return messageProcessor;
+	}
+
+	@Override
+	DomibusConnectorMessageProcessor getConfirmationProcessor() {
+		return confirmationProcessor;
 	}
 
 }
