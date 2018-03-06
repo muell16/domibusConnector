@@ -32,8 +32,15 @@ public class TestGW {
                 .web(true)
                 .properties(properties)
                 .build();
-
         return springApp.run();
+    }
+
+    public static ConfigurableApplicationContext startContextWithArgs(String[] args) {
+        SpringApplicationBuilder builder = new SpringApplicationBuilder();
+        SpringApplication springApp = builder.sources(TestGW.class)
+                .web(true)
+                .build();
+        return springApp.run(args);
     }
 
     public static List<DomibusConnectorMessageType> getToGwSubmittedMessages(ConfigurableApplicationContext context) {

@@ -5,6 +5,8 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 /**
+ * should be implemented by the GatewayLink module
+ * to deliver messages from controller to the gateway
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
