@@ -137,7 +137,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         Principal userPrincipal = webServiceContext.getUserPrincipal();
         String backendName = userPrincipal == null ? null : userPrincipal.getName();
         if (userPrincipal == null || backendName == null) {
-            String error = String.format("checkBackendClient: Cannot requestMessages because userPrincipal is [%s] the userName is [%s]. Cannot identify backend!", userPrincipal, backendName);
+            String error = String.format("checkBackendClient: Cannot handle request because userPrincipal is [%s] the userName is [%s]. Cannot identify backend!", userPrincipal, backendName);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new RuntimeException(error);            
         }

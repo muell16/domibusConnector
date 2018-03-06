@@ -82,14 +82,12 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         if (testPingConnectorMessage.equals(message.getMessageDetails().getService().getService())) {
             LOGGER.debug("#submitToController: message is " + testPingConnectorMessage + " so just sending message back to backend!");
             toBackendDeliveryService.deliverMessageToBackend(message);
-
             //also generate evidences?
+
         } else {
             LOGGER.debug("#submitToController: 'normal' message.....");
             backendToControllerSubmissionService.submitToController(message);
         }
-
-        //TODO: put message on internal queue for further processing
     }
 
 }

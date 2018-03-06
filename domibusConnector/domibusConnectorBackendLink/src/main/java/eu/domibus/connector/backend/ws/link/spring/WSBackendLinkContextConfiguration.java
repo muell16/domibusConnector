@@ -25,32 +25,8 @@ import org.springframework.messaging.MessagingException;
 @ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
 @EnableJms
 @PropertySource("classpath:/eu/domibus/connector/backend/config/backend-default-config.properties")
+@Profile("backendlink-ws")
 public class WSBackendLinkContextConfiguration {
-
-//    @Bean
-//    public MessageToBackendClientWaitQueue toBackendClientJmsBasedWaitQueue() {
-//        ToBackendClientJmsBasedWaitQueue toBackendClientJmsBasedWaitQueue = new ToBackendClientJmsBasedWaitQueue();
-//        return toBackendClientJmsBasedWaitQueue;
-//    }
-//
-//
-//    @Autowired
-//    BackendClientInfoPersistenceService backendClientInfoPersistenceService;
-//
-//    @Autowired(required = false)
-//    PushMessageToBackendClient pushBackend;
-//
-//    /*
-//     * creates a integrationFlow gateway which implements DomibusConnectorBackendDeliveryService
-//     * so controller can deliverMessages to backend into the flow
-//     */
-//    @Bean
-//    public GatewayProxyFactoryBean receiveMessageFromController() {
-//        GatewayProxyFactoryBean gatewayProxyFactoryBean = new GatewayProxyFactoryBean();
-//        gatewayProxyFactoryBean.setServiceInterface(DomibusConnectorBackendDeliveryService.class);
-//        gatewayProxyFactoryBean.setDefaultRequestChannelName("backend.fromconnector");
-//        return gatewayProxyFactoryBean;
-//    }
 
 
 }

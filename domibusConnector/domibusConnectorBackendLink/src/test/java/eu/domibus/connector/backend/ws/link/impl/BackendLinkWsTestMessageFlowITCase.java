@@ -81,7 +81,7 @@ public class BackendLinkWsTestMessageFlowITCase {
     private static void setUpBackend() {
         MDC.put("COLOR", "GREEN");
         String dbName = UUID.randomUUID().toString().substring(0,10);
-        String[] backendProfiles = new String[] {"test", "db_h2"};
+        String[] backendProfiles = new String[] {"test", "db_h2", "backendlink-ws"};
         String[] backendProperties = new String[] {"server.port=0",
                 "logging.config=classpath:log4j2-test.xml",
                 "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",

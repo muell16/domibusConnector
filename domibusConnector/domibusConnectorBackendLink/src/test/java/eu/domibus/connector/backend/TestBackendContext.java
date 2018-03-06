@@ -44,6 +44,7 @@ public class TestBackendContext {
 
     
     @Bean
+    @ConditionalOnMissingBean
     public DomibusConnectorBackendSubmissionService dummySubmissionService() {
         final List<DomibusConnectorMessage>  submittedMessages = createList(); 
         DomibusConnectorBackendSubmissionService submissionService = new DomibusConnectorBackendSubmissionService() {
