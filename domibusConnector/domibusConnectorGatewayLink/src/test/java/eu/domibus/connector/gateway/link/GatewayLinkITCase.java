@@ -37,7 +37,7 @@ public class GatewayLinkITCase {
         //start gw link
         GW_LINK_APPLICATION_CONTEXT =
                 StartupGwLinkOnly.startGwContext(
-                        new String[]{"gw-ws-link"},
+                        new String[]{"gwlink-ws"},
                         new String[]{
                                 "server.port=" + portGWLink,
                                 "gateway.submission.endpoint.address=" + TEST_GW_SERVER_ADDRESS
