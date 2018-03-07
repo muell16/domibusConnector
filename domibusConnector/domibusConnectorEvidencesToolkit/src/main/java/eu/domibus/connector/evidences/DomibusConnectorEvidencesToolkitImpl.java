@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,12 @@ import org.apache.commons.lang3.ArrayUtils;
 @Component("domibusConnectorEvidencesToolkit")
 public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvidencesToolkit {
 
-	@Resource(name="domibusConnectorEvidenceBuilder")
+	//@Resource(name="domibusConnectorEvidenceBuilder")
+    @Autowired
     private EvidenceBuilder evidenceBuilder;
 	
-	@Resource(name="hashValueBuilder")
+	//@Resource(name="hashValueBuilder")
+    @Autowired
     private HashValueBuilder hashValueBuilder;
 	
 	@Value("${gateway.name}")

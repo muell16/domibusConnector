@@ -7,61 +7,26 @@ import org.junit.Test;
 
 import eu.domibus.connector.evidences.HashValueBuilder;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class HashValueBuilderTest {
 
-    @Test
-    public void testBuildHashValueMD5() {
-        try {
-            HashValueBuilder builder = new HashValueBuilder("MD5");
-            Assert.assertEquals("MD5", builder.getAlgorithm().toString());
 
-            String initialValue = "This is a JUnit Test to test the HashValueBuilder";
-
-            String hash = builder.buildHashValueAsString(initialValue.getBytes());
-
-            String expectedHash = "71bb69d05ca4f082e6d7ab99212f0713";
-
-            Assert.assertEquals(expectedHash, hash);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void testBuildHashValueSHA1() {
-        try {
-            HashValueBuilder builder = new HashValueBuilder("SHA-1");
-            Assert.assertEquals("SHA-1", builder.getAlgorithm().toString());
-
-            String initialValue = "This is a JUnit Test to test the HashValueBuilder";
-
-            String hash = builder.buildHashValueAsString(initialValue.getBytes());
-
-            String expectedHash = "2ce13638c8e2b792a9f381f8d5bd409dd158057f";
-
-            Assert.assertEquals(expectedHash, hash);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testWrongAlgorithm() {
-        try {
-            new HashValueBuilder("SHI-1");
-            Assert.fail();
-        } catch (NoSuchAlgorithmException e) {
-        }
+        new HashValueBuilder("SHI-1");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNoAlgorithm() {
+        new HashValueBuilder("");
     }
 
     @Test
-    public void testNoAlgorithm() {
-        try {
-            new HashValueBuilder("");
-            Assert.fail();
-        } catch (NoSuchAlgorithmException e) {
+    public void testAllAlgorithmsFromEnum()  {
+        for (HashValueBuilder.HashAlgorithm algorithm : HashValueBuilder.HashAlgorithm.values()) {
+            new HashValueBuilder(algorithm);
         }
     }
+
 }
