@@ -2,8 +2,11 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
@@ -19,22 +22,37 @@ import eu.domibus.connector.persistence.service.PersistenceException;
 public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMessageProcessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GatewayToBackendConfirmationProcessor.class);
-	
-	@Resource
-	private DomibusConnectorPersistenceService persistenceService;
-	
-	@Resource
+
+    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+
+    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
-	@Override
+	@Autowired
+    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
+
+    @Autowired
+    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+        this.evidencePersistenceService = evidencePersistenceService;
+    }
+
+    @Autowired
+    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
+        this.backendDeliveryService = backendDeliveryService;
+    }
+
+    @Override
 	public void processMessage(DomibusConnectorMessage message) {
 		String refToMessageID = message.getMessageDetails().getRefToMessageId();
 
-        DomibusConnectorMessage originalMessage = persistenceService.findMessageByEbmsId(refToMessageID);    
+        DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToMessageID);
         DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {
-            persistenceService.rejectMessage(originalMessage);
+            messagePersistenceService.rejectMessage(originalMessage);
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
                     .setText("Received evidence of type " + confirmation.getEvidenceType().toString() + 
@@ -46,8 +64,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         originalMessage.addConfirmation(confirmation);
 
-        persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
-                confirmation.getEvidenceType());
+        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation);
 
         backendDeliveryService.deliverMessageToBackend(message);
 
@@ -58,11 +75,11 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 //        	logger.error("Persistence Exception occured", persistenceException);
 //        }
 
-        boolean confirmedOrRejected = persistenceService.checkMessageConfirmedOrRejected(originalMessage);
+        boolean confirmedOrRejected = messagePersistenceService.checkMessageConfirmedOrRejected(originalMessage);
         if (!confirmedOrRejected) {
         	if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE)
                     || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.DELIVERY)) {
-        		persistenceService.confirmMessage(originalMessage);
+                messagePersistenceService.confirmMessage(originalMessage);
         	}
         }
 
@@ -72,7 +89,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 	}
 	
 	private boolean isMessageAlreadyRejected(DomibusConnectorMessage message) {
-      if (persistenceService.checkMessageRejected(message)) {
+      if (messagePersistenceService.checkMessageRejected(message)) {
           return true;
       }
       if (message.getMessageConfirmations() != null) {
@@ -80,7 +97,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
               if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION)
                       || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_DELIVERY)
                       || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_RETRIEVAL)) {
-              	persistenceService.rejectMessage(message);
+                  messagePersistenceService.rejectMessage(message);
                   return true;
               }
           }

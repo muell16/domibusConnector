@@ -173,6 +173,10 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         public void close() throws IOException {
             writeOutputStreamToDatabase(this);
         }
+
+        public String toString() {
+            return String.format("DbBackedOutputStream with bytes [%d] and with storageRef: [%s]", this.toByteArray().length, this.storageReference);
+        }
     }
 
     private static class JpaBasedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {

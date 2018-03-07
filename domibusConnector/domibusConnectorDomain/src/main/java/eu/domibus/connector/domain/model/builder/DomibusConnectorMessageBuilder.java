@@ -27,7 +27,9 @@ public class DomibusConnectorMessageBuilder {
     public static DomibusConnectorMessageBuilder createBuilder() {
         return new DomibusConnectorMessageBuilder();
     }
-    
+
+    private DomibusConnectorMessageBuilder() {}
+
     /**
      * The internal message processing id
      *  is required!

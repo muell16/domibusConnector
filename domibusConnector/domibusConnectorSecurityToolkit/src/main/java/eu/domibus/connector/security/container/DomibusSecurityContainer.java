@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.container;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Security;
@@ -340,6 +341,12 @@ public class DomibusSecurityContainer implements InitializingBean {
 //            InputStream tokenStream = new ByteArrayInputStream(tokenXMLAttachment.getAttachment());
 
             try {
+                if (LOGGER.isTraceEnabled()) {
+                    asicInputStream = logTraceStream(asicInputStream, "asicInputStream", false);
+                    tokenStream = logTraceStream(tokenStream, "tokenStream", true);
+                }
+
+
                 ECodexContainer container = containerService.receive(asicInputStream, tokenStream);
 
                 // KlarA: Added check of the container and the respective
@@ -485,6 +492,22 @@ public class DomibusSecurityContainer implements InitializingBean {
             }
         }
     }
+
+    private InputStream logTraceStream(InputStream inputStream, String name, boolean logStreamContent) {
+        LOGGER.debug("#logTraceStream [{}]: into byte[]", name);
+        try {
+            byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
+            LOGGER.debug("#logTraceStream [{}]: read [{}] bytes", name, byteArray.length);
+            if (logStreamContent) {
+                LOGGER.debug("#logTraceStream [{}]: content: [{}]", name, new String(byteArray));
+            }
+            return new ByteArrayInputStream(byteArray);
+        } catch (IOException ioe) {
+            LOGGER.debug("#logTraceStream [{}]: Error while reading from stream!", name);
+            throw new RuntimeException(ioe);
+        }
+    }
+
 
     private DomibusConnectorMessageAttachment convertDocumentToMessageAttachment(DomibusConnectorMessage message, DSSDocument document, String identifier) //, String name, String mimeType)
             throws IOException {

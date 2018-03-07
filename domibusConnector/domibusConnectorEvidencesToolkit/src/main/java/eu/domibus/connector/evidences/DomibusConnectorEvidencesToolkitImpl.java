@@ -4,6 +4,8 @@ import javax.annotation.Resource;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,11 +26,11 @@ import org.apache.commons.lang3.ArrayUtils;
 @Component("domibusConnectorEvidencesToolkit")
 public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvidencesToolkit {
 
-	//@Resource(name="domibusConnectorEvidenceBuilder")
+    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitImpl.class);
+
     @Autowired
     private EvidenceBuilder evidenceBuilder;
-	
-	//@Resource(name="hashValueBuilder")
+
     @Autowired
     private HashValueBuilder hashValueBuilder;
 	
@@ -395,6 +397,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     private ECodexMessageDetails buildMessageDetails(String nationalMessageId, String senderAddress,
             String recipientAddress, String hash) throws DomibusConnectorEvidencesToolkitException {
         ECodexMessageDetails messageDetails = new ECodexMessageDetails();
+        LOGGER.debug("#buildMessageDetails with nationalMessageId [{}], senderAddress [{}], recipientAddress [{}], hash [{}]",
+                nationalMessageId, senderAddress, recipientAddress, hash);
 
         messageDetails.setHashAlgorithm(hashValueBuilder.getAlgorithm().toString());
         if (hash != null)

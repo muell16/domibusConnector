@@ -2,6 +2,11 @@ package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
+import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +28,16 @@ import eu.domibus.connector.persistence.service.PersistenceException;
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
 public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnectorGatewayDeliveryService {
 
-	private static final Logger logger = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
 
 	private PutMessageOnQueue putMessageOnQueue;
-
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
-
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService;
-
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private DomibusConnectorEvidencesToolkit evidencesToolkit;
+    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 
-	//setter
+    //setter
     @Autowired
     @Qualifier(PutMessageOnQueue.GATEWAY_TO_CONTROLLER_QUEUE)
     public void setPutMessageOnQueue(PutMessageOnQueue putMessageOnQueue) {
@@ -55,6 +59,16 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
         this.messageIdGenerator = messageIdGenerator;
     }
 
+    @Autowired
+	public void setEvidencesToolki(DomibusConnectorEvidencesToolkit evidencesToolki) {
+    	this.evidencesToolkit = evidencesToolki;
+	}
+
+	@Autowired
+    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+        this.evidencePersistenceService = evidencePersistenceService;
+    }
+
     @Override
 	public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
 		
@@ -72,20 +86,22 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message);
 		
 		try {
-			messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+            message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
 		}catch(PersistenceException e) {
 			throw new DomibusConnectorControllerException("Message could not be persisted!", e);
 		}
 		
         try {
-            bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(message);
+            message = bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(message);
+            message = messagePersistenceService.mergeMessageWithDatabase(message);
         } catch (PersistenceException e) {
             throw new DomibusConnectorControllerException("Big data of message could not be persisted!", e);
         }
-		putMessageOnQueue.putMessageOnMessageQueue(message);
 
+        putMessageOnQueue.putMessageOnMessageQueue(message);
 	}
-	
+
+
 	private boolean checkMessageForProcessability(DomibusConnectorMessage message) {
 		
 		if(message == null)

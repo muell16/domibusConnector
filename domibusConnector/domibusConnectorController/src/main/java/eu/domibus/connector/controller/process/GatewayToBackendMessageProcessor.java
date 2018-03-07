@@ -2,9 +2,11 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.persistence.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +24,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
@@ -37,25 +37,64 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	
 	@Value("${domibus.connector.to.connector.test.action:null}")
 	private String connectorTestAction;
-	
-	@Resource
-	private DomibusConnectorPersistenceService persistenceService;
-	
-	@Resource
+
+	private DomibusConnectorMessagePersistenceService messagePersistenceService;
+	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	
-	@Resource
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
-	
-	@Resource
 	private DomibusConnectorEvidencesToolkit evidencesToolkit;
-	
-	@Resource
 	private DomibusConnectorSecurityToolkit securityToolkit;
-	
-	@Resource
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
-	
+	private DomibusConnectorActionPersistenceService actionPersistenceService;
+
+	public void setConnectorTestService(String connectorTestService) {
+		this.connectorTestService = connectorTestService;
+	}
+
+	public void setConnectorTestAction(String connectorTestAction) {
+		this.connectorTestAction = connectorTestAction;
+	}
+
+	@Autowired
+	public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+		this.messagePersistenceService = messagePersistenceService;
+	}
+
+	@Autowired
+	public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+		this.evidencePersistenceService = evidencePersistenceService;
+	}
+
+	@Autowired
+	public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
+		this.gwSubmissionService = gwSubmissionService;
+	}
+
+	@Autowired
+	public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
+		this.messageIdGenerator = messageIdGenerator;
+	}
+
+	@Autowired
+	public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
+		this.evidencesToolkit = evidencesToolkit;
+	}
+
+	@Autowired
+	public void setSecurityToolkit(DomibusConnectorSecurityToolkit securityToolkit) {
+		this.securityToolkit = securityToolkit;
+	}
+
+	@Autowired
+	public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
+		this.backendDeliveryService = backendDeliveryService;
+	}
+
+	@Autowired
+	public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
+		this.actionPersistenceService = actionPersistenceService;
+	}
+
 	@Override
 	public void processMessage(DomibusConnectorMessage message) {
 		
@@ -73,9 +112,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		if(isConnector2ConnectorTest(message)){
 			// if it is a connector to connector test message defined by service and action, do NOT deliver message to the backend, but 
 			// only send a DELIVERY evidence back.
-			LOGGER.info("Message with id {} is a connector to connector test message. \nIt will NOT be delivered to the backend!", message.getConnectorMessageId());
+			LOGGER.info("Message [{}] is a connector to connector test message. \nIt will NOT be delivered to the backend!", message);
 			createDeliveryEvidenceAndSendIt(message);
-			LOGGER.info("Connector to Connector Test message {} is confirmed!", message.getConnectorMessageId());
+			LOGGER.info("Connector to Connector Test message [{}] is confirmed!", message);
 		}else{
 			backendDeliveryService.deliverMessageToBackend(message);
 		}
@@ -96,7 +135,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 		DomibusConnectorMessageConfirmation delivery = null;
 		try {
-			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY,originalMessage, null, null);
+			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY, originalMessage, null, null);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
@@ -106,11 +145,11 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
                     .build();
 		}
 
-		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, delivery);
 
-		persistenceService.confirmMessage(originalMessage);
+		messagePersistenceService.confirmMessage(originalMessage);
 	}
 	
 	private void createNonDeliveryEvidenceAndSendIt(DomibusConnectorMessage originalMessage)
@@ -128,11 +167,11 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
                     .build();
 		}
 
-		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
 
-		persistenceService.rejectMessage(originalMessage);
+		messagePersistenceService.rejectMessage(originalMessage);
 	}
 	
 	private void createRelayREMMDEvidenceAndSendIt(DomibusConnectorMessage originalMessage, boolean isAcceptance)
@@ -150,12 +189,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
                     .build();
 		}
 
-		DomibusConnectorAction action = persistenceService.getRelayREMMDAcceptanceRejectionAction();
+		DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
 
 		sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
 		if (!isAcceptance) {
-			persistenceService.rejectMessage(originalMessage);
+			messagePersistenceService.rejectMessage(originalMessage);
 		}
 	}
 	
@@ -164,8 +203,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	DomibusConnectorMessageException {
 
 		originalMessage.addConfirmation(messageConfirmation);
-		persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation.getEvidence(),
-				messageConfirmation.getEvidenceType());
+		evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
 		
 		
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
@@ -191,7 +229,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 
         try {
-            persistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation.getEvidenceType());
+            evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation);
         } catch (PersistenceException ex) {
             LOGGER.error("Evidence could not persisted", ex);
             //TODO: further exception handling!
