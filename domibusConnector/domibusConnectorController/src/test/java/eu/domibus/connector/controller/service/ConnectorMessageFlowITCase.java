@@ -7,6 +7,9 @@ import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissi
 import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import java.io.File;
+
+import static eu.domibus.connector.controller.service.ConnectorMessageFlowITCase.TestConfiguration.TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME;
+import static eu.domibus.connector.controller.service.ConnectorMessageFlowITCase.TestConfiguration.TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +19,13 @@ import org.apache.log4j.lf5.util.StreamUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.format.datetime.DateFormatter;
@@ -26,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.domibus.connector.controller.service.IncomingMessageServiceITCase.TestConfiguration;
+import eu.domibus.connector.controller.service.ConnectorMessageFlowITCase.TestConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
@@ -40,69 +47,113 @@ import java.io.ByteArrayInputStream;
 import org.springframework.test.context.jdbc.Sql;
 
 /**
+ *  Tests the message flow in the connector
+ *      with persistence
+ *      with security lib
+ *      with evidence lib
+ *
+ *  WITHOUT
+ *      backendlink
+ *      gatewaylink
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={TestConfiguration.class})
+@ContextConfiguration(classes={ConnectorMessageFlowITCase.TestConfiguration.class})
 @TestPropertySource("classpath:application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
-public class IncomingMessageServiceITCase {
+public class ConnectorMessageFlowITCase {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
 
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private File testResultsFolder;
     private String testDateAsString;
+
+
     
-    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector"})
-    static class TestConfiguration {
+
+    @SpringBootApplication(scanBasePackages = {
+            "eu.domibus.connector.controller",
+            "eu.domibus.connector.persistence", //load persistence
+            "eu.domibus.connector.evidences",   //load evidences toolkit
+            "eu.domibus.connector.security"     //load security toolkit
+    })
+    //@EnableConfigurationProperties
+    protected static class TestConfiguration {
+
+        public static final String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
+        public static final String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
 
         @Bean
         public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
         }
 
-        @Bean("tobackenddeliveredmessages")
-        public List<DomibusConnectorMessage> createDeliveryList() {
+        @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public List<DomibusConnectorMessage> toBackendDeliveredMessages() {
+            return Collections.synchronizedList(new ArrayList<>());
+        }
+
+        @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public List<DomibusConnectorMessage> toGatewayDeliveredMessages() {
             return Collections.synchronizedList(new ArrayList<>());
         }
 
         @Bean
         public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
             return new DomibusConnectorBackendDeliveryService() {
-
                 @Override
                 public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
-                    createDeliveryList().add(message);
+                    LOGGER.info("Delivered Message [{}] to Backend");
+                    toBackendDeliveredMessages().add(message);
+                }
+            };
+        }
+
+        @Bean
+        public DomibusConnectorGatewaySubmissionService sendMessageToGwService() {
+            return new DomibusConnectorGatewaySubmissionService() {
+                @Override
+                public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
+                    LOGGER.info("Delivered Message [{}] to Gateway");
+                    toGatewayDeliveredMessages().add(message);
                 }
             };
         }
     }
+
+    @Autowired
+    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    List<DomibusConnectorMessage> toGwDeliveredMessages;
+
+    @Autowired
+    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    List<DomibusConnectorMessage> toBackendDeliveredMessages;
     
     @Autowired
     DomibusConnectorGatewayDeliveryService rcvMessageFromGwService;
-    
-    @MockBean
-    DomibusConnectorGatewaySubmissionService sendMessageToGwService;
-    
-    @MockBean
+
+    @Autowired
     DomibusConnectorBackendSubmissionService sendMessageToBackendService;
-    
-//    @MockBean
-//    DomibusConnectorPersistenceService persistenceService;
-//    
-//    @Autowired
-//    DomibusConnectorIncomingController domibusConnectorController;
+
     
     @Before
     public void setUp() {
         String dir = System.getenv().getOrDefault(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
-        dir = dir + "/" + IncomingMessageServiceITCase.class.getSimpleName();
+        dir = dir + "/" + ConnectorMessageFlowITCase.class.getSimpleName();
         testResultsFolder = new File(dir);
         testResultsFolder.mkdirs();
 
         DateFormatter simpleDateFormatter = new DateFormatter();
         simpleDateFormatter.setPattern("yyyy-MM-dd-hh-mm");
         testDateAsString = simpleDateFormatter.print(new Date(), Locale.ENGLISH);
+
+        //clear delivery lists
+        toGwDeliveredMessages.clear();
+        toBackendDeliveredMessages.clear();
     }
     
     
@@ -113,8 +164,9 @@ public class IncomingMessageServiceITCase {
         assertThat(loadMessageFrom).isNotNull();
         
         rcvMessageFromGwService.deliverMessageFromGateway(loadMessageFrom);
-        
-        
+
+
+        assertThat(toBackendDeliveredMessages).hasSize(1);
         //TODO: check database!
         //TODO: check jms queue!
         
