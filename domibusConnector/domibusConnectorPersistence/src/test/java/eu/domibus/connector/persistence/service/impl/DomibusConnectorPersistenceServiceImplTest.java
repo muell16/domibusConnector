@@ -573,8 +573,8 @@ public class DomibusConnectorPersistenceServiceImplTest {
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(PDomibusConnectorEvidence.class));
     }
 
-    @Test
-    public void testPersistEvidenceForMessageIntoDatabase_evidenceBytesAreNull() {
+    @Test(expected = IllegalArgumentException.class)
+    public void testPersistEvidenceForMessageIntoDatabase_evidenceBytesAreNull_shouldThrowException() {
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(47L);
 

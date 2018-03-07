@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
+import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.SignatureParameters;
@@ -36,7 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.logging.Level;
+
 import org.apache.commons.io.IOUtils;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
@@ -45,9 +46,9 @@ import org.junit.Test;
 import static org.mockito.Matchers.any;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.util.StreamUtils;
 
@@ -127,11 +128,17 @@ public class DomibusSecurityContainerTest {
     @Before
     public void setUp() throws Exception {
         securityContainer = new DomibusSecurityContainer();
-        securityContainer.javaKeyStorePath = "file:src/test/resources/keys/connector-keystore.jks";
-        securityContainer.javaKeyStorePassword = "connector";
-        securityContainer.keyAlias = "domibusConnector";
-        securityContainer.keyPassword = "connector";
+
+        SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties = new SecurityToolkitConfigurationProperties();
+
+        securityContainer.securityToolkitConfigurationProperties = securityToolkitConfigurationProperties;
+        securityToolkitConfigurationProperties.getKeyStore().setPath(new ClassPathResource("keys/connector-keystore.jks"));
+        securityToolkitConfigurationProperties.getKeyStore().setPassword("connector");
+        securityToolkitConfigurationProperties.getKey().setAlias("domibusconnector");
+        securityToolkitConfigurationProperties.getKey().setPassword("connector");
+
         securityContainer.country = "AT";
+
         securityContainer.serviceProvider = "BRZ";
         securityContainer.advancedElectronicSystem = AdvancedSystemType.SIGNATURE_BASED;
         
@@ -168,7 +175,7 @@ public class DomibusSecurityContainerTest {
      */
     @Test
     public void testAfterPropertiesSet() throws Exception {
-        LOGGER.info("testCreateSignatureParameters: javaKeyStorePath is [{}]", securityContainer.javaKeyStorePath);
+//        LOGGER.info("testCreateSignatureParameters: javaKeyStorePath is [{}]", securityContainer.javaKeyStorePath);
         securityContainer.afterPropertiesSet();        
     }
     
@@ -182,7 +189,8 @@ public class DomibusSecurityContainerTest {
     @Test(expected=IOException.class)
     public void testAfterPropertiesSet_withWrongKeyPassword_shouldThrowException() throws Exception {
         LOGGER.info("testAfterPropertiesSet_withWrongKeyPassword");
-        securityContainer.javaKeyStorePassword = "wrong!";
+//        securityContainer.javaKeyStorePassword = "wrong!";
+        securityContainer.securityToolkitConfigurationProperties.getKeyStore().setPassword("wrong!");
         securityContainer.afterPropertiesSet();
     }
     
@@ -194,7 +202,8 @@ public class DomibusSecurityContainerTest {
     @Test(expected=IOException.class)
     public void testAfterPropertiesSet_withWrongKeyStorePath_shouldThrowException() throws Exception {
         LOGGER.info("testAfterPropertiesSet_withWrongKeyStorePath_shouldThrowException");
-        securityContainer.javaKeyStorePath = "wrong!";
+        //securityContainer.javaKeyStorePath = "wrong!";
+        securityContainer.securityToolkitConfigurationProperties.getKeyStore().setPath(new ClassPathResource(""));
         securityContainer.afterPropertiesSet();
     }
     
@@ -205,7 +214,7 @@ public class DomibusSecurityContainerTest {
      */
     @Test
     public void testCreateSignatureParameters() throws Exception {
-        LOGGER.info("testCreateSignatureParameters: javaKeyStorePath is [{}]", securityContainer.javaKeyStorePath);
+        LOGGER.info("testCreateSignatureParameters: javaKeyStorePath is [{}]", securityContainer.securityToolkitConfigurationProperties.getKeyStore().getPath());
         SignatureParameters createSignatureParameters = securityContainer.createSignatureParameters();        
         assertThat(createSignatureParameters).isNotNull();        
     }

@@ -1,6 +1,5 @@
 package eu.domibus.connector.security.container;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Security;
@@ -8,8 +7,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -87,14 +86,9 @@ public class DomibusSecurityContainer implements InitializingBean {
     
     TokenIssuer tokenIssuer;
 
-    @Value("${connector.security.keystore.path:#{null}}")
-    String javaKeyStorePath;
-    @Value("${connector.security.keystore.password:#{null}}")
-    String javaKeyStorePassword;
-    @Value("${connector.security.key.alias:#{null}}")
-    String keyAlias;
-    @Value("${connector.security.key.password:#{null}}")
-    String keyPassword;
+    //contains key store configuration
+    @Autowired
+    SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
     
     @Value("${token.issuer.country:#{null}}")
     String country;
@@ -140,16 +134,23 @@ public class DomibusSecurityContainer implements InitializingBean {
         // and realized by Arhs.
 
         CertificateStoreInfo certStore = new CertificateStoreInfo();
-        certStore.setLocation(javaKeyStorePath);
-        certStore.setPassword(javaKeyStorePassword);
+
+        String storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString();
+        LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString());
+        certStore.setLocation(storeLocation);
+        certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
 
         EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
         DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
-        
+
+        String keyAlias = securityToolkitConfigurationProperties.getKey().getAlias();
+        String keyPassword = securityToolkitConfigurationProperties.getKey().getPassword();
+
+        LOGGER.info("SignatureParameters are certStore [{}], keyAlias [{}], encryptionAlgorithm [{}], digestAlgorithm [{}]",
+                certStore.getLocation(), keyAlias, encryptionAlgorithm, digestAlgorithm);
         final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore, keyAlias,
                 keyPassword, encryptionAlgorithm, digestAlgorithm);
-        LOGGER.info("SignatureParameters are certStore [{}], keyAlias [{}], encryptionAlgorithm [{}], digestAlgorithm [{}]",
-                certStore.getLocation(), keyAlias, encryptionAlgorithm, digestAlgorithm);        
+
         
         
         return mySignatureParameters;
