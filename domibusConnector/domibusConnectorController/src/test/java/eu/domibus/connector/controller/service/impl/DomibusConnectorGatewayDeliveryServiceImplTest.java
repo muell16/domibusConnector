@@ -56,6 +56,10 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
         Mockito.when(bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
                 .then((invoc) -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
 
+
+        Mockito.when(messagePersistenceService.mergeMessageWithDatabase(any(DomibusConnectorMessage.class)))
+                .then((invoc) -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+
         Mockito.doAnswer((invoc) -> putOnQueue.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
                 .when(putMessageOnQueue).putMessageOnMessageQueue(any(DomibusConnectorMessage.class));
 
