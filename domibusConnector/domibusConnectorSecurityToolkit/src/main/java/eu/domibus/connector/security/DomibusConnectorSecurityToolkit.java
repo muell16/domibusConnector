@@ -12,8 +12,8 @@ import eu.domibus.connector.security.exception.DomibusConnectorSecurityException
  */
 public interface DomibusConnectorSecurityToolkit {
 
-    void validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException;
+    DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException;
 
-    void buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException;
+    DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException;
 
 }

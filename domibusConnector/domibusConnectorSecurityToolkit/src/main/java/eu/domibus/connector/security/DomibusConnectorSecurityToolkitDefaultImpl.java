@@ -28,14 +28,16 @@ public class DomibusConnectorSecurityToolkitDefaultImpl implements DomibusConnec
     }
 
     @Override
-    public void buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
+    public DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
     	securityContainer.getContainerService().setTechnicalValidationService(technicalValidationServiceFactory.technicalValidationService(message));
-    	securityContainer.createContainer(message);
+        message = securityContainer.createContainer(message);
+    	return message;
     }
 
     @Override
-    public void validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
+    public DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
         securityContainer.recieveContainerContents(message);
+        return message;
     }
 
 }

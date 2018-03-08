@@ -2,6 +2,7 @@ package eu.domibus.connector.security.validation;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,8 @@ public class DomibusConnectorTechnicalValidationServiceFactory {
 	@Resource(name="domibusConnectorProxyConfig")
 	DomibusConnectorProxyConfig proxyPreferenceManager;
 	
-	@Resource(name="domibusConnectorAESTokenValidationCreator")
+	//@Resource(name="domibusConnectorAESTokenValidationCreator")
+	@Autowired(required=false) //not required if SIGNATURE_BASED
     private DomibusConnectorAESTokenValidationCreator delegate;
 
 	public ECodexTechnicalValidationService technicalValidationService(DomibusConnectorMessage message) {

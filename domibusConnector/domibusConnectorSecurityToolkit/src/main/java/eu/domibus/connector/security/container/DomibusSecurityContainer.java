@@ -3,15 +3,13 @@ package eu.domibus.connector.security.container;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Security;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import eu.ecodex.dss.service.ECodexContainerService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,19 +28,14 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
-import eu.ecodex.dss.model.CertificateStoreInfo;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.SignatureParameters;
 import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.model.token.AdvancedSystemType;
 import eu.ecodex.dss.model.token.TokenIssuer;
-import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
-import eu.ecodex.dss.util.SignatureParametersFactory;
 import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.DigestAlgorithm;
-import eu.europa.esig.dss.EncryptionAlgorithm;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
 import java.io.OutputStream;
@@ -55,7 +48,7 @@ import org.springframework.util.StreamUtils;
  * 
  */
 @Component("domibusConnectorSecurityContainer")
-public class DomibusSecurityContainer implements InitializingBean {
+public class DomibusSecurityContainer {
    
     public static final String MAIN_DOCUMENT_NAME = "mainDocument";
     
@@ -79,8 +72,12 @@ public class DomibusSecurityContainer implements InitializingBean {
     
     static org.slf4j.Marker CONFIDENTAL_MARKER = org.slf4j.MarkerFactory.getMarker("CONFIDENTAL");
 
-    @Resource(name="domibusConnectorContainerService")
-    ECodexContainerService containerService;
+//    @Resource(name="domibusConnectorContainerService")
+//    ECodexContainerService containerService;
+
+
+    @Autowired
+    ECodexContainerFactoryService eCodexContainerFactoryService;
             
     @Autowired
     DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
@@ -90,7 +87,10 @@ public class DomibusSecurityContainer implements InitializingBean {
     //contains key store configuration
     @Autowired
     SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
-    
+
+    @Autowired
+    SignatureParameters signatureParameters;
+
     @Value("${token.issuer.country:#{null}}")
     String country;
     
@@ -100,63 +100,62 @@ public class DomibusSecurityContainer implements InitializingBean {
     @Value("${token.issuer.aes.value:#{null}}") 
     AdvancedSystemType advancedElectronicSystem;
 
-    public ECodexContainerService getContainerService() {
-        return containerService;
-    }
+//    public ECodexContainerService getContainerService() {
+//        return containerService;
+//    }
+//
+//    public void setContainerService(ECodexContainerService containerService) {
+//        this.containerService = containerService;
+//    }
 
-    public void setContainerService(ECodexContainerService containerService) {
-        this.containerService = containerService;
-    }
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        LOGGER.info("Initializing security container!");
+//
+//        Security.addProvider(new BouncyCastleProvider());
+//
+////        final SignatureParameters params = createSignatureParameters();
+//
+//        containerService.setContainerSignatureParameters(signatureParameters);
+//
+//        tokenIssuer = new TokenIssuer();
+//        tokenIssuer.setCountry(country);
+//        tokenIssuer.setServiceProvider(serviceProvider);
+//        tokenIssuer.setAdvancedElectronicSystem(advancedElectronicSystem);
+//        LOGGER.debug("tokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}] ",
+//                country, serviceProvider, advancedElectronicSystem);
+//
+//        LOGGER.info("Finished initializing security container!");
+//    }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        LOGGER.info("Initializing security container!");
-
-        Security.addProvider(new BouncyCastleProvider());
-
-        final SignatureParameters params = createSignatureParameters();
-
-        containerService.setContainerSignatureParameters(params);
-        
-        tokenIssuer = new TokenIssuer();
-        tokenIssuer.setCountry(country);
-        tokenIssuer.setServiceProvider(serviceProvider);
-        tokenIssuer.setAdvancedElectronicSystem(advancedElectronicSystem);
-        LOGGER.debug("tokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}] ",
-                country, serviceProvider, advancedElectronicSystem);
-        
-        LOGGER.info("Finished initializing security container!");
-    }
-
-    protected SignatureParameters createSignatureParameters() throws Exception {
-        LOGGER.debug("creatingSignatureParameters");
-        // KlarA: Changed the functionality of this method to use the methods
-        // that have been ordered by Austria
-        // and realized by Arhs.
-
-        CertificateStoreInfo certStore = new CertificateStoreInfo();
-
-        String storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString();
-        LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString());
-        certStore.setLocation(storeLocation);
-        certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
-
-        EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
-        DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
-
-        String keyAlias = securityToolkitConfigurationProperties.getKey().getAlias();
-        String keyPassword = securityToolkitConfigurationProperties.getKey().getPassword();
-
-        LOGGER.info("SignatureParameters are certStore [{}], keyAlias [{}], encryptionAlgorithm [{}], digestAlgorithm [{}]",
-                certStore.getLocation(), keyAlias, encryptionAlgorithm, digestAlgorithm);
-        final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore, keyAlias,
-                keyPassword, encryptionAlgorithm, digestAlgorithm);
-
-        
-        
-        return mySignatureParameters;
-
-    }
+//    protected SignatureParameters createSignatureParameters() throws Exception {
+//        LOGGER.debug("creatingSignatureParameters");
+//        // KlarA: Changed the functionality of this method to use the methods
+//        // that have been ordered by Austria
+//        // and realized by Arhs.
+//
+//        CertificateStoreInfo certStore = new CertificateStoreInfo();
+//
+//        String storeLocation = securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString();
+//        LOGGER.debug("resolve url [{}] to string [{}]", securityToolkitConfigurationProperties.getKeyStore().getPath(), securityToolkitConfigurationProperties.getKeyStore().getPathUrlAsString());
+//        certStore.setLocation(storeLocation);
+//        certStore.setPassword(securityToolkitConfigurationProperties.getKeyStore().getPassword());
+//
+//        EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
+//        DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
+//
+//        String keyAlias = securityToolkitConfigurationProperties.getKey().getAlias();
+//        String keyPassword = securityToolkitConfigurationProperties.getKey().getPassword();
+//
+//        LOGGER.info("SignatureParameters are certStore [{}], keyAlias [{}], encryptionAlgorithm [{}], digestAlgorithm [{}]",
+//                certStore.getLocation(), keyAlias, encryptionAlgorithm, digestAlgorithm);
+//        final SignatureParameters mySignatureParameters = SignatureParametersFactory.create(certStore, keyAlias,
+//                keyPassword, encryptionAlgorithm, digestAlgorithm);
+//
+//
+//        return mySignatureParameters;
+//
+//    }
 
     BusinessContent buildBusinessContent(@Nonnull DomibusConnectorMessage message) {
         if (message.getMessageContent() == null) {
@@ -238,6 +237,9 @@ public class DomibusSecurityContainer implements InitializingBean {
      * @return - the processed message (same object as passed by param message)
      */
     public DomibusConnectorMessage createContainer(@Nonnull DomibusConnectorMessage message) {
+
+        ECodexContainerService containerService = eCodexContainerFactoryService.createECodexContainerService(message);
+
         try {
             LOGGER.trace("createContainer: for message [{}]", message);
             BusinessContent businessContent = buildBusinessContent(message);
@@ -294,6 +296,9 @@ public class DomibusSecurityContainer implements InitializingBean {
      * @param message - the message to process
      */
     public void recieveContainerContents(DomibusConnectorMessage message) {
+        ECodexContainerService containerService = eCodexContainerFactoryService.createECodexContainerService(message);
+
+
         if (message.getMessageAttachments() != null && !message.getMessageAttachments().isEmpty()) {
             DomibusConnectorMessageAttachment asicsAttachment = null;
             DomibusConnectorMessageAttachment tokenXMLAttachment = null;
