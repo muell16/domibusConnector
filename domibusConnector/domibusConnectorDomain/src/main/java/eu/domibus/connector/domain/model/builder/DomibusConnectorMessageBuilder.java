@@ -72,7 +72,13 @@ public class DomibusConnectorMessageBuilder {
         this.messageAttachments.add(attachment);
         return this;
     }
-    
+
+
+    public DomibusConnectorMessageBuilder addAttachments(List<DomibusConnectorMessageAttachment> domibusConnectorMessageAttachments) {
+        this.messageAttachments.addAll(domibusConnectorMessageAttachments);
+        return this;
+    }
+
     /**
      *  add multiple confirmations to the message
      *  is required if no message content is set!
@@ -81,6 +87,11 @@ public class DomibusConnectorMessageBuilder {
      */
     public DomibusConnectorMessageBuilder addConfirmation(DomibusConnectorMessageConfirmation confirmation) {
         this.messageConfirmations.add(confirmation);
+        return this;
+    }
+
+    public DomibusConnectorMessageBuilder addConfirmations(List<DomibusConnectorMessageConfirmation> confirmations) {
+        this.messageConfirmations.addAll(confirmations);
         return this;
     }
     
@@ -95,6 +106,12 @@ public class DomibusConnectorMessageBuilder {
         this.messageErrors.add(error);
         return this;
     }
+
+
+    public DomibusConnectorMessageBuilder addErrors(List<DomibusConnectorMessageError> errors) {
+        this.messageErrors.addAll(errors);
+        return this;
+    }
     
     /**
      * 
@@ -102,9 +119,6 @@ public class DomibusConnectorMessageBuilder {
      */
     public DomibusConnectorMessage build() {
         DomibusConnectorMessage message;
-//        if (this.connectorMessageId == null) {
-//            throw new IllegalArgumentException("connectorMessageId is required!");
-//        }
         if (this.messageDetails == null) {
             throw new IllegalArgumentException("Setting message details is required!");
         }        
@@ -122,5 +136,5 @@ public class DomibusConnectorMessageBuilder {
 
         return message;
     }
-    
+
 }
