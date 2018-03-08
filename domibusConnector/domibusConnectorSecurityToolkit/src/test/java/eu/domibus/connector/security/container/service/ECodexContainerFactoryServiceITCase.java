@@ -1,7 +1,6 @@
 package eu.domibus.connector.security.container.service;
 
 import eu.domibus.connector.security.configuration.DomibusConnectorEnvironmentConfiguration;
-import eu.domibus.connector.security.container.SignatureParametersConfiguration;
 import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerifier;
@@ -9,12 +8,14 @@ import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidat
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.SignatureParameters;
+import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.model.token.AdvancedSystemType;
 import eu.ecodex.dss.model.token.TokenIssuer;
+import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
-import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 import eu.europa.esig.dss.DSSDocument;
+import eu.europa.esig.dss.DigestAlgorithm;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,7 +35,6 @@ import org.springframework.util.StreamUtils;
 
 
 import java.io.*;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,34 +45,33 @@ import static org.assertj.core.api.Assertions.assertThat;
         DomibusConnectorCertificateVerifier.class,
         DomibusConnectorProxyConfig.class,
         DomibusConnectorTechnicalValidationServiceFactory.class,
-        SignatureParametersConfiguration.class,
-        SecurityToolkitConfigurationProperties.class
-
+        SecurityToolkitConfigurationProperties.class,
+        ECodexContainerFactoryService.class,
+        TokenIssuerFactory.class
 })
+@EnableConfigurationProperties
 @TestPropertySource({"classpath:test.properties", "classpath:test-sig.properties"})
-public class DomibusConnectorSecurityContainerServiceITCase {
+public class ECodexContainerFactoryServiceITCase {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorSecurityContainerServiceITCase.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryServiceITCase.class);
     public static final String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private static File TEST_RESULTS_FOLDER;
 
 
     @Autowired
-    SignatureParameters signatureParameters;
-
-    @Autowired
     DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
 
+    @Autowired
+    ECodexContainerFactoryService eCodexContainerFactoryService;
 
-
-
-    private TokenIssuer tokenIssuer;
+    @Autowired
+    TokenIssuerFactory tokenIssuerFactory;
 
 
     @BeforeClass
     public static void initClass() {
         String dir = System.getenv().getOrDefault(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
-        dir = dir + "/" + DomibusConnectorSecurityContainerServiceITCase.class.getSimpleName();
+        dir = dir + "/" + ECodexContainerFactoryServiceITCase.class.getSimpleName();
         TEST_RESULTS_FOLDER = new File(dir);
         TEST_RESULTS_FOLDER.mkdirs();
 
@@ -80,39 +80,83 @@ public class DomibusConnectorSecurityContainerServiceITCase {
 
     @Before
     public void setUp() {
-        tokenIssuer = new TokenIssuer();
-        tokenIssuer.setCountry("AT");
-        tokenIssuer.setServiceProvider("TEST");
-        tokenIssuer.setAdvancedElectronicSystem(AdvancedSystemType.SIGNATURE_BASED);
-
-        ECodexTechnicalValidationService technicalValidationService = technicalValidationServiceFactory.technicalValidationService(null);
-
 
     }
 
     @Test
-    public void simpleSecurityContainerTest() throws ECodexException, IOException {
+    public void simpleTestCreateContainerServiceAndBuildAsicContainer() throws ECodexException, IOException {
         //securityContainerService.create()
 
-
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
 
         BusinessContent businessContent = new BusinessContent();
 
         //bytes name mimetype
-        DSSDocument dssDocument = loadDocumentFromResource("examples/Form_A.pdf", "Form_A", MimeType.PDF);
+        DSSDocument businessDoc = loadDocumentFromResource("examples/Form_A.pdf", "Form_A.pdf", MimeType.PDF);
+        businessContent.setDocument(businessDoc);
 
+        DSSDocument dssDocument = loadDocumentFromResource("examples/Form_A.pdf", "Addition.pdf", MimeType.PDF);
+        businessContent.addAttachment(dssDocument);
 
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
 
+        DSSDocument asicDocument = eCodexContainer.getAsicDocument();
+
+        assertThat(asicDocument).isNotNull();
 //
-//        writeDssDocToDisk("simpleTest", asicDocument);
-
-
-
+        asicDocument.setName("asic-s.asics");
+        writeDssDocToDisk("simpleTest", asicDocument);
     }
+
+
+    @Test
+    public void testCreateContainerServiceAndResolveAsicContainer() throws IOException, ECodexException {
+        InMemoryDocument asicContainer = loadDocumentFromResource("examples/asic-s.asics", "asic-s.asics", MimeType.ASICS);
+
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+
+        ECodexContainer eCodexContainer = new ECodexContainer();
+        eCodexContainer.setAsicDocument(asicContainer);
+
+        CheckResult check = eCodexContainerService.check(eCodexContainer);
+
+        //BusinessContent businessContent = eCodexContainer.getBusinessContent();
+        DSSDocument businessDocument = eCodexContainer.getBusinessDocument();
+        assertThat(businessDocument).isNotNull();
+
+        String digest = businessDocument.getDigest(DigestAlgorithm.SHA1);
+
+        DSSDocument businessDoc = loadDocumentFromResource("examples/Form_A.pdf", "Form_A.pdf", MimeType.PDF);
+        String digest2 = businessDoc.getDigest(DigestAlgorithm.SHA1);
+
+        assertThat(digest).isEqualTo(digest2);
+    }
+
+//    @Test
+//    @Ignore("not finished yet!")
+//    public void simpleTestCreateContainerServiceAndBuildAsicContainer_withStreams() throws IOException, ECodexException {
+//
+//        //securityContainerService.create()
+//
+//        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+//
+//        BusinessContent businessContent = new BusinessContent();
+//
+//        //bytes name mimetype
+//        DSSDocument businessDoc = loadDocumentFromResource("examples/Form_A.pdf", "Form_A.pdf", MimeType.PDF);
+//        businessContent.setDocument(businessDoc);
+//
+//        DSSDocument dssDocument = loadDocumentFromResource("examples/Form_A.pdf", "Addition.pdf", MimeType.PDF);
+//        businessContent.addAttachment(dssDocument);
+//
+//        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+//
+//    }
+
 
     private void writeDssDocToDisk(String prefix, DSSDocument document) throws IOException {
 
-        File f = new File(TEST_RESULTS_FOLDER + File.separator + "prefix");
+        File f = new File(TEST_RESULTS_FOLDER + File.separator + prefix);
         f.mkdirs();
 
         String docName = document.getName();
