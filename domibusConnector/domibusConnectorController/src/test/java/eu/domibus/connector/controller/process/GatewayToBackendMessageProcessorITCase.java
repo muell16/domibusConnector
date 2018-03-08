@@ -63,7 +63,7 @@ public class GatewayToBackendMessageProcessorITCase {
     public void testProcessMessage() throws IOException {
         //create test message and persist message into DB
         DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
-        message.setConnectorMessageId("msg2");
+        message.setConnectorMessageId("msg3");
 
 
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);

@@ -92,15 +92,13 @@ public class BackendToGatewayMessageProcessorITCase {
 //        content = domibusConnectorTable.getValue(4, "CONTENT");
 //        assertThat(content).isNotNull();
 
+
+
         //write by gw rcv message to file system
-        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
-        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
+//        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
+//        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
 
 
-
-
-        //Date value = (Date) domibusConnectorTable.getValue(0, "");
-        //assertThat(value).isCloseTo(new Date(), 2000);
 
     }
 

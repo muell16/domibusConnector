@@ -36,16 +36,6 @@ public class ECodexContainerFactoryService {
     @Autowired
     DomibusConnectorTechnicalValidationServiceFactory technicalValidationServiceFactory;
 
-    @Value("${token.issuer.country:#{null}}")
-    String country;
-
-    @Value("${token.issuer.service.provider:#{null}}")
-    String serviceProvider;
-
-    @Value("${token.issuer.aes.value:#{null}}")
-    AdvancedSystemType advancedElectronicSystem;
-
-
     public ECodexContainerService createECodexContainerService(DomibusConnectorMessage message) {
         DSSECodexContainerService containerService = new DSSECodexContainerService();
         containerService.setEnvironmentConfiguration(environmentConfiguration);
@@ -56,14 +46,6 @@ public class ECodexContainerFactoryService {
         containerService.setLegalValidationService(legalValidationService);
 
         containerService.setContainerSignatureParameters(signatureParameters);
-
-        TokenIssuer tokenIssuer = new TokenIssuer();
-        tokenIssuer.setCountry(country);
-        tokenIssuer.setServiceProvider(serviceProvider);
-        tokenIssuer.setAdvancedElectronicSystem(advancedElectronicSystem);
-        LOGGER.debug("tokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}] ",
-                country, serviceProvider, advancedElectronicSystem);
-
 
         ECodexTechnicalValidationService eCodexTechnicalValidationService = technicalValidationServiceFactory.technicalValidationService(message);
         containerService.setTechnicalValidationService(eCodexTechnicalValidationService);
