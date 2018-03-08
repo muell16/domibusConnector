@@ -114,6 +114,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			LOGGER.debug("#processMessage: created confirmation [{}] for message [{}]", confirmation, message);
 			// immediately persist new evidence into database
             evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation);
+            message.addConfirmation(confirmation);
 
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
 		    LOGGER.error("Could not generate evidence [{}] for message [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);

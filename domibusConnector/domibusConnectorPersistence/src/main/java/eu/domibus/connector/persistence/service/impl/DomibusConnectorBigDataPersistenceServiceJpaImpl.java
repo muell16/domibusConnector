@@ -69,16 +69,23 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
         try {
             long storageRef = Long.parseLong(storageReference);
-
+            LOGGER.debug("Loading big data with storage ref [{}] from database", storageRef);
             PDomibusConnectorBigData bigData = bigDataDao.findOne(storageRef);
 
             JpaBasedDomibusConnectorBigDataReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedDomibusConnectorBigDataReference(this);
 
             //TODO: use stream from db!
-            InputStream dbStream = bigData.getContent().getBinaryStream();
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(dbStream));
+            Blob content = bigData.getContent();
+            if (content != null) {
+                InputStream dbStream = content.getBinaryStream();
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(dbStream));
+                jpaBasedDomibusConnectorBigDataReference.setInputStream(byteArrayInputStream);
+            } else {
+                String error = String.format("Blob Content of bigDataStorage with reference [%d] is null!", storageRef);
+                throw new IllegalStateException(error);
+            }
 
-            jpaBasedDomibusConnectorBigDataReference.setInputStream(byteArrayInputStream);
+
             jpaBasedDomibusConnectorBigDataReference.setStorageIdReference(storageReference);
             jpaBasedDomibusConnectorBigDataReference.setReadable(true);
             jpaBasedDomibusConnectorBigDataReference.setWriteable(false);
@@ -148,6 +155,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
             Session hibernateSession = entityManager.unwrap(Session.class);
             Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(dbBackedOutputStream.toByteArray());
             data.setContent(blob);
+            LOGGER.trace("#writeOutputStreamToDatabase: calling save");
             bigDataDao.save(data);
             return null;
         });
@@ -171,11 +179,13 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
         @Override
         public void close() throws IOException {
+            LOGGER.debug("called close on DbBackedOutputStream [{}]", this);
             writeOutputStreamToDatabase(this);
         }
 
         public String toString() {
-            return String.format("DbBackedOutputStream with bytes [%d] and with storageRef: [%s]", this.toByteArray().length, this.storageReference);
+            long byteCount = this.toByteArray() == null ? -1 : this.toByteArray().length;
+            return String.format("DbBackedOutputStream with bytes [%d] and with storageRef: [%s]", byteCount, storageReference);
         }
     }
 

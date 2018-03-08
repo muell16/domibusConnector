@@ -103,6 +103,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		
 		
 		try {
+		    LOGGER.debug("#processMessage: call validateContainer");
 			securityToolkit.validateContainer(message);
 		} catch (DomibusConnectorSecurityException e) {
 			createNonDeliveryEvidenceAndSendIt(message);
@@ -112,9 +113,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		if(isConnector2ConnectorTest(message)){
 			// if it is a connector to connector test message defined by service and action, do NOT deliver message to the backend, but 
 			// only send a DELIVERY evidence back.
-			LOGGER.info("Message [{}] is a connector to connector test message. \nIt will NOT be delivered to the backend!", message);
+			LOGGER.info("#processMessage: Message [{}] is a connector to connector test message. \nIt will NOT be delivered to the backend!", message);
 			createDeliveryEvidenceAndSendIt(message);
-			LOGGER.info("Connector to Connector Test message [{}] is confirmed!", message);
+			LOGGER.info("#processMessage: Connector to Connector Test message [{}] is confirmed!", message);
 		}else{
 			backendDeliveryService.deliverMessageToBackend(message);
 		}
@@ -136,6 +137,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		DomibusConnectorMessageConfirmation delivery = null;
 		try {
 			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY, originalMessage, null, null);
+			originalMessage.addConfirmation(delivery);
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)

@@ -332,13 +332,7 @@ public class DomibusSecurityContainer implements InitializingBean {
                 throw new RuntimeException(String.format("error while initializing xmlTokenDataRef get input stream from %s",
                         xmlTokenDataRef.getStorageIdReference()));
             }
-                    
-//                    
-//            DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
-//            InputStream tokenStream = xmlTokenDataRef.getInputStream();
-//            
-//            InputStream asicInputStream = new ByteArrayInputStream(asicsAttachment.getAttachment());
-//            InputStream tokenStream = new ByteArrayInputStream(tokenXMLAttachment.getAttachment());
+
 
             try {
                 if (LOGGER.isTraceEnabled()) {
@@ -530,7 +524,7 @@ public class DomibusSecurityContainer implements InitializingBean {
         InputStream inputStream = document.openStream();
         OutputStream outputStream = bigDataRef.getOutputStream();
         int bytesCopied = StreamUtils.copy(inputStream, outputStream);
-        
+        outputStream.close();
        
         
         

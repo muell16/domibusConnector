@@ -13,19 +13,29 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
+@Commit
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 public class GatewayToBackendMessageProcessorITCase {
 
@@ -52,12 +62,18 @@ public class GatewayToBackendMessageProcessorITCase {
     @Test
     public void testProcessMessage() throws IOException {
         //create test message and persist message into DB
-        DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg1/"));
-        message.setConnectorMessageId("msg1");
+        DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
+        message.setConnectorMessageId("msg2");
 
 
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
         message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
+        message = messagePersistenceService.mergeMessageWithDatabase(message);
+        message = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(message);
+
+
+
+
 
         //start test
         gatewayToBackendMessageProcessor.processMessage(message);

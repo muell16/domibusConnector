@@ -85,7 +85,7 @@ public class PDomibusConnectorBigData {
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", this.id);
-        toString.append("referencedMessage", this.message.getId());
+        toString.append("referencedMessage", this.message == null ? null : this.message.getId());
         return toString.build();
     }
 }
