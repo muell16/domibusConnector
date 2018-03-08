@@ -37,7 +37,7 @@
         <javax.ws.rs>1.1.1</javax.ws.rs>
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
-        
+        <com.sun.xml.bind.jaxb.version>2.3.0</com.sun.xml.bind.jaxb.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 
@@ -153,7 +153,30 @@
                 <version>1.57</version>
                 <type>jar</type>
             </dependency>
-                        
+                       
+            <!-- jaxb -->
+            <dependency>                                   
+                <artifactId>jaxb-impl</artifactId>
+                <groupId>com.sun.xml.bind</groupId>
+                <version>${com.sun.xml.bind.jaxb.version}</version>
+            </dependency>
+            <dependency>                                   
+                <artifactId>jaxb-core</artifactId>
+                <groupId>com.sun.xml.bind</groupId>
+                <version>${com.sun.xml.bind.jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>jaxb-api</artifactId>
+                <groupId>javax.xml.bind</groupId>
+                <version>${com.sun.xml.bind.jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>jaxb-xjc</artifactId>
+                <groupId>com.sun.xml.bind</groupId>
+                <version>${com.sun.xml.bind.jaxb.version}</version>
+            </dependency>        
+                         
+                           
             <!-- MANAGED Spring dependencies -->
             
             <dependency>

@@ -68,7 +68,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
 
     @Test
     public void testDeliverMessageFromGateway_message() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessageFormAFromGw();
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessageFormAFromGwdomibusRed();
 
         deliveryService.deliverMessageFromGateway(epoMessage);
 

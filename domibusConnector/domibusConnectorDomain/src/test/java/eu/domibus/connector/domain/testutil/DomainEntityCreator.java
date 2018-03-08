@@ -6,11 +6,9 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
-import eu.domibus.connector.domain.transformer.testutil.DataHandlerCreator;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
+
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import javax.activation.DataHandler;
 
 /**
  *
@@ -25,6 +23,16 @@ public class DomainEntityCreator {
     
     public static DomibusConnectorParty createPartyDE() {
         DomibusConnectorParty p = new DomibusConnectorParty("DE", "urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");        
+        return p;
+    }
+
+    public static DomibusConnectorParty createPartyDomibusRed() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-red","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
+        return p;
+    }
+
+    public static DomibusConnectorParty createPartyDomibusBlue() {
+        DomibusConnectorParty p = new DomibusConnectorParty("domibus-blue","urn:oasis:names:tc:ebcore:partyid-type:iso3166-1", "GW");
         return p;
     }
     
@@ -158,8 +166,8 @@ public class DomainEntityCreator {
         return message;
     }
 
-    public static DomibusConnectorMessage createEpoMessageFormAFromGw() {
-        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageFormAFromGW();
+    public static DomibusConnectorMessage createEpoMessageFormAFromGwdomibusRed() {
+        DomibusConnectorMessageDetails messageDetails = createDomibusConnectorEpoMessageFormAFromGWdomibusRed();
 
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent(); //TODO: should be a asic container
         messageContent.setXmlContent("<xmlContent/>".getBytes());
@@ -174,6 +182,9 @@ public class DomainEntityCreator {
                 .setMessageDetails(messageDetails)
                 .setMessageContent(messageContent)
                 .build();
+
+        message.addConfirmation(createMessageSubmissionAcceptanceConfirmation());
+
 
         return message;
     }
@@ -223,9 +234,9 @@ public class DomainEntityCreator {
         return messageDetails;
     }
 
-    public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageFormAFromGW() {
+    public static DomibusConnectorMessageDetails createDomibusConnectorEpoMessageFormAFromGWdomibusRed() {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
-        messageDetails.setConversationId(null);      //first message no conversation set yet!
+        messageDetails.setConversationId("conv567");      //first message no conversation set yet!
         messageDetails.setEbmsMessageId("ebms5123");
         messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
         messageDetails.setFinalRecipient("finalRecipient");
@@ -234,8 +245,8 @@ public class DomainEntityCreator {
 
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyAT());
-        messageDetails.setFromParty(createPartyDE());
+        messageDetails.setToParty(createPartyDomibusBlue());
+        messageDetails.setFromParty(createPartyDomibusRed());
 
         return messageDetails;
     }

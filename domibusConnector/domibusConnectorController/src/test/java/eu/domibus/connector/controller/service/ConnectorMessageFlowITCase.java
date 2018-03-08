@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -95,7 +96,7 @@ public class ConnectorMessageFlowITCase {
     
     @Test
     public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        DomibusConnectorMessage loadMessageFrom = LoadStoreMessageFromPath.loadMessageFrom("/testmessages/msg1/");
+        DomibusConnectorMessage loadMessageFrom = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg1/"));
         
         assertThat(loadMessageFrom).isNotNull();
         loadMessageFrom.getMessageDetails().setFinalRecipient("final recipient");

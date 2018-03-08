@@ -23,30 +23,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <!-- <execution>
-                        <id>unpack-transition-model</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>domibusConnectorDomain</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>transition</classifier>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>src/main/resources/wsdl</outputDirectory>
-                                    <includes>**/DomibusConnectorTransitionModel.xsd</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution> -->
-                </executions>
+                <artifactId>maven-dependency-plugin</artifactId>                
             </plugin>
             <plugin>
                 <groupId>org.apache.cxf</groupId>
