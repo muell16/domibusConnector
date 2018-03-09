@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.FileSystemResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,6 +167,8 @@ public class BackendToGatewayMessageProcessorTest {
         //verify rejection is delivered to the backend
         assertThat(toBackendDeliveredMessages).hasSize(1);
         Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToNationalSystem(eq(epoMessage), eq(submissionRejectionConfirmation));
+
+
     }
 
 }

@@ -95,8 +95,8 @@ public class BackendToGatewayMessageProcessorITCase {
 
 
         //write by gw rcv message to file system
-//        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
-//        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
+        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
+        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
 
 
 
