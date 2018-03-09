@@ -23,8 +23,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.FileSystemUtils;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.SQLException;
@@ -94,9 +96,12 @@ public class BackendToGatewayMessageProcessorITCase {
 
 
 
+
         //write by gw rcv message to file system
-        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
-        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
+//        FileSystemUtils.deleteRecursively(new File("./target/testm/"));
+//        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
+//        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
+
 
 
 
