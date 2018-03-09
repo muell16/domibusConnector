@@ -55,12 +55,18 @@
     </dependencies>
     
     <build>
+<!-- activate resource filtering to provide the tests with correct properties for the environment 
+            BUT only filter resources from specific folder to avoid malforming the other resources
+        -->
         <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
             <testResource>
                 <directory>src/test/resources-filtered</directory>
                 <filtering>true</filtering>
             </testResource>
-        </testResources>                
+        </testResources>            
     </build>
     
 </project>
