@@ -7,15 +7,11 @@ import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerif
 import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidationServiceFactory;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.SignatureParameters;
+import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
-import eu.ecodex.dss.model.token.AdvancedSystemType;
-import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
-import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.europa.esig.dss.DSSDocument;
-import eu.europa.esig.dss.DigestAlgorithm;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
 import org.junit.Before;
@@ -35,6 +31,7 @@ import org.springframework.util.StreamUtils;
 
 
 import java.io.*;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,7 +82,7 @@ public class ECodexContainerFactoryServiceITCase {
 
     @Test
     public void simpleTestCreateContainerServiceAndBuildAsicContainer() throws ECodexException, IOException {
-        //securityContainerService.create()
+
 
         ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
 
@@ -101,35 +98,46 @@ public class ECodexContainerFactoryServiceITCase {
         ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
 
         DSSDocument asicDocument = eCodexContainer.getAsicDocument();
-
         assertThat(asicDocument).isNotNull();
 //
-        asicDocument.setName("asic-s.asics");
-        writeDssDocToDisk("simpleTest", asicDocument);
+//        asicDocument.setName("asic-s.asics");
+//        writeDssDocToDisk("simpleTest", asicDocument);
+
+        DSSDocument tokenXML = eCodexContainer.getTokenXML();
+        assertThat(tokenXML).isNotNull();
+//        tokenXML.setName("asic-s_trustoktoken.xml");
+//        writeDssDocToDisk("simpleTest", tokenXML);
+
+        //check if produced container and token can also be resolved again
+        byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
+        byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
+
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
+
     }
 
 
     @Test
     public void testCreateContainerServiceAndResolveAsicContainer() throws IOException, ECodexException {
-        InMemoryDocument asicContainer = loadDocumentFromResource("examples/asic-s.asics", "asic-s.asics", MimeType.ASICS);
 
         ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
 
-        ECodexContainer eCodexContainer = new ECodexContainer();
-        eCodexContainer.setAsicDocument(asicContainer);
+
+        InputStream asicContainer = getClass().getResourceAsStream("/examples/asic-s.asics");
+        InputStream xmlToken = getClass().getResourceAsStream("/examples/asic-s_trustoktoken.xml");
+
+        assertThat(asicContainer).isNotNull();
+        assertThat(xmlToken).isNotNull();
+
+
+        ECodexContainer eCodexContainer =
+                eCodexContainerService.receive(asicContainer, xmlToken);
 
         CheckResult check = eCodexContainerService.check(eCodexContainer);
 
-        //BusinessContent businessContent = eCodexContainer.getBusinessContent();
-        DSSDocument businessDocument = eCodexContainer.getBusinessDocument();
-        assertThat(businessDocument).isNotNull();
+        assertThat(check.isSuccessful()).isTrue();
 
-        String digest = businessDocument.getDigest(DigestAlgorithm.SHA1);
-
-        DSSDocument businessDoc = loadDocumentFromResource("examples/Form_A.pdf", "Form_A.pdf", MimeType.PDF);
-        String digest2 = businessDoc.getDigest(DigestAlgorithm.SHA1);
-
-        assertThat(digest).isEqualTo(digest2);
     }
 
 //    @Test
@@ -166,7 +174,8 @@ public class ECodexContainerFactoryServiceITCase {
 
 
         FileOutputStream fileOutputStream = new FileOutputStream(docPath);
-        StreamUtils.copy(document.openStream(), fileOutputStream);
+        document.writeTo(fileOutputStream);
+
     }
 
     private InMemoryDocument loadDocumentFromResource(String classpathResource, String name, MimeType mimeType) throws IOException {

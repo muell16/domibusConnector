@@ -71,10 +71,6 @@ public class GatewayToBackendMessageProcessorITCase {
         message = messagePersistenceService.mergeMessageWithDatabase(message);
         message = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(message);
 
-
-
-
-
         //start test
         gatewayToBackendMessageProcessor.processMessage(message);
 
