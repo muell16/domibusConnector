@@ -45,7 +45,8 @@ node {
 				//load config file maven-settings (settings.xml) from jenkins managed files and use it 
 					configFileProvider([configFile(fileId: 'jqeup-maven', variable: 'maven_settings')]) {
 						sh "cp ${maven_settings} maven_settings.xml"
-						MAVEN_SETTINGS = "maven_settings.xml"				
+						MAVEN_SETTINGS = "maven_settings.xml"		
+						sh "cat maven_settings.xml"
 					}
 				} catch (e) {
 					//ignore if not available!
