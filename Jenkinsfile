@@ -270,7 +270,7 @@ node {
 						}
 						if (deploySnapshot) {
 							stage ("DEPLOY SNAPSHOTS") {    
-								mvn clean deploy
+								mvn "clean deploy"
 							}
 						}
 					}
