@@ -12,5 +12,6 @@
     <modules>
         <module>domibusConnectorOnlyStarter</module>
         <module>DomibusConnectorTestSuite</module>
+        <module>DomibusConnectorTestData</module>
     </modules>
 </project>

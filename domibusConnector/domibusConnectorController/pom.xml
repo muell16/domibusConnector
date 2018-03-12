@@ -144,6 +144,12 @@
 			<artifactId>dbunit</artifactId>
 			<scope>test</scope>
 		</dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>DomibusConnectorTestData</artifactId>
+	  <version>${project.version}</version>
+	  <scope>test</scope>
+	 </dependency>
 	</dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment 

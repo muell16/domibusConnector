@@ -1,6 +1,5 @@
-package eu.domibus.connector.test;
+package test;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;

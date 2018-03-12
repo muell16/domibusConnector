@@ -381,7 +381,7 @@
 
     </dependencyManagement>
     
-    <profiles>     
+    <profiles>        
         <profile>
         <!--  activates long running integration tests -->
             <id>unit-testing-with-failsafe</id>
