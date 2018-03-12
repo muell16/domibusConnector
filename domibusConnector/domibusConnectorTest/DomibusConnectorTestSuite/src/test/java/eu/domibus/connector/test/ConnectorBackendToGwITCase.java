@@ -181,11 +181,15 @@ public class ConnectorBackendToGwITCase {
 
     @Test
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
+        
+
+
         DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
         epoMessage.getMessageDetails().setConversationId(null);
         epoMessage.getMessageDetails().setRefToMessageId(null);
         epoMessage.getMessageDetails().setBackendMessageId("bob_id123");
 
+        //TODO: load correct document!
 
 
 

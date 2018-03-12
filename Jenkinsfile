@@ -72,7 +72,8 @@ node {
 					arg = "-Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS ${arg}"
 				}
 				
-				sh "mvn ${arg}"
+				output = sh(returnStdout: true, script: "mvn ${arg}").trim()
+				return output
 			}
 		
 			 
@@ -258,6 +259,21 @@ node {
 						currentBuild.result = 'FAILURE'
 					}
 					
+					
+					//SNAPSHOT DEPLOYMENT
+					if (!buildShouldFail) {
+						def deploySnapshot = false
+						stage ("check snapshot deployment") {
+							def version = mvn 'org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v "^\["'
+							println version
+							deploySnapshot = version.endsWith("-SNAPSHOT") //if endswith snapshot activate snapshot deployment
+						}
+						if (deploySnapshot) {
+							stage ("DEPLOY SNAPSHOTS") {    
+								mvn clean deploy
+							}
+						}
+					}
 					
 					if (!buildShouldFail && RELEASE || HOTFIX )  {
 

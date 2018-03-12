@@ -20,7 +20,7 @@ public class LoadStoreMessageFromPathTest {
     @Test
     public void testLoadMsg() throws IOException {
 
-        Resource r = new ClassPathResource("testmessages/msg1/");
+        Resource r = new ClassPathResource("testmessages/msg2/");
 
         DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(r);
 

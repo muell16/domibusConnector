@@ -65,6 +65,46 @@ public class LoadStoreMessageFromPath {
             Resource r = basicFolder.createRelative("content.xml");
             messageProperties.put("message.content.xml", "content.xml");
             writeByteArrayToResource(r, xmlContent);
+
+            //store message document
+            DomibusConnectorMessageDocument messageDocument = messageContent.getDocument();
+            if (messageDocument != null) {
+                messageDocument.getDocument();
+                String fileName = messageDocument.getDocumentName() == null ? "document.pdf" : messageDocument.getDocumentName();
+                Resource d = basicFolder.createRelative(fileName);
+                writeBigDataReferenceToResource(d, messageDocument.getDocument());
+
+                messageProperties.put("message.content.document.file", fileName);
+
+                if (messageDocument.getDocumentName() != null ) {
+                    messageProperties.put("message.content.document.name", messageDocument.getDocumentName());
+                }
+                if (messageDocument.getHashValue() != null) {
+                    messageProperties.put("message.content.document.hash", messageDocument.getHashValue());
+                }
+
+                DetachedSignature detachedSignature = messageDocument.getDetachedSignature();
+                if (detachedSignature != null) {
+                    byte[] detachedSignatureBytes = detachedSignature.getDetachedSignature();
+                    DetachedSignatureMimeType detachedSignatureMimeType = detachedSignature.getMimeType();
+                    String detachedSignatureName = detachedSignature.getDetachedSignatureName() == null ? "detachedSignature" : detachedSignature.getDetachedSignatureName();
+
+                    String appendix = detachedSignatureMimeType.name().toLowerCase();
+                    String detachedResourceFilename = detachedSignatureName + "." + appendix;
+                    Resource res = basicFolder.createRelative(detachedResourceFilename);
+
+                    writeByteArrayToResource(res, detachedSignatureBytes);
+
+                    messageProperties.put("message.content.document.signature.file", detachedResourceFilename);
+                    messageProperties.put("message.content.document.signature.type", detachedSignatureMimeType.name());
+                    if (detachedSignatureName != null) {
+                        messageProperties.put("message.content.document.signature.name", detachedSignatureName);
+                    }
+
+                }
+
+            }
+
         }
 
         //store attachments
@@ -172,7 +212,40 @@ public class LoadStoreMessageFromPath {
             content.setXmlContent(StreamUtils.copyToByteArray(contentResource.getInputStream()));
 
             messageBuilder.setMessageContent(content);
-            //TODO: load document
+            //load document
+            String docFileName = messageProperties.getProperty("message.content.document.file");
+            if (docFileName != null) {
+                DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
+                Resource r = basicFolder.createRelative(docFileName);
+                DomibusConnectorBigDataReference bigDataReferenceDocument = loadResourceAsBigDataRef(r);
+                documentBuilder.setContent(bigDataReferenceDocument);
+                String docName = messageProperties.getProperty("message.content.document.name");
+                documentBuilder.setName(docName);
+
+                //TODO: load signature
+                String signatureFileName = messageProperties.getProperty("message.content.document.signature.file");
+                if (signatureFileName != null) {
+
+                    DetachedSignatureMimeType mimeType = DetachedSignatureMimeType.valueOf(messageProperties.getProperty("message.content.document.signature.type"));
+                    String name = messageProperties.getProperty("message.content.document.signature.name");
+                    Resource fResource = basicFolder.createRelative(signatureFileName);
+                    byte[] signatureBytes = loadResourceAsByteArray(fResource);
+
+
+                    DetachedSignature detachedSignature = DetachedSignatureBuilder.createBuilder()
+                            .setMimeType(mimeType)
+                            .setName(name)
+                            .setSignature(signatureBytes)
+                            .build();
+                    documentBuilder.withDetachedSignature(detachedSignature);
+                }
+
+
+                DomibusConnectorMessageDocument doc = documentBuilder.build();
+                content.setDocument(doc);
+
+            }
+
         }
 
         messageBuilder.addAttachments(loadAttachments());
@@ -325,6 +398,9 @@ public class LoadStoreMessageFromPath {
         if (details.getConnectorBackendClientName() != null) {
             messageProperties.put("message.backend-client-name", details.getConnectorBackendClientName());
         }
+        if (details.getBackendMessageId() != null) {
+            messageProperties.put("message.national-id", details.getBackendMessageId());
+        }
 
 
     }
@@ -359,6 +435,8 @@ public class LoadStoreMessageFromPath {
         messageDetails.setConversationId(messageProperties.getProperty("message.conversation-id"));
 
         messageDetails.setEbmsMessageId(messageProperties.getProperty("message.ebms-id"));
+
+        messageDetails.setBackendMessageId(messageProperties.getProperty("message.national-id"));
 
         return messageDetails;
     }
