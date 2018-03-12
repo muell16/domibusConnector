@@ -65,7 +65,16 @@
         <url>https://secure.e-codex.eu/jenkins/view/domibusConnector/job/domibusWebConnector</url>
     </ciManagement>
 
-
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>${snapshots-repo.id}</id>
+            <url>${snapshots-repo.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 
     <dependencyManagement>

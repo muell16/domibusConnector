@@ -52,6 +52,11 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>DomibusConnectorTestData</artifactId>
+            <version>4.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
     <build>

@@ -209,7 +209,7 @@ public class LoadStoreMessageFromPath {
 
         messageBuilder.setMessageDetails(loadMessageDetailsFromProperties());
 
-        Resource contentResource = createRelativeResource(messageProperties.getProperty("message.content.xml"));
+        Resource contentResource = createRelativeResource(messageProperties.getProperty(LoadStoreTransitionMessage.MESSAGE_CONTENT_XML_PROP_NAME));
         if (contentResource != null && contentResource.exists()) {
             DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
             content.setXmlContent(StreamUtils.copyToByteArray(contentResource.getInputStream()));

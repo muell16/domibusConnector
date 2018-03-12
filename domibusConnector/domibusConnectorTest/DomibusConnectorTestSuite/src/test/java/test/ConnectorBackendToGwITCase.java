@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.starter.ConnectorStarter;
+import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import org.junit.After;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.SocketUtils;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import test.eu.domibus.connector.gateway.link.testgw.TestGW;
@@ -181,18 +183,20 @@ public class ConnectorBackendToGwITCase {
     @Test
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
 
+        DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw"));
 
+        assertThat(msg1).isNotNull();
 
-        DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
-        epoMessage.getMessageDetails().setConversationId(null);
-        epoMessage.getMessageDetails().setRefToMessageId(null);
-        epoMessage.getMessageDetails().setBackendMessageId("bob_id123");
+//        DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
+//        epoMessage.getMessageDetails().setConversationId(null);
+//        epoMessage.getMessageDetails().setRefToMessageId(null);
+//        epoMessage.getMessageDetails().setBackendMessageId("bob_id123");
 
         //TODO: load correct document!
 
 
 
-        DomibsConnectorAcknowledgementType acknowledgementType = bobBackendClient.submitMessage(epoMessage);
+        DomibsConnectorAcknowledgementType acknowledgementType = bobBackendClient.submitMessage(msg1);
 
         assertThat(acknowledgementType.isResult()).isTrue();
 

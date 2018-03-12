@@ -67,7 +67,7 @@ node {
 			
 				sh "ls -la"
 				if (MAVEN_SETTINGS != "") {
-					arg = "-s ${MAVEN_SETTINGS} ${arg}"
+					arg = "--settings ${MAVEN_SETTINGS} ${arg}"
 				}
 				if (truststore != "") {
 					arg = "-Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS ${arg}"

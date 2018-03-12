@@ -13,7 +13,7 @@ public class LoadStoreTransitionMessageTest {
 
     @Test
     public void loadMessageFrom() throws Exception {
-        DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw"));
+        DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw/"));
 
         assertThat(msg1).isNotNull();
 
