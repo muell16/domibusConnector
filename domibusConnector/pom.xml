@@ -65,16 +65,7 @@
         <url>https://secure.e-codex.eu/jenkins/view/domibusConnector/job/domibusWebConnector</url>
     </ciManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+
 
 
     <dependencyManagement>
@@ -382,6 +373,19 @@
     </dependencyManagement>
     
     <profiles>        
+        <profile>
+            <id>deploy-ecodex</id>
+            <distributionManagement>
+                <repository>
+                    <id>nexus-releases</id>
+                    <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-snapshots</id>
+                    <url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
         <profile>
         <!--  activates long running integration tests -->
             <id>unit-testing-with-failsafe</id>
