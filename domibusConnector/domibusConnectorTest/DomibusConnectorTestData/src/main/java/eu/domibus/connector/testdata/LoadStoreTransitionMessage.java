@@ -2,7 +2,6 @@ package eu.domibus.connector.testdata;
 
 
 import com.sun.istack.internal.ByteArrayDataSource;
-import com.sun.istack.internal.Nullable;
 import eu.domibus.connector.domain.transition.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 public class LoadStoreTransitionMessage {
 
