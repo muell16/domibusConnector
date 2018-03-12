@@ -1,7 +1,6 @@
 package eu.domibus.connector.testdata;
 
 
-import com.sun.istack.internal.ByteArrayDataSource;
 import eu.domibus.connector.domain.transition.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -209,7 +208,9 @@ public class LoadStoreTransitionMessage {
     private DataHandler loadResourceAsDataHandler(Resource res) {
         try {
             byte[] bytes = StreamUtils.copyToByteArray(res.getInputStream());
-            DataHandler dh = new DataHandler(new ByteArrayDataSource(bytes, null));
+            
+            DataHandler dh = new DataHandler(bytes, "application/octet-stream");
+            
             return dh;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
