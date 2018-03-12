@@ -1,12 +1,24 @@
 package eu.domibus.connector.testdata;
 
 
+import com.sun.istack.internal.ByteArrayDataSource;
+import com.sun.istack.internal.Nullable;
 import eu.domibus.connector.domain.transition.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 
+import javax.activation.DataHandler;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class LoadStoreTransitionMessage {
 
@@ -39,8 +51,12 @@ public class LoadStoreTransitionMessage {
     private Properties messageProperties;
 
     public static DomibusConnectorMessageType loadMessageFrom(Resource path) {
-        LoadStoreTransitionMessage load = new LoadStoreTransitionMessage(path);
-        return load.loadMessage();
+        try {
+            LoadStoreTransitionMessage load = new LoadStoreTransitionMessage(path);
+            return load.loadMessage();
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     public void storeMessageTo(String path) {
@@ -54,15 +70,171 @@ public class LoadStoreTransitionMessage {
         this.basicFolder = basicFolder;
     }
 
-    private DomibusConnectorMessageType loadMessage() {
+    private DomibusConnectorMessageType loadMessage() throws IOException {
         DomibusConnectorMessageType message = new DomibusConnectorMessageType();
+
+        Resource propertiesResource = basicFolder.createRelative("message.properties");
+        if (!propertiesResource.exists()) {
+            throw new IOException("properties " + propertiesResource + " does not exist!");
+        }
+
+        messageProperties.load(propertiesResource.getInputStream());
+
 
         message.setMessageDetails(loadMessageDetails());
 
-        //TODO: load content
 
+        Resource contentResource = createRelativeResource(messageProperties.getProperty(MESSAGE_CONTENT_XML_PROP_NAME));
+        if (contentResource != null && contentResource.exists()) {
+            DomibusConnectorMessageContentType content = new DomibusConnectorMessageContentType();
+            content.setXmlContent(loadResourceAsSource(contentResource));
+
+            message.setMessageContent(content);
+            //load document
+            String docFileName = messageProperties.getProperty(MESSAGE_DOCUMENT_FILE_PROP_NAME);
+            if (docFileName != null) {
+                DomibusConnectorMessageDocumentType messageDoc = new DomibusConnectorMessageDocumentType();
+                Resource r = basicFolder.createRelative(docFileName);
+
+                messageDoc.setDocument(loadResourceAsDataHandler(r));
+                String docName = messageProperties.getProperty(MESSAGE_DOCUMENT_NAME_PROP_NAME);
+                messageDoc.setDocumentName(docName);
+
+                //TODO: load signature
+                String signatureFileName = messageProperties.getProperty("MESSAGE_DOCUMENT_SIGNATURE_FILE_PROP_NAME");
+                if (signatureFileName != null) {
+                    DomibusConnectorDetachedSignatureType detachedSignature = new DomibusConnectorDetachedSignatureType();
+
+
+                    String mimeTypeString = messageProperties.getProperty("MESSAGE_DOCUMENT_SIGNATURE_TYPE_PROP_NAME");
+                    DomibusConnectorDetachedSignatureMimeType detachedSignatureMimeType =
+                            DomibusConnectorDetachedSignatureMimeType.fromValue(mimeTypeString);
+
+
+//                    DetachedSignatureMimeType mimeType = DetachedSignatureMimeType.valueOf(messageProperties.getProperty("MESSAGE_DOCUMENT_SIGNATURE_TYPE_PROP_NAME"));
+                    String name = messageProperties.getProperty("MESSAGE_DOCUMENT_SIGNATURE_NAME_PROP_NAME");
+                    Resource fResource = basicFolder.createRelative(signatureFileName);
+                    byte[] signatureBytes = loadResourceAsByteArray(fResource);
+
+                    detachedSignature.setDetachedSignature(signatureBytes);
+                    detachedSignature.setDetachedSignatureName(name);
+                    detachedSignature.setMimeType(detachedSignatureMimeType);
+
+                    messageDoc.setDetachedSignature(detachedSignature);
+                }
+
+                content.setDocument(messageDoc);
+
+            }
+
+        }
+
+
+        //load attachments
+        message.getMessageAttachments().addAll(loadMessageAttachments());
+
+        //load confirmations
+        message.getMessageConfirmations().addAll(loadMessageConfirmations());
 
         return message;
+    }
+
+    private List<? extends DomibusConnectorMessageConfirmationType> loadMessageConfirmations() {
+        return messageProperties.stringPropertyNames()
+                .stream()
+                .sorted()
+                .filter( (k) -> k.startsWith(LoadStoreTransitionMessage.MESSAGE_CONFIRMATIONS_PREFIX))
+                .map( (k) -> k.split("\\.")[2])
+                .distinct()
+                .map( (k) -> {
+
+
+                    String evidenceFilePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_CONFIRMATIONS_PREFIX, k, "file");
+                    String evidenceTypePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_CONFIRMATIONS_PREFIX, k, "type");
+
+                    Resource resEvidenceFile = createRelativeResource(messageProperties.getProperty(evidenceFilePropertyName));
+
+                    //TODO: determine evidence type!
+                    //DomibusConnectorMessageC domibusConnectorEvidenceType = DomibusConnectorEvidenceType.valueOf(messageProperties.getProperty(evidenceTypePropertyName));
+
+                    DomibusConnectorConfirmationType domibusConnectorConfirmationType = DomibusConnectorConfirmationType.fromValue(messageProperties.getProperty(evidenceTypePropertyName));
+
+                    DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
+                    confirmation.setConfirmation(loadResourceAsSource(resEvidenceFile));
+                    confirmation.setConfirmationType(domibusConnectorConfirmationType);
+                    //confirmation.setEvidenceType(domibusConnectorEvidenceType);
+                    //confirmation.setConfirmationType(DomibusConnectorConfirmationType.valueOf());
+
+                    return confirmation;
+
+                })
+                .collect(Collectors.toList());
+    }
+
+    private Source loadResourceAsSource(Resource resEvidenceFile) {
+        try {
+            return new StreamSource(resEvidenceFile.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<DomibusConnectorMessageAttachmentType> loadMessageAttachments() {
+
+
+        return messageProperties.stringPropertyNames()
+                .stream()
+                .sorted()
+                .filter( (k) -> k.startsWith(LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX) )
+                .map( (k) -> k.split("\\.")[2])
+                .distinct()
+                .map( (k) -> {
+                    try {
+                        DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
+                        String filePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "file");
+                        String identifierPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "identifier");
+                        Resource res = basicFolder.createRelative(messageProperties.getProperty(filePropertyName));
+                        attachment.setAttachment(loadResourceAsDataHandler(res));
+                        attachment.setIdentifier(messageProperties.getProperty(identifierPropertyName));
+                        return attachment;
+
+                    } catch (IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                })
+                .collect(Collectors.toList());
+
+    }
+
+    private DataHandler loadResourceAsDataHandler(Resource res) {
+        try {
+            byte[] bytes = StreamUtils.copyToByteArray(res.getInputStream());
+            DataHandler dh = new DataHandler(new ByteArrayDataSource(bytes, null));
+            return dh;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    private @Nullable Resource createRelativeResource(@Nullable String relativePath) {
+        if (relativePath == null) {
+            return null;
+        }
+        try {
+            Resource contentResource = basicFolder.createRelative(relativePath);
+            return contentResource;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    private byte[] loadResourceAsByteArray(Resource res) {
+        try {
+            InputStream inputStream = res.getInputStream();
+            return StreamUtils.copyToByteArray(inputStream);
+        } catch(IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     private DomibusConnectorMessageDetailsType loadMessageDetails() {
