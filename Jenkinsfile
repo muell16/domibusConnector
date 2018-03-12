@@ -266,7 +266,7 @@ node {
 						stage ("check snapshot deployment") {
 							def version = mvn 'org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v "^\\["'
 							println version
-							deploySnapshot = version.endsWith("-SNAPSHOT") //if endswith snapshot activate snapshot deployment
+							deploySnapshot = version.endsWith("-SNAPSHOT") && "origin/development".equals(scmInfo.GIT_BRANCH) //if endswith snapshot activate snapshot deployment AND branch is development!
 						}
 						if (deploySnapshot) {
 							stage ("DEPLOY SNAPSHOTS") {    

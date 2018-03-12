@@ -181,7 +181,7 @@ public class ConnectorBackendToGwITCase {
 
     @Test
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
-        
+
 
 
         DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
