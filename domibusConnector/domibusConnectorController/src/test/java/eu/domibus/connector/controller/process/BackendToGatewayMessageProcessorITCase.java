@@ -3,7 +3,10 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
@@ -17,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
@@ -56,6 +60,10 @@ public class BackendToGatewayMessageProcessorITCase {
     private List<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
+    @Qualifier("GatewayToBackendMessageProcessor")
+    private DomibusConnectorMessageProcessor gatewayToBackendMessageProcessor;
+
+    @Autowired
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Autowired
@@ -72,6 +80,15 @@ public class BackendToGatewayMessageProcessorITCase {
         message.getMessageDetails().setConnectorBackendClientName("bob");
         message.setConnectorMessageId("msg2");
         message.getMessageConfirmations().clear();
+
+
+        DomibusConnectorBigDataReference bigDataReference = LoadStoreMessageFromPath.loadResourceAsBigDataRef(new ClassPathResource("testmessages/testdata/ExamplePdfSigned.pdf"));
+        DomibusConnectorMessageDocument signedDocument = DomibusConnectorMessageDocumentBuilder.createBuilder()
+                .setContent(bigDataReference)
+                .setName("SignedDocument")
+                .build();
+        message.getMessageContent().setDocument(signedDocument);
+
 
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
         message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
@@ -98,10 +115,16 @@ public class BackendToGatewayMessageProcessorITCase {
 
 
         //write by gw rcv message to file system
-//        FileSystemUtils.deleteRecursively(new File("./target/testm/"));
-//        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
-//        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
+        FileSystemUtils.deleteRecursively(new File("./target/testm/"));
+        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
+        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
 
+
+//        System.out.println("#############\n#############\n#############\n#############\nOTHER WAY!!!!");
+//
+//        bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
+//
+//        gatewayToBackendMessageProcessor.processMessage(msg);
 
 
 

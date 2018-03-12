@@ -291,7 +291,7 @@ node {
 							mvn "clean deploy"
 							
 							echo "TAGGING REPOSITORY"						
-							sh 'git tag v${releaseVersion}'						
+							sh 'git tag -a v${releaseVersion} -m "create release tag" '						
 							sh 'git push --tags'
 												
 						}

@@ -257,7 +257,9 @@ public class LoadStoreMessageFromPath {
         }
     }
 
-    private DomibusConnectorBigDataReference loadResourceAsBigDataRef(Resource resource) {
+
+
+    public static DomibusConnectorBigDataReference loadResourceAsBigDataRef(Resource resource) {
         try {
             InputStream inputStream = resource.getInputStream();
 

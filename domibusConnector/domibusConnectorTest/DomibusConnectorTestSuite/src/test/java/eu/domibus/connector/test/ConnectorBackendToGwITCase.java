@@ -186,6 +186,9 @@ public class ConnectorBackendToGwITCase {
         epoMessage.getMessageDetails().setRefToMessageId(null);
         epoMessage.getMessageDetails().setBackendMessageId("bob_id123");
 
+
+
+
         DomibsConnectorAcknowledgementType acknowledgementType = bobBackendClient.submitMessage(epoMessage);
 
         assertThat(acknowledgementType.isResult()).isTrue();

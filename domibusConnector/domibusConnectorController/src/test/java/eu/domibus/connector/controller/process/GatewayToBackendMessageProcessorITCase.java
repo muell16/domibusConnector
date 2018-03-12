@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.security.container.service.TokenIssuerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ import java.util.zip.ZipInputStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={ITCaseTestContext.class})
+@ContextConfiguration(classes={ITCaseTestContext.class, TokenIssuerFactory.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party

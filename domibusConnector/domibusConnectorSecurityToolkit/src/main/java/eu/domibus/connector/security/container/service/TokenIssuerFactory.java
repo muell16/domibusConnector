@@ -27,8 +27,9 @@ public class TokenIssuerFactory {
         tokenIssuer.setCountry(country);
         tokenIssuer.setServiceProvider(serviceProvider);
         tokenIssuer.setAdvancedElectronicSystem(advancedElectronicSystem);
-        LOGGER.debug("tokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}] ",
-                country, serviceProvider, advancedElectronicSystem);
+        LOGGER.debug("#getTokenIssuer: TokenIssuer initialized with country [{}], serviceProvide [{}] and advancedElectronicSystem [{}], returned tokenIssuer [{}]",
+                country, serviceProvider, advancedElectronicSystem, tokenIssuer);
+
         return tokenIssuer;
     }
 
