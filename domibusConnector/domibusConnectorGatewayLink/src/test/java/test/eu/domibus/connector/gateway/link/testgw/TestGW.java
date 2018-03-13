@@ -11,6 +11,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Profile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.UUID;
  */
 @SpringBootApplication(scanBasePackageClasses = {TestGW.class})
 @ImportResource("classpath:/test/eu/domibus/connector/gateway/link/testgw/TestGatewayContext.xml")
+@Profile("testgw")
 public class TestGW {
 
 
@@ -31,6 +33,7 @@ public class TestGW {
         SpringApplication springApp = builder.sources(TestGW.class)
                 .web(true)
                 .properties(properties)
+                .profiles("testgw")
                 .build();
         return springApp.run();
     }
@@ -39,6 +42,7 @@ public class TestGW {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         SpringApplication springApp = builder.sources(TestGW.class)
                 .web(true)
+                .profiles("testgw")
                 .build();
         return springApp.run(args);
     }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
         "eu.domibus.connector.evidences",   //load evidences toolkit
         "eu.domibus.connector.security"     //load security toolkit
 })
+@Profile("ITCaseTestContext")
 public class ITCaseTestContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ITCaseTestContext.class);

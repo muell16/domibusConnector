@@ -67,8 +67,8 @@
 
     <distributionManagement>
         <repository>
-            <id>nexus-releases</id>
-            <url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
+            <id>${releases-repo.id}</id>
+            <url>${releases-repo.url}</url>
         </repository>
         <snapshotRepository>
             <id>${snapshots-repo.id}</id>

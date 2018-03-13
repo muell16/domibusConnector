@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
+@ActiveProfiles("ITCaseTestContext")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 public class BackendToGatewayMessageProcessorITCase {
 

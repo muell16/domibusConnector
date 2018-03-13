@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -53,6 +54,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
+@ActiveProfiles("ITCaseTestContext")
 public class ConnectorMessageFlowITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
@@ -96,7 +98,7 @@ public class ConnectorMessageFlowITCase {
     
     @Test
     public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        DomibusConnectorMessage loadMessageFrom = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg1/"));
+        DomibusConnectorMessage loadMessageFrom = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
         
         assertThat(loadMessageFrom).isNotNull();
         loadMessageFrom.getMessageDetails().setFinalRecipient("final recipient");

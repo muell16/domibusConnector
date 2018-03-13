@@ -9,6 +9,7 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
@@ -47,7 +48,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @Import(WSBackendLinkSendReceiveITCase.TestConfiguration.class)
 @SpringBootTest(properties= {"server.port=0"}, webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("backendlink-ws")
+@ActiveProfiles({"backendlink-ws", "WSBackendLinkSendReceiveITCase"})
 public class WSBackendLinkSendReceiveITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkSendReceiveITCase.class);
@@ -55,7 +56,8 @@ public class WSBackendLinkSendReceiveITCase {
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.backend.ws.link.spring", },
             scanBasePackageClasses= {WsPolicyLoader.class},
             exclude = {
-        DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})    
+        DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+    @Profile("WSBackendLinkSendReceiveITCase")
     public static class TestConfiguration {     
 
         @Bean("defaultBackendClientInfo")
@@ -78,6 +80,7 @@ public class WSBackendLinkSendReceiveITCase {
         
         
         @Bean("connectorBackendImpl")
+        @ConditionalOnMissingBean
         DomibusConnectorBackendWebService domibusConnectorBackendWebService() {
             return new DomibusConnectorBackendWebService() {
                 @Override

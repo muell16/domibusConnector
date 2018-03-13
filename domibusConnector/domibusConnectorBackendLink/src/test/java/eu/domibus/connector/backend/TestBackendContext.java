@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.jms.annotation.JmsListener;
     scanBasePackages={"eu.domibus.connector.backend", "eu.domibus.connector.persistence"}
 )  
 @Configuration
+@Profile("TestBackendContext")
 public class TestBackendContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TestBackendContext.class);
@@ -50,7 +52,7 @@ public class TestBackendContext {
         DomibusConnectorBackendSubmissionService submissionService = new DomibusConnectorBackendSubmissionService() {
             @Override
             public void submitToController(DomibusConnectorMessage message) {
-                LOGGER.debug("message to controller submitted: [{}]", message);
+                LOGGER.warn("message to dummySubmissionService controller submitted: [{}]", message);
                 submittedMessages.add(message);
             }                        
         };

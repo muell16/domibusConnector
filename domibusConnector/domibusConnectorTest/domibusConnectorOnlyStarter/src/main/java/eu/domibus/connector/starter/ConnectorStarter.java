@@ -22,7 +22,7 @@ public class ConnectorStarter {
                 .profiles("connector",
                         "embedded",     //use embedded database
                         "gwlink-ws", //use gw webservice based impl
-                        "backendlink-ws"
+                        "backendlink-ws" //use backendlink ws based impl
                 )
                 .build();
 

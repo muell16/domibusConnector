@@ -70,7 +70,9 @@ public class ConnectorBackendToGwITCase {
                 "--gateway.delivery.service.ssl.keystore.password=12345",
                 "--gateway.delivery.service.ssl.truststore.store=store.jks",
                 "--gateway.delivery.service.ssl.truststore.password=12345",
-                "--liquibase.change-log=classpath:/endtoendtest/database/testdata/init-db.xml"
+                "--liquibase.change-log=classpath:/endtoendtest/database/testdata/init-db.xml",
+                "--liquibase.enabled=true",
+                "--debug=true"
         };
         System.out.println("START CONNECTOR CONTEXT");
         CONNECTOR_APPLICATION_CONTEXT = ConnectorStarter.runSpringApplication(args);
@@ -187,20 +189,13 @@ public class ConnectorBackendToGwITCase {
 
         assertThat(msg1).isNotNull();
 
-//        DomibusConnectorMessageType epoMessage = TransitionCreator.createEpoMessage();
-//        epoMessage.getMessageDetails().setConversationId(null);
-//        epoMessage.getMessageDetails().setRefToMessageId(null);
-//        epoMessage.getMessageDetails().setBackendMessageId("bob_id123");
-
-        //TODO: load correct document!
-
-
 
         DomibsConnectorAcknowledgementType acknowledgementType = bobBackendClient.submitMessage(msg1);
 
         assertThat(acknowledgementType.isResult()).isTrue();
 
-        Thread.sleep(20000);
+        System.out.println("sleep.....");
+        Thread.sleep(200000);
 
         System.out.println("size " + toGwSubmittedMessages.size());
 
