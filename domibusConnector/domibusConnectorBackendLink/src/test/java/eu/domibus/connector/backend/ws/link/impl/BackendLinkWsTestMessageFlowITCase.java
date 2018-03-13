@@ -87,7 +87,7 @@ public class BackendLinkWsTestMessageFlowITCase {
                 "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
-                //"liquibase.enabled=true",
+                "liquibase.enabled=true",
                 "spring.datasource.url=jdbc:h2:mem:" + dbName //use random db name to avoid reusing db between tests
         };
 

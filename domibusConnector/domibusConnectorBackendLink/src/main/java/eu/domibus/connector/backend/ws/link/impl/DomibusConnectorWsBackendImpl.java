@@ -142,6 +142,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new RuntimeException(error);            
         }
+        backendName = backendName.replace("CN=", "");
         DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
