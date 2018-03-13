@@ -80,20 +80,22 @@ public class BackendLinkWsTestMessageFlowITCase {
     //setup and start connector backend
     private static void setUpBackend() {
         MDC.put("COLOR", "GREEN");
-        String dbName = UUID.randomUUID().toString().substring(0,10);
-        String[] backendProfiles = new String[] {"test", "db_h2", "backendlink-ws"};
+        String dbName = UUID.randomUUID().toString().substring(0,10); //use random db name to avoid reusing db between test runs
+        String[] backendProfiles = new String[] {"db_h2", "backendlink-ws"};
         String[] backendProperties = new String[] {"server.port=0",
+                "spring.datasource.url=jdbc:h2:mem:" + dbName,
                 "logging.config=classpath:log4j2-test.xml",
                 "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
                 "liquibase.enabled=true",
-                "spring.datasource.url=jdbc:h2:mem:" + dbName //use random db name to avoid reusing db between tests
+
+
         };
 
         backendApplicationContext = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
-
-        LOGGER.debug("backendServiceStarted....");
+        System.out.println("backend context started...");
+        LOGGER.info("backendServiceStarted....");
         MDC.remove("COLOR");        
     }
 
@@ -170,7 +172,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         //send message from bob to connector
         DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
         
-        DomibusConnectorMessageType msg = TransitionCreator.createMessage();
+        DomibusConnectorMessageType msg = TransitionCreator.createEpoMessage();
         DomibsConnectorAcknowledgementType submitMessage = bobClientEndpoint.submitMessage(msg);
         assertThat(submitMessage).isNotNull();
       

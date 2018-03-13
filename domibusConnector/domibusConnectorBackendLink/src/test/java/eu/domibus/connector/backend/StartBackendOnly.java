@@ -37,7 +37,7 @@ public class StartBackendOnly {
 //        list.addAll(Arrays.asList(profiles));
 //        list.add("TestBackendContext");
 
-
+        LOGGER.info("start context with profiles: [{}]", (Object[]) profiles);
         SpringApplication springApplication = new SpringApplicationBuilder()
                 .sources(TestBackendContext.class)
                 .profiles(profiles)
