@@ -13,6 +13,7 @@ import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,7 @@ public class QuartzContext  {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public SchedulerFactoryBean schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory) throws IOException {
 		SchedulerFactoryBean factory = new SchedulerFactoryBean();
 		factory.setOverwriteExistingJobs(true);
@@ -43,6 +45,8 @@ public class QuartzContext  {
 		factory.setDataSource(dataSource);
 		factory.setJobFactory(jobFactory);
 		factory.setQuartzProperties(quartzProperties());
+
+
 
 		// Here we will set all the trigger beans we have defined.
 		if (!CollectionUtils.isEmpty(listOfTrigger)) {
