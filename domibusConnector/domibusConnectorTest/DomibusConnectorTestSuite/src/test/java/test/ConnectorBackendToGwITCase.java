@@ -183,7 +183,7 @@ public class ConnectorBackendToGwITCase {
     @Test
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
 
-        DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw"));
+        DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw/"));
 
         assertThat(msg1).isNotNull();
 

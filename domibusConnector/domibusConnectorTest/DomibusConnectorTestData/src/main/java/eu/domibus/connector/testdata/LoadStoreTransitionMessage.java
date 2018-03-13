@@ -8,10 +8,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.MimetypesFileTypeMap;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -66,6 +67,7 @@ public class LoadStoreTransitionMessage {
     }
 
     private LoadStoreTransitionMessage(Resource basicFolder) {
+        messageProperties = new Properties();
         this.basicFolder = basicFolder;
     }
 
@@ -207,9 +209,9 @@ public class LoadStoreTransitionMessage {
 
     private DataHandler loadResourceAsDataHandler(Resource res) {
         try {
-            byte[] bytes = StreamUtils.copyToByteArray(res.getInputStream());
-            
-            DataHandler dh = new DataHandler(bytes, "application/octet-stream");
+
+            DataHandler dh = new DataHandler(new InputStreamDataSource(res.getInputStream()));
+
             
             return dh;
         } catch (IOException ioe) {
@@ -272,7 +274,41 @@ public class LoadStoreTransitionMessage {
 
 
 
+    public static class InputStreamDataSource implements DataSource {
 
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        public InputStreamDataSource(InputStream inputStream) {
+            try {
+                int nRead;
+                StreamUtils.copy(inputStream, buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public String getContentType() {
+            //return new MimetypesFileTypeMap().getContentType(name);
+            return "application/octet-stream";
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return new ByteArrayInputStream(buffer.toByteArray());
+        }
+
+        @Override
+        public String getName() {
+            return "";
+        }
+
+        @Override
+        public OutputStream getOutputStream() throws IOException {
+            throw new IOException("Read-only data");
+        }
+
+    }
 
 
 }
