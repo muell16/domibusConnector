@@ -63,6 +63,8 @@ public class ConnectorBackendToGwITCase {
 
         //start controller
         String[] args = new String[] {
+                "--liquibase.change-log=classpath:/endtoendtest/database/testdata/init-db.xml",
+                "--liquibase.enabled=true",
                 "--server.port=" + portConnector,
                 "--gateway.submission.endpoint.address=" + TESTGW_SERVER_ADDRESS,
                 "--gateway.delivery.service.ssl.key.password=12345",
@@ -70,9 +72,7 @@ public class ConnectorBackendToGwITCase {
                 "--gateway.delivery.service.ssl.keystore.password=12345",
                 "--gateway.delivery.service.ssl.truststore.store=store.jks",
                 "--gateway.delivery.service.ssl.truststore.password=12345",
-                "--liquibase.change-log=classpath:/endtoendtest/database/testdata/init-db.xml",
-                "--liquibase.enabled=true",
-                "--debug=true"
+                "--debug"
         };
         System.out.println("START CONNECTOR CONTEXT");
         CONNECTOR_APPLICATION_CONTEXT = ConnectorStarter.runSpringApplication(args);
@@ -166,7 +166,7 @@ public class ConnectorBackendToGwITCase {
 
     @After
     public void tearDown() throws InterruptedException {
-        Thread.sleep(3000); //wait 3s after a test!
+        Thread.sleep(300000); //wait 3s after a test!
     }
 
 
@@ -182,7 +182,8 @@ public class ConnectorBackendToGwITCase {
         //do nohting jus see if we can reach to here...
     }
 
-    @Test
+   
+    @Test //("test is failing because testdb is not correct initialized!")
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
 
         DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw/"));
