@@ -26,7 +26,7 @@ import org.springframework.jms.annotation.JmsListener;
     scanBasePackages={"eu.domibus.connector.backend", "eu.domibus.connector.persistence"}
 )  
 @Configuration
-@Profile("TestBackendContext")
+//@Profile("TestBackendContext")
 public class TestBackendContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TestBackendContext.class);

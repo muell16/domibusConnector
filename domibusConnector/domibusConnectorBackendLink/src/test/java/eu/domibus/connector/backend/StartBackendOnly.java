@@ -33,15 +33,17 @@ public class StartBackendOnly {
     
     public static ConfigurableApplicationContext startUpSpringApplication(String[] profiles, String[] properties) {
 
-        List<String> list = Arrays.asList(profiles);
+        List<String> list = new ArrayList<>();
+        list.addAll(Arrays.asList(profiles));
         list.add("TestBackendContext");
 
 
 
         SpringApplication springApplication = new SpringApplicationBuilder()
                 .sources(TestBackendContext.class)
-                .profiles()
+                .profiles(profiles)
                 .properties(properties)
+                .web(true)
                 .build();
         
 
