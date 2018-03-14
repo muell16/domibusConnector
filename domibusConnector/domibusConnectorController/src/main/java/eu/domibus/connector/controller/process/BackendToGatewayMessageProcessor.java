@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,8 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Takes a message from backend and creates evidences for it
@@ -53,10 +56,17 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
-    @Autowired
+	private BigDataWithMessagePersistenceService bigDataPersistenceService;
+
+	@Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
+
+	@Autowired
+	public void setBigDataPersistenceService(BigDataWithMessagePersistenceService bigDataPersistenceService) {
+		this.bigDataPersistenceService = bigDataPersistenceService;
+	}
 
     @Autowired
     public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
@@ -128,8 +138,10 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		try {
+			message = bigDataPersistenceService.loadAllBigFilesFromMessage(message);
 			gwSubmissionService.submitToGateway(message);
 		} catch (DomibusConnectorGatewaySubmissionException e) {
+		    LOGGER.warn("Cannot submit messate to gateway", e);
 			createSubmissionRejectionAndReturnIt(message, e.getMessage());
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -163,8 +175,9 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	}
 
-	private void createSubmissionRejectionAndReturnIt(DomibusConnectorMessage message, String errorMessage){
-
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	void createSubmissionRejectionAndReturnIt(DomibusConnectorMessage message, String errorMessage){
+        LOGGER.debug("#createSubmissionRejectionAndReturnIt: with error [{}]", errorMessage);
 		DomibusConnectorMessageConfirmation confirmation = null;
 		try {
 			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER,
@@ -190,19 +203,32 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .build();            
 		}
 
-		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-        returnMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
-		backendDeliveryService.deliverMessageToBackend(returnMessage);     
+
 
 		try {
-            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
+            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
+            returnMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+            backendDeliveryService.deliverMessageToBackend(returnMessage);
 
+            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
 			messagePersistenceService.rejectMessage(message);
 
 		} catch (PersistenceException persistenceException) {
-			//TODO: exception
-			LOGGER.error("Persistence exceptoin occured while trying to send submission rejection. Rejection is not stored in Storage!", persistenceException);
-		}
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not set evidence of type SUBMISSION_REJECTION as delivered!")
+                    .setSource(this.getClass())
+                    .setCause(persistenceException)
+                    .build();
+
+		} catch (Exception e) {
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not set evidence of type SUBMISSION_REJECTION as delivered!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
+        }
 
 	}
 

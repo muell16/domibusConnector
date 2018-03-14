@@ -8,7 +8,7 @@
     <!-- 
         import to load 4.0 data model
     -->
-    <include file="/db/changelog/install/initial-4.0.xml" />           
-    <include file="/initsql/initial-data.sql" />
+    <include file="db/changelog/install/initial-4.0.xml" />
+    <include file="initsql/initial-data.sql" />
    
 </databaseChangeLog> 

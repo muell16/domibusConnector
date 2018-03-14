@@ -22,7 +22,10 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
-    default void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
+    default void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation) {
+        if (confirmation == null) {
+            throw new IllegalArgumentException("confirmation cannot be null!");
+        }
         persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(), confirmation.getEvidenceType());
     }
 
@@ -41,7 +44,10 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
-    default void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
+    default void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
+        if (confirmation == null) {
+            throw new IllegalArgumentException("confirmation cannot be null!");
+        }
         setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
     }
 
@@ -60,7 +66,10 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
 
-    default void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
+    default void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
+        if (confirmation == null) {
+            throw new IllegalArgumentException("confirmation cannot be null!");
+        }
         setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
     }
 

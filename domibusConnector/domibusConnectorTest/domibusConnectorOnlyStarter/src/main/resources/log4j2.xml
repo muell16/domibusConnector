@@ -11,9 +11,14 @@
         </Root>
         <Logger name="org.liquibase" level="trace"  >
             <AppenderRef ref="Console" />
-        </Logger>    
+        </Logger>
+
         <Logger name="eu.domibus.connector" level="trace" additivity="false">
             <AppenderRef ref="Console" />
-        </Logger>    
+        </Logger>
+
+        <Logger name="org.hibernate" level="trace" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
     </Loggers>
 </Configuration>

@@ -63,7 +63,7 @@ public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCas
         PDomibusConnectorMessage msg = messageDao.findOne(msgId);
 
         PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-        bigData.setMessage(msg);
+        bigData.setMessage(msgId);
 
         transactionTemplate.execute( status -> {
             Session hibernateSession = entityManager.unwrap(Session.class);

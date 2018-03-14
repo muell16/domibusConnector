@@ -16,6 +16,7 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import org.junit.Before;
@@ -57,6 +58,9 @@ public class BackendToGatewayMessageProcessorTest {
 
     @Mock
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    
+    @Mock
+    private BigDataWithMessagePersistenceService bigDataPersistenceService;
 
     BackendToGatewayMessageProcessor backendToGatewayMessageProcessor;
 
@@ -79,14 +83,16 @@ public class BackendToGatewayMessageProcessorTest {
         backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);
         backendToGatewayMessageProcessor.setSecurityToolkit(securityToolkit);
         backendToGatewayMessageProcessor.setMessageIdGenerator(() -> UUID.randomUUID().toString());
-
+        backendToGatewayMessageProcessor.setBigDataPersistenceService(bigDataPersistenceService);
+        
         Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
         Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
                 .when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
-
+        Mockito.when(bigDataPersistenceService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
+                .thenAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
 
 
     }

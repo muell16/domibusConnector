@@ -310,6 +310,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     @Transactional
     public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+        LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] as delivered");
         this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         List<PDomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(dbMessage.getId());
@@ -326,6 +327,7 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
                 return evidence;
             }
         }
+        LOGGER.warn("Evidence of type [{}] was not found in evidences [{}]", evidenceType, evidences);
         return null;
     }
 

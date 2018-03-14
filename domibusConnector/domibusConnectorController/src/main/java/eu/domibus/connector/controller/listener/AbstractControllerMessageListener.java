@@ -23,6 +23,7 @@ public abstract class AbstractControllerMessageListener {
 	private DomibusConnectorPersistenceService persistenceService;
 	
 	void handleMessage(Message message) {
+		getLogger().debug("#handleMessage: jms message: [{}]", message);
 		try {
 			if (message instanceof TextMessage) {
 				TextMessage msg = (TextMessage) message;
@@ -52,13 +53,16 @@ public abstract class AbstractControllerMessageListener {
 	}
 	
 	void startProcessing(DomibusConnectorMessage connectorMessage) {
+		getLogger().trace("#startProcessing: with message [{}]", connectorMessage);
 		try {
 			if (connectorMessage.getMessageContent() != null) {
 				// as there is a message content, it cannot only be a confirmation message
+				getLogger().trace("#startProcessing: with message [{}] as message", connectorMessage);
 				getMessageProcessor().processMessage(connectorMessage);
 			} else if (!CollectionUtils.isEmpty(connectorMessage.getMessageConfirmations())) {
 				// as there is no message content, but at least one message confirmation,
 				// it is a confirmation message
+				getLogger().trace("#startProcessing: with message [{}] as confirmation", connectorMessage);
 				getConfirmationProcessor().processMessage(connectorMessage);
 			}
 		} catch (Exception e) {

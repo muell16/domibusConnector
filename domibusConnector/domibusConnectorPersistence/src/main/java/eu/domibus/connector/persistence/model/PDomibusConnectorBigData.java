@@ -28,9 +28,11 @@ public class PDomibusConnectorBigData {
     @Column(name="CONTENT")
     private Blob content;
 
-    @ManyToOne
-    @JoinColumn(name="MESSAGE_ID", referencedColumnName="ID")
-    private PDomibusConnectorMessage message;
+//    @ManyToOne(fetch=FetchType.LAZY)
+//    @JoinColumn(name="MESSAGE_ID", referencedColumnName="ID")
+//    private PDomibusConnectorMessage message;
+    @Column(name="MESSAGE_ID")
+    private Long message;
 
 
     public Long getId() {
@@ -73,11 +75,11 @@ public class PDomibusConnectorBigData {
         this.content = content;
     }
 
-    public PDomibusConnectorMessage getMessage() {
+    public Long getMessage() {
         return message;
     }
 
-    public void setMessage(PDomibusConnectorMessage message) {
+    public void setMessage(Long message) {
         this.message = message;
     }
 
@@ -85,7 +87,7 @@ public class PDomibusConnectorBigData {
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", this.id);
-        toString.append("referencedMessage", this.message == null ? null : this.message.getId());
+        toString.append("referencedMessage", this.message);
         return toString.build();
     }
 }

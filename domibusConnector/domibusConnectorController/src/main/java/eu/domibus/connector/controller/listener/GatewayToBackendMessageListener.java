@@ -9,17 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 @Component("GatewayToBackendMessageListener")
 public class GatewayToBackendMessageListener extends AbstractControllerMessageListener implements MessageListener {
 
-	private static final String queueName = "domibus.connector.internal.gateway.to.controller.queue";
+	private static final String QUEUE_NAME = "domibus.connector.internal.gateway.to.controller.queue";
 	
-	private static final Logger logger = LoggerFactory.getLogger(BackendToGatewayMessageListener.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageListener.class);
 	
 	@Resource(name="GatewayToBackendMessageProcessor")
 	private DomibusConnectorMessageProcessor messageProcessor;
@@ -29,19 +27,19 @@ public class GatewayToBackendMessageListener extends AbstractControllerMessageLi
 	
 	@Override
 	@Transactional
-	@JmsListener(destination = "${"+queueName+"}") //Funktioniert das????
+	@JmsListener(destination = "${"+ QUEUE_NAME +"}") //Funktioniert das????
 	public void onMessage(Message message) {
 		handleMessage(message);
 	}
 
 	@Override
 	Logger getLogger() {
-		return logger;
+		return LOGGER;
 	}
 
 	@Override
 	String getQueueName() {
-		return queueName;
+		return QUEUE_NAME;
 	}
 
 	@Override
