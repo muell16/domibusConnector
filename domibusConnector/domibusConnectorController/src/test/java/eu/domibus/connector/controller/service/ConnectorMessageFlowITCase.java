@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -55,6 +56,7 @@ import org.springframework.test.context.jdbc.Sql;
 @TestPropertySource("classpath:application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @ActiveProfiles("ITCaseTestContext")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorMessageFlowITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);

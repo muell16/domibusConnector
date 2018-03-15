@@ -125,9 +125,9 @@ public class BackendToGatewayMessageProcessorTest {
         Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToGateway(eq(epoMessage), eq(submissionAcceptanceConfirmation));
 
 
-        //verify confirmation is also delivered to the backend
         assertThat(toBackendDeliveredMessages).hasSize(1);
-        Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToNationalSystem(eq(epoMessage), eq(submissionAcceptanceConfirmation));
+        //delivered to national system is set by backend!
+//        Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToNationalSystem(eq(epoMessage), eq(submissionAcceptanceConfirmation));
     }
 
     @Test
