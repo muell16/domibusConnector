@@ -27,12 +27,19 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
         id="gwSubmissionClient" 
         serviceClass="eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService"
 		address="${gateway.submission.endpoint.address}" 
-    />
+    >
+        <jaxws:properties>
+            <entry key="mtom-enabled" value="true" />
+        </jaxws:properties>
+    </jaxws:client>
 		
 	<jaxws:endpoint
 		id="domibusConnectorDeliveryServiceEndpoint"
         implementor="#domibusConnectorDeliveryServiceImpl"
         address="/domibusConnectorDeliveryWebservice">
+        <jaxws:properties>
+            <entry key="mtom-enabled" value="true" />
+        </jaxws:properties>
    	</jaxws:endpoint>
    	
    	<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">

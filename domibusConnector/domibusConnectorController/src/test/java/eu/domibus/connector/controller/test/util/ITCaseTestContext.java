@@ -5,8 +5,10 @@ import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissi
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +37,15 @@ public class ITCaseTestContext {
         public static final String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
         public static final String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
 
+        public interface DomibusConnectorGatewaySubmissionServiceInterceptor {
+            public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException;
+        }
+
+//        public interface DomibusConnectorBackendDeliveryServiceInterceptor {
+//            public void deliverMessageToBackend(DomibusConnectorMessage message);
+//        }
+
+
         @Bean
         public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
@@ -53,6 +64,12 @@ public class ITCaseTestContext {
         }
 
         @Bean
+        public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
+            return Mockito.mock(DomibusConnectorGatewaySubmissionServiceInterceptor.class);
+        }
+
+
+        @Bean
         public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
             return new DomibusConnectorBackendDeliveryService() {
                 @Override
@@ -68,6 +85,7 @@ public class ITCaseTestContext {
             return new DomibusConnectorGatewaySubmissionService() {
                 @Override
                 public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
+                    domibusConnectorGatewaySubmissionServiceInterceptor().submitToGateway(message);
                     LOGGER.info("Delivered Message [{}] to Gateway");
                     toGatewayDeliveredMessages().add(message);
                 }
