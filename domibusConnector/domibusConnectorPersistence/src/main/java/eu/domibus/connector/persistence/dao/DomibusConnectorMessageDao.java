@@ -19,6 +19,9 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     public PDomibusConnectorMessage findOneByBackendMessageId(String backendId);
     
     public PDomibusConnectorMessage findOneByEbmsMessageId(String ebmsMessageId);
+
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.ebmsMessageId = ?1 OR m.backendMessageId = ?1")
+    public PDomibusConnectorMessage findOneByEbmsMessageIdOrBackendMessageId(String id);
     
     public PDomibusConnectorMessage findOneByConnectorMessageId(String messageConnectorId);
     

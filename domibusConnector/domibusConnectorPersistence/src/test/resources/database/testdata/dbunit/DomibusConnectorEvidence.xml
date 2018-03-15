@@ -44,7 +44,7 @@
     <domibus_connector_evidence
         id="82"
         message_id="73" 
-        type="NON_DELIVERY"
+        type="SUBMISSION_REJECTION"
         evidence="EVIDENCE1"
         delivered_nat="2017-12-12 12:34:23.000000000"
         updated="2017-12-12 12:34:23.000000000"        
@@ -53,7 +53,7 @@
     <domibus_connector_evidence
         id="83"
         message_id="73" 
-        type="NON_DELIVERY"
+        type="SUBMISSION_ACCEPTANCE"
         evidence="EVIDENCE1"
         delivered_gw="2017-12-12 12:34:23.000000000"
         updated="2017-12-12 12:34:23.000000000"        
@@ -71,7 +71,7 @@
     <domibus_connector_evidence
         id="85"
         message_id="74" 
-        type="NON_DELIVERY"
+        type="SUBMISSION_ACCEPTANCE"
         evidence="EVIDENCE1"
         delivered_gw="2017-12-12 12:34:23.000000000"
         updated="2017-12-12 12:34:23.000000000"        

@@ -99,6 +99,8 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
         message = domibusConnectorPersistAllBigDataOfMessageService.loadAllBigFilesFromMessage(message);
         DomibusConnectorMessageType transformDomainToTransition = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+        LOGGER.debug("Setting message [{}] as delivered to national system", message);
+        messagePersistenceService.setMessageDeliveredToNationalSystem(message);
         return transformDomainToTransition;        
     }
     

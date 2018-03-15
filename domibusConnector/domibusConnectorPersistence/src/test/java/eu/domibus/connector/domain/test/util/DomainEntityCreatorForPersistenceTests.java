@@ -75,7 +75,19 @@ public class DomainEntityCreatorForPersistenceTests {
         attachment.setMimeType("application/garbage");
         return attachment;
     }
-    
+
+
+    public static DomibusConnectorMessage createSimpleTestConfirmationMessage() {
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        messageDetails.setConversationId("conversation1");
+        messageDetails.setEbmsMessageId("ebms1_123412");
+        messageDetails.setRefToMessageId("ebms1");
+
+
+        DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
+        DomibusConnectorMessage msg = new DomibusConnectorMessage("msgid", messageDetails, createMessageDeliveryConfirmation());
+        return msg;
+    }
 
     public static DomibusConnectorMessage createSimpleTestMessage() {
         

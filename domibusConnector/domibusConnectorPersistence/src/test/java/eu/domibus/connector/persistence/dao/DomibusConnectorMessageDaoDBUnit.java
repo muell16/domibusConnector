@@ -63,7 +63,28 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");       
     }
-    
+
+    @Test
+    public void testFindOnebyNationalBackendId() {
+        PDomibusConnectorMessage msg = messageDao.findOneByBackendMessageId("20171103080259732_domibus-blue");
+        assertThat(msg).isNotNull();
+        assertThat(msg.getConnectorMessageId()).isEqualTo("msg73");
+    }
+
+    @Test
+    public void testFindOneByEbmsMessageIdOrNationalBackendId_ebmsId() {
+        PDomibusConnectorMessage msg = messageDao.findOneByEbmsMessageId("c1039627-2db3-489c-af18-92b54e630b36@domibus.eu");
+        assertThat(msg).isNotNull();
+        assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");
+    }
+
+    @Test
+    public void testFindOneByEbmsMessageIdOrNationalBackendId_nagionalId() {
+        PDomibusConnectorMessage msg = messageDao.findOneByBackendMessageId("20171103080259732_domibus-blue");
+        assertThat(msg).isNotNull();
+        assertThat(msg.getConnectorMessageId()).isEqualTo("msg73");
+    }
+
     @Test
     public void testFindByConversationId() {
         List<PDomibusConnectorMessage> msgs = messageDao.findByConversationId("aa062b42-2d35-440a-9cb6-c6e95a8679a8@domibus.eu");

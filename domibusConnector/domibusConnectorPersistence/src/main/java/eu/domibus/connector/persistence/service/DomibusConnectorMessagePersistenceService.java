@@ -120,7 +120,7 @@ public interface DomibusConnectorMessagePersistenceService {
     /**
      * marks the message as rejected
      * @throws IllegalArgumentException is thrown, if the message is null,
-     *  or the message does not contain a db id
+     *  or the message does not contain a connector id
      * @trows RuntimeException - if the message is not successfully marked as
      * rejected
      * @param message - the message

@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
@@ -80,6 +83,22 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         int result = evidenceDao.setDeliveredToGateway(882L);        
         assertThat(result).isEqualTo(0); //check on row updated
     }
+
+    @Test
+    public void testSetDeliveredToGateway_ByMessageIdAndType() throws SQLException, DataSetException {
+        int result = evidenceDao.setDeliveredToGateway(73L, EvidenceType.SUBMISSION_REJECTION);
+
+        assertThat(result).isEqualTo(1);
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=82");
+
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
+        Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_GW");
+        assertThat(value).isNotNull();
+        assertThat(value).isCloseTo(new Date(), 2000);
+    }
   
     
     @Test
@@ -96,6 +115,23 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_NAT");
         assertThat(value).isCloseTo(new Date(), 2000);
     }
+
+    @Test
+    public void testSetDeliveredToBackend_ByMessageIdAndType() throws SQLException, DataSetException {
+        int result = evidenceDao.setDeliveredToBackend(74L, EvidenceType.SUBMISSION_ACCEPTANCE);
+
+        assertThat(result).isEqualTo(1);
+        //check result in DB
+        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        QueryDataSet dataSet = new QueryDataSet(conn);
+        dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=85");
+
+        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
+        Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_NAT");
+        assertThat(value).isNotNull();
+        assertThat(value).isCloseTo(new Date(), 2000);
+    }
+
     
     @Test
     public void testSetDeliveredToBackend_updateNoneExistant_shouldReturnZero() {
@@ -120,4 +156,6 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         
         evidenceDao.save(dbEvidence);
     }
+
+
 }

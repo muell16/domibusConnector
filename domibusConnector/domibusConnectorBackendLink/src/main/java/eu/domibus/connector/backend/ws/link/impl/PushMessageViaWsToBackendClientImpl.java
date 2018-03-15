@@ -82,9 +82,10 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
             DomibsConnectorAcknowledgementType messageResponse = pushMessageToBackendClient(transitionMessage, backendClientInfoByName);
 
             if (messageResponse.isResult()) {
-                LOGGER.debug("#push: message with id [{}] sucessfully delivered to client [{}]", message.getConnectorMessageId(), backendClientInfoByName.getBackendName());
-                String messageId = messageResponse.getMessageId();
-                message.getMessageDetails().setBackendMessageId(messageId);
+                String backendMessageId = messageResponse.getMessageId();
+                LOGGER.debug("#push: message with id [{}] sucessfully delivered to client [{}], client return id [{}]",
+                        message.getConnectorMessageId(), backendClientInfoByName.getBackendName(), backendMessageId);
+                message.getMessageDetails().setBackendMessageId(backendMessageId);
 
                 messagePersistenceService.mergeMessageWithDatabase(message);
                 messagePersistenceService.setMessageDeliveredToNationalSystem(message);

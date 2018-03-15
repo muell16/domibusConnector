@@ -2,12 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -17,13 +12,13 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -53,10 +48,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceServiceImpl.class);
 
-    private static final String RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT = "RetrievalNonRetrievalToRecipient";
-    private static final String DELIVERY_NON_DELIVERY_TO_RECIPIENT = "DeliveryNonDeliveryToRecipient";
-    private static final String RELAY_REMMD_FAILURE = "RelayREMMDFailure";
-    private static final String RELAY_REMMD_ACCEPTANCE_REJECTION = "RelayREMMDAcceptanceRejection";
+    private static final String RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT_ACTION = "RetrievalNonRetrievalToRecipient";
+    private static final String DELIVERY_NON_DELIVERY_TO_RECIPIENT_ACTION = "DeliveryNonDeliveryToRecipient";
+    private static final String RELAY_REMMD_FAILURE_ACTION = "RelayREMMDFailure";
+    private static final String RELAY_REMMD_ACCEPTANCE_REJECTION_ACTION = "RelayREMMDAcceptanceRejection";
 
     @Autowired
     private DomibusConnectorMessageDao messageDao;
@@ -286,16 +281,36 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     @Transactional
     public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
-        PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-        messageDao.setMessageDeliveredToBackend(dbMessage.getId());
+        LOGGER.trace("#setMessageDeliveredToNationalSystem: with message [{}]", message);
+        if (DomainModelHelper.isEvidenceMessage(message)) { //TODO: test!!!
+            LOGGER.trace("#setMessageDeliveredToNationalSystem: message is a evidenceMessage");
+            DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
+            String refToMessageId = message.getMessageDetails().getRefToMessageId();
+            LOGGER.trace("#setMessageDeliveredToNationalSystem: find message by refToMessageid: [{}]", refToMessageId);
+            DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
+            PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+            //evidenceDao.setDeliveredToBackend(dbMessage.getId(), evidenceType);
+            //TODO: fix this!
+        } else {
+            PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
+            messageDao.setMessageDeliveredToBackend(dbMessage.getId());
+        }
+    }
+
+    private DomibusConnectorMessage findMessageByEbmsIdORNationalId(String ref) {
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(ref);
+        return this.mapMessageToDomain(dbMessage);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+        if (message == null) {
+            throw new IllegalArgumentException("message is not allowed to be null!");
+        }
 //        this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         Long dbMessageId = dbMessage.getId();
@@ -312,14 +327,23 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Override
     @Transactional
     public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+        if (message == null) {
+            throw new IllegalArgumentException("message is not allowed to be null!");
+        }
         LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] as delivered");
         //this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
+
+    }
+
+    private boolean setEvidenceDeliveredToNationalSystem(PDomibusConnectorMessage dbMessage, DomibusConnectorEvidenceType evidenceType) {
         List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessage.getId());
         PDomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
         if (dbEvidence != null) {
-            evidenceDao.setDeliveredToBackend(dbEvidence.getId());
+            int updated = evidenceDao.setDeliveredToBackend(dbEvidence.getId());
+            return updated == 1;
         }
+        return false;
     }
 
     private @Nullable
@@ -494,9 +518,10 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
         details.setConversationId(dbMessage.getConversationId());
         details.setConnectorBackendClientName(dbMessage.getBackendName());
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
-        details.setRefToMessageId(RELAY_REMMD_FAILURE);
+        //details.setRefToMessageId(dbMessage.get);
 
         if (messageInfo != null) {
+
             DomibusConnectorAction action = this.mapActionToDomain(messageInfo.getAction());
             details.setAction(action);
 
@@ -683,22 +708,22 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
 
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction() {
-        return getAction(RELAY_REMMD_ACCEPTANCE_REJECTION);
+        return getAction(RELAY_REMMD_ACCEPTANCE_REJECTION_ACTION);
     }
 
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorAction getRelayREMMDFailure() {
-        return getAction(RELAY_REMMD_FAILURE);
+        return getAction(RELAY_REMMD_FAILURE_ACTION);
     }
 
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction() {
-        return getAction(DELIVERY_NON_DELIVERY_TO_RECIPIENT);
+        return getAction(DELIVERY_NON_DELIVERY_TO_RECIPIENT_ACTION);
     }
 
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction() {
-        return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT);
+        return getAction(RETRIEVAL_NON_RETRIEVAL_TO_RECIPIENT_ACTION);
     }
 
     @Override
