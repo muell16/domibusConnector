@@ -6,10 +6,16 @@ import eu.domibus.connector.controller.service.queue.PutMessageOnQueueServiceImp
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * Configures Controller Context
@@ -17,7 +23,10 @@ import org.springframework.jms.core.JmsTemplate;
  */
 @Configuration
 @Import(value = { QuartzContext.class })
+@EnableJms
 public class ControllerContext {
+
+    public static final String NON_TRANSACTED_JMS_LISTENER_CONTAINER_FACTORY_BEAN_NAME = "nonTransactedJmsListenerContainerFactory";
 
     @Value("${domibus.connector.internal.backend.to.controller.queue}")
     private String internalBackendToControllerQueueName;
@@ -27,6 +36,24 @@ public class ControllerContext {
 
     @Autowired
     JmsTemplate jmsTemplate;
+
+    //create non transacted jmsListenerContainerFactory: https://docs.spring.io/spring-boot/docs/current/reference/html/howto-messaging.html
+    @Bean(NON_TRANSACTED_JMS_LISTENER_CONTAINER_FACTORY_BEAN_NAME)
+    public DefaultJmsListenerContainerFactory nonTransactedJmsListenerContainerFactory(ConnectionFactory connectionFactory,
+                                                    DefaultJmsListenerContainerFactoryConfigurer configurer) {
+        DefaultJmsListenerContainerFactory listenerFactory = new DefaultJmsListenerContainerFactory();
+
+        listenerFactory.setTransactionManager(null);
+        listenerFactory.setSessionTransacted(false);
+
+        // This provides all boot's default to this factory, including the message converter
+        configurer.configure(listenerFactory, connectionFactory);
+        //override boot defaults to disable transactions
+        listenerFactory.setTransactionManager(null);
+        listenerFactory.setSessionTransacted(false);
+
+        return listenerFactory;
+    }
 
     @Bean
     @Qualifier(PutMessageOnQueue.BACKEND_TO_CONTROLLER_QUEUE)

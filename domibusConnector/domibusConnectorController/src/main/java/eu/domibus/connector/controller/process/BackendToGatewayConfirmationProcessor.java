@@ -22,6 +22,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Takes an confirmation message from backend
@@ -71,6 +73,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Override
+    @Transactional(propagation=Propagation.NEVER)
 	public void processMessage(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isEvidenceMessage(message)) {
             throw new IllegalArgumentException("The message is not an evidence message!");

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -293,11 +294,12 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
      * {@inheritDoc }
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
-        this.mergeMessageWithDatabase(message);
+//        this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-        List<PDomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(dbMessage.getId());
+        Long dbMessageId = dbMessage.getId();
+        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessageId);
         PDomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
         if (dbEvidence != null) {
             evidenceDao.setDeliveredToGateway(dbEvidence.getId());
@@ -311,9 +313,9 @@ public class DomibusConnectorPersistenceServiceImpl implements DomibusConnectorP
     @Transactional
     public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
         LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] as delivered");
-        this.mergeMessageWithDatabase(message);
+        //this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-        List<PDomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(dbMessage.getId());
+        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessage.getId());
         PDomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
         if (dbEvidence != null) {
             evidenceDao.setDeliveredToBackend(dbEvidence.getId());

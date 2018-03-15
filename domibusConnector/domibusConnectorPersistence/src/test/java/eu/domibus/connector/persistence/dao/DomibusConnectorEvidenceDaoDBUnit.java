@@ -55,7 +55,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     @Test
     public void testFindEvidencesForMessage() {
         
-        List<PDomibusConnectorEvidence> evidences = evidenceDao.findEvidencesForMessage(73L);
+        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(73L);
         
         assertThat(evidences).hasSize(3);
     }

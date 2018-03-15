@@ -17,14 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConnectorEvidence, Long> {
 
-    //@Query("select e from PDomibusConnectorEvidence e where e.message = ?1")
-    @Query(value = "select * FROM DOMIBUS_CONNECTOR_EVIDENCE where MESSAGE_ID=?1", nativeQuery = true) //native sql query
-    public @Nonnull List<PDomibusConnectorEvidence> findEvidencesForMessage(Long messageId);
-    
+    public @Nonnull List<PDomibusConnectorEvidence> findByMessage_Id(Long messageId);
+
+    /**
+     *
+     * @param evidenceId the evidence to change
+     * @return modified rows
+     */
     @Modifying
     @Query("update PDomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.id = ?1")
     public int setDeliveredToGateway(Long evidenceId);
-    
+
+    /**
+     *
+     * @param evidenceId the evidence to change
+     * @return modified rows
+     */
     @Modifying
     @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.id = ?1")
     public int setDeliveredToBackend(Long evidenceId);

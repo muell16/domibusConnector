@@ -32,10 +32,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.FileSystemUtils;
+import org.springframework.util.StreamUtils;
 
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.util.Date;
@@ -82,14 +84,17 @@ public class BackendToGatewayMessageProcessorITCase {
 
     @Test
     public void testProcessMessage() throws IOException, DataSetException, SQLException {
-        
+
         DomibusConnectorMessage message = prepareMessage("msg1");
 
         backendToGatewayMessageProcessor.processMessage(message);
 
         assertThat(toGatewayDeliveredMessages).hasSize(1);
+        assertThat(toBackendDeliveredMessages).hasSize(1);
 
         DomibusConnectorMessage msg = toGatewayDeliveredMessages.get(0);
+        DomibusConnectorMessage evidence = toBackendDeliveredMessages.get(0);
+        assertThat(evidence.getMessageConfirmations()).hasSize(1);
 
         //verify DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
@@ -115,7 +120,36 @@ public class BackendToGatewayMessageProcessorITCase {
 //        bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
 //
 //        gatewayToBackendMessageProcessor.processMessage(msg);
+
     }
+
+    /*
+     * Test send to GW, but gw fails
+     * check that SUBMISSION_REJECTION evidence exists in db AND is sent to backend!
+     */
+    @Test
+    public void testProcessMessage_readAttachment() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException {
+
+        Mockito.doAnswer(invoc -> {
+            DomibusConnectorMessage msg = invoc.getArgumentAt(0, DomibusConnectorMessage.class);
+            InputStream inputStream = msg.getMessageAttachments().get(0).getAttachment().getInputStream();
+            byte[] bytes = StreamUtils.copyToByteArray(inputStream);
+
+
+            return null;
+        })
+                .when(submissionServiceInterceptor).submitToGateway(Mockito.any(DomibusConnectorMessage.class));
+
+
+        DomibusConnectorMessage message = prepareMessage("msg2");
+        try {
+            backendToGatewayMessageProcessor.processMessage(message);
+        } catch (Exception e) {
+
+        }
+
+    }
+
 
     /*
      * Test send to GW, but gw fails

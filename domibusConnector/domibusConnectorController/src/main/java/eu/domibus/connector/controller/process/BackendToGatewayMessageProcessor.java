@@ -29,6 +29,7 @@ import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Takes a message from backend and creates evidences for it
@@ -104,9 +105,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
     }
 
     @Override
+    @Transactional(propagation=Propagation.NEVER)
 	public void processMessage(DomibusConnectorMessage message) {
-		
-		try {
+
+        System.out.println("TRANSACTION: " +  TransactionSynchronizationManager.isActualTransactionActive());
+
+        try {
 			securityToolkit.buildContainer(message);
 		} catch (DomibusConnectorSecurityException se) {
 			createSubmissionRejectionAndReturnIt(message, se.getMessage());			
@@ -155,7 +159,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		try {
             evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
 		} catch (PersistenceException ex) {
-			//TODO: handle exception    
+			//TODO: handle exception
 			LOGGER.error("Exception occured", ex);
 		}
 
@@ -164,18 +168,10 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		backendDeliveryService.deliverMessageToBackend(returnMessage);
 
 
-		try {
-            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
-		} catch (PersistenceException ex) {
-			//TODO: handle exception    
-			LOGGER.error("Exception occured", ex);
-		}
-
 		LOGGER.info("Successfully sent message {} to gateway.", message);
 
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	void createSubmissionRejectionAndReturnIt(DomibusConnectorMessage message, String errorMessage){
         LOGGER.debug("#createSubmissionRejectionAndReturnIt: with error [{}]", errorMessage);
 		DomibusConnectorMessageConfirmation confirmation = null;

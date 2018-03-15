@@ -8,9 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
+
+import static eu.domibus.connector.controller.spring.ControllerContext.NON_TRANSACTED_JMS_LISTENER_CONTAINER_FACTORY_BEAN_NAME;
 
 @Component("BackendToGatewayMessageListener")
 public class BackendToGatewayMessageListener extends AbstractControllerMessageListener implements MessageListener {
@@ -26,8 +29,8 @@ public class BackendToGatewayMessageListener extends AbstractControllerMessageLi
 	private DomibusConnectorMessageProcessor confirmationProcessor;
 	
 	@Override
-	@Transactional
-	@JmsListener(destination = "${"+ QUEUE_NAME +"}") //Funktioniert das????
+	@JmsListener(destination = "${"+ QUEUE_NAME +"}", containerFactory = NON_TRANSACTED_JMS_LISTENER_CONTAINER_FACTORY_BEAN_NAME)
+	@Transactional(propagation= Propagation.NEVER)
 	public void onMessage(Message message) {
 		handleMessage(message);
 	}
