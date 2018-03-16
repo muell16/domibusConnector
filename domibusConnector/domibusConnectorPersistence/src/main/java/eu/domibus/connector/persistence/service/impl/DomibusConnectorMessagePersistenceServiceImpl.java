@@ -9,6 +9,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.persistence.model.*;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
@@ -34,6 +35,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     private DomibusConnectorEvidenceDao evidenceDao;
     private DomibusConnectorMessageInfoDao messageInfoDao;
     private MsgContentPersistenceService msgContentService;
+    private InternalEvidencePersistenceService evidencePersistenceService;
 
     /*
      * DAO SETTER  
@@ -56,6 +58,11 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Autowired
     public void setMsgContentService(MsgContentPersistenceService msgContService) {
         this.msgContentService = msgContService;
+    }
+
+    @Autowired
+    public void setEvidencePersistenceService(InternalEvidencePersistenceService evidencePersistenceService) {
+        this.evidencePersistenceService = evidencePersistenceService;
     }
 
     /*
@@ -96,6 +103,12 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         if (message.getConnectorMessageId() == null) {
             throw new IllegalArgumentException("connectorMessageId (getConnectorMessageId()) must be set!");
         }
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            LOGGER.debug("#persistMessageIntoDatabase: messge is an evidence message, persisting as evidence!");
+            message = evidencePersistenceService.persistAsEvidence(message);
+            return message;
+        }
+
         LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
 
@@ -203,24 +216,19 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Override
     @Transactional
     public void setDeliveredToGateway(DomibusConnectorMessage message) {
-        PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
+        LOGGER.trace("#setDeliveredToGateway: with message [{}]", message);
         if (DomainModelHelper.isEvidenceMessage(message)) {
-            //TODO: set evidence delivered...
             DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-            dbMessage = findByRefToMsg(message);
+            PDomibusConnectorMessage dbMessage = findByRefToMsg(message);
+            LOGGER.trace("#setDeliveredToGateway: set evidence with type [{}] of message db id [{}] as delivered to gateway",
+                    confirmation.getEvidenceType(), dbMessage.getId());
             evidenceDao.setDeliveredToGateway(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(confirmation.getEvidenceType()));
         } else {
-            messageDao.setMessageDeliveredToGateway(dbMessage.getId());
+            LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
+            messageDao.setMessageDeliveredToGateway(message.getConnectorMessageId());
         }
+
     }
-
-    PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
-        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
-        PDomibusConnectorMessage refMsg = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
-        return refMsg;
-    }
-
-
 
     /**
      * {@inheritDoc }
@@ -229,27 +237,24 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Transactional
     public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
         LOGGER.trace("#setMessageDeliveredToNationalSystem: with message [{}]", message);
-        if (DomainModelHelper.isEvidenceMessage(message)) { //TODO: test!!!
-            LOGGER.trace("#setMessageDeliveredToNationalSystem: message is a evidenceMessage");
+        if (DomainModelHelper.isEvidenceMessage(message)) {
             DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-            String refToMessageId = message.getMessageDetails().getRefToMessageId();
-            LOGGER.trace("#setMessageDeliveredToNationalSystem: find message by refToMessageid: [{}]", refToMessageId);
-            DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-            PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
-            //evidenceDao.setDeliveredToBackend(dbMessage.getId(), evidenceType);
-            //TODO: fix this!
+            PDomibusConnectorMessage dbMessage = findByRefToMsg(message);
+            LOGGER.trace("#setMessageDeliveredToNationalSystem: set evidence with type [{}] of message db id [{}] as delivered to national system",
+                    confirmation.getEvidenceType(), dbMessage.getId());
+            evidenceDao.setDeliveredToBackend(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(confirmation.getEvidenceType()));
         } else {
-            PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-            messageDao.setMessageDeliveredToBackend(dbMessage.getId());
+            LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
+            messageDao.setMessageDeliveredToBackend(message.getConnectorMessageId());
         }
     }
 
-    private DomibusConnectorMessage findMessageByEbmsIdORNationalId(String ref) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(ref);
-        return mapMessageToDomain(dbMessage);
+    PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
+        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
+        LOGGER.trace("#findByRefToMsg: find message by reference [{}] (should be ebmsId or NationalId)");
+        PDomibusConnectorMessage refMsg = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+        return refMsg;
     }
-
-
 
 
     @Override

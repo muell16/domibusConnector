@@ -2,6 +2,8 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
@@ -20,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Service
-public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusConnectorEvidencePersistenceService {
+public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusConnectorEvidencePersistenceService, InternalEvidencePersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorEvidencePersistenceServiceImpl.class);
 
@@ -42,7 +44,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
      */
     @Override
     @Transactional
-    public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+    public void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
         if (message == null) {
             throw new IllegalArgumentException("message is not allowed to be null!");
         }
@@ -61,7 +63,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
      */
     @Override
     @Transactional
-    public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
+    public void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException {
         if (message == null) {
             throw new IllegalArgumentException("message is not allowed to be null!");
         }
@@ -71,15 +73,19 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
 
     }
 
-    private boolean setEvidenceDeliveredToNationalSystem(PDomibusConnectorMessage dbMessage, DomibusConnectorEvidenceType evidenceType) {
-        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessage.getId());
-        PDomibusConnectorEvidence dbEvidence = findEvidence(evidences, evidenceType);
-        if (dbEvidence != null) {
-            int updated = evidenceDao.setDeliveredToBackend(dbEvidence.getId());
-            return updated == 1;
+    @Override
+    @Transactional
+    public DomibusConnectorMessage persistAsEvidence(DomibusConnectorMessage message) {
+        if (!DomainModelHelper.isEvidenceMessage(message)) {
+            throw new IllegalArgumentException("The provided message is NOT an evidence message!");
         }
-        return false;
+        DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
+        String refToMessageId = message.getMessageDetails().getRefToMessageId();
+        PDomibusConnectorMessage msg = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+        this.persistEvidenceForMessageIntoDatabase(msg, confirmation.getEvidence(), confirmation.getEvidenceType());
+        return message;
     }
+
 
     private @Nullable
     PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
@@ -98,11 +104,14 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     @Override
     @Transactional
     public void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage message, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
-
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
             throw new IllegalStateException(String.format("The provided message [%s] does not exist in storage!", message));
         }
+        persistEvidenceForMessageIntoDatabase(dbMessage, evidence, evidenceType);
+    }
+
+    void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
 
         PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
 

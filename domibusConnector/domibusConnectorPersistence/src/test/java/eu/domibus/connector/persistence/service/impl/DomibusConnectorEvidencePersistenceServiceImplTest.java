@@ -99,7 +99,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
         evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, DomibusConnectorEvidenceType.DELIVERY);
 
 //        Mockito.verify(this.messageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
-//        Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(13L));
+//        Mockito.verify(this.evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(13L));
     }
 
 

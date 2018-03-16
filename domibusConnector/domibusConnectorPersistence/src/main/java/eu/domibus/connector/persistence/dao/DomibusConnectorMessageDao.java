@@ -64,12 +64,19 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     public int rejectMessage(Long messageId);
 
     @Modifying
-    @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP WHERE m.id = ?")
-    public int setMessageDeliveredToGateway(Long dbMessageId);
+    @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP WHERE m = ?1")
+    public int setMessageDeliveredToGateway(PDomibusConnectorMessage dbMessage);
+
+    @Modifying
+    @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP WHERE m.connectorMessageId = ?1")
+    public int setMessageDeliveredToGateway(String connectorId);
     
     @Modifying
-    @Query("update PDomibusConnectorMessage m set m.deliveredToNationalSystem=CURRENT_TIMESTAMP WHERE m.id = ?")
-    public int setMessageDeliveredToBackend(Long dbMessageId);
-    
-    
+    @Query("update PDomibusConnectorMessage m set m.deliveredToNationalSystem=CURRENT_TIMESTAMP WHERE m = ?1")
+    public int setMessageDeliveredToBackend(PDomibusConnectorMessage dbMessage);
+
+    @Modifying
+    @Query("update PDomibusConnectorMessage m set m.deliveredToNationalSystem=CURRENT_TIMESTAMP WHERE m.connectorMessageId = ?1")
+    public int setMessageDeliveredToBackend(String connectorId);
+
 }

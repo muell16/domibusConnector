@@ -159,8 +159,10 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     
     @Test
     public void testSetMessageDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {
-        
-        int upd = messageDao.setMessageDeliveredToGateway(73L);
+
+        PDomibusConnectorMessage message = new PDomibusConnectorMessage();
+        message.setId(73L);
+        int upd = messageDao.setMessageDeliveredToGateway(message);
         
         assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
         
@@ -177,7 +179,9 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     
     @Test
     public void testSetmessageDeliveredToBackend() throws SQLException, AmbiguousTableNameException, DataSetException {
-        int upd = messageDao.setMessageDeliveredToBackend(74L);
+        PDomibusConnectorMessage message = new PDomibusConnectorMessage();
+        message.setId(74L);
+        int upd = messageDao.setMessageDeliveredToBackend(message);
         
         assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
         
