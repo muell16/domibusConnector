@@ -6,7 +6,7 @@ import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.test.util.ConnectorControllerTestDomainCreator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,12 +14,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,8 +38,8 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     public static class TestContextConfiguration {
         
         @Bean
-        public DomibusConnectorPersistenceService myMockedPersistenceService() {
-            DomibusConnectorPersistenceService mock = Mockito.mock(DomibusConnectorPersistenceService.class);
+        public DomibusConnectorMessageErrorPersistenceService myMockedPersistenceService() {
+            DomibusConnectorMessageErrorPersistenceService mock = Mockito.mock(DomibusConnectorMessageErrorPersistenceService.class);
             return mock;
         }
         
@@ -64,7 +62,7 @@ public class StoreMessageExceptionIntoDatabaseAspectTest {
     DomibusConnectorMessageProcessor noPassExceptionProcessor;
     
     @Autowired
-    DomibusConnectorPersistenceService persistenceService;
+    DomibusConnectorMessageErrorPersistenceService persistenceService;
     
     public StoreMessageExceptionIntoDatabaseAspectTest() {
     }

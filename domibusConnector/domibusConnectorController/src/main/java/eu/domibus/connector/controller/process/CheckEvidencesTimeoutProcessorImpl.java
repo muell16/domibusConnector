@@ -5,8 +5,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
+import eu.domibus.connector.persistence.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,14 +20,8 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
 
 @Component
 public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
@@ -36,13 +34,19 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 	@Value("${:0}")
 	private long deliveryTimeout;
 	
-	@Resource
-	private DomibusConnectorPersistenceService persistenceService;
-	
-	@Resource
+	@Autowired
+	private DomibusConnectorMessagePersistenceService persistenceService;
+
+	@Autowired
+	private DomibusConnectorActionPersistenceService actionPersistenceService;
+
+	@Autowired
+	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+
+	@Autowired
 	private DomibusConnectorEvidencesToolkit evidencesToolkit;
 	
-	@Resource
+	@Autowired
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	
     @Override
@@ -130,7 +134,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
                     .build();             
 		}
 
-		DomibusConnectorAction action = persistenceService.getRelayREMMDFailure();
+		DomibusConnectorAction action = actionPersistenceService.getRelayREMMDFailure();
 
 		sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
 	}
@@ -152,7 +156,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
                     .build();
 		}
 
-		DomibusConnectorAction action = persistenceService.getDeliveryNonDeliveryToRecipientAction();
+		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
 		sendEvidenceToNationalSystem(originalMessage, nonDelivery, action);
 	}
@@ -165,7 +169,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 		try {
             
             originalMessage.addConfirmation(confirmation);
-            persistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
+			evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
                     confirmation.getEvidenceType());
             
             DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
@@ -177,8 +181,8 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
             DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, confirmation);
             
             backendDeliveryService.deliverMessageToBackend(evidenceMessage);
-            
-            persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
+
+			evidencePersistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
             persistenceService.rejectMessage(originalMessage);
         } catch (PersistenceException ex) {
             LOGGER.error("PersistenceException occured", ex);

@@ -3,13 +3,10 @@ package eu.domibus.connector.persistence.dao;
 
 import javax.sql.DataSource;
 
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.UUID;
@@ -34,7 +31,6 @@ public abstract class CommonPersistenceDBUnitITCase {
 
     protected DataSource ds;
 
-    protected DomibusConnectorPersistenceService persistenceService;
 
     protected ConfigurableApplicationContext applicationContext;
         
@@ -44,7 +40,7 @@ public abstract class CommonPersistenceDBUnitITCase {
         //lookup type
         this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
         //lookup name
-        this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
+//        this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
     }
 
 }

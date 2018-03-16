@@ -5,9 +5,8 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -27,7 +26,7 @@ public class StoreMessageExceptionIntoDatabaseAspect {
     private final static Logger LOGGER = LoggerFactory.getLogger(StoreMessageExceptionIntoDatabaseAspect.class);
     
     @Autowired
-    DomibusConnectorPersistenceService persistenceService;
+    DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
 
     @Around(value="@annotation(eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase) && @annotation(annot)",            
             argNames="annot")
@@ -69,7 +68,7 @@ public class StoreMessageExceptionIntoDatabaseAspect {
                                         
             DomibusConnectorMessageError messageError = messageErrorBuilder.build();
                     
-            persistenceService.persistMessageError(message.getConnectorMessageId(), messageError);
+            messageErrorPersistenceService.persistMessageError(message.getConnectorMessageId(), messageError);
 
             
         } else {

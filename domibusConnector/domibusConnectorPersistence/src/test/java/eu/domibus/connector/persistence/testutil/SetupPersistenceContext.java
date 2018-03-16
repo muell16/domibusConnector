@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.testutil;
 
-import eu.domibus.connector.persistence.service.PersistenceServiceITCase;
 import org.junit.BeforeClass;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
