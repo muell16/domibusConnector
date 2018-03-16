@@ -20,7 +20,7 @@ public interface DomibusConnectorEvidencePersistenceService {
      * @param evidence - the evidence as byte[]
      * @param evidenceType - the type of the evidence
      */
-    void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
+    void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
 
     default void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation) {
         if (confirmation == null) {

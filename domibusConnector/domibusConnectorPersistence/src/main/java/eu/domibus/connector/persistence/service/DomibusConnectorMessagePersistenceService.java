@@ -131,7 +131,7 @@ public interface DomibusConnectorMessagePersistenceService {
      * Marks the message as delivered to the gateway
      * @param message - the message, which should be marked
      */
-    void setMessageDeliveredToGateway(DomibusConnectorMessage message);
+    void setDeliveredToGateway(DomibusConnectorMessage message);
 
     /**
      * Marks the message as delivered to national backend

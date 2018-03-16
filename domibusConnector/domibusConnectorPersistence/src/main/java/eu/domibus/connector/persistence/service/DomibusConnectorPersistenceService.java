@@ -7,19 +7,20 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @deprecated use the more specific interfaces instead:
  *      DomibusConnectorPartyPersistenceService
- *      DomibusConnectorActionPersistenceService
+ *      DomibusConnectorActionPersistenceServiceImpl
  *      DomibusConnectorEvidencePersistenceService
  *      DomibusConnectorServicePersistenceService
- *      DomibusConnectorMessageErrorPersistenceService
+ *      DomibusConnectorMessageErrorPersistenceServiceImpl
  *      DomibusConnectorMessagePersistenceService
  * 
  */
 @Deprecated
 @Transactional
-public interface DomibusConnectorPersistenceService extends DomibusConnectorPartyPersistenceService, 
-        DomibusConnectorActionPersistenceService, 
-        DomibusConnectorServicePersistenceService,
-        DomibusConnectorEvidencePersistenceService,
-        DomibusConnectorMessageErrorPersistenceService, 
+public interface DomibusConnectorPersistenceService extends
+//        DomibusConnectorPartyPersistenceService,
+//        DomibusConnectorActionPersistenceService,
+//        DomibusConnectorServicePersistenceService,
+//        DomibusConnectorEvidencePersistenceService,
+//        DomibusConnectorMessageErrorPersistenceService,
         DomibusConnectorMessagePersistenceService {
 }

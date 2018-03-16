@@ -1,18 +1,13 @@
 package eu.domibus.connector.controller.process;
 
-import javax.annotation.Resource;
-
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
-import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
@@ -155,7 +150,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .buildAndThrow();
 		}
 
-		messagePersistenceService.setMessageDeliveredToGateway(message);
+		messagePersistenceService.setDeliveredToGateway(message);
 		try {
             evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
 		} catch (PersistenceException ex) {

@@ -33,13 +33,13 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
 
     /**
      *
-     * @param messageId - the database id of the message the evidence belongs to
+     * @param msg - the database message the evidence belongs to
      * @param type - the evidence type to set delivered
      * @return modified rows
      */
     @Modifying
-    @Query("update PDomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.message.id = ?1 AND e.type = ?2")
-    public int setDeliveredToGateway(Long messageId, EvidenceType type);
+    @Query("update PDomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.message = ?1 AND e.type = ?2")
+    public int setDeliveredToGateway(PDomibusConnectorMessage msg, EvidenceType type);
 
     /**
      *
@@ -52,12 +52,12 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
 
     /**
      *
-     * @param messageId - the database id of the message the evidence belongs to
+     * @param message - the database message the evidence belongs to
      * @param type - the evidence type to set delivered
      * @return modified rows
      */
     @Modifying
-    @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.message.id = ?1 AND e.type = ?2")
-    public int setDeliveredToBackend(Long messageId, EvidenceType type);
+    @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.message = ?1 AND e.type = ?2")
+    public int setDeliveredToBackend(PDomibusConnectorMessage message, EvidenceType type);
 
 }

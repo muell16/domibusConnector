@@ -2,10 +2,8 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
-import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -24,7 +22,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.core.io.FileSystemResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +115,7 @@ public class BackendToGatewayMessageProcessorTest {
 
 
         //verify message deliverd to gw status is persisted
-        Mockito.verify(messagePersistenceService, times(1)).setMessageDeliveredToGateway(eq(epoMessage));
+        Mockito.verify(messagePersistenceService, times(1)).setDeliveredToGateway(eq(epoMessage));
 
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
@@ -167,7 +164,7 @@ public class BackendToGatewayMessageProcessorTest {
 
 
         //verify message rejection status is persisted
-        Mockito.verify(messagePersistenceService, times(0)).setMessageDeliveredToGateway(any());
+        Mockito.verify(messagePersistenceService, times(0)).setDeliveredToGateway(any());
 
 
         //verify rejection is delivered to the backend
