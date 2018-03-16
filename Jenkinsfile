@@ -71,7 +71,7 @@ node {
 				if (truststore != "") {
 					arg = "-Djavax.net.ssl.trustStore=${truststore} -Djavax.net.ssl.trustStoreType=JKS ${arg}"
 				}
-				
+				arg = " -Dlocal.maven.repo=./m2localrepo ${arg}"
 				output = sh(returnStdout: true, script: "mvn ${arg}").trim()
 				return output
 			}
