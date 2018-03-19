@@ -111,13 +111,11 @@ public class ConnectorMessageFlowITCase {
 
         rcvMessageFromGwService.deliverMessageFromGateway(loadMessageFrom);
 
-        Thread.sleep(2000); //TODO: replace with synchronized wait
-        assertThat(toBackendDeliveredMessages).hasSize(1);
+        DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
+        assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
+        assertThat(take).isNotNull();
+
         //TODO: check database!
-        //TODO: check jms queue!
-
+        
     }
-    
-
-    
 }
