@@ -2,7 +2,6 @@ package test;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.starter.ConnectorStarter;
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
@@ -18,7 +17,10 @@ import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import test.eu.domibus.connector.gateway.link.testgw.TestGW;
 
 import javax.sql.DataSource;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,10 +37,11 @@ public class ConnectorBackendToGwITCase {
     private static String CONNECTOR_BACKENDLINK_SERVER_ADDRESS;
     private static String BOB_BACKEND_SERVER_ADDRESS;
     private static String ALICE_BACKEND_SERVER_ADDRESS;
+    private static DataSource DATA_SOURCE;
 
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws SQLException {
 
         int portTestGW = SocketUtils.findAvailableTcpPort();
         int portConnector = SocketUtils.findAvailableTcpPort();
@@ -79,11 +82,12 @@ public class ConnectorBackendToGwITCase {
         printDashBlock();
 
         //TODO: prepare testdata....load testdata in db
-        DataSource ds = CONNECTOR_APPLICATION_CONTEXT.getBean(DataSource.class);
+        DATA_SOURCE = CONNECTOR_APPLICATION_CONTEXT.getBean(DataSource.class);
 
+        setPushBackendUrl("bob", BOB_BACKEND_SERVER_ADDRESS);
 
         //start clients....
-        //alice
+        //alice push backend
         System.out.println("START ALICE CONTEXT");
         BACKEND_ALICE_APPLICATION_CONTEXT = CommonBackendClient.startSpringApplication(new String[]{
                 "--spring.profiles.active=" + CommonBackendClient.START_WEBSERVICE_PROFILE,
@@ -93,7 +97,7 @@ public class ConnectorBackendToGwITCase {
                 "--" + CommonBackendClient.PROPERTY_BACKENDCLIENT_KEY_ALIAS + "=alice",
                 "--" + CommonBackendClient.PROPERTY_BACKENDCLIENT_KEY_PASSWORD + "=test",
                 "--" + CommonBackendClient.PROPERTY_CONNECTOR_BACKEND_ADDRESS + "=" + CONNECTOR_BACKENDLINK_SERVER_ADDRESS});
-        //bob
+        //bob push backend
         System.out.println("START BOB CONTEXT");
         BACKEND_BOB_APPLICATION_CONTEXT = CommonBackendClient.startSpringApplication(new String[]{
                         "--spring.profiles.active=" + CommonBackendClient.START_WEBSERVICE_PROFILE,
@@ -126,13 +130,24 @@ public class ConnectorBackendToGwITCase {
 
     }
 
-    List<DomibusConnectorMessageType> toGwSubmittedMessages;
+    static void setPushBackendUrl(String backendName, String url) throws SQLException {
+        Connection connection = DATA_SOURCE.getConnection();
+        PreparedStatement stm = connection.prepareStatement("UPDATE DOMIBUS_CONNECTOR_BACKEND_INFO SET BACKEND_PUSH_ADDRESS=? WHERE BACKEND_NAME=?");
+
+        stm.setString(1, url);
+        stm.setString(2, backendName);
+
+        stm.executeUpdate();
+    }
+
+
+    LinkedBlockingQueue<DomibusConnectorMessageType> toGwSubmittedMessages;
     DomibusConnectorGatewayDeliveryWebService connectorDeliveryClient;
 
-    List<DomibusConnectorMessageType> toBobPushedMessagesList;
+    LinkedBlockingQueue<DomibusConnectorMessageType> toBobPushedMessagesList;
     DomibusConnectorBackendWebService bobBackendClient;
 
-    List<DomibusConnectorMessageType> toAlicePushedMessagesList;
+    LinkedBlockingQueue<DomibusConnectorMessageType> toAlicePushedMessagesList;
     DomibusConnectorBackendWebService aliceBackendClient;
 
     DomibusConnectorBackendWebService catrinaBackendClient;
@@ -177,13 +192,13 @@ public class ConnectorBackendToGwITCase {
         }
     }
 
-    @Test
+    @Test(timeout=2000)
     public void aTest() throws InterruptedException {
         //do nohting jus see if we can reach to here...
     }
 
    
-    @Test //("test is failing because testdb is not correct initialized!")
+    @Test(timeout=5000) //("test is failing because testdb is not correct initialized!")
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
 
         DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw/"));
@@ -195,14 +210,19 @@ public class ConnectorBackendToGwITCase {
 
         assertThat(acknowledgementType.isResult()).isTrue();
 
-        System.out.println("sleep.....");
-        Thread.sleep(200000);
-
         System.out.println("size " + toGwSubmittedMessages.size());
+        assertThat(toGwSubmittedMessages).hasSize(1);
 
-        for (DomibusConnectorMessageType t : toGwSubmittedMessages) {
-            System.out.println("message rcv: " + t);
-        }
+//        toGwSubmittedMessages.
+        DomibusConnectorMessageType msg = toGwSubmittedMessages.take();
+
+        System.out.println("message: " + msg);
+
+
+//
+//        for (DomibusConnectorMessageType t : toGwSubmittedMessages) {
+//            System.out.println("message rcv: " + t);
+//        }
 
     }
 

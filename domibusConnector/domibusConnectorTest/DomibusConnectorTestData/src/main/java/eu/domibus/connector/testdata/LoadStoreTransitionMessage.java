@@ -40,6 +40,8 @@ public class LoadStoreTransitionMessage {
     public static final String TO_PARTY_ROLE_PROP_NAME = "to.party.role";
     public static final String ACTION_PROP_NAME = "action";
     public static final String CONVERSATION_ID_PROP_NAME = "message.conversation-id";
+    public static final String FINAL_RECIPIENT_PROP_NAME = "message.final-recipient";
+    public static final String ORIGINAL_SENDER_NAME_PROP_NAME = "message.original-sender";
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadStoreTransitionMessage.class);
@@ -268,6 +270,10 @@ public class LoadStoreTransitionMessage {
         messageDetails.setEbmsMessageId(messageProperties.getProperty("message.ebms-id"));
 
         messageDetails.setBackendMessageId(messageProperties.getProperty("message.national-id"));
+
+        messageDetails.setOriginalSender(messageProperties.getProperty(ORIGINAL_SENDER_NAME_PROP_NAME));
+        messageDetails.setFinalRecipient(messageProperties.getProperty(FINAL_RECIPIENT_PROP_NAME));
+
 
         return messageDetails;
     }

@@ -17,7 +17,7 @@
             <AppenderRef ref="Console" />
         </Logger>
 
-        <Logger name="org.hibernate" level="trace" additivity="false">
+        <Logger name="org.hibernate" level="debug" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
     </Loggers>

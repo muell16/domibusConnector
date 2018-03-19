@@ -9,10 +9,12 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.persistence.model.*;
+import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
+import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +114,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
 
-        dbMessage.setDirection(eu.domibus.connector.persistence.model.enums.MessageDirection.valueOf(direction.name()));
+        dbMessage.setDirection(MessageDirectionMapper.mapFromDomainToPersistence(direction));
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());

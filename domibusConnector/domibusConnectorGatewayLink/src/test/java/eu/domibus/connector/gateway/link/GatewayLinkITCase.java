@@ -13,6 +13,7 @@ import org.springframework.util.SocketUtils;
 import test.eu.domibus.connector.gateway.link.testgw.TestGW;
 
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,7 +78,7 @@ public class GatewayLinkITCase {
 
         submissionWebServiceClient.submitMessage(message);
 
-        List<DomibusConnectorMessageType> toGwSubmittedMessages = TestGW.getToGwSubmittedMessages(TEST_GW_APPLICATION_CONTEXT);
+        LinkedBlockingQueue<DomibusConnectorMessageType> toGwSubmittedMessages = TestGW.getToGwSubmittedMessages(TEST_GW_APPLICATION_CONTEXT);
         assertThat(toGwSubmittedMessages).hasSize(1);
 
     }

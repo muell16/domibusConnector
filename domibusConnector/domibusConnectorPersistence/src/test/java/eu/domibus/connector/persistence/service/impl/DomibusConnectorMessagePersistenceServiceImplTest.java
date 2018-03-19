@@ -583,7 +583,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         
         assertThat(messageRejected).isFalse();
     }
-    
+
     private void mockFindMessageByConnectorMessageId(String messageId) {
         Mockito.when(this.messageDao.findOneByConnectorMessageId(eq(messageId)))
                 .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()); 
@@ -591,6 +591,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
 
 
     
+
 
 
     

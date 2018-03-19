@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
@@ -17,6 +18,10 @@ import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersisten
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
+import eu.domibus.connector.testutil.matcher.MockitoDomainMatcher;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -98,6 +103,7 @@ public class BackendToGatewayMessageProcessorTest {
     @Test
     public void testProcessMessage() throws DomibusConnectorEvidencesToolkitException {
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        epoMessage.getMessageDetails().setBackendMessageId("backendmsg_1");
 
         DomibusConnectorMessageConfirmation submissionAcceptanceConfirmation = DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation();
         Mockito.when(evidencesToolkit.createEvidence(any(DomibusConnectorEvidenceType.class), any(DomibusConnectorMessage.class), eq(null), eq(null)))
@@ -110,8 +116,10 @@ public class BackendToGatewayMessageProcessorTest {
         //container should be built!
         Mockito.verify(securityToolkit, times(1)).buildContainer(eq(epoMessage));
 
-        //verify evidence is persisted!
-        Mockito.verify(evidencePersistenceService, times(1)).persistEvidenceForMessageIntoDatabase(eq(epoMessage), eq(submissionAcceptanceConfirmation));
+        //verify that the evidence message is persisted into db (before put on queue!)
+        Mockito.verify(messagePersistenceService, times(1))
+                .persistMessageIntoDatabase(Mockito.argThat(MockitoDomainMatcher.eqToRefToMessageId("backendmsg_1")),
+                        eq(DomibusConnectorMessageDirection.CONN_TO_NAT));
 
 
         //verify message deliverd to gw status is persisted
@@ -121,10 +129,9 @@ public class BackendToGatewayMessageProcessorTest {
         assertThat(toGwDeliveredMessages).hasSize(1);
         Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToGateway(eq(epoMessage), eq(submissionAcceptanceConfirmation));
 
-
+        //verify message is handed over to backend for delivery
         assertThat(toBackendDeliveredMessages).hasSize(1);
-        //delivered to national system is set by backend!
-//        Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToNationalSystem(eq(epoMessage), eq(submissionAcceptanceConfirmation));
+
     }
 
     @Test

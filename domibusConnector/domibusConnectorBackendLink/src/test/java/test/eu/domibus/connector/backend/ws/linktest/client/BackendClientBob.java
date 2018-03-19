@@ -26,17 +26,6 @@ public class BackendClientBob extends CommonBackendClient {
         System.out.println("RESPONSE result: " + response.isResult());
     }
     
-    
-    
 
-//    @Override
-//    protected ClientPasswordCallback getClientPasswordCallback() {
-//        return new ClientPasswordCallback("bob", "test");
-//    }
-//
-//    @Override
-//    protected String getUser() {
-//        return "bob";
-//    }
     
 }

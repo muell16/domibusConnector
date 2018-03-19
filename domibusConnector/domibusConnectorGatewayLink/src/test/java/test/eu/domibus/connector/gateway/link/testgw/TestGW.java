@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * IMPLEMENTATION OF THE GW WEB SERIVCE INTERFACE
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Profile("testgw")
 public class TestGW {
 
+    public static final String TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME = "toGwSubmittedMessagesBlockingQueue";
 
     public static ConfigurableApplicationContext startContext(String[] properties) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
@@ -47,17 +49,18 @@ public class TestGW {
         return springApp.run(args);
     }
 
-    public static List<DomibusConnectorMessageType> getToGwSubmittedMessages(ConfigurableApplicationContext context) {
-        return (List<DomibusConnectorMessageType>) context.getBean("toGwSubmittedMessagesList");
+    public static LinkedBlockingQueue<DomibusConnectorMessageType> getToGwSubmittedMessages(ConfigurableApplicationContext context) {
+        return (LinkedBlockingQueue<DomibusConnectorMessageType>) context.getBean(TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME);
     }
 
     public static DomibusConnectorGatewayDeliveryWebService getConnectorDeliveryClient(ConfigurableApplicationContext ctx) {
         return (DomibusConnectorGatewayDeliveryWebService) ctx.getBean("connectorDeliveryClient");
     }
+    @Bean(TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME)
+    public LinkedBlockingQueue<DomibusConnectorMessageType> deliveredMessagesList() {
 
-    @Bean("toGwSubmittedMessagesList")
-    public List<DomibusConnectorMessageType> deliveredMessagesList() {
-        return Collections.synchronizedList(new ArrayList<>());
+//        return Collections.synchronizedList(new ArrayList<>());
+        return new LinkedBlockingQueue<>(20);
     }
 
 
@@ -67,9 +70,12 @@ public class TestGW {
 
             @Override
             public DomibsConnectorAcknowledgementType submitMessage(DomibusConnectorMessageType deliverMessageRequest) {
-                List<DomibusConnectorMessageType> messageList = deliveredMessagesList();
+                LinkedBlockingQueue<DomibusConnectorMessageType> queue = deliveredMessagesList();
 
-                messageList.add(deliverMessageRequest);
+                //messageList.add(deliverMessageRequest);
+                if (!queue.offer(deliverMessageRequest)) {
+                    throw new RuntimeException("Could not add element to queue " + queue);
+                }
 
                 DomibsConnectorAcknowledgementType acknowledgementType = new DomibsConnectorAcknowledgementType();
 

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  *
@@ -69,8 +70,8 @@ public class CommonBackendClient {
     }
 
 
-    public static List<DomibusConnectorMessageType> getPushedMessagesList(ConfigurableApplicationContext ctx) {
-        return (List<DomibusConnectorMessageType>) ctx.getBean(BackendClientPushWebServiceConfiguration.PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME);
+    public static LinkedBlockingQueue<DomibusConnectorMessageType> getPushedMessagesList(ConfigurableApplicationContext ctx) {
+        return (LinkedBlockingQueue<DomibusConnectorMessageType>) ctx.getBean(BackendClientPushWebServiceConfiguration.PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME);
     }
 
     public static DomibusConnectorBackendWebService getBackendWebServiceClient(ConfigurableApplicationContext ctx) {

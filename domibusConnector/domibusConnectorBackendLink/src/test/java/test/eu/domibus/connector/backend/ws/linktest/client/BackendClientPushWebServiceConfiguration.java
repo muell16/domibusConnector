@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 import javax.annotation.Resource;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
@@ -46,8 +47,8 @@ public class BackendClientPushWebServiceConfiguration {
 
 
     @Bean(PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME)
-    public List<DomibusConnectorMessageType> domibusConnectorMessageTypeList() {
-        return Collections.synchronizedList(new ArrayList<DomibusConnectorMessageType>());
+    public LinkedBlockingQueue<DomibusConnectorMessageType> domibusConnectorMessageTypeList() {
+        return new LinkedBlockingQueue<>();
     }
             
     
@@ -69,7 +70,7 @@ public class BackendClientPushWebServiceConfiguration {
         WebServiceContext webServiceContext;
         
         @Autowired
-        List<DomibusConnectorMessageType> domibusConnectorMessageTypeList;
+        LinkedBlockingQueue<DomibusConnectorMessageType> domibusConnectorMessageTypeList;
         
         @Value("${ws.backendclient.name}")
         String backendClientName;

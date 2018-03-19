@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.process;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
 import org.slf4j.Logger;
@@ -103,7 +104,6 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
     @Transactional(propagation=Propagation.NEVER)
 	public void processMessage(DomibusConnectorMessage message) {
 
-        System.out.println("TRANSACTION: " +  TransactionSynchronizationManager.isActualTransactionActive());
 
         try {
 			securityToolkit.buildContainer(message);
@@ -159,9 +159,9 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-
+		LOGGER.trace("#processMessage: persist evidence message [{}] into database", returnMessage);
+        messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONN_TO_NAT);
 		backendDeliveryService.deliverMessageToBackend(returnMessage);
-
 
 		LOGGER.info("Successfully sent message {} to gateway.", message);
 

@@ -21,6 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -59,6 +61,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BackendToGatewayMessageProcessorITCase {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessorITCase.class);
 
     @Autowired
     @Qualifier("BackendToGatewayMessageProcessor")
@@ -112,8 +115,11 @@ public class BackendToGatewayMessageProcessorITCase {
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_BIGDATA", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA");
-        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_BIGDATA");
-        FlatXmlDataSet.write(dataSet, System.out);
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE");
+
+
+//        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_BIGDATA");
+//        FlatXmlDataSet.write(dataSet, System.out);
 //        Object content = domibusConnectorTable.getValue(2, "CONTENT");
 //        assertThat(content).isNotNull();
 //        content = domibusConnectorTable.getValue(4, "CONTENT");
@@ -125,6 +131,11 @@ public class BackendToGatewayMessageProcessorITCase {
 //        FileSystemUtils.deleteRecursively(new File("./target/testm/"));
 //        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
 //        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
+
+
+        ITable messageTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+        FlatXmlDataSet.write(dataSet, System.out);
+
 
 
 //        System.out.println("#############\n#############\n#############\n#############\nOTHER WAY!!!!");
