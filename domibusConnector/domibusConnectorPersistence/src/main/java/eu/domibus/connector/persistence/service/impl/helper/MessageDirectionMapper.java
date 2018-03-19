@@ -1,9 +1,7 @@
 package eu.domibus.connector.persistence.service.impl.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
-import sun.plugin2.message.Message;
 
 import javax.annotation.Nonnull;
 

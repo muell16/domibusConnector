@@ -116,6 +116,6 @@ public class ConnectorMessageFlowITCase {
         assertThat(take).isNotNull();
 
         //TODO: check database!
-        
+
     }
 }
