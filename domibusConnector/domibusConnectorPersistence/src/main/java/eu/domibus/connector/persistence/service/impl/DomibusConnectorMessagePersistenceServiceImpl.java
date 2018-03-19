@@ -217,15 +217,21 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Transactional
     public void setDeliveredToGateway(DomibusConnectorMessage message) {
         LOGGER.trace("#setDeliveredToGateway: with message [{}]", message);
+        PDomibusConnectorMessage dbMessage;
         if (DomainModelHelper.isEvidenceMessage(message)) {
             DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-            PDomibusConnectorMessage dbMessage = findByRefToMsg(message);
+            dbMessage = findByRefToMsg(message);
             LOGGER.trace("#setDeliveredToGateway: set evidence with type [{}] of message db id [{}] as delivered to gateway",
                     confirmation.getEvidenceType(), dbMessage.getId());
             evidenceDao.setDeliveredToGateway(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(confirmation.getEvidenceType()));
         } else {
+            dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
             LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
-            messageDao.setMessageDeliveredToGateway(message.getConnectorMessageId());
+            messageDao.setMessageDeliveredToGateway(dbMessage);
+            message.getMessageConfirmations().forEach( (c) -> {
+                LOGGER.trace("#setDeliveredToGateway: also set with message {[{}] delivered evidence [{}] to status delivered", message, c);
+                evidenceDao.setDeliveredToGateway(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(c.getEvidenceType()));
+            });
         }
 
     }
@@ -236,16 +242,23 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Override
     @Transactional
     public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
+        PDomibusConnectorMessage dbMessage;
         LOGGER.trace("#setMessageDeliveredToNationalSystem: with message [{}]", message);
         if (DomainModelHelper.isEvidenceMessage(message)) {
             DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-            PDomibusConnectorMessage dbMessage = findByRefToMsg(message);
+            dbMessage = findByRefToMsg(message);
             LOGGER.trace("#setMessageDeliveredToNationalSystem: set evidence with type [{}] of message db id [{}] as delivered to national system",
                     confirmation.getEvidenceType(), dbMessage.getId());
             evidenceDao.setDeliveredToBackend(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(confirmation.getEvidenceType()));
         } else {
             LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
-            messageDao.setMessageDeliveredToBackend(message.getConnectorMessageId());
+            dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+            messageDao.setMessageDeliveredToBackend(dbMessage);
+            message.getMessageConfirmations().forEach( (c) -> {
+                LOGGER.trace("#setMessageDeliveredToNationalSystem: set with message [{}] transported evidence [{}] to status delivered to backend",
+                        dbMessage, c);
+                evidenceDao.setDeliveredToBackend(dbMessage, EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(c.getEvidenceType()));
+            });
         }
     }
 

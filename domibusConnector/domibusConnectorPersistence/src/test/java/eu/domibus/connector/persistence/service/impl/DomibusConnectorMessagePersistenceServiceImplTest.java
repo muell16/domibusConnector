@@ -14,6 +14,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
@@ -460,6 +461,31 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     }
 
     /*
+        Ensure that the evidences of an to gw delivered msg are also set as delivered!
+     */
+    @Test
+    public void testSetMessageDeliveredToGateway_confirmationsOfMessageShouldBeSetDeliveredTo() {
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        message.setConnectorMessageId("msgid");
+        message.addConfirmation(DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation()); //add DELIVERY evidence
+        message.addConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
+
+        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
+        //Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+
+        messagePersistenceService.setDeliveredToGateway(message);
+
+
+        //msg itself should be set delivered
+        Mockito.verify(messageDao, Mockito.times(1)).setMessageDeliveredToGateway(eq(dbMessage));
+
+        //confirmation 1 should be set delivered!
+        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(dbMessage), eq(EvidenceType.DELIVERY));
+        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(dbMessage), eq(EvidenceType.SUBMISSION_ACCEPTANCE));
+    }
+
+    /*
     Test if an evidence message can also be set as delivered to gw
      for this purpose the evidence itself must be set as delivered!
      */
@@ -467,13 +493,15 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     public void testSetMessageDeliveredToGateway_isEvidence() {
 
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestConfirmationMessage();
+        message.getMessageDetails().setRefToMessageId("firstmsg");
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+//        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByEbmsMessageIdOrBackendMessageId(eq("firstmsg"))).thenReturn(dbMessage);
 
         messagePersistenceService.setDeliveredToGateway(message);
 
-        Mockito.verify(messageDao, Mockito.times(1)).setMessageDeliveredToGateway(eq(dbMessage));
+        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(dbMessage), eq(EvidenceType.DELIVERY));
     }
 
     @Test
@@ -501,12 +529,33 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
 
         Mockito.verify(this.evidenceDao).setDeliveredToBackend(eq(dbMessage), eq(EvidenceType.DELIVERY));
-        Mockito.verify(this.messageDao).setMessageDeliveredToBackend(eq("msg47"));
+    }
+
+    /*
+    *   test that the evidences transported with an message are also set as delivered to backend
+    */
+    @Test
+    public void testSetMessageDeliveredToNationalSystem_alsoSetWithMessageTransportedEvidencesAsDelivered() {
+        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+        message.setConnectorMessageId("msgid");
+        message.addConfirmation(DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation());
+        message.addConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
+
+        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+
+        messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+
+        //msg itself should be set delivered
+        Mockito.verify(messageDao, Mockito.times(1)).setMessageDeliveredToBackend(dbMessage);
+
+        //confirmations should be set as delivered!
+        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(dbMessage), eq(EvidenceType.DELIVERY));
+        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(dbMessage), eq(EvidenceType.SUBMISSION_ACCEPTANCE));
     }
 
 
     @Test
-    @Ignore("not implemented yet!")
     public void testCheckMessageConfirmedOrRejected() {
         DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
         msg.setConnectorMessageId("msg71");
@@ -522,7 +571,6 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     }
     
     @Test
-    @Ignore("not implemented yet!")
     public void testCheckMessageRejected() {
         DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
         msg.setConnectorMessageId("msg71");

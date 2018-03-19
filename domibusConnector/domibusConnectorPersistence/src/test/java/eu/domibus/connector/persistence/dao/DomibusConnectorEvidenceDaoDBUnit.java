@@ -86,9 +86,11 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
 
     @Test
     public void testSetDeliveredToGateway_ByMessageIdAndType() throws SQLException, DataSetException {
-//        int result = evidenceDao.setDeliveredToGateway(73L, EvidenceType.SUBMISSION_REJECTION);
+        PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
+        dbMessage.setId(73L);
+        int result = evidenceDao.setDeliveredToGateway(dbMessage, EvidenceType.SUBMISSION_REJECTION);
 
-//        assertThat(result).isEqualTo(1);
+        assertThat(result).isEqualTo(1);
         //check result in DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
         QueryDataSet dataSet = new QueryDataSet(conn);
@@ -118,9 +120,11 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
 
     @Test
     public void testSetDeliveredToBackend_ByMessageIdAndType() throws SQLException, DataSetException {
-//        int result = evidenceDao.setDeliveredToBackend(74L, EvidenceType.SUBMISSION_ACCEPTANCE);
+        PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
+        dbMessage.setId(74L);
+        int result = evidenceDao.setDeliveredToBackend(dbMessage, EvidenceType.SUBMISSION_ACCEPTANCE);
 
-//        assertThat(result).isEqualTo(1);
+        assertThat(result).isEqualTo(1);
         //check result in DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
         QueryDataSet dataSet = new QueryDataSet(conn);
