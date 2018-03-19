@@ -36,6 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
 import java.io.ByteArrayInputStream;
+import java.util.concurrent.BlockingQueue;
 
 import org.springframework.test.context.jdbc.Sql;
 
@@ -68,11 +69,11 @@ public class ConnectorMessageFlowITCase {
 
     @Autowired
     @Qualifier(ITCaseTestContext.TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    List<DomibusConnectorMessage> toGwDeliveredMessages;
+    BlockingQueue<DomibusConnectorMessage> toGwDeliveredMessages;
 
     @Autowired
     @Qualifier(ITCaseTestContext.TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    List<DomibusConnectorMessage> toBackendDeliveredMessages;
+    BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
     
     @Autowired
     DomibusConnectorGatewayDeliveryService rcvMessageFromGwService;

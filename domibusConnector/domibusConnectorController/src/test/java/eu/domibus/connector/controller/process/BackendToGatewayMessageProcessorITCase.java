@@ -43,8 +43,10 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,11 +66,11 @@ public class BackendToGatewayMessageProcessorITCase {
 
     @Autowired
     @Qualifier(ITCaseTestContext.TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    private List<DomibusConnectorMessage> toGatewayDeliveredMessages;
+    private BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages;
 
     @Autowired
     @Qualifier(ITCaseTestContext.TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    private List<DomibusConnectorMessage> toBackendDeliveredMessages;
+    private BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
     @Qualifier("GatewayToBackendMessageProcessor")
@@ -93,7 +95,7 @@ public class BackendToGatewayMessageProcessorITCase {
     }
 
     @Test
-    public void testProcessMessage() throws IOException, DataSetException, SQLException {
+    public void testProcessMessage() throws IOException, DataSetException, SQLException, InterruptedException {
 
         DomibusConnectorMessage message = prepareMessage("msg1");
 
@@ -102,8 +104,8 @@ public class BackendToGatewayMessageProcessorITCase {
         assertThat(toGatewayDeliveredMessages).hasSize(1);
         assertThat(toBackendDeliveredMessages).hasSize(1);
 
-        DomibusConnectorMessage msg = toGatewayDeliveredMessages.get(0);
-        DomibusConnectorMessage evidence = toBackendDeliveredMessages.get(0);
+        DomibusConnectorMessage msg = toGatewayDeliveredMessages.take();
+        DomibusConnectorMessage evidence = toBackendDeliveredMessages.take();
         assertThat(evidence.getMessageConfirmations()).hasSize(1);
 
         //verify DB

@@ -27,8 +27,10 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -51,11 +53,11 @@ public class GatewayToBackendMessageProcessorITCase {
 
     @Autowired
     @Qualifier(ITCaseTestContext.TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    private List<DomibusConnectorMessage> toGatewayDeliveredMessages;
+    private BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages;
 
     @Autowired
     @Qualifier(ITCaseTestContext.TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-    private List<DomibusConnectorMessage> toBackendDeliveredMessages;
+    private BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
     private DomibusConnectorMessagePersistenceService messagePersistenceService;

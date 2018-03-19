@@ -16,8 +16,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 @SpringBootApplication(scanBasePackages = {
         "eu.domibus.connector.controller",
@@ -53,14 +56,17 @@ public class ITCaseTestContext {
 
         @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public List<DomibusConnectorMessage> toBackendDeliveredMessages() {
-            return Collections.synchronizedList(new ArrayList<>());
+        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
+            return new ArrayBlockingQueue<>(100);
+            //return Collections.synchronizedList(new ArrayList<>());
+
         }
 
         @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public List<DomibusConnectorMessage> toGatewayDeliveredMessages() {
-            return Collections.synchronizedList(new ArrayList<>());
+        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
+            return new ArrayBlockingQueue<>(100);
+//            return Collections.synchronizedList(new ArrayList<>());
         }
 
         @Bean
