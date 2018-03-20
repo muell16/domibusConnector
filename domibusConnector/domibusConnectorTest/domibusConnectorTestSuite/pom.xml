@@ -48,6 +48,7 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorTestData</artifactId>
             <version>${project.version}</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
