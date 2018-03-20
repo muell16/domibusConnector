@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -141,13 +142,13 @@ public class ConnectorBackendToGwITCase {
     }
 
 
-    LinkedBlockingQueue<DomibusConnectorMessageType> toGwSubmittedMessages;
+    BlockingQueue<DomibusConnectorMessageType> toGwSubmittedMessages;
     DomibusConnectorGatewayDeliveryWebService connectorDeliveryClient;
 
-    LinkedBlockingQueue<DomibusConnectorMessageType> toBobPushedMessagesList;
+    BlockingQueue<DomibusConnectorMessageType> toBobPushedMessagesList;
     DomibusConnectorBackendWebService bobBackendClient;
 
-    LinkedBlockingQueue<DomibusConnectorMessageType> toAlicePushedMessagesList;
+    BlockingQueue<DomibusConnectorMessageType> toAlicePushedMessagesList;
     DomibusConnectorBackendWebService aliceBackendClient;
 
     DomibusConnectorBackendWebService catrinaBackendClient;
@@ -181,7 +182,7 @@ public class ConnectorBackendToGwITCase {
 
     @After
     public void tearDown() throws InterruptedException {
-        Thread.sleep(300000); //wait 3s after a test!
+        Thread.sleep(3000); //wait 3s after a test!
     }
 
 
@@ -192,37 +193,25 @@ public class ConnectorBackendToGwITCase {
         }
     }
 
-    @Test(timeout=2000)
-    public void aTest() throws InterruptedException {
-        //do nohting jus see if we can reach to here...
-    }
+//    @Test(timeout=10000)
+//    public void aTest() throws InterruptedException {
+//        //do nohting jus see if we can reach to here...
+//    }
 
    
-    @Test(timeout=5000) //("test is failing because testdb is not correct initialized!")
+    @Test(timeout=10000) //("test is failing because testdb is not correct initialized!")
     public void testSendEpoMessageFromBackendBobToGw() throws InterruptedException {
 
         DomibusConnectorMessageType msg1 = LoadStoreTransitionMessage.loadMessageFrom(new ClassPathResource("endtoendtest/messages/epo_forma_backend_to_gw/"));
 
         assertThat(msg1).isNotNull();
 
-
         DomibsConnectorAcknowledgementType acknowledgementType = bobBackendClient.submitMessage(msg1);
 
         assertThat(acknowledgementType.isResult()).isTrue();
 
-        System.out.println("size " + toGwSubmittedMessages.size());
-        assertThat(toGwSubmittedMessages).hasSize(1);
-
-//        toGwSubmittedMessages.
         DomibusConnectorMessageType msg = toGwSubmittedMessages.take();
-
-        System.out.println("message: " + msg);
-
-
-//
-//        for (DomibusConnectorMessageType t : toGwSubmittedMessages) {
-//            System.out.println("message rcv: " + t);
-//        }
+        assertThat(msg).isNotNull();
 
     }
 

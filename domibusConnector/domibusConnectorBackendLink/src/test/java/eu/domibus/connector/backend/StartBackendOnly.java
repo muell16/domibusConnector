@@ -42,6 +42,9 @@ public class StartBackendOnly {
                 .sources(TestBackendContext.class)
                 .profiles(profiles)
                 .properties(properties)
+                .properties(new String[] {
+                        "spring.activemq.packages.trusted=*"
+                })
                 .build();
         
 

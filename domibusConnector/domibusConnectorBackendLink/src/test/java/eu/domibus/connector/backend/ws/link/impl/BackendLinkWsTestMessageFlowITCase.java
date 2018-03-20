@@ -30,8 +30,8 @@ import org.slf4j.MDC;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 
 /**
  *
@@ -58,7 +58,7 @@ public class BackendLinkWsTestMessageFlowITCase {
     
     static ApplicationContext aliceApplicationContext;
 
-    private List<DomibusConnectorMessage> toControllerSubmittedMessages;
+    private BlockingQueue<DomibusConnectorMessage> toControllerSubmittedMessages;
 
     @BeforeClass
     public static void beforeClass() {
@@ -139,7 +139,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         System.out.println("wait 3 seconds....");
         Thread.sleep(3000);
 
-        this.toControllerSubmittedMessages = (List<DomibusConnectorMessage>) backendApplicationContext.getBean(TestBackendContext.SUBMITTED_MESSAGES_LIST_BEAN_NAME);
+        this.toControllerSubmittedMessages = (BlockingQueue<DomibusConnectorMessage>) backendApplicationContext.getBean(TestBackendContext.SUBMITTED_MESSAGES_LIST_BEAN_NAME);
         toControllerSubmittedMessages.clear();
 
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
@@ -213,8 +213,8 @@ public class BackendLinkWsTestMessageFlowITCase {
 
         messageToBackend.deliverMessageToBackend(epoMessage);
 
-        List<DomibusConnectorMessageType> toAlicePushedMessages =
-                (List<DomibusConnectorMessageType>) aliceApplicationContext.getBean(BackendClientPushWebServiceConfiguration.PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME);
+        BlockingQueue<DomibusConnectorMessageType> toAlicePushedMessages =
+                (BlockingQueue<DomibusConnectorMessageType>) aliceApplicationContext.getBean(BackendClientPushWebServiceConfiguration.PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME);
 
         assertThat(toAlicePushedMessages).hasSize(1);
     }
@@ -223,8 +223,8 @@ public class BackendLinkWsTestMessageFlowITCase {
      * test complete message flow in backend, when controller hands over
      * message to backend for backend delivery, backend is pulling message...
      */
-    @Ignore("not working because embedded broker is closed before queue is queried")
-    @Test
+    //@Ignore("not working because embedded broker is closed before queue is queried")
+    @Test(timeout=5000)
     public void testSendMessageFromConnectorToBackend_withPull() throws InterruptedException {
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
         message.setConnectorMessageId("msgid2");
@@ -246,12 +246,20 @@ public class BackendLinkWsTestMessageFlowITCase {
         messageToBackend.deliverMessageToBackend(message); //message should be on queue
 
 
+
+
         //Thread.sleep(3000); //to be sure wait a little bit before calling backendService
 
         //ok client bob is now trying to fetch message
         DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
-        EmptyRequestType emptyRequest = new EmptyRequestType();
-        DomibusConnectorMessagesType domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
+
+        DomibusConnectorMessagesType domibusConnectorMessagesType;
+        do {
+            EmptyRequestType emptyRequest = new EmptyRequestType();
+            domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
+            Thread.sleep(500);
+        } while( domibusConnectorMessagesType != null && domibusConnectorMessagesType.getMessages().size() == 0);
+
         assertThat(domibusConnectorMessagesType.getMessages()).hasSize(1);
 
     }

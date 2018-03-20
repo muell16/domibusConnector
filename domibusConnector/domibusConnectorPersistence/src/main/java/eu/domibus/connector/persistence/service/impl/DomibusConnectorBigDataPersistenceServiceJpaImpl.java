@@ -191,15 +191,17 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     private static class JpaBasedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
 
-        InputStream inputStream;
+        transient InputStream inputStream;
 
-        OutputStream outputStream;
+        transient OutputStream outputStream;
+
+        transient final DomibusConnectorBigDataPersistenceServiceJpaImpl bigDataPersistenceService;
 
         boolean readable;
 
         boolean writeable;
 
-        private final DomibusConnectorBigDataPersistenceServiceJpaImpl bigDataPersistenceService;
+
 
         JpaBasedDomibusConnectorBigDataReference(DomibusConnectorBigDataPersistenceServiceJpaImpl persistenceService) {
             this.bigDataPersistenceService = persistenceService;

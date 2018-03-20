@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +36,8 @@ public class TestBackendContext {
     public static final String SUBMITTED_MESSAGES_LIST_BEAN_NAME = "submittedMessages";
     
     @Bean("submittedMessages")
-    public List<DomibusConnectorMessage> createList() {
-        return Collections.synchronizedList(new ArrayList());
+    public BlockingQueue<DomibusConnectorMessage> createList() {
+        return new LinkedBlockingQueue<>();
     }
 
     @Bean
@@ -48,7 +50,7 @@ public class TestBackendContext {
     @Bean
     @ConditionalOnMissingBean
     public DomibusConnectorBackendSubmissionService dummySubmissionService() {
-        final List<DomibusConnectorMessage>  submittedMessages = createList(); 
+        final BlockingQueue<DomibusConnectorMessage>  submittedMessages = createList();
         DomibusConnectorBackendSubmissionService submissionService = new DomibusConnectorBackendSubmissionService() {
             @Override
             public void submitToController(DomibusConnectorMessage message) {
