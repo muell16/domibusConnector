@@ -17,6 +17,9 @@
     
     <property name="text.type" value="TEXT" />
     <property name="text.type" value="CLOB" dbms="oracle" />
+
+    <property name="default_now" value="CURRENT_TIMESTAMP" />
+    <!--<property name="now" value="SYSDATE" dbms="oracle" />-->
     
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0">
         <createTable tableName="DOMIBUS_CONNECTOR_SEQ_STORE" >
@@ -66,7 +69,7 @@
             </column>
             <column name="DETAILED_TEXT" type="${text.type}" />
             <column name="ERROR_SOURCE" type="${text.type}" />
-            <column name="CREATED" type="TIMESTAMP" >
+            <column name="CREATED" type="DATETIME" >
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -80,7 +83,7 @@
             <column name="CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="CONTENT" type="BLOB" />
             <column name="CHECKSUM" type="${text.type}" />            
-            <column name="CREATED" type="TIMESTAMP" />
+            <column name="CREATED" type="DATETIME" />
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
         
@@ -89,9 +92,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="CHECKSUM" type="${text.type}" />
-            <column name="CREATED" type="timestamp" />
+            <column name="CREATED" type="DATETIME" />
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
-            <column name="LAST_ACCESS" type="timestamp" />          
+            <column name="LAST_ACCESS" type="DATETIME" />          
             <column name="NAME" type="${text.type}" />
             <column name="CONTENT" type="BLOB" />
             <column name="MIMETYPE" type="${varchar.type}(255 ${varchar.length.type})" />
@@ -116,10 +119,10 @@
             <column name="FINAL_RECIPIENT" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="ACTION" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="CREATED" type="TIMESTAMP" >
+            <column name="CREATED" type="DATETIME" defaultValue="${default_now}">
                 <constraints nullable="false" />
             </column>
-            <column name="UPDATED" type="TIMESTAMP" >
+            <column name="UPDATED" type="DATETIME" defaultValue="${default_now}">
                 <constraints nullable="false" />
             </column>        
         </createTable>
@@ -136,11 +139,11 @@
             <column name="CONVERSATION_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>      
             <column name="DIRECTION" type="${varchar.type}(10)"></column>
             <column name="HASH_VALUE" type="${text.type}"></column>
-            <column name="CONFIRMED" type="TIMESTAMP" ></column>
-            <column name="REJECTED" type="TIMESTAMP"></column>
-            <column name="DELIVERED_BACKEND" type="TIMESTAMP"></column>
-            <column name="DELIVERED_GW" type="TIMESTAMP"></column>
-            <column name="UPDATED" type="TIMESTAMP">
+            <column name="CONFIRMED" type="DATETIME" ></column>
+            <column name="REJECTED" type="DATETIME"></column>
+            <column name="DELIVERED_BACKEND" type="DATETIME"></column>
+            <column name="DELIVERED_GW" type="DATETIME"></column>
+            <column name="UPDATED" type="DATETIME">
                 <constraints nullable="false" />
             </column>      
         </createTable>
@@ -156,9 +159,9 @@
             </column>
             <column name="TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="EVIDENCE" type="${text.type}" />
-            <column name="DELIVERED_NAT" type="TIMESTAMP" />
-            <column name="DELIVERED_GW" type="TIMESTAMP" />
-            <column name="UPDATED" type="TIMESTAMP" >
+            <column name="DELIVERED_NAT" type="DATETIME" />
+            <column name="DELIVERED_GW" type="DATETIME" />
+            <column name="UPDATED" type="DATETIME" >
                 <constraints nullable="false" />
             </column>            
         </createTable>
