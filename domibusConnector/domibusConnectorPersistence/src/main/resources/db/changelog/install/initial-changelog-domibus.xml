@@ -125,11 +125,11 @@
             <column name="FINAL_RECIPIENT" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" />
             <column name="ACTION" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="CREATED" type="DATETIME" defaultValue="${default_now}">
-                <constraints nullable="false" />
+            <column name="CREATED" type="DATETIME">
+                <!--<constraints nullable="false" />-->
             </column>
-            <column name="UPDATED" type="DATETIME" defaultValue="${default_now}">
-                <constraints nullable="false" />
+            <column name="UPDATED" type="DATETIME" >
+                <!--<constraints nullable="false" />-->
             </column>        
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_INFO" />
@@ -153,7 +153,7 @@
             <column name="DELIVERED_BACKEND" type="DATETIME"></column>
             <column name="DELIVERED_GW" type="DATETIME"></column>
             <column name="UPDATED" type="DATETIME">
-                <constraints nullable="false" />
+                <!--<constraints nullable="false" />-->
             </column>      
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
@@ -175,7 +175,7 @@
             <column name="DELIVERED_NAT" type="DATETIME" />
             <column name="DELIVERED_GW" type="DATETIME" />
             <column name="UPDATED" type="DATETIME" >
-                <constraints nullable="false" />
+                <!--<constraints nullable="false" />-->
             </column>            
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />

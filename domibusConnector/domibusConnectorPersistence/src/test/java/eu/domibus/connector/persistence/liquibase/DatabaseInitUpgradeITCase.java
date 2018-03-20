@@ -88,7 +88,8 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     }
     
     @Test
-    @Ignore
+//    @Ignore
+    // setenv: test.mysql.db.enabled=true
     public void testInstall004Database_mysql() {        
         Properties p = loadMysqlTestProperties();
         checkInstallDB("db_mysql", p);  
