@@ -108,6 +108,13 @@
                 <configuration>
                     <mainClass>eu.domibus.connector.starter.ConnectorStarter</mainClass>
                 </configuration>
+			<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.springframework</groupId>
@@ -115,6 +122,28 @@
                         <version>1.2.6.RELEASE</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+	    <plugin>
+              <groupId>io.fabric8</groupId>
+              <artifactId>docker-maven-plugin</artifactId>
+              <version>0.24.0</version>
+              <configuration>
+                <images>
+                  <image>
+                    <name>domibusconnector4:${project.version}</name>
+                    <build>
+                      <from>java:8</from>
+                      <assembly>
+                        <descriptor>docker-assembly.xml</descriptor>
+                      </assembly>
+                      <cmd>
+                        <!--<shell>/maven/connector/init-db.sh; java -jar /maven/connector/connector.jar</shell> -->
+                        <shell>/maven/connector/wait-for-it.sh DB_HOST:3306 -t 20 -- java -jar /maven/connector/connector.jar</shell>
+                      </cmd>
+                    </build>
+                  </image>
+                </images>
+              </configuration>
             </plugin>
         </plugins>
     </build>
