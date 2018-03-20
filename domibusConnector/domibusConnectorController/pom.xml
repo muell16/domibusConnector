@@ -146,7 +146,7 @@
 		</dependency>
 	 <dependency>
 	  <groupId>${project.groupId}</groupId>
-	  <artifactId>DomibusConnectorTestData</artifactId>
+	  <artifactId>domibusConnectorTestData</artifactId>
 	  <version>${project.version}</version>
 	  <scope>test</scope>
 	 </dependency>
