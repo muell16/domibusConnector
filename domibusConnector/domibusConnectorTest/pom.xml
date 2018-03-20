@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorOnlyStarter</module>
-        <module>DomibusConnectorTestSuite</module>
-        <module>DomibusConnectorTestData</module>
+        <module>domibusConnectorTestSuite</module>
+        <module>domibusConnectorTestData</module>
     </modules>
 </project>
