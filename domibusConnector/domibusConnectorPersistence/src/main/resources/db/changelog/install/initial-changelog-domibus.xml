@@ -6,20 +6,22 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     
-    <property name="varchar.type" value="VARCHAR" />
+    <property name="varchar.type" value="VARCHAR" dbms="h2,mysql,postgresql"/>
     <property name="varchar.type" value="VARCHAR2" dbms="oracle" />
     
-    <property name="varchar.length.type" value="" />
+    <property name="varchar.length.type" value="" dbms="h2,mysql,postgresql" />
     <property name="varchar.length.type" value="CHAR" dbms="oracle" />
-    
-    <property name="id.type" value="NUMBER(10,0)" />
+
+    <property name="id.type" value="BIGINT" dbms="postgresql" />
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
     <property name="id.type" value="NUMBER(10)" dbms="oracle" />
     
-    <property name="text.type" value="TEXT" />
+    <property name="text.type" value="TEXT" dbms="h2,postgresql" />
     <property name="text.type" value="CLOB" dbms="oracle" />
+    <property name="text.type" value="longtext" dbms="mysql" />
     
-    <property name="blob" value="BLOB" />
-    <property name="blob" value="LONGBLOB" dbms="mysql" />
+    <property name="blob" value="BLOB" dbms="oracle,h2,postgresql"/>
+    <property name="blob" value="longblob" dbms="mysql" />
 
     
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_1">
