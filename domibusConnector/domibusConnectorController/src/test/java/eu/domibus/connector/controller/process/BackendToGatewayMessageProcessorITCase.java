@@ -151,7 +151,7 @@ public class BackendToGatewayMessageProcessorITCase {
      * check that SUBMISSION_REJECTION evidence exists in db AND is sent to backend!
      */
     @Test
-    public void testProcessMessage_readAttachment() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException {
+    public void testProcessMessage_readAttachment() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         Mockito.doAnswer(invoc -> {
             DomibusConnectorMessage msg = invoc.getArgumentAt(0, DomibusConnectorMessage.class);
@@ -170,6 +170,9 @@ public class BackendToGatewayMessageProcessorITCase {
         } catch (Exception e) {
 
         }
+
+        DomibusConnectorMessage take = toBackendDeliveredMessages.take();
+        System.out.println("message: " + take.getMessageDetails());
 
     }
 

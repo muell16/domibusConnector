@@ -237,6 +237,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
         DomibusConnectorMessageDetails originalMessageDetails = originalMessage.getMessageDetails();
 
 		details.setRefToMessageId(originalMessageDetails.getBackendMessageId());
+		details.setBackendMessageId(originalMessageDetails.getBackendMessageId());
 		details.setService(originalMessageDetails.getService());
 		details.setFinalRecipient(originalMessageDetails.getFinalRecipient());
 		details.setOriginalSender(originalMessageDetails.getOriginalSender());

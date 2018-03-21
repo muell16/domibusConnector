@@ -172,6 +172,7 @@ public class DomibusConnectorMessageDetails implements Serializable {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("ebmsMessageId", this.ebmsMessageId);
         builder.append("backendMessageId", this.backendMessageId);
+        builder.append("refToMessageId", this.refToMessageId);
         builder.append("originalSender", this.originalSender);
         builder.append("finalRecipient", this.finalRecipient);
         builder.append("conversationId", this.conversationId);

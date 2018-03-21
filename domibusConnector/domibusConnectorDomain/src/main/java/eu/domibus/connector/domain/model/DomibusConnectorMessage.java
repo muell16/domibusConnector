@@ -157,7 +157,8 @@ public class DomibusConnectorMessage implements Serializable {
     @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
-        builder.append("connectorMessageId", this.connectorMessageId);        
+        builder.append("connectorMessageId", this.connectorMessageId);
+        builder.append("messageDetails", this.messageDetails);
         return builder.toString();
 	}
     

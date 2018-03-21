@@ -9,6 +9,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
@@ -102,8 +103,9 @@ public class BackendToGatewayMessageProcessorTest {
 
     @Test
     public void testProcessMessage() throws DomibusConnectorEvidencesToolkitException {
+        String backendMessageId = "backendmsg_1";
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        epoMessage.getMessageDetails().setBackendMessageId("backendmsg_1");
+        epoMessage.getMessageDetails().setBackendMessageId(backendMessageId);
 
         DomibusConnectorMessageConfirmation submissionAcceptanceConfirmation = DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation();
         Mockito.when(evidencesToolkit.createEvidence(any(DomibusConnectorEvidenceType.class), any(DomibusConnectorMessage.class), eq(null), eq(null)))
@@ -127,6 +129,11 @@ public class BackendToGatewayMessageProcessorTest {
 
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
+        DomibusConnectorMessage message = toGwDeliveredMessages.get(0);
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
+        assertThat(messageDetails.getBackendMessageId()).isEqualTo(backendMessageId);
+        assertThat(messageDetails.getRefToMessageId()).isEqualTo(backendMessageId);
+
         Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToGateway(eq(epoMessage), eq(submissionAcceptanceConfirmation));
 
         //verify message is handed over to backend for delivery
