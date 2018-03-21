@@ -129,15 +129,15 @@ public class BackendToGatewayMessageProcessorTest {
 
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
-        DomibusConnectorMessage message = toGwDeliveredMessages.get(0);
-        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
-        assertThat(messageDetails.getBackendMessageId()).isEqualTo(backendMessageId);
-        assertThat(messageDetails.getRefToMessageId()).isEqualTo(backendMessageId);
-
-        Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToGateway(eq(epoMessage), eq(submissionAcceptanceConfirmation));
+        
 
         //verify message is handed over to backend for delivery
         assertThat(toBackendDeliveredMessages).hasSize(1);
+
+        DomibusConnectorMessage message = toBackendDeliveredMessages.get(0);
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
+        assertThat(messageDetails.getRefToMessageId()).isEqualTo(backendMessageId);
+        assertThat(messageDetails.getBackendMessageId()).isEqualTo(backendMessageId);
 
     }
 

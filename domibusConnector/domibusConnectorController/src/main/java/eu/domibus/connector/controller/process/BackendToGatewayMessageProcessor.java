@@ -151,13 +151,15 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		messagePersistenceService.setDeliveredToGateway(message);
-		try {
-            evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
-		} catch (PersistenceException ex) {
-			//TODO: handle exception
-			LOGGER.error("Exception occured", ex);
-		}
+// not necessary messagePersistenceService is also setting all transmitted confirmations to delivered!
+//		try {
+//            evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
+//		} catch (PersistenceException ex) {
+//			//TODO: handle exception
+//			LOGGER.error("Exception occured", ex);
+//		}
 
+        //also send evidence back to backend client:
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
 		LOGGER.trace("#processMessage: persist evidence message [{}] into database", returnMessage);
         messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONN_TO_NAT);
@@ -198,10 +200,11 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 		try {
             DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-            returnMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
-            backendDeliveryService.deliverMessageToBackend(returnMessage);
 
+            backendDeliveryService.deliverMessageToBackend(returnMessage);
+            LOGGER.info("Setting message confirmation [{}] as delivered to national system!", confirmation.getEvidenceType());
             evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
+            LOGGER.info("Setting message status to rejected");
 			messagePersistenceService.rejectMessage(message);
 
 		} catch (PersistenceException persistenceException) {
@@ -228,6 +231,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
      *  for this purpose the action is set to SubmissionAcceptanceRejection
      *  which is the action for submission -acceptance and -rejection evidences
      *
+     *  all other attributes are set to the same as the original message!
+     *
      * @param confirmation the confirmation to send back
      * @param originalMessage the message the confirmation belongs to
      * @return the created evidence message
@@ -241,7 +246,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		details.setService(originalMessageDetails.getService());
 		details.setFinalRecipient(originalMessageDetails.getFinalRecipient());
 		details.setOriginalSender(originalMessageDetails.getOriginalSender());
-		details.setAction(originalMessageDetails.getAction());
+
 		details.setFromParty(originalMessageDetails.getFromParty());
 		details.setToParty(originalMessageDetails.getToParty());
 
