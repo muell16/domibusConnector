@@ -129,7 +129,7 @@ public class BackendToGatewayMessageProcessorTest {
 
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
-        
+
 
         //verify message is handed over to backend for delivery
         assertThat(toBackendDeliveredMessages).hasSize(1);
