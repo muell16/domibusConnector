@@ -3,12 +3,12 @@
 
   <files>
     <file>
-      <source>target/${project.name}-${project.version}.jar</source
+      <source>target/${project.name}-${project.version}.jar</source>
       <outputDirectory>/connector</outputDirectory>
       <destName>connector.jar</destName>
     </file>
     <file>
-      <source>src/main/sh/wait-for-it.sh</source
+      <source>src/main/sh/wait-for-it.sh</source>
       <outputDirectory>/connector</outputDirectory>
     </file>
 
