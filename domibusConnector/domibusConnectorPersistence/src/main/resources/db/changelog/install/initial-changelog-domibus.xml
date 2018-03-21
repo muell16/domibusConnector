@@ -17,9 +17,10 @@
     
     <property name="text.type" value="TEXT" />
     <property name="text.type" value="CLOB" dbms="oracle" />
+    
+    <property name="blob" value="BLOB" />
+    <property name="blob" value="LONGBLOB" dbms="mysql" />
 
-    <property name="default_now" value="CURRENT_TIMESTAMP" />
-    <!--<property name="now" value="SYSDATE" dbms="oracle" />-->
     
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_1">
         <createTable tableName="DOMIBUS_CONNECTOR_SEQ_STORE" >
@@ -84,7 +85,7 @@
             </column>
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
             <column name="CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="CONTENT" type="BLOB" />
+            <column name="CONTENT" type="${blob}" />
             <column name="CHECKSUM" type="${text.type}" />            
             <column name="CREATED" type="DATETIME" />
         </createTable>
@@ -100,7 +101,7 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
             <column name="LAST_ACCESS" type="DATETIME" />          
             <column name="NAME" type="${text.type}" />
-            <column name="CONTENT" type="BLOB" />
+            <column name="CONTENT" type="${blob}" />
             <column name="MIMETYPE" type="${varchar.type}(255 ${varchar.length.type})" />
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BIGDATA" columnNames="ID" />
