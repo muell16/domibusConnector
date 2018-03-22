@@ -4,15 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MSG_ERROR")
@@ -47,6 +39,13 @@ public class PDomibusConnectorMessageError {
 
     @Column(name = "CREATED", nullable = false)
     private Date created;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.created == null) {
+            this.created = new Date();
+        }
+    }
 
     public Long getId() {
         return id;
