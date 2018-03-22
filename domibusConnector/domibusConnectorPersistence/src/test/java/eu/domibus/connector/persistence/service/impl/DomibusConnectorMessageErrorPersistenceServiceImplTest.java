@@ -49,9 +49,10 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
     @Test
     public void testPersistMessageError() {
         DomibusConnectorMessageError messageError = DomainEntityCreatorForPersistenceTests.createMessageError();
-
+        
+        
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(this.messageDao.findOne(eq(47L))).thenReturn(dbMessage);
+        Mockito.when(this.messageDao.findOneByConnectorMessageId(eq("msg72"))).thenReturn(dbMessage);
 
         Mockito.when(this.errorDao.save(any(PDomibusConnectorMessageError.class)))
                 .thenAnswer(new Answer<PDomibusConnectorMessageError>() {
