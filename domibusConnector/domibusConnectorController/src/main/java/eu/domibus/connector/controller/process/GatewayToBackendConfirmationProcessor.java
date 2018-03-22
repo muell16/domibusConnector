@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.process;
 
 
+import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Override
+    @StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
 		String refToMessageID = message.getMessageDetails().getRefToMessageId();
 

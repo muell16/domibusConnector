@@ -68,8 +68,22 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
         messageErrorPersistenceService.persistMessageError("msg72", messageError);
 
         Mockito.verify(this.errorDao, Mockito.times(1)).save(any(PDomibusConnectorMessageError.class));
+    }
+
+    /**
+     * Message Error related
+     */
+    @Test
+    public void testPersistMessageError_messageDoesNotExistInDb_shouldNotPersist() {
+        DomibusConnectorMessageError messageError = DomainEntityCreatorForPersistenceTests.createMessageError();
+
+        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
+        Mockito.when(this.messageDao.findOne(eq(47L))).thenReturn(null);
 
 
+        messageErrorPersistenceService.persistMessageError("msg72", messageError);
+
+        Mockito.verify(this.errorDao, Mockito.times(0)).save(any(PDomibusConnectorMessageError.class));
     }
 
     @Test

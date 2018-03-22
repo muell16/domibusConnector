@@ -42,11 +42,15 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
     public void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError) {
         PDomibusConnectorMessageError dbError = new PDomibusConnectorMessageError();
 
-        dbError.setErrorMessage(messageError.getText());
-        dbError.setDetailedText(messageError.getDetails());
-        dbError.setErrorSource(messageError.getSource());
+        PDomibusConnectorMessage msg = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        if (msg != null) {
+            dbError.setMessage(msg);
+            dbError.setErrorMessage(messageError.getText());
+            dbError.setDetailedText(messageError.getDetails());
+            dbError.setErrorSource(messageError.getSource());
 
-        this.messageErrorDao.save(dbError);
+            this.messageErrorDao.save(dbError);
+        }
     }
 
     @Override

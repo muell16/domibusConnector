@@ -129,6 +129,8 @@ public class BackendToGatewayMessageProcessorTest {
 
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
+        DomibusConnectorMessage toGwMsg = toGwDeliveredMessages.get(0);
+        assertThat(toGwMsg.getMessageConfirmations()).hasSize(1); //should contain one SUBMISSION_ACCEPTANCE evidence
 
 
         //verify message is handed over to backend for delivery

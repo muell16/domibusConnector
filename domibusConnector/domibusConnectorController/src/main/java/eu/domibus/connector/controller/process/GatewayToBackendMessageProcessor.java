@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.persistence.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -96,8 +97,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 
 	@Override
+	@StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
-		
+		LOGGER.trace("#processMessage: start processing message [{}] with confirmations [{}]", message, message.getMessageConfirmations());
 		
 		createRelayREMMDEvidenceAndSendIt(message, true);
 		

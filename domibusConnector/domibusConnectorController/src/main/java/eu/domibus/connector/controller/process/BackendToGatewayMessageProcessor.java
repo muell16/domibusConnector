@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.process;
 
+import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
@@ -102,6 +103,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
     @Override
     @Transactional(propagation=Propagation.NEVER)
+    @StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
 
 

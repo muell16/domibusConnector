@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -97,7 +98,7 @@ public class BackendToGatewayMessageProcessorITCase {
         toBackendDeliveredMessages.clear();
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testProcessMessage() throws IOException, DataSetException, SQLException, InterruptedException {
 
         DomibusConnectorMessage message = prepareMessage("msg1");
@@ -107,11 +108,16 @@ public class BackendToGatewayMessageProcessorITCase {
         assertThat(toGatewayDeliveredMessages).hasSize(1);
         assertThat(toBackendDeliveredMessages).hasSize(1);
 
-        DomibusConnectorMessage msg = toGatewayDeliveredMessages.take();
+        DomibusConnectorMessage toGwMsg = toGatewayDeliveredMessages.take();
+        assertThat(toGwMsg.getMessageConfirmations()).hasSize(1); //should contain submission acceptance evidence!
+        assertThat(toGwMsg.getMessageConfirmations().get(0).getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+
+
         DomibusConnectorMessage evidence = toBackendDeliveredMessages.take();
         assertThat(evidence.getMessageConfirmations()).hasSize(1);
+        assertThat(evidence.getMessageConfirmations().get(0).getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 
-        //verify DB
+        //TODO: verify DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_BIGDATA", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA");
@@ -125,17 +131,14 @@ public class BackendToGatewayMessageProcessorITCase {
 //        content = domibusConnectorTable.getValue(4, "CONTENT");
 //        assertThat(content).isNotNull();
 
-
-
 //        //write by gw rcv message to file system
 //        FileSystemUtils.deleteRecursively(new File("./target/testm/"));
 //        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
 //        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
 
 
-        ITable messageTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
-        FlatXmlDataSet.write(dataSet, System.out);
-
+//        ITable messageTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
+//        FlatXmlDataSet.write(dataSet, System.out);
 
 
 //        System.out.println("#############\n#############\n#############\n#############\nOTHER WAY!!!!");
@@ -150,7 +153,7 @@ public class BackendToGatewayMessageProcessorITCase {
      * Test send to GW, but gw fails
      * check that SUBMISSION_REJECTION evidence exists in db AND is sent to backend!
      */
-    @Test
+    @Test(timeout=20000)
     public void testProcessMessage_readAttachment() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         Mockito.doAnswer(invoc -> {
@@ -165,11 +168,9 @@ public class BackendToGatewayMessageProcessorITCase {
 
 
         DomibusConnectorMessage message = prepareMessage("msg2");
-        try {
-            backendToGatewayMessageProcessor.processMessage(message);
-        } catch (Exception e) {
 
-        }
+        backendToGatewayMessageProcessor.processMessage(message);
+
 
         DomibusConnectorMessage take = toBackendDeliveredMessages.take();
         System.out.println("message: " + take.getMessageDetails());
@@ -181,8 +182,8 @@ public class BackendToGatewayMessageProcessorITCase {
      * Test send to GW, but gw fails
      * check that SUBMISSION_REJECTION evidence exists in db AND is sent to backend!
      */
-    @Test
-    public void testProcessMessage_sendToGwFails() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException {
+    @Test(timeout=20000)
+    public void testProcessMessage_sendToGwFails() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         Mockito.doThrow(new DomibusConnectorGatewaySubmissionException("a error occured!"))
                 .when(submissionServiceInterceptor).submitToGateway(Mockito.any(DomibusConnectorMessage.class));
@@ -198,9 +199,6 @@ public class BackendToGatewayMessageProcessorITCase {
         }
 
         assertThat(toBackendDeliveredMessages).hasSize(1);
-
-        //assertThat(toGatewayDeliveredMessages).hasSize(1);
-//        DomibusConnectorMessage msg = toGatewayDeliveredMessages.get(0);
 
         //verify DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);

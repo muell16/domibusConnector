@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.*;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
     @Override
     @Transactional(propagation=Propagation.NEVER)
+    @StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isEvidenceMessage(message)) {
             throw new IllegalArgumentException("The message is not an evidence message!");
