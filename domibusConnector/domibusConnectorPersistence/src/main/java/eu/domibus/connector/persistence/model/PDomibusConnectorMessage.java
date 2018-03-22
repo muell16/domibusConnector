@@ -78,6 +78,10 @@ public class PDomibusConnectorMessage implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @Column(name = "CREATED", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
     @OneToOne(mappedBy = "message", fetch = FetchType.EAGER)
     private PDomibusConnectorMessageInfo messageInfo;
 
@@ -87,6 +91,9 @@ public class PDomibusConnectorMessage implements Serializable {
     @PrePersist    
     public void prePersist() {
         this.updated = new Date();
+        if (this.created == null) {
+            this.created = this.updated;
+        }
     }
     
     @PreUpdate
@@ -212,6 +219,14 @@ public class PDomibusConnectorMessage implements Serializable {
 
     public void setBackendName(String backendName) {
         this.backendName = backendName;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     @Override

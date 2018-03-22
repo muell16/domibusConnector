@@ -157,7 +157,10 @@
             <column name="DELIVERED_GW" type="DATETIME"></column>
             <column name="UPDATED" type="DATETIME">
                 <!--<constraints nullable="false" />-->
-            </column>      
+            </column>
+            <column name="CREATED" type="DATETIME">
+                <!--<constraints nullable="false" />-->
+            </column>
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="CONNECTOR_MESSAGE_ID" constraintName="UNIQUE_CONNECTOR_MESSAGE_ID" />
