@@ -204,7 +204,7 @@ public class BackendLinkWsTestMessageFlowITCase {
 
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
         DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-        BigDataWithMessagePersistenceServiceImpl bigDataPersistence = backendApplicationContext.getBean(BigDataWithMessagePersistenceServiceImpl.class);
+        DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
 
         persistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GW_TO_NAT);
         bigDataPersistence.persistAllBigFilesFromMessage(epoMessage);

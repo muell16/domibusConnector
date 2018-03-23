@@ -3,6 +3,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -47,12 +48,12 @@ public class DeliverMessageFromControllerToBackendServiceTest {
         waitQueueMessages = new ArrayList<>();
 
         MockitoAnnotations.initMocks(this);
-        deliverMessageFromControllerToBackendService = new DeliverMessageFromControllerToBackendService();
-        deliverMessageFromControllerToBackendService.setBackendClientInfoPersistenceService(backendClientInfoPersistenceService);
-        deliverMessageFromControllerToBackendService.setPushMessageToBackendClient(pushMessageToBackendClient);
-        deliverMessageFromControllerToBackendService.setWaitQueue(waitQueue);
-        deliverMessageFromControllerToBackendService.setMessagePersistenceService(messagePersistenceService);
-
+        DeliverMessageFromControllerToBackendService impl = new DeliverMessageFromControllerToBackendService();
+        impl.setBackendClientInfoPersistenceService(backendClientInfoPersistenceService);
+        impl.setPushMessageToBackendClient(pushMessageToBackendClient);
+        impl.setWaitQueue(waitQueue);
+        impl.setMessagePersistenceService(messagePersistenceService);
+        deliverMessageFromControllerToBackendService = impl;
 
         //collect all messages put in wait queue
         Mockito.doAnswer((invocation) -> waitQueueMessages.add(invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class)))
