@@ -95,7 +95,8 @@ public class BackendToGatewayMessageProcessorTest {
         Mockito.when(bigDataPersistenceService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
                 .thenAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
 
-
+        
+        
     }
 
 

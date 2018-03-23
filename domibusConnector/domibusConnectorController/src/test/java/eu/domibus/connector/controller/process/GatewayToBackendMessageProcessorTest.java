@@ -81,12 +81,18 @@ public class GatewayToBackendMessageProcessorTest {
         gatewayToBackendMessageProcessor.setConnectorTestAction(CONNECTOR_TEST_ACTION_STRING);
         gatewayToBackendMessageProcessor.setConnectorTestService(CONNECTOR_TEST_SERVICE_STRING);
 
+        Mockito.doAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class))
+                .when(messagePersistenceService).mergeMessageWithDatabase(any(DomibusConnectorMessage.class));
+        
         Mockito.doAnswer(invoc -> toGwDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
         Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
                 .when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
+        Mockito.doAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class))
+                .when(securityToolkit).validateContainer(any(DomibusConnectorMessage.class));
+        
     }
 
 
