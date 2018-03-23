@@ -31,8 +31,8 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 		DomibsConnectorAcknowledgementType ack = submissionClient.submitMessage(request);
 		LOGGER.debug("#submitToGateway: received [{}] from gw", ack);
 
-		if(ack==null || !ack.isResult()) {
-			if(ack!=null && !StringUtils.isEmpty(ack.getResultMessage()))
+		if (ack == null || !ack.isResult()) {
+			if (ack != null && !StringUtils.isEmpty(ack.getResultMessage()))
 				throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());
 			else
 				throw new DomibusConnectorGatewaySubmissionException("Undefined submission error!");

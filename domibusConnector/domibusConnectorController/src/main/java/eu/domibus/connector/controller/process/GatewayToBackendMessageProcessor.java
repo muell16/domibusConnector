@@ -7,6 +7,7 @@ import eu.domibus.connector.persistence.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -208,15 +209,16 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 		originalMessage.addConfirmation(messageConfirmation);
 		evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
-		
-		
+
+		DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+		BeanUtils.copyProperties(originalDetails, details);
+
+		details.setFromParty(originalDetails.getToParty());
+		details.setToParty(originalDetails.getFromParty());
 		details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
-		details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-		details.setService(originalMessage.getMessageDetails().getService());
 		details.setAction(action);
-		details.setFromParty(originalMessage.getMessageDetails().getToParty());
-		details.setToParty(originalMessage.getMessageDetails().getFromParty());
+
 
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
 		
@@ -235,7 +237,8 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         try {
             evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation);
         } catch (PersistenceException ex) {
-            LOGGER.error("Evidence could not persisted", ex);
+        	String error = String.format("Confirmation [%s] could not set to 'delivered' to GW", messageConfirmation);
+            LOGGER.error(error, ex);
             //TODO: further exception handling!
         }
 	}
