@@ -15,6 +15,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import org.junit.*;
 import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWebServiceConfiguration;
@@ -236,7 +237,7 @@ public class BackendLinkWsTestMessageFlowITCase {
 
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
         DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-        BigDataWithMessagePersistenceServiceImpl bigDataPersistence = backendApplicationContext.getBean(BigDataWithMessagePersistenceServiceImpl.class);
+        DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
 
         persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
         bigDataPersistence.persistAllBigFilesFromMessage(message);
