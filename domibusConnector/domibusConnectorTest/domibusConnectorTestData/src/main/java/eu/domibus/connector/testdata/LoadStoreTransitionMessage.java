@@ -9,12 +9,9 @@ import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.MimetypesFileTypeMap;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;

@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.service;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -13,12 +13,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
@@ -38,7 +36,7 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
 
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
-    private BigDataWithMessagePersistenceService bigDataPersistenceService;
+    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
 
     private ApplicationContext applicationContext;
     private DataSource dataSource;
@@ -61,7 +59,7 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
     public void setUp() throws SQLException {
         this.applicationContext = APPLICATION_CONTEXT;
         messagePersistenceService = applicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-        bigDataPersistenceService = applicationContext.getBean(BigDataWithMessagePersistenceService.class);
+        bigDataPersistenceService = applicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
         dataSource = applicationContext.getBean(DataSource.class);
         transactionManager = applicationContext.getBean(PlatformTransactionManager.class);
         this.conn = new DatabaseDataSourceConnection(dataSource);
@@ -104,4 +102,5 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
         assertThat(new String(documentContent)).isEqualTo("documentbytes");
 
     }
+
 }

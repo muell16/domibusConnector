@@ -13,12 +13,11 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServiceMemoryImpl;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import javax.xml.ws.WebServiceContext;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -72,8 +70,8 @@ public class  DomibusConnectorWsBackendImplTest {
         domibusConnectorBackendImpl.setMessagePersistenceService(messagePersistenceService);
         
         DomibusConnectorBigDataPersistenceServiceMemoryImpl bigDataPersistenceService = new DomibusConnectorBigDataPersistenceServiceMemoryImpl();        
-        domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceService());
-        ((BigDataWithMessagePersistenceService)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);        
+        domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceServiceImpl());
+        ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);
         domibusConnectorBackendImpl.setDomibusConnectorPersistAllBigDataOfMessageService(domibusConnectorPersistAllBigDataOfMessageService);
                 
         backendSubmissionService = Mockito.mock(DomibusConnectorBackendInternalDeliverToController.class);

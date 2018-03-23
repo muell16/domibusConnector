@@ -11,8 +11,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
-import org.dbunit.database.AmbiguousTableNameException;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -26,9 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -36,19 +34,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.sql.DataSource;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,7 +76,7 @@ public class BackendToGatewayMessageProcessorITCase {
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Autowired
-    private BigDataWithMessagePersistenceService bigDataWithMessagePersistenceService;
+    private DomibusConnectorPersistAllBigDataOfMessageService bigDataWithMessagePersistenceService;
 
     @Autowired
     private DataSource dataSource;

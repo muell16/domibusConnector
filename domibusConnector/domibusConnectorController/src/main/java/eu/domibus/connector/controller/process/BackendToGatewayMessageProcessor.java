@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,6 @@ import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Takes a message from backend and creates evidences for it
@@ -54,7 +53,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
-	private BigDataWithMessagePersistenceService bigDataPersistenceService;
+	private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
 
 	@Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
@@ -62,7 +61,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
     }
 
 	@Autowired
-	public void setBigDataPersistenceService(BigDataWithMessagePersistenceService bigDataPersistenceService) {
+	public void setBigDataPersistenceService(DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService) {
 		this.bigDataPersistenceService = bigDataPersistenceService;
 	}
 

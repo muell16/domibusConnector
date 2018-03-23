@@ -8,7 +8,8 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
-    private BigDataWithMessagePersistenceService bigDataPersistence;
+    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence;
 
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
@@ -38,7 +39,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     }
 
     @Autowired
-    public void setBigDataPersistence(BigDataWithMessagePersistenceService bigDataPersistence) {
+    public void setBigDataPersistence(DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence) {
         this.bigDataPersistence = bigDataPersistence;
     }
 

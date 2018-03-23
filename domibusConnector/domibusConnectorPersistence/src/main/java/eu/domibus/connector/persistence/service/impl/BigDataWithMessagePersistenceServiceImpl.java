@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 
@@ -25,12 +26,14 @@ import javax.annotation.Nonnull;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Service
-public class BigDataWithMessagePersistenceService implements DomibusConnectorPersistAllBigDataOfMessageService {
+public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnectorPersistAllBigDataOfMessageService {
     
-    private final static Logger LOGGER = LoggerFactory.getLogger(BigDataWithMessagePersistenceService.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(BigDataWithMessagePersistenceServiceImpl.class);
     
     @Autowired
     private DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl;
+
+
     
     // START GETTER / SETTER //
     public void setBigDataPersistenceServiceImpl(DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl) {
@@ -40,6 +43,7 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
     
     
     @Override
+    @Transactional
     public DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message) {
         LOGGER.trace("persistAllBigFilesFromMessage: message [{}]", message);
         try {
@@ -67,16 +71,19 @@ public class BigDataWithMessagePersistenceService implements DomibusConnectorPer
     }
     
     @Override
+    @Transactional
     public DomibusConnectorMessage loadAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message) {
-        LOGGER.trace("loadAllBigFilesFromMessage: message [{}]", message);
+        LOGGER.trace("#loadAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
             DomibusConnectorBigDataReference activeRead = attachment.getAttachment();
+            LOGGER.trace("#loadAllBigFilesFromMessage: loading attachment [{}]", activeRead);
             DomibusConnectorBigDataReference activatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(activeRead);
             attachment.setAttachment(activatedRead);
         }
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (hasMainDocument(messageContent)) {
             DomibusConnectorBigDataReference docRefresRead = messageContent.getDocument().getDocument();
+            LOGGER.trace("#loadAllBigFilesFromMessage: loading content document [{}]", docRefresRead);
             DomibusConnectorBigDataReference docActivatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(docRefresRead);
             messageContent.getDocument().setDocument(docActivatedRead);
         }

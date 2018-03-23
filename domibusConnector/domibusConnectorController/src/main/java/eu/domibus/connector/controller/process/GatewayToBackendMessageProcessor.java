@@ -107,7 +107,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		
 		try {
 		    LOGGER.debug("#processMessage: call validateContainer");
-			securityToolkit.validateContainer(message);
+			message = securityToolkit.validateContainer(message);
+			//update message in database
+			message = messagePersistenceService.mergeMessageWithDatabase(message);
 		} catch (DomibusConnectorSecurityException e) {
 			createNonDeliveryEvidenceAndSendIt(message);
 			throw e;

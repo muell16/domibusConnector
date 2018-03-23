@@ -20,7 +20,7 @@ public class ConnectorStarter {
         SpringApplication springApplication = new SpringApplicationBuilder()
                 .sources(ConnectorStarter.class)
                 .profiles("connector",
-                        "embedded",     //use embedded database
+//                        "embedded",     //use embedded database
                         "gwlink-ws", //use gw webservice based impl
                         "backendlink-ws" //use backendlink ws based impl
                 )

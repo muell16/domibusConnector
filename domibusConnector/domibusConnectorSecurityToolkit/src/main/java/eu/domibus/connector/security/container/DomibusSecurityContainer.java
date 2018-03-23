@@ -42,6 +42,7 @@ import eu.europa.esig.dss.MimeType;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 /**

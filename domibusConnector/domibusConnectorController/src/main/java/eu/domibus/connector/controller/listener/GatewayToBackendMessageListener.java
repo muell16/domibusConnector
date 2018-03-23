@@ -30,7 +30,6 @@ public class GatewayToBackendMessageListener extends AbstractControllerMessageLi
 	
 	@Override
 	@JmsListener(destination = "${"+ QUEUE_NAME +"}", containerFactory = NON_TRANSACTED_JMS_LISTENER_CONTAINER_FACTORY_BEAN_NAME)
-	@Transactional(propagation=Propagation.NEVER)
 	public void onMessage(Message message) {
 		handleMessage(message);
 	}

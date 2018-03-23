@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 /**
@@ -48,6 +49,7 @@ import org.springframework.util.DigestUtils;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component
+@Transactional
 public class MsgContentPersistenceService {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(MsgContentPersistenceService.class);

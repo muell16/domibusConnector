@@ -1,7 +1,5 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
-import eu.domibus.connector.backend.ws.link.impl.PushMessageViaWsToBackendClientImpl;
-import eu.domibus.connector.backend.ws.link.impl.BackendClientWebServiceClientFactory;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
@@ -10,7 +8,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 
 public class PushMessageViaWsToBackendClientImplTest {
@@ -33,7 +30,7 @@ public class PushMessageViaWsToBackendClientImplTest {
 
     BackendClientWebServiceClientFactory webServiceClientFactory;
 
-    BigDataWithMessagePersistenceService bigDataMessageService;
+    BigDataWithMessagePersistenceServiceImpl bigDataMessageService;
 
     DomibusConnectorMessagePersistenceService messagePersistenceService;
 
@@ -49,7 +46,7 @@ public class PushMessageViaWsToBackendClientImplTest {
                 });
 
         //just pass message through bigDataMessageService
-        this.bigDataMessageService = Mockito.mock(BigDataWithMessagePersistenceService.class);
+        this.bigDataMessageService = Mockito.mock(BigDataWithMessagePersistenceServiceImpl.class);
         Mockito.when(bigDataMessageService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
                 .then(new Answer<DomibusConnectorMessage>() {
                     @Override

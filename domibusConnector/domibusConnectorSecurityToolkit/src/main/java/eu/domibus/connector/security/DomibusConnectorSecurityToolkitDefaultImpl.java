@@ -11,6 +11,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidationServiceFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("domibusConnectorSecurityToolkitDefaultImpl")
 public class DomibusConnectorSecurityToolkitDefaultImpl implements DomibusConnectorSecurityToolkit {
@@ -28,13 +29,14 @@ public class DomibusConnectorSecurityToolkitDefaultImpl implements DomibusConnec
     }
 
     @Override
+    @Transactional
     public DomibusConnectorMessage buildContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
-//    	securityContainer.getContainerService().setTechnicalValidationService(technicalValidationServiceFactory.technicalValidationService(message));
         message = securityContainer.createContainer(message);
     	return message;
     }
 
     @Override
+    @Transactional
     public DomibusConnectorMessage validateContainer(DomibusConnectorMessage message) throws DomibusConnectorSecurityException {
         securityContainer.recieveContainerContents(message);
         return message;

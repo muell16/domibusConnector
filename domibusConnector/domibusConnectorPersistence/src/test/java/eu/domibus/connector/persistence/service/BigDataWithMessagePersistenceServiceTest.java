@@ -1,12 +1,12 @@
 package eu.domibus.connector.persistence.service;
 
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 import java.util.UUID;
-import static org.assertj.core.api.Assertions.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
@@ -22,15 +22,15 @@ public class BigDataWithMessagePersistenceServiceTest {
     
     @Mock
     private DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl;
-    
-    
-    BigDataWithMessagePersistenceService persistenceService;
-    
+
+    DomibusConnectorPersistAllBigDataOfMessageService persistenceService;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        persistenceService = new BigDataWithMessagePersistenceService();
-        persistenceService.setBigDataPersistenceServiceImpl(bigDataPersistenceServiceImpl);
+        BigDataWithMessagePersistenceServiceImpl impl = new BigDataWithMessagePersistenceServiceImpl();
+        impl.setBigDataPersistenceServiceImpl(bigDataPersistenceServiceImpl);
+        persistenceService = impl;
     }
     
     private static DomibusConnectorBigDataReferenceMemoryBacked generateNewDomibusConnectorBigDataReferenceMemoryBacked() {

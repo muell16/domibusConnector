@@ -6,6 +6,7 @@ import javax.jms.TextMessage;
 
 import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
+import eu.domibus.connector.controller.service.queue.GetDomibusConnectorMessageFromJmsMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
 
@@ -18,37 +19,16 @@ import org.springframework.util.CollectionUtils;
 public abstract class AbstractControllerMessageListener {
 	
 	
+//	@Autowired
+//	private DomibusConnectorMessagePersistenceService persistenceService;
+
 	@Autowired
-	private DomibusConnectorMessagePersistenceService persistenceService;
+	GetDomibusConnectorMessageFromJmsMessage getFromJmsMessage;
 	
 	void handleMessage(Message message) {
 		getLogger().debug("#handleMessage: jms message: [{}]", message);
-		try {
-			if (message instanceof TextMessage) {
-				TextMessage msg = (TextMessage) message;
-
-				String connectorMessageId = msg.getText();
-				SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(connectorMessageId);
-				getLogger().info("received messageID [{}] from queue [{}].", connectorMessageId, getQueueName());
-				DomibusConnectorMessage connectorMessage = null;
-				try {
-					connectorMessage = persistenceService.findMessageByConnectorMessageId(connectorMessageId);
-				} catch (PersistenceException e) {
-					getLogger().error("Message [{}] could not be loaded from database!", connectorMessageId, e);
-				}
-				
-				if(connectorMessage!=null) {
-					startProcessing(connectorMessage);
-				}else {
-					getLogger().error("Message [{}] is null!");
-				}
-				
-			} else {
-				throw new IllegalArgumentException("Message must be of type TextMessage");
-			}
-		} catch (JMSException e) {
-			getLogger().error("Exception receiving message from queue [{}].", getQueueName());
-		}
+		DomibusConnectorMessage domibusConnectorMessage = getFromJmsMessage.getMessage(message);
+		startProcessing(domibusConnectorMessage);
 	}
 	
 	void startProcessing(DomibusConnectorMessage connectorMessage) {

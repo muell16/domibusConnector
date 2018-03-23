@@ -16,13 +16,11 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.domibus.connector.testutil.matcher.MockitoDomainMatcher;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -63,7 +61,7 @@ public class BackendToGatewayMessageProcessorTest {
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
     
     @Mock
-    private BigDataWithMessagePersistenceService bigDataPersistenceService;
+    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
 
     BackendToGatewayMessageProcessor backendToGatewayMessageProcessor;
 
