@@ -14,6 +14,9 @@ import javax.annotation.Nonnull;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import static eu.domibus.connector.controller.service.queue.MessageOnQueueConstants.CONFIRMATION_TYPE_PROPERTY_NAME;
 
 public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
 
@@ -35,12 +38,16 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
     @Override
     public void putMessageOnMessageQueue(@Nonnull DomibusConnectorMessage message) {
         String connectorMessageId = message.getConnectorMessageId();
+        //TODO: make sure message is persisted!
+
         LOGGER.debug("Putting message [{}] on queue [{}].", connectorMessageId, queueName);
         try {
             jmsTemplate.send(queueName, new MessageCreator() {
                 @Override
                 public Message createMessage(Session session) throws JMSException {
-                    return session.createTextMessage(connectorMessageId);
+                    //TextMessage textMessage = session.createTextMessage(connectorMessageId);
+                    //return textMessage;
+                    return session.createObjectMessage(message);
                 }
 
             });

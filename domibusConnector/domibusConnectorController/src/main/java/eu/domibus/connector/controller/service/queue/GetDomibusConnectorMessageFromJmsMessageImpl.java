@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 
 @Component
@@ -25,26 +26,30 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
     public DomibusConnectorMessage getMessage(Message message) {
         String jmsDestination = "";
         try {
-            if (message instanceof TextMessage) {
+            if (message instanceof ObjectMessage) {
                 jmsDestination = message.getJMSDestination().toString();
-                TextMessage msg = (TextMessage) message;
+                ObjectMessage msg = (ObjectMessage) message;
+                Object obj = msg.getObject();
+                if (!(obj instanceof  DomibusConnectorMessage)) {
+                    throw new IllegalArgumentException("Object message from queue must be of type DomibusConnectorMessage!");
+                }
+                DomibusConnectorMessage domibusConnectorMessage = (DomibusConnectorMessage) obj;
 
-                String connectorMessageId = msg.getText();
+                String connectorMessageId = domibusConnectorMessage.getConnectorMessageId();
                 SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(connectorMessageId);
                 LOGGER.info("received messageID [{}] from queue [{}].", connectorMessageId, jmsDestination);
                 DomibusConnectorMessage connectorMessage = null;
-                try {
-                    connectorMessage = persistenceService.findMessageByConnectorMessageId(connectorMessageId);
-                } catch (PersistenceException e) {
-                    LOGGER.error("Message [{}] could not be loaded from database!", connectorMessageId, e);
-                }
-
-                if (connectorMessage == null) {
-                    LOGGER.error("Message loaded from db with id [{}] is null!", connectorMessageId);
-                    throw new RuntimeException("Cannot get message null from queue!");
-                }
+//                try {
+//                    connectorMessage = persistenceService.findMessageByConnectorMessageId(connectorMessageId);
+//                } catch (PersistenceException e) {
+//                    LOGGER.error("Message [{}] could not be loaded from database!", connectorMessageId, e);
+//                }
+//
+//                if (connectorMessage == null) {
+//                    LOGGER.error("Message loaded from db with id [{}] is null!", connectorMessageId);
+//                    throw new RuntimeException("Cannot get message null from queue!");
+//                }
                 return connectorMessage;
-
 
             } else {
                 throw new IllegalArgumentException("Message must be of type TextMessage");
