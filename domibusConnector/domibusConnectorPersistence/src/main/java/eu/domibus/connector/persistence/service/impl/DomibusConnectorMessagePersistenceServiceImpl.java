@@ -175,7 +175,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Override
     @Transactional
     public DomibusConnectorMessage mergeMessageWithDatabase(DomibusConnectorMessage message) throws PersistenceException {
-
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            LOGGER.debug("#mergeMessageWithDatabase: message is an evidence message, doing nothing!");
+            return message;
+        }
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
             String error = String.format("No db message found for domain message %s in storage!%n"

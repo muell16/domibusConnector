@@ -480,7 +480,10 @@ public class DomibusConnectorDomainMessageTransformer {
     static DomibusConnectorMessageConfirmation transformMessageConfirmationTransitionToDomain(final @Nonnull DomibusConnectorMessageConfirmationType messageConfirmationTO) {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
 
-        confirmation.setEvidence(convertXmlSourceToByteArray(messageConfirmationTO.getConfirmation()));
+        Source evidence = messageConfirmationTO.getConfirmation();
+        if (evidence != null) {
+            confirmation.setEvidence(convertXmlSourceToByteArray(evidence));
+        }
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.valueOf(messageConfirmationTO.getConfirmationType().name()));
         
         return confirmation;

@@ -324,9 +324,12 @@ public class DomibusSecurityContainer {
                                 DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
                                 
                                 LOGGER.trace("copying businessDocument input stream to bigDataReference output Stream");
-                                InputStream inputStream = container.getBusinessDocument().openStream();
-                                OutputStream outputStream = bigDataRef.getOutputStream();
-                                StreamUtils.copy(inputStream, outputStream);
+                                try (InputStream inputStream = container.getBusinessDocument().openStream();
+                                OutputStream outputStream = bigDataRef.getOutputStream() ) {
+                                    StreamUtils.copy(inputStream, outputStream);
+                                } catch (IOException ioe) {
+                                    throw new DomibusConnectorSecurityException("Could not read business document!", ioe);
+                                }
                                 
                                 documentBuilder.setContent(bigDataRef);
                                 
@@ -450,18 +453,18 @@ public class DomibusSecurityContainer {
 //        LOGGER.trace("copied: [{}]", IOUtils.toString(document.openStream()));
 //        
         LOGGER.debug("Copy input stream from dss document to output stream of big data reference");
-        InputStream inputStream = document.openStream();
-        OutputStream outputStream = bigDataRef.getOutputStream();
-        int bytesCopied = StreamUtils.copy(inputStream, outputStream);
-        outputStream.close();
-       
-        
-        
-        
-        if (bytesCopied == 0) {
-            throw new DomibusConnectorSecurityException("Cannot create attachment with empty content!");
-            //TODO: delete bigDataRef from database!
+        try (InputStream inputStream = document.openStream();
+        OutputStream outputStream = bigDataRef.getOutputStream()) {
+            int bytesCopied = StreamUtils.copy(inputStream, outputStream);
+            if (bytesCopied == 0) {
+                throw new DomibusConnectorSecurityException("Cannot create attachment with empty content!");
+                //TODO: delete bigDataRef from database!
+            }
+        } catch (IOException ioe) {
+            throw new DomibusConnectorSecurityException("Error while writing attachment to storage!", ioe);
         }
+
+
 
     	if(StringUtils.isEmpty(identifier)){
     		throw new DomibusConnectorSecurityException("Cannot create attachment without identifier!");

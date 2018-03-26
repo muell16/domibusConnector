@@ -39,12 +39,12 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
                     LOGGER.error("Message [{}] could not be loaded from database!", connectorMessageId, e);
                 }
 
-                if (connectorMessage != null) {
-                    return connectorMessage;
-                } else {
-                    LOGGER.error("Message [{}] is null!");
+                if (connectorMessage == null) {
+                    LOGGER.error("Message loaded from db with id [{}] is null!", connectorMessageId);
                     throw new RuntimeException("Cannot get message null from queue!");
                 }
+                return connectorMessage;
+
 
             } else {
                 throw new IllegalArgumentException("Message must be of type TextMessage");

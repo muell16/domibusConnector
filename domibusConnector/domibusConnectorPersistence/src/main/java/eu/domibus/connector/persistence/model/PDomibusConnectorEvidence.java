@@ -78,8 +78,7 @@ public class PDomibusConnectorEvidence {
 
     public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
-
-        if (null != this.message.getEvidences() && !this.message.getEvidences().contains(this)) {
+        if (this.message != null && null != this.message.getEvidences() && !this.message.getEvidences().contains(this)) {
             this.message.getEvidences().add(this);
         }
     }

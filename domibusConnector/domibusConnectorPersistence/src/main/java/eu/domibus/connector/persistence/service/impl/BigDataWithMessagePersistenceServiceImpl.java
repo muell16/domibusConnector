@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import java.io.IOException;
@@ -45,6 +46,10 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     @Override
     @Transactional
     public DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message) {
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            LOGGER.debug("#persistAllBigFilesFromMessage: is evidence message doing nothing...");
+            return message;
+        }
         LOGGER.trace("persistAllBigFilesFromMessage: message [{}]", message);
         try {
             for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {                   
@@ -73,6 +78,10 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     @Override
     @Transactional
     public DomibusConnectorMessage loadAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message) {
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            LOGGER.debug("#persistAllBigFilesFromMessage: is evidence message doing nothing...");
+            return message;
+        }
         LOGGER.trace("#loadAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
             DomibusConnectorBigDataReference activeRead = attachment.getAttachment();
