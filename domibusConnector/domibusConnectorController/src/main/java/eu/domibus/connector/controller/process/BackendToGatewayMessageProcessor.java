@@ -152,7 +152,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		messagePersistenceService.setDeliveredToGateway(message);
-// not necessary messagePersistenceService is also setting all transmitted confirmations to delivered!
+// 		not necessary messagePersistenceService is also setting all transmitted confirmations to delivered!
 //		try {
 //            evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
 //		} catch (PersistenceException ex) {

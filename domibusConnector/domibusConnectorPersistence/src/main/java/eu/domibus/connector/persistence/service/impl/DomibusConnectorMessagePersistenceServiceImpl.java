@@ -141,13 +141,17 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
 
         try {
             dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
+
+
         } catch (Exception e) {
             LOGGER.error("Exception occured", e);
             throw new PersistenceException("Could not persist message info into database. ", e);
         }
 
         dbMessage.setMessageInfo(dbMessageInfo);
-        
+
+        mapMessageInfoIntoMessageDetails(dbMessage, message.getMessageDetails());
+
         return message;
     }
 
@@ -211,7 +215,9 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         this.msgContentService.storeMsgContent(message);
 
         this.messageDao.save(dbMessage);
-        
+
+        mapMessageInfoIntoMessageDetails(dbMessage, message.getMessageDetails());
+
         return message;
     }
 
@@ -396,14 +402,39 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
             return null;
         }
         DomibusConnectorMessageBuilder messageBuilder = DomibusConnectorMessageBuilder.createBuilder();
+
         DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         details.setEbmsMessageId(dbMessage.getEbmsMessageId());
         details.setBackendMessageId(dbMessage.getBackendMessageId());
         details.setConversationId(dbMessage.getConversationId());
         details.setConnectorBackendClientName(dbMessage.getBackendName());
-        PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
-        //details.setRefToMessageId(dbMessage.get);
 
+        mapMessageInfoIntoMessageDetails(dbMessage, details);
+
+        messageBuilder.setMessageDetails(details);
+        messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
+
+        this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
+
+        DomibusConnectorMessage message = messageBuilder.build();
+        return message;
+    }
+
+    /**
+     * maps all messageInfos into the message details
+     *  *) action
+     *  *) service
+     *  *) originalSender
+     *  *) finalRecipient
+     *  *) fromParty
+     *  *) toParty
+     *
+     * @param dbMessage the db message
+     * @param details the details, wich are changed
+     * @return - the reference of the changed details (same reference as passed via param details)
+     */
+    DomibusConnectorMessageDetails mapMessageInfoIntoMessageDetails(PDomibusConnectorMessage dbMessage, DomibusConnectorMessageDetails details) {
+        PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         if (messageInfo != null) {
 
             DomibusConnectorAction action = ActionMapper.mapActionToDomain(messageInfo.getAction());
@@ -420,13 +451,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
             DomibusConnectorParty toParty = PartyMapper.mapPartyToDomain(messageInfo.getTo());
             details.setToParty(toParty);
         }
-        messageBuilder.setMessageDetails(details);
-        messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
-
-        this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
-
-        DomibusConnectorMessage message = messageBuilder.build();
-        return message;
+        return details;
     }
 
     void mapMessageDetailsToDbMessageInfoPersistence(DomibusConnectorMessageDetails messageDetails, PDomibusConnectorMessageInfo dbMessageInfo) {

@@ -38,7 +38,7 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
                 String connectorMessageId = domibusConnectorMessage.getConnectorMessageId();
                 SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(connectorMessageId);
                 LOGGER.info("received messageID [{}] from queue [{}].", connectorMessageId, jmsDestination);
-                DomibusConnectorMessage connectorMessage = null;
+//                DomibusConnectorMessage connectorMessage = null;
 //                try {
 //                    connectorMessage = persistenceService.findMessageByConnectorMessageId(connectorMessageId);
 //                } catch (PersistenceException e) {
@@ -49,7 +49,7 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
 //                    LOGGER.error("Message loaded from db with id [{}] is null!", connectorMessageId);
 //                    throw new RuntimeException("Cannot get message null from queue!");
 //                }
-                return connectorMessage;
+                return domibusConnectorMessage;
 
             } else {
                 throw new IllegalArgumentException("Message must be of type TextMessage");
