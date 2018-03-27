@@ -1,9 +1,6 @@
 package eu.domibus.connector.domain.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Objects;
 import javax.annotation.Nullable;
 import javax.activation.DataSource;
@@ -15,11 +12,11 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorBigDataReference implements DataSource, Serializable {
 
-    private String storageIdReference;
+    private String storageIdReference = "";
 
-    private String mimetype;
+    private String mimetype = "";
     
-    private String name;
+    private String name = "";
 
     public DomibusConnectorBigDataReference() {}
 
@@ -109,6 +106,22 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
         }
         return true;
     }
-    
-    
+
+//
+//    @Override
+//    public void readExternal(ObjectInput in) throws IOException {
+//        setStorageIdReference(in.readUTF());
+//        setMimetype(in.readUTF());
+//        setName(in.readUTF());
+//    }
+//
+//
+//    @Override
+//    public void writeExternal(ObjectOutput out) throws IOException {
+//        out.writeUTF(getStorageIdReference());
+//        out.writeUTF(this.mimetype);
+//        out.writeUTF(this.name);
+//    }
+
+
 }
