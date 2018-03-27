@@ -261,7 +261,7 @@ public class ConnectorActionsTableBean {
 			
 			
 		} else {
-			//TODO: save change...
+			//TODO: buildAndSaveMessage change...
 			try {
 				this.pModeSupport.updateAction(oldAction, action);
 			} catch (Exception e) {

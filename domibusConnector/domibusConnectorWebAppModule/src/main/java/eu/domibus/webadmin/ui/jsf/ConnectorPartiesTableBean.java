@@ -245,7 +245,7 @@ public class ConnectorPartiesTableBean {
 				LOG.error(":saveparty: create party failed with exception", e);
 			}
 		} else {
-			//TODO: save change...
+			//TODO: buildAndSaveMessage change...
 			this.pModeSupport.updateParty(this.oldParty, this.party);
 		}
 		this.party = null;		

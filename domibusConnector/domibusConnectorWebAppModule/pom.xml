@@ -122,7 +122,7 @@
         </profile>
 <!--        <profile>
             <id>integration-testing</id>
-            <build>
+            <buildWithoutSave>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -133,7 +133,7 @@
                         </configuration>
                     </plugin>
                 </plugins>
-            </build>
+            </buildWithoutSave>
         </profile>-->
         <profile>
             <id>tomcat7-it</id>

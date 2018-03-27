@@ -1,5 +1,5 @@
 package test;
-//commented out because of build error!
+//commented out because of buildWithoutSave error!
 /*
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;

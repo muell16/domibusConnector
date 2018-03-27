@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -88,6 +89,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
         DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         DomibusConnectorAction action = createEvidenceAction(evidenceType);
+        BeanUtils.copyProperties(originalMessage.getMessageDetails(), details);
         details.setAction(action);
         details.setService(message.getMessageDetails().getService());
         details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
