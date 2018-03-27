@@ -55,7 +55,7 @@ public class GatewayToBackendMessageProcessorITCase {
     @Autowired
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataWithMessagePersistenceService;
 
-    @Test
+    @Test(timeout=20000)
     public void testProcessMessage() throws IOException {
         //create test message and persist message into DB
         DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));

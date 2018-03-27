@@ -99,7 +99,7 @@ public class ConnectorMessageFlowITCase {
     }
     
     
-    @Test
+    @Test(timeout = 20000)
     public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
         DomibusConnectorMessage loadMessageFrom = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
         
