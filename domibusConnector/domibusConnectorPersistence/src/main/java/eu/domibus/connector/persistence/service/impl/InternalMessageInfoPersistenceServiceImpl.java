@@ -70,26 +70,28 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     }
 
     @Override
-    public void validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
+    public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         PDomibusConnectorAction dbAction = messageInfo.getAction();
         PDomibusConnectorAction dbActionFound = actionDao.findOne(dbAction.getAction());
         checkNull(dbAction, dbActionFound);
-        messageInfo.setAction(dbAction);
+        messageInfo.setAction(dbActionFound);
 
         PDomibusConnectorService dbService = messageInfo.getService();
         PDomibusConnectorService dbServiceFound = serviceDao.findOne(dbService.getService());
         checkNull(dbService, dbServiceFound);
-        messageInfo.setService(dbService);
+        messageInfo.setService(dbServiceFound);
 
         PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
         PDomibusConnectorParty dbFromPartyFound = partyDao.findOne(new PDomibusConnectorPartyPK(dbFromParty));
         checkNull(dbFromParty, dbFromPartyFound);
-        messageInfo.setFrom(dbFromParty);
+        messageInfo.setFrom(dbFromPartyFound);
 
         PDomibusConnectorParty dbToParty = messageInfo.getTo();
         PDomibusConnectorParty dbToPartyFound = partyDao.findOne(new PDomibusConnectorPartyPK(dbToParty));
         checkNull(dbToParty, dbToPartyFound);
-        messageInfo.setTo(dbToParty);
+        messageInfo.setTo(dbToPartyFound);
+
+        return messageInfo;
     }
 
     private void checkNull(Object provided, Object foundInDb) throws PersistenceException {

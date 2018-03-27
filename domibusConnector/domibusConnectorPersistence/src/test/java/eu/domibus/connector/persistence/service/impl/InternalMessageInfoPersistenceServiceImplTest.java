@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
@@ -65,8 +65,19 @@ public class InternalMessageInfoPersistenceServiceImplTest {
     @Test
     public void testValidatePartyServiceActionOfMessageInfo() {
         PDomibusConnectorMessageInfo messageInfo = PersistenceEntityCreator.createSimpleMessageInfo();
+        messageInfo.getTo().setPartyIdType(null);
+        messageInfo.getFrom().setPartyIdType(null);
+        messageInfo.getService().setServiceType(null);
+        messageInfo.getAction().setDocumentRequired(true);
 
         internalMessageInfoPersistenceService.validatePartyServiceActionOfMessageInfo(messageInfo);
+
+        assertThat(messageInfo.getFrom().getPartyIdType()).isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+        assertThat(messageInfo.getTo().getPartyIdType()).isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+
+        assertThat(messageInfo.getService().getServiceType()).isEqualTo("urn:e-codex:services:");
+
+        assertThat(messageInfo.getAction().isDocumentRequired()).isFalse();
     }
 
     @Test(expected = PersistenceException.class)
@@ -78,6 +89,9 @@ public class InternalMessageInfoPersistenceServiceImplTest {
         messageInfo.setFrom(unknownParty);
 
         internalMessageInfoPersistenceService.validatePartyServiceActionOfMessageInfo(messageInfo);
+
+
+
     }
 
 }

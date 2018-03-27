@@ -39,10 +39,16 @@ public class PartyMapperTest {
                 .withPartyIdType("partyIdType")
                 .build();
 
-        assertThat(domainParty.getPartyId()).isEqualTo("partyId");
-        assertThat(domainParty.getRole()).isEqualTo("role");
-        assertThat(domainParty.getPartyIdType()).isEqualTo("partyIdType");
+        PDomibusConnectorParty dbParty = PartyMapper.mapPartyToPersistence(domainParty);
 
+        assertThat(dbParty.getPartyId()).isEqualTo("partyId");
+        assertThat(dbParty.getRole()).isEqualTo("role");
+        assertThat(dbParty.getPartyIdType()).isEqualTo("partyIdType");
+    }
+
+    @Test
+    public void mapPartyToPersistence_mapNull_shouldRetNull() {
+        assertThat(PartyMapper.mapPartyToPersistence(null)).isNull();
     }
 
 }
