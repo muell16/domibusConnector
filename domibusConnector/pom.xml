@@ -20,6 +20,7 @@
         <module>domibusConnectorControllerAPI</module>
         <module>domibusConnectorTest</module>
         <module>domibusConnectorAPI</module>
+        <module>domibusConnectorAPIlib</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>

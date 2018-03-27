@@ -2,6 +2,7 @@ package eu.domibus.connector.gateway.link.impl;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessageType;
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -26,6 +27,11 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
 		DomibusConnectorMessageType request = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+
+		if (LOGGER.isTraceEnabled()) {
+		    LOGGER.trace("Printing out request message:");
+            LOGGER.trace("message=[{}]", PrintDomibusConnectorMessageType.messageToString(request));
+        }
 
 		LOGGER.debug("#submitToGateway: calling webservice to send request");
 		DomibsConnectorAcknowledgementType ack = submissionClient.submitMessage(request);

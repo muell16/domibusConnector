@@ -555,6 +555,6 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
                 .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()); 
     }
 
-    
+
     
 }
