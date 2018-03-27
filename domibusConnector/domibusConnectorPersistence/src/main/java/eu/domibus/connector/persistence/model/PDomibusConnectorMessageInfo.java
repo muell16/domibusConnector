@@ -4,19 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MESSAGE_INFO")
@@ -34,7 +22,7 @@ public class PDomibusConnectorMessageInfo {
     @ManyToOne
     @JoinColumns(value = { 
         @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
-        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) 
+        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true)
     })
     private PDomibusConnectorParty from;
 
@@ -159,6 +147,12 @@ public class PDomibusConnectorMessageInfo {
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", id);
+        toString.append("finalRecipient", this.finalRecipient);
+        toString.append("originalSender", this.originalSender);
+        toString.append("fromParty", this.from);
+        toString.append("toParty", this.to);
+        toString.append("service", this.service);
+        toString.append("action", this.action);
         return toString.build();
     }
 

@@ -23,13 +23,12 @@ public class SetupPersistenceContext {
 
     public static ConfigurableApplicationContext startApplicationContext(Class<?>... sources) {
         ConfigurableApplicationContext applicationContext;
-        String dbName = UUID.randomUUID().toString().substring(0,10);
+        String dbName = UUID.randomUUID().toString().substring(0,10); //create random db name to avoid conflicts between tests
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
-                //.profiles("test", "db_mysql")
                 .sources(sources)
                 .web(false)
                 .profiles("test", "db_h2")
-                .properties("liquibase.change-log=/db/changelog/install/initial-4.0.xml", "spring.datasource.url=jdbc:h2:mem:" + dbName)
+                .properties("liquibase.change-log=db/changelog/test/testdata.xml", "spring.datasource.url=jdbc:h2:mem:" + dbName)
                 ;
         applicationContext = springAppBuilder.run();
         APPLICATION_CONTEXT = applicationContext;

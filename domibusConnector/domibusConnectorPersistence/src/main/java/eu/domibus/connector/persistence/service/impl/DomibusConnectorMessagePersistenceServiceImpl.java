@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
@@ -35,9 +36,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
 
     private DomibusConnectorMessageDao messageDao;
     private DomibusConnectorEvidenceDao evidenceDao;
-    private DomibusConnectorMessageInfoDao messageInfoDao;
     private MsgContentPersistenceService msgContentService;
     private InternalEvidencePersistenceService evidencePersistenceService;
+
+    private InternalMessageInfoPersistenceService internalMessageInfoPersistenceService;
 
     /*
      * DAO SETTER  
@@ -53,8 +55,8 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     }
 
     @Autowired
-    public void setMessageInfoDao(DomibusConnectorMessageInfoDao messageInfoDao) {
-        this.messageInfoDao = messageInfoDao;
+    public void setInternalMessageInfoPersistenceService(InternalMessageInfoPersistenceService internalMessageInfoPersistenceService) {
+        this.internalMessageInfoPersistenceService = internalMessageInfoPersistenceService;
     }
 
     @Autowired
@@ -66,6 +68,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     public void setEvidencePersistenceService(InternalEvidencePersistenceService evidencePersistenceService) {
         this.evidencePersistenceService = evidencePersistenceService;
     }
+
 
     /*
     * END DAO SETTER
@@ -99,6 +102,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Override
     @Transactional(readOnly = false)
     public DomibusConnectorMessage persistMessageIntoDatabase(DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException {
+        DomibusConnectorMessageBuilder messageBuilder = DomibusConnectorMessageBuilder.createBuilder();
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
@@ -131,26 +135,8 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
             throw new PersistenceException(error, cve);
         }
 
-        PDomibusConnectorMessageInfo dbMessageInfo = new PDomibusConnectorMessageInfo();
-        dbMessageInfo.setMessage(dbMessage);
-        dbMessageInfo.setCreated(new Date());
-        dbMessageInfo.setUpdated(new Date());
-        mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), dbMessageInfo);
-
         this.msgContentService.storeMsgContent(message);
-
-        try {
-            dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
-
-
-        } catch (Exception e) {
-            LOGGER.error("Exception occured", e);
-            throw new PersistenceException("Could not persist message info into database. ", e);
-        }
-
-        dbMessage.setMessageInfo(dbMessageInfo);
-
-        mapMessageInfoIntoMessageDetails(dbMessage, message.getMessageDetails());
+        this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
 
         return message;
     }
@@ -208,15 +194,16 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
 
         if (messageDetails != null) {
-            mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), messageInfo);
-            messageInfoDao.save(messageInfo);
+            this.internalMessageInfoPersistenceService.mergeMessageInfo(message, dbMessage);
+//            mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), messageInfo);
+//            messageInfoDao.save(messageInfo);
         }
 
         this.msgContentService.storeMsgContent(message);
 
-        this.messageDao.save(dbMessage);
+        dbMessage = this.messageDao.save(dbMessage);
 
-        mapMessageInfoIntoMessageDetails(dbMessage, message.getMessageDetails());
+        //mapMessageInfoIntoMessageDetails(dbMessage, messageDetails);
 
         return message;
     }
@@ -409,7 +396,8 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         details.setConversationId(dbMessage.getConversationId());
         details.setConnectorBackendClientName(dbMessage.getBackendName());
 
-        mapMessageInfoIntoMessageDetails(dbMessage, details);
+        //mapMessageInfoIntoMessageDetails(dbMessage, details);
+        this.internalMessageInfoPersistenceService.mapMessageInfoIntoMessageDetails(dbMessage, details);
 
         messageBuilder.setMessageDetails(details);
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
@@ -420,54 +408,6 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         return message;
     }
 
-    /**
-     * maps all messageInfos into the message details
-     *  *) action
-     *  *) service
-     *  *) originalSender
-     *  *) finalRecipient
-     *  *) fromParty
-     *  *) toParty
-     *
-     * @param dbMessage the db message
-     * @param details the details, wich are changed
-     * @return - the reference of the changed details (same reference as passed via param details)
-     */
-    DomibusConnectorMessageDetails mapMessageInfoIntoMessageDetails(PDomibusConnectorMessage dbMessage, DomibusConnectorMessageDetails details) {
-        PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
-        if (messageInfo != null) {
 
-            DomibusConnectorAction action = ActionMapper.mapActionToDomain(messageInfo.getAction());
-            details.setAction(action);
-
-            DomibusConnectorService service = ServiceMapper.mapServiceToDomain(messageInfo.getService());
-            details.setService(service);
-
-            details.setFinalRecipient(messageInfo.getFinalRecipient());
-            details.setOriginalSender(messageInfo.getOriginalSender());
-
-            DomibusConnectorParty fromParty = PartyMapper.mapPartyToDomain(messageInfo.getFrom());
-            details.setFromParty(fromParty);
-            DomibusConnectorParty toParty = PartyMapper.mapPartyToDomain(messageInfo.getTo());
-            details.setToParty(toParty);
-        }
-        return details;
-    }
-
-    void mapMessageDetailsToDbMessageInfoPersistence(DomibusConnectorMessageDetails messageDetails, PDomibusConnectorMessageInfo dbMessageInfo) {
-        PDomibusConnectorAction persistenceAction = ActionMapper.mapActionToPersistence(messageDetails.getAction());
-        dbMessageInfo.setAction(persistenceAction);
-
-        PDomibusConnectorService persistenceService = ServiceMapper.mapServiceToPersistence(messageDetails.getService());
-        dbMessageInfo.setService(persistenceService);
-
-        dbMessageInfo.setFinalRecipient(messageDetails.getFinalRecipient());
-        dbMessageInfo.setOriginalSender(messageDetails.getOriginalSender());
-
-        PDomibusConnectorParty from = PartyMapper.mapPartyToPersistence(messageDetails.getFromParty());
-        dbMessageInfo.setFrom(from);
-        PDomibusConnectorParty to = PartyMapper.mapPartyToPersistence(messageDetails.getToParty());
-        dbMessageInfo.setTo(to);
-    }
 
 }

@@ -25,6 +25,10 @@ public class PDomibusConnectorPartyPK implements Serializable {
         this.role = role;
     }
 
+    public PDomibusConnectorPartyPK(PDomibusConnectorParty dbToParty) {
+        this(dbToParty.getPartyId(), dbToParty.getRole());
+    }
+
     public String getPartyId() {
         return partyId;
     }

@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -102,19 +103,24 @@ public class MessagePersistenceServiceITCase {
     
     @Test
     public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-        String connectorMessageId = "msg0021";
+        String connectorMessageId = "msg9021";
 
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
         //message.setDbMessageId(null);
         //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
         DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         
-        messageDetails.setConversationId("conversation421");
-        messageDetails.setEbmsMessageId("ebms421");
-        messageDetails.setBackendMessageId("backend421");
+        messageDetails.setConversationId("conversation4211");
+        messageDetails.setEbmsMessageId("ebms4211");
+        messageDetails.setBackendMessageId("backend4211");
                      
         DomibusConnectorParty fromPartyAT = DomainEntityCreatorForPersistenceTests.createPartyAT();
-        DomibusConnectorParty toPartyDE = DomainEntityCreatorForPersistenceTests.createPartyDE();
+        DomibusConnectorParty toPartyDE = DomibusConnectorPartyBuilder.createBuilder()
+                .copyPropertiesFrom(DomainEntityCreatorForPersistenceTests.createPartyDE())
+                .withPartyIdType(null)
+                .build();
+
+
         messageDetails.setFromParty(fromPartyAT);
         messageDetails.setToParty(toPartyDE);
         
@@ -132,10 +138,23 @@ public class MessagePersistenceServiceITCase {
         ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
         
         String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
-        assertThat(ebmsId).isEqualTo("ebms421");
+        assertThat(ebmsId).isEqualTo("ebms4211");
         
         String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
-        assertThat(conversationId).isEqualTo("conversation421");        
+        assertThat(conversationId).isEqualTo("conversation4211");
+
+
+        DomibusConnectorMessageDetails persistedDetails = persistedMessage.getMessageDetails();
+
+
+
+//        assertThat(persistedDetails.getFromParty().getPartyIdType())
+//                .as("correct partyIdType of fromParty should be loaded from db!")
+//                .isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+
+        assertThat(persistedDetails.getToParty().getPartyIdType())
+                .as("correct partyIdType of toParty should be loaded from db!")
+                .isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
     }
 
     /**
@@ -178,7 +197,7 @@ public class MessagePersistenceServiceITCase {
      * TODO: improve specification to throw more specific exception!   
      *
      */
-    @Test(expected=InvalidDataAccessApiUsageException.class) //(expected=TransientPropertyValueException.class)
+    @Test(expected=PersistenceException.class) //(expected=TransientPropertyValueException.class)
     public void testPersistMessageIntoDatabase_serviceNotInDatabase_shouldThrowException() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
         String connectorMessageId = "msg0021";
 
@@ -256,7 +275,10 @@ public class MessagePersistenceServiceITCase {
                 
         //TODO: make changes to message
 
-        messagePersistenceService.mergeMessageWithDatabase(message);
+        message = messagePersistenceService.mergeMessageWithDatabase(message);
+
+
+        //message.getMessageDetails()
 
     }
     
@@ -267,13 +289,23 @@ public class MessagePersistenceServiceITCase {
     }
 
     @Test
-    public void testFindMessageByNationalId_doesNotExist_shouldThrowEmptyResultException() {
+    public void testFindMessageByNationalId_doesNotExist_shouldBeNull() {
         String nationalIdString = "TEST1";
         DomibusConnectorMessage findMessageByNationalId = messagePersistenceService.findMessageByNationalId(nationalIdString);
 
         assertThat(findMessageByNationalId).isNull();
     }
-    
+
+
+    //TODO: test find message & check fromParty, toParty, service, action
+
+    @Test
+    public void findMessageBy() {
+        messagePersistenceService.findMessageByConnectorMessageId("msg1");
+
+    }
+
+
 //    @Test
 //    public void testPersistEvidenceForMessageIntoDatabase() throws PersistenceException {
 //        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("myid");

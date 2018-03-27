@@ -64,13 +64,13 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     DomibusConnectorMessageDao messageDao;
 
     @Mock
-    DomibusConnectorMessageInfoDao domibusConnectorMessageInfoDao;
-
-    @Mock
     MsgContentPersistenceService msgContService;
 
     @Mock
     InternalEvidencePersistenceService internalEvidencePersistenceService;
+
+    @Mock
+    InternalMessageInfoPersistenceService messageInfoPersistenceService;
 
     DomibusConnectorMessagePersistenceService messagePersistenceService;
     
@@ -83,7 +83,8 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         DomibusConnectorMessagePersistenceServiceImpl impl = new DomibusConnectorMessagePersistenceServiceImpl();
         impl.setEvidenceDao(evidenceDao);
         impl.setMessageDao(messageDao);
-        impl.setMessageInfoDao(domibusConnectorMessageInfoDao);
+        impl.setInternalMessageInfoPersistenceService(messageInfoPersistenceService);
+
         impl.setMsgContentService(msgContService);
         impl.setEvidencePersistenceService(internalEvidencePersistenceService);
 
@@ -385,48 +386,13 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         PDomibusConnectorMessage pMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         pMessage.setId(47L);        
         Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(pMessage);
-        
-        Mockito.when(domibusConnectorMessageInfoDao.save(any(PDomibusConnectorMessageInfo.class)))
-                .then(new Answer<PDomibusConnectorMessageInfo>() {
-                    @Override
-                    public PDomibusConnectorMessageInfo answer(InvocationOnMock invocation) throws Throwable {
-                        PDomibusConnectorMessageInfo messageInfo = invocation.getArgumentAt(0, PDomibusConnectorMessageInfo.class);     
-                               
-                        //detailed mapping is checked at an other location
-                        assertThat(messageInfo.getFinalRecipient()).as("final recipient must match").isEqualTo("finalRecipient");
-                        assertThat(messageInfo.getOriginalSender()).as("original sender must match").isEqualTo("original1");   
-                        //check action
-                        assertThat(messageInfo.getAction()).as("action is not null").isNotNull();
-                        assertThat(messageInfo.getAction().isDocumentRequired()).as("action pdf required is true").isTrue();
-                        assertThat(messageInfo.getAction().getAction()).isEqualTo("Form_A");
-                        //check service
-                        assertThat(messageInfo.getService()).isNotNull();
-                        assertThat(messageInfo.getService().getService()).isEqualTo("EPO");
-                        assertThat(messageInfo.getService().getServiceType()).isEqualTo(DomainEntityCreatorForPersistenceTests.createServiceEPO().getServiceType());
-                        //check party from
-                        assertThat(messageInfo.getFrom()).isNotNull();
-                        assertThat(messageInfo.getFrom().getPartyId()).isEqualTo("AT");
-                        assertThat(messageInfo.getFrom().getRole()).isEqualTo("GW");
-                        assertThat(messageInfo.getFrom().getPartyIdType()).isEqualTo(createPartyAT().getPartyIdType());
-                        //check party to
-                        assertThat(messageInfo.getTo()).isNotNull();
-                        assertThat(messageInfo.getTo().getPartyId()).isEqualTo("AT");
-                        assertThat(messageInfo.getTo().getRole()).isEqualTo("GW");
-                        assertThat(messageInfo.getTo().getPartyIdType()).isEqualTo(createPartyAT().getPartyIdType());
-                        
-                        return messageInfo;
-                    }                
-                });
-        
+
         Mockito.when(messageDao.findOne(47L)).thenReturn(pMessage);
 
         messagePersistenceService.mergeMessageWithDatabase(message);
-        
-        //TODO: test mapping back to db
-        //Mockito.verify(messageDao, Mockito.times(1)).findOne(eq(47L));
-        //Mockito.verify(messageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
-        
-        Mockito.verify(domibusConnectorMessageInfoDao, Mockito.times(1)).save(any(PDomibusConnectorMessageInfo.class));
+
+        Mockito.verify(messageInfoPersistenceService, Mockito.times(1))
+                .mergeMessageInfo(any(DomibusConnectorMessage.class), any(PDomibusConnectorMessage.class));
         
         //make sure message content is also saved to db
         Mockito.verify(this.msgContService, Mockito.times(1)).storeMsgContent(eq(message));
@@ -589,15 +555,6 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
                 .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()); 
     }
 
-
     
-
-
-
-    
-
-
-
-
     
 }
