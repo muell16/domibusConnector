@@ -1,16 +1,11 @@
 package eu.domibus.connector.persistence.model.test.util;
 
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.persistence.model.PDomibusConnectorAction;
-import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
-import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.model.PDomibusConnectorPartyPK;
-import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -77,6 +72,14 @@ public class PersistenceEntityCreator {
         at.setPartyIdType("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
         return at;
     }
+
+    public static PDomibusConnectorParty createPartyDomibusBLUE() {
+        PDomibusConnectorParty at = new PDomibusConnectorParty();
+        at.setPartyId("domibus-blue");
+        at.setRole("GW");
+        at.setPartyIdType("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
+        return at;
+    }
     
     public static PDomibusConnectorPartyPK createPartyPKforPartyAT() {
         return new PDomibusConnectorPartyPK("AT", "GW");
@@ -138,6 +141,18 @@ public class PersistenceEntityCreator {
         }
     }
 
+    public static PDomibusConnectorMessageInfo createSimpleMessageInfo() {
+        PDomibusConnectorMessageInfo messageInfo = new PDomibusConnectorMessageInfo();
+        messageInfo.setTo(createPartyAT());
+        messageInfo.setFrom(createPartyDomibusBLUE());
+        messageInfo.setService(createServiceEPO());
+        messageInfo.setAction(createRelayREMMDAcceptanceRejectionAction());
+        messageInfo.setCreated(new Date());
+        messageInfo.setFinalRecipient("finalRecipient");
+        messageInfo.setOriginalSender("originalSender");
+        messageInfo.setUpdated(new Date());
+        return messageInfo;
+    }
 
     
 }

@@ -69,31 +69,32 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
         }
     }
 
+    @Override
     public void validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         PDomibusConnectorAction dbAction = messageInfo.getAction();
-        dbAction = actionDao.findOne(dbAction.getAction());
-        checkNull("Action", dbAction);
+        PDomibusConnectorAction dbActionFound = actionDao.findOne(dbAction.getAction());
+        checkNull(dbAction, dbActionFound);
         messageInfo.setAction(dbAction);
 
         PDomibusConnectorService dbService = messageInfo.getService();
-        dbService = serviceDao.findOne(dbService.getService());
-        checkNull("service", dbService);
+        PDomibusConnectorService dbServiceFound = serviceDao.findOne(dbService.getService());
+        checkNull(dbService, dbServiceFound);
         messageInfo.setService(dbService);
 
-        PDomibusConnectorParty dbFromParty = messageInfo.getTo();
-        checkNull("fromParty", dbFromParty);
-        dbFromParty = partyDao.findOne(new PDomibusConnectorPartyPK(dbFromParty));
+        PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
+        PDomibusConnectorParty dbFromPartyFound = partyDao.findOne(new PDomibusConnectorPartyPK(dbFromParty));
+        checkNull(dbFromParty, dbFromPartyFound);
         messageInfo.setFrom(dbFromParty);
 
         PDomibusConnectorParty dbToParty = messageInfo.getTo();
-        checkNull("toParty", dbToParty);
-        dbToParty = partyDao.findOne(new PDomibusConnectorPartyPK(dbToParty));
+        PDomibusConnectorParty dbToPartyFound = partyDao.findOne(new PDomibusConnectorPartyPK(dbToParty));
+        checkNull(dbToParty, dbToPartyFound);
         messageInfo.setTo(dbToParty);
     }
 
-    private void checkNull(String type, Object obj) throws PersistenceException {
-        if (obj == null) {
-            String error = String.format("%s [%s] is not configured in database!", type, obj);
+    private void checkNull(Object provided, Object foundInDb) throws PersistenceException {
+        if (foundInDb == null) {
+            String error = String.format("%s [%s] is not configured in database!", provided.getClass().getSimpleName(), provided);
             LOGGER.error("Throwing exception, because [{}]", error);
             throw new PersistenceException(error);
         }
