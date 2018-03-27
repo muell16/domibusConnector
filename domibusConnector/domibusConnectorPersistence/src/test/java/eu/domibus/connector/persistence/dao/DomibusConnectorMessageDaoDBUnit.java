@@ -42,77 +42,77 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
         
     }
-    
-    
-    @Test
+
+
+    @Test(timeout=20000)
     public void testFindOneMessage() {
         PDomibusConnectorMessage msg = messageDao.findOne(73L);
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");        
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testFindOneMessage_doesNotExist_shouldRetNull() {
         PDomibusConnectorMessage msg = messageDao.findOne(7231254123L);
         assertThat(msg).isNull();        
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testFindOneByEbmsMessageId() {
         PDomibusConnectorMessage msg = messageDao.findOneByEbmsMessageId("c1039627-2db3-489c-af18-92b54e630b36@domibus.eu");
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");       
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testFindOnebyNationalBackendId() {
         PDomibusConnectorMessage msg = messageDao.findOneByBackendMessageId("20171103080259732_domibus-blue");
         assertThat(msg).isNotNull();
         assertThat(msg.getConnectorMessageId()).isEqualTo("msg73");
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testFindOneByEbmsMessageIdOrNationalBackendId_ebmsId() {
         PDomibusConnectorMessage msg = messageDao.findOneByEbmsMessageId("c1039627-2db3-489c-af18-92b54e630b36@domibus.eu");
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testFindOneByEbmsMessageIdOrNationalBackendId_nagionalId() {
         PDomibusConnectorMessage msg = messageDao.findOneByBackendMessageId("20171103080259732_domibus-blue");
         assertThat(msg).isNotNull();
         assertThat(msg.getConnectorMessageId()).isEqualTo("msg73");
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testFindByConversationId() {
         List<PDomibusConnectorMessage> msgs = messageDao.findByConversationId("aa062b42-2d35-440a-9cb6-c6e95a8679a8@domibus.eu");
         assertThat(msgs).hasSize(1);
         //assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");       
     }
-    
-    
-    @Test
+
+
+    @Test(timeout=20000)
     public void testFindOutgoingUnconfirmedMessages() {
         List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingUnconfirmedMessages();
         assertThat(msgs).hasSize(2);
     }
-    
-    
-    @Test
+
+
+    @Test(timeout=20000)
     public void testFindOutgoingMessagesNotRejectedAndWithoutDelivery() {
         List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedAndWithoutDelivery();
         assertThat(msgs).hasSize(1);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testFindOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD() {
         List<PDomibusConnectorMessage> msgs = messageDao.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         assertThat(msgs).hasSize(1);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testFindIncomingUnconfirmedMessages() {
         List<PDomibusConnectorMessage> msgs = messageDao.findIncomingUnconfirmedMessages();
         assertThat(msgs).hasSize(1);
@@ -133,8 +133,8 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         
         assertThat(upd).as("one row must be updated").isEqualTo(1);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testRejectMessage() throws SQLException, DataSetException  {
         int upd = messageDao.rejectMessage(73L);
         
@@ -149,15 +149,15 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         
         assertThat(upd).as("one row must be updated!").isEqualTo(1);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testRejectedMessage_notExisting() {
         int upd = messageDao.rejectMessage(21321315123123L);
         
         assertThat(upd).as("there should be no updates!").isEqualTo(0);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSetMessageDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {
 
         PDomibusConnectorMessage message = new PDomibusConnectorMessage();
@@ -176,8 +176,8 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(value).isCloseTo(new Date(), 2000);
 
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSetmessageDeliveredToBackend() throws SQLException, AmbiguousTableNameException, DataSetException {
         PDomibusConnectorMessage message = new PDomibusConnectorMessage();
         message.setId(74L);
@@ -195,8 +195,8 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(value).isCloseTo(new Date(), 2000);
         
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSave() throws SQLException, AmbiguousTableNameException, DataSetException {
         PDomibusConnectorMessage message = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
         message.setEbmsMessageId("ebms2");        
@@ -221,15 +221,15 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
     }
 
 
-    @Test
+    @Test(timeout=20000)
     public void testCheckMessageConfirmedOrRejected_shouldBeFalse() {
         long id = 655L;        
         boolean rejectedOrConfirmed = messageDao.checkMessageConfirmedOrRejected(id);
         
         assertThat(rejectedOrConfirmed).isFalse();
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testCheckMessageConfirmedOrRejected_shouldBeTrue() {
         long id = 65L;        
         boolean rejectedOrConfirmed = messageDao.checkMessageConfirmedOrRejected(id);
@@ -242,15 +242,15 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
 //    // if DB field rejected is NOT NULL -> then true
 //    @Query("SELECT case when (count(m) > 0) then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.rejected is not null")
 //    public boolean checkMessageRejected(Long messageId);     
-    @Test
+@Test(timeout=20000)
     public void checkMessageRejected_shouldBeTrue() {
         long id = 65L;
         boolean rejected = messageDao.checkMessageRejected(id);
 
         assertThat(rejected).isTrue();
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void checkMessageRejected_shouldBeFalse() {
         long id = 655L;
         boolean rejected = messageDao.checkMessageRejected(id);
@@ -262,7 +262,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
 //    // if DB field confirmend is NOT NULL -> then true
 //    @Query("SELECT case when (count(m) > 0)  then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.confirmed is not null")
 //    public boolean checkMessageConfirmed(Long messageId);
-    @Test
+    @Test(timeout=20000)
     public void checkMessageConfirmed_shouldBeFalse() {
         long id = 59L;
         boolean confirmed = messageDao.checkMessageConfirmed(id);

@@ -54,16 +54,16 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
         
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testFindEvidencesForMessage() {
         
         List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(73L);
         
         assertThat(evidences).hasSize(3);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSetDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {                
         int result = evidenceDao.setDeliveredToGateway(82L);        
         assertThat(result).isEqualTo(1); //check on row updated
@@ -77,14 +77,14 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_GW");
         assertThat(value).isCloseTo(new Date(), 2000);        
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSetDeliveredToGateway_updateNonExistant_shouldReturnZero() {
         int result = evidenceDao.setDeliveredToGateway(882L);        
         assertThat(result).isEqualTo(0); //check on row updated
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testSetDeliveredToGateway_ByMessageIdAndType() throws SQLException, DataSetException {
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
         dbMessage.setId(73L);
@@ -101,9 +101,9 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         assertThat(value).isNotNull();
         assertThat(value).isCloseTo(new Date(), 2000);
     }
-  
-    
-    @Test
+
+
+    @Test(timeout=20000)
     public void testSetDeliveredToBackend() throws SQLException, AmbiguousTableNameException, DataSetException {
         int result = evidenceDao.setDeliveredToBackend(83L);        
         assertThat(result).isEqualTo(1); //check one row updated
@@ -118,7 +118,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         assertThat(value).isCloseTo(new Date(), 2000);
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testSetDeliveredToBackend_ByMessageIdAndType() throws SQLException, DataSetException {
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
         dbMessage.setId(74L);
@@ -136,14 +136,14 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         assertThat(value).isCloseTo(new Date(), 2000);
     }
 
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSetDeliveredToBackend_updateNoneExistant_shouldReturnZero() {
         int result = evidenceDao.setDeliveredToBackend(83231L);        
         assertThat(result).isEqualTo(0); //check one row updated
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testSaveEvidence() {
         PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
         

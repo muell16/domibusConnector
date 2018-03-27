@@ -91,16 +91,6 @@ public class MessagePersistenceServiceITCase {
     }
 
 
-
-
-
-//    @Test
-//    public void testGetService() {
-//        DomibusConnectorService epo = persistenceService.getService("EPO");
-//        assertThat(epo).isNotNull();
-//    }
-
-    
     @Test
     public void testPersistMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
         String connectorMessageId = "msg9021";
@@ -197,7 +187,7 @@ public class MessagePersistenceServiceITCase {
      * TODO: improve specification to throw more specific exception!   
      *
      */
-    @Test(expected=PersistenceException.class) //(expected=TransientPropertyValueException.class)
+    @Test(timeout=20000, expected=PersistenceException.class) //(expected=TransientPropertyValueException.class)
     public void testPersistMessageIntoDatabase_serviceNotInDatabase_shouldThrowException() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
         String connectorMessageId = "msg0021";
 
@@ -224,7 +214,7 @@ public class MessagePersistenceServiceITCase {
      * 
      * test restore evidenceMessage!
      */
-    @Test
+    @Test(timeout=20000)
     public void testPersistMessageIntoDatabase_testContentPersist() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
         String ebmsId = "ebamHUGO1";
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("superid23");
@@ -263,8 +253,8 @@ public class MessagePersistenceServiceITCase {
 //                .containsExactly(attach1.getAttachment());
 
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testMergeMessageWithDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("superid");
         message.getMessageDetails().setEbmsMessageId("ebamdsafae3");
@@ -281,14 +271,14 @@ public class MessagePersistenceServiceITCase {
         //message.getMessageDetails()
 
     }
-    
-    @Test(expected=PersistenceException.class)
+
+    @Test(timeout=20000, expected=PersistenceException.class)
     public void testMergeMessageWithDatabase_doesNotExistInDatabase() throws PersistenceException {
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage();
         messagePersistenceService.mergeMessageWithDatabase(message);
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testFindMessageByNationalId_doesNotExist_shouldBeNull() {
         String nationalIdString = "TEST1";
         DomibusConnectorMessage findMessageByNationalId = messagePersistenceService.findMessageByNationalId(nationalIdString);
@@ -299,7 +289,7 @@ public class MessagePersistenceServiceITCase {
 
     //TODO: test find message & check fromParty, toParty, service, action
 
-    @Test
+    @Test(timeout=20000)
     public void findMessageBy() {
         messagePersistenceService.findMessageByConnectorMessageId("msg1");
 

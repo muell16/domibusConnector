@@ -31,7 +31,7 @@ public class PersistenceModelTest {
         
     }
 
-    @Test
+    @Test(timeout=20000)
     public void contextLoads() {
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
                 .properties("spring.jpa.hibernate.ddl-auto=create-drop");                

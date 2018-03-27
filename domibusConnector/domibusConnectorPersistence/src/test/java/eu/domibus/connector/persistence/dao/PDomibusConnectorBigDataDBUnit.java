@@ -57,7 +57,7 @@ public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCas
     }
 
 
-    @Test
+    @Test(timeout=20000)
     public void testSave() throws SQLException, DataSetException {
         long msgId = 72L;
         PDomibusConnectorMessage msg = messageDao.findOne(msgId);

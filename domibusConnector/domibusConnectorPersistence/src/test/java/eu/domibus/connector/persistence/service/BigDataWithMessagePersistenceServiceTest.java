@@ -38,8 +38,8 @@ public class BigDataWithMessagePersistenceServiceTest {
         ref.setStorageIdReference(UUID.randomUUID().toString());
         return ref;
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testPersistAllBigFilesFromMessage() {
         DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
         
@@ -52,7 +52,7 @@ public class BigDataWithMessagePersistenceServiceTest {
         Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class));
     }
 
-    @Test
+    @Test(timeout=20000)
     public void testLoadAllBigFilesFromMessage() {
         DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
         persistenceService.loadAllBigFilesFromMessage(msg);

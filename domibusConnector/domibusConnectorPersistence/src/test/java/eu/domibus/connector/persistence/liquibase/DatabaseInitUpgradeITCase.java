@@ -78,32 +78,32 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         
         ctx.close();
     }
-    
-        
-    @Test    
+
+
+    @Test(timeout=20000)
     public void testInstall004Database_h2() {
         Properties props = loadH2TestProperties();
         props.put("spring.datasource.url", "jdbc:h2:mem:install004");
         checkInstallDB("db_h2", props);  
     }
-    
-    @Test
+
+    @Test(timeout=20000)
 //    @Ignore
     // setenv: test.mysql.db.enabled=true
     public void testInstall004Database_mysql() {        
         Properties p = loadMysqlTestProperties();
         checkInstallDB("db_mysql", p);  
     }
-    
-    
-    @Test
+
+
+    @Test(timeout=20000)
     public void testMigrate3to4_h2() throws SQLException, LiquibaseException, DatabaseException, IOException {
         Properties props = loadH2TestProperties();
         props.put("spring.datasource.url", "jdbc:h2:mem:3to4db");
         testMigrate3to4Database(H2_PROFILE, props);
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     public void testMigrate3to4_mysql() throws SQLException, LiquibaseException, DatabaseException, IOException {
         Properties props = loadMysqlTestProperties();
         //props.setProperty("spring.datasource.url", "jdbc:h2:mem:");
@@ -214,14 +214,14 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     
 
 //@Ignore    
-    @Test
+    @Test(timeout=20000)
     public void testInitial003Database_h2() {
         Properties props = super.loadH2TestProperties();
         props.put("spring.datasource.url", "jdbc:h2:mem:install003");
         checkInital003DB("db_h2", props);  
     }
-    
-    @Test
+
+    @Test(timeout=20000)
     @Ignore
     public void testInitial003Database_mysql() {        
         Properties p = loadMysqlTestProperties();

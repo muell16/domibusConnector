@@ -70,7 +70,7 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
      * test write a message with attachments / content into database
      * and ensure, that everything is written
      */
-    @Test
+    @Test(timeout=20000)
     public void testPersistMessageWithBigFiles() throws SQLException, DataSetException {
         LOGGER.info("run test testPersistMessageWithBigFiles");
         DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();

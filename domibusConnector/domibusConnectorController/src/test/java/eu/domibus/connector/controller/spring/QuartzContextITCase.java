@@ -88,12 +88,12 @@ public class QuartzContextITCase {
     
     DataSource dataSource;
     
-    @Test(timeout=20000) //10s
+    @Test(timeout=20000)
     public void testIfQuartzJobsAreExecuted() throws InterruptedException, SQLException {
         
 //        assertThat(quartzContext).isNotNull();
         
-        Thread.sleep(7000); //1s
+        Thread.sleep(7000);
         
         //check job counter
         assertThat(JOB_CALL_COUNT.get()).as("job should be executed more than 10 times").isGreaterThan(10);
