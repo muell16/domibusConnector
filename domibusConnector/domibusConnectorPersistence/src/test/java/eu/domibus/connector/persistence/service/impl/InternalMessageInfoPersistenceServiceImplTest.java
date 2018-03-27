@@ -73,10 +73,10 @@ public class InternalMessageInfoPersistenceServiceImplTest {
         internalMessageInfoPersistenceService.validatePartyServiceActionOfMessageInfo(messageInfo);
 
         assertThat(messageInfo.getFrom().getPartyIdType()).isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
-        assertThat(messageInfo.getFrom().getPartyId()).isEqualTo("AT");
+        assertThat(messageInfo.getFrom().getPartyId()).isEqualTo("domibus-blue");
 
         assertThat(messageInfo.getTo().getPartyIdType()).isEqualTo("urn:oasis:names:tc:ebcore:partyid-type:iso3166-1");
-        assertThat(messageInfo.getTo().getPartyId()).isEqualTo("domibus-blue");
+        assertThat(messageInfo.getTo().getPartyId()).isEqualTo("AT");
 
         assertThat(messageInfo.getService().getServiceType()).isEqualTo("urn:e-codex:services:");
 
