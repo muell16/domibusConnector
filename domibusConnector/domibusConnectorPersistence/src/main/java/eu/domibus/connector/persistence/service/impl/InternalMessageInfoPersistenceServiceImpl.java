@@ -132,7 +132,7 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
             details.setFinalRecipient(messageInfo.getFinalRecipient());
             details.setOriginalSender(messageInfo.getOriginalSender());
 
-            PDomibusConnectorParty fromPartyDb = messageInfo.getTo();
+            PDomibusConnectorParty fromPartyDb = messageInfo.getFrom();
             DomibusConnectorParty fromParty = PartyMapper.mapPartyToDomain(fromPartyDb);
             LOGGER.trace("#mapMessageInfoIntoMessageDetails: set fromParty to [{}]", fromParty);
             details.setFromParty(fromParty);
