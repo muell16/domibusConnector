@@ -40,6 +40,11 @@ public class TestBackendContext {
         return new LinkedBlockingQueue<>();
     }
 
+    @Bean("asDeliveredSetMessages")
+    public BlockingQueue<DomibusConnectorMessage> createSetAsDeliveredList() {
+        return new LinkedBlockingQueue<>();
+    }
+
     @Bean
     @ConditionalOnMissingBean
     public DomibusConnectorMessageIdGenerator domibusConnectorMessageIdGenerator() {
@@ -51,12 +56,19 @@ public class TestBackendContext {
     @ConditionalOnMissingBean
     public DomibusConnectorBackendSubmissionService dummySubmissionService() {
         final BlockingQueue<DomibusConnectorMessage>  submittedMessages = createList();
+        final BlockingQueue<DomibusConnectorMessage> asDeliveredSet = createSetAsDeliveredList();
         DomibusConnectorBackendSubmissionService submissionService = new DomibusConnectorBackendSubmissionService() {
             @Override
             public void submitToController(DomibusConnectorMessage message) {
                 LOGGER.warn("message to dummySubmissionService controller submitted: [{}]", message);
                 submittedMessages.add(message);
-            }                        
+            }
+
+            @Override
+            public void setMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message) {
+                LOGGER.warn("message on dummySubmissionService controller set as delivered to national system: [{}]", message);
+                asDeliveredSet.add(message);
+            }
         };
         return submissionService;
     }

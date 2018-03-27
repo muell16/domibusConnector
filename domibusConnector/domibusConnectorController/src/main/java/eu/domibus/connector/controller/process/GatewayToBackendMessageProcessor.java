@@ -225,6 +225,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
 		
         try {
+        	LOGGER.debug("Submitting RelayREMMDEnvidence back to GW");
             this.gwSubmissionService.submitToGateway(evidenceMessage);
         } catch (Exception e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()

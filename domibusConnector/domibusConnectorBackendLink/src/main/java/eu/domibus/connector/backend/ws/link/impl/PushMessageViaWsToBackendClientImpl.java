@@ -4,6 +4,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
+import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -34,6 +35,8 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataMessageService;
     
     private BackendClientWebServiceClientFactory webServiceClientFactory;
+
+    private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
     
     //SETTER
     @Autowired
@@ -54,6 +57,11 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
     @Autowired
     public void setBackendClientWebServiceClientFactory(BackendClientWebServiceClientFactory webServiceClientFactory) {
         this.webServiceClientFactory = webServiceClientFactory;
+    }
+
+    @Autowired
+    public void setDomibusConnectorBackendInternalDeliverToController(DomibusConnectorBackendInternalDeliverToController backendSubmissionService) {
+        this.backendSubmissionService = backendSubmissionService;
     }
 
 
@@ -85,11 +93,9 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
                 String backendMessageId = messageResponse.getMessageId();
                 LOGGER.debug("#push: message with id [{}] sucessfully delivered to client [{}], client return id [{}]",
                         message.getConnectorMessageId(), backendClientInfoByName.getBackendName(), backendMessageId);
-                message.getMessageDetails().setBackendMessageId(backendMessageId);
-
-                messagePersistenceService.mergeMessageWithDatabase(message);
-                messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+                backendSubmissionService.markMessageAsDeliveredToNationalSystem(message);
             } else {
+                throw new RuntimeException("error occured during push...!");
                 //TODO: handle message error
             }
 

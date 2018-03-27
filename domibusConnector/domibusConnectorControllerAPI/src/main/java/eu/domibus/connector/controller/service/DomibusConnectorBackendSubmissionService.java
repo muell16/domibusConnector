@@ -10,6 +10,21 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
  */
 public interface DomibusConnectorBackendSubmissionService {
 
+    /**
+     * submit a persisted message for further processing to controller
+     * @param message - the message
+     */
     public void submitToController(DomibusConnectorMessage message);
-    
+
+    /**
+     * set message as delivered to national system
+     *  *) create evidence and send it (DeliveryEvidence)
+     *  *) mark message as delivered in database
+     *
+     * @param message - the message
+     *
+     */
+    public void setMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message);
+
+
 }

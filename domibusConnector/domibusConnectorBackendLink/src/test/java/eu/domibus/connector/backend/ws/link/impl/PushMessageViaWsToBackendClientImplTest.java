@@ -3,6 +3,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
+import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -12,7 +13,9 @@ import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersisten
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -24,21 +27,23 @@ import static org.mockito.Matchers.any;
 
 public class PushMessageViaWsToBackendClientImplTest {
 
-    PushMessageViaWsToBackendClientImpl pushMessageOverWs;
+    PushMessageToBackendClient pushMessageToBackendService;
 
+    @Mock
     BackendClientInfoPersistenceService backendClientInfoPersistenceService;
-
+    @Mock
+    DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
+    @Mock
     BackendClientWebServiceClientFactory webServiceClientFactory;
-
+    @Mock
     BigDataWithMessagePersistenceServiceImpl bigDataMessageService;
-
+    @Mock
     DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Before
     public void setUp() {
-        this.backendClientInfoPersistenceService = Mockito.mock(BackendClientInfoPersistenceService.class);
+        MockitoAnnotations.initMocks(this);
 
-        this.webServiceClientFactory = Mockito.mock(BackendClientWebServiceClientFactory.class);
         Mockito.when(webServiceClientFactory.createWsClient(any(DomibusConnectorBackendClientInfo.class)))
                 .then((InvocationOnMock invocation) -> {
                     DomibusConnectorBackendClientInfo backendInfo = invocation.getArgumentAt(0, DomibusConnectorBackendClientInfo.class);
@@ -46,7 +51,6 @@ public class PushMessageViaWsToBackendClientImplTest {
                 });
 
         //just pass message through bigDataMessageService
-        this.bigDataMessageService = Mockito.mock(BigDataWithMessagePersistenceServiceImpl.class);
         Mockito.when(bigDataMessageService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
                 .then(new Answer<DomibusConnectorMessage>() {
                     @Override
@@ -55,13 +59,18 @@ public class PushMessageViaWsToBackendClientImplTest {
                     }
                 });
 
-        this.messagePersistenceService = Mockito.mock(DomibusConnectorMessagePersistenceService.class);
-        this.pushMessageOverWs = new PushMessageViaWsToBackendClientImpl();
+
+
+        PushMessageViaWsToBackendClientImpl pushMessageOverWs = new PushMessageViaWsToBackendClientImpl();
 
         pushMessageOverWs.setBackendClientPersistenceService(backendClientInfoPersistenceService);
         pushMessageOverWs.setBackendClientWebServiceClientFactory(this.webServiceClientFactory);
         pushMessageOverWs.setBigDataMessageService(this.bigDataMessageService);
         pushMessageOverWs.setMessagePersistenceService(this.messagePersistenceService);
+        pushMessageOverWs.setDomibusConnectorBackendInternalDeliverToController(this.backendSubmissionService);
+
+        pushMessageToBackendService = pushMessageOverWs;
+
     }
 
     List<DomibusConnectorMessageType> pushedMessages = new ArrayList<>();
@@ -96,7 +105,7 @@ public class PushMessageViaWsToBackendClientImplTest {
         backendMessage.setBackendClientInfo(backendClientInfo);
         backendMessage.setDomibusConnectorMessage(DomainEntityCreator.createMessage());
 
-        pushMessageOverWs.push(backendMessage);
+        pushMessageToBackendService.push(backendMessage);
     }
 
 }

@@ -1,7 +1,9 @@
 package eu.domibus.connector.controller.service.impl;
 
+import eu.domibus.connector.controller.process.MessageDeliveredToNationalSystemProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,17 @@ public class DomibusConnectorBackendSubmissionServiceImpl implements DomibusConn
 	@Qualifier(PutMessageOnQueue.BACKEND_TO_CONTROLLER_QUEUE)
 	private PutMessageOnQueue putMessageOnQueue;
 
+	@Autowired
+	private MessageDeliveredToNationalSystemProcessor messageDeliveredToNationalSystemProcessor;
+
 	@Override
 	public void submitToController(DomibusConnectorMessage message) {
 		putMessageOnQueue.putMessageOnMessageQueue(message);
+	}
+
+	@Override
+	public void setMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message) {
+		messageDeliveredToNationalSystemProcessor.processMessage(message);
 	}
 
 }
