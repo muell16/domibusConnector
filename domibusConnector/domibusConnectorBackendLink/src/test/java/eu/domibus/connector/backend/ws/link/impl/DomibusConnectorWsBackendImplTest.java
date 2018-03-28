@@ -29,7 +29,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -42,40 +44,38 @@ public class  DomibusConnectorWsBackendImplTest {
     DomibusConnectorWsBackendImpl backendWebService;
     
     WebServiceContext webServiceContext;
-    
-    BackendClientInfoPersistenceService backendClientInfoPersistenceService;
-    
-    MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
-    
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
-    
-    DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
 
+    @Mock
+    BackendClientInfoPersistenceService backendClientInfoPersistenceService;
+    @Mock
+    MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
+    @Mock
+    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    @Mock
+    DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
+    @Mock
     DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
     
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         webServiceContext = Mockito.mock(WebServiceContext.class);
      
         DomibusConnectorWsBackendImpl domibusConnectorBackendImpl = new DomibusConnectorWsBackendImpl();
         domibusConnectorBackendImpl.setWsContext(webServiceContext);
-        
-        backendClientInfoPersistenceService = Mockito.mock(BackendClientInfoPersistenceService.class);
         domibusConnectorBackendImpl.setBackendClientInfoPersistenceService(backendClientInfoPersistenceService);
-        
-        messageToBackendClientWaitQueue = Mockito.mock(MessageToBackendClientWaitQueue.class);
         domibusConnectorBackendImpl.setMessageToBackendClientWaitQueue(messageToBackendClientWaitQueue);
-        
-        messagePersistenceService = Mockito.mock(DomibusConnectorMessagePersistenceService.class);
         domibusConnectorBackendImpl.setMessagePersistenceService(messagePersistenceService);
-        
-        DomibusConnectorBigDataPersistenceServiceMemoryImpl bigDataPersistenceService = new DomibusConnectorBigDataPersistenceServiceMemoryImpl();        
+        domibusConnectorBackendImpl.setBackendSubmissionService(backendSubmissionService);
+
+
+        Mockito.when(backendSubmissionService.markMessageAsDeliveredToNationalSystem(any(DomibusConnectorMessage.class)))
+                .thenAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+
+        DomibusConnectorBigDataPersistenceServiceMemoryImpl bigDataPersistenceService = new DomibusConnectorBigDataPersistenceServiceMemoryImpl();
         domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceServiceImpl());
         ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);
         domibusConnectorBackendImpl.setDomibusConnectorPersistAllBigDataOfMessageService(domibusConnectorPersistAllBigDataOfMessageService);
-                
-        backendSubmissionService = Mockito.mock(DomibusConnectorBackendInternalDeliverToController.class);
-        domibusConnectorBackendImpl.setBackendSubmissionService(backendSubmissionService);
 
 
         backendWebService = domibusConnectorBackendImpl;
