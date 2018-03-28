@@ -11,6 +11,5 @@ public interface PushMessageToBackendClient {
 
     public void push(DomibusConnectorBackendMessage backendMessage);
 
-//    public void push(String connectorMessageId, String backendClientName);
 
 }

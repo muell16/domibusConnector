@@ -52,13 +52,10 @@ public class PushMessageViaWsToBackendClientImplTest {
 
         //just pass message through bigDataMessageService
         Mockito.when(bigDataMessageService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
-                .then(new Answer<DomibusConnectorMessage>() {
-                    @Override
-                    public DomibusConnectorMessage answer(InvocationOnMock invocation) throws Throwable {
-                        return invocation.getArgumentAt(0, DomibusConnectorMessage.class);
-                    }
-                });
+                .then((Answer<DomibusConnectorMessage>) invocation -> invocation.getArgumentAt(0, DomibusConnectorMessage.class));
 
+        Mockito.when(backendSubmissionService.processMessageBeforeDeliverToBackend(any(DomibusConnectorMessage.class)))
+                .then(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
 
 
         PushMessageViaWsToBackendClientImpl pushMessageOverWs = new PushMessageViaWsToBackendClientImpl();
