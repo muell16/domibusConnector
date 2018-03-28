@@ -118,6 +118,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         persistEvidenceForMessageIntoDatabase(dbMessage, evidence, evidenceType);
     }
 
+    @Transactional
     void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
         PDomibusConnectorEvidence dbEvidence;
 

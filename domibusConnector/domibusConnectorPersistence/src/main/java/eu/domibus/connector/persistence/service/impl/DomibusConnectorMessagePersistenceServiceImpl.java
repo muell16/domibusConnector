@@ -1,17 +1,12 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.model.enums.MessageDirection;
-import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
@@ -26,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service("persistenceService")
 public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusConnectorMessagePersistenceService {
@@ -403,6 +398,12 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
 
         this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
+
+        List<DomibusConnectorMessageConfirmation> confirmations = dbMessage.getEvidences().stream()
+                .map(e -> MessageConfirmationMapper.mapFromDbToDomain(e))
+                .collect(Collectors.toList());
+        messageBuilder.addConfirmations(confirmations);
+
 
         DomibusConnectorMessage message = messageBuilder.build();
         return message;

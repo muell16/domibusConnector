@@ -15,5 +15,5 @@ public interface DomibusConnectorBackendInternalDeliverToController {
      * @param message - the corresponding message
      *
      */
-    DomibusConnectorMessage markMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message);
+    DomibusConnectorMessage processMessageBeforeDeliverToBackend(DomibusConnectorMessage message);
 }

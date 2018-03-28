@@ -86,7 +86,7 @@ public class MsgContentPersistenceService {
      */
     public void loadMsgContent(final @Nonnull DomibusConnectorMessageBuilder messageBuilder, final PDomibusConnectorMessage dbMessage) throws PersistenceException {
         List<PDomibusConnectorMsgCont> findByMessage = this.msgContDao.findByMessage(dbMessage);
-        //map content back
+        //mapFromDbToDomain content back
         Optional<PDomibusConnectorMsgCont> findFirst = findByMessage.stream()
                 .filter( c -> StoreType.MESSAGE_CONTENT.getDbString().equals(c.getContentType()))
                 .findFirst();
@@ -94,14 +94,14 @@ public class MsgContentPersistenceService {
             DomibusConnectorMessageContent messageContent = mapFromMsgCont(findFirst.get(), DomibusConnectorMessageContent.class);
             messageBuilder.setMessageContent(messageContent);
         }
-        //map evidence back
+        //mapFromDbToDomain evidence back
         findByMessage.stream()
                 .filter( c -> StoreType.MESSAGE_CONFIRMATION.getDbString().equals(c.getContentType()))
                 .forEach( c -> {
                     DomibusConnectorMessageConfirmation msgConfirmation = mapFromMsgCont(c, DomibusConnectorMessageConfirmation.class);
                     messageBuilder.addConfirmation(msgConfirmation);
                 });
-        //map attachments back
+        //mapFromDbToDomain attachments back
         findByMessage.stream()
                 .filter( c -> StoreType.MESSAGE_ATTACHMENT.getDbString().equals(c.getContentType()))
                 .forEach( c -> {

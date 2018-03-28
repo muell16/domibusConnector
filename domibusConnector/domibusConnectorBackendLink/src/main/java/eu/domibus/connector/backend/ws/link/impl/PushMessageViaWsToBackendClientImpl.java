@@ -83,6 +83,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
         message = bigDataMessageService.loadAllBigFilesFromMessage(message);
 
         //transform message to transition
+        message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
         DomibusConnectorMessageType transitionMessage = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
 
         //send message
@@ -93,7 +94,8 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
                 String backendMessageId = messageResponse.getMessageId();
                 LOGGER.debug("#push: message with id [{}] sucessfully delivered to client [{}], client return id [{}]",
                         message.getConnectorMessageId(), backendClientInfoByName.getBackendName(), backendMessageId);
-                backendSubmissionService.markMessageAsDeliveredToNationalSystem(message);
+
+                messagePersistenceService.setMessageDeliveredToNationalSystem(message);
             } else {
                 throw new RuntimeException("error occured during push...!");
                 //TODO: handle message error

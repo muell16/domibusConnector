@@ -90,7 +90,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     }
 
     @Override
-    public DomibusConnectorMessage markMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message) {
+    public DomibusConnectorMessage processMessageBeforeDeliverToBackend(DomibusConnectorMessage message) {
         return backendToControllerSubmissionService.prepareMessageForNationalDelivery(message);
     }
 

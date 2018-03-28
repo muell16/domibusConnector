@@ -69,7 +69,7 @@ public class  DomibusConnectorWsBackendImplTest {
         domibusConnectorBackendImpl.setBackendSubmissionService(backendSubmissionService);
 
 
-        Mockito.when(backendSubmissionService.markMessageAsDeliveredToNationalSystem(any(DomibusConnectorMessage.class)))
+        Mockito.when(backendSubmissionService.processMessageBeforeDeliverToBackend(any(DomibusConnectorMessage.class)))
                 .thenAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
 
         DomibusConnectorBigDataPersistenceServiceMemoryImpl bigDataPersistenceService = new DomibusConnectorBigDataPersistenceServiceMemoryImpl();

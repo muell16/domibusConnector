@@ -40,9 +40,12 @@ public class MessageDeliveredToNationalSystemProcessor implements DomibusConnect
         if (!DomainModelHelper.isEvidenceMessage(message)) {
 
             LOGGER.debug("#processMessage: Appending DELIVERY evidence to message");
-            DomibusConnectorMessage deliveryConfirmationMessage = confirmationMessageService
+
+            CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper confirmationMessageWrapper = confirmationMessageService
                     .createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.DELIVERY)
-                    .buildAndSaveMessage();
+                    .build();
+            confirmationMessageWrapper.persistEvidenceToMessage();
+            DomibusConnectorMessage deliveryConfirmationMessage = confirmationMessageWrapper.getEvidenceMessage();
             try {
                 gwSubmissionService.submitToGateway(deliveryConfirmationMessage);
             } catch (DomibusConnectorGatewaySubmissionException e) {

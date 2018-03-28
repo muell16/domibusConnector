@@ -84,8 +84,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
 		String refToOriginalMessage = message.getMessageDetails().getRefToMessageId();
         LOGGER.debug("#processMessage: refToMessageId is [{}]", refToOriginalMessage);
-        DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToOriginalMessage);
         DomibusConnectorEvidenceType evidenceType = message.getMessageConfirmations().get(0).getEvidenceType();
+
+        DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToOriginalMessage);
+        LOGGER.debug("#processMessage: processing evidence [{}] of original message [{}]", evidenceType, originalMessage);
+        if (originalMessage == null) {
+            throw new RuntimeException(String.format("No message for refToMessageId [%s] found!", refToOriginalMessage));
+        }
 
         DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         DomibusConnectorAction action = createEvidenceAction(evidenceType);
@@ -103,7 +108,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         } catch (DomibusConnectorEvidencesToolkitException e) {
             DomibusConnectorMessageExceptionBuilder.createBuilder()                    
                     .setMessage(originalMessage)
-                    .setText("Could not handle Evidence to Message " + refToOriginalMessage)
+                    .setText(String.format("Could not handle Evidence [%s] to Message [%s]", evidenceType, originalMessage))
                     .setCause(e)
                     .setSource(this.getClass())
                     .buildAndThrow();

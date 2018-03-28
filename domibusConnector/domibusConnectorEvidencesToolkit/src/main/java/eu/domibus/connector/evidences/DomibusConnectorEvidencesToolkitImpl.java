@@ -54,6 +54,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 	
     @Override
     public DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
+        LOGGER.debug("#createEvidence: [{}] for message [{}]", type, message);
+        LOGGER.trace("#createEvidence: message contains following evidences: [{}]", message.getMessageConfirmations());
     	byte[] evidence = null;
     	switch(type) {
     	case SUBMISSION_ACCEPTANCE:
@@ -68,6 +70,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 		case NON_DELIVERY:
 			evidence = createNonDeliveryEvidence(rejectionReason, message, details);
 			break;
+        case RETRIEVAL:
+            evidence = createRetrievalEvidence(message);
+            break;
 		case NON_RETRIEVAL:
 			evidence = createNonRetrievalEvidence(rejectionReason, message, details);
 			break;
@@ -79,9 +84,6 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 			break;
 		case RELAY_REMMD_REJECTION:
 			evidence = createRelayREMMDRejection(rejectionReason, message, details);
-			break;
-		case RETRIEVAL:
-			evidence = createRetrievalEvidence(message);
 			break;
 		default:
 			break;

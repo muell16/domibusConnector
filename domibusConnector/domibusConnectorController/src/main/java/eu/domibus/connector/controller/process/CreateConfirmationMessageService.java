@@ -64,7 +64,40 @@ public class CreateConfirmationMessageService {
 
 
 
+    public class DomibusConnectorMessageConfirmationWrapper {
 
+        public DomibusConnectorMessageConfirmation messageConfirmation;
+        public DomibusConnectorMessage originalMesssage;
+        public DomibusConnectorMessage evidenceMessage;
+
+        private DomibusConnectorMessageConfirmationWrapper(){}
+
+        private void setMessageConfirmation(DomibusConnectorMessageConfirmation messageConfirmation) {
+            this.messageConfirmation = messageConfirmation;
+        }
+
+        private void setOriginalMesssage(DomibusConnectorMessage originalMesssage) {
+            this.originalMesssage = originalMesssage;
+        }
+
+        private void setEvidenceMessage(DomibusConnectorMessage evidenceMessage) {
+            this.evidenceMessage = evidenceMessage;
+        }
+
+        public DomibusConnectorMessage getEvidenceMessage() {
+            return this.evidenceMessage;
+        }
+
+        public DomibusConnectorMessageConfirmation getMessageConfirmation() {
+            return this.messageConfirmation;
+        }
+
+        public void persistEvidenceToMessage() {
+            LOGGER.trace("#persistEvidenceToMessage: persist evidence [{}] to message [{}]", messageConfirmation, originalMesssage);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMesssage, messageConfirmation);
+        }
+
+    }
 
     public class ConfirmationMessageBuilder {
         DomibusConnectorMessage originalMessage;
@@ -72,8 +105,8 @@ public class CreateConfirmationMessageService {
         DomibusConnectorRejectionReason rejectionReason;
         String details;
         private DomibusConnectorAction action;
-        private DomibusConnectorMessageConfirmation messageConfirmation;
-        private DomibusConnectorMessage evidenceMessage = null;
+
+        private ConfirmationMessageBuilder() {}
 
         public ConfirmationMessageBuilder setMessage(DomibusConnectorMessage message) {
             this.originalMessage = message;
@@ -100,12 +133,10 @@ public class CreateConfirmationMessageService {
             return this;
         }
 
-        private void internalBuild() {
-            if (this.evidenceMessage != null) {
-                return;
-            }
+        public DomibusConnectorMessageConfirmationWrapper build() {
             try {
-                this.messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, details);
+
+                DomibusConnectorMessageConfirmation messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, details);
                 originalMessage.addConfirmation(messageConfirmation);
 
                 DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
@@ -127,8 +158,14 @@ public class CreateConfirmationMessageService {
 
                 details.setAction(action);
 
-                this.evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
+                DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
                 evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+
+                DomibusConnectorMessageConfirmationWrapper wrapper = new DomibusConnectorMessageConfirmationWrapper();
+                wrapper.setEvidenceMessage(evidenceMessage);
+                wrapper.setOriginalMesssage(originalMessage);
+                wrapper.setMessageConfirmation(messageConfirmation);
+                return wrapper;
 
             } catch (DomibusConnectorEvidencesToolkitException e) {
                 LOGGER.error("A Exception occured while generating evdince of type [{}]", evidenceType);
@@ -136,16 +173,5 @@ public class CreateConfirmationMessageService {
             }
         }
 
-
-        public DomibusConnectorMessage buildWithoutSave() {
-            internalBuild();
-            return this.evidenceMessage;
-        }
-
-        public DomibusConnectorMessage buildAndSaveMessage() {
-            internalBuild();
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
-            return this.evidenceMessage;
-        }
     }
 }

@@ -93,13 +93,14 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         messageIds.stream()
                 .forEach((message) -> {
                     messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
+                    messagePersistenceService.setMessageDeliveredToNationalSystem(message);
                 });
                 
         return messagesType;
     }
     
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
-        message = backendSubmissionService.markMessageAsDeliveredToNationalSystem(message);
+        message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
         message = domibusConnectorPersistAllBigDataOfMessageService.loadAllBigFilesFromMessage(message);
         DomibusConnectorMessageType transformDomainToTransition = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
         return transformDomainToTransition;        
