@@ -100,7 +100,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	@Override
 	@StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
-		LOGGER.trace("#processMessage: start processing message [{}] with confirmations [{}]", message, message.getMessageConfirmations());
+		LOGGER.trace("#processMessage: start processing originalMessage [{}] with confirmations [{}]", message, message.getMessageConfirmations());
 		
 		createRelayREMMDEvidenceAndSendIt(message, true);
 		
@@ -108,7 +108,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		try {
 		    LOGGER.debug("#processMessage: call validateContainer");
 			message = securityToolkit.validateContainer(message);
-			//update message in database
+			//update originalMessage in database
 			message = messagePersistenceService.mergeMessageWithDatabase(message);
 		} catch (DomibusConnectorSecurityException e) {
 			createNonDeliveryEvidenceAndSendIt(message);
@@ -116,19 +116,19 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		}
 		
 		if(isConnector2ConnectorTest(message)){
-			// if it is a connector to connector test message defined by service and action, do NOT deliver message to the backend, but 
+			// if it is a connector to connector test originalMessage defined by service and action, do NOT deliver originalMessage to the backend, but
 			// only send a DELIVERY evidence back.
-			LOGGER.info("#processMessage: Message [{}] is a connector to connector test message. \nIt will NOT be delivered to the backend!", message);
+			LOGGER.info("#processMessage: Message [{}] is a connector to connector test originalMessage. \nIt will NOT be delivered to the backend!", message);
 			createDeliveryEvidenceAndSendIt(message);
-			LOGGER.info("#processMessage: Connector to Connector Test message [{}] is confirmed!", message);
+			LOGGER.info("#processMessage: Connector to Connector Test originalMessage [{}] is confirmed!", message);
 		}else{
 			backendDeliveryService.deliverMessageToBackend(message);
 		}
 
 		 // TODO this needs to be done by the backend link!!!
-//		persistenceService.setMessageDeliveredToNationalSystem(message);
+//		persistenceService.setMessageDeliveredToNationalSystem(originalMessage);
 
-		LOGGER.info("Successfully processed message {} from GW to backend.", message.getConnectorMessageId());
+		LOGGER.info("Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());
 	}
 	
 	private boolean isConnector2ConnectorTest(DomibusConnectorMessage message) {
@@ -146,7 +146,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Error creating Delivery evidence for message!")
+                    .setText("Error creating Delivery evidence for originalMessage!")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();
@@ -168,7 +168,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Error creating NonDelivery evidence for message!")
+                    .setText("Error creating NonDelivery evidence for originalMessage!")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();
@@ -190,7 +190,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Error creating RelayREMMD evidence for message!")
+                    .setText("Error creating RelayREMMD evidence for originalMessage!")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();
@@ -230,7 +230,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         } catch (Exception e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Exception sending confirmation message '" + originalMessage.getConnectorMessageId() + "' back to gateway ")
+                    .setText("Exception sending confirmation originalMessage '" + originalMessage.getConnectorMessageId() + "' back to gateway ")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();

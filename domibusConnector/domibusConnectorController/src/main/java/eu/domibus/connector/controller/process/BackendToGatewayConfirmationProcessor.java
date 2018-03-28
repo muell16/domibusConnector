@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Takes an confirmation message from backend
+ * Takes an confirmation originalMessage from backend
  * and creates a new confirmation of the same confirmation type
  * and sends it to the gw
  *
@@ -79,7 +79,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     @StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isEvidenceMessage(message)) {
-            throw new IllegalArgumentException("The message is not an evidence message!");
+            throw new IllegalArgumentException("The originalMessage is not an evidence originalMessage!");
         }
 
 		String messageID = message.getMessageDetails().getRefToMessageId();
@@ -137,7 +137,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             messagePersistenceService.confirmMessage(originalMessage);
         }
 
-        LOGGER.info("Successfully sent evidence of type {} for message {} to gateway.", confirmation.getEvidenceType(), originalMessage);
+        LOGGER.info("Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
 	}
 	
 	private DomibusConnectorMessageConfirmation generateEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage originalMessage)

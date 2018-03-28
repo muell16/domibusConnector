@@ -73,8 +73,8 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 		Date now = new Date();
 		if (messages != null && !messages.isEmpty()) {
 			for (DomibusConnectorMessage message : messages) {
-				//Evaluate time in ms the reception of a RELAY_REMMD_ACCEPTANCE/REJECTION for the message times out
-				//Date delivered = message.getDbMessage().getDeliveredToGateway(); //TODO:
+				//Evaluate time in ms the reception of a RELAY_REMMD_ACCEPTANCE/REJECTION for the originalMessage times out
+				//Date delivered = originalMessage.getDbMessage().getDeliveredToGateway(); //TODO:
                 Date delivered = new Date();
 				long relayRemmdTimout = delivered.getTime() + relayREMMDTimeout;
 				
@@ -97,8 +97,8 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 		Date now = new Date();
 		if (messages != null && !messages.isEmpty()) {
 			for (DomibusConnectorMessage message : messages) {
-				//Evaluate time in ms the reception of a DELIVERY/NON_DELIVERY for the message times out
-				//Date delivered = message.getDbMessage().getDeliveredToGateway(); //TODO
+				//Evaluate time in ms the reception of a DELIVERY/NON_DELIVERY for the originalMessage times out
+				//Date delivered = originalMessage.getDbMessage().getDeliveredToGateway(); //TODO
                 Date delivered = new Date();
 				long deliveryTimeoutT = delivered.getTime() + deliveryTimeout;
 				
@@ -118,7 +118,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 	private void createRelayRemmdFailureAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 
-		LOGGER.info("The RelayREMMDAcceptance/Rejection evidence for message {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
+		LOGGER.info("The RelayREMMDAcceptance/Rejection evidence for originalMessage {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
 				.getMessageDetails().getEbmsMessageId());
 
 		DomibusConnectorMessageConfirmation relayRemMDFailure = null;
@@ -128,7 +128,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Error creating RelayREMMDFailure for message!")
+                    .setText("Error creating RelayREMMDFailure for originalMessage!")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();             
@@ -142,7 +142,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 	private void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
 		
-		LOGGER.info("The Delivery/NonDelivery evidence for message {} timed out. Sending NonDelivery to backend!", originalMessage
+		LOGGER.info("The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
 				.getMessageDetails().getEbmsMessageId());
 		DomibusConnectorMessageConfirmation nonDelivery = null;
 		try {
@@ -150,7 +150,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 		} catch (DomibusConnectorEvidencesToolkitException e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Error creating NonDelivery for message!")
+                    .setText("Error creating NonDelivery for originalMessage!")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();

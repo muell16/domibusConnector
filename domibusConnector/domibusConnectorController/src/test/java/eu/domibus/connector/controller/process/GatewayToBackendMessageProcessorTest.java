@@ -115,7 +115,7 @@ public class GatewayToBackendMessageProcessorTest {
         //TODO: decide to test sendEvidenceToBackToGateway here or in extra test method
 
 
-        //confirm container of message is validated!
+        //confirm container of originalMessage is validated!
         Mockito.verify(securityToolkit, times(1)).validateContainer(eq(message));
 
 
@@ -144,7 +144,7 @@ public class GatewayToBackendMessageProcessorTest {
 
         //TODO: test that evidence is generated and sent back!
 
-        //connector2connector Test message never reaches backend!
+        //connector2connector Test originalMessage never reaches backend!
         Mockito.verifyZeroInteractions(backendDeliveryService);
     }
 

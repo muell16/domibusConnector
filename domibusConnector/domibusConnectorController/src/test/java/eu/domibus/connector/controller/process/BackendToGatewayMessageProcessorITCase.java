@@ -123,7 +123,7 @@ public class BackendToGatewayMessageProcessorITCase {
 //        content = domibusConnectorTable.getValue(4, "CONTENT");
 //        assertThat(content).isNotNull();
 
-//        //write by gw rcv message to file system
+//        //write by gw rcv originalMessage to file system
 //        FileSystemUtils.deleteRecursively(new File("./target/testm/"));
 //        msg = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(msg);
 //        LoadStoreMessageFromPath.storeMessageTo(new FileSystemResource("./target/testm/"), msg);
@@ -165,7 +165,7 @@ public class BackendToGatewayMessageProcessorITCase {
 
 
         DomibusConnectorMessage take = toBackendDeliveredMessages.take();
-        System.out.println("message: " + take.getMessageDetails());
+        System.out.println("originalMessage: " + take.getMessageDetails());
 
     }
 
@@ -214,9 +214,9 @@ public class BackendToGatewayMessageProcessorITCase {
     }
 
     /*
-     * prepares test message for message processing by
-     *  creating (test) message
-     *  persisting message
+     * prepares test originalMessage for originalMessage processing by
+     *  creating (test) originalMessage
+     *  persisting originalMessage
      *
      */
     private DomibusConnectorMessage prepareMessage(String idsuffix) {

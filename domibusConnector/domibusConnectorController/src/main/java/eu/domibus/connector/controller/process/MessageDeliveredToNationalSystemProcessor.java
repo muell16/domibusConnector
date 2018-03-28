@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for setting message as delivered to national system
+ * Responsible for setting originalMessage as delivered to national system
  *  *) sets the correct state in persistence
  *  *) creates the correct evidences and sends them
  *
@@ -48,7 +48,7 @@ public class MessageDeliveredToNationalSystemProcessor implements DomibusConnect
             try {
                 gwSubmissionService.submitToGateway(deliveryConfirmationMessage);
             } catch (DomibusConnectorGatewaySubmissionException e) {
-                LOGGER.error("Error while sending Evidence message [{}] to GW", deliveryConfirmationMessage);
+                LOGGER.error("Error while sending Evidence originalMessage [{}] to GW", deliveryConfirmationMessage);
             }
 
             backendDeliveryService.deliverMessageToBackend(deliveryConfirmationMessage);

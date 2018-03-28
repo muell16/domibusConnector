@@ -81,7 +81,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         	}
         }
 
-        logger.info("Successfully processed evidence of type {} to message {}", confirmation.getEvidenceType(),
+        logger.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
                 originalMessage.getConnectorMessageId());
 
 	}

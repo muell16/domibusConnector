@@ -64,7 +64,7 @@ public class CreateConfirmationMessageService {
 
 
     public class ConfirmationMessageBuilder {
-        DomibusConnectorMessage message;
+        DomibusConnectorMessage originalMessage;
         DomibusConnectorEvidenceType evidenceType;
         DomibusConnectorRejectionReason rejectionReason;
         String details;
@@ -73,7 +73,7 @@ public class CreateConfirmationMessageService {
         private DomibusConnectorMessage evidenceMessage = null;
 
         public ConfirmationMessageBuilder setMessage(DomibusConnectorMessage message) {
-            this.message = message;
+            this.originalMessage = message;
             return this;
         }
 
@@ -102,16 +102,26 @@ public class CreateConfirmationMessageService {
                 return;
             }
             try {
-                this.messageConfirmation = evidencesToolkit.createEvidence(evidenceType, message, rejectionReason, details);
-                message.addConfirmation(messageConfirmation);
+                this.messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, details);
+                originalMessage.addConfirmation(messageConfirmation);
 
-                DomibusConnectorMessageDetails originalDetails = message.getMessageDetails();
+                DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
                 DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
                 BeanUtils.copyProperties(originalDetails, details);
 
                 details.setFromParty(originalDetails.getToParty());
                 details.setToParty(originalDetails.getFromParty());
-                details.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());
+
+                if (originalDetails.getEbmsMessageId() != null) {
+                    details.setRefToMessageId(originalDetails.getEbmsMessageId());
+                } else if (originalDetails.getBackendMessageId() != null) {
+                    details.setRefToMessageId(originalDetails.getBackendMessageId());
+                } else {
+                    String error = String.format("Cannot set refToMessageId: both ebmsMessageId and backendMessageId of original originalMessage [%s] are null!",
+                            originalMessage);
+                    throw new RuntimeException(error);
+                }
+
                 details.setAction(action);
 
                 this.evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
@@ -131,7 +141,7 @@ public class CreateConfirmationMessageService {
 
         public DomibusConnectorMessage buildAndSaveMessage() {
             internalBuild();
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, messageConfirmation);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
             return this.evidenceMessage;
         }
     }

@@ -28,9 +28,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Takes a message from backend and creates evidences for it
+ * Takes a originalMessage from backend and creates evidences for it
  * and also wraps it into an asic container and delivers the
- * message to the gw
+ * originalMessage to the gw
  */
 @Component("BackendToGatewayMessageProcessor")
 public class BackendToGatewayMessageProcessor implements DomibusConnectorMessageProcessor {
@@ -121,13 +121,13 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		DomibusConnectorMessageConfirmation confirmation = null;
 		try {
 			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
-			LOGGER.debug("#processMessage: created confirmation [{}] for message [{}]", confirmation, message);
+			LOGGER.debug("#processMessage: created confirmation [{}] for originalMessage [{}]", confirmation, message);
 			// immediately persist new evidence into database
             evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation);
             message.addConfirmation(confirmation);
 
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
-		    LOGGER.error("Could not generate evidence [{}] for message [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
+		    LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 			createSubmissionRejectionAndReturnIt(message, ete.getMessage());
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -145,28 +145,21 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			createSubmissionRejectionAndReturnIt(message, e.getMessage());
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
-                    .setText("Could not submit message to gateway! ")
+                    .setText("Could not submit originalMessage to gateway! ")
                     .setSource(this.getClass())
                     .setCause(e)
                     .buildAndThrow();
 		}
-
+		messagePersistenceService.mergeMessageWithDatabase(message);
 		messagePersistenceService.setDeliveredToGateway(message);
-// 		not necessary messagePersistenceService is also setting all transmitted confirmations to delivered!
-//		try {
-//            evidencePersistenceService.setEvidenceDeliveredToGateway(message, confirmation);
-//		} catch (PersistenceException ex) {
-//			//TODO: handle exception
-//			LOGGER.error("Exception occured", ex);
-//		}
 
         //also send evidence back to backend client:
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-		LOGGER.trace("#processMessage: persist evidence message [{}] into database", returnMessage);
+		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", returnMessage);
         messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONN_TO_NAT);
 		backendDeliveryService.deliverMessageToBackend(returnMessage);
 
-		LOGGER.info("Successfully sent message {} to gateway.", message);
+		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
 
 	}
 
@@ -203,9 +196,9 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
             DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
 
             backendDeliveryService.deliverMessageToBackend(returnMessage);
-            LOGGER.info("Setting message confirmation [{}] as delivered to national system!", confirmation.getEvidenceType());
+            LOGGER.info("Setting originalMessage confirmation [{}] as delivered to national system!", confirmation.getEvidenceType());
             evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
-            LOGGER.info("Setting message status to rejected");
+            LOGGER.info("Setting originalMessage status to rejected");
 			messagePersistenceService.rejectMessage(message);
 
 		} catch (PersistenceException persistenceException) {
@@ -228,15 +221,15 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 	}
 
     /**
-     * prepares an evidence message for sending back to the backend
+     * prepares an evidence originalMessage for sending back to the backend
      *  for this purpose the action is set to SubmissionAcceptanceRejection
      *  which is the action for submission -acceptance and -rejection evidences
      *
-     *  all other attributes are set to the same as the original message!
+     *  all other attributes are set to the same as the original originalMessage!
      *
      * @param confirmation the confirmation to send back
-     * @param originalMessage the message the confirmation belongs to
-     * @return the created evidence message
+     * @param originalMessage the originalMessage the confirmation belongs to
+     * @return the created evidence originalMessage
      */
 	private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageConfirmation confirmation, DomibusConnectorMessage originalMessage) {
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();

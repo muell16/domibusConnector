@@ -81,8 +81,13 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         }
         DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
         String refToMessageId = message.getMessageDetails().getRefToMessageId();
-        PDomibusConnectorMessage msg = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
-        this.persistEvidenceForMessageIntoDatabase(msg, confirmation.getEvidence(), confirmation.getEvidenceType());
+        PDomibusConnectorMessage referencedMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+        if (referencedMessage == null) {
+            String error = String.format("No message with refToMessageId [%s] found in database! " +
+                    "Cannot persist confirmation [%s]", refToMessageId, confirmation);
+            throw new RuntimeException(error);
+        }
+        this.persistEvidenceForMessageIntoDatabase(referencedMessage, confirmation.getEvidence(), confirmation.getEvidenceType());
         return message;
     }
 

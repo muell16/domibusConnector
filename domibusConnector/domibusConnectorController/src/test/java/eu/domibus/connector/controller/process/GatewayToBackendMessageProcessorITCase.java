@@ -57,7 +57,7 @@ public class GatewayToBackendMessageProcessorITCase {
 
     @Test(timeout=20000)
     public void testProcessMessage() throws IOException {
-        //create test message and persist message into DB
+        //create test originalMessage and persist originalMessage into DB
         DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
         message.setConnectorMessageId("msg3");
 
@@ -72,7 +72,7 @@ public class GatewayToBackendMessageProcessorITCase {
 
 
         //validate test results
-        assertThat(toBackendDeliveredMessages).as("One message should be delivered to backendlink").hasSize(1);
+        assertThat(toBackendDeliveredMessages).as("One originalMessage should be delivered to backendlink").hasSize(1);
 
     }
 

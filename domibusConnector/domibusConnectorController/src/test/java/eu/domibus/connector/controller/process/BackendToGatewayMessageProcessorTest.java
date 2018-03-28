@@ -117,13 +117,13 @@ public class BackendToGatewayMessageProcessorTest {
         //container should be built!
         Mockito.verify(securityToolkit, times(1)).buildContainer(eq(epoMessage));
 
-        //verify that the evidence message is persisted into db (before put on queue!)
+        //verify that the evidence originalMessage is persisted into db (before put on queue!)
         Mockito.verify(messagePersistenceService, times(1))
                 .persistMessageIntoDatabase(Mockito.argThat(MockitoDomainMatcher.eqToRefToMessageId("backendmsg_1")),
                         eq(DomibusConnectorMessageDirection.CONN_TO_NAT));
 
 
-        //verify message deliverd to gw status is persisted
+        //verify originalMessage deliverd to gw status is persisted
         Mockito.verify(messagePersistenceService, times(1)).setDeliveredToGateway(eq(epoMessage));
 
         //verify submission acceptance is delivered to gw
@@ -132,7 +132,7 @@ public class BackendToGatewayMessageProcessorTest {
         assertThat(toGwMsg.getMessageConfirmations()).hasSize(1); //should contain one SUBMISSION_ACCEPTANCE evidence
 
 
-        //verify message is handed over to backend for delivery
+        //verify originalMessage is handed over to backend for delivery
         assertThat(toBackendDeliveredMessages).hasSize(1);
 
         DomibusConnectorMessage message = toBackendDeliveredMessages.get(0);
@@ -178,7 +178,7 @@ public class BackendToGatewayMessageProcessorTest {
         Mockito.verify(evidencePersistenceService, times(1)).persistEvidenceForMessageIntoDatabase(eq(epoMessage), eq(submissionRejectionConfirmation));
 
 
-        //verify message rejection status is persisted
+        //verify originalMessage rejection status is persisted
         Mockito.verify(messagePersistenceService, times(0)).setDeliveredToGateway(any());
 
 
