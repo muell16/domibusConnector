@@ -19,12 +19,11 @@ public interface DomibusConnectorBackendSubmissionService {
     /**
      * set message as delivered to national system
      *  *) create evidence and send it (DeliveryEvidence)
-     *  *) mark message as delivered in database
      *
      * @param message - the message
      *
      */
-    public void setMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message);
+    public DomibusConnectorMessage prepareMessageForNationalDelivery(DomibusConnectorMessage message);
 
 
 }

@@ -22,6 +22,9 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
 
     public @Nonnull List<PDomibusConnectorEvidence> findByMessage_Id(Long messageId);
 
+    @Query("SELECT e FROM PDomibusConnectorEvidence e WHERE e.message=?1 AND e.type=?2")
+    public PDomibusConnectorEvidence findByMessageAndEvidenceType(PDomibusConnectorMessage dbMessage, EvidenceType dbEvidenceType);
+
     /**
      *
      * @param evidenceId the evidence to change

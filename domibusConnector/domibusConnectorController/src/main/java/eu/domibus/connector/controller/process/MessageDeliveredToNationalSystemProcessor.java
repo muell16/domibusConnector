@@ -37,22 +37,17 @@ public class MessageDeliveredToNationalSystemProcessor implements DomibusConnect
 
     @Override
     public void processMessage(DomibusConnectorMessage message) {
-        messagePersistenceService.setMessageDeliveredToNationalSystem(message);
-
         if (!DomainModelHelper.isEvidenceMessage(message)) {
 
+            LOGGER.debug("#processMessage: Appending DELIVERY evidence to message");
             DomibusConnectorMessage deliveryConfirmationMessage = confirmationMessageService
                     .createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.DELIVERY)
                     .buildAndSaveMessage();
-
             try {
                 gwSubmissionService.submitToGateway(deliveryConfirmationMessage);
             } catch (DomibusConnectorGatewaySubmissionException e) {
                 LOGGER.error("Error while sending Evidence originalMessage [{}] to GW", deliveryConfirmationMessage);
             }
-
-            backendDeliveryService.deliverMessageToBackend(deliveryConfirmationMessage);
         }
     }
-
 }

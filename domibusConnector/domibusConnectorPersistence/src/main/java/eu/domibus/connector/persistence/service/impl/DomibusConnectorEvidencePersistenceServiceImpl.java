@@ -8,8 +8,10 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
+import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,16 +119,25 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     }
 
     void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
+        PDomibusConnectorEvidence dbEvidence;
 
-        PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
+        EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);
+        dbEvidence = evidenceDao.findByMessageAndEvidenceType(dbMessage, dbEvidenceType);
+        if (dbEvidence == null) {
+            LOGGER.trace("Creating new evidence in database!");
+            dbEvidence = new PDomibusConnectorEvidence();
+//            dbEvidence.setDeliveredToGateway(null);
+//            dbEvidence.setDeliveredToNationalSystem(null);
+        } else {
+            LOGGER.trace("updating evidence [{}] in database", dbEvidence);
+        }
 
         dbEvidence.setMessage(dbMessage);
         if (evidence != null) {
             dbEvidence.setEvidence(convertByteArrayToString(evidence));
         }
-        dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.valueOf(evidenceType.name()));
-        dbEvidence.setDeliveredToGateway(null);
-        dbEvidence.setDeliveredToNationalSystem(null);
+        dbEvidence.setType(dbEvidenceType);
+
         evidenceDao.save(dbEvidence);
     }
 

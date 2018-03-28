@@ -8,12 +8,12 @@ public interface DomibusConnectorBackendInternalDeliverToController {
     void submitToController(DomibusConnectorBackendMessage message);
 
     /**
-     * sets message as delivered to national system
-     *  *) set state in persistence
+     * prepares message for delivery to national system
+     *
      *  *) create delivery evidence
      *
      * @param message - the corresponding message
      *
      */
-    void markMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message);
+    DomibusConnectorMessage markMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message);
 }

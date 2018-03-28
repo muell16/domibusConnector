@@ -33,8 +33,9 @@ public class DomibusConnectorBackendSubmissionServiceImpl implements DomibusConn
 	}
 
 	@Override
-	public void setMessageAsDeliveredToNationalSystem(DomibusConnectorMessage message) {
+	public DomibusConnectorMessage prepareMessageForNationalDelivery(DomibusConnectorMessage message) {
 		messageDeliveredToNationalSystemProcessor.processMessage(message);
+		return message;
 	}
 
 }
