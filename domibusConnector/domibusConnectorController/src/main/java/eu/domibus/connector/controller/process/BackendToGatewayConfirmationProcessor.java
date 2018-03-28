@@ -38,35 +38,19 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayConfirmationProcessor.class);
 
-	private DomibusConnectorActionPersistenceService actionPersistenceService;
-
+    private CreateConfirmationMessageService confirmationMessageService;
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-
-    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-
-	private DomibusConnectorEvidencesToolkit evidencesToolkit;
-
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 
     //setter
     @Autowired
-    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
-        this.actionPersistenceService = actionPersistenceService;
+    public void setConfirmationMessageService(CreateConfirmationMessageService confirmationMessageService) {
+        this.confirmationMessageService = confirmationMessageService;
     }
 
     @Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
-    }
-
-    @Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
-    }
-
-    @Autowired
-    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
-        this.evidencesToolkit = evidencesToolkit;
     }
 
     @Autowired
@@ -84,7 +68,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
 		String refToOriginalMessage = message.getMessageDetails().getRefToMessageId();
         LOGGER.debug("#processMessage: refToMessageId is [{}]", refToOriginalMessage);
-        DomibusConnectorEvidenceType evidenceType = message.getMessageConfirmations().get(0).getEvidenceType();
+        DomibusConnectorEvidenceType evidenceType = DomainModelHelper.getEvidenceTypeOfEvidenceMessage(message);
 
         DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToOriginalMessage);
         LOGGER.debug("#processMessage: processing evidence [{}] of original message [{}]", evidenceType, originalMessage);
@@ -92,51 +76,23 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             throw new RuntimeException(String.format("No message for refToMessageId [%s] found!", refToOriginalMessage));
         }
 
-        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-        DomibusConnectorAction action = createEvidenceAction(evidenceType);
-        BeanUtils.copyProperties(originalMessage.getMessageDetails(), details);
-        details.setAction(action);
-        details.setService(message.getMessageDetails().getService());
-        details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
-        details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-        details.setFromParty(message.getMessageDetails().getFromParty());
-        details.setToParty(message.getMessageDetails().getToParty());
+        CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder
+                = confirmationMessageService.createConfirmationMessageBuilder(originalMessage, evidenceType);
 
-        DomibusConnectorMessageConfirmation confirmation = null;
-        try {
-            confirmation = generateEvidence(evidenceType, originalMessage);
-        } catch (DomibusConnectorEvidencesToolkitException e) {
-            DomibusConnectorMessageExceptionBuilder.createBuilder()                    
-                    .setMessage(originalMessage)
-                    .setText(String.format("Could not handle Evidence [%s] to Message [%s]", evidenceType, originalMessage))
-                    .setCause(e)
-                    .setSource(this.getClass())
-                    .buildAndThrow();
-        }
+        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation =
+                confirmationMessageBuilder
+                .switchFromToParty()
+                .build();
 
+        wrappedConfirmation.persistEvidenceToMessage();
+        DomibusConnectorMessageConfirmation confirmation = wrappedConfirmation.getMessageConfirmation();
         originalMessage.addConfirmation(confirmation);
-        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
-                evidenceType);
 
-        DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, confirmation);
+        DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
 
-        try {
-			gwSubmissionService.submitToGateway(evidenceMessage);
-		} catch (DomibusConnectorGatewaySubmissionException gwse) {
-            DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(originalMessage)
-                    .setText("Could not send Evidence Message to Gateway!")
-                    .setSource(this.getClass())
-                    .setCause(gwse)
-                    .buildAndThrow();			
-		}
+        submitToGateway(evidenceMessage, originalMessage);
+        setDeliveredToGateway(evidenceMessage);
 
-
-        try {
-            evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, evidenceType);
-        } catch(PersistenceException persistenceException) {
-            LOGGER.error("persistence Exception occured", persistenceException);
-        }
 
         if (!messagePersistenceService.checkMessageConfirmed(originalMessage)) {
             messagePersistenceService.confirmMessage(originalMessage);
@@ -144,26 +100,27 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
         LOGGER.info("Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
 	}
-	
-	private DomibusConnectorMessageConfirmation generateEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage originalMessage)
-            throws DomibusConnectorEvidencesToolkitException, DomibusConnectorMessageException {
-            return evidencesToolkit.createEvidence(type, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
-        
-    }
 
-    private DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
-        switch (type) {
-        case DELIVERY:
-            return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
-        case NON_DELIVERY:
-            return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
-        case RETRIEVAL:
-            return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
-        case NON_RETRIEVAL:
-            return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
-        default:
-            throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
+	private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {
+        try {
+            gwSubmissionService.submitToGateway(evidenceMessage);
+        } catch (DomibusConnectorGatewaySubmissionException gwse) {
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText("Could not send Evidence Message to Gateway!")
+                    .setSource(this.getClass())
+                    .setCause(gwse)
+                    .buildAndThrow();
         }
     }
+
+    private void setDeliveredToGateway(DomibusConnectorMessage evidenceMessage) {
+        try {
+            messagePersistenceService.setDeliveredToGateway(evidenceMessage);
+        } catch(PersistenceException persistenceException) {
+            LOGGER.error("persistence Exception occured", persistenceException);
+        }
+    }
+
 
 }

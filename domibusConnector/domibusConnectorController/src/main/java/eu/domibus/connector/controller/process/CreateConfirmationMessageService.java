@@ -1,12 +1,10 @@
 package eu.domibus.connector.controller.process;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
@@ -15,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,7 +23,7 @@ public class CreateConfirmationMessageService {
 
     DomibusConnectorEvidencesToolkit evidencesToolkit;
     DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    private DomibusConnectorActionPersistenceService setActionPersistenceService;
+    private DomibusConnectorActionPersistenceService actionPersistenceService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
     @Autowired
@@ -34,7 +33,7 @@ public class CreateConfirmationMessageService {
 
     @Autowired
     public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
-        this.setActionPersistenceService = actionPersistenceService;
+        this.actionPersistenceService = actionPersistenceService;
     }
 
     @Autowired
@@ -48,20 +47,28 @@ public class CreateConfirmationMessageService {
     }
 
     public ConfirmationMessageBuilder createConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
-        ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder()
-                .setMessage(message)
-                .setEvidenceType(evidenceType);
+        ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(message, evidenceType);
 
-        if (evidenceType.equals(DomibusConnectorEvidenceType.DELIVERY ) ||
-                evidenceType.equals(DomibusConnectorEvidenceType.NON_DELIVERY)) {
-            confirmationMessageBuilder.setAction(setActionPersistenceService.getDeliveryNonDeliveryToRecipientAction());
-        }
-
-        //TODO: other evidenceTypes...
+        DomibusConnectorAction messageAction = createEvidenceAction(evidenceType);
+        confirmationMessageBuilder.setAction(messageAction);
 
         return confirmationMessageBuilder;
     }
 
+    public DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
+        switch (type) {
+            case DELIVERY:
+                return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
+            case NON_DELIVERY:
+                return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
+            case RETRIEVAL:
+                return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
+            case NON_RETRIEVAL:
+                return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
+            default:
+                throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
+        }
+    }
 
 
     public class DomibusConnectorMessageConfirmationWrapper {
@@ -103,19 +110,15 @@ public class CreateConfirmationMessageService {
         DomibusConnectorMessage originalMessage;
         DomibusConnectorEvidenceType evidenceType;
         DomibusConnectorRejectionReason rejectionReason;
-        String details;
+        String rejectionDetails;
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         private DomibusConnectorAction action;
 
-        private ConfirmationMessageBuilder() {}
-
-        public ConfirmationMessageBuilder setMessage(DomibusConnectorMessage message) {
+        private ConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
             this.originalMessage = message;
-            return this;
-        }
-
-        public ConfirmationMessageBuilder setEvidenceType(DomibusConnectorEvidenceType evidenceType) {
             this.evidenceType = evidenceType;
-            return this;
+            DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
+            BeanUtils.copyProperties(originalDetails, details);
         }
 
         public ConfirmationMessageBuilder setRejectionReason(DomibusConnectorRejectionReason rejectionReason) {
@@ -124,7 +127,7 @@ public class CreateConfirmationMessageService {
         }
 
         public ConfirmationMessageBuilder setDetails(String details) {
-            this.details = details;
+            this.rejectionDetails = details;
             return this;
         }
 
@@ -133,18 +136,25 @@ public class CreateConfirmationMessageService {
             return this;
         }
 
+        /**
+         * switches the toParty with fromParty
+         * @return the builder object
+         */
+        public ConfirmationMessageBuilder switchFromToParty() {
+            LOGGER.debug("[{}]: switching fromParty with toParty in messageDetails", this);
+            DomibusConnectorParty fromParty = details.getFromParty();
+            DomibusConnectorParty toParty = details.getToParty();
+            details.setFromParty(toParty);
+            details.setToParty(fromParty);
+            return this;
+        }
+
         public DomibusConnectorMessageConfirmationWrapper build() {
             try {
-
-                DomibusConnectorMessageConfirmation messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, details);
+                DomibusConnectorMessageConfirmation messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, rejectionDetails);
                 originalMessage.addConfirmation(messageConfirmation);
 
                 DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
-                DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-                BeanUtils.copyProperties(originalDetails, details);
-
-                details.setFromParty(originalDetails.getToParty());
-                details.setToParty(originalDetails.getFromParty());
 
                 if (originalDetails.getEbmsMessageId() != null) {
                     details.setRefToMessageId(originalDetails.getEbmsMessageId());
@@ -173,5 +183,11 @@ public class CreateConfirmationMessageService {
             }
         }
 
+        public String toString() {
+            ToStringCreator toStringCreator = new ToStringCreator(this);
+            toStringCreator.append("originalMessage", this.originalMessage);
+            toStringCreator.append("evidenceType", this.evidenceType);
+            return toStringCreator.toString();
+        }
     }
 }

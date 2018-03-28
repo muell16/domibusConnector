@@ -127,6 +127,7 @@ public class PDomibusConnectorEvidence {
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", this.id);
+        toString.append("evidenceType", this.type);
         toString.append("evidence", this.evidence);
         toString.append("deliveredToGw", this.deliveredToGateway);
         toString.append("deliveredToNationalSystem", this.deliveredToNationalSystem);

@@ -43,11 +43,11 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
     @Override
     @StoreMessageExceptionIntoDatabase
-	public void processMessage(DomibusConnectorMessage message) {
-		String refToMessageID = message.getMessageDetails().getRefToMessageId();
+	public void processMessage(DomibusConnectorMessage confirmationMessage) {
+		String refToMessageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
         DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToMessageID);
-        DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
+        DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {
             messagePersistenceService.rejectMessage(originalMessage);
@@ -64,14 +64,12 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation);
 
-        backendDeliveryService.deliverMessageToBackend(message);
 
-        // TODO this needs to be done by the backend link!!!
-//        try {
-//            persistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
-//        } catch (PersistenceException persistenceException) {
-//        	logger.error("Persistence Exception occured", persistenceException);
-//        }
+        if (originalMessage.getMessageDetails().getBackendMessageId() != null) {
+            confirmationMessage.getMessageDetails().setBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
+        }
+        backendDeliveryService.deliverMessageToBackend(confirmationMessage);
+
 
         boolean confirmedOrRejected = messagePersistenceService.checkMessageConfirmedOrRejected(originalMessage);
         if (!confirmedOrRejected) {
