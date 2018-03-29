@@ -234,23 +234,7 @@ node {
 						}
 					}
 					
-					/*
-						println "download tomcat"
-						sh 'mkdir testDeploy'
-						sh '''mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip
-								mvn dependency:copy -Dartifact=org.apache.tomcat:tomcat:7.0.82:zip -Dmdep.stripVersion=true -DoutputDirectory=./testDeploy'''
-								
-						//sh 'cd testDeploy'
-						sh 'ls -la testDeploy'
-						sh 'cd testDeploy; unzip tomcat.zip'
-						
-						println "download testdb"
-						sh '''mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 ; 
-							mvn dependency:copy -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3  -Dmdep.stripVersion=true  -DoutputDirectory=.
-						'''
 
-					
-					} */
 				
 					if (buildShouldUnstable) {
 						currentBuild.result = 'UNSTABLE'
@@ -275,7 +259,7 @@ node {
 						}
 					}
 					
-					if (!buildShouldFail && RELEASE || HOTFIX )  {
+					if (!buildShouldFail && (RELEASE || HOTFIX))  {
 
 						//TODO: if release...start release prepare...
 						//increment version number: MAJOR, MINOR, PATCH according to BRANCH NAME or just check?
@@ -299,15 +283,22 @@ node {
 							}
 						}
 						
+						def author = "jenkins <jenkins@example.com>"
+						def branchName = scmInfo.GIT_BRANCH.replace("origin/", "")
 						stage ("DEPLOY and TAG Release") {    
 							println "CHANGING VERSION NUMBER"
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
+							sh 'git add -u'
+							sh "git commit -m 'commit changed pom.xml' --author '${author}'"
+							
+							
+							sh "git push origin HEAD:${branchName}"
 							
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
 							
 							echo "TAGGING REPOSITORY"						
-							sh 'git tag -a v${releaseVersion} -m "create release tag" '						
+							sh "git tag -a v${releaseVersion} -m 'create release tag' "
 							sh 'git push --tags'
 												
 						}
@@ -325,19 +316,27 @@ node {
 								
 								println("merge feature branch into master branch and push")
 								sh "git checkout master"
-								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
-								sh "git push"
+								sh "git merge --ff-only ${branchName}"								
+								//sh "git push HEAD:master"
 								
 								println("merge feature branch into development branch and push")
 								sh "git checkout development"
-								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
+								sh "git merge --ff-only ${branchName}"	
+								
+								incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";
+								
+								mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
+																
+								
+								sh "git push HEAD:development"	
+																
 								
 								//TODO: increment version number and add -SNAPSHOT
+								//mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
+								//sh "git push"
 								
-								sh "git push"
-								
-								println("delete old feature branch in remote repo")
-								sh "git push origin :${scmInfo.GIT_BRANCH}"
+								//println("delete old feature branch in remote repo")
+								//sh "git push origin :${scmInfo.GIT_BRANCH}"
 							}
 							
 						}                
@@ -348,7 +347,39 @@ node {
 										
 					
 		}  //end withEnv(MY_ENV)
+	  
+}
+
+def incrementVersionNumber(String version, RELEASE) {
+	major, minor, patch = version.tokenize('.');
+		
+	if (patch.contains("-")) {
+			def m = patch =~ /(\d+)-([A-Za-z]+)(\d+)?/
+			println("m: ${m}")
+			def p = m[0][1]
+			println("p: ${p}")
+			def t = m[0][2]
+			println("t: ${t}")
+
+			def ptext = m[0][2]
+			def patchnumber = m[0][1]
+			def postfixnumber = 0
+			if (m[0].size() > 3  && m[0][3] != null) {
+				//contains number
+				postfixnumber = (m[0][3] as Integer) + 1
+			}
+			postfix = "${ptext}${postfixnumber}"
+			patch = patchnumber + "-" + ptext + postfixnumber
+			m = null //
+		return "${major}.${minor}.${patch}";
+	} 		
 	
-	
-    
+	if (RELEASE) {
+		minor = (minor as Integer) + 1;
+		return "${major}.${minor}.${patch}";
+	} else {
+		patch = (patch as Number) + 1;
+		return "${major}.${minor}.${patch}";
+	}
+		
 }
