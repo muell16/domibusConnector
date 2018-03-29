@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.helper;
+package eu.domibus.connector.tools.logging;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;

@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.process.util;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
@@ -138,6 +138,7 @@ public class CreateConfirmationMessageService {
 
         /**
          * switches the toParty with fromParty
+         *  neccessary if the evidence goes in the other direction as the original message
          * @return the builder object
          */
         public ConfirmationMessageBuilder switchFromToParty() {

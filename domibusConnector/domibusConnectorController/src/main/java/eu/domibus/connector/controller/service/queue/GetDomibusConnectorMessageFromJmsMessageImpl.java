@@ -1,9 +1,8 @@
 package eu.domibus.connector.controller.service.queue;
 
-import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
+import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
 
 @Component
 public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusConnectorMessageFromJmsMessage {

@@ -1,11 +1,8 @@
 package eu.domibus.connector.controller.service.impl;
 
-import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
+import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

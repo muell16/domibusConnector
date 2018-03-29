@@ -41,25 +41,18 @@ public class BackendToGatewayMessageProcessorTest {
 
     @Mock
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-
     @Mock
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-
     @Mock
     private DomibusConnectorActionPersistenceService actionPersistenceService;
-
     @Mock
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-
     @Mock
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
-
     @Mock
     private DomibusConnectorSecurityToolkit securityToolkit;
-
     @Mock
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
-    
     @Mock
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
 
@@ -186,7 +179,54 @@ public class BackendToGatewayMessageProcessorTest {
         assertThat(toBackendDeliveredMessages).hasSize(1);
         Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToNationalSystem(eq(epoMessage), eq(submissionRejectionConfirmation));
 
+    }
 
+    @Test
+    public void testProcessMessage_gwSubmissionFailure() throws DomibusConnectorEvidencesToolkitException, DomibusConnectorGatewaySubmissionException {
+        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+
+//        Mockito.doThrow(new DomibusConnectorSecurityException("A security toolkit error occured!"))
+//                .when(securityToolkit).buildContainer(any());
+
+        Mockito.doThrow(new DomibusConnectorGatewaySubmissionException("GW Submission Failure!"))
+                .when(gwSubmissionService).submitToGateway(any());
+
+        DomibusConnectorMessageConfirmation submissionRejectionConfirmation = DomainEntityCreator.createMessageSubmissionRejectionConfirmation();
+//        Mockito.when(evidencesToolkit.createEvidence(any(DomibusConnectorEvidenceType.class), any(DomibusConnectorMessage.class), eq(null), eq(null)))
+//                .thenThrow(new DomibusConnectorEvidencesToolkitException("A error occured!"));
+
+        Mockito.when(evidencesToolkit.createEvidence(eq(DomibusConnectorEvidenceType.SUBMISSION_REJECTION),
+                any(DomibusConnectorMessage.class),
+                eq(DomibusConnectorRejectionReason.OTHER),
+                any(String.class)))
+                .thenReturn(submissionRejectionConfirmation);
+
+        //test method
+        try {
+            backendToGatewayMessageProcessor.processMessage(epoMessage);
+        } catch (DomibusConnectorMessageException ex) {
+            assertThat(ex.getCause()).isOfAnyClassIn(DomibusConnectorGatewaySubmissionException.class);
+        }
+
+        //VERIFY
+        //container should be built!
+        Mockito.verify(securityToolkit, times(1)).buildContainer(eq(epoMessage));
+
+        Mockito.verify(evidencesToolkit, times(1))
+                .createEvidence(eq(DomibusConnectorEvidenceType.SUBMISSION_REJECTION), eq(epoMessage), eq(DomibusConnectorRejectionReason.OTHER),
+                        any(String.class));
+
+        //verify evidence is persisted!
+        Mockito.verify(evidencePersistenceService, times(1)).persistEvidenceForMessageIntoDatabase(eq(epoMessage), eq(submissionRejectionConfirmation));
+
+
+        //verify originalMessage rejection status is persisted
+        Mockito.verify(messagePersistenceService, times(0)).setDeliveredToGateway(any());
+
+
+        //verify rejection is delivered to the backend
+        assertThat(toBackendDeliveredMessages).hasSize(1);
+        Mockito.verify(evidencePersistenceService, times(1)).setEvidenceDeliveredToNationalSystem(eq(epoMessage), eq(submissionRejectionConfirmation));
     }
 
 }

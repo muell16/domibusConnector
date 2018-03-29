@@ -1,17 +1,12 @@
 package eu.domibus.connector.controller.listener;
 
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.TextMessage;
 
-import eu.domibus.connector.controller.helper.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.service.queue.GetDomibusConnectorMessageFromJmsMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
