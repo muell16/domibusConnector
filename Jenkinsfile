@@ -287,8 +287,8 @@ node {
 							println "CHANGING VERSION NUMBER"
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
 							sh 'git add -u'
-							sh 'git commit -m "commit changed pom.xml"'
-							sh 'git push'
+							sh 'git commit -m "commit changed pom.xml" --author "jenkins <jenkins@example.com>"'
+							sh "git push ${scmInfo.GIT_BRANCH}"
 							
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
