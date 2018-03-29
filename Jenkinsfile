@@ -291,11 +291,11 @@ node {
 							sh 'git add -u'
 							sh "git commit -m 'commit changed pom.xml' --author '${author}'"
 							
-							sh "git checkout -b tempbranch"
-							sh "git merge ${scmInfo.GIT_BRANCH}"
-							sh "git push ${scmInfo.GIT_BRANCH}"
+							//sh "git checkout -b tempbranch"
+							//sh "git merge ${scmInfo.GIT_BRANCH}"
+							//sh "git push ${scmInfo.GIT_BRANCH}"
 							
-							//sh "git push HEAD:${branchName}"
+							sh "git push origin HEAD:${branchName}"
 							
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
@@ -319,20 +319,27 @@ node {
 								
 								println("merge feature branch into master branch and push")
 								sh "git checkout master"
-								sh "git merge --ff-only ${branchName} --author '${author}'"								
-								sh "git push HEAD:master"
+								sh "git merge --ff-only ${branchName}"								
+								//sh "git push HEAD:master"
 								
 								println("merge feature branch into development branch and push")
 								sh "git checkout development"
-								sh "git merge --ff-only ${branchName} --author '${author}'"								
+								sh "git merge --ff-only ${branchName}"	
 								
+								incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";
+								
+								mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
+																
+								
+								sh "git push HEAD:development"	
+																
 								
 								//TODO: increment version number and add -SNAPSHOT
 								//mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
 								//sh "git push"
 								
-								println("delete old feature branch in remote repo")
-								sh "git push origin :${scmInfo.GIT_BRANCH}"
+								//println("delete old feature branch in remote repo")
+								//sh "git push origin :${scmInfo.GIT_BRANCH}"
 							}
 							
 						}                
@@ -343,7 +350,39 @@ node {
 										
 					
 		}  //end withEnv(MY_ENV)
+	  
+}
+
+def incrementVersionNumber(String version, RELEASE) {
+	major, minor, patch = version.tokenize('.');
+		
+	if (patch.contains("-")) {
+			def m = patch =~ /(\d+)-([A-Za-z]+)(\d+)?/
+			println("m: ${m}")
+			def p = m[0][1]
+			println("p: ${p}")
+			def t = m[0][2]
+			println("t: ${t}")
+
+			def ptext = m[0][2]
+			def patchnumber = m[0][1]
+			def postfixnumber = 0
+			if (m[0].size() > 3  && m[0][3] != null) {
+				//contains number
+				postfixnumber = (m[0][3] as Integer) + 1
+			}
+			postfix = "${ptext}${postfixnumber}"
+			patch = patchnumber + "-" + ptext + postfixnumber
+			m = null //
+		return "${major}.${minor}.${patch}";
+	} 		
 	
-	
-    
+	if (RELEASE) {
+		minor = (minor as Integer) + 1;
+		return "${major}.${minor}.${patch}";
+	} else {
+		patch = (patch as Number) + 1;
+		return "${major}.${minor}.${patch}";
+	}
+		
 }
