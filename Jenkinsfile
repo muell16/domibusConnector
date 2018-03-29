@@ -234,23 +234,7 @@ node {
 						}
 					}
 					
-					/*
-						println "download tomcat"
-						sh 'mkdir testDeploy'
-						sh '''mvn dependency:get -DgroupId=org.apache.tomcat -DartifactId=tomcat -Dversion=7.0.82 -Dpackaging=zip
-								mvn dependency:copy -Dartifact=org.apache.tomcat:tomcat:7.0.82:zip -Dmdep.stripVersion=true -DoutputDirectory=./testDeploy'''
-								
-						//sh 'cd testDeploy'
-						sh 'ls -la testDeploy'
-						sh 'cd testDeploy; unzip tomcat.zip'
-						
-						println "download testdb"
-						sh '''mvn dependency:get -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3 ; 
-							mvn dependency:copy -DgroupId=ch.vorburger.mariaDB4j -DartifactId=mariaDB4j-app -Dversion=2.2.3  -Dmdep.stripVersion=true  -DoutputDirectory=.
-						'''
 
-					
-					} */
 				
 					if (buildShouldUnstable) {
 						currentBuild.result = 'UNSTABLE'
@@ -275,7 +259,7 @@ node {
 						}
 					}
 					
-					if (!buildShouldFail && RELEASE || HOTFIX )  {
+					if (!buildShouldFail && (RELEASE || HOTFIX))  {
 
 						//TODO: if release...start release prepare...
 						//increment version number: MAJOR, MINOR, PATCH according to BRANCH NAME or just check?
@@ -302,12 +286,15 @@ node {
 						stage ("DEPLOY and TAG Release") {    
 							println "CHANGING VERSION NUMBER"
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
+							sh 'git add -u'
+							sh 'git commit -m "commit changed pom.xml"'
+							sh 'git push'
 							
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
 							
 							echo "TAGGING REPOSITORY"						
-							sh 'git tag -a v${releaseVersion} -m "create release tag" '						
+							sh "git tag -a v${releaseVersion} -m 'create release tag' "
 							sh 'git push --tags'
 												
 						}
