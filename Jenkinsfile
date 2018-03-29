@@ -351,7 +351,7 @@ node {
 }
 
 def incrementVersionNumber(String version, RELEASE) {
-	major, minor, patch = version.tokenize('.');
+	(major, minor, patch) = version.tokenize('.');
 		
 	if (patch.contains("-")) {
 			def m = patch =~ /(\d+)-([A-Za-z]+)(\d+)?/
