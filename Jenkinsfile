@@ -283,13 +283,19 @@ node {
 							}
 						}
 						
+						def author = "jenkins <jenkins@example.com>"
+						def branchName = scmInfo.GIT_BRANCH.replace("origin/", "")
 						stage ("DEPLOY and TAG Release") {    
 							println "CHANGING VERSION NUMBER"
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
 							sh 'git add -u'
-							sh 'git commit -m "commit changed pom.xml" --author "jenkins <jenkins@example.com>"'
-							def branchName = scmInfo.GIT_BRANCH.replace("origin/", "")
-							sh "git push HEAD:${branchName}"
+							sh "git commit -m 'commit changed pom.xml' --author '${author}'"
+							
+							sh "git checkout -b tempbranch"
+							sh "git merge ${scmInfo.GIT_BRANCH}"
+							sh "git push ${scmInfo.GIT_BRANCH}"
+							
+							//sh "git push HEAD:${branchName}"
 							
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
@@ -313,16 +319,17 @@ node {
 								
 								println("merge feature branch into master branch and push")
 								sh "git checkout master"
-								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
-								sh "git push"
+								sh "git merge --ff-only ${branchName} --author '${author}'"								
+								sh "git push HEAD:master"
 								
 								println("merge feature branch into development branch and push")
 								sh "git checkout development"
-								sh "git merge --ff-only ${scmInfo.GIT_BRANCH}"								
+								sh "git merge --ff-only ${branchName} --author '${author}'"								
+								
 								
 								//TODO: increment version number and add -SNAPSHOT
-								
-								sh "git push"
+								//mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
+								//sh "git push"
 								
 								println("delete old feature branch in remote repo")
 								sh "git push origin :${scmInfo.GIT_BRANCH}"
