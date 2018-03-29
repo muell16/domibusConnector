@@ -288,7 +288,8 @@ node {
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
 							sh 'git add -u'
 							sh 'git commit -m "commit changed pom.xml" --author "jenkins <jenkins@example.com>"'
-							sh "git push ${scmInfo.GIT_BRANCH}"
+							def branchName = scmInfo.GIT_BRANCH.replace("origin/", "")
+							sh "git push HEAD:${branchName}"
 							
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
