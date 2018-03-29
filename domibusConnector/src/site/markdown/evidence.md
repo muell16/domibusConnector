@@ -8,3 +8,4 @@ Following evidences are used by the connector/e-codex:
 
  * SUBMISSION_ACCEPTANCE: The initial business message has been successfully submitted to the Gateway
  * SUBMISSION_REJECTION: The connector was not able to submit the message to the Gateway, due the message is invalid, the asic-container could not be created, ...
+ * TODO: add missing evidences...and link them to the sequence diagramm

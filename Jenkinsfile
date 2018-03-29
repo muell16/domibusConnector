@@ -291,9 +291,6 @@ node {
 							sh 'git add -u'
 							sh "git commit -m 'commit changed pom.xml' --author '${author}'"
 							
-							//sh "git checkout -b tempbranch"
-							//sh "git merge ${scmInfo.GIT_BRANCH}"
-							//sh "git push ${scmInfo.GIT_BRANCH}"
 							
 							sh "git push origin HEAD:${branchName}"
 							
