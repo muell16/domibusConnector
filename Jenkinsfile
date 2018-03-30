@@ -302,8 +302,9 @@ node {
 												
 						}
 						
-						stage ("repo cleanup") {
-							try {
+						try {
+							stage ("repo cleanup") {
+							
 								//TODO: clean up
 								//TODO: delete RELEASE / HOTFIX branch from repo
 								//TODO: merge RELEASE / HOTFIX Branch back to master?
@@ -337,12 +338,10 @@ node {
 									
 									//println("delete old feature branch in remote repo")
 									//sh "git push origin :${scmInfo.GIT_BRANCH}"
-								}
-								
-							} catch (e) {                
-							} 
-						
-						}
+								}											
+							}
+						} catch (e) {                
+						} 	
 					}     
 							
 							
