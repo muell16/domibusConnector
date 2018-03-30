@@ -315,29 +315,18 @@ node {
 
 								if (RELEASE || HOTFIX) {
 									
+									
+									println("merge feature branch into development branch, increment to SNAPSHOT version and push")
+									sh "git checkout development"
+									sh "git merge --ff-only origin/${branchName}"										
+									incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";									
+									mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"																										
+									sh "git push HEAD:development"	
+									
+																	
 									println("merge feature branch into master branch and push")
 									sh "git checkout master"
 									sh "git merge --ff-only origin/${branchName}"								
-									//sh "git push HEAD:master"
-									
-									println("merge feature branch into development branch and push")
-									sh "git checkout development"
-									sh "git merge --ff-only origin/${branchName}"	
-									
-									incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";
-									
-									mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
-																	
-									
-									sh "git push HEAD:development"	
-																	
-									
-									//TODO: increment version number and add -SNAPSHOT
-									//mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
-									//sh "git push"
-									
-									//println("delete old feature branch in remote repo")
-									//sh "git push origin :${scmInfo.GIT_BRANCH}"
 								}											
 							}
 						} catch (e) {                
