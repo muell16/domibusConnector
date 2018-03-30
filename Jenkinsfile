@@ -321,6 +321,8 @@ node {
 									sh "git merge --ff-only origin/${branchName}"										
 									incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";									
 									mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"																										
+									sh 'git add -u'
+									sh "git commit -m 'commit changed pom.xml' --author '${author}'"
 									sh "git push origin HEAD:development"	
 									
 																	
