@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0-SNAPSHOT</version>
+        <version>4.0.0-alpha4</version>
     </parent>
     <name>domibusConnectorGatewayLink</name>
     <artifactId>domibusConnectorGatewayLink</artifactId>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPIlib</artifactId>
-            <version>4.0-SNAPSHOT</version>
+            <version>4.0.0-alpha4</version>
         </dependency>
     </dependencies>
 
