@@ -321,12 +321,13 @@ node {
 									sh "git merge --ff-only origin/${branchName}"										
 									incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";									
 									mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"																										
-									sh "git push HEAD:development"	
+									sh "git push origin HEAD:development"	
 									
 																	
 									println("merge feature branch into master branch and push")
 									sh "git checkout master"
 									sh "git merge --ff-only origin/${branchName}"								
+									//sh "git push origin HEAD:master"
 								}											
 							}
 						} catch (e) {                
