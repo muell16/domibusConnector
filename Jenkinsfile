@@ -290,12 +290,11 @@ node {
 							mvn "build-helper:parse-version versions:set -DnewVersion=${releaseVersion}"
 							sh 'git add -u'
 							sh "git commit -m 'commit changed pom.xml' --author '${author}'"
-							
-							
-							sh "git push origin HEAD:${branchName}"
-							
+																										
 							echo "STARTING DEPLOY"
 							mvn "clean deploy"
+							
+							sh "git push origin HEAD:${branchName}"
 							
 							echo "TAGGING REPOSITORY"						
 							sh "git tag -a v${releaseVersion} -m 'create release tag' "
@@ -304,42 +303,46 @@ node {
 						}
 						
 						stage ("repo cleanup") {
-							//TODO: clean up
-							//TODO: delete RELEASE / HOTFIX branch from repo
-							//TODO: merge RELEASE / HOTFIX Branch back to master?
-							//TODO: merge release into dev with snapshot version or manual?
-							
-							//switch to master branch    
-							//sh "git branch -d ${scmInfo.GIT_BRANCH}" //delete release branch (only local!)
+							try {
+								//TODO: clean up
+								//TODO: delete RELEASE / HOTFIX branch from repo
+								//TODO: merge RELEASE / HOTFIX Branch back to master?
+								//TODO: merge release into dev with snapshot version or manual?
+								
+								//switch to master branch    
+								//sh "git branch -d ${scmInfo.GIT_BRANCH}" //delete release branch (only local!)
 
-							if (RELEASE || HOTFIX) {
+								if (RELEASE || HOTFIX) {
+									
+									println("merge feature branch into master branch and push")
+									sh "git checkout master"
+									sh "git merge --ff-only origin/${branchName}"								
+									//sh "git push HEAD:master"
+									
+									println("merge feature branch into development branch and push")
+									sh "git checkout development"
+									sh "git merge --ff-only origin/${branchName}"	
+									
+									incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";
+									
+									mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
+																	
+									
+									sh "git push HEAD:development"	
+																	
+									
+									//TODO: increment version number and add -SNAPSHOT
+									//mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
+									//sh "git push"
+									
+									//println("delete old feature branch in remote repo")
+									//sh "git push origin :${scmInfo.GIT_BRANCH}"
+								}
 								
-								println("merge feature branch into master branch and push")
-								sh "git checkout master"
-								sh "git merge --ff-only ${branchName}"								
-								//sh "git push HEAD:master"
-								
-								println("merge feature branch into development branch and push")
-								sh "git checkout development"
-								sh "git merge --ff-only ${branchName}"	
-								
-								incrementedVersion = incrementVersionNumber(releaseVersion, RELEASE) + "-SNAPSHOT";
-								
-								mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
-																
-								
-								sh "git push HEAD:development"	
-																
-								
-								//TODO: increment version number and add -SNAPSHOT
-								//mvn "build-helper:parse-version versions:set -DnewVersion=${incrementedVersion}"
-								//sh "git push"
-								
-								//println("delete old feature branch in remote repo")
-								//sh "git push origin :${scmInfo.GIT_BRANCH}"
-							}
-							
-						}                
+							}                
+						} catch (e) {
+						
+						}
 					}     
 							
 							
