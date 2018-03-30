@@ -339,8 +339,8 @@ node {
 									//sh "git push origin :${scmInfo.GIT_BRANCH}"
 								}
 								
-							}                
-						} catch (e) {
+							} catch (e) {                
+							} 
 						
 						}
 					}     
