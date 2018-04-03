@@ -89,6 +89,8 @@ node {
 			withEnv(MY_ENV) {
 				stage ("Checkout") {
 					
+					sh 'git config --global credential.helper cache'
+					
 					scmInfo = checkout([
 							$class: 'GitSCM',
 							branches: scm.branches,
