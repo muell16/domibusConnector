@@ -89,7 +89,9 @@ node {
 			withEnv(MY_ENV) {
 				stage ("Checkout") {
 					
-					sh 'git config --global credential.helper cache'
+					sh 'git config credential.helper cache'
+					
+					//TODO: set git username password
 					
 					scmInfo = checkout([
 							$class: 'GitSCM',
