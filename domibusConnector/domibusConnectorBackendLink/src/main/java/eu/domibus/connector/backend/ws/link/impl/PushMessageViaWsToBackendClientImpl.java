@@ -79,8 +79,6 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
         DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
         DomibusConnectorBackendClientInfo backendClientInfoByName = backendMessage.getBackendClientInfo();
 
-        //initialize BigData
-        message = bigDataMessageService.loadAllBigFilesFromMessage(message);
 
         //transform message to transition
         message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
@@ -95,9 +93,10 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
                 LOGGER.debug("#push: message with id [{}] sucessfully delivered to client [{}], client return id [{}]",
                         message.getConnectorMessageId(), backendClientInfoByName.getBackendName(), backendMessageId);
 
-                messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+                backendSubmissionService.processMessageAfterDeliveredToBackend(message);
             } else {
-                throw new RuntimeException("error occured during push...!");
+                String error = String.format("Error occured during push: [%s]", messageResponse.getResultMessage());
+                throw new RuntimeException(error);
                 //TODO: handle message error
             }
 
@@ -108,19 +107,6 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
         }
     }
 
-
-
-
-//    public void push(String connectorMessageId, String backendClientName) {
-//
-//        //load message from persistence
-//        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(connectorMessageId);
-//
-//        //load get backend address, cert,
-//        DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientPersistenceService.getEnabledBackendClientInfoByName(backendClientName);
-//
-//
-//    }
         
     public DomibsConnectorAcknowledgementType pushMessageToBackendClient(DomibusConnectorMessageType transitionMessage, DomibusConnectorBackendClientInfo backendClientInfoByName) {
         DomibusConnectorBackendDeliveryWebService wsClient = webServiceClientFactory.createWsClient(backendClientInfoByName);
