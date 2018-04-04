@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 /**
  * Responsible for setting originalMessage as delivered to national system
  *  *) sets the correct state in persistence
- *  *) creates the correct evidences and sends them
  *
  */
 @Component
@@ -38,20 +37,6 @@ public class MessageDeliveredToNationalSystemProcessor implements DomibusConnect
 
     @Override
     public void processMessage(DomibusConnectorMessage message) {
-        if (!DomainModelHelper.isEvidenceMessage(message)) {
 
-            LOGGER.debug("#processMessage: Appending DELIVERY evidence to message");
-
-            CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper confirmationMessageWrapper = confirmationMessageService
-                    .createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.DELIVERY)
-                    .build();
-            confirmationMessageWrapper.persistEvidenceToMessage();
-            DomibusConnectorMessage deliveryConfirmationMessage = confirmationMessageWrapper.getEvidenceMessage();
-            try {
-                gwSubmissionService.submitToGateway(deliveryConfirmationMessage);
-            } catch (DomibusConnectorGatewaySubmissionException e) {
-                LOGGER.error("Error while sending Evidence originalMessage [{}] to GW", deliveryConfirmationMessage);
-            }
-        }
     }
 }

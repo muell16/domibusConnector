@@ -65,7 +65,7 @@ public class  DomibusConnectorWsBackendImplTest {
         domibusConnectorBackendImpl.setWsContext(webServiceContext);
         domibusConnectorBackendImpl.setBackendClientInfoPersistenceService(backendClientInfoPersistenceService);
         domibusConnectorBackendImpl.setMessageToBackendClientWaitQueue(messageToBackendClientWaitQueue);
-        domibusConnectorBackendImpl.setMessagePersistenceService(messagePersistenceService);
+
         domibusConnectorBackendImpl.setBackendSubmissionService(backendSubmissionService);
 
 
@@ -75,7 +75,7 @@ public class  DomibusConnectorWsBackendImplTest {
         DomibusConnectorBigDataPersistenceServiceMemoryImpl bigDataPersistenceService = new DomibusConnectorBigDataPersistenceServiceMemoryImpl();
         domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceServiceImpl());
         ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);
-        domibusConnectorBackendImpl.setDomibusConnectorPersistAllBigDataOfMessageService(domibusConnectorPersistAllBigDataOfMessageService);
+
 
 
         backendWebService = domibusConnectorBackendImpl;
@@ -101,8 +101,7 @@ public class  DomibusConnectorWsBackendImplTest {
         
         assertThat(requestMessages).isNotNull();
         assertThat(requestMessages.getMessages()).as("2 messages are expected").hasSize(2);
-
-        Mockito.verify(domibusConnectorPersistAllBigDataOfMessageService, times(2)).loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class));
+        
     }
 
     @Test

@@ -16,6 +16,10 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * this service handles the message transport from controller to the backend
+ *
+ */
 @Service
 public class BackendInternalToControllerMessageFlow implements DomibusConnectorBackendInternalDeliverToController {
 
@@ -91,7 +95,14 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     @Override
     public DomibusConnectorMessage processMessageBeforeDeliverToBackend(DomibusConnectorMessage message) {
-        return backendToControllerSubmissionService.prepareMessageForNationalDelivery(message);
+        message = backendToControllerSubmissionService.prepareMessageForNationalDelivery(message);
+        return bigDataPersistence.loadAllBigFilesFromMessage(message);
+    }
+
+    @Override
+    public DomibusConnectorMessage processMessageAfterDeliveredToBackend(DomibusConnectorMessage message) {
+        messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+        return message;
     }
 
 }

@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
- * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ * Handles transmitting messages (push/pull) from and to backendClients over webservice
+ *  pushing messages to backendClients are handled in different service: {@link PushMessageViaWsToBackendClientImpl}
+ *
  */
 @Service("connectorBackendImpl")
 public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWebService {
@@ -40,10 +42,6 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
 
     private MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
-
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
-
-    private DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
 
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
     
@@ -60,16 +58,6 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     @Autowired
     public void setMessageToBackendClientWaitQueue(MessageToBackendClientWaitQueue messageToBackendClientWaitQueue) {
         this.messageToBackendClientWaitQueue = messageToBackendClientWaitQueue;
-    }
-
-    @Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
-        this.messagePersistenceService = messagePersistenceService;
-    }
-
-    @Autowired
-    public void setDomibusConnectorPersistAllBigDataOfMessageService(DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService) {
-        this.domibusConnectorPersistAllBigDataOfMessageService = domibusConnectorPersistAllBigDataOfMessageService;
     }
 
     @Autowired
@@ -93,15 +81,13 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         messageIds.stream()
                 .forEach((message) -> {
                     messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
-                    messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+                    backendSubmissionService.processMessageAfterDeliveredToBackend(message);
                 });
-                
         return messagesType;
     }
     
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
         message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-        message = domibusConnectorPersistAllBigDataOfMessageService.loadAllBigFilesFromMessage(message);
         DomibusConnectorMessageType transformDomainToTransition = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
         return transformDomainToTransition;        
     }

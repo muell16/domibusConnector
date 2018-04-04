@@ -87,9 +87,21 @@ node {
 			
 			
 			withEnv(MY_ENV) {
+			
+				//gitPush = { arg -> 
+				//	withCredentials([usernamePassword(credentialsId: 'jenkinsuser_git', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME' )]) {
+				//		
+				//	}
+				//	//println "git push ${arg}"
+				//	
+				//	//TODO: set git credentials!
+				//	
+				//	sh "git ${arg}"
+				//}
+			
 				stage ("Checkout") {
 					
-					sh 'git config credential.helper cache'
+					//sh 'git config credential.helper cache'
 					
 					//TODO: set git username password
 					
@@ -100,6 +112,8 @@ node {
 							extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
 							userRemoteConfigs: scm.userRemoteConfigs,
 					])
+			 
+					//TODO: git push in extra function withCredentials!
 			 
 					println "scm : ${scmInfo}"
 					println "${scmInfo.GIT_COMMIT}"
