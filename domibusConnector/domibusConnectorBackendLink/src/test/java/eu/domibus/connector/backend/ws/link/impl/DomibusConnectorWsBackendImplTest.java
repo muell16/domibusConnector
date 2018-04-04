@@ -101,7 +101,7 @@ public class  DomibusConnectorWsBackendImplTest {
         
         assertThat(requestMessages).isNotNull();
         assertThat(requestMessages.getMessages()).as("2 messages are expected").hasSize(2);
-        
+
     }
 
     @Test
