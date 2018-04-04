@@ -43,7 +43,7 @@ import org.springframework.test.context.TestPropertySource;
  * and DSSECodexContainerService is loading data from remote location
  * (the trust lists)
  * 
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={DomibusConnectorSecurityToolkitAuthITCase.TestContextConfiguration.class})

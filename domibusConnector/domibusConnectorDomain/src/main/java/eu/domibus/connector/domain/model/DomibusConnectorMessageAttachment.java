@@ -13,7 +13,6 @@ import org.springframework.core.style.ToStringCreator;
  * "text/xml", "application/pdf"  description:
  * @author riederb
  * @version 1.0
- * @updated 29-Dez-2017 10:12:48
  */
 public class DomibusConnectorMessageAttachment implements Serializable {
 

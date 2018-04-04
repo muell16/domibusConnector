@@ -43,7 +43,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 @RunWith(SpringRunner.class)
 @Import(WSBackendLinkSendReceiveITCase.TestConfiguration.class)

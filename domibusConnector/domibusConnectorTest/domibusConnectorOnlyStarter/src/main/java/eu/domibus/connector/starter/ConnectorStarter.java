@@ -7,7 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 public class ConnectorStarter {

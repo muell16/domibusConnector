@@ -44,13 +44,12 @@ import org.springframework.util.StreamUtils;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 
 public class MsgContentPersistenceServiceTest {
-    
-    //TODO: write unit tests 
+
 
     @Mock
     private DomibusConnectorMsgContDao msgContDao;

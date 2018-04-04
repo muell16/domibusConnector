@@ -12,7 +12,6 @@ import org.springframework.core.style.ToStringCreator;
  * object.
  * @author riederb
  * @version 1.0
- * @updated 29-Dez-2017 10:12:49
  */
 public class DomibusConnectorMessageDocument implements Serializable  {
 
@@ -59,7 +58,7 @@ public class DomibusConnectorMessageDocument implements Serializable  {
 
 	/**
 	 * 
-	 * @param newVal
+	 * @param newVal the hashValue
 	 */
 	public void setHashValue(String newVal){
 		this.hashValue = newVal;

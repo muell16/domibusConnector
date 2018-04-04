@@ -9,6 +9,9 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * Represents a reference to a storage system for big files
+ *
+ * If you extends this class make SURE that all additional fields are serializable
+ * or transient!
  */
 public class DomibusConnectorBigDataReference implements DataSource, Serializable {
 
@@ -107,21 +110,6 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
         return true;
     }
 
-//
-//    @Override
-//    public void readExternal(ObjectInput in) throws IOException {
-//        setStorageIdReference(in.readUTF());
-//        setMimetype(in.readUTF());
-//        setName(in.readUTF());
-//    }
-//
-//
-//    @Override
-//    public void writeExternal(ObjectOutput out) throws IOException {
-//        out.writeUTF(getStorageIdReference());
-//        out.writeUTF(this.mimetype);
-//        out.writeUTF(this.name);
-//    }
 
 
 }

@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
 
 /**
  *
- * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ *
  */
 public class DomainEntityCreator {
 

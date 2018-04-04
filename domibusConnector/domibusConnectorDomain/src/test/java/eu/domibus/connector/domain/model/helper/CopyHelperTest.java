@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class CopyHelperTest {
 

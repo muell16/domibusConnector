@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  *
@@ -23,9 +24,9 @@ public interface DomibusConnectorMessagePersistenceService {
      * marks the message as confirmed
      * @throws IllegalArgumentException  is thrown, if the message is null,
      *  or the message does not contain a db id
-     * @throws RuntimeException - if the message is not sucessfully marked as
+     * @throws RuntimeException - if the message is not successfully marked as
      * confirmed
-     * @param message
+     * @param message - the message to confirm
      */
     void confirmMessage(DomibusConnectorMessage message);
 
@@ -38,18 +39,19 @@ public interface DomibusConnectorMessagePersistenceService {
     DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
 
     /**
-     * TODO!
-     * @param ebmsMessageId
-     * @return
+     * @param ebmsMessageId - the ebmsId of the message
+     * @return the found message or null if no message found with this ebmsId
      */
+    @Nullable
     DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId);
 
     /**
      * finds the message by the national id
      * the nationalId is not set if the message was received from the gw
-     * @param nationalMessageId
-     * @return
+     * @param nationalMessageId - the nationalMessageId
+     * @return the found message or null if no message found with this nationalMessageId
      */
+    @Nullable
     DomibusConnectorMessage findMessageByNationalId(String nationalMessageId);
 
     /**
@@ -101,7 +103,7 @@ public interface DomibusConnectorMessagePersistenceService {
      *
      * @param message - the message
      * @return the message with eventually updated fields
-     * @throws PersistenceException
+     * @throws PersistenceException in case of an error
      */
     DomibusConnectorMessage mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException;
 
@@ -121,7 +123,7 @@ public interface DomibusConnectorMessagePersistenceService {
      * marks the message as rejected
      * @throws IllegalArgumentException is thrown, if the message is null,
      *  or the message does not contain a connector id
-     * @trows RuntimeException - if the message is not successfully marked as
+     * @throws RuntimeException - if the message is not successfully marked as
      * rejected
      * @param message - the message
      */

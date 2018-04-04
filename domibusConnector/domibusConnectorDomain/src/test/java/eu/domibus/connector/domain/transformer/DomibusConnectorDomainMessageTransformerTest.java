@@ -35,20 +35,13 @@ import org.springframework.util.StreamUtils;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class DomibusConnectorDomainMessageTransformerTest {
     
     public DomibusConnectorDomainMessageTransformerTest() {
     }
 
-//    @Test(expected=CannotBeMappedToTransitionException.class)
-//    public void testTransformDomainToTransition_nullProvided_shouldThrowIllegalArgumentException() {
-//        transformDomainToTransition(null);
-//    }
-    
-    
-    //TODO: test null message content!
     
     @Test
     public void testTransformDomainToTransition() {

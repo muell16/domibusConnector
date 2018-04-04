@@ -4,48 +4,27 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
-import eu.domibus.connector.domain.transformer.util.InputStreamDataSource;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.DomibusConnectorActionType;
-import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
-import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageAttachmentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageConfirmationType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDetailsType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
-import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
-import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import eu.domibus.connector.domain.transition.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StreamUtils;
 
+import javax.activation.DataHandler;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- * @author riederb
- * @version 1.0
- * @created 29-Dez-2017 11:59:43
+ * Transforms the TransitionObjects to the internal domainModel
+ *
+ *
  */
 public class DomibusConnectorDomainMessageTransformer {
 
@@ -241,22 +220,7 @@ public class DomibusConnectorDomainMessageTransformer {
         return messageContentTO;
     }
     
-    /**
-     * converts a byte[] by creating a copy of the provided byte array
-     * (because byte array is not immutable) and wrapping this byte array in an
-     * inputStream which is provided to StreamSource
-     * 
-     * There are no checks of the byte[] content, if its a valid Source ressource!
-     * 
-     * @param array - the byte array
-     * @return - the Source
-     */
-    static @Nonnull Source convertByteArrayToSource(@Nonnull byte[] array) {
-        StreamSource streamSource = new StreamSource(new ByteArrayInputStream(
-                //byte[] is copied because domain model is not immutable
-                Arrays.copyOf(array, array.length)));       
-        return streamSource;
-    }
+
     
     /**
      * converts a byte[] by creating a copy of the provided byte array
@@ -395,7 +359,8 @@ public class DomibusConnectorDomainMessageTransformer {
 
 	/**
 	 * 
-	 * @param transitionMessage
+	 * @param transitionMessage - the TransitionMessage
+     * @return the domainModel message
 	 */
 	public static @Nonnull DomibusConnectorMessage transformTransitionToDomain(final @Nonnull DomibusConnectorMessageType transitionMessage){
 	    LOGGER.trace("#transformTransitionToDomain: transforming transition message object [{}] to domain message object", transitionMessage);

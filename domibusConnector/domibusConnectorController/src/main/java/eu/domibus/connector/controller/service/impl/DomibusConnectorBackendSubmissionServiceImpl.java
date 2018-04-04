@@ -32,10 +32,4 @@ public class DomibusConnectorBackendSubmissionServiceImpl implements DomibusConn
 		putMessageOnQueue.putMessageOnMessageQueue(message);
 	}
 
-	@Override
-	public DomibusConnectorMessage prepareMessageForNationalDelivery(DomibusConnectorMessage message) {
-		messageDeliveredToNationalSystemProcessor.processMessage(message);
-		return message;
-	}
-
 }

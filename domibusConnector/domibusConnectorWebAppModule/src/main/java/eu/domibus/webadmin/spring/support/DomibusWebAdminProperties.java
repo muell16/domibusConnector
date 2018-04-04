@@ -6,8 +6,9 @@ import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 /**
- * Property POJO to support configuration metadata: {@link https://docs.spring.io/spring-boot/docs/current/reference/html/configuration-metadata.html}
- * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ * Property POJO to support configuration metadata:
+ * @see <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/configuration-metadata.html">Spring Boot Configuration Metadata</a>
+ *
  */
 @ConfigurationProperties(prefix="webadmin")
 @Component

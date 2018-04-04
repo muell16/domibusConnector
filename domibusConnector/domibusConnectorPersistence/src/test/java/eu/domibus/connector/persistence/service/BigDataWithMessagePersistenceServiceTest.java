@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class BigDataWithMessagePersistenceServiceTest {
     

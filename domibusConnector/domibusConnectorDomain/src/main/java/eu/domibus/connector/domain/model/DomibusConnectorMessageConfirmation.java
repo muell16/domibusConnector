@@ -4,27 +4,29 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import java.io.Serializable;
 import org.springframework.core.style.ToStringCreator;
 
+import javax.annotation.Nullable;
+
 /**
  * This is an object that internally represents the evidences for a message. It
  * contains the evidence itself as a byte[] containing a structured document, and
- * an enum type {@link EvidenceType} which describes the evidence type. To be able
+ * an enum type {@link DomibusConnectorEvidenceType} which describes the evidence type. To be able
  * to connect the confirmation to a message it should be instantiated and added to
  * the {@link DomibusConnectorMessage} object.
  * @author riederb
  * @version 1.0
- * @created 29-Dez-2017 10:15:46
+ *
  */
 public class DomibusConnectorMessageConfirmation implements Serializable {
 
 	private DomibusConnectorEvidenceType evidenceType;
-	private byte evidence[];
+	private @Nullable byte evidence[];
 
 	/**
 	 * 
-	 * @param evidenceType
+	 * @param evidenceType the evidenceType
 	 * @param evidence    evidence
 	 */
-	public DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType evidenceType, byte[] evidence){
+	public DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType evidenceType, @Nullable byte[] evidence){
 	   this.evidenceType = evidenceType;
 	   this.evidence = evidence;
 	}
@@ -53,7 +55,7 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 		this.evidenceType = evidenceType;
 	}
 
-	public byte[] getEvidence(){
+	public @Nullable  byte[] getEvidence(){
 		return this.evidence;
 	}
 
@@ -61,7 +63,7 @@ public class DomibusConnectorMessageConfirmation implements Serializable {
 	 * 
 	 * @param evidence    evidence
 	 */
-	public void setEvidence(byte[] evidence){
+	public void setEvidence(@Nullable byte[] evidence){
 		this.evidence = evidence;
 	}
 

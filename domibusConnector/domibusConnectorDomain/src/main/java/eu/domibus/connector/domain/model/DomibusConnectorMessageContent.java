@@ -10,7 +10,7 @@ import org.springframework.core.style.ToStringCreator;
  * most of the {@link DomibusConnectorAction} require.
  * @author riederb
  * @version 1.0
- * @updated 29-Dez-2017 10:12:49
+ * updated 29-Dez-2017 10:12:49
  */
 public class DomibusConnectorMessageContent implements Serializable {
 

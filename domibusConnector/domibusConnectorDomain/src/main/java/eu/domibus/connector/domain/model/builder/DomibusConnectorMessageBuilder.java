@@ -44,7 +44,7 @@ public class DomibusConnectorMessageBuilder {
     /**
      * 
      *  is required!
-     * @param msgDetails the mesageDetails
+     * @param msgDetails the messageDetails
      * @return the builder
      */
     public DomibusConnectorMessageBuilder setMessageDetails(DomibusConnectorMessageDetails msgDetails) {
@@ -115,7 +115,7 @@ public class DomibusConnectorMessageBuilder {
     
     /**
      * 
-     * @return 
+     * @return the created DomibusConnectorMessage
      */
     public DomibusConnectorMessage build() {
         DomibusConnectorMessage message;

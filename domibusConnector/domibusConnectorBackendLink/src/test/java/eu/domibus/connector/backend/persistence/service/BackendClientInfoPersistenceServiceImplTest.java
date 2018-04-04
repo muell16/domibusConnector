@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class BackendClientInfoPersistenceServiceImplTest {
 

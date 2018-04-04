@@ -47,7 +47,7 @@ import java.util.concurrent.BlockingQueue;
  * so message tests between the ports can be done...
  *  colorizing the outputs from the different spring contexts is not working!
  * 
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class BackendLinkWsTestMessageFlowITCase {
 

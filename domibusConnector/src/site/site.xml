@@ -13,7 +13,7 @@
     </links>
 
     <menu name="domibus WebConnector">
-      <item name="Overview" href="index.html" />
+      <item name="Module" href="modules.html" />
       <item name="Installation" href="installation.html"/>
       <item name="Deploy on Tomcat" href="tomcat_deploy.html"/>
       <item name="Deploy on Weblogic" href="weblogic_deploy.html" />

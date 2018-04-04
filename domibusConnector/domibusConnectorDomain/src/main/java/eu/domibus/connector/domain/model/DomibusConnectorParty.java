@@ -7,7 +7,6 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * @author riederb
  * @version 1.0
- * @created 29-Dez-2017 10:05:58
  */
 public class DomibusConnectorParty implements Serializable {
 
@@ -17,8 +16,8 @@ public class DomibusConnectorParty implements Serializable {
 
 	/**
 	 * 
-	 * @param partyId
-	 * @param partyIdType
+	 * @param partyId partyId
+	 * @param partyIdType partyIdType
 	 * @param role    role
 	 */
 	public DomibusConnectorParty(final String partyId, final String partyIdType, final String role){

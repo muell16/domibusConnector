@@ -11,7 +11,6 @@ import java.io.Serializable;
  * represented is needed to be able to send the message to other participants.
  * @author riederb
  * @version 1.0
- * @updated 29-Dez-2017 10:12:49
  */
 public class DomibusConnectorMessageDetails implements Serializable {
 

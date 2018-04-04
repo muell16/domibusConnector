@@ -20,7 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
 

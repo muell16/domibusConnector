@@ -37,7 +37,7 @@ import org.mockito.stubbing.Answer;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class  DomibusConnectorWsBackendImplTest {
 

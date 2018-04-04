@@ -7,7 +7,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class DomainModelHelperTest {
     

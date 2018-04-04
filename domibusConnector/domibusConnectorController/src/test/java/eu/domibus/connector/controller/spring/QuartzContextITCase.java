@@ -34,7 +34,7 @@ import org.junit.Ignore;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 @Ignore("tests fail because quartz registers as jmx bean twice - which leads to AlreadyRegisteredException")
 public class QuartzContextITCase {

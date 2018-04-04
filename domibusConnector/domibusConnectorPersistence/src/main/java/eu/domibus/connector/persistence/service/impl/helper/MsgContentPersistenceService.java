@@ -1,30 +1,13 @@
 package eu.domibus.connector.persistence.service.impl.helper;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageContentBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.model.helper.CopyHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont;
 import eu.domibus.connector.persistence.service.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
+
+import javax.annotation.Nonnull;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -53,22 +42,19 @@ import org.springframework.util.DigestUtils;
 public class MsgContentPersistenceService {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(MsgContentPersistenceService.class);
-    
-    @Autowired
+
     private DomibusConnectorMsgContDao msgContDao;
-    
-    @Autowired
     private DomibusConnectorMessageDao msgDao;
 
-    
     /*
      * DAO Setter
      */
-    
+    @Autowired
     public void setMsgContDao(DomibusConnectorMsgContDao msgContDao) {
         this.msgContDao = msgContDao;
     }
 
+    @Autowired
     public void setMsgDao(DomibusConnectorMessageDao msgDao) {
         this.msgDao = msgDao;
     }
@@ -80,9 +66,9 @@ public class MsgContentPersistenceService {
     
     /**
      * loads Message Content from Database, deserializes the stored objects back to java objects, and puts them back into the message
-     * @param messageBuilder
-     * @param dbMessage
-     * @throws PersistenceException 
+     * @param messageBuilder - message builder
+     * @param dbMessage - the  dbMessage object
+     * @throws PersistenceException - throws persistenceException in case of failure
      */
     public void loadMsgContent(final @Nonnull DomibusConnectorMessageBuilder messageBuilder, final PDomibusConnectorMessage dbMessage) throws PersistenceException {
         List<PDomibusConnectorMsgCont> findByMessage = this.msgContDao.findByMessage(dbMessage);
@@ -171,7 +157,9 @@ public class MsgContentPersistenceService {
      * Takes a StoreType and a Object
      * serializes the object and
      * writes that into @see eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont
-     * 
+     * @param message - the db message
+     * @param type - the StorageType (is it a attachment, content, ...)
+     * @param object - the java object to store as blob in db
      * 
      */
     PDomibusConnectorMsgCont serializeObjectIntoMsgCont(    
@@ -203,8 +191,12 @@ public class MsgContentPersistenceService {
             byte[] byteContent = msgContent.getContent();
             ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteContent);
             inputStream = new ObjectInputStream(byteInputStream);
-            T confirmation = (T) inputStream.readObject();                                    
-            return confirmation;            
+            T readObject = (T) inputStream.readObject();
+            if (!clazz.isAssignableFrom(readObject.getClass())) {
+                LOGGER.error("read unknown object from database!");
+                throw new PersistenceException("read unknown object from database!");
+            }
+            return readObject;
         } catch (IOException ex) {
             String error = String.format("mapFromMsgCont: IOException occured during reading object out of message content [%s]", msgContent);
             LOGGER.error(error);

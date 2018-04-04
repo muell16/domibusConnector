@@ -2,8 +2,10 @@ package eu.domibus.connector.persistence.model;
 
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -86,7 +88,7 @@ public class PDomibusConnectorMessage implements Serializable {
     private PDomibusConnectorMessageInfo messageInfo;
 
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
-    private Set<PDomibusConnectorEvidence> evidences;
+    private Set<PDomibusConnectorEvidence> evidences = new HashSet<>();
 
     @PrePersist    
     public void prePersist() {
@@ -197,7 +199,7 @@ public class PDomibusConnectorMessage implements Serializable {
         this.messageInfo = messageInfo;
     }
 
-    public @Nullable Set<PDomibusConnectorEvidence> getEvidences() {
+    public @Nonnull Set<PDomibusConnectorEvidence> getEvidences() {
         return evidences;
     }
 

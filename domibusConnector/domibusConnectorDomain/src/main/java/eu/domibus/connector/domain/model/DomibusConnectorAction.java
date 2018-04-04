@@ -7,7 +7,6 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * @author riederb
  * @version 1.0
- * @created 29-Dez-2017 10:05:58
  */
 public class DomibusConnectorAction implements Serializable {
 
@@ -16,7 +15,7 @@ public class DomibusConnectorAction implements Serializable {
 
 	/**
 	 * 
-	 * @param action
+	 * @param action action
 	 * @param documentRequired    documentRequired
 	 */
 	public DomibusConnectorAction(final String action, final boolean documentRequired){

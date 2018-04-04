@@ -10,7 +10,6 @@ import org.springframework.core.style.ToStringCreator;
  * reported by the gateway are stored and added to the message.
  * @author riederb
  * @version 1.0
- * @updated 29-Dez-2017 10:12:49
  */
 public class DomibusConnectorMessageError implements Serializable {
 
@@ -20,9 +19,9 @@ public class DomibusConnectorMessageError implements Serializable {
 
 	/**
 	 * 
-	 * @param text
-	 * @param details
-	 * @param source    source
+	 * @param text text
+	 * @param details details
+	 * @param source  source The source of the error, usually the class name where the error occurred as string
 	 */
 	public DomibusConnectorMessageError(final String text, final String details, final String source){
 	   this.text = text;

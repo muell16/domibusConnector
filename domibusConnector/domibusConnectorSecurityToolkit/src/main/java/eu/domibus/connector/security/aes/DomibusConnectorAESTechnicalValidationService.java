@@ -28,7 +28,7 @@ import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
 
 public class DomibusConnectorAESTechnicalValidationService implements ECodexTechnicalValidationService {
 
-    static final Logger LOG = LoggerFactory.getLogger(DomibusConnectorAESTechnicalValidationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorAESTechnicalValidationService.class);
     
     private DomibusConnectorAESTokenValidationCreator delegate;
 
@@ -51,14 +51,11 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
     @Override
     public TokenValidation create(final DSSDocument businessDocument, final DSSDocument detachedSignature)
             throws ECodexException {
-//         LOG.mEnter("create", businessDocument, detachedSignature);
+        LOGGER.debug("create businessDocument: [{}] detachedSignature: [{}]", businessDocument, detachedSignature);
         try {
             return delegate.createTokenValidation(message);
         } catch (Exception e) {
-            // LOG.mCause("create", e, businessDocument, detachedSignature);
             throw ECodexException.wrap(e);
-            // } finally {
-            // LOG.mExit("create", businessDocument, detachedSignature);
         }
     }
 
@@ -66,18 +63,18 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
      * {@inheritDoc}
      * 
      * the report must contain exactly one object of type
-     * {@link ValidationReport}
+     *
      */
     @Override
     public DSSDocument createReportPDF(final Token token) throws ECodexException {
-        // LOG.mEnter("createReportPDF", token);
+        // LOGGER.mEnter("createReportPDF", token);
         try {
             return createReportPDFImpl(token);
         } catch (Exception e) {
-            // LOG.mCause("createReportPDF", e, token);
+            // LOGGER.mCause("createReportPDF", e, token);
             throw ECodexException.wrap(e);
             // } finally {
-            // LOG.mExit("createReportPDF", token);
+            // LOGGER.mExit("createReportPDF", token);
         }
     }
 
@@ -132,19 +129,20 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
     /**
      * {@inheritDoc}
      * 
-     * <br/>
-     * note that you first have to use
-     * {@link #setProxyPreferenceManager(eu.europa.ec.markt.dss.manager.ProxyPreferenceManager)}
-     * in order that this call has some effect - otherwise it will be ignored
+     *
+     *
+     *
+     *
+     *
      */
     @Override
     public void setEnvironmentConfiguration(final EnvironmentConfiguration conf) {
         this.environmentConfiguration = conf;
 
-        LOG.debug("set environment configuration: " + environmentConfiguration);
+        LOGGER.debug("set environment configuration: " + environmentConfiguration);
 
         if (preferenceManager == null) {
-            LOG.warn("NO preference manager set - unable to forward environment configuration",
+            LOGGER.warn("NO preference manager set - unable to forward environment configuration",
                     environmentConfiguration);
             return;
         }
@@ -154,30 +152,30 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
                 : environmentConfiguration.getProxyHTTPS();
 
         if (proxyHttp != null) {
-            LOG.info(
+            LOGGER.info(
                     "HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
             ProxyProperties httpProperties = new ProxyProperties();
-            httpProperties.setHost((proxyHttp == null) ? null : proxyHttp.getHost());
-            httpProperties.setPort((proxyHttp == null) ? null : proxyHttp.getPort());
-            httpProperties.setUser((proxyHttp == null) ? null : proxyHttp.getAuthName());
-            httpProperties.setPassword((proxyHttp == null) ? null : proxyHttp.getAuthPass());
+            httpProperties.setHost(proxyHttp.getHost());
+            httpProperties.setPort(proxyHttp.getPort());
+            httpProperties.setUser(proxyHttp.getAuthName());
+            httpProperties.setPassword(proxyHttp.getAuthPass());
             preferenceManager.setHttpProperties(httpProperties);
         } else {
-            LOG.info(
+            LOGGER.info(
                     "No HTTP Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
         }
 
         if (proxyHttps != null) {
-            LOG.info(
+            LOGGER.info(
                     "HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from EnvironmentConfiguration.");
             ProxyProperties httpsProperties = new ProxyProperties();
-            httpsProperties.setHost((proxyHttps == null) ? null : proxyHttps.getHost());
-            httpsProperties.setPort((proxyHttps == null) ? null : proxyHttps.getPort());
-            httpsProperties.setUser((proxyHttps == null) ? null : proxyHttps.getAuthName());
-            httpsProperties.setPassword((proxyHttps == null) ? null : proxyHttps.getAuthPass());
+            httpsProperties.setHost(proxyHttps.getHost());
+            httpsProperties.setPort(proxyHttps.getPort());
+            httpsProperties.setUser(proxyHttps.getAuthName());
+            httpsProperties.setPassword(proxyHttps.getAuthPass());
             preferenceManager.setHttpProperties(httpsProperties);
         } else {
-            LOG.info(
+            LOGGER.info(
                     "No HTTPS Configuration detected in EnvironmentConfiguration: Taking configuration from ProxyPreferenceManager.");
         }
 
@@ -194,7 +192,7 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
             logMessage = logMessage + "\nHTTPS Proxy Host: " + preferenceManager.getHttpsProperties().getHost();
         }
 
-        LOG.info(logMessage);
+        LOGGER.info(logMessage);
     }
 
 }

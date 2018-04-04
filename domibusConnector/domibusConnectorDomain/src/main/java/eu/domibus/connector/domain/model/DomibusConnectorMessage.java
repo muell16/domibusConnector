@@ -15,7 +15,6 @@ import org.springframework.core.style.ToStringCreator;
  * finished.
  * @author riederb
  * @version 1.0
- * @updated 29-Dez-2017 10:12:48
  */
 public class DomibusConnectorMessage implements Serializable {
 
@@ -64,8 +63,8 @@ public class DomibusConnectorMessage implements Serializable {
 	 * it is a confirmation message. At least the messageDetails and the
 	 * messageConfirmation must be given.
 	 * 
-	 * @param messageDetails
-	 * @param messageConfirmation
+	 * @param messageDetails messageDetails
+	 * @param messageConfirmation messageConfirmation
      * 
      * 
 	 */
@@ -80,8 +79,8 @@ public class DomibusConnectorMessage implements Serializable {
 	 * messageConfirmation must be given.
 	 * 
      * @param connectorMessageId internal connector message process id
-	 * @param messageDetails
-	 * @param messageConfirmation
+	 * @param messageDetails messageDetails
+	 * @param messageConfirmation messageConfirmation
 	 */
     public DomibusConnectorMessage(
             final String connectorMessageId, 

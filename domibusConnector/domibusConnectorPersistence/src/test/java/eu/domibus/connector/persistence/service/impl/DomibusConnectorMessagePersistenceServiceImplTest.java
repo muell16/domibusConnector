@@ -1,12 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-//import eu.domibus.connector.domain.Action;
-//import eu.domibus.connector.domain.Message;
-//import eu.domibus.connector.domain.MessageConfirmation;
-//import eu.domibus.connector.domain.MessageDetails;
-//import eu.domibus.connector.domain.MessageError;
-//import eu.domibus.connector.domain.Party;
-//import eu.domibus.connector.domain.Service;
+
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -17,42 +11,31 @@ import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTe
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
-
-import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyAT;
-
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
-import java.util.Arrays;
-import java.util.List;
-import static org.assertj.core.api.Assertions.*;
-import static org.hamcrest.CoreMatchers.allOf;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Matchers.eq;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import static org.hamcrest.CoreMatchers.allOf;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.eq;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 public class DomibusConnectorMessagePersistenceServiceImplTest {
 

@@ -6,7 +6,6 @@ import java.io.Serializable;
 /**
  * @author riederb
  * @version 1.0
- * @created 29-Dez-2017 10:05:58
  */
 public class DetachedSignature implements Serializable {
 
@@ -16,8 +15,8 @@ public class DetachedSignature implements Serializable {
 
 	/**
 	 * 
-	 * @param detachedSignature
-	 * @param detachedSignatureName
+	 * @param detachedSignature detachedSignature
+	 * @param detachedSignatureName detachedSignatureName
 	 * @param mimeType    mimeType
 	 */
 	public DetachedSignature(final byte[] detachedSignature, final String detachedSignatureName, final DetachedSignatureMimeType mimeType){

@@ -7,7 +7,6 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * @author riederb
  * @version 1.0
- * @created 29-Dez-2017 10:05:58
  */
 public class DomibusConnectorService implements Serializable {
 
@@ -16,8 +15,8 @@ public class DomibusConnectorService implements Serializable {
 
 	/**
 	 * 
-	 * @param service
-	 * @param serviceType
+	 * @param service service
+	 * @param serviceType serviceType
 	 */
 	public DomibusConnectorService(final String service, final String serviceType){
 	   this.service = service;

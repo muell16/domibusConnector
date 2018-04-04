@@ -95,7 +95,6 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     @Override
     public DomibusConnectorMessage processMessageBeforeDeliverToBackend(DomibusConnectorMessage message) {
-        message = backendToControllerSubmissionService.prepareMessageForNationalDelivery(message);
         return bigDataPersistence.loadAllBigFilesFromMessage(message);
     }
 

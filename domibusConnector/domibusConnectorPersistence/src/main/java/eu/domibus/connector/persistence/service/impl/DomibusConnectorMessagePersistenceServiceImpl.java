@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("WeakerAccess")
 @org.springframework.stereotype.Service("persistenceService")
 public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusConnectorMessagePersistenceService {
 
@@ -72,8 +73,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Override
     public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
-        DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
-        return message;
+        return mapMessageToDomain(dbMessage);
     }
 
     @Override
@@ -95,9 +95,8 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     }
 
     @Override
-    @Transactional(readOnly = false)
-    public DomibusConnectorMessage persistMessageIntoDatabase(DomibusConnectorMessage message, DomibusConnectorMessageDirection direction) throws PersistenceException {
-        DomibusConnectorMessageBuilder messageBuilder = DomibusConnectorMessageBuilder.createBuilder();
+    @Transactional
+    public DomibusConnectorMessage persistMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageDirection direction) throws PersistenceException {
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
@@ -159,7 +158,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
      */
     @Override
     @Transactional
-    public DomibusConnectorMessage mergeMessageWithDatabase(DomibusConnectorMessage message) throws PersistenceException {
+    public DomibusConnectorMessage mergeMessageWithDatabase(@Nonnull DomibusConnectorMessage message) throws PersistenceException {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#mergeMessageWithDatabase: message is an evidence message, doing nothing!");
             return message;
@@ -196,7 +195,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
 
         this.msgContentService.storeMsgContent(message);
 
-        dbMessage = this.messageDao.save(dbMessage);
+        this.messageDao.save(dbMessage);
 
         //mapMessageInfoIntoMessageDetails(dbMessage, messageDetails);
 
@@ -258,8 +257,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
         String refToMessageId = msg.getMessageDetails().getRefToMessageId();
         LOGGER.trace("#findByRefToMsg: find message by reference [{}] (should be ebmsId or NationalId)");
-        PDomibusConnectorMessage refMsg = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
-        return refMsg;
+        return messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
     }
 
 
@@ -267,21 +265,14 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Transactional(readOnly = true)
     public DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
-
-        DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
-
-        return message;
-
+        return mapMessageToDomain(dbMessage);
     }
 
     @Override
     @Transactional(readOnly = true)
     public DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
-
-        DomibusConnectorMessage message = mapMessageToDomain(dbMessage);
-
-        return message;
+        return mapMessageToDomain(dbMessage);
     }
 
     @Override
@@ -400,13 +391,11 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
 
         List<DomibusConnectorMessageConfirmation> confirmations = dbMessage.getEvidences().stream()
-                .map(e -> MessageConfirmationMapper.mapFromDbToDomain(e))
+                .map(MessageConfirmationMapper::mapFromDbToDomain)
                 .collect(Collectors.toList());
         messageBuilder.addConfirmations(confirmations);
 
-
-        DomibusConnectorMessage message = messageBuilder.build();
-        return message;
+        return messageBuilder.build();
     }
 
 

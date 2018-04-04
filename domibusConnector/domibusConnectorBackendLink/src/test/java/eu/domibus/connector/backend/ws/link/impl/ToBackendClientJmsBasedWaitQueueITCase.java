@@ -42,7 +42,7 @@ import static org.mockito.Matchers.eq;
 
 /**
  *
- * @author Stephan Spindler <stephan.spindler@extern.brz.gv.at>
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class})

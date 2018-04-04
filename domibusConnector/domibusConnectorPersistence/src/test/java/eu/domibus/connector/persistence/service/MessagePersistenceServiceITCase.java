@@ -2,47 +2,30 @@ package eu.domibus.connector.persistence.service;
 
 
 
-//import eu.domibus.connector.domain.Action;
-//import eu.domibus.connector.domain.Message;
-//import eu.domibus.connector.domain.MessageContent;
-//import eu.domibus.connector.domain.MessageDetails;
-//import eu.domibus.connector.domain.Party;
-//import eu.domibus.connector.domain.Service;
+
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorParty;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
-import java.sql.SQLException;
-import java.util.UUID;
-
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
-import javax.sql.DataSource;
-
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.junit.Test;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import org.hibernate.TransientPropertyValueException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 /**
  * Integration Test for testing persistence service
@@ -60,10 +43,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at>}
  */
 public class MessagePersistenceServiceITCase {
-
-//    @SpringBootApplication(scanBasePackages={"eu.domibus.connector"})
-//    static class TestConfiguration {
-//    }
 
     static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
@@ -248,9 +227,7 @@ public class MessagePersistenceServiceITCase {
                 .filter(a -> "idf".equals(a.getIdentifier()))
                 .findFirst()
                 .get();
-//        assertThat(messageAttachment.getAttachment())
-//                .as("Attachment content [%s] should equal [%s]", messageAttachment.getAttachment(), attach1.getAttachment())
-//                .containsExactly(attach1.getAttachment());
+
 
     }
 
@@ -296,68 +273,6 @@ public class MessagePersistenceServiceITCase {
     }
 
 
-//    @Test
-//    public void testPersistEvidenceForMessageIntoDatabase() throws PersistenceException {
-//        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("myid");
-//        message.getMessageDetails().setBackendMessageId("71321");
-//        message.getMessageDetails().setEbmsMessageId("ebmnsdsaf2123");
-//
-//        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW); //create message first
-//
-//        byte[] evidence = "hallo Welt".getBytes();
-//
-//        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
-//
-//        //verify db
-//    }
-
-//    @Test
-//    public void testPersistEvidenceForMessageIntoDatabase_evidenceContentIsNull() throws PersistenceException {
-//        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("myid1");
-//        message.getMessageDetails().setBackendMessageId("71321");
-//        message.getMessageDetails().setEbmsMessageId("ebmnsdsaf2123");
-//
-//        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW); //create message first
-//
-//        byte[] evidence = null;
-//
-//        persistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
-//
-//        //verify db
-//    }
-
-    
-
-    
-//    @Test
-//    public void testGetAction_doesNotExistInDb_retShouldBeNull() {
-//        DomibusConnectorAction action = persistenceService.getAction("DOESNOTEXIST");
-//        assertThat(action).as("should be null beacause does not exist in db").isNull();
-//    }
-//
-//    @Test
-//    public void testGetAction() {
-//        DomibusConnectorAction action = persistenceService.getAction("Form_A");
-//        assertThat(action).isNotNull();
-//    }
-//
-//    @Test
-//    public void testGetParty() {
-//        DomibusConnectorParty party = persistenceService.getParty("AT", "GW");
-//        assertThat(party).isNotNull();
-//    }
-//
-//    @Test
-//    public void testGetParty_doesNotExistInDB_retShouldBeNull() {
-//        DomibusConnectorParty party = persistenceService.getParty("ATEA", "GW");
-//        assertThat(party).isNull();
-//    }
-//
-//    @Test
-//    public void testGetPartyById() {
-//        DomibusConnectorParty party = persistenceService.getPartyByPartyId("AT");
-//        assertThat(party).isNotNull();
-//    }
     
     
     //TODO: test other methods/use cases
