@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-alpha4</version>
+        <version>4.0.0-alpha5-SNAPSHOT</version>
     </parent>
     <description>
         This module is the worker/core of the domibusWebConnector it contains the responsibly services to retrieve the messages from the domibusGateway
