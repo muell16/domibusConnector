@@ -753,6 +753,13 @@
                 <groupId>at.gv.brz.jqeu</groupId>
                 <artifactId>spring-properties-reporting-plugin</artifactId>
                 <version>0.9-alpha2</version>
+                <configuration>
+                    <includedDependencies>
+                        <dependency>
+                            <groupId>^eu.domibus.connector</groupId>
+                        </dependency>
+                    </includedDependencies>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
