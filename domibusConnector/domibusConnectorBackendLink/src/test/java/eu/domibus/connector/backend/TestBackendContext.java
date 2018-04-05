@@ -64,12 +64,7 @@ public class TestBackendContext {
                 submittedMessages.add(message);
             }
 
-            @Override
-            public DomibusConnectorMessage prepareMessageForNationalDelivery(DomibusConnectorMessage message) {
-                LOGGER.warn("message on dummySubmissionService controller set as delivered to national system: [{}]", message);
-                asDeliveredSet.add(message);
-                return message;
-            }
+
         };
         return submissionService;
     }
