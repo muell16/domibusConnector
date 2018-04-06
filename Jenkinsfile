@@ -44,7 +44,7 @@
 							git([url: "https://secure.e-codex.eu/gitblit/r/~spindlers/connector-jenkins-jobs.git", credentialsId: 'IT-NRW GIT Repo'])
 						}
 					
-						MAVEN_PROJECT_DIR = pwd() + "/domibus-connector-plugin"
+						MAVEN_PROJECT_DIR = pwd() + "/domibusConnector"
 					  	commonJob = load("pipeline_sources/common-job")
 
 						  commonJob.execute(MAVEN_PROJECT_DIR)
