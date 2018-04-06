@@ -1,0 +1,39 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<f:view contentType="text/html" id="fview">
+	<h:head>    
+<!-- 		<h:outputStylesheet name="css/stylesheet.css"/>   -->
+   	<link href="#{facesContext.externalContext.requestContextPath}/css/stylesheet.css" rel="styleSheet" type="text/css"/> 
+	<!-- 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css" />   -->
+	</h:head>
+	<h:body>
+		<p:growl showDetail="true" sticky="true" />
+		<p:layout fullPage="true">
+			<div id="headerTop">
+				<p:layoutUnit position="north" size="262" resizable="false"  styleClass="headerClass">
+					<ui:insert name="header">Header</ui:insert>
+				</p:layoutUnit>
+			</div>
+			<p:layoutUnit position="west" size="200" header="WebAdmin"
+				resizable="false">
+				<ui:insert name="menu">Menu</ui:insert>
+			</p:layoutUnit>
+			<p:layoutUnit position="east" size="200" header="Status"
+				resizable="false">
+				<ui:insert name="status"></ui:insert>
+			</p:layoutUnit>
+			<p:layoutUnit position="center">				 
+				<ui:insert name="content"></ui:insert>
+			</p:layoutUnit>
+		</p:layout>
+	</h:body>
+</f:view>
+</html>

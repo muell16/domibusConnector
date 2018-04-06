@@ -15,13 +15,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
-import eu.domibus.connector.common.CommonConnectorProperties;
+//import eu.domibus.connector.common.CommonConnectorProperties;
 import eu.domibus.connector.monitoring.db.DomibusConnectorMonitorDB;
 
 public class DomibusConnectorMonitorController implements ApplicationContextAware, InitializingBean {
 
     private ApplicationContext ctx;
-    private CommonConnectorProperties connectorProperties;
+//    private CommonConnectorProperties connectorProperties;
 
     static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMonitorController.class);
 
@@ -37,7 +37,7 @@ public class DomibusConnectorMonitorController implements ApplicationContextAwar
     @Override
     public void afterPropertiesSet() throws Exception {
 
-        monitoring monitoringType = checkMonitoringType(connectorProperties.getMonitoringType());
+        monitoring monitoringType = monitoring.DB; //checkMonitoringType(connectorProperties.getMonitoringType());
 
         // the configured monitoring type decides which beans will be loaded
         // into the applicaiton context.
@@ -64,7 +64,7 @@ public class DomibusConnectorMonitorController implements ApplicationContextAwar
             } catch (ClassCastException cce) {
                 LOGGER.error("ApplicationContext not compatible with XmlWebApplicationContext. Monitoring stays DB!",
                         cce);
-                connectorProperties.setMonitoringType(monitoring.DB.toString());
+//                connectorProperties.setMonitoringType(monitoring.DB.toString());
                 monitoringType = monitoring.DB;
             }
 
@@ -73,16 +73,20 @@ public class DomibusConnectorMonitorController implements ApplicationContextAwar
         if (monitoringType.equals(monitoring.DB) && !ctx.containsBean("domibusConnectorMonitorDB")) {
             // if DB is configured (or the context is not a web context) the
             // right bean will be loaded manually into the context
-            AbstractRefreshableApplicationContext refctx = (AbstractRefreshableApplicationContext) ctx;
+            try {
+                AbstractRefreshableApplicationContext refctx = (AbstractRefreshableApplicationContext) ctx;
 
-            // Creating and registering bean to the container
-            BeanDefinition beanDefinition = new RootBeanDefinition(DomibusConnectorMonitorDB.class);
-            DomibusConnectorMonitor monitor = (DomibusConnectorMonitor) refctx.getBean("domibusConnectorMonitor");
+                // Creating and registering bean to the container
+                BeanDefinition beanDefinition = new RootBeanDefinition(DomibusConnectorMonitorDB.class);
+                DomibusConnectorMonitor monitor = (DomibusConnectorMonitor) refctx.getBean("domibusConnectorMonitor");
 
-            beanDefinition.setAttribute("domibusConnectorMonitor", monitor);
+                beanDefinition.setAttribute("domibusConnectorMonitor", monitor);
 
-            BeanDefinitionRegistry factory = (BeanDefinitionRegistry) refctx.getBeanFactory();
-            factory.registerBeanDefinition("domibusConnectorMonitorDB", beanDefinition);
+                BeanDefinitionRegistry factory = (BeanDefinitionRegistry) refctx.getBeanFactory();
+                factory.registerBeanDefinition("domibusConnectorMonitorDB", beanDefinition);
+            } catch (ClassCastException cce) {
+                LOGGER.error("Application context not compatible with AbstractRefreshableApplicationContext. Monitoring disabled!", cce);
+            }
         }
 
     }
@@ -101,12 +105,12 @@ public class DomibusConnectorMonitorController implements ApplicationContextAwar
         }
     }
 
-    public CommonConnectorProperties getConnectorProperties() {
-        return connectorProperties;
-    }
-
-    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
-        this.connectorProperties = connectorProperties;
-    }
+//    public CommonConnectorProperties getConnectorProperties() {
+//        return connectorProperties;
+//    }
+//
+//    public void setConnectorProperties(CommonConnectorProperties connectorProperties) {
+//        this.connectorProperties = connectorProperties;
+//    }
 
 }

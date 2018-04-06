@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+    <domibus_connector_service
+        service="EPO"
+        service_type="urn:e-codex:services:"
+        />
+    
+    <domibus_connector_service
+        service="SmallClaims"
+        service_type="urn:e-codex:services:"
+        />
+    
+    
+    <domibus_connector_service
+        service="GW-TEST"
+        service_type="urn:e-codex:services:"
+        />
+    
+    <domibus_connector_service
+        service="REMOTE-CONNECTOR-TEST"
+        service_type="urn:e-codex:services:"
+        />
+    
+    <domibus_connector_service
+        service="LOCAL-CONNECTOR-TEST"
+        service_type="urn:e-codex:services:"
+        />
+
+
+
+    <DOMIBUS_CONNECTOR_BACKEND_INFO
+            id="88"
+            backend_name="not_enabled"
+            backend_key_alias="not_enabled"
+            backend_key_pass="12345"
+            backend_enabled="false"
+    />
+
+
+    <DOMIBUS_CONNECTOR_BACKEND_INFO
+        id="89"
+        backend_name="bob"       
+        backend_key_alias="bob"
+        backend_key_pass="12345"
+        backend_enabled="true"
+    />
+    
+    <DOMIBUS_CONNECTOR_BACKEND_INFO 
+        id="90"
+        backend_name="alice"
+        backend_key_alias="alice"
+        backend_enabled="true"
+    />
+    
+    <!-- client bob is mapped to EPO service -->
+    <DOMIBUS_CONNECTOR_BACK_2_S
+        DOMIBUS_CONNECTOR_BACKEND_ID="89"
+        DOMIBUS_CONNECTOR_SERVICE_ID="EPO"
+        />
+    
+    
+    <!-- the data model allows multiple bindings for one service! -->
+    <DOMIBUS_CONNECTOR_BACK_2_S
+        DOMIBUS_CONNECTOR_BACKEND_ID="89"
+        DOMIBUS_CONNECTOR_SERVICE_ID="LOCAL-CONNECTOR-TEST"
+    />
+        
+    <DOMIBUS_CONNECTOR_BACK_2_S
+        DOMIBUS_CONNECTOR_BACKEND_ID="90"
+        DOMIBUS_CONNECTOR_SERVICE_ID="LOCAL-CONNECTOR-TEST"
+    />
+
+    <DOMIBUS_CONNECTOR_BACK_2_S
+            DOMIBUS_CONNECTOR_BACKEND_ID="89"
+            DOMIBUS_CONNECTOR_SERVICE_ID="SmallClaims"
+    />
+
+    <DOMIBUS_CONNECTOR_BACK_2_S
+            DOMIBUS_CONNECTOR_BACKEND_ID="89"
+            DOMIBUS_CONNECTOR_SERVICE_ID="GW-TEST"
+    />
+
+        
+</dataset>

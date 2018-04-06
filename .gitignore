@@ -5,6 +5,11 @@
 
 ## PMD Eclipse plugin files ##
 .pmd
+﻿## Eclipse config files ##
+.settings/
+.classpath
+.project
+
 
 ## soapUI test reports ##
 
@@ -28,8 +33,44 @@ target/
 *.tmp
 *.log
 *.tmp
+*.orig
 
 ## Intellij IDEA files 
 *.iml
 *.ipr
 *.iws
+*/.idea/
+
+##netbeans files
+nbactions.xml
+nb-configuration.xml
+nbproject/**
+
+##temp docx files
+~$*.docx
+$Recycle.Bin
+
+## soapUI test reports ##
+
+/holodeck/modules/holodeck-distribution/src/test/resources/soapui_testsuites/*.txt
+
+#ignore netbeans folders
+/domibusConnector/domibusConnectorSecurityToolkit/nbproject/
+/domibusConnector/domibusConnectorPersistence/nbproject/
+/domibusConnector/domibusConnectorDomain/nbproject/
+
+#ignore generated code:
+/domibusConnector/domibusConnectorDomain/src/main/java/eu/domibus/connector/domain/transition/
+
+#is downloaded and unpacked by maven so ignore it
+/domibusConnector/domibusConnectorGatewayLink/src/main/resources/wsdl/eu.domibus.connector.domain.transition
+/domibusConnector/domibusConnectorController/nbproject/
+/domibusConnector/domibusConnectorGatewayLink/nbproject/
+/domibusConnector/domibusConnectorBackendLink/nbproject/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/domain/transition/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/backend/webservice/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/backend/delivery/webservice/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/gateway/delivery/webservice/
+/domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/gateway/submission/webservice/
+/domibusConnector/domibusConnectorWebAppModule/src/main/java/eu/domibus/configuration/
+/domibusConnector/domibusConnectorAPIlib/nbproject/

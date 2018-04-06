@@ -13,56 +13,83 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.Assert;
-
+import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.domibus.connector.common.message.Message;
-import eu.domibus.connector.common.message.MessageContent;
-import eu.domibus.connector.common.message.MessageDetails;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.evidences.HashValueBuilder;
+
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.evidences.type.RejectionReason;
+import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test/context/testContext.xml")
+@ContextConfiguration(classes = {DomibusConnectorEvidencesToolkitTest.DomibusConnectorEvidencesToolkitTestContext.class,
+        DomibusConnectorEvidencesToolkitContext.class,
+        EvidencesToolkitConfigurationProperties.class,
+        DomibusConnectorEvidencesToolkitContext.class
+})
+@TestPropertySource(locations = "classpath:test.properties")
+@EnableConfigurationProperties
 public class DomibusConnectorEvidencesToolkitTest {
+
+    @Configuration
+    static class DomibusConnectorEvidencesToolkitTestContext {
+
+        @Bean
+        public static PropertySourcesPlaceholderConfigurer
+        propertySourcesPlaceholderConfigurer() {
+            return new PropertySourcesPlaceholderConfigurer();
+        }
+    }
 
     private static Logger LOG = LoggerFactory.getLogger(DomibusConnectorEvidencesToolkitTest.class);
 
-    @Resource
+    @Autowired
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
-    @Resource
-    private HashValueBuilder hashValueBuilder;
+
+    @Autowired
+    private EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
 
     @Test
-    public void testCreateSubmissionAcceptance() {
+    public void testCreateSubmissionAcceptance() throws DomibusConnectorEvidencesToolkitException, TransformerException {
         LOG.info("Started testCreateSubmissionAcceptance");
 
-        Message message = buildTestMessage();
+        DomibusConnectorMessage message = buildTestMessage();
 
-        try {
-            evidencesToolkit.createSubmissionAcceptance(message, buildHashValue());
-            Assert.assertNotNull(message.getConfirmations());
-            Assert.assertEquals(1, message.getConfirmations().size());
-            String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
+//        try {
+
+            DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+            Assert.assertNotNull(confirmation);
+            String evidencePretty = prettyPrint(confirmation.getEvidence());
             LOG.info(evidencePretty);
-        } catch (DomibusConnectorEvidencesToolkitException e) {
-            e.printStackTrace();
-            Assert.fail();
-        } catch (TransformerFactoryConfigurationError e) {
-            e.printStackTrace();
-            Assert.fail();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
+//        } catch (DomibusConnectorEvidencesToolkitException e) {
+//            e.printStackTrace();
+//            Assert.fail();
+//        } catch (TransformerFactoryConfigurationError e) {
+//            e.printStackTrace();
+//            Assert.fail();
+//        } catch (TransformerException e) {
+//            e.printStackTrace();
+//            Assert.fail();
+//        }
         LOG.info("Finished testCreateSubmissionAcceptance");
     }
 
@@ -70,13 +97,15 @@ public class DomibusConnectorEvidencesToolkitTest {
     public void testCreateSubmissionRejection() {
         LOG.info("Started testCreateSubmissionRejection");
 
-        Message message = buildTestMessage();
+        DomibusConnectorMessage message = buildTestMessage();
 
         try {
-            evidencesToolkit.createSubmissionRejection(RejectionReason.OTHER, message, buildHashValue());
-            Assert.assertNotNull(message.getConfirmations());
-            Assert.assertEquals(1, message.getConfirmations().size());
-            String evidencePretty = prettyPrint(message.getConfirmations().get(0).getEvidence());
+            DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(
+                    DomibusConnectorEvidenceType.SUBMISSION_REJECTION,
+                    message,
+                    DomibusConnectorRejectionReason.OTHER, null);
+            Assert.assertNotNull(confirmation);
+            String evidencePretty = prettyPrint(confirmation.getEvidence());
             LOG.info(evidencePretty);
         } catch (DomibusConnectorEvidencesToolkitException e) {
             e.printStackTrace();
@@ -91,22 +120,25 @@ public class DomibusConnectorEvidencesToolkitTest {
         LOG.info("Finished testCreateSubmissionRejection");
     }
 
-    private Message buildTestMessage() {
-        MessageDetails details = new MessageDetails();
-        details.setNationalMessageId("nationalMessageId1");
+    private DomibusConnectorMessage buildTestMessage() {
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+        details.setBackendMessageId("nationalMessageId1");
         details.setOriginalSender("someSenderAddress");
         details.setFinalRecipient("someRecipientAddress");
 
-        MessageContent content = new MessageContent();
-        content.setNationalXmlContent(new String("originalMessage").getBytes());
+        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
-        Message message = new Message(details, content);
+        DomibusConnectorBigDataReferenceMemoryBacked ref = new DomibusConnectorBigDataReferenceMemoryBacked("originalMessage".getBytes());
+
+        DomibusConnectorMessageDocument document =
+                new DomibusConnectorMessageDocument(ref, "documentName", null);
+
+        content.setXmlContent("originalMessage".getBytes());
+        content.setDocument(document);
+
+        DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
 
         return message;
-    }
-
-    private String buildHashValue() {
-        return hashValueBuilder.buildHashValueAsString(new String("originalMessage").getBytes());
     }
 
     private String prettyPrint(byte[] input) throws TransformerFactoryConfigurationError, TransformerException {
@@ -116,8 +148,8 @@ public class DomibusConnectorEvidencesToolkitTest {
 
         // Configure transformer
         Transformer transformer = TransformerFactory.newInstance().newTransformer(); // An
-                                                                                     // identity
-                                                                                     // transformer
+        // identity
+        // transformer
         transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "testing.dtd");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

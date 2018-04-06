@@ -9,24 +9,6 @@
 		
 		<!-- ==================== Copying Module's JAR files ================= -->
 		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorCommon/target/
-			</directory>
-			<outputDirectory>${modules.output.dir}/domibusConnectorCommon
-			</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorContentMapper/target/
-			</directory>
-			<outputDirectory>${modules.output.dir}/domibusConnectorContentMapper
-			</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorController/target/
 			</directory>
 			<outputDirectory>${modules.output.dir}/domibusConnectorController
@@ -45,36 +27,9 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorGatewayPluginClient/target/
-			</directory>
-			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayPluginClient
-			</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorGatewayWebserviceClient/target/
-			</directory>
-			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayWebserviceClient
-			</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorMonitoring/target/
 			</directory>
 			<outputDirectory>${modules.output.dir}/domibusConnectorMonitoring
-			</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorNationalBackendClient/target/
-			</directory>
-			<outputDirectory>${modules.output.dir}/domibusConnectorNationalBackendClient
 			</outputDirectory>
 			<includes>
 				<include>*.jar</include>
@@ -101,17 +56,7 @@
 
 		<!-- ==================== Copying Module's POM files ================= -->
 
-		<file>
-			<source>${project.basedir}/../domibusConnectorCommon/pom.xml</source>
-			<outputDirectory>${modules.output.dir}/domibusConnectorCommon
-			</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/../domibusConnectorContentMapper/pom.xml
-			</source>
-			<outputDirectory>${modules.output.dir}/domibusConnectorContentMapper
-			</outputDirectory>
-		</file>
+
 		<file>
 			<source>${project.basedir}/../domibusConnectorController/pom.xml
 			</source>
@@ -125,27 +70,9 @@
 			</outputDirectory>
 		</file>
 		<file>
-			<source>${project.basedir}/../domibusConnectorGatewayPluginClient/pom.xml
-			</source>
-			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayPluginClient
-			</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/../domibusConnectorGatewayWebserviceClient/pom.xml
-			</source>
-			<outputDirectory>${modules.output.dir}/domibusConnectorGatewayWebserviceClient
-			</outputDirectory>
-		</file>
-		<file>
 			<source>${project.basedir}/../domibusConnectorMonitoring/pom.xml
 			</source>
 			<outputDirectory>${modules.output.dir}/domibusConnectorMonitoring
-			</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/../domibusConnectorNationalBackendClient/pom.xml
-			</source>
-			<outputDirectory>${modules.output.dir}/domibusConnectorNationalBackendClient
 			</outputDirectory>
 		</file>
 		<file>
