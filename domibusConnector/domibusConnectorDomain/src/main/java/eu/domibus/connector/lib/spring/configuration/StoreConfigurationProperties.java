@@ -17,6 +17,13 @@ public class StoreConfigurationProperties {
 
     String password;
 
+    public StoreConfigurationProperties() {}
+
+    public StoreConfigurationProperties(Resource path, String password) {
+        this.path = path;
+        this.password = password;
+    }
+
     public Resource getPath() {
         return path;
     }

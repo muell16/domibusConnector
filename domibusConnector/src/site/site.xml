@@ -14,12 +14,18 @@
 
     <menu name="domibus WebConnector">
       <item name="Module" href="modules.html" />
-      <item name="Installation" href="installation.html"/>
-      <item name="Deploy on Tomcat" href="tomcat_deploy.html"/>
-      <item name="Deploy on Weblogic" href="weblogic_deploy.html" />
       <item name="Use Cases" href="use_cases.html" />
-      <item name="Evidence" href="evidence.html" />
+      <!--<item name="Evidence" href="evidence.html" />-->
     </menu>
+    <menu name="Installation/Configuration">
+      <item name="Installation" href="installation/installation.html" />
+      <item name="Database Setup" href="installation/database.html" />
+      <item name="Deploy on Tomcat" href="installation/tomcat_deploy.html"/>
+      <item name="Deploy on Weblogic" href="installation/weblogic_deploy.html" />
+      <item name="Certificate Configuration" href="installation/certificates.html" />
+    </menu>
+
+
     
     <footer></footer> <!-- empty footer -->
     

@@ -7,24 +7,16 @@ import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationPro
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
-import javax.xml.stream.XMLStreamException;
+
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.staxutils.StaxUtils;
-import org.apache.cxf.ws.policy.PolicyBuilderImpl;
-import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Element;
 
 /**
  * Creates a web service client for pushing messages to backend client
@@ -65,7 +57,7 @@ public class BackendClientWebServiceClientFactory {
         props.put("security.encryption.properties", encryptionProperties);
         props.put("security.signature.properties", signatureProperties);
         props.put("security.encryption.username", backendClientInfoByName.getBackendKeyAlias());
-        props.put("security.signature.username", "connector");
+        props.put("security.signature.username", backendLinkConfigurationProperties.getConnectorCertAlias());
         jaxWsProxyFactoryBean.setProperties(props);
         //jaxWsProxyFactoryBean.set
         DomibusConnectorBackendDeliveryWebService webServiceClientEndpoint = (DomibusConnectorBackendDeliveryWebService) jaxWsProxyFactoryBean.create();
@@ -75,14 +67,30 @@ public class BackendClientWebServiceClientFactory {
     private Properties loadEncryptionProperties() {
         try {
             Properties props = new Properties();
-            InputStream is = backendLinkConfigurationProperties.getEncryptionProperties().getInputStream();
+            InputStream is = backendLinkConfigurationProperties.getEncryptionPropertiesResource().getInputStream();
             if (is == null) {
                 throw new RuntimeException("Encryption properties cannot be read!");
             }
             props.load(is);
             return props;
         } catch (IOException ioe) {
-            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", backendLinkConfigurationProperties.getEncryptionProperties());
+            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", backendLinkConfigurationProperties.getEncryptionPropertiesResource());
+            LOGGER.error("IOException: ", ioe);
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    private Properties loadSignatureProperties() {
+        try {
+            Properties props = new Properties();
+            InputStream is = backendLinkConfigurationProperties.getSignaturePropertiesResource().getInputStream();
+            if (is == null) {
+                throw new RuntimeException("Signature properties cannot be read!");
+            }
+            props.load(is);
+            return props;
+        } catch (IOException ioe) {
+            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", backendLinkConfigurationProperties.getEncryptionPropertiesResource());
             LOGGER.error("IOException: ", ioe);
             throw new RuntimeException(ioe);
         }

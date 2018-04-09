@@ -41,10 +41,10 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
         
         <jaxws:properties>
             
-            <entry key="security.signature.properties" value="${connector.backend.ws.signature.properties}" />
+            <entry key="security.signature.properties" value="#{WSBackendLinkConfigurationProperties.getSignatureProperties()}" />
             <entry key="security.signature.username" value="connector" />
-            <entry key="security.encryption.username" value="bob" />
-            <entry key="security.encryption.properties" value="${connector.backend.ws.encryption.properties}" />
+            <!--<entry key="security.encryption.username" value="bob" />-->
+            <entry key="security.encryption.properties" value="#{WSBackendLinkConfigurationProperties.getEncryptionProperties()}" />
 
             <entry key="mtom-enabled" value="true" />
             <entry key="security.store.bytes.in.attachment" value="true" />

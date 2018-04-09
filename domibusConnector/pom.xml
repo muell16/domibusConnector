@@ -752,7 +752,7 @@
             <plugin>
                 <groupId>at.gv.brz.jqeu</groupId>
                 <artifactId>spring-properties-reporting-plugin</artifactId>
-                <version>0.9-alpha2</version>
+                <version>0.9-alpha4-SNAPSHOT</version>
                 <configuration>
                     <includedDependencies>
                         <dependency>
@@ -769,6 +769,10 @@
                     <reportSet>
                         <reports><!-- select reports -->
                             <report>index</report>
+                            <report>modules</report>
+                            <report>scm</report>
+                            <report>cim</report>
+                            <report>summary</report>
                         </reports>
                     </reportSet>
                 </reportSets>

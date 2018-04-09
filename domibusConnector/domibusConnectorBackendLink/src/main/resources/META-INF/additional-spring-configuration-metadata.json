@@ -1,0 +1,17 @@
+{
+  "properties": [
+
+    {
+      "name": "connector.backend.ws.encryption-properties-resource",
+      "defaultValue": "new ClassPathResource(\"/eu/domibus/connector/backend/config/decrypt.properties\")"
+    },
+    {
+      "name": "connector.backend.ws.signature-properties-resource",
+      "defaultValue": "new ClassPathResource(\"/eu/domibus/connector/backend/config/decrypt.properties\")"
+    },
+    {
+      "name": "connector.backend.ws.ws-policy",
+      "defaultValue": "new ClassPathResource(\"/wsdl/backend.policy.xml\")"
+    }
+  ]
+}

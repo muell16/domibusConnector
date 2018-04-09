@@ -26,8 +26,9 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 	<jaxws:client
         id="gwSubmissionClient" 
         serviceClass="eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService"
-		address="${gateway.submission.endpoint.address}" 
-    >
+        address="#{GatewayLinkWsServiceProperties.submissionEndpointAddress}">
+		<!--address="${gateway.submission.endpoint.address}" -->
+    <!--&gt;-->
         <jaxws:properties>
             <entry key="mtom-enabled" value="true" />
         </jaxws:properties>
@@ -36,7 +37,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 	<jaxws:endpoint
 		id="domibusConnectorDeliveryServiceEndpoint"
         implementor="#domibusConnectorDeliveryServiceImpl"
-        address="/domibusConnectorDeliveryWebservice">
+        address="#{GatewayLinkWsServiceProperties.address}">
         <jaxws:properties>
             <entry key="mtom-enabled" value="true" />
         </jaxws:properties>
@@ -45,14 +46,25 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
    	<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">
  
     <http:tlsClientParameters>
-      <sec:keyManagers keyPassword="${gateway.delivery.service.ssl.key.password}">
-        <sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"
-                      file="${gateway.delivery.service.ssl.keystore.store}"/>
-      </sec:keyManagers>
-      <sec:trustManagers>
-        <sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.truststore.password}"
-                      file="${gateway.delivery.service.ssl.truststore.store}"/>
-      </sec:trustManagers>
+      <!--<sec:keyManagers keyPassword="${gateway.delivery.service.ssl.key.password}">-->
+        <!--<sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"-->
+                      <!--file="${gateway.delivery.service.ssl.keystore.store}"/>-->
+      <!--</sec:keyManagers>-->
+      <!--<sec:trustManagers>-->
+        <!--<sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.truststore.password}"-->
+                      <!--file="${gateway.delivery.service.ssl.truststore.store}"/>-->
+      <!--</sec:trustManagers>-->
+        <sec:keyManagers keyPassword="#{GatewayLinkWsServiceProperties.tlsKey.password}">
+            <sec:keyStore type="JKS"
+                          password="#{GatewayLinkWsServiceProperties.tlsKeyStore.password}"
+                          file="#{GatewayLinkWsServiceProperties.tlsKeyStore.pathUrlAsString}"/>
+        </sec:keyManagers>
+        <sec:trustManagers>
+            <sec:keyStore type="JKS"
+                          password="#{GatewayLinkWsServiceProperties.tlsTrustStore.password}"
+                          file="#{GatewayLinkWsServiceProperties.tlsTrustStore.pathUrlAsString}"/>
+        </sec:trustManagers>
+
       <sec:cipherSuitesFilter>
         <!-- these filters ensure that a ciphersuite with
              export-suitable or null encryption is used,

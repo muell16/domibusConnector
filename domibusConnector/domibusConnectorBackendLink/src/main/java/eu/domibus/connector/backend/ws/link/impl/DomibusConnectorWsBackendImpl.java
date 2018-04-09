@@ -139,6 +139,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new RuntimeException(error);
         }
+
         return backendClientInfoByName;
     }
 

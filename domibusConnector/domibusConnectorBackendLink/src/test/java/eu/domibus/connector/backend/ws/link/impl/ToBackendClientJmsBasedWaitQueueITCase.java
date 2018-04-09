@@ -6,6 +6,7 @@ import eu.domibus.connector.backend.ws.link.impl.ToBackendClientJmsBasedWaitQueu
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
+import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ import static org.mockito.Matchers.eq;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class})
+@ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class, BackendLinkInternalWaitQueueProperties.class})
 @TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue",
         "spring.activemq.packages.trusted=eu.domibus.connector.backend.domain.model,eu.domibus.connector.domain.model,java.util,eu.domibus.connector.domain.testutil,eu.domibus.connector.domain.enums"})
 public class ToBackendClientJmsBasedWaitQueueITCase {

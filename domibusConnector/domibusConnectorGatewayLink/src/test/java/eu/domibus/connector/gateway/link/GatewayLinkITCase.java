@@ -41,7 +41,7 @@ public class GatewayLinkITCase {
                         new String[]{"gwlink-ws"},
                         new String[]{
                                 "server.port=" + portGWLink,
-                                "gateway.submission.endpoint.address=" + TEST_GW_SERVER_ADDRESS
+                                "connector.gatewaylink.ws.submission-endpoint-address=" + TEST_GW_SERVER_ADDRESS
                         });
         System.out.println(String.format("GW LINK APPLICATION CONTEXT STARTED with address [%s]", GW_LINK_SERVER_ADDRESS));
 
