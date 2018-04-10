@@ -1,17 +1,17 @@
 {
   "properties": [
 
-    {
-      "name": "connector.backend.ws.encryption-properties-resource",
-      "defaultValue": "classpath:/eu/domibus/connector/backend/config/decrypt.properties"
-    },
-    {
-      "name": "connector.backend.ws.signature-properties-resource",
-      "defaultValue": "classpath:eu/domibus/connector/backend/config/decrypt.properties"
-    },
+
     {
       "name": "connector.backend.ws.ws-policy",
-      "defaultValue": "classpath:wsdl/backend.policy.xml"
+      "defaultValue": "classpath:wsdl/backend.policy.xml",
+      "description": "Contains the path to the wsdl policy which is used communicating between connectorBackendClient and connectorBackend"
+    },
+    {
+      "name": "connector.backend.ws.wss.cert.alias",
+      "defaultValue": "connector",
+      "description": "alias name of the Certificate ( which is used to sign the soap-messages, which are transported to the connectorBackendClient"
     }
+
   ]
 }

@@ -54,7 +54,8 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
             <entry key="security.signature.properties" value-ref="encryptProperties"  />
             <entry key="security.encryption.username" value="connector" />
             <entry key="security.signature.username" value="${ws.backendclient.name}" />
-            
+
+            <entry key="security.enable.streaming" value="true" />
 <!--            <entry key="mtom-enabled" value="true"/> -->
                         
          </jaxws:properties>

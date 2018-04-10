@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -48,9 +47,18 @@ public class WSBackendLinkConfigurationProperties {
     @NestedConfigurationProperty
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
-
+    /**
+     * Configuration of the key store which is used to sign the transferred soap-messages and
+     * decrypt the from the backendClient received messages
+     */
     @NestedConfigurationProperty
-    private CertAndStoreConfigurationProperties wss;
+    private KeyAndKeyStoreConfigurationProperties key;
+
+    /**
+     * Trust store which is used to verify the from the backendClient signed messages
+     */
+    @NestedConfigurationProperty
+    private CertAndStoreConfigurationProperties trust;
 
     public String getBackendPublishAddress() {
         return backendPublishAddress;
@@ -60,13 +68,21 @@ public class WSBackendLinkConfigurationProperties {
         this.backendPublishAddress = backendPublishAddress;
     }
 
-
-    public Properties getEncryptionProperties() throws IOException {
-        Properties p = mapCertAndStoreConfigPropertiesToMerlinProperties(this.wss);
-        LOGGER.debug("getEncryptionProperties() are: [{}]", p);
-        return p;
+    public KeyAndKeyStoreConfigurationProperties getKey() {
+        return key;
     }
 
+    public void setKey(KeyAndKeyStoreConfigurationProperties key) {
+        this.key = key;
+    }
+
+    public CertAndStoreConfigurationProperties getTrust() {
+        return trust;
+    }
+
+    public void setTrust(CertAndStoreConfigurationProperties trust) {
+        this.trust = trust;
+    }
 
     public Resource getWsPolicy() {
         return wsPolicy;
@@ -77,7 +93,7 @@ public class WSBackendLinkConfigurationProperties {
     }
 
     public Properties getWssProperties() {
-        Properties p = mapCertAndStoreConfigPropertiesToMerlinProperties(this.wss);
+        Properties p = mapCertAndStoreConfigPropertiesToMerlinProperties();
         LOGGER.debug("getSignatureProperties() are: [{}]", p);
         return p;
     }
@@ -85,41 +101,28 @@ public class WSBackendLinkConfigurationProperties {
     /**
      * Maps the own configured properties to the crypto Properties
      *  also see https://ws.apache.org/wss4j/config.html
-     * @param c - the Properties
      * @return the wss Properties
      */
-    //using same store for trust and keystore
-    public Properties mapCertAndStoreConfigPropertiesToMerlinProperties(CertAndStoreConfigurationProperties c) {
+    public Properties mapCertAndStoreConfigPropertiesToMerlinProperties() {
         Properties p = new Properties();
         p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.wss.getStore().getPassword());
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.wss.getStore().getPathUrlAsString());
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.wss.getCert().getAlias());
-        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.wss.getStore().getPassword());
-        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.wss.getStore().getPathUrlAsString());
-        p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.wss.isLoadCaCerts()));
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.key.getStore().getPassword());
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.key.getStore().getPathUrlAsString());
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.key.getKey().getAlias());
+        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.trust.getStore().getPassword());
+        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.trust.getStore().getPathUrlAsString());
+        p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.trust.isLoadCaCerts()));
 
         return p;
     }
 
+    public static class KeyAndKeyStoreConfigurationProperties {
+        public KeyAndKeyStoreConfigurationProperties() {}
 
-    public CertAndStoreConfigurationProperties getWss() {
-        return wss;
-    }
-
-    public void setWss(CertAndStoreConfigurationProperties wss) {
-        this.wss = wss;
-    }
-
-
-    public static class CertAndStoreConfigurationProperties {
-
-        public CertAndStoreConfigurationProperties() {}
-
-        public CertAndStoreConfigurationProperties(StoreConfigurationProperties keyStore, CertConfigurationProperties cert) {
+        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, CertConfigurationProperties key) {
             this.store = keyStore;
-            this.cert = cert;
+            this.key = key;
         }
 
         /**
@@ -132,7 +135,40 @@ public class WSBackendLinkConfigurationProperties {
          * Configures the default alias to use
          */
         @NestedConfigurationProperty
-        private CertConfigurationProperties cert;
+        private CertConfigurationProperties key;
+
+        public StoreConfigurationProperties getStore() {
+            return store;
+        }
+
+        public void setStore(StoreConfigurationProperties store) {
+            this.store = store;
+        }
+
+        public CertConfigurationProperties getKey() {
+            return key;
+        }
+
+        public void setKey(CertConfigurationProperties key) {
+            this.key = key;
+        }
+
+    }
+
+
+    public static class CertAndStoreConfigurationProperties {
+
+        public CertAndStoreConfigurationProperties() {}
+
+        public CertAndStoreConfigurationProperties(StoreConfigurationProperties keyStore) {
+            this.store = keyStore;
+        }
+
+        /**
+         * Configuration of the (Key/Certificate)Store
+         */
+        @NestedConfigurationProperty
+        private StoreConfigurationProperties store;
 
         /**
          * Load system Ca Certs? (default false).
@@ -147,14 +183,6 @@ public class WSBackendLinkConfigurationProperties {
 
         public void setStore(StoreConfigurationProperties store) {
             this.store = store;
-        }
-
-        public CertConfigurationProperties getCert() {
-            return cert;
-        }
-
-        public void setCert(CertConfigurationProperties cert) {
-            this.cert = cert;
         }
 
         public void setLoadCaCerts(boolean loadCaCerts) {

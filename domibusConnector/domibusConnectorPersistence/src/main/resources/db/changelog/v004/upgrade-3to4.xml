@@ -18,12 +18,19 @@
     
     <property name="varchar512.type" value="VARCHAR(512)" />
     <property name="varchar512.type" value="VARCHAR(512 CHAR)" dbms="oracle" />
-    
-    <property name="id.type" value="NUMBER(10,0)" />
+
+    <property name="id.type" value="BIGINT" dbms="postgresql" />
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
     <property name="id.type" value="NUMBER(10)" dbms="oracle" />
-    
-    <property name="text.type" value="TEXT" />
+
+    <property name="text.type" value="TEXT" dbms="h2,postgresql" />
     <property name="text.type" value="CLOB" dbms="oracle" />
+    <property name="text.type" value="longtext" dbms="mysql" />
+
+    <property name="blob" value="BLOB" dbms="oracle,h2,postgresql"/>
+    <property name="blob" value="longblob" dbms="mysql" />
+
+
      
     <changeSet id="3to4_upgrade_001.0_pre_setup" author="StephanSpindler">
         <preConditions onFail="CONTINUE">
@@ -300,22 +307,22 @@
             newDataType="${varchar255.type}" />
     </changeSet>
     
-    <changeSet id="3to4_upgrade_014.0_fk_drop" author="StephanSpindler">
-        <preConditions onFail="CONTINUE">
-            <not>
-                <dbms type="h2" />
-            </not>
-        </preConditions>
-        <!-- drop all FK to make sure i can create them -->
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_ACTION" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_EVIDENCES" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
-    </changeSet>
+    <!--<changeSet id="3to4_upgrade_014.0_fk_drop" author="StephanSpindler">-->
+        <!--<preConditions onFail="CONTINUE">-->
+            <!--<not>-->
+                <!--<dbms type="h2" />-->
+            <!--</not>-->
+        <!--</preConditions>-->
+        <!--&lt;!&ndash; drop all FK to make sure i can create them &ndash;&gt;-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_ACTION" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_EVIDENCES" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />-->
+        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />-->
+    <!--</changeSet>-->
     
     <changeSet id="3to4_upgrade_014_fk_create" author="StephanSpindler">
 <!--        <preConditions>

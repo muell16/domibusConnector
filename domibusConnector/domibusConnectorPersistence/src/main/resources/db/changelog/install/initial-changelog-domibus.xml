@@ -12,6 +12,12 @@
     <property name="varchar.length.type" value="" dbms="h2,mysql,postgresql" />
     <property name="varchar.length.type" value="CHAR" dbms="oracle" />
 
+    <property name="varchar255.type" value="VARCHAR(255)" />
+    <property name="varchar255.type" value="VARCHAR(255 CHAR)" dbms="oracle" />
+
+    <property name="varchar512.type" value="VARCHAR(512)" />
+    <property name="varchar512.type" value="VARCHAR(512 CHAR)" dbms="oracle" />
+
     <property name="id.type" value="BIGINT" dbms="postgresql" />
     <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
     <property name="id.type" value="NUMBER(10)" dbms="oracle" />
@@ -38,6 +44,7 @@
             <column name="SEQ_NAME" />
         </createIndex>
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_2">
         <createTable tableName="DOMIBUS_CONNECTOR_SERVICE" >
             <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >
@@ -49,6 +56,7 @@
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_3">
         <createTable tableName="DOMIBUS_CONNECTOR_PARTY">
             <column name="PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" >
@@ -61,6 +69,7 @@
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_4">
         <createTable tableName="DOMIBUS_CONNECTOR_MSG_ERROR">
             <column name="ID" type="DECIMAL(10,0)" >
@@ -80,6 +89,7 @@
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG_ERROR" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_5">
         <createTable tableName="DOMIBUS_CONNECTOR_MSG_CONT" >
             <column name="ID" type="DECIMAL(10,0)">
@@ -93,6 +103,7 @@
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6">
         <createTable tableName="DOMIBUS_CONNECTOR_BIGDATA">
             <column name="ID" type="${varchar.type}(255 ${varchar.length.type})" >
@@ -110,8 +121,6 @@
 
     </changeSet>
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_7">
-        
-        
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" >
             <column name="ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
@@ -136,10 +145,9 @@
             </column>        
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8">
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8">
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE">
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />

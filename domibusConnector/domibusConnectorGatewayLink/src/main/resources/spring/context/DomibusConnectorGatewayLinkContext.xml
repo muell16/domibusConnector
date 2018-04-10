@@ -46,14 +46,6 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
    	<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">
  
     <http:tlsClientParameters>
-      <!--<sec:keyManagers keyPassword="${gateway.delivery.service.ssl.key.password}">-->
-        <!--<sec:store type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"-->
-                      <!--file="${gateway.delivery.service.ssl.keystore.store}"/>-->
-      <!--</sec:keyManagers>-->
-      <!--<sec:trustManagers>-->
-        <!--<sec:store type="JKS" password="${gateway.delivery.service.ssl.truststore.password}"-->
-                      <!--file="${gateway.delivery.service.ssl.truststore.store}"/>-->
-      <!--</sec:trustManagers>-->
         <sec:keyManagers keyPassword="#{GatewayLinkWsServiceProperties.tlsKey.password}">
 
             <sec:keyStore type="JKS"

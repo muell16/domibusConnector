@@ -12,10 +12,20 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class EvidencesToolkitConfigurationProperties {
 
+    /**
+     * Configuration of the keyStore which holds the private key to sign the evidences
+     */
     StoreConfigurationProperties keystore = new StoreConfigurationProperties();
 
+    /**
+     * Configuration of the private key which is used to sign the evidences
+     */
     CertConfigurationProperties key = new CertConfigurationProperties();
 
+    /**
+     * The hashAlgorithm used for signing the evidences
+     * The default value is SHA256
+     */
     HashValueBuilder.HashAlgorithm hashAlgorithm = HashValueBuilder.HashAlgorithm.SHA256;
 
     public StoreConfigurationProperties getKeystore() {

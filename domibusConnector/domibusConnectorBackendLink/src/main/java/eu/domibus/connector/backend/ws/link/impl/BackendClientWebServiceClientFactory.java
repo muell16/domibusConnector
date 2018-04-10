@@ -57,7 +57,7 @@ public class BackendClientWebServiceClientFactory {
         props.put("security.encryption.properties", backendLinkConfigurationProperties.getWssProperties());
         props.put("security.signature.properties", backendLinkConfigurationProperties.getWssProperties());
         props.put("security.encryption.username", backendClientInfoByName.getBackendKeyAlias());
-        props.put("security.signature.username", backendLinkConfigurationProperties.getWss().getCert().getAlias());
+        props.put("security.signature.username", backendLinkConfigurationProperties.getKey().getKey().getAlias());
         LOGGER.debug("#createWsClient: Configuring WsClient with following properties: [{}]", props);
         jaxWsProxyFactoryBean.setProperties(props);
         //jaxWsProxyFactoryBean.set
