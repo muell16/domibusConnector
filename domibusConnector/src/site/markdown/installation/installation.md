@@ -29,7 +29,8 @@ You can configure logging in your own log4j2.xml file by setting
     
     logging.config=<location of logging file>
 
-or adjusting the logging level by setting
+or use the spring boot to configure the logging level by setting the property,
+which will configure the root logging level.
 
     logging.level.root=WARN|INFO|DEBUG|TRACE
     

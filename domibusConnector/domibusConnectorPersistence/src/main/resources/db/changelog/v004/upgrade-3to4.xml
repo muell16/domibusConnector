@@ -212,6 +212,9 @@
             newColumnName="DELIVERED_BACKEND"
             columnDataType="TIMESTAMP"
         />
+        <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE">
+            <column name="BACKEND_NAME" type="${varchar255.type}" />
+        </addColumn>
     </changeSet>
     
     <changeSet id="3to4_upgrade_008_tb_ren_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
@@ -242,18 +245,6 @@
     </changeSet>
     
     
-    <changeSet id="3to4_upgrade_009c_tb_update_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
-        <addNotNullConstraint 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE"             
-            columnName="DELIVERED_NAT" 
-            columnDataType="TIMESTAMP"
-            defaultNullValue="1970-01-01T10:10:10"
-        />
-<!--        <renameColumn 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            oldColumnName="DELIVERED_NAT" 
-            newColumnName="DELIVERED_NAT" />-->
-    </changeSet>
     
     <changeSet id="3to4_upgrade_010_tb_create_DOMIBUS_CONNECTOR_CONTENT_TYPE" author="StephanSpindler">
         <createTable tableName="MESSAGE_CONTENT_TYPE" >
@@ -282,7 +273,10 @@
                 <constraints nullable="false" />
             </column>
             <column name="BACKEND_SERVICE_TYPE" type="${varchar255.type}" ></column>
-            <column name="SERVICE" type="${varchar255.type}" ></column>            
+            <column name="BACKEND_ENABLED" type="BOOLEAN"></column>
+            <column name="BACKEND_DEFAULT" type="BOOLEAN"></column>
+            <column name="BACKEND_DESCRIPTION" type="${text.type}" ></column>
+            <column name="BACKEND_PUSH_ADDRESS" type="${varchar512.type}"></column>                    
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_BACK_01" />
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_NAME" constraintName="UN_DOMIBUS_CONNECTOR_BACK_01" />
@@ -306,33 +300,21 @@
             columnName="ACTION" 
             newDataType="${varchar255.type}" />
     </changeSet>
+
+    <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_BIGDATA">
+        <addForeignKeyConstraint
+                baseTableName="DOMIBUS_CONNECTOR_BIGDATA"
+                baseColumnNames="MESSAGE_ID"
+                constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA"
+                referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                referencedColumnNames="ID"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION" />
+    </changeSet>
+
     
-    <!--<changeSet id="3to4_upgrade_014.0_fk_drop" author="StephanSpindler">-->
-        <!--<preConditions onFail="CONTINUE">-->
-            <!--<not>-->
-                <!--<dbms type="h2" />-->
-            <!--</not>-->
-        <!--</preConditions>-->
-        <!--&lt;!&ndash; drop all FK to make sure i can create them &ndash;&gt;-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_ACTION" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_EVIDENCES" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />-->
-        <!--<dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />-->
-    <!--</changeSet>-->
-    
-    <changeSet id="3to4_upgrade_014_fk_create" author="StephanSpindler">
-<!--        <preConditions>
-            <or>
-                <changeSetExecuted id="3to4_upgrade_014.0_fk_drop" author="StephanSpindler" changeLogFile="db/changelog/v004/upgrade-3to4.xml" />
-                <not>
-                    <dbms type="h2" />
-                </not>
-            </or>
-        </preConditions>-->
+    <changeSet id="3to4_upgrade_020_fk_create" author="StephanSpindler">
+
         
         
         <addForeignKeyConstraint 
@@ -438,7 +420,9 @@
             onUpdate="NO ACTION"  
         />
     </changeSet>
-        
-    
+
+    <changeSet id="tag-db-domibus-4.0" author="StephanSpindler">
+        <tagDatabase tag="DOMIBUS_DB_V4.0" />
+    </changeSet>
    
 </databaseChangeLog> 

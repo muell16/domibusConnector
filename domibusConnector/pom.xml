@@ -744,6 +744,19 @@
                 <artifactId>maven-site-plugin</artifactId>                
                 <version>3.3</version>
             </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-pdf-plugin</artifactId>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>make-pdf</id>-->
+                        <!--<phase>prepare-package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>pdf</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
     
