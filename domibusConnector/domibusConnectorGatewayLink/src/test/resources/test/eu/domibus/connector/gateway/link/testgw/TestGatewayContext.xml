@@ -56,16 +56,16 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
  <!---->
     <!--<http:tlsClientParameters>-->
       <!--<sec:keyManagers keyPassword="${gateway.delivery.service.ssl.key.password}">-->
-        <!--<sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"-->
+        <!--<sec:store type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"-->
                       <!--file="${gateway.delivery.service.ssl.keystore.store}"/>-->
       <!--</sec:keyManagers>-->
       <!--<sec:trustManagers>-->
-        <!--<sec:keyStore type="JKS" password="${gateway.delivery.service.ssl.truststore.password}"-->
+        <!--<sec:store type="JKS" password="${gateway.delivery.service.ssl.truststore.password}"-->
                       <!--file="${gateway.delivery.service.ssl.truststore.store}"/>-->
       <!--</sec:trustManagers>-->
       <!--<sec:cipherSuitesFilter>-->
         <!--&lt;!&ndash; these filters ensure that a ciphersuite with-->
-             <!--export-suitable or null encryption is used,-->
+             <!--export-suitable or null wss is used,-->
              <!--but exclude anonymous Diffie-Hellman key change as-->
              <!--this is vulnerable to man-in-the-middle attacks &ndash;&gt;-->
         <!--<sec:include>.*_EXPORT_.*</sec:include>-->

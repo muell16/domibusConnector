@@ -9,6 +9,13 @@ import javax.annotation.Nullable;
  */
 public class CertConfigurationProperties {
 
+    public CertConfigurationProperties() {}
+
+    public CertConfigurationProperties(String alias, String password) {
+        this.alias = alias;
+        this.password = password;
+    }
+
     /**
      * The alias of the Certificate/Key
      */

@@ -31,12 +31,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
          <jaxws:properties>
             <entry key="security.username" value="bob" />
             <entry key="security.password" value="test" />            
-            <entry key="security.encryption.properties" value="encrypt.properties" />
+            <entry key="security.wss.properties" value="encrypt.properties" />
             <entry key="security.signature.properties" value="encrypt.properties" />
-            <entry key="security.encryption.username" value="connector" />
+            <entry key="security.wss.username" value="connector" />
             <entry key="security.signature.username" value="bob" />
             
-            <entry key="security.encryption.properties" value="encrypt.properties" />
+            <entry key="security.wss.properties" value="encrypt.properties" />
             <entry key="mtom-enabled" value="true"/> 
                         
          </jaxws:properties>

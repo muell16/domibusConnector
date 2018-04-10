@@ -49,8 +49,9 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
          <jaxws:properties>
 <!--            <entry key="security.username" value="bob" />
             <entry key="security.password" value="test" />            -->
-            <entry key="security.encryption.properties" value-ref="encryptProperties"  />
-            <entry key="security.signature.properties" value-ref="encryptProperties" />
+
+            <entry key="security.encryption.properties" value-ref="encryptProperties" />
+            <entry key="security.signature.properties" value-ref="encryptProperties"  />
             <entry key="security.encryption.username" value="connector" />
             <entry key="security.signature.username" value="${ws.backendclient.name}" />
             

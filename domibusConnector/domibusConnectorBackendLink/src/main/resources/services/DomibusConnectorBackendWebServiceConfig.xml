@@ -26,7 +26,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
     
     <jaxws:endpoint id="connectorBackendWS"
                     implementor="#connectorBackendImpl"
-                    address="/backend"                       
+                    address="#{WSBackendLinkConfigurationProperties.backendPublishAddress}"
                     serviceName="s:DomibusConnectorBackendWSService"    
                     wsdlLocation="wsdl/DomibusConnectorBackendWebService.wsdl"
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
@@ -41,13 +41,14 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
         
         <jaxws:properties>
             
-            <entry key="security.signature.properties" value="#{WSBackendLinkConfigurationProperties.getSignatureProperties()}" />
-            <entry key="security.signature.username" value="connector" />
-            <!--<entry key="security.encryption.username" value="bob" />-->
-            <entry key="security.encryption.properties" value="#{WSBackendLinkConfigurationProperties.getEncryptionProperties()}" />
+            <entry key="security.signature.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
+            <!--<entry key="security.signature.username" value="${}" />-->
+            <entry key="security.encryption.username" value="bob" />
+            <entry key="security.encryption.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
 
             <entry key="mtom-enabled" value="true" />
             <entry key="security.store.bytes.in.attachment" value="true" />
+            <!--<entry key="ws-security.enable.streaming" value="true" />-->
 
 
         </jaxws:properties>

@@ -51,49 +51,19 @@ public class BackendClientWebServiceClientFactory {
         jaxWsProxyFactoryBean.setFeatures(Arrays.asList(new Feature[]{policyUtil.loadPolicyFeature()}));
         jaxWsProxyFactoryBean.setAddress(pushAddress);
         jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl"); //maybe load own wsdl instead of remote one?
-        Properties encryptionProperties = loadEncryptionProperties();
-        Properties signatureProperties = loadEncryptionProperties();
+//        Properties encryptionProperties = loadEncryptionProperties();
+//        Properties signatureProperties = loadEncryptionProperties();
         HashMap<String, Object> props = new HashMap<>();
-        props.put("security.encryption.properties", encryptionProperties);
-        props.put("security.signature.properties", signatureProperties);
+        props.put("security.encryption.properties", backendLinkConfigurationProperties.getWssProperties());
+        props.put("security.signature.properties", backendLinkConfigurationProperties.getWssProperties());
         props.put("security.encryption.username", backendClientInfoByName.getBackendKeyAlias());
-        props.put("security.signature.username", backendLinkConfigurationProperties.getConnectorCertAlias());
+        props.put("security.signature.username", backendLinkConfigurationProperties.getWss().getCert().getAlias());
+        LOGGER.debug("#createWsClient: Configuring WsClient with following properties: [{}]", props);
         jaxWsProxyFactoryBean.setProperties(props);
         //jaxWsProxyFactoryBean.set
         DomibusConnectorBackendDeliveryWebService webServiceClientEndpoint = (DomibusConnectorBackendDeliveryWebService) jaxWsProxyFactoryBean.create();
         return webServiceClientEndpoint;
     }
 
-    private Properties loadEncryptionProperties() {
-        try {
-            Properties props = new Properties();
-            InputStream is = backendLinkConfigurationProperties.getEncryptionPropertiesResource().getInputStream();
-            if (is == null) {
-                throw new RuntimeException("Encryption properties cannot be read!");
-            }
-            props.load(is);
-            return props;
-        } catch (IOException ioe) {
-            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", backendLinkConfigurationProperties.getEncryptionPropertiesResource());
-            LOGGER.error("IOException: ", ioe);
-            throw new RuntimeException(ioe);
-        }
-    }
-
-    private Properties loadSignatureProperties() {
-        try {
-            Properties props = new Properties();
-            InputStream is = backendLinkConfigurationProperties.getSignaturePropertiesResource().getInputStream();
-            if (is == null) {
-                throw new RuntimeException("Signature properties cannot be read!");
-            }
-            props.load(is);
-            return props;
-        } catch (IOException ioe) {
-            LOGGER.debug("IOError occured while loading default encryption properties from [{}]", backendLinkConfigurationProperties.getEncryptionPropertiesResource());
-            LOGGER.error("IOException: ", ioe);
-            throw new RuntimeException(ioe);
-        }
-    }
 
 }
