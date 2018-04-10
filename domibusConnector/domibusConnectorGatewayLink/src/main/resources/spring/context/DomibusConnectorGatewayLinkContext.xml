@@ -55,12 +55,13 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
                       <!--file="${gateway.delivery.service.ssl.truststore.store}"/>-->
       <!--</sec:trustManagers>-->
         <sec:keyManagers keyPassword="#{GatewayLinkWsServiceProperties.tlsKey.password}">
-            <sec:store type="JKS"
+
+            <sec:keyStore type="JKS"
                           password="#{GatewayLinkWsServiceProperties.tlsKeyStore.password}"
-                          file="#{GatewayLinkWsServiceProperties.tlsKeyStore.pathUrlAsString}"/>
+                          file="#{GatewayLinkWsServiceProperties.tlsKeyStore.pathUrlAsString}" />
         </sec:keyManagers>
         <sec:trustManagers>
-            <sec:store type="JKS"
+            <sec:keyStore type="JKS"
                           password="#{GatewayLinkWsServiceProperties.tlsTrustStore.password}"
                           file="#{GatewayLinkWsServiceProperties.tlsTrustStore.pathUrlAsString}"/>
         </sec:trustManagers>
