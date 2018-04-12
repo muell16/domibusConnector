@@ -45,7 +45,14 @@ and liquibase. You can update your database by executing the jar:
 
     java -jar domibusConnectorDatabaseInitializer-4.0.0-beta2-SNAPSHOT-jar-with-dependencies.jar  --changeLogFile=db/changelog/v004/upgrade-3to4.xml --driver=com.mysql.jdbc.Driver --url=jdbc:mysql://localhost/domibusconnector --username=domibus --password=domibus
 
-You have to provide
+oracle:
+
+    java -jar domibusConnectorDatabaseInitializer-4.0.0-beta2-SNAPSHOT-jar-with-dependencies.jar  --changeLogFile=db/changelog/v004/upgrade-3to4.xml --driver=oracle.jdbc.OracleDriver --url=jdbc:oracle:thin:connectormigrate//@localhost:1521/xe --username=connectormigrate --password=connector  --classpath="C:\Entwicklung\.m2\repository\com\oracle\ojdbc7\12.1.0.1\ojdbc7-12.1.0.1.jar" --logLevel=info update
+
+
+
+
+ You have to provide
  * --driver the jdbc driver name (is com.mysql.jdbc.Driver for mysql)
  * --url the jdbc url to access the database (consult the documentation of your jdbc driver)
  * --username the username to access the database (the database user needs the permission to make schema modifications)

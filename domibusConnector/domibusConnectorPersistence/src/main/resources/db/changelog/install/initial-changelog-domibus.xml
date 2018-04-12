@@ -51,7 +51,7 @@
             <column name="SERVICE" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="SERVICE_TYPE" type="${varchar255.type}" >
+            <column name="SERVICE_TYPE" type="${varchar512.type}" >
                 <constraints nullable="false" />
             </column>
         </createTable>
@@ -95,7 +95,7 @@
         </createTable>
     </changeSet>
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_4_primary_key">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG_ERROR" />
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_MSG_ERROR" />
     </changeSet>
 
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_5">
@@ -103,7 +103,9 @@
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+            </column>
             <column name="CONTENT_TYPE" type="${varchar255.type}" />
             <column name="CONTENT" type="${blob}" />
             <column name="CHECKSUM" type="${text.type}" />            
@@ -149,15 +151,18 @@
             <column name="SERVICE" type="${varchar255.type}" />
             <column name="ACTION" type="${varchar255.type}" />
             <column name="CREATED" type="DATETIME">
-                <!--<constraints nullable="false" />-->
+                <constraints nullable="false" />
             </column>
             <column name="UPDATED" type="DATETIME" >
-                <!--<constraints nullable="false" />-->
+                <constraints nullable="false" />
             </column>        
         </createTable>
     </changeSet>
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_7_primary_key">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_CONNECTOR_MESSAGE_INFO" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_7_message_id_unique">
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="MESSAGE_ID" constraintName="MSG_INFO_UNIQ_MSG_ID"/>
     </changeSet>
 
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8">
@@ -232,18 +237,16 @@
 
 
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10_1">
-        <comment>Create Connector Action Table</comment>
         <createTable tableName="DOMIBUS_CONNECTOR_ACTION" >
             <column name="ACTION" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="PDF_REQUIRED" type="DECIMAL(1,0)" defaultValueBoolean="true">
+            <column name="PDF_REQUIRED" type="BOOLEAN" defaultValueBoolean="0">
                 <constraints nullable="false" />
             </column>        
         </createTable>
     </changeSet>
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10_1_primary_key">
-        <comment>Create Primary Key for DOMIBUS_CONNECTOR_ACTION Table</comment>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION" />
     </changeSet>
 
@@ -259,7 +262,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="BACKEND_KEY_PASS" type="${varchar255.type}" ></column>
-            <column name="BACKEND_SERVICE_TYPE" type="${varchar255.type}" ></column>
+            <column name="BACKEND_SERVICE_TYPE" type="${varchar512.type}" ></column>
             <column name="BACKEND_ENABLED" type="BOOLEAN" defaultValueBoolean="true" />
             <column name="BACKEND_DEFAULT" type="BOOLEAN" defaultValueBoolean="false" />
             <column name="BACKEND_DESCRIPTION" type="${text.type}"  />

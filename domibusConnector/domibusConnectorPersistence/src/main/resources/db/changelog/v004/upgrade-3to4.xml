@@ -51,15 +51,50 @@
     <changeSet id="3to4_upgrade_001.1_pre_setup_drop_primary_keys" author="StephanSpindler">
         <comment>Drop all primary keys, they are regenerated with named constraints</comment>
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" />
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" />
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" />
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_INFO" />
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.2_drop_pk_evidences" author="StephanSpindler" failOnError="false">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCES" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.3_drop_pk_msg_info" author="StephanSpindler">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.4_drop_pk_messages" author="StephanSpindler">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGES" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.5_pre_setup_drop_pk_msg_error" author="StephanSpindler">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.6_drop_pk_party" author="StephanSpindler">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.7_drop_pk_seq_store" author="StephanSpindler">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.8_drop_pk_service" author="StephanSpindler">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.9_drop_pk_webadmin_users" author="StephanSpindler">
         <dropPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" />
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_001.32_pk_create_action" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION"/>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_001.33_pk_create_message_info" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_MSG_INFO" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.34_pk_create_msg_error" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_MSG_ERROR" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.35_pk_create_party" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.36_pk_create_seq_store" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_001.37_pk_create_service" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
     </changeSet>
 
 
@@ -91,7 +126,7 @@
                         newDataType="${varchar512.type}"
         />        
     </changeSet>
-    
+
     <changeSet id="3to4_upgrade_003_tb_DOMIBUS_CONNECTOR_MSG_ERROR" author="StephanSpindler">
         <modifyDataType
             tableName="DOMIBUS_CONNECTOR_MSG_ERROR"
@@ -147,7 +182,8 @@
         </createTable>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
     </changeSet>
-    
+
+
     <changeSet id="3to4_upgrade_005_tb_update_DOMIBUS_CONNECTOR_MESSAGE_INFO" author="StephanSpindler">
         <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
@@ -195,14 +231,23 @@
             newDataType="TIMESTAMP" />
         <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="UPDATED" 
+            columnName="UPDATED"
             newDataType="TIMESTAMP" />
+    </changeSet>
+    <!--<changeSet id="3to4_upgrade_005_tb_update_DOMIBUS_CONNECTOR_MESSAGE_INFO_created" author="StephanSpindler">-->
+        <!--&lt;!&ndash;<addNotNullConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnName="CREATED" />&ndash;&gt;-->
+        <!--&lt;!&ndash;<addNotNullConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnName="UPDATED" />&ndash;&gt;-->
+    <!--</changeSet>-->
+    <changeSet id="3to4_upgrade_005_tb_update_DOMIBUS_CONNECTOR_MESSAGE_INFO_add_message_id_unique" author="StephanSpindler" dbms="mysql">
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="MESSAGE_ID" constraintName="MSG_INFO_UNIQ_MSG_ID"/>
     </changeSet>
         
     <changeSet id="3to4_upgrade_006_tb_rename_DOMIBUS_CONNECTOR_MESSAGE" author="StephanSpindler">
         <renameTable oldTableName="DOMIBUS_CONNECTOR_MESSAGES" newTableName="DOMIBUS_CONNECTOR_MESSAGE" />        
     </changeSet>
-
+    <changeSet id="3to4_upgrade_006_pk_create_message" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE"/>
+    </changeSet>
 
     <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_modify_id" author="StephanSpindler">
         <modifyDataType 
@@ -261,6 +306,7 @@
         </addColumn>
     </changeSet>
 
+
     <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_hashValue_mysql" author="StephanSpindler" dbms="mysql">
         <modifyDataType
                 tableName="DOMIBUS_CONNECTOR_MESSAGE"
@@ -279,7 +325,10 @@
     <changeSet id="3to4_upgrade_008_tb_ren_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
         <renameTable oldTableName="DOMIBUS_CONNECTOR_EVIDENCES" newTableName="DOMIBUS_CONNECTOR_EVIDENCE" />
     </changeSet>
-    
+    <changeSet id="3to4_upgrade_008_pk_create_evidence" author="StephanSpindler">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
+    </changeSet>
+
     <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_mod_id_type" author="StephanSpindler">
         <modifyDataType 
             tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
@@ -333,9 +382,8 @@
                 <constraints nullable="false" />
             </column>
             <column name="BACKEND_KEY_PASS" type="${varchar255.type}" >
-                <constraints nullable="false" />
             </column>
-            <column name="BACKEND_SERVICE_TYPE" type="${varchar255.type}" ></column>
+            <column name="BACKEND_SERVICE_TYPE" type="${varchar512.type}" ></column>
             <column name="BACKEND_ENABLED" type="BOOLEAN" defaultValueBoolean="true"></column>
             <column name="BACKEND_DEFAULT" type="BOOLEAN" defaultValueBoolean="false"></column>
             <column name="BACKEND_DESCRIPTION" type="${text.type}" ></column>
@@ -365,6 +413,9 @@
             tableName="DOMIBUS_CONNECTOR_ACTION" 
             columnName="ACTION" 
             newDataType="${varchar255.type}" />
+    </changeSet>
+    <changeSet id="3to4_upgrade_013.1_tb_update_DOMIBUS_CONNECTOR_ACTION_pdf_required" author="StephanSpindler">
+        <addDefaultValue tableName="DOMIBUS_CONNECTOR_ACTION" columnName="PDF_REQUIRED" defaultValueBoolean="0" />
     </changeSet>
 
     <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_CONT_TYPE">
@@ -396,6 +447,8 @@
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BIGDATA" columnNames="ID" />
     </changeSet>
 
+
+
     <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_BIGDATA_constraints">
         <addForeignKeyConstraint
                 baseTableName="DOMIBUS_CONNECTOR_BIGDATA"
@@ -405,6 +458,52 @@
                 referencedColumnNames="ID"
                 onDelete="NO ACTION"
                 onUpdate="NO ACTION" />
+    </changeSet>
+
+    <changeSet author="StephanSpindler" id="3to4_upgrade_015_tb_modify_WEBADMIN_USER">
+        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
+                        columnName="USERNAME"
+                        newDataType="${varchar512.type}" />
+        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
+                        columnName="PASSWORD"
+                        newDataType="${varchar512.type}" />
+        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
+                        columnName="SALT"
+                        newDataType="${varchar255.type}" />
+        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
+                        columnName="ROLE"
+                        newDataType="${varchar255.type}" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="3to4_upgrade_015_tb_modify_WEBADMIN_USER_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" columnNames="USERNAME"  constraintName="PK_WEBADMIN_USER" />
+    </changeSet>
+
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_rename_WEBADMIN_PROPERTIES_drop_pk" failOnError="false">
+        <dropPrimaryKey tableName="DOMIBUS_WEBADMIN_PROPERTIES" />
+    </changeSet>
+
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_rename_WEBADMIN_PROPERTIES">
+        <renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTIES" newTableName="DOMIBUS_WEBADMIN_PROPERTY" />
+    </changeSet>
+
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_key_rename">
+        <renameColumn tableName="DOMIBUS_WEBADMIN_PROPERTY" oldColumnName="PROPERTIES_KEY" newColumnName="KEY" columnDataType="${varchar512.type}"/>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_key_mod">
+        <modifyDataType tableName="DOMIBUS_WEBADMIN_PROPERTY"
+                        columnName="KEY"
+                        newDataType="${varchar512.type}" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_value_rename">
+        <renameColumn tableName="DOMIBUS_WEBADMIN_PROPERTY" oldColumnName="PROPERTIES_VALUE" newColumnName="VALUE" columnDataType="${varchar512.type}"/>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_value_modify">
+        <modifyDataType tableName="DOMIBUS_WEBADMIN_PROPERTY"
+                        columnName="VALUE"
+                        newDataType="${varchar512.type}" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_WEBADMIN_PROPERTY_add_primary_key" failOnError="false">
+        <addPrimaryKey tableName="DOMIBUS_WEBADMIN_PROPERTY" columnNames="KEY" constraintName="PK_WEBAMDIN_PROPERTY" />
     </changeSet>
 
     
@@ -534,30 +633,8 @@
         />
     </changeSet>
 
-    <changeSet id="3to4_upgrade_030_pk_create_action" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION"/>
-    </changeSet>
-    <changeSet id="3to4_upgrade_031_pk_create_evidence" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_032_pk_create_message_info" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_MSG_INFO" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_033_pk_create_msg_error" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_ERROR" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG_ERROR" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_034_pk_create_party" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_035_pk_create_seq_store" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_036_pk_create_service" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_037_pk_create_service" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" columnNames="USERNAME" constraintName="PK_DOMIBUS_WEBADMIN_USER" />
-    </changeSet>
+
+
 
     <changeSet id="tag-db-domibus-4.0" author="StephanSpindler">
         <tagDatabase tag="DOMIBUS_DB_V4.0" />
