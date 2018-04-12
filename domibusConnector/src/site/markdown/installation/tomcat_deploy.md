@@ -31,6 +31,9 @@ context and are available to the starting application.
     <Context docBase="<path to domibusConnectorWebAppModule.war>">  
         <Parameter  name="spring.datasource.jndi-name" 
                     value="jdbc/domibusWebConnectorDS" override="false" />
+        <Parameter  name="spring.config.location" 
+                      value="<path to the folder containing the application.properties" 
+                      override="false" />  
         <Resource name="jdbc/domibusWebConnectorDS" auth="Container"
                 type="javax.sql.DataSource" 
                 driverClassName="<jdbcDriverClass>"
@@ -43,3 +46,86 @@ context and are available to the starting application.
     </Context>
 
 The attribute 'docBase' contains the path of the war file, which should be deployed in this context.
+
+### Example Step-By-Step Installation on a Centos 7
+
+#### System preparation
+
+Install java, tomcat and mysql:
+
+> Note: mariadb is the opensource fork of mysql and in the standard centos repository available
+
+    sudo yum install -y java-1.8.0-openjdk-headless mariadb tomcat
+
+
+Start the database service and enable it as system service. 
+
+    sudo systemctl start mariadb
+    sudo systemctl enable mariadb
+
+Create a database and a database user:  
+
+If the database has started successfully log into the datbase with the following command 
+    
+    sudo mysql
+Execute the following commands on the database:
+    
+>Replace password with your own password  
+    
+    create database connector; --create a database named connector
+    create user connector identified by 'password';
+    grant all privileges on connector.* to connector;   
+    
+Execute the databaseInitializer:
+
+>You can find the domibusConnectorDatabaseInitializer.jar in the folder database-scripts/databaseInitializer
+
+    java -jar domibusConnectorDatabaseInitializer.jar \
+        --changeLogFile=db/changelog/install/initial-4.0.xml \
+        --driver=com.mysql.jdbc.Driver \
+        --url=jdbc:mysql://localhost/connector \
+        --username=connector \
+        --password=password \        
+        upgrade
+          
+After that your database is ready to use. Continue configuring and deploying the connector war.          
+          
+
+Create a folder for the domibusConnector:
+
+    mkdir /opt/domibusConnector
+
+After that copy the domibusConnector.war to /opt/domibusConnector/
+    
+    cp ${domibusConnectorWar} /opt/domibusConnector
+    
+Create a domibusConnectorWebAppModule.xml at /etc/tomcat/Catalina/localhost
+
+    cp ${exampleContext}  /etc/tomcat/Catalina/localhost
+    
+   
+Replace the databaseUrl, driverClass, eg. accordingly to your database settings:
+
+
+>        <Context docBase="/opt/domibus/connectorWebApp.war">  
+>             <Parameter  name="spring.datasource.jndi-name" 
+>                         value="jdbc/domibusWebConnectorDS" override="false" />
+>             <Parameter  name="spring.config.location" 
+>                           value="/etc/opt/domibus/config" 
+>                           override="false" />  
+>             <Resource name="jdbc/domibusWebConnectorDS" auth="Container"
+>                     type="javax.sql.DataSource" 
+>                     driverClassName="com.mysql.jdbc.Driver"
+>                     url="jdbc:mysql://localhost/connector"
+>                     username="connector" 
+>                     password="password" 
+>                     maxActive="20" 
+>                     maxIdle="10"
+>                     maxWait="-1"/>   
+>         </Context>
+
+Copy the application example properties to /opt/domibus/config
+
+    cp example-application.properties /opt/domibus/config 
+
+Configure the application properties according to your needs. Especially the security stores [Configuring Trust- and Keystores](certificates.html).

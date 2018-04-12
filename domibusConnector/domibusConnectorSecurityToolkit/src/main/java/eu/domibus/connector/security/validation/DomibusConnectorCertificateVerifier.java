@@ -1,12 +1,20 @@
 package eu.domibus.connector.security.validation;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +32,14 @@ import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
 @Component("domibusConnectorCertificateVerifier")
 public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifier implements InitializingBean {
 
-	private static final String OJ_STORE_PASSWORD = "ecodex";
-
-	private static final String OJ_STORE_JKS = "/keys/ojStore.jks";
+//	private static final String OJ_STORE_PASSWORD = "ecodex";
+//
+//	private static final String OJ_STORE_JKS = "/keys/ojStore.jks";
 
 	static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorCertificateVerifier.class);
+
+	@Autowired
+	SecurityToolkitConfigurationProperties securityToolkitConfigurationProperties;
 
 	@Value("${security.lotl.scheme.uri:null}")
 	String lotlSchemeUri;
@@ -49,6 +60,10 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		if (!securityToolkitConfigurationProperties.getKeyStore().getPath().exists()) {
+			createStore(securityToolkitConfigurationProperties.getKeyStore().getPath());
+		}
+
 		TrustedListsCertificateSource certSource = new TrustedListsCertificateSource();
 		OnlineCRLSource crlSource = new OnlineCRLSource();
 		OnlineOCSPSource ocspSource = new OnlineOCSPSource();
@@ -59,8 +74,8 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 		tslRepository.setTrustedListsCertificateSource(certSource);
 
 		KeyStoreCertificateSource keyStoreCertificateSource = null;
-		InputStream res = DomibusConnectorCertificateVerifier.class.getResourceAsStream(OJ_STORE_JKS);
-		keyStoreCertificateSource = new KeyStoreCertificateSource(res, "JKS", OJ_STORE_PASSWORD);
+		InputStream res = securityToolkitConfigurationProperties.getKeyStore().getPath().getInputStream();
+		keyStoreCertificateSource = new KeyStoreCertificateSource(res, "JKS", securityToolkitConfigurationProperties.getKeyStore().getPassword());
 
 		TSLValidationJob job = new TSLValidationJob();
 		job.setDataLoader(normalLoader);
@@ -85,5 +100,21 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 		setOcspSource(ocspSource);
 
 	}
+
+	private void createStore(org.springframework.core.io.Resource resource) {
+        String file = resource.getFilename();
+	    try (FileOutputStream fos = new FileOutputStream(file)){
+            KeyStore ks = KeyStore.getInstance("JKS");
+            ks.store(fos, securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());
+        } catch (IOException ioe) {
+	        LOGGER.error("Cannot create java key store with resource: [{}]", resource);
+        } catch (KeyStoreException e) {
+            LOGGER.error("Cannot create java key store", e);
+        } catch (CertificateException e) {
+            LOGGER.error("Cannot create java key store", e);
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error("Cannot create java key store", e);
+        }
+    }
 
 }

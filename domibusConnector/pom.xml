@@ -9,9 +9,7 @@
         <module>domibusConnectorEvidencesToolkit</module>
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
-        <module>domibusConnectorDistribution</module>
         <module>domibusConnectorMonitoring</module>
-        <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorWebAppModule</module>
         <module>domibusConnectorPersistence</module>
         <module>domibusConnectorDomain</module>
@@ -21,6 +19,8 @@
         <module>domibusConnectorTest</module>
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
+        <module>domibusConnectorDocumentation</module>
+        <module>domibusConnectorDistribution</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -744,19 +744,20 @@
                 <artifactId>maven-site-plugin</artifactId>                
                 <version>3.3</version>
             </plugin>
-            <!--<plugin>-->
-                <!--<artifactId>maven-pdf-plugin</artifactId>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>make-pdf</id>-->
-                        <!--<phase>prepare-package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>pdf</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <artifactId>maven-pdf-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>make-pdf</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>pdf</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     

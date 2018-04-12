@@ -24,20 +24,41 @@
 			</includes>
 		</fileSet>
         <fileSet>
-			<directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs</directory>
+			<directory>${project.basedir}/../target/pdf</directory>
 			<outputDirectory>${documentation.output.dir}</outputDirectory>
 			<includes>
-				<include>domibusWebAdmin_*.pdf</include>
+				<include>*.pdf</include>
 			</includes>
 		</fileSet>
 		
 		<!-- ==================== Copying example properties ================= -->
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/properties
-			</directory>
-			<outputDirectory>${properties.output.dir}</outputDirectory>
-		</fileSet>
-	
+		<!--<fileSet>-->
+			<!--<directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/properties-->
+			<!--</directory>-->
+			<!--<outputDirectory>${properties.output.dir}</outputDirectory>-->
+		<!--</fileSet>-->
+
+
+
 	</fileSets>
+
+	<files>
+		<!-- ==================== Copying DatabaseInitializer ================= -->
+		<file>
+			<source>${project.basedir}/../domibusConnectorTest/domibusConnectorDatabaseInitializer/target/domibusConnectorDatabaseInitializer-4.0.0-beta2-SNAPSHOT-jar-with-dependencies.jar</source>
+			<outputDirectory>${documentation.output.dir}/databaseInitializer</outputDirectory>
+			<destName>domibusConnectorDatabaseInitializer.jar</destName>
+		</file>
+		<!-- ==================== Copying Example Tomcat Context ================= -->
+		<file>
+			<source>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/examplecontext/domibusConnectorWebApp.xml</source>
+			<outputDirectory>${documentation.output.dir}/exampleContext</outputDirectory>
+		</file>
+        <!-- Copying Example application properties -->
+        <file>
+            <source>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/example/application.properties</source>
+            <outputDirectory>${documentation.output.dir}/exampleProperties</outputDirectory>
+        </file>
+	</files>
 
 </assembly>

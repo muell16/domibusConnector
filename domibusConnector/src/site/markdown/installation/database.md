@@ -5,21 +5,22 @@ The deliverable contains database scripts to create a new database or
 
 ## Supported Databases
 
-During development we tested the following databases:
+The following databases are currently supported:
  
  * Mysql
  * Oracle
  
-We also only providing create scripts for these two databases. 
- 
- 
-## New Database creation
+## New Database / Fresh Installation
   
-Execute the scripts which are located TODO!
+If you are starting with a new installation you can just execute the provided scripts or use liquibase.
 
 ### Using the scripts
 
+The documentation contains a folder database-scripts/initial. In this folder choose the database script four your database. 
+
 ### Using liquibase 
+
+It is also possibly to let [liquibase](https://www.liquibase.org/) create your database tables. Start reading the section "Upgrade with Liquibase" down below.
 
 
 ## Database Upgrade 3.5 to 4.0
@@ -35,30 +36,51 @@ indexes added compared to the 3.5 database script.
 
  * Create a backup of your current database
  * Drop all Foreign key constraints
- * Execute the upgrade script
+ * Execute the upgrade script which is is located in the folder database-scripts/migration
+ use the script for your database:
+    * MySQL_Migrate_3.5_ConnectorDB_to_4.0.sql for mysql
+    * Oracle_Migrate_3.5_ConnectorDB_to_4_0.sql for oracle database
 
 ### Using liquibase
 
-It is also possibly to let [liquibase](https://www.liquibase.org/) upgrade your database. For this purpose the
-distribution contains a jar named domibusConnectorDatabaseInitializer.jar which includes all the necessary scripts
-and liquibase. You can update your database by executing the jar:
+If you want to use liquibase for database upgrade please continue with the next section "Upgrade with Liquibase".
 
-    java -jar domibusConnectorDatabaseInitializer-4.0.0-beta2-SNAPSHOT-jar-with-dependencies.jar  --changeLogFile=db/changelog/v004/upgrade-3to4.xml --driver=com.mysql.jdbc.Driver --url=jdbc:mysql://localhost/domibusconnector --username=domibus --password=domibus
+## Upgrade with Liquibase
 
-oracle:
+It is also possibly to let [liquibase](https://www.liquibase.org/) upgrade or create your database. Liquibase is a tool
+which splits the database creation/upgrade into multiple changesets. In the future it will allow semi automatic database upgrades. 
+You can also use liquibase to use unsupported databases like postgresql.
 
-    java -jar domibusConnectorDatabaseInitializer-4.0.0-beta2-SNAPSHOT-jar-with-dependencies.jar  --changeLogFile=db/changelog/v004/upgrade-3to4.xml --driver=oracle.jdbc.OracleDriver --url=jdbc:oracle:thin:connectormigrate//@localhost:1521/xe --username=connectormigrate --password=connector  --classpath="C:\Entwicklung\.m2\repository\com\oracle\ojdbc7\12.1.0.1\ojdbc7-12.1.0.1.jar" --logLevel=info update
+Liquibase is package into the jar named domibusConnectorDatabaseInitializer.jar which includes all 
+the necessary database scripts:
 
+ * Database Upgrade ChangeLog: "db/changelog/v004/upgrade-3to4.xml"
+ * Database Create ChangeLog:  "db/changelog/install/initial-4.0.xml"
 
+You can execute the scripts in your database by executing the jar:
 
+    java -jar domibusConnectorDatabaseInitializer.jar  --changeLogFile=${changeLogFile} \
+    --driver=${sqlDriverName} \
+    --url=${databaseUrl} \
+    --username=${databaseUsername} \
+    --password=${databasePassword} \
+    --classpath=${jdbcDriverJar} \
+    upgrade
 
+   
  You have to provide
- * --driver the jdbc driver name (is com.mysql.jdbc.Driver for mysql)
+ 
+ * --driver the jdbc driver name 
+    * com.mysql.jdbc.Driver for MySQL
+    * oracle.jdbc.OracleDriver for Oracle (you have to provide the jar which contains the driver)
  * --url the jdbc url to access the database (consult the documentation of your jdbc driver)
+    * jdbc:mysql://localhost/domibusconnector (for connecting to a local msql database named domibusconnector)
  * --username the username to access the database (the database user needs the permission to make schema modifications)
  * --password the password of the database user
  * --classpath the path to an additional jar which contains the jdbc driver (the package already contains the mysql jdbc driver, 
  so this parameter is only needed to provide the oracle jdbc driver jar)
+ * --help will show the liquibase help 
+
  
 
 

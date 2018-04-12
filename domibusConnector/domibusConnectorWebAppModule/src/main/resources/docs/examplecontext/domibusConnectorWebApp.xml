@@ -1,4 +1,4 @@
-<Context docBase="[path to domibusConnectorWebAppModule.war]">  
+<Context docBase="/opt/domibus/domibusConnectorWebApp.war">
     <Parameter  name="spring.datasource.jndi-name" 
                     value="jdbc/domibusWebConnectorDS" override="false" />
         

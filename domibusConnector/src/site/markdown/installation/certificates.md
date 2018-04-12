@@ -1,9 +1,5 @@
 # Certificate Configurations
 
-TODO: insert link to architecture overview
-
-TODO: insert certificate graphic
-
 The connector uses multiple certificates for different purposes.
 
  * Signing and Encrypting SOAP messages between BackendClient and Connector
@@ -19,7 +15,72 @@ The connector uses multiple certificates for different purposes.
 For each of this use cases you have to use at least one private-public key pair. As an example at 
 the backend connection you have to generate for each client a private-public key pair.
 
-TODO: asic-s container signing certificate source?
+![alt text](../images/KeyTrustStores.gif)
+
+## Connector Backend Key Store
+
+The connector backend key store holds the private key of the connector which is used to decrypt and sign
+the messages which are sent to the connector clients.
+It also contains all public keys of the connectorClients to verify the signed messages. The common name of
+the certificate is also used to identify the connectorClient name.
+
+The configuration properties are:
+
+    #defines the location of the backend keyStore:
+    connector.backend.ws.key.store.path=
+    #defines the key store password:    
+    connector.backend.ws.key.store.password=
+    #defines the key alias for the key which is used to sign the messages:
+    connector.backend.ws.key.key.alias=
+    #defines the key password:
+    connector.backend.ws.key.key.password=
+
+
+    
+## Evidence Builder Key Store (Connector Key Store)
+
+The evidence builder key store holds the private key for signing the generated evidences.
+This private key and key store can be the same for signing the ASIC-S container.
+
+The configuration properties are:
+
+    #defines the key store location:
+    connector.evidences.keystore.path=
+    #defines the keystore password
+    connector.evidences.keystore.password=
+    #defines the key alias
+    connector.evidences.key.alias=
+    #defines the key password
+    connector.evidences.key.password=
+    
+    
+## Security Lib Key Store (Connector Key Store)
+
+The security lib key store holds the private key for signing the ASIC-S container.
+The private key and key store can be the same as the for signing the evidences.
+    
+    #defines the key store location:
+    connector.security.keystore.path=
+    #defines the key store password
+    connector.security.keystore.password=
+    #defines the key alias
+    connector.security.key.alias=
+    #defines the key password
+    connector.security.key.password=
+    
+## Security Lib Trust Store (Connector Trust Store)  
+
+The security lib trust store also known as connector trust store contains the public certificates of 
+the partner countries to verify the ASIC-S container signature.
+It also contains the national certificates if SIGNATURE_BASED Authentication is used.
+Because the security lib is using the certificates from this store to verify the signature of the national
+documents.
+
+    #defines the key store location:
+    connector.security.ojstore.path=
+    #defines the store password
+    connector.security.ojstore.password=
+    
 
 
 
