@@ -31,15 +31,14 @@
 			</includes>
 		</fileSet>
 		
-		<!-- ==================== Copying example properties ================= -->
-		<!--<fileSet>-->
-			<!--<directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/properties-->
-			<!--</directory>-->
-			<!--<outputDirectory>${properties.output.dir}</outputDirectory>-->
-		<!--</fileSet>-->
-
-
-
+		<!-- ==================== Copying example properties/config ================= -->
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config</directory>
+			<outputDirectory>${properties.output.dir}/config/</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+		</fileSet>
 	</fileSets>
 
 	<files>

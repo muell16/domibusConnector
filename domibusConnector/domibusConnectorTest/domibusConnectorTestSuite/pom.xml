@@ -9,8 +9,9 @@
     </parent>
     <artifactId>domibusConnectorTestSuite</artifactId>
     <packaging>jar</packaging>
-    
-    
+    <name>${project.artifactId}</name>
+    <description>Should provide SystemTests to run End-To-End Test in an Testing Environment.</description>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

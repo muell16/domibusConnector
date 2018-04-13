@@ -6,8 +6,9 @@
         <artifactId>domibusConnector</artifactId>
         <version>4.0.0-beta2-SNAPSHOT</version>
     </parent>
-    <name>domibusConnectorGatewayLink</name>
+    <name>${project.artifactId}</name>
     <artifactId>domibusConnectorGatewayLink</artifactId>
+    <description>The GatewayLinkModule handles the communication with the GW(ConnectorPlugin)</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,13 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>eu.domibus.connector</groupId>
-    <artifactId>domibusConnector</artifactId>
-    <version>4.0.0-beta2-SNAPSHOT</version>
-  </parent>
-  <artifactId>domibusConnectorAPI</artifactId>
-   
-   <properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnector</artifactId>
+        <version>4.0.0-beta2-SNAPSHOT</version>
+    </parent>
+    <artifactId>domibusConnectorAPI</artifactId>
+    <name>${artifactId}</name>
+    <description>Contains the domibusConnectorAPI which declares the web interfaces and provides the transition model. It also provides the WSDL files for the webinterfaces.</description>
+
+    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -19,12 +22,12 @@
             <type>jar</type>
         </dependency>
     </dependencies>
-  
-   <build>
+
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>                
+                <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.cxf</groupId>
@@ -61,8 +64,8 @@
                     </execution>
                 </executions>
             </plugin>
-           <plugin>
-                <!--assemble wsdl files-->          
+            <plugin>
+                <!--assemble wsdl files-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -80,7 +83,7 @@
                     </execution>
                 </executions>
             </plugin>
-             <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -90,7 +93,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>                         
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>

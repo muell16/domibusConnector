@@ -14,7 +14,8 @@
     </parent>
 
     <name>domibusConnectorWebAppModule</name>
-    <url>http://maven.apache.org</url>
+    <description>This module includes the connector modules and provides them as war with an additional admin interface.</description>
+    <!--<url>http://maven.apache.org</url>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

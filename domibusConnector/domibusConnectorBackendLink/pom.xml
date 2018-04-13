@@ -6,7 +6,10 @@
         <version>4.0.0-beta2-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorBackendLink</artifactId>
-  
+    <name>${artifactId}</name>
+    <description>The backendLink handles the communication with the connectorClients and routes the messages to the correct connectorClient.</description>
+
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

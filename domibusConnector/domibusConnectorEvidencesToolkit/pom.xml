@@ -7,6 +7,10 @@
         <version>4.0.0-beta2-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorEvidencesToolkit</artifactId>
+    <name>${project.artifactId}</name>
+    <description>The evidence toolkit contains the evidence releated services. It is is responsibly for creating the evidences.</description>
+
+
     <dependencies>
         <dependency>
             <groupId>eu.ecodex.evidences</groupId>

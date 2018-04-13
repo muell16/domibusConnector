@@ -126,6 +126,6 @@ Replace the databaseUrl, driverClass, eg. accordingly to your database settings:
 
 Copy the application example properties to /opt/domibus/config
 
-    cp example-application.properties /opt/domibus/config 
+    cp application.properties /opt/domibus/config 
 
 Configure the application properties according to your needs. Especially the security stores [Configuring Trust- and Keystores](certificates.html).

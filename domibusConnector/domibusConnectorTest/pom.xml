@@ -6,6 +6,7 @@
         <artifactId>domibusConnector</artifactId>
         <version>4.0.0-beta2-SNAPSHOT</version>
     </parent>
+    <name>${project.artifactId}</name>
     <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>
     <artifactId>domibusConnectorTest</artifactId>
     <packaging>pom</packaging>

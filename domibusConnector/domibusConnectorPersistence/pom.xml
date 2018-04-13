@@ -8,6 +8,8 @@
     </parent>
     <artifactId>domibusConnectorPersistence</artifactId>
     <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>This module is responsibly for persisting the messages and message contents into a persistent storage (Database).</description>
     
     <dependencies>
         <dependency>

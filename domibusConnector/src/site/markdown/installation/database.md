@@ -16,7 +16,10 @@ If you are starting with a new installation you can just execute the provided sc
 
 ### Using the scripts
 
-The documentation contains a folder database-scripts/initial. In this folder choose the database script four your database. 
+The documentation contains a folder database-scripts/initial. In this folder choose the database script four your database:
+  
+  * [MySql_4_0_initial.sql](../doc-resources/DbScripts/initial/MySql_4_0_initial.sql) for MySQL
+  * [Oracle_4_0_initial.sql](../doc-resources/DbScripts/initial/Oracle_4_0_initial.sql) for Oracle
 
 ### Using liquibase 
 
@@ -25,7 +28,7 @@ It is also possibly to let [liquibase](https://www.liquibase.org/) create your d
 
 ## Database Upgrade 3.5 to 4.0
 
-Upgrading the connector database is possibly. But first of all create a backup
+Upgrading the connector database is possibly. But first of all **create a backup**
 of your current connector database. Then you can choose to upgrade your database
 manually by executing the scripts or let liquibase do the work.
 
@@ -35,11 +38,11 @@ indexes added compared to the 3.5 database script.
 ### Using the script
 
  * Create a backup of your current database
- * Drop all Foreign key constraints
+ * Drop all Foreign key constraints (the script will create them again!)
  * Execute the upgrade script which is is located in the folder database-scripts/migration
  use the script for your database:
-    * MySQL_Migrate_3.5_ConnectorDB_to_4.0.sql for mysql
-    * Oracle_Migrate_3.5_ConnectorDB_to_4_0.sql for oracle database
+    * [MySQL_Migrate_3.5_ConnectorDB_to_4.0.sql](../doc-resources/DbScripts/migration/MySQL_Migrate_3.5_ConnectorDB_to_4.0.sql) for mysql 
+    * [Oracle_Migrate_3.5_ConnectorDB_to_4_0.sql](../doc-resources/DbScripts/migration/Oracle_Migrate_3.5_ConnectorDB_to_4_0.sql) for oracle database
 
 ### Using liquibase
 
@@ -54,8 +57,8 @@ You can also use liquibase to use unsupported databases like postgresql.
 Liquibase is package into the jar named domibusConnectorDatabaseInitializer.jar which includes all 
 the necessary database scripts:
 
- * Database Upgrade ChangeLog: "db/changelog/v004/upgrade-3to4.xml"
- * Database Create ChangeLog:  "db/changelog/install/initial-4.0.xml"
+ * Database Migrate 3.5 to 4.0 DB ChangeLog: "db/changelog/v004/upgrade-3to4.xml"
+ * Database Create 4.0 DB ChangeLog:  "db/changelog/install/initial-4.0.xml"
 
 You can execute the scripts in your database by executing the jar:
 
@@ -79,6 +82,7 @@ You can execute the scripts in your database by executing the jar:
  * --password the password of the database user
  * --classpath the path to an additional jar which contains the jdbc driver (the package already contains the mysql jdbc driver, 
  so this parameter is only needed to provide the oracle jdbc driver jar)
+ * --changeLogFile the change log liquibase should run against the database
  * --help will show the liquibase help 
 
  

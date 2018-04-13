@@ -1,0 +1,14 @@
+<Context docBase="/opt/domibus/domibusConnectorWebApp.war">
+    <Parameter  name="spring.datasource.jndi-name" 
+                    value="jdbc/domibusWebConnectorDS" override="false" />
+        
+    <Resource name="jdbc/domibusWebConnectorDS" auth="Container"
+                type="javax.sql.DataSource" 
+                driverClassName="[jdbcDriverClass]"
+                url="[databaseUrl]"
+                username="[username]" 
+                password="[password]" 
+                maxActive="20" 
+                maxIdle="10"
+                maxWait="-1" />   
+</Context>

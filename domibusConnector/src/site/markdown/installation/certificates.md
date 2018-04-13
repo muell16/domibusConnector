@@ -81,6 +81,11 @@ documents.
     #defines the store password
     connector.security.ojstore.password=
     
+## TLS Key Store (System Key Store)
+
+The TLS Key Store is used to establish a trust if the connector has to make a TLS/SSL encrypted
+connection to the GW(plugin) or connectorClient. For this purpose the connector uses
+the system key store which is provided by java itself.     
 
 
 

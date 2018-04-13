@@ -9,7 +9,8 @@
   </parent>
   <artifactId>domibusConnectorDocumentation</artifactId>
   <name>domibusConnectorDocumentation</name>
-  <url>http://maven.apache.org</url>
+  <description>This module contains the documentation like the create, migrate sql scripts</description>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

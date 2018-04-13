@@ -13,6 +13,7 @@
     </links>
 
     <menu name="domibus WebConnector">
+      <item name="Overview" href="index.html" />
       <item name="Module" href="modules.html" />
       <item name="Use Cases" href="use_cases.html" />
       <!--<item name="Evidence" href="evidence.html" />-->
@@ -24,7 +25,9 @@
       <item name="Deploy on Weblogic" href="installation/weblogic_deploy.html" />
       <item name="Certificate Configuration" href="installation/certificates.html" />
     </menu>
-
+    <menu name="Technical/Developer Documentation">
+      <item name="Architecture" href="development/architecture_overview.html"/>
+    </menu>
 
     
     <footer></footer> <!-- empty footer -->
