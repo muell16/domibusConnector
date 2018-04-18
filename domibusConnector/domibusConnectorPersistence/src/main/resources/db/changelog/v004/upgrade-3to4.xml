@@ -30,7 +30,7 @@
     <property name="blob" value="BLOB" dbms="oracle,h2,postgresql"/>
     <property name="blob" value="longblob" dbms="mysql" />
 
-    <include file="/db/changelog/v004/upgrade_qrtz_tables.xml" />
+    <include file="db/changelog/v004/upgrade_qrtz_tables.xml" />
      
     <changeSet id="3to4_upgrade_001.0_pre_setup" author="StephanSpindler">
         <preConditions onFail="CONTINUE">
