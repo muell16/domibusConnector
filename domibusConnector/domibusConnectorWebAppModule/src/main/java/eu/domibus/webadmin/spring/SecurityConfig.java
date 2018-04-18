@@ -25,8 +25,8 @@ import eu.domibus.webadmin.spring.support.DomibusWebAdminUserAuthenticationProvi
  * @author spindlest
  *
  */
-//@Configuration
-//@EnableWebSecurity
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.logoutSuccessUrl("/pages/login.xhtml");
 			
 		http.authorizeRequests()
-		
+            .antMatchers("/services/*").permitAll() //allow access to webservices
 			.antMatchers("/pages/login.xhtml").permitAll()
 		
 			.antMatchers("/javax.faces.resource/**").permitAll()

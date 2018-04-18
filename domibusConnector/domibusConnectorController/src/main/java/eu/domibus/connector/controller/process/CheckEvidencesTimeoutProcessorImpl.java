@@ -28,10 +28,10 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
 	static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
 
-	@Value("${:0}")
+	@Value("${connector.controller.evidence.relayREMMDTimeout:0}")
 	private long relayREMMDTimeout;
 	
-	@Value("${:0}")
+	@Value("${connector.controller.evidence.DeliveryTimeout:0}")
 	private long deliveryTimeout;
 	
 	@Autowired

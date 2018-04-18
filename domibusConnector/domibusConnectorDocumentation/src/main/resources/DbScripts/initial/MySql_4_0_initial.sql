@@ -193,10 +193,6 @@ ALTER TABLE connectornew.DOMIBUS_CONNECTOR_MSG_CONT ADD CONSTRAINT FK_DOMIBUS_CO
 
 INSERT INTO connectornew.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES ('changelog-domibus-4.0_14', 'StephanSpindler', '/db/changelog/install/initial-changelog-domibus.xml', NOW(), 34, '7:79940f7647fa5b32ba163f93ec7dc443', 'addForeignKeyConstraint baseTableName=DOMIBUS_CONNECTOR_MSG_CONT, constraintName=FK_DOMIBUS_CONN_DOMIBUS_CON_04, referencedTableName=DOMIBUS_CONNECTOR_MESSAGE', 'Foreign key between message content and message', 'EXECUTED', NULL, NULL, '3.5.3', '3517749427');
 
---  Changeset /db/changelog/install/initial-changelog-domibus.xml::changelog-domibus-4.0_14_1_ref_msg_cont_cont_type::StephanSpindler
-ALTER TABLE connectornew.DOMIBUS_CONNECTOR_MSG_CONT ADD CONSTRAINT FK_DOMIBUS_CONN_DOMIBUS_CON_03 FOREIGN KEY (CONTENT_TYPE) REFERENCES connectornew.DOMIBUS_CONNECTOR_CONT_TYPE (MESSAGE_CONTENT_TYPE) ON UPDATE NO ACTION ON DELETE NO ACTION;
-
-INSERT INTO connectornew.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES ('changelog-domibus-4.0_14_1_ref_msg_cont_cont_type', 'StephanSpindler', '/db/changelog/install/initial-changelog-domibus.xml', NOW(), 35, '7:4c93a2196fccac74ca8f3683a749552c', 'addForeignKeyConstraint baseTableName=DOMIBUS_CONNECTOR_MSG_CONT, constraintName=FK_DOMIBUS_CONN_DOMIBUS_CON_03, referencedTableName=DOMIBUS_CONNECTOR_CONT_TYPE', '', 'EXECUTED', NULL, NULL, '3.5.3', '3517749427');
 
 --  Changeset /db/changelog/install/initial-changelog-domibus.xml::changelog-domibus-4.0_15::StephanSpindler
 --  Foreign key between message info and message

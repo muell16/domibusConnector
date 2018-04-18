@@ -48,16 +48,16 @@
 			<outputDirectory>${documentation.output.dir}/databaseInitializer</outputDirectory>
 			<destName>domibusConnectorDatabaseInitializer.jar</destName>
 		</file>
-		<!-- ==================== Copying Example Tomcat Context ================= -->
-		<file>
-			<source>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/examplecontext/domibusConnectorWebApp.xml</source>
-			<outputDirectory>${documentation.output.dir}/exampleContext</outputDirectory>
-		</file>
-        <!-- Copying Example application properties -->
-        <file>
-            <source>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/example/application.properties</source>
-            <outputDirectory>${documentation.output.dir}/exampleProperties</outputDirectory>
-        </file>
+		<!--&lt;!&ndash; ==================== Copying Example Tomcat Context ================= &ndash;&gt;-->
+		<!--<file>-->
+			<!--<source>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/examplecontext/domibusConnectorWebApp.xml</source>-->
+			<!--<outputDirectory>${documentation.output.dir}/exampleContext</outputDirectory>-->
+		<!--</file>-->
+        <!--&lt;!&ndash; Copying Example application properties &ndash;&gt;-->
+        <!--<file>-->
+            <!--<source>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/example/application.properties</source>-->
+            <!--<outputDirectory>${documentation.output.dir}/exampleProperties</outputDirectory>-->
+        <!--</file>-->
 	</files>
 
 </assembly>

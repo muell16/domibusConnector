@@ -105,7 +105,9 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
         String file = resource.getFilename();
 	    try (FileOutputStream fos = new FileOutputStream(file)){
             KeyStore ks = KeyStore.getInstance("JKS");
-            ks.store(fos, securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());
+            LOGGER.debug("Creating key store with file [{}] and password [{}]", file, 
+                    securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());
+            ks.store(fos, securityToolkitConfigurationProperties.getKeyStore().getPassword().toCharArray());            
         } catch (IOException ioe) {
 	        LOGGER.error("Cannot create java key store with resource: [{}]", resource);
         } catch (KeyStoreException e) {

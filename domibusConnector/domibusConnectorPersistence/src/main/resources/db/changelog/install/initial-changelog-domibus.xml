@@ -319,17 +319,6 @@
             onUpdate="NO ACTION"/>
     </changeSet>
 
-    <changeSet id="changelog-domibus-4.0_14_1_ref_msg_cont_cont_type" author="StephanSpindler">
-        <addForeignKeyConstraint
-                baseTableName="DOMIBUS_CONNECTOR_MSG_CONT"
-                baseColumnNames="CONTENT_TYPE"
-                constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_03"
-                referencedTableName="DOMIBUS_CONNECTOR_CONT_TYPE"
-                referencedColumnNames="MESSAGE_CONTENT_TYPE"
-                onDelete="NO ACTION"
-                onUpdate="NO ACTION"/>
-    </changeSet>
-
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_15">
         <comment>Foreign key between message info and message</comment>
         <addForeignKeyConstraint 

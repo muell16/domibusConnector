@@ -17,6 +17,7 @@ import org.junit.Ignore;
  *
  * @author spindlest
  */
+@Ignore
 public class WebAdminPropertiesTest {
     
     public static DataSource DATA_SOURCE; 

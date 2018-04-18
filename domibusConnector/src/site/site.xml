@@ -24,10 +24,14 @@
       <item name="Deploy on Tomcat" href="installation/tomcat_deploy.html"/>
       <item name="Deploy on Weblogic" href="installation/weblogic_deploy.html" />
       <item name="Certificate Configuration" href="installation/certificates.html" />
+      <item name="Backend configuration" href="installation/backend_configuration.html" />
     </menu>
     <menu name="Technical/Developer Documentation">
       <item name="Architecture" href="development/architecture_overview.html"/>
+      <item name="Changelog" href="development/changelog.html" />
+      <item name="Backend Message Routing" href="development/backend_message_routing.html" />
     </menu>
+
 
     
     <footer></footer> <!-- empty footer -->

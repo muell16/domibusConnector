@@ -11,6 +11,13 @@ The delivered zip contains a example application context, which has been tested 
 
 For further information consult the tomcat documentation: [https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context](https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context)
 
+### Tested Tomcat Version
+
+The deployment has been tested on following tomcat versions:
+
+ * Apache Tomcat/8.5.23 on Windows 7
+ 
+
 ### Step-by-Step
 
 Copy the domibusConnectorTomcatStarter.war file to a location where the application server can read it. But **NOT** in the
@@ -55,7 +62,20 @@ Install java, tomcat and mysql:
 
 > Note: mariadb is the opensource fork of mysql and in the standard centos repository available
 
-    sudo yum install -y java-1.8.0-openjdk-headless mariadb tomcat
+    sudo yum install -y java-1.8.0-openjdk-headless mariadb tomcat mysql-connector-java
+
+   * java-1.8.0-openjdk-headless java runtime environment
+   * mariadb (the database)
+   * tomcat tomcat web application container
+   * mysql-connector-java jdbc driver for accessing the database
+
+Make the database jdbc driver for tomcat available by linking it into the tomcat libs folder.
+By linking you get the benifit, that the driver is updated by the centos distribution.
+
+> Note: if you are using a different database like oracle, you have to copy the database jdbc driver jar
+by yourself into the tomcat lib folder.
+
+    cp /usr/share/java/mysql-connector-java.jar /usr/share/tomcat/lib/
 
 
 Start the database service and enable it as system service. 
