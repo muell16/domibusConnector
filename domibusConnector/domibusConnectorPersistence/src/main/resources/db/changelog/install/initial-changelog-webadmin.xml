@@ -35,7 +35,9 @@
 
     <changeSet author="StephanSpindler" id="changelog-1.1_create_tbl_webadmin_property">
         <createTable tableName="DOMIBUS_WEBADMIN_PROPERTY">
-            <column name="KEY" type="${varchar512.type}"/>
+            <column name="KEY" type="${varchar512.type}">
+                <constraints nullable="false" />
+            </column>
             <column name="VALUE" type="${varchar512.type}"/>
         </createTable>
     </changeSet>
