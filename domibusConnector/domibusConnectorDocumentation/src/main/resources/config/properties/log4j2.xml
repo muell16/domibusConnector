@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
     <Appenders>
+        <!-- logging to system standard out -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [msgid=%X{messageid}] %-5level %logger{36} - %msg%n" />
         </Console>
     </Appenders>
     <Loggers>
+        <!-- ROOT logger -->
         <Root level="warn" additivity="false">
             <AppenderRef ref="Console" />
         </Root>
-        <Logger name="org.liquibase" level="warn"  >
-            <AppenderRef ref="Console" />
-        </Logger>
-
+        <!-- connector log -->
         <Logger name="eu.domibus.connector" level="info" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
-
+        <!-- database access log -->
         <Logger name="org.hibernate" level="info" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
