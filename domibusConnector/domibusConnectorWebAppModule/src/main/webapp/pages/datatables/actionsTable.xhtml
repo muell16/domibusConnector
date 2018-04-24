@@ -64,7 +64,7 @@
         	</p:column>
             
             <p:column headerText="PDF required">
-                <h:outputText value="#{action.pdfRequired}" />
+                <h:outputText value="#{action.documentRequired}" />
             </p:column>
             
             
@@ -104,7 +104,7 @@
  		<h:form id="actionDialogForm"> 	 			
 	        <p:outputPanel id="actionDelete" style="text-align:center;">
 	            <ui:repeat value="#{connectorActionsTableBean.selectedActions}" var="action">	            	
-	                <h:outputText value="action: #{action.action} - pdf required: #{action.pdfRequired}" style="display:block"/>
+	                <h:outputText value="action: #{action.action} - pdf required: #{action.documentRequired}" style="display:block"/>
 	            </ui:repeat>            
 	            <p:commandButton id="confirmDeleteSelectedActionsButton" actionListener="#{connectorActionsTableBean.confirmDeleteSelectedActions}" ajax="false" value="Delete" />
 	            <p:commandButton id="abbortDeleteSelectedActionsButton" ajax="false" value="Cancel" /> <!-- TODO: Styling, ordering -->             
@@ -127,7 +127,7 @@
  				<p:inputText id="actionEditAction"  value="#{connectorActionsTableBean.action.action}" disabled="#{not(connectorActionsTableBean.createNewActionMode)}" /> 
  									
 				<h:outputLabel for="actionEditPdfRequired" value="pdf required" />
-				<p:selectBooleanCheckbox id="actionEditPdfRequired" value="#{connectorActionsTableBean.action.pdfRequired}" />
+				<p:selectBooleanCheckbox id="actionEditPdfRequired" value="#{connectorActionsTableBean.action.documentRequired}" />
 				 					 					 					
  			</p:panelGrid>
  			<!--  TODO: Error Message Feld hier einbauen -->
