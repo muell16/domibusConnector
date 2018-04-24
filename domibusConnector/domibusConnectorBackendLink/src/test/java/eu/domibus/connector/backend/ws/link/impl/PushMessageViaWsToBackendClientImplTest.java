@@ -62,7 +62,7 @@ public class PushMessageViaWsToBackendClientImplTest {
 
         pushMessageOverWs.setBackendClientPersistenceService(backendClientInfoPersistenceService);
         pushMessageOverWs.setBackendClientWebServiceClientFactory(this.webServiceClientFactory);
-        pushMessageOverWs.setBigDataMessageService(this.bigDataMessageService);
+//        pushMessageOverWs.setBigDataMessageService(this.bigDataMessageService);
         pushMessageOverWs.setMessagePersistenceService(this.messagePersistenceService);
         pushMessageOverWs.setDomibusConnectorBackendInternalDeliverToController(this.backendSubmissionService);
 

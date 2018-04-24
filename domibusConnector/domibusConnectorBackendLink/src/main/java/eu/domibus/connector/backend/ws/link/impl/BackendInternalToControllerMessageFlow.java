@@ -101,6 +101,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     @Override
     public DomibusConnectorMessage processMessageAfterDeliveredToBackend(DomibusConnectorMessage message) {
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+        bigDataPersistence.cleanForMessage(message);
         return message;
     }
 

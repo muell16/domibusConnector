@@ -40,4 +40,10 @@ public interface DomibusConnectorPersistAllBigDataOfMessageService {
      */
     @Nonnull DomibusConnectorMessage persistAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message);
 
+    /**
+     * this method should remove all messages from storage which is related to this
+     * message
+     * @param message - the message
+     */
+    void cleanForMessage(DomibusConnectorMessage message);
 }

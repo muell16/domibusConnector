@@ -31,9 +31,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
     private BackendClientInfoPersistenceService backendClientPersistenceService;
     
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-    
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataMessageService;
-    
+
     private BackendClientWebServiceClientFactory webServiceClientFactory;
 
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
@@ -49,11 +47,6 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
         this.messagePersistenceService = messagePersistenceService;
     }
 
-    @Autowired
-    public void setBigDataMessageService(DomibusConnectorPersistAllBigDataOfMessageService bigDataMessageService) {
-        this.bigDataMessageService = bigDataMessageService;
-    }
-    
     @Autowired
     public void setBackendClientWebServiceClientFactory(BackendClientWebServiceClientFactory webServiceClientFactory) {
         this.webServiceClientFactory = webServiceClientFactory;
