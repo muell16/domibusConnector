@@ -15,6 +15,7 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.jms.ConnectionFactory;
 
@@ -24,6 +25,7 @@ import javax.jms.ConnectionFactory;
  */
 @Configuration
 @EnableJms
+@EnableScheduling
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
 public class ControllerContext {
 
