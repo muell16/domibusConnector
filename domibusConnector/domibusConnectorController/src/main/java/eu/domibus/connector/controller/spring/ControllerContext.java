@@ -23,7 +23,6 @@ import javax.jms.ConnectionFactory;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
-@Import(value = { QuartzContext.class })
 @EnableJms
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
 public class ControllerContext {
