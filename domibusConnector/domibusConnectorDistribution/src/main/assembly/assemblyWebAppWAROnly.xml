@@ -7,34 +7,25 @@
 	<includeBaseDirectory>false</includeBaseDirectory>        
 	<fileSets>
         <!-- ==================== Copying Module's JAR files ================= -->
-		<fileSet>
+	<!-- 	<fileSet>
 			<directory>${project.basedir}/../domibusConnectorWebAppModule/target/
 			</directory>
 			<outputDirectory>../</outputDirectory>
 			<includes>
 				<include>*.war</include>
 			</includes>
-		</fileSet>   
-       <!--  <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/examplecontext</directory>
-            <outputDirectory>domibusConnectorWebApp/Documentation/ExampleContext</outputDirectory>
-            <includes>
-                <include>*.xml</include>
-            </includes>
-        </fileSet>  
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs</directory>
-            <outputDirectory>domibusConnectorWebApp/Documentation/Guides</outputDirectory>
-            <includes>
-                <include>*.pdf</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/target/pdf/</directory>
-            <outputDirectory>domibusConnectorWebApp/Documentation/Guides</outputDirectory>
-            <includes>
-                <include>*.pdf</include>
-            </includes>
-        </fileSet>   -->                   
+		</fileSet>  -->  
+                      
     </fileSets>
+    
+    	<files>
+
+		<file>
+			<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
+			</source>
+			<outputDirectory>../</outputDirectory>
+			<destName>domibusConnector-${version}.war</destName>
+		</file>
+
+	</files>
 </assembly>
