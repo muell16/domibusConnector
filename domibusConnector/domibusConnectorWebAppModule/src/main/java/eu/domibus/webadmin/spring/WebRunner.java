@@ -9,6 +9,8 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
 
@@ -29,12 +31,15 @@ import javax.servlet.ServletException;
 @SpringBootApplication(scanBasePackages = "eu.domibus")
 @EnableTransactionManagement
 @EnableAutoConfiguration
+@EnableScheduling
+@PropertySource("classpath:/default.properties")
 public class WebRunner extends SpringBootServletInitializer implements WebApplicationInitializer {
 
     private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 
     public void onStartup(ServletContext servletContext) throws ServletException {
         String configLocation = servletContext.getInitParameter("config.location");
+        LOG.info("CONFIG LOCATION IS : " + configLocation);
         if (configLocation != null) {
             servletContext.setInitParameter("spring.config.location", configLocation);
         }
