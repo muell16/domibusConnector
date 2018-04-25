@@ -10,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
 
@@ -31,7 +30,6 @@ import javax.servlet.ServletException;
 @SpringBootApplication(scanBasePackages = "eu.domibus")
 @EnableTransactionManagement
 @EnableAutoConfiguration
-@EnableScheduling
 @PropertySource("classpath:/default.properties")
 public class WebRunner extends SpringBootServletInitializer implements WebApplicationInitializer {
 
