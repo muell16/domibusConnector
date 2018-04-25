@@ -12,7 +12,6 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
