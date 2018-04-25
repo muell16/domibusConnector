@@ -72,8 +72,6 @@
         <dropTable tableName="DCON_QRTZ_JOB_DETAILS" />
     </changeSet>
 
-    <include file="db/changelog/install/initial-changelog-quartz.xml" />
-
 
 </databaseChangeLog>
 

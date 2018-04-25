@@ -2,6 +2,7 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
+import eu.domibus.connector.backend.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
@@ -109,7 +110,13 @@ public class  DomibusConnectorWsBackendImplTest {
         Mockito.when(messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(Mockito.eq("bob")))
                 .thenReturn(createTestMessages());
 
-        DomibusConnectorMessagesType domibusConnectorMessagesType = backendWebService.retrieveWaitingMessagesFromQueue(backendClientInfoBob());
+        DomibusConnectorMessagesType domibusConnectorMessagesType = null;
+		try {
+			domibusConnectorMessagesType = backendWebService.retrieveWaitingMessagesFromQueue(backendClientInfoBob());
+		} catch (DomibusConnectorBackendException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         assertThat(domibusConnectorMessagesType.getMessages()).hasSize(2);
     }

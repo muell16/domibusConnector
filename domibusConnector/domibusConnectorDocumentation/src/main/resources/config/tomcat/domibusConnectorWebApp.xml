@@ -1,10 +1,22 @@
-<Context docBase="C:\Entwicklung\repos\connector\domibusConnector\domibusConnectorWebAppModule\target\domibusConnectorWebAppModule.war">
+<!--
+    Defines a tomcat context
+    docBase is the path of the web application war which should be deployed into this context
+    (put this file into ${CATALINA_HOME}/conf/Catalina/localhost, so tomcat can load it or upload it over the
+    manager-gui)
+-->
+<Context docBase="${CATALINA_HOME}/conf/connector/domibusConnectorWebAppModule.war">
+    <!-- name of the container datasource -->
     <Parameter  name="spring.datasource.jndi-name" 
                     value="jdbc/domibusWebConnectorDS" override="false" />
-					
-	<Parameter  name="spring.config.location" 
-                    value="C:\Entwicklung\domibus\config\application.properties" override="false" />					
-        
+
+    <!-- location of the connector configuration -->
+    <Parameter  name="config.location"
+                value="file:///${CATALINA_HOME}/conf/connector/connector.properties" override="false" />
+
+    <!-- location of the log4j2 logging configuration -->
+    <Parameter name="logging.config" value="file:///${CATALINA_HOME}/conf/connector/log4j2.xml" />
+
+    <!-- definition of the container datasource -->
     <Resource name="jdbc/domibusWebConnectorDS" auth="Container"
                 type="javax.sql.DataSource" 
                 driverClassName="com.mysql.jdbc.Driver"

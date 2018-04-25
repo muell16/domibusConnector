@@ -5,135 +5,55 @@
 		<format>zip</format>
 		<format>dir</format>
 	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>        
+	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
-        <!-- ==================== Copying Module's JAR files ================= -->
+
 		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorBackendLink/target/
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/
 			</directory>
-			<outputDirectory>${sources.output.dir}
+			<outputDirectory>${connector.build.dir}/documentation/properties
 			</outputDirectory>
 			<includes>
-				<include>*-sources.jar</include>
+				<include>*.properties</include>
 			</includes>
 		</fileSet>
+
 		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorController/target/
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
 			</directory>
-			<outputDirectory>${sources.output.dir}
+			<outputDirectory>${connector.build.dir}/documentation/database-scripts
 			</outputDirectory>
 			<includes>
-				<include>*-sources.jar</include>
+				<include>*/*.*</include>
 			</includes>
 		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorControllerAPI/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-				<fileSet>
-			<directory>${project.basedir}/../domibusConnectorDomain/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorEvidencesToolkit/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorGatewayLink/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorMonitoring/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorPersistence/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorSecurityToolkit/target/
-			</directory>
-			<outputDirectory>${sources.output.dir}
-			</outputDirectory>
-			<includes>
-				<include>*-sources.jar</include>
-			</includes>
-		</fileSet>
-		
-		
-		
-		
-      <!--   <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs/examplecontext</directory>
-            <outputDirectory>domibusConnectorWebApp/Documentation/ExampleContext</outputDirectory>
-            <includes>
-                <include>*.xml</include>
-            </includes>
-        </fileSet>  
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/src/main/resources/docs</directory>
-            <outputDirectory>domibusConnectorWebApp/Documentation/Guides</outputDirectory>
-            <includes>
-                <include>*.pdf</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorWebAppModule/target/pdf/</directory>
-            <outputDirectory>domibusConnectorWebApp/Documentation/Guides</outputDirectory>
-            <includes>
-                <include>*.pdf</include>
-            </includes>
-        </fileSet>     -->                 
-    </fileSets>
-    <files>
-    <!-- <file>
-		<source>${project.basedir}/../domibusConnectorBackendLink/target/*-sources.jar
-		</source>
-		<outputDirectory>${sources.output.dir}</outputDirectory>
-		<destName>domibusConnector-${version}.war</destName>
-	</file> -->
-    
-	<file>
-		<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
-		</source>
-		<outputDirectory>${connector.build.dir}/webapp</outputDirectory>
-		<destName>domibusConnector-${version}.war</destName>
-	</file>
+
+	</fileSets>
+	<files>
+
 		<file>
-		<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule-sources.jar
-		</source>
-		<outputDirectory>${connector.build.dir}/webapp</outputDirectory>
-		<destName>domibusConnector-${version}-sources.jar</destName>
-	</file>
+			<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
+			</source>
+			<outputDirectory>${connector.build.dir}/webapp</outputDirectory>
+			<destName>domibusConnector-${version}.war</destName>
+		</file>
+
+		<file>
+			<source>${project.basedir}/../domibusConnectorTest/domibusConnectorDatabaseInitializer/target/domibusConnectorDatabaseInitializer-${project.version}.jar
+			</source>
+			<outputDirectory>${connector.build.dir}/documentation/databaseInitializer
+			</outputDirectory>
+			<destName>domibusConnectorDatabaseInitializer.jar</destName>
+		</file>
+
+		<file>
+			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/domibusConnector_InstallationGuide.pdf
+			</source>
+			<outputDirectory>${connector.build.dir}/documentation/
+			</outputDirectory>
+			<destName>domibusConnector_InstallationGuide.pdf</destName>
+		</file>
+
+
 	</files>
 </assembly>

@@ -11,6 +11,8 @@ import java.security.cert.CertificateException;
 import javax.annotation.Resource;
 
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import eu.ecodex.dss.util.ECodexDataLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -67,7 +69,8 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 		TrustedListsCertificateSource certSource = new TrustedListsCertificateSource();
 		OnlineCRLSource crlSource = new OnlineCRLSource();
 		OnlineOCSPSource ocspSource = new OnlineOCSPSource();
-		CommonsDataLoader normalLoader = new CommonsDataLoader();
+		ECodexDataLoader normalLoader = new ECodexDataLoader();
+		normalLoader.setAllowLDAP(false);
 		normalLoader.setProxyConfig(proxyPreferenceManager);
 
 		TSLRepository tslRepository = new TSLRepository();

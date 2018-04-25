@@ -11,7 +11,7 @@
     <description>This maaven module contains the assembly scripts to create the different distributions</description>
 
     <properties>
-        <connector.build.dir>domibusConnector/</connector.build.dir>
+        <connector.build.dir>/</connector.build.dir>
         <documentation.output.dir>${connector.build.dir}documentation/</documentation.output.dir>
         <db.scripts.output.dir>${documentation.output.dir}database-scripts</db.scripts.output.dir>
         <modules.output.dir>${connector.build.dir}modules</modules.output.dir>
@@ -31,7 +31,7 @@
                     <descriptors>
                         <!-- <descriptor>src/main/assembly/assemblyFW.xml</descriptor> -->
                         <!-- <descriptor>src/main/assembly/assemblyESAC.xml</descriptor> -->
-                        <descriptor>src/main/assembly/assemblyDocu.xml</descriptor>
+                        <!-- <descriptor>src/main/assembly/assemblyDocu.xml</descriptor> -->
                         <descriptor>src/main/assembly/assemblyWebApp.xml</descriptor>
                         <descriptor>src/main/assembly/assemblyWebAppWAROnly.xml</descriptor>
                     </descriptors>

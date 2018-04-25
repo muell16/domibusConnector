@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+How to configure log4j2:
+   https://logging.apache.org/log4j/2.x/manual/configuration.html
+-->
 <Configuration status="INFO">
     <Appenders>
         <!-- logging to system standard out -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [msgid=%X{messageid}] %-5level %logger{36} - %msg%n" />
         </Console>
+        <!-- rolling file appender -->
+        <RollingFile name="RollingFile" fileName="C:\Entwicklung\domibus\logs\connector.log" filePattern="C:\Entwicklung\domibus\logs\app-%d{MM-dd-yyyy}.log.gz"
+                     ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} [%t] [msgid=%X{messageid}] %-5level %logger{36} - %msg%n</Pattern>
+            </PatternLayout>
+            <TimeBasedTriggeringPolicy />
+        </RollingFile>
     </Appenders>
     <Loggers>
         <!-- ROOT logger -->
         <Root level="warn" additivity="false">
             <AppenderRef ref="Console" />
+            <!-- <AppenderRef ref="RollingFile" /> -->
         </Root>
         <!-- connector log -->
         <Logger name="eu.domibus.connector" level="info" additivity="false">
             <AppenderRef ref="Console" />
-        </Logger>
-        <!-- database access log -->
-        <Logger name="org.hibernate" level="info" additivity="false">
-            <AppenderRef ref="Console" />
+            <!-- <AppenderRef ref="RollingFile" /> -->
         </Logger>
     </Loggers>
 </Configuration>

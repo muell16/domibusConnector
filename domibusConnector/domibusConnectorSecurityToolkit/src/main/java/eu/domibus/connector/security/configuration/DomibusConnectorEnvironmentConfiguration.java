@@ -10,9 +10,9 @@ import eu.ecodex.dss.model.EnvironmentConfiguration;
 @Component("domibusConnectorEnvironmentConfiguration")
 public class DomibusConnectorEnvironmentConfiguration extends EnvironmentConfiguration implements InitializingBean {
 
-	@Value("${java.truststore.path:null}")
+	@Value("${connector.truststore.path:null}")
 	String truststoreLocation;
-	@Value("${java.truststore.password:null}")
+	@Value("${connector.truststore.password:null}")
 	String truststorePassword;
 
 	@Override
