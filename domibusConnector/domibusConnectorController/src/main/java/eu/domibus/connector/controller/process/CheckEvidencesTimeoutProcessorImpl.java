@@ -24,8 +24,9 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
 
     static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
@@ -50,8 +51,9 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
     @Override
     @Scheduled(fixedDelayString = "#{evidencesTimeoutConfigurationProperties.checkTimeout.milliseconds}")
+//    @Scheduled(fixedDelay = 1000)
     public void checkEvidencesTimeout() throws DomibusConnectorControllerException {
-        LOGGER.debug("Job for checking evidence timeouts triggered.");
+        LOGGER.info("Job for checking evidence timeouts triggered.");
         Date start = new Date();
 
         // only check for timeout of RELAY_REMMD_ACCEPTANCE/REJECTION evidences if the timeout is set in the connector.properties
