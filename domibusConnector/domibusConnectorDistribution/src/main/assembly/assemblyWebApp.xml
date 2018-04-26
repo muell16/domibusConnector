@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-	<id>${project.version}</id>
+	<id>WebConnectorWithDocumentation</id>
 	<formats>
 		<format>zip</format>
 		<format>dir</format>
@@ -11,7 +11,7 @@
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/
 			</directory>
-			<outputDirectory>${connector.build.dir}/documentation/properties
+			<outputDirectory>/documentation/properties
 			</outputDirectory>
 			<includes>
 				<include>*.properties</include>
@@ -21,7 +21,7 @@
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
 			</directory>
-			<outputDirectory>${connector.build.dir}/documentation/database-scripts
+			<outputDirectory>/documentation/database-scripts
 			</outputDirectory>
 			<includes>
 				<include>*/*.*</include>
@@ -34,14 +34,14 @@
 		<file>
 			<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
 			</source>
-			<outputDirectory>${connector.build.dir}/webapp</outputDirectory>
+			<outputDirectory>/webapp</outputDirectory>
 			<destName>domibusConnector-${version}.war</destName>
 		</file>
 
 		<file>
 			<source>${project.basedir}/../domibusConnectorTest/domibusConnectorDatabaseInitializer/target/domibusConnectorDatabaseInitializer-${project.version}.jar
 			</source>
-			<outputDirectory>${connector.build.dir}/documentation/databaseInitializer
+			<outputDirectory>/documentation/databaseInitializer
 			</outputDirectory>
 			<destName>domibusConnectorDatabaseInitializer.jar</destName>
 		</file>
@@ -49,7 +49,7 @@
 		<file>
 			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/domibusConnector_InstallationGuide.pdf
 			</source>
-			<outputDirectory>${connector.build.dir}/documentation/
+			<outputDirectory>/documentation/
 			</outputDirectory>
 			<destName>domibusConnector_InstallationGuide.pdf</destName>
 		</file>
