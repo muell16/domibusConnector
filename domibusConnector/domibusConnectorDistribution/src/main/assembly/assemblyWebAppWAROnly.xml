@@ -4,21 +4,9 @@
 	<formats>
 		<format>war</format>
 	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>        
-	<fileSets>
-        <!-- ==================== Copying Module's JAR files ================= -->
-	<!-- 	<fileSet>
-			<directory>${project.basedir}/../domibusConnectorWebAppModule/target/
-			</directory>
-			<outputDirectory>../</outputDirectory>
-			<includes>
-				<include>*.war</include>
-			</includes>
-		</fileSet>  -->  
-                      
-    </fileSets>
-    
-    	<files>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<files>
 
 		<file>
 			<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
