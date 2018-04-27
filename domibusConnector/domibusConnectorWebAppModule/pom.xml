@@ -4,13 +4,13 @@
 
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorWebAppModule</artifactId>
-    <version>4.0.0-RELEASE</version>
+    <version>4.1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-RELEASE</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
 
     <name>domibusConnectorWebAppModule</name>
