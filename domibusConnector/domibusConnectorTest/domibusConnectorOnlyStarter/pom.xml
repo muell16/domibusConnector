@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorTest</artifactId>
-        <version>4.0.0-beta2-SNAPSHOT</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
 
     <artifactId>domibusConnectorOnlyStarter</artifactId>
