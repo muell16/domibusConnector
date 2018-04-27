@@ -74,7 +74,13 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
             throw new PersistenceException("A exception occured during copying big data into storage", ioe);
         }
     }
-    
+
+    @Override
+    @Transactional
+    public void cleanForMessage(DomibusConnectorMessage message) {
+        bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(message);
+    }
+
     @Override
     @Transactional
     public DomibusConnectorMessage loadAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message) {

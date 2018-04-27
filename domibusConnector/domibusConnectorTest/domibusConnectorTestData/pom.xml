@@ -4,10 +4,13 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorTest</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
     <artifactId>domibusConnectorTestData</artifactId>
     <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>This module contains testData for Tests. To make the TestData reusable through the different modules of the project.</description>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>

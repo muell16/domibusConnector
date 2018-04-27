@@ -4,17 +4,18 @@
 
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorWebAppModule</artifactId>
-    <version>4.0.0-beta1</version>
+    <version>4.0.0-RELEASE</version>
     <packaging>war</packaging>
 
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
 
     <name>domibusConnectorWebAppModule</name>
-    <url>http://maven.apache.org</url>
+    <description>This module includes the connector modules and provides them as war with an additional admin interface.</description>
+    <!--<url>http://maven.apache.org</url>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -424,6 +425,16 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorGatewayLink</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorSecurityToolkit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorEvidencesToolkit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

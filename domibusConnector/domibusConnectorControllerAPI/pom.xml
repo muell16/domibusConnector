@@ -1,18 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>eu.domibus.connector</groupId>
-    <artifactId>domibusConnector</artifactId>
-    <version>4.0.0-beta1</version>
-  </parent>
-  <artifactId>domibusConnectorControllerAPI</artifactId>
-  
-  <dependencies>
-  	    <dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnector</artifactId>
+        <version>4.0.0-RELEASE</version>
+    </parent>
+    <artifactId>domibusConnectorControllerAPI</artifactId>
+    <name>${artifactId}</name>
+    <description>This module provides the internal connector interfaces for binding a GatewayLink-Module or a BackendLink module to the connectorModule</description>
+
+    <dependencies>
+        <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorDomain</artifactId>
-            <!-- <version>${project.version}</version> -->
         </dependency>
-  </dependencies>
-  
+    </dependencies>
+
 </project>

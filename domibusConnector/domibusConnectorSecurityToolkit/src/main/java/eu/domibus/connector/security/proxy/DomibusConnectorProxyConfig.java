@@ -13,31 +13,31 @@ public class DomibusConnectorProxyConfig extends ProxyConfig implements Initiali
 	@Value("${http.proxy.enabled}")
 	boolean httpProxyEnabled;
 	
-	@Value("${http.proxy.host:null}")
+	@Value("${http.proxy.host:#null}")
 	String httpProxyHost;
 	
-	@Value("${http.proxy.port:0}")
+	@Value("${http.proxy.port:#null}")
 	String httpProxyPort;
 	
-	@Value("${http.proxy.user:null}")
+	@Value("${http.proxy.user:#null}")
 	String httpProxyUser;
 	
-	@Value("${http.proxy.password:null}")
+	@Value("${http.proxy.password:#null}")
 	String httpProxyPassword;
 	
 	@Value("${https.proxy.enabled}")
 	boolean httpsProxyEnabled;
 	
-	@Value("${https.proxy.host:null}")
+	@Value("${https.proxy.host:#null}")
 	String httpsProxyHost;
 	
-	@Value("${https.proxy.port:0}")
+	@Value("${https.proxy.port:#null}")
 	String httpsProxyPort;
 	
-	@Value("${https.proxy.user:null}")
+	@Value("${https.proxy.user:#null}")
 	String httpsProxyUser;
 	
-	@Value("${https.proxy.password:null}")
+	@Value("${https.proxy.password:#null}")
 	String httpsProxyPassword;
     
     public DomibusConnectorProxyConfig() {

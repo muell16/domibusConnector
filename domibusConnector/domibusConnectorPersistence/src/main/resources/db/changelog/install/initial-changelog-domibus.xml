@@ -12,6 +12,12 @@
     <property name="varchar.length.type" value="" dbms="h2,mysql,postgresql" />
     <property name="varchar.length.type" value="CHAR" dbms="oracle" />
 
+    <property name="varchar255.type" value="VARCHAR(255)" />
+    <property name="varchar255.type" value="VARCHAR2(255 CHAR)" dbms="oracle" />
+
+    <property name="varchar512.type" value="VARCHAR(512)" />
+    <property name="varchar512.type" value="VARCHAR2(512 CHAR)" dbms="oracle" />
+
     <property name="id.type" value="BIGINT" dbms="postgresql" />
     <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
     <property name="id.type" value="NUMBER(10)" dbms="oracle" />
@@ -26,41 +32,50 @@
     
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_1">
         <createTable tableName="DOMIBUS_CONNECTOR_SEQ_STORE" >
-            <column name="SEQ_NAME" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="SEQ_NAME" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
             <column name="SEQ_VALUE" type="${id.type}" >
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
-        <createIndex tableName="DOMIBUS_CONNECTOR_SEQ_STORE" indexName="INDEX_PK_DOMIBUS_CONNECTOR_SEQ_STORE" >
-            <column name="SEQ_NAME" />
-        </createIndex>
     </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_1_primary_key_for_seq_store">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
+    </changeSet>
+
+
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_2">
         <createTable tableName="DOMIBUS_CONNECTOR_SERVICE" >
-            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="SERVICE" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="SERVICE_TYPE" type="${varchar512.type}" >
                 <constraints nullable="false" />
             </column>
         </createTable>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_2_primary_key_for_connector_service">
+        <comment>Creating Primary Key for DOMIBUS_CONNECTOR_SERVICE</comment>
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_3">
         <createTable tableName="DOMIBUS_CONNECTOR_PARTY">
-            <column name="PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="PARTY_ID" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="ROLE" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="ROLE" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="PARTY_ID_TYPE" type="${varchar.type}(512 ${varchar.length.type})" />        
+            <column name="PARTY_ID_TYPE" type="${varchar512.type}" />
         </createTable>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_3_primary_key">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_4">
         <createTable tableName="DOMIBUS_CONNECTOR_MSG_ERROR">
             <column name="ID" type="DECIMAL(10,0)" >
@@ -69,7 +84,7 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
             </column>
-            <column name="ERROR_MESSAGE" type="${varchar.type}(512 ${varchar.length.type})" >
+            <column name="ERROR_MESSAGE" type="${varchar512.type}" >
                 <constraints nullable="false" />
             </column>
             <column name="DETAILED_TEXT" type="${text.type}" />
@@ -78,24 +93,32 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG_ERROR" />
     </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_4_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_MSG_ERROR" />
+    </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_5">
         <createTable tableName="DOMIBUS_CONNECTOR_MSG_CONT" >
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
-            <column name="CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="CONTENT_TYPE" type="${varchar255.type}" />
             <column name="CONTENT" type="${blob}" />
             <column name="CHECKSUM" type="${text.type}" />            
             <column name="CREATED" type="DATETIME" />
         </createTable>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_5_primary_key">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6">
         <createTable tableName="DOMIBUS_CONNECTOR_BIGDATA">
-            <column name="ID" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="ID" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
             <column name="CHECKSUM" type="${text.type}" />
@@ -104,14 +127,14 @@
             <column name="LAST_ACCESS" type="DATETIME" />          
             <column name="NAME" type="${text.type}" />
             <column name="CONTENT" type="${blob}" />
-            <column name="MIMETYPE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="MIMETYPE" type="${varchar255.type}" />
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BIGDATA" columnNames="ID" />
-
     </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BIGDATA" columnNames="ID" />
+    </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_7">
-        
-        
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" >
             <column name="ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
@@ -119,36 +142,39 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
             </column>
-            <column name="CONNECTOR_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="FROM_PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="FROM_PARTY_ROLE" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="TO_PARTY_ID" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="TO_PARTY_ROLE" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="ORIGINAL_SENDER" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="FINAL_RECIPIENT" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="SERVICE" type="${varchar.type}(255 ${varchar.length.type})" />
-            <column name="ACTION" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="FROM_PARTY_ID" type="${varchar255.type}" />
+            <column name="FROM_PARTY_ROLE" type="${varchar255.type}" />
+            <column name="TO_PARTY_ID" type="${varchar255.type}" />
+            <column name="TO_PARTY_ROLE" type="${varchar255.type}" />
+            <column name="ORIGINAL_SENDER" type="${varchar255.type}" />
+            <column name="FINAL_RECIPIENT" type="${varchar255.type}" />
+            <column name="SERVICE" type="${varchar255.type}" />
+            <column name="ACTION" type="${varchar255.type}" />
             <column name="CREATED" type="DATETIME">
-                <!--<constraints nullable="false" />-->
+                <constraints nullable="false" />
             </column>
             <column name="UPDATED" type="DATETIME" >
-                <!--<constraints nullable="false" />-->
+                <constraints nullable="false" />
             </column>        
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8">
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_7_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_CONNECTOR_MESSAGE_INFO" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_7_message_id_unique">
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="MESSAGE_ID" constraintName="MSG_INFO_UNIQ_MSG_ID"/>
+    </changeSet>
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8">
         <createTable tableName="DOMIBUS_CONNECTOR_MESSAGE">
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="EBMS_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})" ></column>
-            <column name="BACKEND_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
-            <column name="BACKEND_NAME" type="${varchar.type}(255 ${varchar.length.type})"></column>
-            <column name="CONNECTOR_MESSAGE_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>
-            <column name="CONVERSATION_ID" type="${varchar.type}(255 ${varchar.length.type})"></column>      
+            <column name="EBMS_MESSAGE_ID" type="${varchar255.type}" ></column>
+            <column name="BACKEND_MESSAGE_ID" type="${varchar255.type}"></column>
+            <column name="BACKEND_NAME" type="${varchar255.type}"></column>
+            <column name="CONNECTOR_MESSAGE_ID" type="${varchar255.type}"></column>
+            <column name="CONVERSATION_ID" type="${varchar255.type}"></column>      
             <column name="DIRECTION" type="${varchar.type}(10)"></column>
             <column name="HASH_VALUE" type="${text.type}"></column>
             <column name="CONFIRMED" type="DATETIME" ></column>
@@ -162,13 +188,21 @@
                 <!--<constraints nullable="false" />-->
             </column>
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" /> 
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8_unique_connector_message_id">
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="CONNECTOR_MESSAGE_ID" constraintName="UNIQUE_CONNECTOR_MESSAGE_ID" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8_unique_ebms_id">
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="EBMS_MESSAGE_ID" constraintName="UQ_DOMIBUS_CONNE_EBMS_MESSAGE" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_8_unique_backend_message_id">
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="BACKEND_MESSAGE_ID" constraintName="UQ_DOMIBUS_CONNE_NAT_MESSAGE_" />
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_9">
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_9">
         <createTable tableName="DOMIBUS_CONNECTOR_EVIDENCE">
             <column name="ID" type="DECIMAL(10,0)"> 
                 <constraints nullable="false" />
@@ -176,7 +210,7 @@
             <column name="MESSAGE_ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="TYPE" type="${varchar.type}(255 ${varchar.length.type})" />
+            <column name="TYPE" type="${varchar255.type}" />
             <column name="EVIDENCE" type="${text.type}" />
             <column name="DELIVERED_NAT" type="DATETIME" />
             <column name="DELIVERED_GW" type="DATETIME" />
@@ -184,75 +218,85 @@
                 <!--<constraints nullable="false" />-->
             </column>            
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
-
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10">
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_9_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
+    </changeSet>
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10">
+        <comment>Create Content Type Table</comment>
         <createTable tableName="DOMIBUS_CONNECTOR_CONT_TYPE">
-            <column name="MESSAGE_CONTENT_TYPE" type="${varchar.type}(255 ${varchar.length.type})">
+            <column name="MESSAGE_CONTENT_TYPE" type="${varchar255.type}">
                 <constraints nullable="false" />
             </column>
         </createTable>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10_primary_key">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_CONT_TYPE" columnNames="MESSAGE_CONTENT_TYPE" constraintName="PK_DOMIBUS_CONN_02" />
-            
+    </changeSet>
+
+
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10_1">
         <createTable tableName="DOMIBUS_CONNECTOR_ACTION" >
-            <column name="ACTION" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="ACTION" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="PDF_REQUIRED" type="DECIMAL(1,0)" >
+            <column name="PDF_REQUIRED" type="BOOLEAN" defaultValueBoolean="0">
                 <constraints nullable="false" />
             </column>        
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION" />
-
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_11">
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_10_1_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION" />
+    </changeSet>
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_11_backend_info">
         <createTable tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" >
             <column name="ID" type="DECIMAL(10,0)">
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_NAME" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="BACKEND_NAME" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_KEY_ALIAS" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="BACKEND_KEY_ALIAS" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="BACKEND_KEY_PASS" type="${varchar.type}(255 ${varchar.length.type})" ></column>
-            <column name="BACKEND_SERVICE_TYPE" type="${varchar.type}(255 ${varchar.length.type})" ></column>
+            <column name="BACKEND_KEY_PASS" type="${varchar255.type}" ></column>
+            <column name="BACKEND_SERVICE_TYPE" type="${varchar512.type}" ></column>
             <column name="BACKEND_ENABLED" type="BOOLEAN" defaultValueBoolean="true" />
             <column name="BACKEND_DEFAULT" type="BOOLEAN" defaultValueBoolean="false" />
             <column name="BACKEND_DESCRIPTION" type="${text.type}"  />
             <column name="BACKEND_PUSH_ADDRESS" type="${text.type}" />
         </createTable>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_11_primary_key_backend_info">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_BACK_01" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_11_backend_info_unique_backend_name">
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_NAME" constraintName="UN_DOMIBUS_CONNECTOR_BACK_01" />
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_11_backend_info_unique_key_alias">
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_KEY_ALIAS" constraintName="UN_DOMIBUS_CONNECTOR_BACK_02" />
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_12">
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_12_connector_to_service_rel">
         <createTable tableName="DOMIBUS_CONNECTOR_BACK_2_S">
-            <column name="DOMIBUS_CONNECTOR_SERVICE_ID" type="${varchar.type}(255 ${varchar.length.type})" >
+            <column name="DOMIBUS_CONNECTOR_SERVICE_ID" type="${varchar255.type}" >
                 <constraints nullable="false" />
             </column>
             <column name="DOMIBUS_CONNECTOR_BACKEND_ID" type="DECIMAL(10,0)" >
                 <constraints nullable="false" />
             </column>            
         </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACK_2_S" columnNames="DOMIBUS_CONNECTOR_SERVICE_ID, DOMIBUS_CONNECTOR_BACKEND_ID" constraintName="PK_DOMIBUS_CONN_01" />
-            
-        
-
-
     </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_12_connector_to_service_rel_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACK_2_S" columnNames="DOMIBUS_CONNECTOR_SERVICE_ID, DOMIBUS_CONNECTOR_BACKEND_ID" constraintName="PK_DOMIBUS_CONN_01" />
+    </changeSet>
+
+
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_13">
-
-
-
-
-    
-        
+        <comment>Foreign Key between Message error and Message</comment>
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
             baseColumnNames="MESSAGE_ID" 
@@ -261,10 +305,10 @@
             referencedColumnNames="ID" 
             onDelete="NO ACTION" 
             onUpdate="NO ACTION" />
-
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_14">
 
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_14">
+        <comment>Foreign key between message content and message</comment>
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
             baseColumnNames="MESSAGE_ID" 
@@ -273,23 +317,25 @@
             referencedColumnNames="ID" 
             onDelete="NO ACTION" 
             onUpdate="NO ACTION"/>
-
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_15">
+        <comment>Foreign key between message info and message</comment>
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
             baseColumnNames="ACTION" 
-            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_1" 
+            constraintName="FK_MSGI_ACTION"
             referencedTableName="DOMIBUS_CONNECTOR_ACTION" 
             referencedColumnNames="ACTION" 
             onDelete="NO ACTION" 
             onUpdate="NO ACTION"/>
     </changeSet>
+
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_16">
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
             baseColumnNames="SERVICE" 
-            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_2" 
+            constraintName="FK_MSGI_SERVICE"
             referencedTableName="DOMIBUS_CONNECTOR_SERVICE" 
             referencedColumnNames="service" 
             onDelete="NO ACTION" 
@@ -299,7 +345,7 @@
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
             baseColumnNames="FROM_PARTY_ID, FROM_PARTY_ROLE" 
-            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_3" 
+            constraintName="FK_MSGI_FROM_PARTY"
             referencedTableName="DOMIBUS_CONNECTOR_PARTY" 
             referencedColumnNames="PARTY_ID, ROLE" 
             onDelete="NO ACTION" 
@@ -309,7 +355,7 @@
         <addForeignKeyConstraint 
             baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
             baseColumnNames="TO_PARTY_ID, TO_PARTY_ROLE" 
-            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_4" 
+            constraintName="FK_MSGI_TO_PARTY"
             referencedTableName="DOMIBUS_CONNECTOR_PARTY" 
             referencedColumnNames="PARTY_ID, ROLE" 
             onDelete="NO ACTION" 
@@ -319,7 +365,7 @@
         <addForeignKeyConstraint    
             baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"     
             baseColumnNames="MESSAGE_ID"         
-            constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_I"
+            constraintName="FK_MSGI_MSGID"
             referencedColumnNames="ID"
             referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
             onDelete="NO ACTION" 

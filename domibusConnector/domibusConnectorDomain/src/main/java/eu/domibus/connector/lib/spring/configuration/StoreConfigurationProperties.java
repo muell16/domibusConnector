@@ -12,10 +12,23 @@ public class StoreConfigurationProperties {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StoreConfigurationProperties.class);
 
+    /**
+     * Path to the Key/Truststore
+     */
     @Nonnull
     Resource path;
 
+    /**
+     * Password to open the Store
+     */
     String password;
+
+    public StoreConfigurationProperties() {}
+
+    public StoreConfigurationProperties(Resource path, String password) {
+        this.path = path;
+        this.password = password;
+    }
 
     public Resource getPath() {
         return path;

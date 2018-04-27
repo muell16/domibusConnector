@@ -4,6 +4,7 @@ import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,10 +13,22 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class EvidencesToolkitConfigurationProperties {
 
+    /**
+     * Configuration of the keyStore which holds the private key to sign the evidences
+     */
+    @NestedConfigurationProperty
     StoreConfigurationProperties keystore = new StoreConfigurationProperties();
 
+    /**
+     * Configuration of the private key which is used to sign the evidences
+     */
+    @NestedConfigurationProperty
     CertConfigurationProperties key = new CertConfigurationProperties();
 
+    /**
+     * The hashAlgorithm used for signing the evidences
+     * The default value is SHA256
+     */
     HashValueBuilder.HashAlgorithm hashAlgorithm = HashValueBuilder.HashAlgorithm.SHA256;
 
     public StoreConfigurationProperties getKeystore() {

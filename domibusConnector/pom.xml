@@ -3,15 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.0.0-beta1</version>
+    <version>4.0.0-RELEASE</version>
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorEvidencesToolkit</module>
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
-        <module>domibusConnectorDistribution</module>
         <module>domibusConnectorMonitoring</module>
-        <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorWebAppModule</module>
         <module>domibusConnectorPersistence</module>
         <module>domibusConnectorDomain</module>
@@ -21,6 +19,8 @@
         <module>domibusConnectorTest</module>
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
+        <module>domibusConnectorDocumentation</module>
+        <module>domibusConnectorDistribution</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -744,6 +744,39 @@
                 <artifactId>maven-site-plugin</artifactId>                
                 <version>3.3</version>
             </plugin>
+            <plugin>
+                <artifactId>maven-pdf-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>make-pdf</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>pdf</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <inherited>false</inherited>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <copy todir="target/site/resources/doc-resources" overwrite="true" >
+                                    <fileset dir="domibusConnectorDocumentation/src/main/resources/"/>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     
@@ -752,7 +785,7 @@
             <plugin>
                 <groupId>at.gv.brz.jqeu</groupId>
                 <artifactId>spring-properties-reporting-plugin</artifactId>
-                <version>0.9-alpha2</version>
+                <version>0.9-alpha4-SNAPSHOT</version>
                 <configuration>
                     <includedDependencies>
                         <dependency>
@@ -769,6 +802,10 @@
                     <reportSet>
                         <reports><!-- select reports -->
                             <report>index</report>
+                            <report>modules</report>
+                            <report>scm</report>
+                            <report>cim</report>
+                            <report>summary</report>
                         </reports>
                     </reportSet>
                 </reportSets>

@@ -4,10 +4,12 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
     <artifactId>domibusConnectorPersistence</artifactId>
     <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>This module is responsibly for persisting the messages and message contents into a persistent storage (Database).</description>
     
     <dependencies>
         <dependency>

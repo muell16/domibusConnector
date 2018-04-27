@@ -118,7 +118,7 @@
     <changeSet author="StephanSpindler" id="init-quartz-3.2" >
         <addForeignKeyConstraint baseTableName="DCON_QRTZ_SIMPLE_TRIGGERS" 
                                  baseColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" 
-                                 constraintName="fk_schedtrigger_to_qrtz_triggers" 
+                                 constraintName="fk_schedtrigger_qrtz_trig"
                                  referencedTableName="DCON_QRTZ_TRIGGERS" 
                                  referencedColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" />
         
@@ -148,7 +148,7 @@
         <addForeignKeyConstraint 
             baseTableName="DCON_QRTZ_CRON_TRIGGERS" 
             baseColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" 
-            constraintName="fk_qrtzcrontriggers_to_qrtztriggers" 
+            constraintName="fk_crontrig_to_qrtztrig"
             referencedTableName="DCON_QRTZ_TRIGGERS" 
             referencedColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" />
     </changeSet>
@@ -184,7 +184,7 @@
         <addForeignKeyConstraint 
             baseTableName="DCON_QRTZ_SIMPROP_TRIGGERS"
             baseColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" 
-            constraintName="fk_qrtzsimproptriggers_to_qrtztriggers" 
+            constraintName="fk_simproptrig_to_qrtztrig"
             referencedTableName="DCON_QRTZ_TRIGGERS" 
             referencedColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" />
     </changeSet>
@@ -209,7 +209,7 @@
         <addForeignKeyConstraint 
             baseTableName="DCON_QRTZ_BLOB_TRIGGERS" 
             baseColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" 
-            constraintName="fk_qrtzblobtriggers_to_qrtztriggers" 
+            constraintName="fk_blobtrig_to_trig"
             referencedTableName="DCON_QRTZ_TRIGGERS" 
             referencedColumnNames="SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP" />
     </changeSet>

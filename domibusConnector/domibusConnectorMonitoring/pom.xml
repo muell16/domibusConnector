@@ -4,9 +4,12 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
-		<version>4.0.0-beta1</version>
+		<version>4.0.0-RELEASE</version>
 	</parent>
 	<artifactId>domibusConnectorMonitoring</artifactId>
+	<name>${project.artifactId}</name>
+	<description>Deprecated, provides multiple monitoring methods: REST, JMX, DB.
+		Module to hold all monitoring interfaces for the domibus Connector</description>
 
 	<dependencies>
 	 <dependency>
@@ -32,5 +35,5 @@
 	  <artifactId>jsr311-api</artifactId>
 	 </dependency>
 	</dependencies>
-	<description>Module to hold all monitoring interfaces for the domibus Connector</description>
+
 </project>

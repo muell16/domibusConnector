@@ -82,7 +82,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
         LOGGER.debug("#submitToController: message.getMessageDetails().getService() [{}]", message.getMessageDetails().getService());
 
-        String testPingConnectorMessage = "TEST-ping-connector";
+        String testPingConnectorMessage = "TEST-ping-connector"; //TODO: make configureable!
         if (testPingConnectorMessage.equals(message.getMessageDetails().getService().getService())) {
             LOGGER.debug("#submitToController: message is " + testPingConnectorMessage + " so just sending message back to backend!");
             toBackendDeliveryService.deliverMessageToBackend(message);
@@ -101,6 +101,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     @Override
     public DomibusConnectorMessage processMessageAfterDeliveredToBackend(DomibusConnectorMessage message) {
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
+        bigDataPersistence.cleanForMessage(message);
         return message;
     }
 

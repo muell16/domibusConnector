@@ -10,31 +10,6 @@
 		namespace="transition.domain.connector.domibus.eu"
 		location="./eu.domibus.connector.domain.transition/DomibusConnectorTransitionModel.xsd" />
    
-<!--    <wsdl:import 
-        namespace="http://schemas.xmlsoap.org/ws/2004/09/policy"
-        location="./backend.policy.xml" 
-    />     -->
-       
-        <!-- Policy for UsernameToken with plaintext password, sent from client to
-        server only -->
-<!--        <wsp:Policy wsu:Id="UsernameToken" xmlns:wsu=
-     "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-                    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
-                    xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
-            <wsp:ExactlyOne>
-                <wsp:All>
-                    <sp:SupportingTokens>
-                        <wsp:Policy>
-                            <sp:UsernameToken sp:IncludeToken=".../IncludeToken/AlwaysToRecipient">
-                                <wsp:Policy>
-                            </sp:UsernameToken>
-                        </wsp:Policy>
-                    </sp:SupportingTokens>
-                </wsp:All>
-            </wsp:ExactlyOne>
-        </wsp:Policy>-->
-    
-
 	<wsdl:message name="deliverMessageRequest">
 		<wsdl:part name="deliverMessageRequest" type="dct:DomibusConnectorMessageType"></wsdl:part>
 	</wsdl:message>

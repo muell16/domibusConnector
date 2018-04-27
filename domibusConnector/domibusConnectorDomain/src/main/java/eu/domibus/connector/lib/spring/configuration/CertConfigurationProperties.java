@@ -1,5 +1,7 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import javax.annotation.Nullable;
+
 /**
  * Configuration properties for referencing a
  *  key, cert in a key store
@@ -7,8 +9,22 @@ package eu.domibus.connector.lib.spring.configuration;
  */
 public class CertConfigurationProperties {
 
+    public CertConfigurationProperties() {}
+
+    public CertConfigurationProperties(String alias, String password) {
+        this.alias = alias;
+        this.password = password;
+    }
+
+    /**
+     * The alias of the Certificate/Key
+     */
     String alias;
 
+    /**
+     * The password of the Certificate/Key
+     */
+    @Nullable
     String password;
 
     public String getAlias() {
@@ -19,7 +35,7 @@ public class CertConfigurationProperties {
         this.alias = alias;
     }
 
-    public String getPassword() {
+    public @Nullable String getPassword() {
         return password;
     }
 

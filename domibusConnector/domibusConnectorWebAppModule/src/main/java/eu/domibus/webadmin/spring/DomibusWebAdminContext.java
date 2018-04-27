@@ -109,7 +109,7 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
      *  view scope
      */
     @Bean
-    public ViewScope viewScope() {
+    public static ViewScope viewScope() {
     	return new ViewScope();
     }
     
@@ -117,7 +117,7 @@ public class DomibusWebAdminContext implements ServletContextInitializer {
      *  configure custom view scope
      */
     @Bean
-    public CustomScopeConfigurer customScopeConfigurer() {
+    public static CustomScopeConfigurer customScopeConfigurer() {
     	CustomScopeConfigurer scopeConfig = new CustomScopeConfigurer();
     	scopeConfig.addScope("view", viewScope());
     	return scopeConfig;

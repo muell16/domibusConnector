@@ -3,10 +3,12 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
+import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.jms.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -36,24 +37,27 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     private final static String CONNECTOR_BACKEND_IS_PUSH_BACKEND = "CONNECTOR_BACKEND_IS_PUSH_BACKEND";
     
     private final static String BACKEND_CLIENT_DELIVERY_RETRIES = "BACKEND_CLIENT_DELIVERY_RETRIES";
-    
-    private final static String WAIT_QUEUE_PROPERTY_NAME = "${connector.backend.internal.wait-queue.name}";
-    
-    @Value(WAIT_QUEUE_PROPERTY_NAME)
-    private String waitQueueName;
-    
-    @Value("${connector.backend.push.max-retries:3}")
-    private int maxDeliveryRetries;
-    
-    @Value("${connector.backend.internal.wait-queue.receive-timeout:10}")
-    private long receiveTimeout;
-    
+
+
+    @Autowired
+    private BackendLinkInternalWaitQueueProperties backendLinkInternalWaitQueueProperties;
+
     @Autowired(required = false) //can be null if there is no push impl
     private @Nullable
     PushMessageToBackendClient pushMessageToBackendCallback;
        
     @Autowired
     private JmsTemplate jmsTemplate;
+
+    private long receiveTimeout;
+    private String waitQueueName;
+
+
+    @PostConstruct
+    public void init() {
+        this.waitQueueName = backendLinkInternalWaitQueueProperties.getName();
+        this.receiveTimeout = backendLinkInternalWaitQueueProperties.getReceiveTimeout();
+    }
 
     @Override
     public void putMessageInWaitingQueue(final DomibusConnectorBackendMessage backendMessage) {
@@ -85,7 +89,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         });                
     }
         
-    @JmsListener(destination=WAIT_QUEUE_PROPERTY_NAME, selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
+    @JmsListener(destination="#{backendLinkInternalWaitQueueProperties.getName()}", selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
     public void pushToBackend(ObjectMessage msg) throws JMSException {
         LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
         String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);

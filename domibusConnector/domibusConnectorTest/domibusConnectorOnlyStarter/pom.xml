@@ -4,13 +4,20 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorTest</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
+
+    <artifactId>domibusConnectorOnlyStarter</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>This module packages the connector with an embedded tomcat and database (h2) but without the webadmin and creates a runnable jar.
+        This makes this module perfect for local testing. It also contains a reasonably default configuration with certifcates.
+    </description>
+
     <properties>
         <mainClass>eu.domibus.connector.starter.ConnectorStarter</mainClass>
     </properties>
-    <artifactId>domibusConnectorOnlyStarter</artifactId>
-    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

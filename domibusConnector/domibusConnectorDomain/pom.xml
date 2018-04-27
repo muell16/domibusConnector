@@ -4,10 +4,12 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
     <artifactId>domibusConnectorDomain</artifactId>
     <packaging>jar</packaging>
+    <name>${artifactId}</name>
+    <description>This module contains the domain model classes.</description>
     
     <profiles>
     	<profile>

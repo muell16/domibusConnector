@@ -4,8 +4,9 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
+    <name>${project.artifactId}</name>
     <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>
     <artifactId>domibusConnectorTest</artifactId>
     <packaging>pom</packaging>
@@ -13,5 +14,6 @@
         <module>domibusConnectorOnlyStarter</module>
         <module>domibusConnectorTestSuite</module>
         <module>domibusConnectorTestData</module>
+        <module>domibusConnectorDatabaseInitializer</module>
     </modules>
 </project>

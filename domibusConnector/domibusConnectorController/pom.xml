@@ -4,11 +4,13 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.0-beta1</version>
+        <version>4.0.0-RELEASE</version>
     </parent>
+    <name>${project.artifactId}</name>
     <description>
-        This module is the worker/core of the domibusWebConnector it contains the responsibly services to retrieve the messages from the domibusGateway
-        and sends it to the domibusClients
+        Does the business work with the messages: Generates the evidences, resolves and verifies the ASIC-S container, creates the TRUST-Tokens.
+        It hands over the messages to the GWLink module for GW-Communication and to the BackendLinkModule for communication with the connectorClients.
+
         For this purpose it uses other modules like persistence, evidenceToolkit, securityToolkit,...
     </description>
     <artifactId>domibusConnectorController</artifactId>

@@ -9,14 +9,13 @@ import org.springframework.context.annotation.Configuration;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 
 /**
- *
+ *  Default connectorMessage ID generator
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
 public class MessageIdGeneratorConfigurer {
 
-    
-    
+
     @ConditionalOnMissingBean(DomibusConnectorMessageIdGenerator.class)
     @Bean
     public DomibusConnectorMessageIdGenerator domibusConnectorMessageIdGenerator() {
