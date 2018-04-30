@@ -3,8 +3,18 @@
     docBase is the path of the web application war which should be deployed into this context
     (put this file into ${CATALINA_HOME}/conf/Catalina/localhost, so tomcat can load it or upload it over the
     manager-gui)
+    IMPORTANT!: REPLACE #CATALINA_HOME# with your correct Tomcat Path!, Tomcat cannot resolve
+    environment variables at this place!
 -->
-<Context docBase="${CATALINA_HOME}/conf/connector/domibusConnectorWebAppModule.war">
+<Context docBase="#CATALINA_HOME#/conf/connector/domibusConnectorWebAppModule.war">
+    <!--
+        prevent tomcat from scanning jaxb-api on an environment with java less than java version 9;
+        tomcat will raise an warning if scanning module-info.class (java 9 module info) in jaxb-api package otherwise
+    -->
+    <JarScanner>
+        <JarScanFilter pluggabilitySkip="jaxb-api-2.3.0.jar" />
+    </JarScanner>
+
     <!-- name of the container datasource -->
     <Parameter  name="spring.datasource.jndi-name" 
                     value="jdbc/domibusWebConnectorDS" override="false" />

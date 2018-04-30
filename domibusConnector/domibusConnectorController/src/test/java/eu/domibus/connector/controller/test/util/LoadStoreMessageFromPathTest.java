@@ -44,9 +44,6 @@ public class LoadStoreMessageFromPathTest {
         DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
 
         LoadStoreMessageFromPath.storeMessageTo(r, message);
-
-
-
     }
 
 
