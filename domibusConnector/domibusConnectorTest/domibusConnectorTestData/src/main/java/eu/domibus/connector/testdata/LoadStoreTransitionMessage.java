@@ -55,6 +55,7 @@ public class LoadStoreTransitionMessage {
     private Properties messageProperties;
 
     public static DomibusConnectorMessageType loadMessageFrom(Resource path) {
+        LOGGER.info("Load message from path [{}]", path);
         try {
             LoadStoreTransitionMessage load = new LoadStoreTransitionMessage(path);
             return load.loadMessage();
@@ -65,6 +66,7 @@ public class LoadStoreTransitionMessage {
 
 
     public static void storeMessageTo(Resource path, DomibusConnectorMessageType message, boolean overwrite) {
+        LOGGER.debug("storeMessageTo [{}]", path);
         try {
             LoadStoreTransitionMessage store = new LoadStoreTransitionMessage(path);
             store.storeMessageTo(message, overwrite);
@@ -81,9 +83,7 @@ public class LoadStoreTransitionMessage {
 
         Resource propertiesResource = basicFolder.createRelative(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
         File f = propertiesResource.getFile();
-        if (!f.exists()) {
-            f.createNewFile();
-        }
+
 
         storeMessageContent(message.getMessageContent());
 
@@ -92,6 +92,7 @@ public class LoadStoreTransitionMessage {
         storeMessageAttachments(message.getMessageAttachments());
 
         try (FileOutputStream fout = new FileOutputStream(f)) {
+            LOGGER.debug("writing properties file [{}]", f);
             messageProperties.store(fout, "");
         } catch (IOException ioe) {
 
