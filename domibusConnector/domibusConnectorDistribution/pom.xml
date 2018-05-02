@@ -7,9 +7,38 @@
         <version>4.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorDistribution</artifactId>
-    <name>${artifactId}</name>
-    <description>This maven module contains the assembly scripts to create the different distribution packages</description>
-    
+    <name>${project.artifactId}</name>
+    <description>This maven module contains the assembly scripts to create the different distribution packages
+    </description>
+
+    <profiles>
+        <profile>
+            <id>site</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create-site-package</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>true</appendAssemblyId>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/assemblySite.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>domibusConnector</finalName>
         <plugins>
@@ -25,8 +54,7 @@
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
-                                <descriptor>src/main/assembly/assemblyWebApp.xml</descriptor>
-                                <descriptor>src/main/assembly/assemblyWebAppWAROnly.xml</descriptor>
+                                <descriptor>src/main/assembly/assemblySite.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -40,9 +68,49 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-war-artifact</id>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>
+                                        ${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
+                                    </file>
+                                    <type>war</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>deploy-test-report</id>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.basedir}/../target/site/test-result-report.html</file>
+                                    <type>html</type>
+                                    <classifier>testReport</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-	
+
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
