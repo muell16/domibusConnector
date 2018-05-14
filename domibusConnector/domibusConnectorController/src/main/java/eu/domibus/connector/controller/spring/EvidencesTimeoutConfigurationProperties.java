@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nonnull;
 
-@Component("evidencesTimeoutConfigurationProperties")
+@Component(EvidencesTimeoutConfigurationProperties.BEAN_NAME)
 @ConfigurationProperties(prefix="connector.controller.evidence")
 @Validated
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
