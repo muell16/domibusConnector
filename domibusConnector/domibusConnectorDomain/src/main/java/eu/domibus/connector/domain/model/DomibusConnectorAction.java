@@ -10,8 +10,8 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorAction implements Serializable {
 
-	private final String action;
-	private final boolean documentRequired;
+	private String action;
+	private boolean documentRequired;
 
 	/**
 	 * 
@@ -31,7 +31,15 @@ public class DomibusConnectorAction implements Serializable {
 		return this.documentRequired;
 	}
 
-    @Override
+	public void setDocumentRequired(boolean documentRequired) {
+		this.documentRequired = documentRequired;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("action", this.action);        

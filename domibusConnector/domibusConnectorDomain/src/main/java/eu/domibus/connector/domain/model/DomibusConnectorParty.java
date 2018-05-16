@@ -10,9 +10,9 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorParty implements Serializable {
 
-	private final String partyId;
-	private final String partyIdType;
-	private final String role;
+	private String partyId;
+	private String partyIdType;
+	private String role;
 
 	/**
 	 * 
@@ -37,8 +37,20 @@ public class DomibusConnectorParty implements Serializable {
 	public String getRole(){
 		return this.role;
 	}
-    
-    @Override
+
+	public void setPartyIdType(String partyIdType) {
+		this.partyIdType = partyIdType;
+	}
+
+	public void setPartyId(String partyId) {
+		this.partyId = partyId;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("partyId", this.partyId);

@@ -10,8 +10,8 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorService implements Serializable {
 
-	private final String service;
-	private final String serviceType;
+	private String service;
+	private String serviceType;
 
 	/**
 	 * 
@@ -31,7 +31,15 @@ public class DomibusConnectorService implements Serializable {
 		return this.serviceType;
 	}
 
-    @Override
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("service", this.service);
