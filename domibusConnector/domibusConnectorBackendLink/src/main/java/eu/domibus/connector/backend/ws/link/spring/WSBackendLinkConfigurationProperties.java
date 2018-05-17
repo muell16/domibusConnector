@@ -115,7 +115,8 @@ public class WSBackendLinkConfigurationProperties {
         try {
             p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.getKey().getStore().getPathUrlAsString());
         } catch (Exception e) {
-            throw new RuntimeException("Error with property: " + PREFIX + " key.store.path");
+            throw new RuntimeException("Error with property: [" + PREFIX + ".key.store.path]\n" +
+                    "value is [" + this.getKey().getStore().getPath() + "]");
         }
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.getKey().getKey().getAlias());
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getStore().getPassword());
@@ -123,8 +124,8 @@ public class WSBackendLinkConfigurationProperties {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
             p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
         } catch (Exception e) {
-            LOGGER.warn("Error with property: " + PREFIX + " trust.store.path\n Setting same as keyStore", e);
-            p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", p.getProperty("org.apache.wss4j.crypto.merlin.truststore.file"));
+            LOGGER.warn("Error with property: " + PREFIX + ".trust.store.path\n Setting same as keyStore", e);
+            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
             //truststore.file is optional default will be the same as keystore.file...
         }
         p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.getTrust().isLoadCaCerts()));

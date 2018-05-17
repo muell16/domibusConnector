@@ -43,7 +43,8 @@ public class StartBackendOnly {
                 .profiles(profiles)
                 .properties(properties)
                 .properties(new String[] {
-                        "spring.activemq.packages.trusted=*"
+                        "spring.activemq.packages.trusted=*",
+                        "connector.backend.ws key.store.path=classpath:/connector.jks"
                 })
                 .build();
         
