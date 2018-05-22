@@ -56,7 +56,7 @@ public class StoreConfigurationProperties {
             LOGGER.trace("#getPathUrlAsString: get url from [{}] to [{}]", path, path.getURL().toString());
             return path.getURL().toString();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("#getPathUrlAsString: path: [" + path + "]", e);
         }
     }
 }

@@ -35,6 +35,7 @@ public class WebRunner extends SpringBootServletInitializer implements WebApplic
 
     private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 
+    @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         String configLocation = servletContext.getInitParameter("config.location");
         LOG.info("CONFIG LOCATION IS : " + configLocation);

@@ -35,7 +35,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     @Override
     public Long countOutgoingMessages() {
 
-        Query query = em.createQuery("select count(*) from DomibusConnectorMessage m where m.direction=:direction");
+        Query query = em.createQuery("select count(*) from PDomibusConnectorMessage m where m.direction=:direction");
         query.setParameter("direction", MessageDirection.NAT_TO_GW);
 
         return (Long) query.getSingleResult();
@@ -44,7 +44,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     @Override
     public Long countIncomingMessages() {
 
-        Query query = em.createQuery("select count(*) from DomibusConnectorMessage m where m.direction=:direction");
+        Query query = em.createQuery("select count(*) from PDomibusConnectorMessage m where m.direction=:direction");
         query.setParameter("direction", MessageDirection.GW_TO_NAT);
 
         return (Long) query.getSingleResult();
@@ -53,7 +53,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     @Override
     public HashMap<String, Long> countService(String service) {
         HashMap<String, Long> serviceMap = new HashMap<String, Long>();
-        Query query = em.createQuery("select count(*) from DomibusConnectorMessageInfo m where m.service=:service");
+        Query query = em.createQuery("select count(*) from PDomibusConnectorMessageInfo m where m.service=:service");
         PDomibusConnectorService eCodexService = new PDomibusConnectorService();
         eCodexService.setService(service);
         query.setParameter("service", eCodexService);
@@ -64,7 +64,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
     @Override
     public HashMap<String, Long> countUndefinedService() {
         HashMap<String, Long> serviceMap = new HashMap<String, Long>();
-        Query query = em.createQuery("select count(*) from DomibusConnectorMessageInfo m where m.service is null");
+        Query query = em.createQuery("select count(*) from PDomibusConnectorMessageInfo m where m.service is null");
         serviceMap.put("Undefined", (Long) query.getSingleResult());
         return serviceMap;
     }
@@ -88,7 +88,7 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
             Calendar cTo = Calendar.getInstance();
             cTo = Calendar.getInstance();
             Date dTo = cTo.getTime();
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate order by m.created");
+            q = em.createQuery("from PDomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate order by m.created");
             q.setParameter("fromDate", dFrom);
             q.setParameter("toDate", dTo);
         } else if (fromDate == null && toDate != null) {
@@ -96,17 +96,17 @@ public class DomibusMessageWebAdminDao implements IDomibusMessageWebAdminDao, Se
             cTo.setTime(toDate);
             cTo.add(Calendar.DAY_OF_MONTH, 1);
             toDate = cTo.getTime();
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created <=:toDate order by m.created");
+            q = em.createQuery("from PDomibusConnectorMessageInfo m where m.created <=:toDate order by m.created");
             q.setParameter("toDate", toDate);
         } else if (fromDate != null && toDate == null) {
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate order by m.created");
+            q = em.createQuery("from PDomibusConnectorMessageInfo m where m.created >=:fromDate order by m.created");
             q.setParameter("fromDate", fromDate);
         } else {
             Calendar cTo = Calendar.getInstance();
             cTo.setTime(toDate);
             cTo.add(Calendar.DAY_OF_MONTH, 1);
             toDate = cTo.getTime();
-            q = em.createQuery("from DomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate order by m.created");
+            q = em.createQuery("from PDomibusConnectorMessageInfo m where m.created >=:fromDate and m.created <=:toDate order by m.created");
             q.setParameter("fromDate", fromDate);
             q.setParameter("toDate", toDate);
         }

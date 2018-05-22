@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 /**
@@ -18,8 +19,10 @@ import java.util.Properties;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component
-@ConfigurationProperties(prefix = "connector.backend.ws")
+@ConfigurationProperties(prefix = WSBackendLinkConfigurationProperties.PREFIX)
 public class WSBackendLinkConfigurationProperties {
+
+    public static final String PREFIX = "connector.backend.ws";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkConfigurationProperties.class);
 
@@ -107,12 +110,25 @@ public class WSBackendLinkConfigurationProperties {
         Properties p = new Properties();
         p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.key.getStore().getPassword());
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.key.getStore().getPathUrlAsString());
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.key.getKey().getAlias());
-        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.trust.getStore().getPassword());
-        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.trust.getStore().getPathUrlAsString());
-        p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.trust.isLoadCaCerts()));
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.getKey().getStore().getPassword());
+        LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", this.getKey().getStore().getPath());
+        try {
+            p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.getKey().getStore().getPathUrlAsString());
+        } catch (Exception e) {
+            throw new RuntimeException("Error with property: [" + PREFIX + ".key.store.path]\n" +
+                    "value is [" + this.getKey().getStore().getPath() + "]");
+        }
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.getKey().getKey().getAlias());
+        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getStore().getPassword());
+        try {
+            LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
+            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
+        } catch (Exception e) {
+            LOGGER.warn("Error with property: " + PREFIX + ".trust.store.path\n Setting same as keyStore", e);
+            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
+            //truststore.file is optional default will be the same as keystore.file...
+        }
+        p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.getTrust().isLoadCaCerts()));
 
         return p;
     }
@@ -193,4 +209,6 @@ public class WSBackendLinkConfigurationProperties {
             return loadCaCerts;
         }
     }
+
+
 }

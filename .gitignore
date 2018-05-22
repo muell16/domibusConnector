@@ -5,7 +5,7 @@
 
 ## PMD Eclipse plugin files ##
 .pmd
-﻿## Eclipse config files ##
+## Eclipse config files ##
 .settings/
 .classpath
 .project
@@ -40,6 +40,7 @@ target/
 *.ipr
 *.iws
 */.idea/
+.idea/
 
 ##netbeans files
 nbactions.xml
@@ -74,4 +75,4 @@ $Recycle.Bin
 /domibusConnector/domibusConnectorAPI/src/main/java/eu/domibus/connector/ws/gateway/submission/webservice/
 /domibusConnector/domibusConnectorWebAppModule/src/main/java/eu/domibus/configuration/
 /domibusConnector/domibusConnectorAPIlib/nbproject/
-.idea
+
