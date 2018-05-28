@@ -33,14 +33,29 @@ import javax.servlet.ServletException;
 @PropertySource("classpath:/default.properties")
 public class WebRunner extends SpringBootServletInitializer implements WebApplicationInitializer {
 
-    private final static Logger LOG = LoggerFactory.getLogger(WebRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebRunner.class);
+
+    private static final String CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME = "connector.config.file";
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        String configLocation = servletContext.getInitParameter("config.location");
-        LOG.info("CONFIG LOCATION IS : " + configLocation);
-        if (configLocation != null) {
-            servletContext.setInitParameter("spring.config.location", configLocation);
+
+        //"connector.logging.config"
+        String loggingConfigFile = System.getProperty("connector.logging.config");
+        if (loggingConfigFile != null) {
+            System.setProperty("log4j.configurationFile", loggingConfigFile);
+        }
+
+        String envParamConfigLocation = System.getProperty(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME);
+        LOG.info("CONFIG LOCATION by ENV is: " + envParamConfigLocation);
+        if (envParamConfigLocation != null) {
+            servletContext.setInitParameter("spring.config.location", envParamConfigLocation);
+        }
+
+        String servletParamConfigLocation = servletContext.getInitParameter(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME);
+        LOG.info("CONFIG LOCATION by servletContext IS : " + servletParamConfigLocation);
+        if (servletParamConfigLocation != null) {
+            servletContext.setInitParameter("spring.config.location", servletParamConfigLocation);
         }
         super.onStartup(servletContext);
     }
