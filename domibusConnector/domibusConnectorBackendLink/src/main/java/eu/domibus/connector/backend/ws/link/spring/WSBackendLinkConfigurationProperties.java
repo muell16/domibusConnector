@@ -119,6 +119,7 @@ public class WSBackendLinkConfigurationProperties {
                     "value is [" + this.getKey().getStore().getPath() + "]");
         }
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.getKey().getKey().getAlias());
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.private.password", this.getKey().getKey().getPassword());
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getStore().getPassword());
         try {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
