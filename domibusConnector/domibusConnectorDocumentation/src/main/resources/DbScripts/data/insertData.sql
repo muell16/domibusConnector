@@ -1,11 +1,11 @@
 ----------------------- Values for DOMIBUS_CONNECTOR_SEQ_STORE ------------------------------
 
 
--- Changeset /db/changelog/install/initial-changelog-data.sql::initialData_1::StephanSpindler
 INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE VALUES ('DOMIBUS_CONNECTOR_MESSAGES.ID', 0);
 INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE VALUES ('DOMIBUS_CONNECTOR_EVIDENCES.ID', 0);
 INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE VALUES ('DOMIBUS_CONNECTOR_MESSAGE_INFO.ID', 0);
 INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE VALUES ('DOMIBUS_CONNECTOR_MSG_ERROR.ID', 0);
+
 ----------------------- Values for DOMIBUS_CONNECTOR_PARTY ------------------------------
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('ARHS', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
 INSERT INTO DOMIBUS_CONNECTOR_PARTY VALUES ('AT', 'GW', 'urn:oasis:names:tc:ebcore:partyid-type:iso3166-1');
@@ -48,4 +48,6 @@ INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('SmallClaims', 'urn:e-codex:servic
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('Connector-TEST', 'urn:e-codex:services:');
 INSERT INTO DOMIBUS_CONNECTOR_SERVICE VALUES ('TEST-ping-connector', 'urn:e-codex:services:');
 
-INSERT INTO CONNECTORNEW.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES ('initialData_1', 'StephanSpindler', '/db/changelog/install/initial-changelog-data.sql', SYSTIMESTAMP, 53, '7:d299ac405108642b0b8b4dbb75cfbb29', 'sql', '', 'EXECUTED', NULL, NULL, '3.5.3', '3450612126');
+
+-- insert default user (admin) with default password (admin)
+INSERT INTO DOMIBUS_WEBADMIN_USER (USERNAME, "PASSWORD", SALT, ROLE) VALUES ('admin', '2bf5e637d0d82a75ca43e3be85df2c23febffc0cc221f5e010937005df478a19b5eaab59fe7e4e97f6b43ba648c169effd432e19817f386987d058c239236306', '5b424031616564356639', 'admin');
