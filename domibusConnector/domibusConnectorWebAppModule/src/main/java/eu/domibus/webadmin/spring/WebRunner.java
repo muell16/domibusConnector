@@ -1,5 +1,6 @@
 package eu.domibus.webadmin.spring;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -44,7 +45,14 @@ public class WebRunner extends SpringBootServletInitializer implements WebApplic
         String loggingConfigFile = System.getProperty("connector.logging.config");
         if (loggingConfigFile != null) {
             System.setProperty("log4j.configurationFile", loggingConfigFile);
+            PropertyConfigurator.configure(loggingConfigFile);
         }
+        loggingConfigFile = servletContext.getInitParameter("connector.logging.config");
+        if (loggingConfigFile != null) {
+            System.setProperty("log4j.configurationFile", loggingConfigFile);
+            PropertyConfigurator.configure(loggingConfigFile);
+        }
+
 
         String envParamConfigLocation = System.getProperty(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME);
         LOG.info("CONFIG LOCATION by ENV is: " + envParamConfigLocation);
