@@ -12,7 +12,7 @@ public class BackendLinkInternalWaitQueueProperties {
      * from the connector to the backend client
      *
      */
-    private String name = "backendwaitqueue";
+    private String name;
 
     /**
      * Configures how long we should wait (milliseconds) while polling the backend wait queue for messages.
