@@ -41,17 +41,19 @@ public class WebRunner extends SpringBootServletInitializer implements WebApplic
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
-        //"connector.logging.config"
-        String loggingConfigFile = System.getProperty("connector.logging.config");
-        if (loggingConfigFile != null) {
-            System.setProperty("log4j.configurationFile", loggingConfigFile);
-            PropertyConfigurator.configure(loggingConfigFile);
-        }
-        loggingConfigFile = servletContext.getInitParameter("connector.logging.config");
-        if (loggingConfigFile != null) {
-            System.setProperty("log4j.configurationFile", loggingConfigFile);
-            PropertyConfigurator.configure(loggingConfigFile);
-        }
+//        //"connector.logging.config"
+//        String loggingConfigFile = System.getProperty("connector.logging.config");
+//        if (loggingConfigFile != null) {
+//            System.setProperty("log4j.configurationFile", loggingConfigFile);
+//            PropertyConfigurator.configure(loggingConfigFile);
+//        }
+//        loggingConfigFile = servletContext.getInitParameter("connector.logging.config");
+//        if (loggingConfigFile != null) {
+//            System.setProperty("log4j.configurationFile", loggingConfigFile);
+//            PropertyConfigurator.configure(loggingConfigFile);
+//        }
+
+        //TODO!!!
 
 
         String envParamConfigLocation = System.getProperty(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME);

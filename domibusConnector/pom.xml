@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.0.0-RELEASE</version>
+    <version>4.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorEvidencesToolkit</module>
@@ -733,7 +733,8 @@
                             <excludes>
 <!--                                <exclude>commons-logging:commons-logging</exclude>-->
                                 <exclude>ch.qos.logback:logback-classic</exclude>
-                                <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>                     
+                                <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
+                                <exclude>log4j:log4j</exclude>
                             </excludes>
                         </bannedDependencies>
                     </rules>
