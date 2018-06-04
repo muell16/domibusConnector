@@ -37,37 +37,41 @@ public class WebRunner extends SpringBootServletInitializer implements WebApplic
     private static final Logger LOG = LoggerFactory.getLogger(WebRunner.class);
 
     private static final String CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME = "connector.config.file";
+    private static final String CONNECTOR_LOGGING_CONFIG_LOCATION_PROPERTY_NAME = "connector.logging.config";
+
+    private ServletContext servletContext;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+        this.servletContext = servletContext;
 
-//        //"connector.logging.config"
-//        String loggingConfigFile = System.getProperty("connector.logging.config");
-//        if (loggingConfigFile != null) {
-//            System.setProperty("log4j.configurationFile", loggingConfigFile);
-//            PropertyConfigurator.configure(loggingConfigFile);
-//        }
-//        loggingConfigFile = servletContext.getInitParameter("connector.logging.config");
-//        if (loggingConfigFile != null) {
-//            System.setProperty("log4j.configurationFile", loggingConfigFile);
-//            PropertyConfigurator.configure(loggingConfigFile);
-//        }
+        //copy connector.logging.config from systemProperty, then from servletContext into logging.config of servletContext
+        setFromSystemPropertyIfNotNull(CONNECTOR_LOGGING_CONFIG_LOCATION_PROPERTY_NAME, "logging.config");
+        setFromServletContextIfNotNull(CONNECTOR_LOGGING_CONFIG_LOCATION_PROPERTY_NAME, "logging.config");
 
-        //TODO!!!
+        //copy connector.config.file from systemProperty, then from servletContext into spring.config.location of servletContext
+        setFromSystemPropertyIfNotNull(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME, "spring.config.location");
+        setFromServletContextIfNotNull(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME, "spring.config.location");
 
-
-        String envParamConfigLocation = System.getProperty(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME);
-        LOG.info("CONFIG LOCATION by ENV is: " + envParamConfigLocation);
-        if (envParamConfigLocation != null) {
-            servletContext.setInitParameter("spring.config.location", envParamConfigLocation);
-        }
-
-        String servletParamConfigLocation = servletContext.getInitParameter(CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME);
-        LOG.info("CONFIG LOCATION by servletContext IS : " + servletParamConfigLocation);
-        if (servletParamConfigLocation != null) {
-            servletContext.setInitParameter("spring.config.location", servletParamConfigLocation);
-        }
         super.onStartup(servletContext);
+    }
+
+    private void setFromSystemPropertyIfNotNull(String name, String setPropertyName) {
+        String value = System.getProperty(name);
+        LOG.info("Config name from SystemProperty is [{}] value is [{}]", name, value);
+        if (value != null) {
+            LOG.info("Setting servletInitParam [{}] to value [{}]", setPropertyName, value);
+            servletContext.setInitParameter(setPropertyName, value);
+        }
+    }
+
+    private void setFromServletContextIfNotNull(String name, String setPropertyName) {
+        String value = servletContext.getInitParameter(name);
+        LOG.info("Config name from servletContext is [{}] value is [{}]", name, value);
+        if (value != null) {
+            LOG.info("Setting servletInitParam [{}] to value [{}]", setPropertyName, value);
+            servletContext.setInitParameter(setPropertyName, value);
+        }
     }
 
     /**
@@ -77,6 +81,7 @@ public class WebRunner extends SpringBootServletInitializer implements WebApplic
      */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        application.properties("banner.location=classpath:/ascii/ecodex.txt", "spring.output.ansi.enabled=DETECT");
     	return application.sources(WebRunner.class);
     }
     
