@@ -125,7 +125,10 @@ public class WSBackendLinkConfigurationProperties {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
             p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
         } catch (Exception e) {
-            LOGGER.warn("Error with property: " + PREFIX + ".trust.store.path\n Setting same as keyStore", e);
+            LOGGER.debug("Trust Store Property: [" + PREFIX + ".trust.store.path]\n cannot be processed. ", e);
+            LOGGER.info("Trust Store Property: [" + PREFIX + ".trust.store.path]" +
+                    "\n cannot be processed. Using the configured key store [{}] as trust store",
+                    p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
             p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
             //truststore.file is optional default will be the same as keystore.file...
         }
