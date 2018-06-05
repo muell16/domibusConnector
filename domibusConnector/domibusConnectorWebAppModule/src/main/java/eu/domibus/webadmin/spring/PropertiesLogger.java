@@ -25,11 +25,11 @@ public class PropertiesLogger {
 
         Set<String> properties = new TreeSet<>();
         for (PropertiesPropertySource p : findPropertiesPropertySources()) {
-            log.info(p.toString());
+            log.debug(p.toString());
             properties.addAll(Arrays.asList(p.getPropertyNames()));
         }
 
-        log.info("**** APPLICATION PROPERTIES VALUES ****");
+        log.debug("**** APPLICATION PROPERTIES VALUES ****");
         print(properties);
 
     }
@@ -46,7 +46,7 @@ public class PropertiesLogger {
 
     private void print(Set<String> properties) {
         for (String propertyName : properties) {
-            log.info("{}={}", propertyName, environment.getProperty(propertyName));
+            log.debug("{}={}", propertyName, environment.getProperty(propertyName));
         }
     }
 
