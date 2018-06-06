@@ -4,11 +4,13 @@ package eu.domibus.connector.backend.ws.link.spring;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
+import eu.domibus.connector.backend.ws.link.impl.DefaultWsCallbackHandler;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
@@ -41,6 +43,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+
 /**
  *
  *
@@ -66,6 +71,12 @@ public class WSBackendLinkSendReceiveITCase {
             backendClientInfo.setBackendName("bob");
             backendClientInfo.setBackendKeyAlias("bob");
             return backendClientInfo;
+        }
+
+        @Bean("defaultCallbackHandler")
+        @ConditionalOnMissingBean
+        CallbackHandler defaultCallbackHandler() {
+            return (Callback[] cbk) -> {};
         }
 
 

@@ -37,7 +37,7 @@ import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 @Service("connectorBackendImpl")
 public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWebService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBackendWebService.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorWsBackendImpl.class);
     
     @Resource
     private WebServiceContext webServiceContext;
@@ -172,7 +172,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
         ///
         MessageContext messageContext = webServiceContext.getMessageContext();
-        LOGGER.info("messageContext: [{}]", messageContext);
+        LOGGER.trace("messageContext: [{}]", messageContext);
         ///
 
 
