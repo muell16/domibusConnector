@@ -129,8 +129,9 @@ public class WSBackendLinkConfigurationProperties {
             LOGGER.info("Trust Store Property: [" + PREFIX + ".trust.store.path]" +
                     "\n cannot be processed. Using the configured key store [{}] as trust store",
                     p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
+
             p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
-            //truststore.file is optional default will be the same as keystore.file...
+            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", p.getProperty("org.apache.wss4j.crypto.merlin.keystore.password"));
         }
         p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.getTrust().isLoadCaCerts()));
 
