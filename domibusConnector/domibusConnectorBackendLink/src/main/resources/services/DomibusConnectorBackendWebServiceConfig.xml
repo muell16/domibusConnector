@@ -39,6 +39,9 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
         </jaxws:features>
         
         <jaxws:properties>
+            <entry key="security.callback-handler">
+                <ref bean="defaultCallbackHandler" />
+            </entry>
             <entry key="security.signature.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
             <entry key="security.encryption.username" value="useReqSigCert" />
             <entry key="security.encryption.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
