@@ -3,21 +3,16 @@ package eu.domibus.connector.controller.service;
 
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
-import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
-import eu.domibus.connector.domain.model.builder.*;
-import org.apache.log4j.lf5.util.StreamUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

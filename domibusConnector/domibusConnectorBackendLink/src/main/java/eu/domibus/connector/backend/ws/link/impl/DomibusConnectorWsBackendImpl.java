@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,6 +169,12 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendException(error);
         }
+
+        ///
+        MessageContext messageContext = webServiceContext.getMessageContext();
+        LOGGER.info("messageContext: [{}]", messageContext);
+        ///
+
 
         return backendClientInfoByName;
     }

@@ -22,31 +22,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
             <!--<cxf:logging/>-->
         </cxf:features>
     </cxf:bus>
-    
-    
-<!--     <jaxws:client id="backendClient"
-                serviceClass="eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService"
-                address="${connector.backend.ws.address}" >
-         
-         <jaxws:properties>
-            <entry key="security.username" value="bob" />
-            <entry key="security.password" value="test" />            
-            <entry key="security.wss.properties" value="encrypt.properties" />
-            <entry key="security.signature.properties" value="encrypt.properties" />
-            <entry key="security.wss.username" value="connector" />
-            <entry key="security.signature.username" value="bob" />
-            
-            <entry key="security.wss.properties" value="encrypt.properties" />
-            <entry key="mtom-enabled" value="true"/> 
-                        
-         </jaxws:properties>
-         <jaxws:features>
-            <p:policies>
-                <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>
-            </p:policies>
-        </jaxws:features>
-         
-     </jaxws:client>-->
+
      
     <jaxws:endpoint id="connectorBackendClientDeliveryWS"
                     implementor="#backendDeliveryWebService"
@@ -58,10 +34,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
                     xmlns:s="http://connector.domibus.eu/ws/backend/webservice"                                                           
     >
-        <!--
-              serviceName="s:BackendDeliveryService"
-                            wsdlLocation="/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl"
-        serviceName="BackendDeliveryService"-->
+
         
         <jaxws:properties>
             

@@ -17,6 +17,7 @@ import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
+import javafx.application.Application;
 import org.junit.*;
 import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWebServiceConfiguration;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
@@ -54,10 +55,9 @@ public class BackendLinkWsTestMessageFlowITCase {
     private final static Logger LOGGER = LoggerFactory.getLogger(BackendLinkWsTestMessageFlowITCase.class);
     
     static ConfigurableApplicationContext backendApplicationContext;
-    
-    static ApplicationContext bobApplicationContext;
-    
     static ApplicationContext aliceApplicationContext;
+    static ApplicationContext bobApplicationContext;
+    static ApplicationContext catrinaApplicationcontext;
 
     private BlockingQueue<DomibusConnectorMessage> toControllerSubmittedMessages;
 
@@ -67,6 +67,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         
         bobApplicationContext = setUpClientBob(getBackendServiceWsAddress(backendApplicationContext));
         aliceApplicationContext = setUpClientAlice(getBackendServiceWsAddress(backendApplicationContext));
+//        catrinaApplicationcontext = setUpClientCatrina(getBackendServiceWsAddress(backendApplicationContext));
         
         LOGGER.info("SERVER ADDRESS " +  getBackendServiceWsAddress(backendApplicationContext));
         LOGGER.info("CLIENT BOB ADDRESS " + getBackendClientPushServiceAddress(bobApplicationContext));
@@ -90,8 +91,7 @@ public class BackendLinkWsTestMessageFlowITCase {
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
                 "liquibase.enabled=true",
-
-
+                "connector.backend.ws.key.store.path=classpath:/connector.jks"
         };
 
         backendApplicationContext = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
@@ -100,16 +100,6 @@ public class BackendLinkWsTestMessageFlowITCase {
         MDC.remove("COLOR");        
     }
 
-    
-    //setup and start application context for client bob
-    private static ApplicationContext setUpClientBob(String backendAddress) {
-        MDC.put("COLOR", "BLUE");
-        String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
-        String[] properties = new String[]{"ws.backendclient.name=bob", "ws.backendclient.cn=bob", "server.port=0", "connector.backend.ws.address=" + backendAddress};
-        ApplicationContext ctx = CommonBackendClient.startSpringApplication(profiles, properties);
-        MDC.remove("COLOR");
-        return ctx;
-    }
 
     //setup and start application context for client alice
     private static ApplicationContext setUpClientAlice(String backendAddress) {
@@ -120,7 +110,26 @@ public class BackendLinkWsTestMessageFlowITCase {
         MDC.remove("COLOR");
         return ctx;
     }
-    
+
+    //setup and start application context for client bob
+    private static ApplicationContext setUpClientBob(String backendAddress) {
+        MDC.put("COLOR", "BLUE");
+        String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
+        String[] properties = new String[]{"ws.backendclient.name=bob", "ws.backendclient.cn=bob", "server.port=0", "connector.backend.ws.address=" + backendAddress};
+        ApplicationContext ctx = CommonBackendClient.startSpringApplication(profiles, properties);
+        MDC.remove("COLOR");
+        return ctx;
+    }
+
+    private static ApplicationContext setUpClientCatrina(String backendAddress) {
+//        MDC.put("COLOR", "CYAN");
+        String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
+        String[] properties = new String[]{"ws.backendclient.name=catrina", "ws.backendclient.cn=catrina", "server.port=0", "connector.backend.ws.address=" + backendAddress};
+        ApplicationContext ctx = CommonBackendClient.startSpringApplication(profiles, properties);
+        MDC.remove("COLOR");
+        return ctx;
+    }
+
     protected static String getBackendClientPushServiceAddress(ApplicationContext appContext) {
         String serverPort = appContext.getEnvironment().getProperty("local.server.port");
         return "http://localhost:" + serverPort + "/services/backendDelivery";
@@ -180,15 +189,22 @@ public class BackendLinkWsTestMessageFlowITCase {
     }
 
     @Test
-    public void testRequestMessages() {
-        DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
-
+    public void testRequestMessages_asAlice() {
+        DomibusConnectorBackendWebService bobClientEndpoint = aliceApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
         EmptyRequestType emptyRequest = new EmptyRequestType();
-
         DomibusConnectorMessagesType domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
-
         assertThat(domibusConnectorMessagesType.getMessages()).hasSize(0);
     }
+
+
+    @Test
+    public void testRequestMessages_asBob() {
+        DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
+        EmptyRequestType emptyRequest = new EmptyRequestType();
+        DomibusConnectorMessagesType domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
+        assertThat(domibusConnectorMessagesType.getMessages()).hasSize(0);
+    }
+
 
     /**
      * test complete message flow in backend, when controller hands over

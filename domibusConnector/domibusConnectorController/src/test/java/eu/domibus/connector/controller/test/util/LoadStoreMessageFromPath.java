@@ -7,7 +7,6 @@ package eu.domibus.connector.controller.test.util;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
-
 import eu.domibus.connector.testdata.LoadStoreTransitionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
