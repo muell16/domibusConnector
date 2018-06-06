@@ -4,6 +4,7 @@ package eu.domibus.connector.backend.ws.link.spring;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
+import eu.domibus.connector.backend.ws.link.impl.DefaultWsCallbackHandler;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -54,7 +55,7 @@ public class WSBackendLinkSendReceiveITCase {
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkSendReceiveITCase.class);
     
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.backend.ws.link.spring", },
-            scanBasePackageClasses= {WsPolicyLoader.class},
+            scanBasePackageClasses= {WsPolicyLoader.class, DefaultWsCallbackHandler.class},
             exclude = {
         DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
     @Profile("WSBackendLinkSendReceiveITCase")
