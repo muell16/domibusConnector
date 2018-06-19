@@ -182,7 +182,7 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
     }
 
     private DomibusConnectorBackendClientInfo getBackendClientInfoByConversationIdOrReturnNull(String conversationId) {
-        if (conversationId != null) {
+        if (conversationId == null) {
             LOGGER.debug("#getBackendClientInfoByConversationIdOrReturnNull: conversationId is null returning null!");
             return null;
         }
