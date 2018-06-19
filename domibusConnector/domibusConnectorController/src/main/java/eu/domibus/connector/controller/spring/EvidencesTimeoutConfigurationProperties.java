@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
 
@@ -11,7 +12,7 @@ import javax.annotation.Nonnull;
 @ConfigurationProperties(prefix="connector.controller.evidence")
 @Validated
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
-@SuppressWarnings("findbugs:NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") //suppress sonar warning
+@SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") //suppress findbugs warning
 public class EvidencesTimeoutConfigurationProperties {
 
     public static final String BEAN_NAME = "evidencesTimeoutConfigurationProperties";
