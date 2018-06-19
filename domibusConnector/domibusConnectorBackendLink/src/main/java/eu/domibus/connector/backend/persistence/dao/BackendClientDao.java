@@ -2,11 +2,11 @@
 package eu.domibus.connector.backend.persistence.dao;
 
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
-import java.util.List;
-import javax.transaction.Transactional;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  *
@@ -14,15 +14,16 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @Transactional
+@SuppressWarnings({"squid:S00100"})
 public interface BackendClientDao extends CrudRepository<BackendClientInfo, Long> {
 
-    public BackendClientInfo findOneBackendByBackendNameAndEnabledIsTrue(String name);
+    BackendClientInfo findOneBackendByBackendNameAndEnabledIsTrue(String name);
 
-    public List<BackendClientInfo> findByServices_serviceAndEnabledIsTrue(String service);
+    List<BackendClientInfo> findByServices_serviceAndEnabledIsTrue(String service);
 
-    public BackendClientInfo findOneByDefaultBackendIsTrue();
+    BackendClientInfo findOneByDefaultBackendIsTrue();
 
-    public BackendClientInfo findOneByBackendName(String backendName);
+    BackendClientInfo findOneByBackendName(String backendName);
 
-    public BackendClientInfo findOneBackendByBackendName(String backendName);
+    BackendClientInfo findOneBackendByBackendName(String backendName);
 }

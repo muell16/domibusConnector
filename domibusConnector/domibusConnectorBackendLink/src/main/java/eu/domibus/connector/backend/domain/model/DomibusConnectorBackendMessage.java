@@ -36,6 +36,7 @@ public class DomibusConnectorBackendMessage implements Serializable {
         this.backendClientInfo = backendClientInfo;
     }
 
+    @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("message", this.domibusConnectorMessage);
