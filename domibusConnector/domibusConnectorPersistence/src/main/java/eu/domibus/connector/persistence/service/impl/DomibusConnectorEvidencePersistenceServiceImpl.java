@@ -10,8 +10,10 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.EvidencePersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
+import eu.domibus.connector.persistence.service.impl.helper.MapperHelper;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,6 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         if (message == null) {
             throw new IllegalArgumentException("message is not allowed to be null!");
         }
-//        this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
         Long dbMessageId = dbMessage.getId();
         List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(dbMessageId);
@@ -70,9 +71,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
             throw new IllegalArgumentException("message is not allowed to be null!");
         }
         LOGGER.trace("#setEvidenceDeliveredToNationalSystem: setting evidence [{}] as delivered");
-        //this.mergeMessageWithDatabase(message);
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
-
     }
 
     @Override
@@ -87,15 +86,15 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         if (referencedMessage == null) {
             String error = String.format("No message with refToMessageId [%s] found in database! " +
                     "Cannot persist confirmation [%s]", refToMessageId, confirmation);
-            throw new RuntimeException(error);
+            throw new EvidencePersistenceException(error);
+
         }
         this.persistEvidenceForMessageIntoDatabase(referencedMessage, confirmation.getEvidence(), confirmation.getEvidenceType());
         return message;
     }
 
-
-    private @Nullable
-    PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
+    @Nullable
+    private PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
         for (PDomibusConnectorEvidence evidence : evidences) {
             if (evidence.getType().name().equals(evidenceType.name())) {
                 return evidence;
@@ -119,7 +118,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
     }
 
     @Transactional
-    void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
+    public void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType) {
         PDomibusConnectorEvidence dbEvidence;
 
         EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);
@@ -127,15 +126,13 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         if (dbEvidence == null) {
             LOGGER.trace("Creating new evidence in database!");
             dbEvidence = new PDomibusConnectorEvidence();
-//            dbEvidence.setDeliveredToGateway(null);
-//            dbEvidence.setDeliveredToNationalSystem(null);
         } else {
             LOGGER.trace("updating evidence [{}] in database", dbEvidence);
         }
 
         dbEvidence.setMessage(dbMessage);
         if (evidence != null) {
-            dbEvidence.setEvidence(convertByteArrayToString(evidence));
+            dbEvidence.setEvidence(MapperHelper.convertByteArrayToString(evidence));
         }
         dbEvidence.setType(dbEvidenceType);
 
@@ -152,14 +149,5 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         return messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
     }
 
-    private @Nullable String convertByteArrayToString(@Nullable byte[] bytes) {
-        try {
-            if (bytes == null) {
-                return null;
-            }
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }

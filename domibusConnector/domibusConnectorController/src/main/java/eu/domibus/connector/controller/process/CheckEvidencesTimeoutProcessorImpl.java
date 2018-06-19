@@ -3,18 +3,14 @@ package eu.domibus.connector.controller.process;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 import eu.domibus.connector.persistence.service.*;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;

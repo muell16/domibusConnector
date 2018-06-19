@@ -521,7 +521,7 @@
                             <schemaIncludes>
                                 <include>domibus-pmode.xsd</include>
                             </schemaIncludes>
-                            <generateDirectory>src/main/java</generateDirectory>
+                            <!--<generateDirectory>src/main/java</generateDirectory>-->
                             <strict>true</strict>
                             <extension>true</extension>
                             <args>

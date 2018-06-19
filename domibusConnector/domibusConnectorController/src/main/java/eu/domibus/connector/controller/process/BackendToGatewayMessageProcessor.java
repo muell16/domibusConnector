@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

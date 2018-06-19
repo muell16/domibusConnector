@@ -94,7 +94,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         return this.mapDbEntityToDomainEntity(dbBackendClientInfo);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public DomibusConnectorBackendClientInfo getDefaultBackendClientInfo() {
         BackendClientInfo defaultBackend = backendClientDao.findOneByDefaultBackendIsTrue();

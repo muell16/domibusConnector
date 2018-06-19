@@ -25,25 +25,26 @@ import org.slf4j.LoggerFactory;
  */
 @Component
 public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientWaitQueue {
-    
-    private final static Logger LOGGER = LoggerFactory.getLogger(ToBackendClientJmsBasedWaitQueue.class);
-    
-    private final static String BACKEND_CLIENT_NAME = "BACKEND_CLIENT_NAME";
-    
-    private final static String CONNECTOR_MESSAGE_ID = "CONNECTOR_MESSAGE_ID";
-    
-    private final static String CONNECTOR_BACKEND_CLIENT_INFO = "CONNECTOR_BACKEND_CLIENT_INFO";
-    
-    private final static String CONNECTOR_BACKEND_IS_PUSH_BACKEND = "CONNECTOR_BACKEND_IS_PUSH_BACKEND";
-    
-    private final static String BACKEND_CLIENT_DELIVERY_RETRIES = "BACKEND_CLIENT_DELIVERY_RETRIES";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToBackendClientJmsBasedWaitQueue.class);
+
+    private static final String BACKEND_CLIENT_NAME = "BACKEND_CLIENT_NAME";
+
+    private static final String CONNECTOR_MESSAGE_ID = "CONNECTOR_MESSAGE_ID";
+
+//    private static final String CONNECTOR_BACKEND_CLIENT_INFO = "CONNECTOR_BACKEND_CLIENT_INFO";
+
+    private static final String CONNECTOR_BACKEND_IS_PUSH_BACKEND = "CONNECTOR_BACKEND_IS_PUSH_BACKEND";
+
+    private static final String BACKEND_CLIENT_DELIVERY_RETRIES = "BACKEND_CLIENT_DELIVERY_RETRIES";
 
 
     @Autowired
     private BackendLinkInternalWaitQueueProperties backendLinkInternalWaitQueueProperties;
 
     @Autowired(required = false) //can be null if there is no push impl
-    private @Nullable
+    @Nullable
+    private
     PushMessageToBackendClient pushMessageToBackendCallback;
        
     @Autowired
@@ -92,8 +93,8 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     @JmsListener(destination="#{backendLinkInternalWaitQueueProperties.getName()}", selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
     public void pushToBackend(ObjectMessage msg) throws JMSException {
         LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
-        String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
-        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
+//        String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
+//        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
         DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
         pushMessageToBackendCallback.push(backendMessage);
     }

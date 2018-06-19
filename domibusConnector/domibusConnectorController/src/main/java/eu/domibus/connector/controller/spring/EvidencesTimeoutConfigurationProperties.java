@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 @ConfigurationProperties(prefix="connector.controller.evidence")
 @Validated
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
+@SuppressWarnings("findbugs:NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") //suppress sonar warning
 public class EvidencesTimeoutConfigurationProperties {
 
     public static final String BEAN_NAME = "evidencesTimeoutConfigurationProperties";
@@ -19,7 +20,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * This property configures if timeouts for messages
      * should be checked!
      */
-    private boolean timeoutActive = false;
+    private boolean timeoutActive;
 
     /**
      * This property defines the how often the timeouts for the

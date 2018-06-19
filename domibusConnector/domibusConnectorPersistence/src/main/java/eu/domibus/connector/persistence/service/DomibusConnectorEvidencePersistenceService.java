@@ -1,9 +1,9 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +37,7 @@ public interface DomibusConnectorEvidencePersistenceService {
      *
      * @param message - the message
      * @param evidenceType - the evidenceType
-     * @throws eu.domibus.connector.persistence.service.PersistenceException - if the message could not be updated
+     * @throws PersistenceException - if the message could not be updated
      * in storage
      *
      *
@@ -60,7 +60,7 @@ public interface DomibusConnectorEvidencePersistenceService {
      *
      * @param message - the message
      * @param evidenceType - the evidenceType
-     * @throws eu.domibus.connector.persistence.service.PersistenceException - if the message
+     * @throws PersistenceException - if the message
      * could not be updated in storage
      *
      */

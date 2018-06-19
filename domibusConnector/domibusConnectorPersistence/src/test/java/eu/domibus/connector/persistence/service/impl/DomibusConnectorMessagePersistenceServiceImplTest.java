@@ -16,7 +16,7 @@ import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
 import org.junit.Before;
 import org.junit.Test;

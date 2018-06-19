@@ -1,9 +1,8 @@
 package eu.domibus.connector.controller.process;
 
-import javax.annotation.Resource;
-
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.persistence.service.*;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
