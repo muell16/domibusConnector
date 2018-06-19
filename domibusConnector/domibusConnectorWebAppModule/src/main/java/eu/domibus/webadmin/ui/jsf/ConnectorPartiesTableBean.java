@@ -161,7 +161,7 @@ public class ConnectorPartiesTableBean {
 	        
 	public void confirmDeleteSelectedParties(ActionEvent actionEvent) {
 		LOG.trace("#confirmDeleteSelectedParties: delete confirmed, calling Service to delete [{}]", selectedParties);
-		//TODO: delete DB entries
+
 		
 		for (DomibusConnectorParty p : selectedParties) {	
 			try {

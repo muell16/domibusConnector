@@ -6,7 +6,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

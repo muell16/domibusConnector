@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 public class DomibusConnectorBackendMessage implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private DomibusConnectorMessage domibusConnectorMessage;
 
     private DomibusConnectorBackendClientInfo backendClientInfo;
@@ -34,6 +36,7 @@ public class DomibusConnectorBackendMessage implements Serializable {
         this.backendClientInfo = backendClientInfo;
     }
 
+    @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("message", this.domibusConnectorMessage);

@@ -15,7 +15,7 @@ import java.util.List;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  * 
  */
-public class DomibusConnectorMessageBuilder {
+public final class DomibusConnectorMessageBuilder {
 
     private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;

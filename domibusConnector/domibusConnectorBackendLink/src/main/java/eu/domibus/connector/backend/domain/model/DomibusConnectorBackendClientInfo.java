@@ -12,6 +12,8 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorBackendClientInfo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String backendName;
 
     private String backendDescription;

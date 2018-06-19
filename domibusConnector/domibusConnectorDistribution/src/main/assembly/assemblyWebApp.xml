@@ -28,6 +28,16 @@
 			</includes>
 		</fileSet>
 
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
+			<outputDirectory>documentation/</outputDirectory>
+			<includes>
+				<include>domibusConnector_4.0_AdministrationGuide.pdf</include>
+                <include>domibusConnector_InstallationGuide.pdf</include>
+                <include>e-Codex_key_trust_stores.pdf</include>
+			</includes>
+		</fileSet>
+
 	</fileSets>
 	<files>
 
@@ -46,13 +56,6 @@
 			<destName>domibusConnectorDatabaseInitializer.jar</destName>
 		</file>
 
-		<file>
-			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/domibusConnector_InstallationGuide.pdf
-			</source>
-			<outputDirectory>/documentation/
-			</outputDirectory>
-			<destName>domibusConnector_InstallationGuide.pdf</destName>
-		</file>
 
 
 	</files>

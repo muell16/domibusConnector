@@ -10,14 +10,12 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
-//import org.apache.cxf.ws.policy.v200607.PolicyReference;
-//import org.apache.neethi.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 
 /**
  *
@@ -26,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackendClient {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(PushMessageViaWsToBackendClientImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PushMessageViaWsToBackendClientImpl.class);
     
     private BackendClientInfoPersistenceService backendClientPersistenceService;
     
@@ -67,11 +65,9 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
     @Override
     public void push(DomibusConnectorBackendMessage backendMessage) {
         LOGGER.debug("#push: push message [{}]", backendMessage);
-        //push(backendMessage.getDomibusConnectorMessage().getConnectorMessageId(), backendMessage.getBackendClientInfo().getBackendName());
 
         DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
         DomibusConnectorBackendClientInfo backendClientInfoByName = backendMessage.getBackendClientInfo();
-
 
         //transform message to transition
         message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
@@ -103,8 +99,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
         
     public DomibsConnectorAcknowledgementType pushMessageToBackendClient(DomibusConnectorMessageType transitionMessage, DomibusConnectorBackendClientInfo backendClientInfoByName) {
         DomibusConnectorBackendDeliveryWebService wsClient = webServiceClientFactory.createWsClient(backendClientInfoByName);
-        DomibsConnectorAcknowledgementType msgResponse = wsClient.deliverMessage(transitionMessage);
-        return msgResponse;
+        return wsClient.deliverMessage(transitionMessage);
     }
     
 

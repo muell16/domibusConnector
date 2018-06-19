@@ -42,5 +42,5 @@ public interface BackendClientInfoPersistenceService {
      * Throws an exception if there is no default backend configured!
      * @return the default backend
      */
-    public @Nonnull DomibusConnectorBackendClientInfo getDefaultBackendClientInfo();
+    public @Nullable DomibusConnectorBackendClientInfo getDefaultBackendClientInfo();
 }

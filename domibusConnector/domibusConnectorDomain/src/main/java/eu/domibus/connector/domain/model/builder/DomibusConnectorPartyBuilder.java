@@ -6,11 +6,11 @@ import eu.domibus.connector.domain.model.DomibusConnectorParty;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorPartyBuilder {
+public final class DomibusConnectorPartyBuilder {
 
-    private String partyId = null;
-	private String partyIdType = null;
-	private String role = null;
+    private String partyId;
+	private String partyIdType;
+	private String role;
     
     public static DomibusConnectorPartyBuilder createBuilder() {
         return new DomibusConnectorPartyBuilder();
@@ -35,10 +35,10 @@ public class DomibusConnectorPartyBuilder {
     
     public DomibusConnectorParty build() {
         if (partyId == null) {
-            throw new RuntimeException("PartyId is not allowed to be null!");
+            throw new IllegalArgumentException("PartyId is not allowed to be null!");
         }
         if (role == null) {
-            throw new RuntimeException("Role is not allowed to be null!");
+            throw new IllegalArgumentException("Role is not allowed to be null!");
         }
         return new DomibusConnectorParty(partyId, partyIdType, role);
     }

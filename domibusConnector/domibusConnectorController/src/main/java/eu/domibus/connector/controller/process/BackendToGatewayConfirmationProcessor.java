@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionI
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageService;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.*;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -6,7 +6,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,7 +7,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageErrorDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -24,8 +24,8 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessageErrorPersistenceServiceImpl.class);
 
-    DomibusConnectorMessageErrorDao messageErrorDao;
-    DomibusConnectorMessageDao messageDao;
+    private DomibusConnectorMessageErrorDao messageErrorDao;
+    private DomibusConnectorMessageDao messageDao;
 
     @Autowired
     public void setMessageErrorDao(DomibusConnectorMessageErrorDao messageErrorDao) {
@@ -55,9 +55,10 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
 
     @Override
     @Transactional
+    @SuppressWarnings("squid:MethodCyclomaticComplexity")
     public void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source) {
         if (message == null) {
-            throw new IllegalArgumentException("message is not allowed to be null!");
+            throw new IllegalArgumentException("Cannot persist a exception for a null, message is not allowed to be null!");
         }
         if (ex == null) {
             throw new IllegalArgumentException("Message Error cannot be stored as there is no exception given!");
@@ -66,14 +67,10 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
             throw new IllegalArgumentException(
                     "Message Error cannot be stored as the Class object given as source is null!");
         }
+
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-        if (message == null) {
-            LOGGER.error("persistMessageErrorFromException: failed because ");
-            throw new RuntimeException(
-                    "Message Error cannot be stored as the message object, or its database reference is null!");
-        }
         if (dbMessage == null) {
-            throw new RuntimeException(
+            throw new PersistenceException(
                     String.format("No entry for message [%s] has been found in database! Persist message first!", message));
         }
 

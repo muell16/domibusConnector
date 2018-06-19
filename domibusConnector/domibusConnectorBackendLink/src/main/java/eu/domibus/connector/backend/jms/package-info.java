@@ -1,6 +1,7 @@
-package eu.domibus.connector.backend.jms;
+/**
+ This package contains the JMS communication related
+ classes and subpackages
 
 
-/*
- package for the jms based connectorClient communication impl
  */
+package eu.domibus.connector.backend.jms;

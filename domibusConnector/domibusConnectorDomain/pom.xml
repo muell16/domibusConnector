@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.domibus.connector</groupId>
@@ -8,44 +9,43 @@
     </parent>
     <artifactId>domibusConnectorDomain</artifactId>
     <packaging>jar</packaging>
-    <name>${artifactId}</name>
+    <name>${project.artifactId}</name>
     <description>This module contains the domain model classes.</description>
-    
+
     <profiles>
-    	<profile>
-    	<!--  convert maven.test.skip to skipTests (because maven.test.skip don't compile tests), to ensure the 
-    	domibusConnectorDomain-{version}-tests.jar is packaged -->
-    		<activation>
-    			<property>
-    				<name>maven.test.skip</name>
-    			</property>
-    		</activation>
-    		<properties>
-    			<maven.test.skip>false</maven.test.skip>
-    			<skipTests>true</skipTests>
-    		</properties>
-    	</profile>
+        <profile>
+            <!--  convert maven.test.skip to skipTests (because maven.test.skip don't compile tests), to ensure the
+            domibusConnectorDomain-{version}-tests.jar is packaged -->
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                </property>
+            </activation>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
     </profiles>
 
 
-    
     <build>
         <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>test-jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-	</build>
+    </build>
     <dependencies>
-    	<dependency>
+        <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
         </dependency>
@@ -58,12 +58,12 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>            
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>            
+            <artifactId>hamcrest-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -81,6 +81,11 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-core</artifactId>
         </dependency>
@@ -88,7 +93,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -98,11 +103,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>      
-        </dependency>        
+            <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>           
+            <artifactId>log4j-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -117,5 +122,5 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-    </dependencies>    
+    </dependencies>
 </project>

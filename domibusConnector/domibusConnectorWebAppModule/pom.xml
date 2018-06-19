@@ -53,6 +53,10 @@
             <dependencies>
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-log4j2</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
                     <exclusions>
                         <exclusion>
@@ -229,8 +233,11 @@
             <artifactId>all-themes</artifactId>
         </dependency>
 
-	
 
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -514,7 +521,7 @@
                             <schemaIncludes>
                                 <include>domibus-pmode.xsd</include>
                             </schemaIncludes>
-                            <generateDirectory>src/main/java</generateDirectory>
+                            <!--<generateDirectory>src/main/java</generateDirectory>-->
                             <strict>true</strict>
                             <extension>true</extension>
                             <args>

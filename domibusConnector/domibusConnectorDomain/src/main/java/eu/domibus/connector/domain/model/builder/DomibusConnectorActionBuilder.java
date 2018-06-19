@@ -6,10 +6,10 @@ import eu.domibus.connector.domain.model.DomibusConnectorAction;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorActionBuilder {
+public final class DomibusConnectorActionBuilder {
 
     private String action;
-	private boolean documentRequired = false;
+	private boolean documentRequired;
     
     public static DomibusConnectorActionBuilder createBuilder() {
         return new DomibusConnectorActionBuilder();

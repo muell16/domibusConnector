@@ -2,10 +2,10 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
