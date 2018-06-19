@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DetachedSignatureBuilder {
+public final class DetachedSignatureBuilder {
 
     private byte detachedSignature[];
 	private String detachedSignatureName;

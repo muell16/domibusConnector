@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 public class StoreConfigurationProperties {
@@ -25,7 +26,7 @@ public class StoreConfigurationProperties {
      */
     private String password;
 
-    @SuppressWarnings("findbugs:NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
+    @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public StoreConfigurationProperties() {}
 
     public StoreConfigurationProperties(Resource path, String password) {
@@ -50,7 +51,7 @@ public class StoreConfigurationProperties {
     }
 
      @Nullable
-    @SuppressWarnings("findbugs:RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
+     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
      public String getPathUrlAsString() {
         try {
             if (path == null) {

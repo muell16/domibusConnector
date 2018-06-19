@@ -7,10 +7,10 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorServiceBuilder {
+public final class DomibusConnectorServiceBuilder {
     
     private String service;
-	private String serviceType = null;
+	private String serviceType;
     
     public static DomibusConnectorServiceBuilder createBuilder() {
         return new DomibusConnectorServiceBuilder();

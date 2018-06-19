@@ -3,7 +3,7 @@ package eu.domibus.connector.domain.model.builder;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 
-public class DomibusConnectorMessageConfirmationBuilder {
+public final class DomibusConnectorMessageConfirmationBuilder {
 
     public static DomibusConnectorMessageConfirmationBuilder createBuilder() { return new DomibusConnectorMessageConfirmationBuilder(); };
 
