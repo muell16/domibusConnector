@@ -2,7 +2,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.exception.DomibusConnectorBackendException;
+import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
@@ -23,7 +23,6 @@ import java.util.List;
 public class DeliverMessageFromControllerToBackendService implements DomibusConnectorBackendDeliveryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliverMessageFromControllerToBackendService.class);
-
 
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
 
@@ -113,14 +112,11 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
         DomibusConnectorBackendClientInfo backendClientInfo;
 
         String backendConnectorClientName = msg.getMessageDetails().getConnectorBackendClientName();
-        if (backendConnectorClientName != null) {
-            backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName(backendConnectorClientName);
-            if (backendClientInfo != null) {
-                LOGGER.debug("#getBackendClientForMessage: used connectorBackendClientName [{}] in messageDetails to determine backend [{}]!",
-                        msg.getMessageDetails().getConnectorBackendClientName(), backendClientInfo);
-                return backendClientInfo;
-            }
-            LOGGER.debug("#getBackendClientForMessage: connectorBackendClientName is not set in messageDetails!");
+        backendClientInfo = getBackendClientInfoByClientNameOrReturnNull(backendConnectorClientName);
+        if (backendClientInfo != null) {
+            LOGGER.debug("#getBackendClientForMessage: used by message provided backend name [{}] to determine backend [{}]",
+                    backendConnectorClientName, backendClientInfo);
+            return backendClientInfo;
         }
 
         // 1 RefToMessageId
@@ -161,6 +157,21 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
 
         //5 error
         throw new DomibusConnectorBackendException(String.format("No backend found to handle message [%s]", msg));
+    }
+
+    private DomibusConnectorBackendClientInfo getBackendClientInfoByClientNameOrReturnNull(String backendConnectorClientName) {
+        DomibusConnectorBackendClientInfo backendClientInfo;
+        if (backendConnectorClientName != null) {
+            backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName(backendConnectorClientName);
+            if (backendClientInfo != null) {
+                LOGGER.debug("#getBackendClientInfoByClientNameOrReturnNull: used connectorBackendClientName [{}] in messageDetails to determine backend [{}]!",
+                        backendConnectorClientName, backendClientInfo);
+                return backendClientInfo;
+            }
+            LOGGER.debug("#getBackendClientInfoByClientNameOrReturnNull: connectorBackendClientName is not set in messageDetails!");
+        }
+        LOGGER.debug("#getBackendClientInfoByClientNameOrReturnNull: backendConnectorClientName is null returning null!");
+        return null;
     }
 
     private DomibusConnectorBackendClientInfo getBackendClientInfoByRefToMessageIdOrReturnNull(String refToMessageId) {

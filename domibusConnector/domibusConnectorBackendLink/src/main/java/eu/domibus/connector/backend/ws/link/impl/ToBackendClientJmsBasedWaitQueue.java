@@ -32,8 +32,6 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
 
     private static final String CONNECTOR_MESSAGE_ID = "CONNECTOR_MESSAGE_ID";
 
-//    private static final String CONNECTOR_BACKEND_CLIENT_INFO = "CONNECTOR_BACKEND_CLIENT_INFO";
-
     private static final String CONNECTOR_BACKEND_IS_PUSH_BACKEND = "CONNECTOR_BACKEND_IS_PUSH_BACKEND";
 
     private static final String BACKEND_CLIENT_DELIVERY_RETRIES = "BACKEND_CLIENT_DELIVERY_RETRIES";
@@ -93,8 +91,6 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     @JmsListener(destination="#{backendLinkInternalWaitQueueProperties.getName()}", selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
     public void pushToBackend(ObjectMessage msg) throws JMSException {
         LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
-//        String connectorMessageId = msg.getStringProperty(CONNECTOR_MESSAGE_ID);
-//        String backendName = msg.getStringProperty(BACKEND_CLIENT_NAME);
         DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
         pushMessageToBackendCallback.push(backendMessage);
     }

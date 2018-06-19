@@ -3,15 +3,14 @@ package eu.domibus.connector.backend.ws.link.spring;
 
 import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 /**
@@ -125,7 +124,6 @@ public class WSBackendLinkConfigurationProperties {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
             p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
         } catch (Exception e) {
-//            LOGGER.debug("Trust Store Property: [" + PREFIX + ".trust.store.path]\n cannot be processed. ", e);
             LOGGER.info("Trust Store Property: [" + PREFIX + ".trust.store.path]" +
                     "\n cannot be processed. Using the configured key store [{}] as trust store",
                     p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
