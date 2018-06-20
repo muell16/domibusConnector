@@ -607,6 +607,26 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring.boot.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <configuration>
+                        <!-- fix error javax.interceptor.InterceptorBinding not found -->
+                        <additionalDependencies>
+                            <additionalDependency>
+                                <groupId>javax.interceptor</groupId>
+                                <artifactId>javax.interceptor-api</artifactId>
+                                <version>1.2.2</version>
+                            </additionalDependency>
+                        </additionalDependencies>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -814,17 +834,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <!-- fix error javax.interceptor.InterceptorBinding not found -->
-                    <additionalDependencies>
-                        <additionalDependency>
-                            <groupId>javax.interceptor</groupId>
-                            <artifactId>javax.interceptor-api</artifactId>
-                            <version>1.2</version>
-                        </additionalDependency>
-                    </additionalDependencies>
-                </configuration>
+                <!--<configuration>-->
+                    <!--&lt;!&ndash; fix error javax.interceptor.InterceptorBinding not found &ndash;&gt;-->
+                    <!--<additionalDependencies>-->
+                        <!--<additionalDependency>-->
+                            <!--<groupId>javax.interceptor</groupId>-->
+                            <!--<artifactId>javax.interceptor-api</artifactId>-->
+                        <!--</additionalDependency>-->
+                    <!--</additionalDependencies>-->
+                <!--</configuration>-->
                 <reportSets>
                     <reportSet><!-- by default, id = "default" -->
                         <reports><!-- select non-aggregate reports -->
