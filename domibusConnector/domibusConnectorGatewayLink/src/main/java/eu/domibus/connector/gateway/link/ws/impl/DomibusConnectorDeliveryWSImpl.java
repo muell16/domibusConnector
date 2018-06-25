@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
@@ -19,7 +20,7 @@ public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDe
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDeliveryWSImpl.class);
 
-	@Resource
+	@Autowired
 	private DomibusConnectorGatewayDeliveryService controllerService;
 	
 	@Override

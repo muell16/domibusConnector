@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessage
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
@@ -15,14 +16,16 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
+@Profile("gwlink-ws")
 public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusConnectorGatewaySubmissionService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorGatewaySubmissionServiceClient.class);
 
 	@Resource(name="gwSubmissionClient")
-	DomibusConnectorGatewaySubmissionWebService submissionClient;
+	private DomibusConnectorGatewaySubmissionWebService submissionClient;
 
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {

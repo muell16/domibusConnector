@@ -5,6 +5,7 @@ import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component("GatewayLinkWsServiceProperties")
+@Profile("gwlink-ws")
 @ConfigurationProperties(prefix = "connector.gatewaylink.ws")
 public class GatewayLinkWsServiceProperties {
 
