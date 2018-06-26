@@ -139,6 +139,11 @@
             <artifactId>activemq-kahadb-store</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorTestData</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 
