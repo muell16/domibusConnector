@@ -67,7 +67,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     }
 
     @Override
-	public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+	public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
 		
 		//Check consistence of message:
 		// Either a message content, or at least one confirmation must exist for processing

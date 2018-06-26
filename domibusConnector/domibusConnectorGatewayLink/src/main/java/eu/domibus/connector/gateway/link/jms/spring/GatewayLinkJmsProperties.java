@@ -4,6 +4,7 @@ package eu.domibus.connector.gateway.link.jms.spring;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Component //("GatewayLinkJmsServiceProperties")
@@ -33,6 +34,8 @@ public class GatewayLinkJmsProperties {
     private String toConnectorMessageErrorQueue;
 
     private String toConnectorResponseErrorQueue;
+
+    private Resource securityPolicy;
 
     public String getBrokerUrl() {
         return brokerUrl;
@@ -120,5 +123,13 @@ public class GatewayLinkJmsProperties {
 
     public void setToConnectorResponseErrorQueue(String toConnectorResponseErrorQueue) {
         this.toConnectorResponseErrorQueue = toConnectorResponseErrorQueue;
+    }
+
+    public Resource getSecurityPolicy() {
+        return securityPolicy;
+    }
+
+    public void setSecurityPolicy(Resource securityPolicy) {
+        this.securityPolicy = securityPolicy;
     }
 }

@@ -3,9 +3,11 @@ package eu.domibus.connector.gateway.link.ws.impl;
 import javax.annotation.Resource;
 
 import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessageType;
+import eu.domibus.connector.gateway.link.jms.GatewaySubmissionTransportStatusService;
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,9 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	@Resource(name="gwSubmissionClient")
 	private DomibusConnectorGatewaySubmissionWebService submissionClient;
 
+	@Autowired
+    private GatewaySubmissionTransportStatusService gatewaySubmissionTransportStatusService;
+
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
 		DomibusConnectorMessageType request = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
@@ -36,6 +41,11 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
             LOGGER.trace("message=[{}]", PrintDomibusConnectorMessageType.messageToString(request));
         }
 
+
+        GatewaySubmissionTransportStatusService.DomibusConnectorTransportState state = new GatewaySubmissionTransportStatusService.DomibusConnectorTransportState();
+        state.setForTransport(message.getConnectorMessageId());
+
+
 		LOGGER.debug("#submitToGateway: calling webservice to send request");
 		DomibsConnectorAcknowledgementType ack = submissionClient.submitMessage(request);
 		LOGGER.debug("#submitToGateway: received [{}] from gw", ack);
@@ -43,13 +53,26 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
         if (ack != null && ack.isResult()) {
             String ebmsId = ack.getMessageId();
             LOGGER.info("GW accepted message and sent id [{}] back", ebmsId);
-            message.getMessageDetails().setEbmsMessageId(ebmsId);
+            //message.getMessageDetails().setEbmsMessageId(ebmsId);
+
+            state.setRemoteTransportId(ebmsId);
+            state.setStatus(GatewaySubmissionTransportStatusService.TransportState.ACCEPTED);
+            gatewaySubmissionTransportStatusService.setTransportStatusForTransportToGateway(state);
         } else {
+            state.setStatus(GatewaySubmissionTransportStatusService.TransportState.FAILED);
+            gatewaySubmissionTransportStatusService.setTransportStatusForTransportToGateway(state);
+
             if (ack != null && !StringUtils.isEmpty(ack.getResultMessage()))
                 throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());
             else
                 throw new DomibusConnectorGatewaySubmissionException("Undefined submission error!");
         }
+
+
+
+
+
+
 	}
 
 }

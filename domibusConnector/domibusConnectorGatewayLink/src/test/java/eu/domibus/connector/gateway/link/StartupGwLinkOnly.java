@@ -64,7 +64,7 @@ public class StartupGwLinkOnly {
     public DomibusConnectorGatewayDeliveryService mockedDomibusConnectorGatewayDeliveryService() {
         return new DomibusConnectorGatewayDeliveryService() {
             @Override
-            public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+            public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
                 LOGGER.info("Received following message: [{}]",message);
                 fromGwReceivedMessagesList().add(message);
             }

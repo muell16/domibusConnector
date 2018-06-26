@@ -3,7 +3,9 @@ package eu.domibus.connector.gateway.link.jms.spring;
 
 import eu.domibus.connector.gateway.link.jms.impl.GatewayLinkAsyncDeliveryService;
 import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorService;
+import eu.domibus.connector.link.common.WsPolicyLoader;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.jms.JMSConfigFeature;
 import org.apache.cxf.transport.jms.JMSConfiguration;
@@ -56,13 +58,17 @@ public class GatewayLinkJmsConfiguration {
 //        proxyFactory.setEndpointName(new QName("deliverMessageRequest"));
         proxyFactory.setAddress("jms://");
         proxyFactory.getFeatures().add(jmsFeature);
+        proxyFactory.getFeatures().add(loadWsPolicyFeature());
         proxyFactory.setServiceBean(deliveryServiceImplementor);
 
         Server server = proxyFactory.create();
         server.start();
     }
 
-
+    private Feature loadWsPolicyFeature() {
+        WsPolicyLoader policyLoader = new WsPolicyLoader(this.gatewayLinkJmsProperties.getSecurityPolicy());
+        return policyLoader.loadPolicyFeature();
+    }
 
 
 }

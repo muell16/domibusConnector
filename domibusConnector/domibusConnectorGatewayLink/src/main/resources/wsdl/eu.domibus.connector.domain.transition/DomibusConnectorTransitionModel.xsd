@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="transition.domain.connector.domibus.eu" 
-	xmlns:tns="transition.domain.connector.domibus.eu"
-	xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   targetNamespace="transition.domain.connector.domibus.eu"
+		   xmlns:tns="transition.domain.connector.domibus.eu"
+		   xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
 	<xs:complexType name="DomibusConnectorMessageContentType">
 		<xs:sequence>
-			<xs:element name="xmlContent" type="xs:base64Binary" xmime:expectedContentTypes="application/xml" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="xmlContent" type="xs:base64Binary" xmime:expectedContentTypes="application/xml"
+						minOccurs="1" maxOccurs="1"/>
 			<xs:element name="document" type="tns:DomibusConnectorMessageDocumentType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorMessageDocumentType">
 		<xs:sequence>
-			<xs:element name="document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"
+						minOccurs="1" maxOccurs="1"/>
 			<xs:element name="documentName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="detachedSignature" type="tns:DomibusConnectorDetachedSignatureType" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="detachedSignature" type="tns:DomibusConnectorDetachedSignatureType" minOccurs="0"
+						maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorDetachedSignatureType">
 		<xs:sequence>
 			<xs:element name="detachedSignature" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="detachedSignatureName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="mimeType" type="tns:DomibusConnectorDetachedSignatureMimeType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="mimeType" type="tns:DomibusConnectorDetachedSignatureMimeType" minOccurs="1"
+						maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorMessageDetailsType">
 		<xs:sequence>
 			<xs:element name="backendMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ebmsMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="refToMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="conversationId" type="xs:string" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="originalSender" type="xs:string" minOccurs="1" maxOccurs="1"/>
@@ -56,8 +61,10 @@
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorMessageConfirmationType">
 		<xs:sequence>
-			<xs:element name="confirmation" type="xs:base64Binary" xmime:expectedContentTypes="application/xml" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="confirmationType" type="tns:DomibusConnectorConfirmationType" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="confirmation" type="xs:base64Binary" xmime:expectedContentTypes="application/xml"
+						minOccurs="1" maxOccurs="1"/>
+			<xs:element name="confirmationType" type="tns:DomibusConnectorConfirmationType" minOccurs="1"
+						maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:simpleType name="DomibusConnectorConfirmationType">
@@ -76,7 +83,8 @@
 	<xs:complexType name="DomibusConnectorMessageAttachmentType">
 		<xs:sequence>
 			<xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="attachment" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="attachment" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"
+						minOccurs="1" maxOccurs="1"/>
 			<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="mimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -96,6 +104,16 @@
 			<xs:element name="resultMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="DomibusConnectorMessageResponseType">
+		<xs:sequence>
+			<xs:element name="responseForMessageId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="result" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="resultMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="assignedMessageId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="messageErrors" type="tns:DomibusConnectorMessageErrorType" minOccurs="0"
+						maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:simpleType name="DomibusConnectorDetachedSignatureMimeType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="BINARY"/>
@@ -110,11 +128,16 @@
 	</xs:complexType>
 	<xs:complexType name="DomibusConnectorMessageType">
 		<xs:sequence>
-			<xs:element name="messageContent" type="tns:DomibusConnectorMessageContentType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="messageDetails" type="tns:DomibusConnectorMessageDetailsType" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="messageConfirmations" type="tns:DomibusConnectorMessageConfirmationType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="messageAttachments" type="tns:DomibusConnectorMessageAttachmentType" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="messageErrors" type="tns:DomibusConnectorMessageErrorType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="messageContent" type="tns:DomibusConnectorMessageContentType" minOccurs="0"
+						maxOccurs="1"/>
+			<xs:element name="messageDetails" type="tns:DomibusConnectorMessageDetailsType" minOccurs="1"
+						maxOccurs="1"/>
+			<xs:element name="messageConfirmations" type="tns:DomibusConnectorMessageConfirmationType" minOccurs="0"
+						maxOccurs="unbounded"/>
+			<xs:element name="messageAttachments" type="tns:DomibusConnectorMessageAttachmentType" minOccurs="0"
+						maxOccurs="unbounded"/>
+			<xs:element name="messageErrors" type="tns:DomibusConnectorMessageErrorType" minOccurs="0"
+						maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

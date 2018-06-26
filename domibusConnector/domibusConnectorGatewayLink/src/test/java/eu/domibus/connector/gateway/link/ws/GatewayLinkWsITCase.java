@@ -1,8 +1,9 @@
-package eu.domibus.connector.gateway.link;
+package eu.domibus.connector.gateway.link.ws;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.gateway.link.StartupGwLinkOnly;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.junit.Before;
@@ -17,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GatewayLinkITCase {
+public class GatewayLinkWsITCase {
 
 
     static String GW_LINK_SERVER_ADDRESS;

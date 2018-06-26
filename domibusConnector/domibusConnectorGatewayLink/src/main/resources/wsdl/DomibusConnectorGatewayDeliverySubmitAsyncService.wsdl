@@ -19,7 +19,7 @@
         <wsdl:part name="message" type="dct:DomibusConnectorMessageType"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="response">
-        <wsdl:part name="response" type="dct:DomibsConnectorAcknowledgementType"></wsdl:part>
+        <wsdl:part name="response" type="dct:DomibusConnectorMessageResponseType"></wsdl:part>
     </wsdl:message>
 
 

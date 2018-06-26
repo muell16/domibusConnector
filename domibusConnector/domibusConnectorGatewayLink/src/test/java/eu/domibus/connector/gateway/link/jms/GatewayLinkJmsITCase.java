@@ -1,6 +1,7 @@
 package eu.domibus.connector.gateway.link.jms;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.gateway.link.StartupGwLinkOnly;
@@ -12,13 +13,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
-import test.eu.domibus.connector.gateway.link.testgw.TestGW;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GatewayJmsLinkITCase {
+public class GatewayLinkJmsITCase {
 
     static String GW_LINK_SERVER_ADDRESS;
     static String TEST_GW_SERVER_ADDRESS;
@@ -29,6 +29,7 @@ public class GatewayJmsLinkITCase {
     private static String BROKER_URL;
 
     private ActiveMQConnectionFactory connectionFactory;
+    private List<DomibusConnectorMessage> fromGwReceivedMessagesList;
 
 
     @BeforeClass
@@ -79,35 +80,51 @@ public class GatewayJmsLinkITCase {
         //TODO: configure connection factory of broker URL
         this.connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(BROKER_URL);
+
+        this.fromGwReceivedMessagesList = StartupGwLinkOnly.getFromGwReceivedMessagesList(GW_LINK_APPLICATION_CONTEXT);
+
+        fromGwReceivedMessagesList.clear();
     }
 
 
     @Test
-    public void testJmsConnection() throws InterruptedException {
+    public void testDeliverMessageToConnector() throws InterruptedException {
 
-
-        List<DomibusConnectorMessage> fromGwReceivedMessagesList = StartupGwLinkOnly.getFromGwReceivedMessagesList(GW_LINK_APPLICATION_CONTEXT);
-
-        Thread.sleep(1000L);
 
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
         DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
-        testClient.deliverMessge(testmessage);
+        testClient.deliverMessage(testmessage);
 
         Thread.sleep(1000L);
-
         assertThat(fromGwReceivedMessagesList).hasSize(1);
-        //int size = fromGwReceivedMessagesList.size();
-        //System.out.println("SIZE IS " + size);
+    }
+
+
+//    @Test
+    public void testDeliverResponseToConnector() throws InterruptedException {
+
+
+
+        TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
+        DomibusConnectorMessageResponseType testmessage = TransitionCreator.createResponse();
+
+
+        Thread.sleep(1000L);
+//        assertThat(fromGwReceivedMessagesList).hasSize(1);
+
+
 
     }
+
+
+
 
 
 //    @Test
     public void justSendSomething() {
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
         DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
-        testClient.deliverMessge(testmessage);
+        testClient.deliverMessage(testmessage);
     }
 
 }
