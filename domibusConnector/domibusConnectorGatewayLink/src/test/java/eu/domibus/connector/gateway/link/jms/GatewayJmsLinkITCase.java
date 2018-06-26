@@ -35,7 +35,7 @@ public class GatewayJmsLinkITCase {
     public static void prepareEnv() throws Exception {
         //TODO: set up/prepare jms server
 
-        BROKER_URL = "tcp://localhost:61616";
+
         startBroker();
 
         int portTestGW = SocketUtils.findAvailableTcpPort();
@@ -60,8 +60,10 @@ public class GatewayJmsLinkITCase {
 
     private static void startBroker() throws Exception {
         BrokerService broker = new BrokerService();
-        broker.setBrokerName("fred");
+        broker.setBrokerName("testbroker");
         broker.setUseShutdownHook(false);
+
+        broker.setDataDirectory("target/activemq-data/");
 
         int freeBrokerPort = SocketUtils.findAvailableTcpPort();
         BROKER_URL = "tcp://localhost:" + freeBrokerPort;

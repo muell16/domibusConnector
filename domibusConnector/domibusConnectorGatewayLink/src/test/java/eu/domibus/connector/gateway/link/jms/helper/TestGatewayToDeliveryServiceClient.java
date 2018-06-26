@@ -1,23 +1,15 @@
 package eu.domibus.connector.gateway.link.jms.helper;
 
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
-import eu.domibus.connector.gateway.link.jms.impl.GatewayLinkAsyncDeliveryService;
-import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryAsyncService;
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.feature.Feature;
+import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorService;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.transport.jms.ConnectionFactoryFeature;
 import org.apache.cxf.transport.jms.JMSConfigFeature;
 import org.apache.cxf.transport.jms.JMSConfiguration;
-import org.apache.cxf.transport.jms.spec.JMSSpecConstants;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.ConnectionFactory;
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 public class TestGatewayToDeliveryServiceClient {
 
@@ -40,13 +32,13 @@ public class TestGatewayToDeliveryServiceClient {
 
 
         JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
-        proxyFactory.setServiceClass(DomibusConnectorGatewayDeliveryAsyncService.class);
-        proxyFactory.setServiceName(new QName("deliverMessageRequest"));
-        proxyFactory.setEndpointName(new QName("deliverMessageRequest"));
+        proxyFactory.setServiceClass(DomibusConnectorAsyncDeliverToConnectorService.class);
+//        proxyFactory.setServiceName(new QName("deliverMessageRequest"));
+//        proxyFactory.setEndpointName(new QName("deliverMessageRequest"));
         proxyFactory.setAddress("jms://");
         proxyFactory.getFeatures().add(jmsFeature);
 
-        DomibusConnectorGatewayDeliveryAsyncService client = (DomibusConnectorGatewayDeliveryAsyncService) proxyFactory.create();
+        DomibusConnectorAsyncDeliverToConnectorService client = (DomibusConnectorAsyncDeliverToConnectorService) proxyFactory.create();
 
         client.deliverMessage(message);
 
