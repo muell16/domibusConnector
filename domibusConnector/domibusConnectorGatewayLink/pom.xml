@@ -186,7 +186,7 @@
                             <encoding>UTF-8</encoding>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliveryAsyncService.wsdl</wsdl>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliverySubmitAsyncService.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
