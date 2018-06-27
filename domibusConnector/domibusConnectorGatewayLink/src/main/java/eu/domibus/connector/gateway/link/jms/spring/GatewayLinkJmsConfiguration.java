@@ -14,6 +14,7 @@ import org.apache.cxf.transport.jms.JMSConstants;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
@@ -39,11 +40,9 @@ public class GatewayLinkJmsConfiguration {
     @Autowired
     private GatewayLinkJmsProperties gatewayLinkJmsProperties;
 
-    @PostConstruct  //TODO: maybe replace with return Server
-    public void newJmsConfiguration() {
+    @Bean  //TODO: maybe replace with return Server
+    public Server newJmsConfiguration() {
 
-//        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-//        connectionFactory.setBrokerURL("tcp://localhost:61616");
         ConnectionFactory connectionFactory = factoryConfiguration.getJmsConnectionFactory();
 
         String toConnectorMessageQueue = gatewayLinkJmsProperties.getToConnectorMessageQueue();
@@ -65,13 +64,11 @@ public class GatewayLinkJmsConfiguration {
         proxyFactory.getFeatures().add(loadWsPolicyFeature());
         proxyFactory.setServiceBean(deliveryServiceImplementor);
 
-
-
-
         proxyFactory.setProperties(loadSecurityProperties());
 
         Server server = proxyFactory.create();
-        server.start();
+        return server;
+//        server.start();
     }
 
     private Feature loadWsPolicyFeature() {
@@ -89,18 +86,13 @@ public class GatewayLinkJmsConfiguration {
         p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", "12345");
-
-
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", "classpath:/keystores/gwlink-keystore.jks");
 
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", "gwlink");
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.private.password", "12345");
 
-
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", "12345");
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", "classpath:/keystores/gwlink-keystore.jks");
-
-
 
         map.put("security.signature.properties", p);
         map.put("security.signature.username", "gwlink"); //alias for signature (private key)
@@ -110,7 +102,6 @@ public class GatewayLinkJmsConfiguration {
 
         map.put("security.store.bytes.in.attachment", true);
         map.put("security.enable.streaming", true);
-
 
         return map;
     }

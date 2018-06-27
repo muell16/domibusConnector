@@ -32,28 +32,7 @@ public class GatewayLinkAsyncDeliveryService implements DomibusConnectorAsyncDel
         controllerService.deliverMessageFromGatewayToController(message);
     }
 
-    @Override
-    public void deliverResponse(DomibusConnectorMessageResponseType response) {
-        LOGGER.debug("Received Response....");
-        //response.getMessageId()
-        GatewaySubmissionTransportStatusService.DomibusConnectorTransportState transportState = new GatewaySubmissionTransportStatusService.DomibusConnectorTransportState();
 
-        transportState.setForTransport(response.getResponseForMessageId());
-        transportState.setRemoteTransportId(response.getAssignedMessageId());
-
-        if (response.isResult()) {
-            transportState.setStatus(GatewaySubmissionTransportStatusService.TransportState.ACCEPTED);
-        } else {
-            transportState.setStatus(GatewaySubmissionTransportStatusService.TransportState.FAILED);
-
-            //DomibusConnectorDomainMessageTransformer.
-            //TODO: map error list
-            //transportState.setMessageErrorList();
-        }
-
-
-        transportStatusService.setTransportStatusForTransportToGateway(transportState);
-    }
 
 
 }
