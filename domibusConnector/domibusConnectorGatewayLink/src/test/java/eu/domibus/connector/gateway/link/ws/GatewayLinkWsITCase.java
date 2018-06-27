@@ -27,7 +27,7 @@ public class GatewayLinkWsITCase {
     private static ConfigurableApplicationContext GW_LINK_APPLICATION_CONTEXT;
     private static ConfigurableApplicationContext TEST_GW_APPLICATION_CONTEXT;
 
-    @BeforeClass
+   @BeforeClass
     public static void beforeClass() {
 
         int portTestGW = SocketUtils.findAvailableTcpPort();

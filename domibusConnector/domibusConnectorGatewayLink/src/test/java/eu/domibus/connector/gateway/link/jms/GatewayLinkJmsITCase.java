@@ -117,14 +117,12 @@ public class GatewayLinkJmsITCase {
     }
 
 
-
-
-
+//
 //    @Test
-    public void justSendSomething() {
-        TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
-        DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
-        testClient.deliverMessage(testmessage);
-    }
+//    public void justSendSomething() {
+//        TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
+//        DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
+//        testClient.deliverMessage(testmessage);
+//    }
 
 }

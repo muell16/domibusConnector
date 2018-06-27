@@ -8,6 +8,7 @@ import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.jms.JMSConfigFeature;
 import org.apache.cxf.transport.jms.JMSConfiguration;
+import org.apache.cxf.transport.jms.JMSConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -51,6 +52,7 @@ public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsync
         JMSConfiguration jmsConfig = new JMSConfiguration();
         jmsConfig.setTargetDestination(TO_CONNECTOR_MESSAGE_QUEUE_NAME);
         jmsConfig.setConnectionFactory(connectionFactory);
+        jmsConfig.setMessageType(JMSConstants.BINARY_MESSAGE_TYPE);
         JMSConfigFeature jmsFeature = new JMSConfigFeature();
         jmsFeature.setJmsConfig(jmsConfig);
 
@@ -79,17 +81,19 @@ public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsync
         HashMap<String, Object> map = new HashMap<>();
 
         //TODO: load Properties
-        Properties p = new Properties();
+        Properties encryptionProperties = new Properties();
 
-        p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", "12345");
+        encryptionProperties.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
+        encryptionProperties.setProperty("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
+        encryptionProperties.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", "12345");
 
 
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", "classpath:/keystores/gwlink-keystore.jks");
+        encryptionProperties.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", "classpath:/keystores/testgw.jks");
 
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", "gwlink");
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.private.password", "12345");
+        encryptionProperties.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", "testgw");
+        encryptionProperties.setProperty("org.apache.wss4j.crypto.merlin.keystore.private.password", "12345");
+
+//        Properties signatureProperties = new Properties();
 
 
 //        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getStore().getPassword());
@@ -107,10 +111,11 @@ public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsync
 //        p.setProperty("org.apache.wss4j.crypto.merlin.load.cacerts", Boolean.toString(this.getTrust().isLoadCaCerts()));
 
 
-
-        map.put("security.signature.properties", p);
-        map.put("security.encryption.properties", p);
-        map.put("mtom-enabled", true);
+        map.put("security.signature.username", "testgw"); //sign with testgw
+        map.put("security.signature.properties", encryptionProperties);
+        map.put("security.encryption.properties", encryptionProperties);
+        map.put("security.encryption.username", "gwlink"); //encrypt for gwlink
+//        map.put("mtom-enabled", false);
         map.put("security.store.bytes.in.attachment", true);
         map.put("security.enable.streaming", true);
 
