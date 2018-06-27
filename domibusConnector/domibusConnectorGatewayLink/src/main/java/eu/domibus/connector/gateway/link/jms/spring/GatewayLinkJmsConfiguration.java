@@ -1,11 +1,18 @@
 package eu.domibus.connector.gateway.link.jms.spring;
 
 
-import eu.domibus.connector.gateway.link.jms.impl.GatewayLinkAsyncDeliveryService;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
+import eu.domibus.connector.gateway.link.jms.impl.HandleFromGwToConnectorDeliveredMessage;
+import eu.domibus.connector.gateway.link.jms.impl.HandleFromGwToConnectorSentResponse;
+import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorReceiveResponseService;
 import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorService;
+import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncSubmitToGatewayReceiveResponseService;
+import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncSubmitToGatewayService;
 import eu.domibus.connector.link.common.WsPolicyLoader;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.Feature;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.jms.JMSConfigFeature;
 import org.apache.cxf.transport.jms.JMSConfiguration;
@@ -22,8 +29,9 @@ import javax.jms.ConnectionFactory;
 import java.util.HashMap;
 import java.util.Properties;
 
+import static eu.domibus.connector.tools.logging.LoggingMarker.CONFIG;
+
 @Configuration
-@EnableJms
 @Profile("gwlink-jms")
 public class GatewayLinkJmsConfiguration {
 
@@ -33,40 +41,106 @@ public class GatewayLinkJmsConfiguration {
     private JmsConnectionFactoryConfiguration factoryConfiguration;
 
     @Autowired
-    private GatewayLinkAsyncDeliveryService deliveryServiceImplementor;
+    private HandleFromGwToConnectorDeliveredMessage deliveryServiceImplementor;
+
+    @Autowired
+    private HandleFromGwToConnectorSentResponse handleFromGwToConnectorSentResponse;
 
     @Autowired
     private GatewayLinkJmsProperties gatewayLinkJmsProperties;
 
-    @Bean  //TODO: maybe replace with return Server
-    public Server newJmsConfiguration() {
+    /**
+     * Configure endpoint to listen on toConnectorResponseQueue
+     * for responses from GW
+     * @return the Server endpoint
+     */
+    @Bean
+    public Server asnycSubmitToGatewayReceiveResponseJmsEndpoint() {
+        String toConnectorResponseQueue = gatewayLinkJmsProperties.getToConnectorResponseQueue();
+        LOGGER.debug(CONFIG, "Setting handleFromGwToConnectorSentResponse to listen on queue: [{}]", toConnectorResponseQueue);
 
-        ConnectionFactory connectionFactory = factoryConfiguration.getJmsConnectionFactory();
+        return connectJmsEndpointQueueWithBean(toConnectorResponseQueue,
+                DomibusConnectorAsyncSubmitToGatewayReceiveResponseService.class,
+                handleFromGwToConnectorSentResponse);
+    }
 
+    /**
+     * Configure endpoint to listen on toConnectorMessageQueue
+     * for message from GW
+     * @return the Server endpoint
+     */
+    @Bean
+    public Server asyncDeliverToConnectorJmsEndpoint() {
         String toConnectorMessageQueue = gatewayLinkJmsProperties.getToConnectorMessageQueue();
-        LOGGER.debug("Setting deliveryService to listen on queue: [{}]", toConnectorMessageQueue);
+        LOGGER.debug(CONFIG, "Setting handleFromGwToConnectorDeliveredMessage to listen on queue: [{}]", toConnectorMessageQueue);
+        return connectJmsEndpointQueueWithBean(toConnectorMessageQueue,
+                DomibusConnectorAsyncDeliverToConnectorService.class,
+                deliveryServiceImplementor);
+    }
 
-        JMSConfiguration jmsConfig = new JMSConfiguration();
-        jmsConfig.setTargetDestination(toConnectorMessageQueue);
-        jmsConfig.setConnectionFactory(connectionFactory);
-        jmsConfig.setMessageType(JMSConstants.BINARY_MESSAGE_TYPE);
-        JMSConfigFeature jmsFeature = new JMSConfigFeature();
-        jmsFeature.setJmsConfig(jmsConfig);
+    /**
+     * Configure cxf client for sending messages over jms queue
+     * to GW
+     * @return - the cxf client
+     */
+    @Bean
+    public DomibusConnectorAsyncSubmitToGatewayService submitToGatewayService() {
+        String submitToGwQueueName = gatewayLinkJmsProperties.getToGatewayMessageQueue();
+        LOGGER.debug(CONFIG, "Configuring submit to Gateway JMS Queue to [{}]", submitToGwQueueName);
+        return createClient(submitToGwQueueName, DomibusConnectorAsyncSubmitToGatewayService.class);
+    }
 
+    /**
+     * Configure cxf client for sending a message reponse over jms queue
+     * back to GW
+     * @return - the cxf client
+     */
+    @Bean
+    public DomibusConnectorAsyncDeliverToConnectorReceiveResponseService sendResponseService() {
+        String sendResponseToGwQueueName = gatewayLinkJmsProperties.getToGatewayResponseQueue();
+        LOGGER.debug(CONFIG, "Configuring response to Gateway JMS Queue to [{}]", sendResponseToGwQueueName);
+        return createClient(sendResponseToGwQueueName, DomibusConnectorAsyncDeliverToConnectorReceiveResponseService.class);
+    }
+
+    private Server connectJmsEndpointQueueWithBean(String queueName, Class clazz, Object bean) {
         JaxWsServerFactoryBean proxyFactory = new JaxWsServerFactoryBean();
-        proxyFactory.setServiceClass(DomibusConnectorAsyncDeliverToConnectorService.class);
-//        proxyFactory.setServiceName(new QName("deliverMessageRequest"));
-//        proxyFactory.setEndpointName(new QName("deliverMessageRequest"));
+        proxyFactory.setServiceClass(clazz);
         proxyFactory.setAddress("jms://");
-        proxyFactory.getFeatures().add(jmsFeature);
+        proxyFactory.getFeatures().add(loadJmsFeature(queueName));
         proxyFactory.getFeatures().add(loadWsPolicyFeature());
-        proxyFactory.setServiceBean(deliveryServiceImplementor);
+        proxyFactory.setServiceBean(bean);
 
         proxyFactory.setProperties(loadSecurityProperties());
 
         Server server = proxyFactory.create();
         return server;
-//        server.start();
+    }
+
+    private <T> T createClient(String queueName, Class<T> serviceClazz) {
+
+
+        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
+        proxyFactory.setServiceClass(serviceClazz);
+        proxyFactory.setAddress("jms://");
+        proxyFactory.getFeatures().add(loadJmsFeature(queueName));
+        proxyFactory.getFeatures().add(loadWsPolicyFeature());
+        proxyFactory.setProperties(loadSecurityProperties());
+
+
+        T client = (T) proxyFactory.create();
+        return client;
+    }
+
+
+    private JMSConfigFeature loadJmsFeature(String queueName) {
+        ConnectionFactory connectionFactory = factoryConfiguration.getJmsConnectionFactory();
+        JMSConfiguration jmsConfig = new JMSConfiguration();
+        jmsConfig.setTargetDestination(queueName);
+        jmsConfig.setConnectionFactory(connectionFactory);
+        jmsConfig.setMessageType(JMSConstants.BINARY_MESSAGE_TYPE);
+        JMSConfigFeature jmsFeature = new JMSConfigFeature();
+        jmsFeature.setJmsConfig(jmsConfig);
+        return jmsFeature;
     }
 
     private Feature loadWsPolicyFeature() {
@@ -78,7 +152,7 @@ public class GatewayLinkJmsConfiguration {
     private HashMap<String, Object> loadSecurityProperties() {
         HashMap<String, Object> map = new HashMap<>();
 
-        //TODO: load Configured Properties
+        //TODO: load Configuration Properties
         Properties p = new Properties();
 
         p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
@@ -92,11 +166,18 @@ public class GatewayLinkJmsConfiguration {
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", "12345");
         p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", "classpath:/keystores/gwlink-keystore.jks");
 
+        LOGGER.trace(CONFIG, "Setting security.signature.properties to [{}]", p);
         map.put("security.signature.properties", p);
-        map.put("security.signature.username", "gwlink"); //alias for signature (private key)
+        String sigUsername = "gwlink";
+        LOGGER.trace(CONFIG, "Setting security.signature.username to [{}]", sigUsername);
+        map.put("security.signature.username", sigUsername); //alias for signature (private key)
 
+        LOGGER.trace(CONFIG, "Setting security.encryption.properties to [{}]", p);
         map.put("security.encryption.properties", p);
-        map.put("security.encrpytion.username", "testgw"); //alias for encryption (public key)
+
+        String encUsername = "testgw";
+        LOGGER.trace(CONFIG, "Setting security.encrpytion.username to [{}]", encUsername);
+        map.put("security.encrpytion.username", encUsername); //alias for encryption (public key)
 
         map.put("security.store.bytes.in.attachment", true);
         map.put("security.enable.streaming", true);

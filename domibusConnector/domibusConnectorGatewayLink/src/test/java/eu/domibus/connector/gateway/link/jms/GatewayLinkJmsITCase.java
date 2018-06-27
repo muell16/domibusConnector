@@ -1,5 +1,6 @@
 package eu.domibus.connector.gateway.link.jms;
 
+import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -15,6 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
 
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,6 +32,7 @@ public class GatewayLinkJmsITCase {
 
     private ActiveMQConnectionFactory connectionFactory;
     private List<DomibusConnectorMessage> fromGwReceivedMessagesList;
+    private LinkedBlockingQueue<TransportStatusService.DomibusConnectorTransportState> setTransportState;
 
 
     @BeforeClass
@@ -81,15 +84,16 @@ public class GatewayLinkJmsITCase {
         this.connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(BROKER_URL);
 
-        this.fromGwReceivedMessagesList = StartupGwLinkOnly.getFromGwReceivedMessagesList(GW_LINK_APPLICATION_CONTEXT);
-
+        fromGwReceivedMessagesList = StartupGwLinkOnly.getFromGwReceivedMessagesList(GW_LINK_APPLICATION_CONTEXT);
         fromGwReceivedMessagesList.clear();
+
+        setTransportState = StartupGwLinkOnly.getSetTransportStates(GW_LINK_APPLICATION_CONTEXT);
+        setTransportState.clear();
     }
 
 
     @Test
     public void testDeliverMessageToConnector() throws InterruptedException {
-
 
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
         DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
@@ -100,29 +104,30 @@ public class GatewayLinkJmsITCase {
     }
 
 
-//    @Test
+    @Test(timeout = 10000)
     public void testDeliverResponseToConnector() throws InterruptedException {
 
-
-
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
-        DomibusConnectorMessageResponseType testmessage = TransitionCreator.createResponse();
+        DomibusConnectorMessageResponseType response = TransitionCreator.createResponse();
+        testClient.deliverResponse(response);
 
 
-        Thread.sleep(1000L);
-//        assertThat(fromGwReceivedMessagesList).hasSize(1);
+        TransportStatusService.DomibusConnectorTransportState state = setTransportState.take();
+        assertThat(state).isNotNull();
 
 
 
     }
 
 
-//
-//    @Test
-//    public void justSendSomething() {
+
+    @Test
+    public void sendMessageToGateway() {
 //        TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
-//        DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
-//        testClient.deliverMessage(testmessage);
-//    }
+////        DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
+////        testClient.deliverMessage(testmessage);
+
+
+    }
 
 }

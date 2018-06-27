@@ -1,4 +1,4 @@
-package eu.domibus.connector.gateway.link.jms;
+package eu.domibus.connector.controller.service;
 
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
@@ -7,18 +7,22 @@ import org.springframework.core.style.ToStringCreator;
 import java.util.List;
 
 /**
- * This service provides methods for the implementing transporting services
- * to handle the message status
  *
  *
  */
-public interface GatewaySubmissionTransportStatusService {
+public interface TransportStatusService {
 
     /**
-     * Sets the transport status
+     * Sets the transport status for transports to GW
      * @param transportState the transport status to set, contains also the transport id / connector message id
      */
     public void setTransportStatusForTransportToGateway(DomibusConnectorTransportState transportState);
+
+    /**
+     * Sets the transport status for transport to backendClient
+     * @param transportState the transport status to set, contains also the transport id / connector message id
+     */
+    public void setTransportStatusForTransportToBackendClient(DomibusConnectorTransportState transportState);
 
     public static class DomibusConnectorTransportState {
         private String forTransport;

@@ -2,8 +2,8 @@ package eu.domibus.connector.gateway.link.ws.impl;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessageType;
-import eu.domibus.connector.gateway.link.jms.GatewaySubmissionTransportStatusService;
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	private DomibusConnectorGatewaySubmissionWebService submissionClient;
 
 	@Autowired
-    private GatewaySubmissionTransportStatusService gatewaySubmissionTransportStatusService;
+    private TransportStatusService gatewaySubmissionTransportStatusService;
 
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
@@ -42,7 +42,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
         }
 
 
-        GatewaySubmissionTransportStatusService.DomibusConnectorTransportState state = new GatewaySubmissionTransportStatusService.DomibusConnectorTransportState();
+        TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
         state.setForTransport(message.getConnectorMessageId());
 
 
@@ -56,10 +56,10 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
             //message.getMessageDetails().setEbmsMessageId(ebmsId);
 
             state.setRemoteTransportId(ebmsId);
-            state.setStatus(GatewaySubmissionTransportStatusService.TransportState.ACCEPTED);
+            state.setStatus(TransportStatusService.TransportState.ACCEPTED);
             gatewaySubmissionTransportStatusService.setTransportStatusForTransportToGateway(state);
         } else {
-            state.setStatus(GatewaySubmissionTransportStatusService.TransportState.FAILED);
+            state.setStatus(TransportStatusService.TransportState.FAILED);
             gatewaySubmissionTransportStatusService.setTransportStatusForTransportToGateway(state);
 
             if (ack != null && !StringUtils.isEmpty(ack.getResultMessage()))
