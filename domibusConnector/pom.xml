@@ -22,6 +22,7 @@
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorDistribution</module>
+        <module>domibusConnectorLinkCommon</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -95,6 +96,11 @@
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorAPI</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorLinkCommon</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- E-CODEX LIBRARIES -->

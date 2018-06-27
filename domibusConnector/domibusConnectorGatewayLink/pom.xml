@@ -25,6 +25,10 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorLinkCommon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.jms.ConnectionFactory;
-import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Properties;
 
