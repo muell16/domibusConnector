@@ -23,6 +23,7 @@ public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsync
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestGatewayToDeliveryServiceClient.class);
     public static final String TO_CONNECTOR_MESSAGE_QUEUE_NAME = "eu.domibus.connector.external.gatewayToControllerQueue";
+    public static final String TO_CONNECTOR_RESPONSE_QUEUE_NAME = "eu.domibus.connector.external.gatewayToControllerResponseQueue";
 
     private final ConnectionFactory connectionFactory;
 
@@ -33,20 +34,20 @@ public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsync
 
     @Override
     public void deliverMessage(DomibusConnectorMessageType message ) {
-        DomibusConnectorAsyncDeliverToConnectorService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorService.class);
+        DomibusConnectorAsyncDeliverToConnectorService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorService.class, TO_CONNECTOR_MESSAGE_QUEUE_NAME);
         client.deliverMessage(message);
 
     }
 
     @Override
     public void deliverResponse(DomibusConnectorMessageResponseType response) {
-        DomibusConnectorAsyncDeliverToConnectorReceiveResponseService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorReceiveResponseService.class);
+        DomibusConnectorAsyncDeliverToConnectorReceiveResponseService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorReceiveResponseService.class, TO_CONNECTOR_RESPONSE_QUEUE_NAME);
         client.deliverResponse(response);
     }
 
-    private <T> T createClient(Class<T> serviceClazz) {
+    private <T> T createClient(Class<T> serviceClazz, String queue) {
         JMSConfiguration jmsConfig = new JMSConfiguration();
-        jmsConfig.setTargetDestination(TO_CONNECTOR_MESSAGE_QUEUE_NAME);
+        jmsConfig.setTargetDestination(queue);
         jmsConfig.setConnectionFactory(connectionFactory);
         jmsConfig.setMessageType(JMSConstants.BINARY_MESSAGE_TYPE);
         JMSConfigFeature jmsFeature = new JMSConfigFeature();
