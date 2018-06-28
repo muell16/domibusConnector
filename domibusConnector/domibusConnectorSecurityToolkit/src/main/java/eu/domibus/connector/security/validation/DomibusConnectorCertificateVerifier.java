@@ -89,6 +89,7 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 		job.setLotlCode("EU");
 		job.setRepository(tslRepository);
 		job.refresh();
+		//job.initRepository();
 
 		crlSource.setDataLoader(normalLoader);
 
