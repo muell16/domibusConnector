@@ -26,7 +26,11 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 	<jaxws:client
         id="gwSubmissionClient" 
         serviceClass="eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService"
-        address="#{GatewayLinkWsServiceProperties.submissionEndpointAddress}">
+        address="#{GatewayLinkWsServiceProperties.submissionEndpointAddress}"
+        serviceName="s:DomibusConnectorGatewaySubmissionWebService"
+        xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice"
+        wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl"
+        >
 		<!--address="${gateway.submission.endpoint.address}" -->
     <!--&gt;-->
         <jaxws:properties>
@@ -34,16 +38,25 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
         </jaxws:properties>
     </jaxws:client>
 		
-	<jaxws:endpoint
-		id="domibusConnectorDeliveryServiceEndpoint"
-        implementor="#domibusConnectorDeliveryServiceImpl"
-        address="#{GatewayLinkWsServiceProperties.address}">
-        <jaxws:properties>
+	<jaxws:endpoint id="domibusConnectorDeliveryServiceEndpoint"
+                    implementor="#domibusConnectorDeliveryServiceImpl"
+                    address="#{GatewayLinkWsServiceProperties.address}"
+                    serviceName="s:DomibusConnectorGatewayDeliveryWebService"  
+                    wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl"
+                    xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"
+                    >
+                    <!-- 
+                    serviceName="s:DomibusConnectorGatewayDeliveryWebService"
+                    endpointName="s:DomibusConnectorGatewayDeliveryWebService"
+                    xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
+                    xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"
+    > -->
+         <jaxws:properties>
             <entry key="mtom-enabled" value="true" />
         </jaxws:properties>
    	</jaxws:endpoint>
    	
-   	<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">
+  <!--  	<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">
  
     <http:tlsClientParameters>
         <sec:keyManagers keyPassword="#{GatewayLinkWsServiceProperties.tlsKey.password}">
@@ -59,10 +72,10 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
         </sec:trustManagers>
 
       <sec:cipherSuitesFilter>
-        <!-- these filters ensure that a ciphersuite with
+        these filters ensure that a ciphersuite with
              export-suitable or null wss is used,
              but exclude anonymous Diffie-Hellman key change as
-             this is vulnerable to man-in-the-middle attacks -->
+             this is vulnerable to man-in-the-middle attacks
         <sec:include>.*_EXPORT_.*</sec:include>
         <sec:include>.*_EXPORT1024_.*</sec:include>
         <sec:include>.*_WITH_DES_.*</sec:include>
@@ -71,12 +84,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
         <sec:exclude>.*_DH_anon_.*</sec:exclude>
       </sec:cipherSuitesFilter>
     </http:tlsClientParameters>
-    <!-- <http:authorization>
+    <http:authorization>
       <sec:UserName>Betty</sec:UserName>
       <sec:Password>password</sec:Password>
-    </http:authorization> -->
+    </http:authorization>
     <http:client AutoRedirect="true" Connection="Keep-Alive"/>
  
-  </http:conduit>
+  </http:conduit> -->
 	
 </beans>
