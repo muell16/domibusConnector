@@ -27,7 +27,7 @@ public class DomibusConnectorEnvironmentConfiguration extends EnvironmentConfigu
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		CertificateStoreInfo trustedCertificates = new CertificateStoreInfo();
-        StoreConfigurationProperties trustStore = securityToolkitConfigurationProperties.getTrustStore();
+        StoreConfigurationProperties trustStore = securityToolkitConfigurationProperties.getTruststore();
         if (trustStore != null && trustStore.getPath() != null) {
             trustedCertificates.setLocation(trustStore.getPath().getURL().toString());
             trustedCertificates.setPassword(trustStore.getPassword());

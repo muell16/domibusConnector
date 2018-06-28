@@ -39,7 +39,7 @@ public class SecurityToolkitConfigurationProperties {
     StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
 
     @NestedConfigurationProperty
-    StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
+    StoreConfigurationProperties truststore = new StoreConfigurationProperties();
 
     /**
      * Should the trust store created if it is missing?
@@ -78,12 +78,12 @@ public class SecurityToolkitConfigurationProperties {
         this.ojStore = ojStore;
     }
 
-    public StoreConfigurationProperties getTrustStore() {
-        return trustStore;
+    public StoreConfigurationProperties getTruststore() {
+        return truststore;
     }
 
-    public void setTrustStore(StoreConfigurationProperties trustStore) {
-        this.trustStore = trustStore;
+    public void setTruststore(StoreConfigurationProperties trustStore) {
+        this.truststore = trustStore;
     }
 
     public boolean isCreateOjStoreIfMissing() {
