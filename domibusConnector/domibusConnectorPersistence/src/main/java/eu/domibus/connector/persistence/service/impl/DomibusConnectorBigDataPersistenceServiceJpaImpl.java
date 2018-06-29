@@ -141,8 +141,12 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data related to message {}", message);
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
 
-        List<PDomibusConnectorBigData> dataByMsg = bigDataDao.findAllByMessage(dbMessage.getId());
-        bigDataDao.delete(dataByMsg);
+        if (dbMessage != null) {
+            List<PDomibusConnectorBigData> dataByMsg = bigDataDao.findAllByMessage(dbMessage.getId());
+            bigDataDao.delete(dataByMsg);
+        } else {
+            LOGGER.warn(String.format("Did not delete big data of message with connector id [%s], because there was no entry in database", message));
+        }
 
     }
 
