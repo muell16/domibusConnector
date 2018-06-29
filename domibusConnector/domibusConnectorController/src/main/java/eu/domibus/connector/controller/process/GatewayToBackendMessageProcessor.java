@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.process;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
@@ -188,9 +189,19 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private void createRelayREMMDEvidenceAndSendIt(DomibusConnectorMessage originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 		DomibusConnectorMessageConfirmation messageConfirmation = null;
+        DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+
 		try {
-			messageConfirmation = isAcceptance ? evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null)
-					: evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
+			if(isAcceptance) {
+			    LOGGER.trace("relay is acceptance, generating RELAY_REMMD_ACCEPTANCE");
+                messageConfirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null);
+            } else {
+                LOGGER.trace("relay is denied, generating RELAY_REMMD_REJECTION");
+                messageConfirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
+            }
+            LOGGER.trace("generated confirmation is [{}]", messageConfirmation);
+            sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
+
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
 					.setMessage(originalMessage)
@@ -209,9 +220,6 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
             messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
 		}
 
-		DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
-
-		sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
 
 		if (!isAcceptance) {
 			messagePersistenceService.rejectMessage(originalMessage);
@@ -219,8 +227,11 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 	
 	private void sendEvidenceToBackToGateway(DomibusConnectorMessage originalMessage, DomibusConnectorAction action,
-			DomibusConnectorMessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
+			@Nonnull DomibusConnectorMessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
+        if (messageConfirmation == null) {
+            throw new IllegalArgumentException("messageConfirmation is not allowed to be null!");
+        }
 
 		originalMessage.addConfirmation(messageConfirmation);
 		evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
@@ -238,13 +249,18 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
 		
         try {
-        	LOGGER.debug("Submitting RelayREMMDEnvidence back to GW");
+        	LOGGER.debug("Submitting messageConfirmation [{}] back to GW", messageConfirmation);
             gwSubmissionService.submitToGateway(evidenceMessage);
+
+
         } catch (Exception e) {
             //TODO: improve that!
+            String error = String.format("Exception sending evidenceMessage [%s] of originalMessage with connectorMessageId [%s] back to gateway ",
+                    evidenceMessage,
+                    originalMessage.getConnectorMessageId());
             DomibusConnectorMessageException exception = DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Exception sending confirmation originalMessage '" + originalMessage.getConnectorMessageId() + "' back to gateway ")
+                    .setText(error)
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();
@@ -253,7 +269,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
                     DomibusConnectorMessageErrorBuilder.createBuilder()
                             .setSource(this.getClass().getName())
                             .setDetails(e.getStackTrace().toString())
-                            .setText("Exception sending confirmation originalMessage '" + originalMessage.getConnectorMessageId() + "' back to gateway ")
+                            .setText(error)
                             .build();
             messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
         }

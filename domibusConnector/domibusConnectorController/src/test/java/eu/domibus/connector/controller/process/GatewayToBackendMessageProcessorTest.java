@@ -4,19 +4,19 @@ import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissi
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
+import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -104,7 +105,16 @@ public class GatewayToBackendMessageProcessorTest {
 
         Mockito.doAnswer(invoc -> savedMessageErrors.add(invoc.getArgumentAt(1, DomibusConnectorMessageError.class)))
                 .when(messageErrorPersistenceService).persistMessageError(any(), any());
-        
+
+        Mockito.doAnswer(invoc -> {
+            DomibusConnectorEvidenceType type = invoc.getArgumentAt(0, DomibusConnectorEvidenceType.class);
+            DomibusConnectorMessageConfirmation confirmation = DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation();
+            confirmation.setEvidenceType(type);
+            return confirmation;
+                })
+                .when(evidencesToolkit)
+                .createEvidence(any(), any(), any(), any());
+
     }
 
 
@@ -129,10 +139,6 @@ public class GatewayToBackendMessageProcessorTest {
 
         //confirm container of originalMessage is validated!
         Mockito.verify(securityToolkit, times(1)).validateContainer(eq(message));
-
-
-
-
 
     }
 
@@ -198,7 +204,34 @@ public class GatewayToBackendMessageProcessorTest {
     }
 
 
-    //TODO: test if message validation failes
+    /**
+     * Test if security toolkit failes to resolve container,
+     * RELAY_REMMD_ACCEPTANCE and then NON_DELIVERY is sent back to gw
+     *
+     */
+    @Test
+    public void processMessage_securityToolkitFailes() throws Exception {
+        boolean exceptionThrown = false;
+        Mockito.doThrow(new DomibusConnectorSecurityException("ERROR!"))
+                .when(securityToolkit)
+                .validateContainer(any());
+
+        DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
+
+        try {
+            gatewayToBackendMessageProcessor.processMessage(message);
+        } catch (DomibusConnectorSecurityException e) {
+            exceptionThrown = true;
+        }
+
+        assertThat(exceptionThrown).isTrue();
+        assertThat(toBackendDeliveredMessages).hasSize(0);
+        assertThat(toGwDeliveredMessages).hasSize(2);
+        assertThat(toGwDeliveredMessages.get(1).getMessageConfirmations().get(0).getEvidenceType())
+                .isEqualTo(DomibusConnectorEvidenceType.NON_DELIVERY);
+
+
+    }
 
 
 }
