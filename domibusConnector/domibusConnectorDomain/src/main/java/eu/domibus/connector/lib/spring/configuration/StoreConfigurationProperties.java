@@ -1,13 +1,17 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import com.sun.istack.internal.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.InputStream;
 
+@Validated
 public class StoreConfigurationProperties {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StoreConfigurationProperties.class);
@@ -15,13 +19,13 @@ public class StoreConfigurationProperties {
     /**
      * Path to the Key/Truststore
      */
-    @Nonnull
+    @NotNull
     Resource path;
 
     /**
      * Password to open the Store
      */
-    String password;
+    String password = "";
 
     public StoreConfigurationProperties() {}
 
@@ -59,4 +63,41 @@ public class StoreConfigurationProperties {
             throw new RuntimeException("#getPathUrlAsString: path: [" + path + "]", e);
         }
     }
+
+    public void validatePathReadable() {
+        if (getPath() == null) {
+            throw new ValidationException("Path is null!");
+        }
+        try {
+            InputStream inputStream = this.getPath().getInputStream();
+            if (inputStream == null) {
+                throw new ValidationException("Input Stream from path is null!");
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            throw new ValidationException("IOException occured during open", e);
+        }
+    }
+
+    public static class ValidationException extends  RuntimeException {
+        public ValidationException() {
+        }
+
+        public ValidationException(String message) {
+            super(message);
+        }
+
+        public ValidationException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public ValidationException(Throwable cause) {
+            super(cause);
+        }
+
+        public ValidationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
+        }
+    }
+
 }

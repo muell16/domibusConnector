@@ -1,5 +1,6 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -19,13 +20,13 @@ public class CertConfigurationProperties {
     /**
      * The alias of the Certificate/Key
      */
+    @Nonnull
     String alias;
 
     /**
      * The password of the Certificate/Key
      */
-    @Nullable
-    String password;
+    String password = "";
 
     public String getAlias() {
         return alias;
