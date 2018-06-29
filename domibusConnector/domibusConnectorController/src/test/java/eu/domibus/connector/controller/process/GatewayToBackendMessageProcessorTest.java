@@ -149,4 +149,12 @@ public class GatewayToBackendMessageProcessorTest {
     }
 
 
+    //TODO: test if message validation failes
+
+    //TODO: add test if sending evidence back to gw failes
+
+    //TODO: add test if evidence creation failes
+    
+
+
 }
