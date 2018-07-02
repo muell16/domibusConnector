@@ -27,13 +27,19 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
     <jaxws:client
         id="connectorDeliveryClient"
         serviceClass="eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService"
-        address="${connector.delivery.endpoint.address}">
+        address="${connector.delivery.endpoint.address}"
+        serviceName="s:DomibusConnectorGatewayDeliveryWebService"
+        wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl"
+        xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice">
     </jaxws:client>
 
     <jaxws:endpoint
             id="testGwSubmissionServiceEndpoint"
             implementor="#testGwSubmissionService"
             address="/submission"
+            serviceName="s:DomibusConnectorGatewaySubmissionWebService"
+            xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice"
+            wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl"
     >
     </jaxws:endpoint>
 
