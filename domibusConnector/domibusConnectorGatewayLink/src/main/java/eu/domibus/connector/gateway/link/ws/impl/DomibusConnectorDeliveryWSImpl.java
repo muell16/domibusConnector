@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
@@ -14,7 +15,7 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 
-@Component("domibusConnectorDeliveryServiceImpl")
+@Service("domibusConnectorDeliveryServiceImpl")
 public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDeliveryWebService {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDeliveryWSImpl.class);

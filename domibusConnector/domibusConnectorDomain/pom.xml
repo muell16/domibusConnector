@@ -14,8 +14,10 @@
 
     <profiles>
         <profile>
+            <id>maven_test_skip_profile</id>
             <!--  convert maven.test.skip to skipTests (because maven.test.skip don't compile tests), to ensure the
-            domibusConnectorDomain-{version}-tests.jar is packaged -->
+            domibusConnectorDomain-{version}-tests.jar is packaged, so this also runs with eclipse
+            -->
             <activation>
                 <property>
                     <name>maven.test.skip</name>
