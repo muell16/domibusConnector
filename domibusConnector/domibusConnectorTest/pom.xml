@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
     </parent>
     <name>${project.artifactId}</name>
     <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>

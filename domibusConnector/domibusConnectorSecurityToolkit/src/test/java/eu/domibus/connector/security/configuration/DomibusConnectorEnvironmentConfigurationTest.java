@@ -40,7 +40,7 @@ public class DomibusConnectorEnvironmentConfigurationTest {
         StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
         trustStore.setPath(new ClassPathResource("/keys/ojStore.jks"));
         trustStore.setPassword("ecodex");
-        props.setTrustStore(trustStore);
+        props.setTruststore(trustStore);
 
         return props;
     }

@@ -7,6 +7,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmission
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -101,7 +102,9 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     @Override
     public DomibusConnectorMessage processMessageAfterDeliveredToBackend(DomibusConnectorMessage message) {
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
-        bigDataPersistence.cleanForMessage(message);
+        if (!DomainModelHelper.isEvidenceMessage(message)) {
+            bigDataPersistence.cleanForMessage(message);
+        }
         return message;
     }
 
