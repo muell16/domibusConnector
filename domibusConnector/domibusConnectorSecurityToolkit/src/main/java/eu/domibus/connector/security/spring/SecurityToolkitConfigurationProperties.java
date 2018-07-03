@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -21,10 +22,12 @@ import java.io.IOException;
  * typesafe way
  */
 @Component
-@ConfigurationProperties(prefix = "connector.security")
+@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
 @PropertySource("classpath:/eu/domibus/connector/security/spring/security-default-configuration.properties")
 @Validated
 public class SecurityToolkitConfigurationProperties {
+
+    public static final String CONFIG_PREFIX = "connector.security";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityToolkitConfigurationProperties.class);
 
@@ -92,5 +95,19 @@ public class SecurityToolkitConfigurationProperties {
 
     public void setCreateOjStoreIfMissing(boolean createOjStoreIfMissing) {
         this.createOjStoreIfMissing = createOjStoreIfMissing;
+    }
+
+    @PostConstruct
+    public void checkValues() {
+        throwIfNull(this.getKey(), "key");
+        throwIfNull(this.getKey().getAlias(), "key.alias");
+
+
+    }
+
+    public void throwIfNull(Object prop, String propName) {
+        if (prop == null) {
+            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!");
+        }
     }
 }
