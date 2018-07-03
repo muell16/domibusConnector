@@ -8,10 +8,14 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.PostConstruct;
+
 @Component
-@ConfigurationProperties(prefix = "connector.evidences")
+@ConfigurationProperties(prefix = EvidencesToolkitConfigurationProperties.CONFIG_PREFIX)
 @Validated
 public class EvidencesToolkitConfigurationProperties {
+
+    public static final String CONFIG_PREFIX = "connector.evidences";
 
     /**
      * Configuration of the keyStore which holds the private key to sign the evidences
@@ -53,5 +57,23 @@ public class EvidencesToolkitConfigurationProperties {
 
     public void setHashAlgorithm(HashValueBuilder.HashAlgorithm hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
+    }
+
+
+    @PostConstruct
+    public void checkValues() {
+        try {
+            this.getKeystore().validatePathReadable();
+        } catch (StoreConfigurationProperties.ValidationException ve) {
+            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + ".keystore" , ve);
+        }
+        throwIfNull(getKey(), "key");
+        throwIfNull(getKey().getAlias(), "key.alias");
+    }
+
+    public void throwIfNull(Object nullcheck, String message) {
+        if (nullcheck == null) {
+            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + "." + message + " is not allowed to be null!");
+        }
     }
 }
