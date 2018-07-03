@@ -1,5 +1,6 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -8,7 +9,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 public class StoreConfigurationProperties {

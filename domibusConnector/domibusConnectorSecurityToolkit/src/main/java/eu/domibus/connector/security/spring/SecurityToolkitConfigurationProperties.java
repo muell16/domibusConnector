@@ -1,9 +1,11 @@
 package eu.domibus.connector.security.spring;
 
+import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.PropertySource;
@@ -30,6 +32,9 @@ public class SecurityToolkitConfigurationProperties {
     public static final String CONFIG_PREFIX = "connector.security";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityToolkitConfigurationProperties.class);
+
+    @Autowired
+    CommonProperties commonProperties;
 
     @Valid
     @NestedConfigurationProperty
@@ -102,12 +107,16 @@ public class SecurityToolkitConfigurationProperties {
         throwIfNull(this.getKey(), "key");
         throwIfNull(this.getKey().getAlias(), "key.alias");
 
-
     }
 
     public void throwIfNull(Object prop, String propName) {
         if (prop == null) {
-            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!");
+            String error = "Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!";
+            if (commonProperties.isFailOnInvalidProperty()) {
+                throw new IllegalArgumentException(error);
+            } else {
+                LOGGER.warn(error);
+            }
         }
     }
 }

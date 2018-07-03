@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.spring;
 
+import eu.domibus.connector.common.spring.CommonProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test security toolkit config resolving
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={SecurityToolkitConfigurationProperties.class})
+@ContextConfiguration(classes={SecurityToolkitConfigurationProperties.class, CommonProperties.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"},
         properties= {   "liquibase.enabled=false",
                "connector.security.keystore.password=password",

@@ -23,6 +23,7 @@
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorDistribution</module>
+        <module>domibusConnectorControllerLIB</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -62,6 +63,7 @@
         <spring.boot.version>1.5.8.RELEASE</spring.boot.version>
 
         <releases-repo.url></releases-repo.url>
+        <snapshots-repo.url></snapshots-repo.url>
     </properties>
 
     <scm>
@@ -98,13 +100,37 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>domibusConnectorDomain</artifactId>
+                <classifier>tests</classifier>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorAPI</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorAPI</artifactId>
+                <version>${project.version}</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorAPIlib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorControllerAPI</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorControllerLIB</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -299,6 +325,16 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
                 <version>${org.apache.cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
