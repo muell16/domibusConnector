@@ -21,7 +21,7 @@ public class EvidencesToolkitConfigurationProperties {
      * Configuration of the keyStore which holds the private key to sign the evidences
      */
     @NestedConfigurationProperty
-    StoreConfigurationProperties keystore = new StoreConfigurationProperties();
+    StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
 
     /**
      * Configuration of the private key which is used to sign the evidences
@@ -38,12 +38,12 @@ public class EvidencesToolkitConfigurationProperties {
      */
     HashValueBuilder.HashAlgorithm hashAlgorithm = HashValueBuilder.HashAlgorithm.SHA256;
 
-    public StoreConfigurationProperties getKeystore() {
-        return keystore;
+    public StoreConfigurationProperties getKeyStore() {
+        return keyStore;
     }
 
-    public void setKeystore(StoreConfigurationProperties keystore) {
-        this.keystore = keystore;
+    public void setKeyStore(StoreConfigurationProperties keystore) {
+        this.keyStore = keystore;
     }
 
     public KeyConfigurationProperties getPrivateKey() {
@@ -66,7 +66,7 @@ public class EvidencesToolkitConfigurationProperties {
     @PostConstruct
     public void checkValues() {
         try {
-            this.getKeystore().validatePathReadable();
+            this.getKeyStore().validatePathReadable();
         } catch (StoreConfigurationProperties.ValidationException ve) {
             throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + ".keystore" , ve);
         }

@@ -26,8 +26,8 @@ public class DomibusConnectorEvidencesToolkitContext {
     @Bean
     @SuppressWarnings("squid:S2068")
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
-        String javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeystore().getPathUrlAsString();
-        String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeystore().getPassword();
+        String javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeyStore().getPathUrlAsString();
+        String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeyStore().getPassword();
         String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
         String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();
         LOGGER.debug("Creating ECodexEvidenceBuilder with keyStorePath [{}], keyStorePassword [{}], keyAlias [{}], keyPassword [password={}]",
