@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.backend.ws.link.spring;
 
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +139,7 @@ public class WSBackendLinkConfigurationProperties {
     public static class KeyAndKeyStoreConfigurationProperties {
         public KeyAndKeyStoreConfigurationProperties() {}
 
-        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, CertConfigurationProperties key) {
+        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, KeyConfigurationProperties key) {
             this.store = keyStore;
             this.key = key;
         }
@@ -154,7 +154,7 @@ public class WSBackendLinkConfigurationProperties {
          * Configures the default alias to use
          */
         @NestedConfigurationProperty
-        private CertConfigurationProperties key;
+        private KeyConfigurationProperties key;
 
         public StoreConfigurationProperties getStore() {
             return store;
@@ -164,11 +164,11 @@ public class WSBackendLinkConfigurationProperties {
             this.store = store;
         }
 
-        public CertConfigurationProperties getKey() {
+        public KeyConfigurationProperties getKey() {
             return key;
         }
 
-        public void setKey(CertConfigurationProperties key) {
+        public void setKey(KeyConfigurationProperties key) {
             this.key = key;
         }
 

@@ -1,7 +1,7 @@
 package eu.domibus.connector.security.spring;
 
 import eu.domibus.connector.common.spring.CommonProperties;
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,15 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
-import java.io.IOException;
 
 /**
  * contains security toolkit related configuration in a
@@ -41,7 +37,7 @@ public class SecurityToolkitConfigurationProperties {
     StoreConfigurationProperties keystore = new StoreConfigurationProperties();
 
     @NestedConfigurationProperty
-    CertConfigurationProperties key = new CertConfigurationProperties();
+    KeyConfigurationProperties key = new KeyConfigurationProperties();
 
     @NestedConfigurationProperty
     StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
@@ -62,11 +58,11 @@ public class SecurityToolkitConfigurationProperties {
         this.keystore = store;
     }
 
-    public CertConfigurationProperties getKey() {
+    public KeyConfigurationProperties getKey() {
         return key;
     }
 
-    public void setKey(CertConfigurationProperties key) {
+    public void setKey(KeyConfigurationProperties key) {
         this.key = key;
     }
 

@@ -31,6 +31,7 @@
         <!--		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>-->
         <org.apache.cxf.version>3.2.1</org.apache.cxf.version>
         <org.slf4j.version>1.7.11</org.slf4j.version>
+        <tomcat.version>8.5.32</tomcat.version>
         <!--		<hibernate.version>5.0.2.Final</hibernate.version>-->
         <quartz.version>2.2.1</quartz.version>
         <theme.version>1.0.10</theme.version>
@@ -133,6 +134,12 @@
                 <artifactId>domibusConnectorControllerLIB</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorTestData</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
 
             <!-- E-CODEX LIBRARIES -->
             <dependency>
@@ -384,8 +391,20 @@
 
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>6.0.53</version>
+                <artifactId>tomcat-jsp-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-el-api</artifactId>
+                <scope>test</scope>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper-el</artifactId>
+                <scope>test</scope>
+                <version>${tomcat.version}</version>
             </dependency>
 
             <!-- MANAGED TEST DEPENDENCIES -->

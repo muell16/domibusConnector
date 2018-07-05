@@ -1,7 +1,7 @@
 package eu.domibus.connector.evidences.spring;
 
 import eu.domibus.connector.evidences.HashValueBuilder;
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -27,7 +27,7 @@ public class EvidencesToolkitConfigurationProperties {
      * Configuration of the private key which is used to sign the evidences
      */
     @NestedConfigurationProperty
-    CertConfigurationProperties key = new CertConfigurationProperties();
+    KeyConfigurationProperties key = new KeyConfigurationProperties();
 
     /**
      * The hashAlgorithm used for signing the evidences
@@ -43,11 +43,11 @@ public class EvidencesToolkitConfigurationProperties {
         this.keystore = keystore;
     }
 
-    public CertConfigurationProperties getKey() {
+    public KeyConfigurationProperties getKey() {
         return key;
     }
 
-    public void setKey(CertConfigurationProperties key) {
+    public void setKey(KeyConfigurationProperties key) {
         this.key = key;
     }
 

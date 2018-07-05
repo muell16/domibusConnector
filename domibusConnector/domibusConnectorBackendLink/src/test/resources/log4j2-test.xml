@@ -9,10 +9,10 @@
                         var result = logEvent.getContextMap().get("COLOR");
                         result;                  
                     ]]></Script>                                        
-                    <PatternMatch key="YELLOW" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{yellow}"/>       
-                    <PatternMatch key="CYAN" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{cyan}"/>       
-                    <PatternMatch key="GREEN" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{green}"/>   
-                    <PatternMatch key="BLUE" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{blue}"/>        
+                    <PatternMatch privateKey="YELLOW" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{yellow}"/>
+                    <PatternMatch privateKey="CYAN" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{cyan}"/>
+                    <PatternMatch privateKey="GREEN" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{green}"/>
+                    <PatternMatch privateKey="BLUE" pattern="%style{%X{COLOR}## %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{blue}"/>
                 </ScriptPatternSelector>
             </PatternLayout>
         </Console>

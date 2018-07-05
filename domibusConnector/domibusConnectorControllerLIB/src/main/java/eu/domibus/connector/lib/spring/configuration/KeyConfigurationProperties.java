@@ -1,18 +1,21 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 /**
  * Configuration properties for referencing a
- *  key, cert in a key store
+ *  key in a key store
  *   a alias and a optional password
  */
-public class CertConfigurationProperties {
+public class KeyConfigurationProperties {
 
-    public CertConfigurationProperties() {}
+    public KeyConfigurationProperties() {}
 
-    public CertConfigurationProperties(String alias, String password) {
+    public KeyConfigurationProperties(String alias, String password) {
         this.alias = alias;
         this.password = password;
     }
@@ -21,11 +24,14 @@ public class CertConfigurationProperties {
      * The alias of the Certificate/Key
      */
     @Nonnull
+    @NotNull(message = "an alias must be provided!")
+    @Length(min = 1, message = "Alias must have at least one charactar!")
     String alias;
 
     /**
      * The password of the Certificate/Key
      */
+    @NotNull
     String password = "";
 
     public String getAlias() {
