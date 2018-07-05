@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * contains security toolkit related configuration in a
@@ -29,22 +30,26 @@ public class SecurityToolkitConfigurationProperties {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityToolkitConfigurationProperties.class);
 
-    @Autowired
-    CommonProperties commonProperties;
+//    @Autowired
+//    CommonProperties commonProperties;
 
     @Valid
+    @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
 
     @Valid
+    @NotNull
     @NestedConfigurationProperty
     KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
     @Valid
+    @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
 
     @Valid
+    @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
 
@@ -109,21 +114,21 @@ public class SecurityToolkitConfigurationProperties {
         this.createOjStoreIfMissing = createOjStoreIfMissing;
     }
 
-    @PostConstruct
-    public void checkValues() {
-        throwIfNull(this.getPrivateKey(), "private-key");
-        throwIfNull(this.getPrivateKey().getAlias(), "private-key.alias");
-
-    }
-
-    public void throwIfNull(Object prop, String propName) {
-        if (prop == null) {
-            String error = "Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!";
-            if (commonProperties.isFailOnInvalidProperty()) {
-                throw new IllegalArgumentException(error);
-            } else {
-                LOGGER.warn(error);
-            }
-        }
-    }
+//    @PostConstruct
+//    public void checkValues() {
+//        throwIfNull(this.getPrivateKey(), "private-key");
+//        throwIfNull(this.getPrivateKey().getAlias(), "private-key.alias");
+//
+//    }
+//
+//    public void throwIfNull(Object prop, String propName) {
+//        if (prop == null) {
+//            String error = "Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!";
+//            if (commonProperties.isFailOnInvalidProperty()) {
+//                throw new IllegalArgumentException(error);
+//            } else {
+//                LOGGER.warn(error);
+//            }
+//        }
+//    }
 }

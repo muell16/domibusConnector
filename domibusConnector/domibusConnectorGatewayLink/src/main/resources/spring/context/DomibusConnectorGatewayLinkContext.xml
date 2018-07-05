@@ -34,7 +34,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 		<!--address="${gateway.submission.endpoint.address}" -->
     <!--&gt;-->
         <jaxws:properties>
-            <entry privateKey="mtom-enabled" value="true" />
+            <entry key="mtom-enabled" value="true" />
         </jaxws:properties>
     </jaxws:client>
 		
@@ -52,7 +52,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
                     xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"
     > -->
          <jaxws:properties>
-            <entry privateKey="mtom-enabled" value="true" />
+            <entry key="mtom-enabled" value="true" />
         </jaxws:properties>
    	</jaxws:endpoint>
    	
