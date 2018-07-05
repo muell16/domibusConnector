@@ -38,16 +38,16 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
         
         <jaxws:properties>
             
-            <entry privateKey="security.signature.properties" value-ref="encryptProperties" />
-            <entry privateKey="security.signature.username" value="${ws.backendclient.name}" />
-            <entry privateKey="security.encryption.username" value="connector" />
+            <entry key="security.signature.properties" value-ref="encryptProperties" />
+            <entry key="security.signature.username" value="${ws.backendclient.name}" />
+            <entry key="security.encryption.username" value="connector" />
 <!--            <entry privateKey="security.callback-handler" value-ref="myPasswordCallback"/>-->
-            <entry privateKey="security.encryption.properties" value-ref="encryptProperties" />
+            <entry key="security.encryption.properties" value-ref="encryptProperties" />
 
-            <entry privateKey="mtom-enabled" value="true" />
-            <entry privateKey="security.store.bytes.in.attachment" value="true" />
+            <entry key="mtom-enabled" value="true" />
+            <entry key="security.store.bytes.in.attachment" value="true" />
 
-            <entry privateKey="security.enable.streaming" value="true" />
+            <entry key="security.enable.streaming" value="true" />
 
         </jaxws:properties>
          <jaxws:features>

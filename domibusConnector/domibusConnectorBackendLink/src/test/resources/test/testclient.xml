@@ -27,10 +27,10 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
           class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <props>
-                <prop privateKey="org.apache.ws.security.crypto.provider">org.apache.wss4j.common.crypto.Merlin</prop>
-                <prop privateKey="org.apache.ws.security.crypto.merlin.keystore.type">jks</prop>
-                <prop privateKey="org.apache.ws.security.crypto.merlin.keystore.password">12345</prop>
-                <prop privateKey="org.apache.ws.security.crypto.merlin.keystore.file">${ws.backendclient.name}.jks</prop>
+                <prop key="org.apache.ws.security.crypto.provider">org.apache.wss4j.common.crypto.Merlin</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.type">jks</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.password">12345</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.file">${ws.backendclient.name}.jks</prop>
             </props>
         </property>
     </bean>
@@ -50,12 +50,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
 <!--            <entry privateKey="security.username" value="bob" />
             <entry privateKey="security.password" value="test" />            -->
 
-            <entry privateKey="security.encryption.properties" value-ref="encryptProperties" />
-            <entry privateKey="security.signature.properties" value-ref="encryptProperties"  />
-            <entry privateKey="security.encryption.username" value="connector" />
-            <entry privateKey="security.signature.username" value="${ws.backendclient.name}" />
+            <entry key="security.encryption.properties" value-ref="encryptProperties" />
+            <entry key="security.signature.properties" value-ref="encryptProperties"  />
+            <entry key="security.encryption.username" value="connector" />
+            <entry key="security.signature.username" value="${ws.backendclient.name}" />
 
-            <entry privateKey="security.enable.streaming" value="true" />
+            <entry key="security.enable.streaming" value="true" />
 <!--            <entry privateKey="mtom-enabled" value="true"/> -->
                         
          </jaxws:properties>
