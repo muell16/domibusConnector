@@ -2,7 +2,9 @@
 package eu.domibus.connector.controller.service;
 
 /**
- *
+ * Service for generating a for the connector unique message id
+ *  if multiple instances are running the generated id must be unique over all
+ *  instances
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 public interface DomibusConnectorMessageIdGenerator {

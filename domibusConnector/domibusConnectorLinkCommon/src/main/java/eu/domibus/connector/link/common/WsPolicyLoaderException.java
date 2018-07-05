@@ -1,6 +1,5 @@
-package eu.domibus.connector.backend.ws.helper;
+package eu.domibus.connector.link.common;
 
-@Deprecated // "use class from package eu.domibus.connector.link.common instead!"
 public class WsPolicyLoaderException extends RuntimeException {
     public WsPolicyLoaderException() {
     }

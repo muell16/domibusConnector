@@ -4,8 +4,8 @@ package eu.domibus.connector.controller.service;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 /**
- * should be implemented by the Service which is delivering the messages
- * to the backend
+ *  is implemented by the controller to submit messages to the controller
+ *  which have been received by the backend link module
  *
  */
 public interface DomibusConnectorBackendSubmissionService {

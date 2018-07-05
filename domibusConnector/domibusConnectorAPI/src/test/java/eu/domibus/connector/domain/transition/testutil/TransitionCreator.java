@@ -1,19 +1,7 @@
 package eu.domibus.connector.domain.transition.testutil;
 
-import eu.domibus.connector.domain.transition.DomibusConnectorActionType;
-import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
-import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureMimeType;
-import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageAttachmentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageConfirmationType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDetailsType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
-import eu.domibus.connector.domain.transition.DomibusConnectorPartyType;
-import eu.domibus.connector.domain.transition.DomibusConnectorServiceType;
+import eu.domibus.connector.domain.transition.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +43,29 @@ public class TransitionCreator {
         message.getMessageAttachments().add(createMessageAttachment());
                 
         return message;
+    }
+
+    public static DomibusConnectorMessageResponseType createResponse() {
+        DomibusConnectorMessageResponseType response = new DomibusConnectorMessageResponseType();
+        response.setAssignedMessageId("assigned_01234");
+        response.setResponseForMessageId("msg12345");
+        response.setResult(true);
+        response.setResultMessage("message accepted!");
+
+        return response;
+    }
+
+    public static DomibusConnectorMessageResponseType createResponseWithErrors() {
+        DomibusConnectorMessageResponseType response = new DomibusConnectorMessageResponseType();
+        response.setAssignedMessageId("assigned_01234");
+        response.setResponseForMessageId("msg12345");
+        response.setResult(false);
+        response.setResultMessage("message not accepted due errors...!");
+
+        DomibusConnectorMessageErrorType messageError = createMessageError();
+        response.getMessageErrors().add(messageError);
+
+        return response;
     }
     
     public static DomibusConnectorMessageType createEvidenceNonDeliveryMessage() {

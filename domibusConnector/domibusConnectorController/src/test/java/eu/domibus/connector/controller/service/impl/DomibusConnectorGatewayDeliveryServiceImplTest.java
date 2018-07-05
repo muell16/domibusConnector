@@ -70,7 +70,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
     public void testDeliverMessageFromGateway_message() {
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessageFormAFromGwdomibusRed();
 
-        deliveryService.deliverMessageFromGateway(epoMessage);
+        deliveryService.deliverMessageFromGatewayToController(epoMessage);
 
         assertThat(putOnQueue).hasSize(1);
         assertThat(putOnQueue.get(0)).isEqualToComparingFieldByField(epoMessage);
@@ -81,7 +81,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
     public void testDeliverMessageFromGateway_evidenceMessage() {
         DomibusConnectorMessage nonDeliveryMessage = DomainEntityCreator.createEvidenceNonDeliveryMessage();
 
-        deliveryService.deliverMessageFromGateway(nonDeliveryMessage);
+        deliveryService.deliverMessageFromGatewayToController(nonDeliveryMessage);
 
         assertThat(putOnQueue).hasSize(1);
         assertThat(putOnQueue.get(0)).isEqualToComparingFieldByField(nonDeliveryMessage);
@@ -90,7 +90,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
 
     @Test(expected = DomibusConnectorControllerException.class)
     public void testDeliverMessageFromGateway_null_shouldThrowException() {
-        deliveryService.deliverMessageFromGateway(null);
+        deliveryService.deliverMessageFromGatewayToController(null);
     }
 
     @Test(expected =  DomibusConnectorControllerException.class)
@@ -101,7 +101,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
                 .build();
         message.getMessageConfirmations().clear();
 
-        deliveryService.deliverMessageFromGateway(message);
+        deliveryService.deliverMessageFromGatewayToController(message);
     }
 
 }

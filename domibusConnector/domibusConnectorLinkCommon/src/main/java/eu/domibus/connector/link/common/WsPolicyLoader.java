@@ -1,13 +1,11 @@
 
-package eu.domibus.connector.backend.ws.helper;
+package eu.domibus.connector.link.common;
 
-import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
 import javax.xml.stream.XMLStreamException;
@@ -22,18 +20,14 @@ import java.util.List;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Component
-@Deprecated // "use class from package eu.domibus.connector.link.common instead!"
 public class WsPolicyLoader {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(WsPolicyLoader.class);
 
-    private WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
+    private Resource wsPolicy;
 
-    //setter
-    @Autowired
-    public void setBackendLinkConfigurationProperties(WSBackendLinkConfigurationProperties backendLinkConfigurationProperties) {
-        this.backendLinkConfigurationProperties = backendLinkConfigurationProperties;
+    public WsPolicyLoader(Resource resource) {
+        this.wsPolicy = resource;
     }
 
     public WSPolicyFeature loadPolicyFeature() {
@@ -42,12 +36,12 @@ public class WsPolicyLoader {
 
         InputStream is = null;
         try {
-            is = backendLinkConfigurationProperties.getWsPolicy().getInputStream();
+            is = wsPolicy.getInputStream();
         } catch (IOException ioe) {
-            throw new UncheckedIOException(String.format("ws policy [%s] cannot be read!", backendLinkConfigurationProperties.getWsPolicy()), ioe);
+            throw new UncheckedIOException(String.format("ws policy [%s] cannot be read!", wsPolicy), ioe);
         }
         if (is == null) {
-            throw new WsPolicyLoaderException(String.format("ws policy [%s] cannot be read! InputStream is nulL!", backendLinkConfigurationProperties.getWsPolicy()));
+            throw new WsPolicyLoaderException(String.format("ws policy [%s] cannot be read! InputStream is nulL!", wsPolicy));
         }
         List<Element> policyElements = new ArrayList<Element>();
         try {
@@ -55,7 +49,7 @@ public class WsPolicyLoader {
             LOGGER.debug("adding policy element [{}]", e);
             policyElements.add(e);
         } catch (XMLStreamException ex) {
-            throw new WsPolicyLoaderException("cannot parse policy: /wsdl/backend.policy.xml", ex);
+            throw new WsPolicyLoaderException("cannot parse policy " + wsPolicy , ex);
         }
         policyFeature.getPolicyElements().addAll(policyElements);
 

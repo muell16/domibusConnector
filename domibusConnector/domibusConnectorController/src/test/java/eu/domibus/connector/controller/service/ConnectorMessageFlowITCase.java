@@ -30,7 +30,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
-import java.io.ByteArrayInputStream;
 import java.util.concurrent.BlockingQueue;
 
 import org.springframework.test.context.jdbc.Sql;
@@ -104,7 +103,7 @@ public class ConnectorMessageFlowITCase {
 
         LOGGER.info("message with confirmations: [{}]", loadMessageFrom.getMessageConfirmations());
 
-        rcvMessageFromGwService.deliverMessageFromGateway(loadMessageFrom);
+        rcvMessageFromGwService.deliverMessageFromGatewayToController(loadMessageFrom);
 
         DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
         assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!

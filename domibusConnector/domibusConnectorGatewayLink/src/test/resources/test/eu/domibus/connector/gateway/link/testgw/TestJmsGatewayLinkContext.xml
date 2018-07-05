@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:soap="http://cxf.apache.org/bindings/soap"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <context:annotation-config />
+
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://172.18.2.100:8080"/>
+    </bean>
+
+    <bean id="clientCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="amqConnectionFactory"/>
+        <property name="sessionCacheSize" value="20"/>
+        <property name="cacheProducers" value="true"/>
+    </bean>
+
+    <bean id="clientContainerListener" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="clientCachingConnectionFactory" />
+        <property name="destinationName" value="test.load.outside.multispeak.ch.queue" />
+    </bean>
+
+    <jaxws:client
+            id="load-test-multispeak-ch-client"
+            xmlns:ns="http://www.multispeak.org/Version_4.1_Release"
+            serviceClass="org.multispeak.version_4_1_6.CH.CHServerSoap"
+            serviceName="ns:CH_Server"
+            endpointName="ns:CH_ServerSoap"
+            address="jms://"
+            wsdlLocation="classpath:CH_Server.wsdl">
+        <jaxws:features>
+            <bean class="org.apache.cxf.transport.jms.ConnectionFactoryFeature">
+                <constructor-arg index="0" ref="clientCachingConnectionFactory"/>
+            </bean>
+        </jaxws:features>
+    </jaxws:client>
+
+    <bean id="serverCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="amqConnectionFactory"/>
+        <property name="sessionCacheSize" value="20"/>
+        <property name="cacheConsumers" value="true"/>
+    </bean>
+
+    <bean id="serverContainerListener" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="serverCachingConnectionFactory" />
+        <property name="destinationName" value="test.load.outside.multispeak.ch.queue" />
+        <property name="cacheLevel" value="3" />
+        <property name="concurrentConsumers" value="10" />
+        <property name="maxConcurrentConsumers" value="50" />
+    </bean>
+
+    <jaxws:endpoint
+            id="load-test-multispeak-ch-server"
+            xmlns:tns="http://www.multispeak.org/Version_4.1_Release"
+            implementor="pt.fraunhofer.outside.multispeak.ch.server.CHServerSoapImpl"
+            serviceName="tns:CH_Server"
+            endpointName="tns:CH_ServerSoap"
+            publish="false"
+            address="jms://"
+            wsdlLocation="classpath:CH_Server.wsdl">
+        <jaxws:features>
+            <bean class="org.apache.cxf.feature.LoggingFeature"/>
+            <bean class="org.apache.cxf.transport.jms.ConnectionFactoryFeature">
+                <constructor-arg index="0" ref="serverCachingConnectionFactory"/>
+            </bean>
+        </jaxws:features>
+    </jaxws:endpoint>
