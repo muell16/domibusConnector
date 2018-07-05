@@ -39,15 +39,15 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
         </jaxws:features>
         
         <jaxws:properties>
-            <entry privateKey="security.callback-handler">
+            <entry key="security.callback-handler">
                 <ref bean="defaultCallbackHandler" />
             </entry>
-            <entry privateKey="security.signature.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
-            <entry privateKey="security.encryption.username" value="useReqSigCert" />
-            <entry privateKey="security.encryption.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
-            <entry privateKey="mtom-enabled" value="true" />
-            <entry privateKey="security.store.bytes.in.attachment" value="true" />
-            <entry privateKey="security.enable.streaming" value="true" />
+            <entry key="security.signature.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
+            <entry key="security.encryption.username" value="useReqSigCert" />
+            <entry key="security.encryption.properties" value="#{WSBackendLinkConfigurationProperties.getWssProperties()}" />
+            <entry key="mtom-enabled" value="true" />
+            <entry key="security.store.bytes.in.attachment" value="true" />
+            <entry key="security.enable.streaming" value="true" />
         </jaxws:properties>
     </jaxws:endpoint>
 
