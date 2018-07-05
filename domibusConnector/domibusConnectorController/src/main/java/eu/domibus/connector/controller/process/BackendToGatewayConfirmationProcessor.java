@@ -19,6 +19,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
+
 /**
  * Takes an confirmation originalMessage from backend
  * and creates a new confirmation of the same confirmation type
@@ -90,7 +92,8 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             messagePersistenceService.confirmMessage(originalMessage);
         }
 
-        LOGGER.info("Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
+
+        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
 	}
 
 	private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {

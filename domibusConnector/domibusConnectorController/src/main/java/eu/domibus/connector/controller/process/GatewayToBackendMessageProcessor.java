@@ -30,6 +30,8 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
+import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
+
 @Component("GatewayToBackendMessageProcessor")
 public class GatewayToBackendMessageProcessor implements DomibusConnectorMessageProcessor {
 	
@@ -132,10 +134,8 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			backendDeliveryService.deliverMessageToBackend(message);
 		}
 
-		 // TODO this needs to be done by the backend link!!!
-//		persistenceService.setMessageDeliveredToNationalSystem(originalMessage);
 
-		LOGGER.info("Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());
+		LOGGER.info(BUSINESS_LOG, "Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());
 	}
 	
 	private boolean isConnector2ConnectorTest(DomibusConnectorMessage message) {
@@ -224,6 +224,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 
 		if (!isAcceptance) {
+			LOGGER.warn(BUSINESS_LOG, "Message is not accepted!");
 			messagePersistenceService.rejectMessage(originalMessage);
 		}
 	}

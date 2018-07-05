@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 @Component(EvidencesTimeoutConfigurationProperties.BEAN_NAME)
 @ConfigurationProperties(prefix="connector.controller.evidence")
@@ -28,7 +29,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * evidences should be checked
      * the default value is 1 minute (60000ms)
      */
-    @Nonnull
+    @NotNull
     private Duration checkTimeout;
 
     /**
@@ -36,30 +37,66 @@ public class EvidencesTimeoutConfigurationProperties {
      * wait for an relayREMMD evidence message after a message has been
      * successfully submitted to the gateway
      * The default value is 24 hours
+     * 0 disables the timeoutProcessor
      * If the timeout exceeds the according timeoutProcessor is started
      */
-    @Nonnull
+    @NotNull
     private Duration relayREMMDTimeout;
+
+    /**
+     * This property defines the timeout how long the connector should
+     * wait for an relayREMMD evidence message after a message has been
+     * successfully submitted to the gateway
+     * The default value is 12 hours
+     * 0 disables the timeoutProcessor
+     * If the timeout exceeds the according warnTimeoutProcessor is started
+     */
+    @NotNull
+    private Duration relayREMMDWarnTimeout;
 
     /**
      * this property defines the timeout how long the connector should
      * wait for an deliveryTimeout evidence message after a message has been
      * successfully submitted to the gateway
-     * * The default value is 24 hours
+     * The default value is 24 hours
+     * 0 disables the timeoutProcessor
      * If the timeout exceeds the according timeoutProcessor is started
      */
-    @Nonnull
+    @NotNull
     private Duration deliveryTimeout;
+
+    /**
+     * this property defines the timeout how long the connector should
+     * wait for an deliveryTimeout evidence message after a message has been
+     * successfully submitted to the gateway
+     * The default value is 24 hours
+     * 0 disables the timeoutProcessor
+     * If the timeout exceeds the according warnTimeoutProcessor is started
+     */
+    @NotNull
+    private Duration deliveryWarnTimeout;
 
     /**
      * this property defines the timeout how long the connector should
      * wait for an retrievalTimeout evidence message after a message has been
      * successfully submitted to the gateway
      * The default value is 24 hours
+     * 0 disables the timeoutProcessor
      * If the timeout exceeds the according timeoutProcessor is started
      */
-    @Nonnull
+    @NotNull
     private Duration retrievalTimeout;
+
+    /**
+     * this property defines the timeout how long the connector should
+     * wait for an retrievalTimeout evidence message after a message has been
+     * successfully submitted to the gateway
+     * The default value is 24 hours
+     * 0 disables the timeoutProcessor
+     * If the timeout exceeds the according warnTmeoutProcessor is started
+     */
+    @NotNull
+    private Duration retrievalWarnTimeout;
 
 
     public boolean isTimeoutActive() {
@@ -102,5 +139,27 @@ public class EvidencesTimeoutConfigurationProperties {
         this.checkTimeout = checkTimeout;
     }
 
+    public Duration getRelayREMMDWarnTimeout() {
+        return relayREMMDWarnTimeout;
+    }
 
+    public void setRelayREMMDWarnTimeout(Duration relayREMMDWarnTimeout) {
+        this.relayREMMDWarnTimeout = relayREMMDWarnTimeout;
+    }
+
+    public Duration getDeliveryWarnTimeout() {
+        return deliveryWarnTimeout;
+    }
+
+    public void setDeliveryWarnTimeout(Duration deliveryWarnTimeout) {
+        this.deliveryWarnTimeout = deliveryWarnTimeout;
+    }
+
+    public Duration getRetrievalWarnTimeout() {
+        return retrievalWarnTimeout;
+    }
+
+    public void setRetrievalWarnTimeout(Duration retrievalWarnTimeout) {
+        this.retrievalWarnTimeout = retrievalWarnTimeout;
+    }
 }
