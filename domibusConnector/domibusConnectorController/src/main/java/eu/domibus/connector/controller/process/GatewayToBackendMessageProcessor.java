@@ -9,6 +9,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
+import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_EVIDENCE_LOG;
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 @Component("GatewayToBackendMessageProcessor")
@@ -109,6 +111,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
     @Override
 	@StoreMessageExceptionIntoDatabase
 	public void processMessage(DomibusConnectorMessage message) {
+        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message); //set message on logging context
 		LOGGER.trace("#processMessage: start processing originalMessage [{}] with confirmations [{}]", message, message.getMessageConfirmations());
 		
 		createRelayREMMDEvidenceAndSendIt(message, true);
@@ -254,7 +257,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         try {
         	LOGGER.debug("Submitting messageConfirmation [{}] back to GW", messageConfirmation);
             gwSubmissionService.submitToGateway(evidenceMessage);
-
+            LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] for message [{}] successfully sent to gw", messageConfirmation.getEvidenceType(), originalMessage.getConnectorMessageId());
 
         } catch (Exception e) {
             //TODO: improve that!
