@@ -10,7 +10,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Properties;
 
 /**
@@ -19,6 +22,7 @@ import java.util.Properties;
  */
 @Component
 @ConfigurationProperties(prefix = WSBackendLinkConfigurationProperties.PREFIX)
+@Validated
 public class WSBackendLinkConfigurationProperties {
 
     public static final String PREFIX = "connector.backend.ws";
@@ -46,20 +50,26 @@ public class WSBackendLinkConfigurationProperties {
      *  the signing and wss is done with certificates
      *
      */
+    @Valid
     @NestedConfigurationProperty
+    @NotNull
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
     /**
      * Configuration of the key store which is used to sign the transferred soap-messages and
      * decrypt the from the backendClient received messages
      */
+    @Valid
     @NestedConfigurationProperty
+    @NotNull
     private KeyAndKeyStoreConfigurationProperties key;
 
     /**
      * Trust store which is used to verify the from the backendClient signed messages
      */
+    @Valid
     @NestedConfigurationProperty
+    @NotNull
     private CertAndStoreConfigurationProperties trust;
 
     public String getBackendPublishAddress() {

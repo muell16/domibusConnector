@@ -210,6 +210,11 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
   
