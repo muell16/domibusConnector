@@ -1,13 +1,8 @@
 package eu.domibus.connector.evidences.spring;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,8 +28,8 @@ public class DomibusConnectorEvidencesToolkitContext {
     public EvidenceBuilder domibusConnectorEvidenceBuilder() {
         String javaKeyStorePath = evidencesToolkitConfigurationProperties.getKeystore().getPathUrlAsString();
         String javaKeyStorePassword = evidencesToolkitConfigurationProperties.getKeystore().getPassword();
-        String keyAlias = evidencesToolkitConfigurationProperties.getKey().getAlias();
-        String keyPassword = evidencesToolkitConfigurationProperties.getKey().getPassword();
+        String keyAlias = evidencesToolkitConfigurationProperties.getPrivateKey().getAlias();
+        String keyPassword = evidencesToolkitConfigurationProperties.getPrivateKey().getPassword();
         LOGGER.debug("Creating ECodexEvidenceBuilder with keyStorePath [{}], keyStorePassword [{}], keyAlias [{}], keyPassword [password={}]",
                 javaKeyStorePath, javaKeyStorePassword, keyAlias, keyPassword);
         return new ECodexEvidenceBuilder(javaKeyStorePath, javaKeyStorePassword, keyAlias, keyPassword);

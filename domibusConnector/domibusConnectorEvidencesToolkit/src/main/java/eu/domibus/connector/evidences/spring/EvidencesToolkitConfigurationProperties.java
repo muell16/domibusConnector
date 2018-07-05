@@ -27,7 +27,7 @@ public class EvidencesToolkitConfigurationProperties {
      * Configuration of the private key which is used to sign the evidences
      */
     @NestedConfigurationProperty
-    KeyConfigurationProperties key = new KeyConfigurationProperties();
+    KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
     /**
      * The hashAlgorithm used for signing the evidences
@@ -43,12 +43,12 @@ public class EvidencesToolkitConfigurationProperties {
         this.keystore = keystore;
     }
 
-    public KeyConfigurationProperties getKey() {
-        return key;
+    public KeyConfigurationProperties getPrivateKey() {
+        return privateKey;
     }
 
-    public void setKey(KeyConfigurationProperties key) {
-        this.key = key;
+    public void setPrivateKey(KeyConfigurationProperties privateKey) {
+        this.privateKey = privateKey;
     }
 
     public HashValueBuilder.HashAlgorithm getHashAlgorithm() {
@@ -67,8 +67,8 @@ public class EvidencesToolkitConfigurationProperties {
         } catch (StoreConfigurationProperties.ValidationException ve) {
             throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + ".keystore" , ve);
         }
-        throwIfNull(getKey(), "key");
-        throwIfNull(getKey().getAlias(), "key.alias");
+        throwIfNull(getPrivateKey(), "key");
+        throwIfNull(getPrivateKey().getAlias(), "key.alias");
     }
 
     public void throwIfNull(Object nullcheck, String message) {
