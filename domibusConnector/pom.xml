@@ -22,7 +22,8 @@
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorDistribution</module>
-        <module>domibusConnectorControllerLIB</module>
+	<module>domibusConnectorControllerLIB</module>
+	<module>domibusConnectorLinkCommon</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
