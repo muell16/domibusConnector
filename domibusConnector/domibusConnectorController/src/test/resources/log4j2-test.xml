@@ -3,7 +3,7 @@
     <Appenders>
         <Console name="Business" target="SYSTEM_OUT">
             <MarkerFilter marker="BUSINESS" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%style{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %marker - messageid: [%mdc{messageid}] - %msg%n}{Cyan}" />
+            <PatternLayout pattern="%style{%d{HH:mm:ss} %-5level - %marker - messageid: [%mdc{messageid}] - %msg%n}{Cyan}" />
         </Console>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - messageid: [%mdc{messageid}] - %msg%n" />
