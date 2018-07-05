@@ -855,6 +855,8 @@
                                 <exclude>ch.qos.logback:logback-classic</exclude>
                                 <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
                                 <exclude>log4j:log4j</exclude>
+                                <exclude>org.apache.tomcat:jasper-el</exclude>
+                                <exclude>org.apache.tomcat:el-api</exclude>
                             </excludes>
                         </bannedDependencies>
                     </rules>

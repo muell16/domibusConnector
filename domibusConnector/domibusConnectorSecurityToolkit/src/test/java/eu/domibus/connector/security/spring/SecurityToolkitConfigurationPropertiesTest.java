@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes={SecurityToolkitConfigurationProperties.class, CommonProperties.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"},
         properties= {   "liquibase.enabled=false",
-               "connector.security.keystore.password=password",
-                "connector.security.t=test"
+//               "connector.security.keystore.password=password",
+//                "connector.security.t=test"
         })
 @EnableConfigurationProperties
 public class SecurityToolkitConfigurationPropertiesTest {

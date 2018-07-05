@@ -25,6 +25,9 @@ public class EvidencesToolkitConfigurationProperties {
 
     /**
      * Configuration of the private key which is used to sign the evidences
+     *
+     * property name connector.evidences.private-key
+     *
      */
     @NestedConfigurationProperty
     KeyConfigurationProperties privateKey = new KeyConfigurationProperties();

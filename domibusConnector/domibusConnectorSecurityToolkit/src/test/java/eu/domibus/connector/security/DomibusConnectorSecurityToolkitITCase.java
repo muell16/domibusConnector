@@ -1,5 +1,6 @@
 package eu.domibus.connector.security;
 
+import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.domain.testutil.DomibusConnectorBigDataReferenceGetSetBased;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -45,7 +46,7 @@ import org.springframework.test.context.TestPropertySource;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class})
+@ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class, CommonProperties.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"}, 
         properties= {   "liquibase.enabled=false"
 })

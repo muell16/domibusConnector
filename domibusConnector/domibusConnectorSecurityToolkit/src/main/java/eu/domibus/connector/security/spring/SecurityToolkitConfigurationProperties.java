@@ -34,16 +34,19 @@ public class SecurityToolkitConfigurationProperties {
 
     @Valid
     @NestedConfigurationProperty
-    StoreConfigurationProperties keystore = new StoreConfigurationProperties();
+    StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
 
+    @Valid
     @NestedConfigurationProperty
-    KeyConfigurationProperties key = new KeyConfigurationProperties();
+    KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
+    @Valid
     @NestedConfigurationProperty
     StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
 
+    @Valid
     @NestedConfigurationProperty
-    StoreConfigurationProperties truststore = new StoreConfigurationProperties();
+    StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
 
     /**
      * Should the trust store created if it is missing?
@@ -51,27 +54,27 @@ public class SecurityToolkitConfigurationProperties {
     boolean createOjStoreIfMissing = true;
 
     public StoreConfigurationProperties getKeyStore() {
-        return keystore;
+        return keyStore;
     }
 
     public void setKeyStore(StoreConfigurationProperties store) {
-        this.keystore = store;
+        this.keyStore = store;
     }
 
-    public KeyConfigurationProperties getKey() {
-        return key;
+    public KeyConfigurationProperties getPrivateKey() {
+        return privateKey;
     }
 
-    public void setKey(KeyConfigurationProperties key) {
-        this.key = key;
+    public void setPrivateKey(KeyConfigurationProperties key) {
+        this.privateKey = key;
     }
 
     public StoreConfigurationProperties getKeystore() {
-        return keystore;
+        return keyStore;
     }
 
     public void setKeystore(StoreConfigurationProperties keystore) {
-        this.keystore = keystore;
+        this.keyStore = keystore;
     }
 
     public StoreConfigurationProperties getOjStore() {
@@ -83,11 +86,19 @@ public class SecurityToolkitConfigurationProperties {
     }
 
     public StoreConfigurationProperties getTruststore() {
-        return truststore;
+        return trustStore;
     }
 
     public void setTruststore(StoreConfigurationProperties trustStore) {
-        this.truststore = trustStore;
+        this.trustStore = trustStore;
+    }
+
+    public StoreConfigurationProperties getTrustStore() {
+        return trustStore;
+    }
+
+    public void setTrustStore(StoreConfigurationProperties trustStore) {
+        this.trustStore = trustStore;
     }
 
     public boolean isCreateOjStoreIfMissing() {
@@ -100,8 +111,8 @@ public class SecurityToolkitConfigurationProperties {
 
     @PostConstruct
     public void checkValues() {
-        throwIfNull(this.getKey(), "key");
-        throwIfNull(this.getKey().getAlias(), "key.alias");
+        throwIfNull(this.getPrivateKey(), "private-key");
+        throwIfNull(this.getPrivateKey().getAlias(), "private-key.alias");
 
     }
 

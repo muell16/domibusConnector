@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.container.service;
 
+import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.security.configuration.DomibusConnectorEnvironmentConfiguration;
 import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
@@ -44,7 +45,8 @@ import static org.assertj.core.api.Assertions.assertThat;
         DomibusConnectorTechnicalValidationServiceFactory.class,
         SecurityToolkitConfigurationProperties.class,
         ECodexContainerFactoryService.class,
-        TokenIssuerFactory.class
+        TokenIssuerFactory.class,
+        CommonProperties.class
 })
 @EnableConfigurationProperties
 @TestPropertySource({"classpath:test.properties", "classpath:test-sig.properties"})
