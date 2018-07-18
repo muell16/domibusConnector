@@ -115,10 +115,6 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPIlib</artifactId>
-<<<<<<< HEAD
-=======
-            <version>4.0.2.1</version>
->>>>>>> origin/master
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
