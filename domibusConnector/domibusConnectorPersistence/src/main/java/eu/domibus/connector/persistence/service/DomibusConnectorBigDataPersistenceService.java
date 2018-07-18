@@ -33,12 +33,14 @@ public interface DomibusConnectorBigDataPersistenceService {
         
     /**
      * will create a new instance of DomibusConnectorBigDataReference     
-     * @param message - the message the data is related to
+     * @param input the inputstream holding the content
+     * @param connectorMessageId the unique id of this message
+     * @param documentName the name of this document
+     * @param documentContentType the type of this document
      * @return the created DomibusConnectorBigDataReference with writeable OutputStream
      */
     DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
     		String documentContentType);
-//    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message);
     
     /**
      * will delete all messages related to the provides message
