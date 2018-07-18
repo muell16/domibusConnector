@@ -4,7 +4,11 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorTest</artifactId>
+<<<<<<< HEAD
         <version>4.1.0-SNAPSHOT</version>
+=======
+        <version>4.0.2.1</version>
+>>>>>>> origin/master
     </parent>
     <artifactId>domibusConnectorDatabaseInitializer</artifactId>
     <name>${project.artifactId}</name>

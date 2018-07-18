@@ -45,7 +45,7 @@
 			<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
 			</source>
 			<outputDirectory>/webapp</outputDirectory>
-			<destName>domibusConnector-${version}.war</destName>
+			<destName>domibusConnector.war</destName>
 		</file>
 
 		<file>
