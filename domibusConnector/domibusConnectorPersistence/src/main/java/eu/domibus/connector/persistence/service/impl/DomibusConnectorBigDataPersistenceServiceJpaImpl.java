@@ -1,5 +1,28 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
+import org.springframework.util.StreamUtils;
+
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.dao.DomibusConnectorBigDataDao;
@@ -7,30 +30,11 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.StreamUtils;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.*;
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
 
 
 /**
- * this service uses jdbc to create an input / output stream with writing it
+ * this service uses jdbc to create an input / output stream with writing it 
  * to an byte array (ByteArrayInputStream / ByteArrayOutputStream)
- *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Service
@@ -39,18 +43,16 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceJpaImpl.class);
 
-
+    
     @Autowired
     private DomibusConnectorMessageDao messageDao;
 
     @Autowired
     private DomibusConnectorBigDataDao bigDataDao;
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
     @PersistenceContext
-    private EntityManager entityManager;
+    EntityManager entityManager;
+
 
 
     @Override
@@ -66,11 +68,20 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
             LOGGER.debug("Loading big data with storage ref [{}] from database", storageRef);
             PDomibusConnectorBigData bigData = bigDataDao.findOne(storageRef);
 
-            JpaBasedDomibusConnectorBigDataReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedDomibusConnectorBigDataReference(this);
+            JpaBasedDomibusConnectorBigDataReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedDomibusConnectorBigDataReference();
 
-            InputStream inputStream = createInputStream(bigData);
+            //TODO: use stream from db!
+            Blob content = bigData.getContent();
+            if (content != null) {
+                InputStream dbStream = content.getBinaryStream();
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(dbStream));
+                jpaBasedDomibusConnectorBigDataReference.setInputStream(byteArrayInputStream);
+            } else {
+                String error = String.format("Blob Content of bigDataStorage with reference [%d] is null!", storageRef);
+                throw new IllegalStateException(error);
+            }
 
-            jpaBasedDomibusConnectorBigDataReference.setInputStream(inputStream);
+
             jpaBasedDomibusConnectorBigDataReference.setStorageIdReference(storageReference);
             jpaBasedDomibusConnectorBigDataReference.setReadable(true);
             jpaBasedDomibusConnectorBigDataReference.setWriteable(false);
@@ -79,62 +90,69 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
             return jpaBasedDomibusConnectorBigDataReference;
 
-        } catch (NumberFormatException nfe) {
-            String error = String.format("Cannot load big data with storage reference [%s]%nThe actual implementation accepts only a Long number as storage ref key!", storageReference);
-            throw new RuntimeException(error, nfe);
-        }
-    }
 
-    private InputStream createInputStream(PDomibusConnectorBigData bigData) {
-        try {
-            //TODO: use stream from db!
-            Blob content = bigData.getContent();
-            if (content != null) {
-                InputStream dbStream = content.getBinaryStream();
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(dbStream));
-                return byteArrayInputStream;
-            } else {
-                String error = String.format("Blob Content of bigDataStorage with reference [%d] is null!", bigData.getId());
-                throw new IllegalStateException(error);
-            }
+        } catch (NumberFormatException nfe) {
+            String error = String.format("Cannot load big data with storage reference [%s]\nThe actual implementation expects a Long as storage ref key!", storageReference);
+            throw new RuntimeException(error, nfe);
         } catch (SQLException e) {
-            String error = String.format("Error while loading big data with ref [%s] from database", bigData.getId());
+            String error = String.format("Error while loading from database");
             throw new RuntimeException(error, e);
         } catch (IOException e) {
-            String error = String.format("Error while reading stream of big data with ref [%s] from database", bigData.getId());
-            throw new UncheckedIOException(error, e);
+            String error = String.format("Error while reading stream from database");
+            throw new RuntimeException(error, e);
         }
+
     }
 
     @Override
     @Transactional(readOnly = false)
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
+    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
-        LOGGER.trace("#createDomibusConnectorBigDataReference: called with message {}", message);
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+            LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
+            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
-        JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference(this);
-        reference.setReadable(false);
-        reference.setWriteable(true);
+            JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
+            reference.setReadable(false);
+            reference.setWriteable(true);
 
-        PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-        bigData.setName(reference.getName());
-        bigData.setMimeType(reference.getContentType());
-        bigData.setLastAccess(new Date());
-        if (dbMessage != null) {
+            PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
             bigData.setMessage(dbMessage.getId());
-        }
+            
+            bigData.setName(documentName);
+            bigData.setMimeType(documentContentType);
+            bigData.setLastAccess(new Date());
+            
+            DbBackedOutputStream outputStream = new DbBackedOutputStream(bigData);
+            try {
+				StreamUtils.copy(in, outputStream);
+			} catch (IOException e1) {
+				LOGGER.error("Exception copy streams for big data to database!", e1);
+			}
+            byte[] toByteArray = outputStream.toByteArray();
+            
+            Session hibernateSession = entityManager.unwrap(Session.class);
+            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+            bigData.setContent(blob);
+            String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
+            bigData.setChecksum(md5DigestAsHex);
 
-        bigData = bigDataDao.save(bigData);
+            try {
+            bigData = bigDataDao.save(bigData);
+            }catch (Exception e) {
+            	LOGGER.error("Exception saving big data to database!", e);
+            }
 
-        OutputStream outputStream = new DbBackedOutputStream(bigData);
-        reference.setOutputStream(outputStream);
-        reference.setStorageIdReference(Long.toString(bigData.getId()));
-        return reference;
+            
+            reference.setOutputStream(outputStream);
+
+            
+            reference.setStorageIdReference(Long.toString(bigData.getId()));
+            return reference;
 
 
     }
-
+    
+    
     @Override
     @Transactional(readOnly = false)
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
@@ -150,44 +168,26 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     }
 
-    private void writeOutputStreamToDatabase(final DbBackedOutputStream dbBackedOutputStream) {
-        LOGGER.trace("#writeOutputStreamToDatabase: outputStream: [{}]", dbBackedOutputStream);
-        PDomibusConnectorBigData data = dbBackedOutputStream.getStorageReference();
-
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute(status -> {
-            Session hibernateSession = entityManager.unwrap(Session.class);
-            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(dbBackedOutputStream.toByteArray());
-            data.setContent(blob);
-            LOGGER.trace("#writeOutputStreamToDatabase: calling save");
-            bigDataDao.save(data);
-            return null;
-        });
-
-
-    }
-
-
     private class DbBackedOutputStream extends ByteArrayOutputStream {
 
         private final PDomibusConnectorBigData storageReference;
 
-        DbBackedOutputStream(PDomibusConnectorBigData bigData) {
+        public DbBackedOutputStream(PDomibusConnectorBigData bigData) {
             this.storageReference = bigData;
         }
-
-        public PDomibusConnectorBigData getStorageReference() {
-            return storageReference;
+        
+        @Override
+        public void flush() throws IOException {
+        	LOGGER.debug("called flush on DbBackedOutputStream [{}]", this);
+            super.flush();
         }
 
         @Override
         public void close() throws IOException {
             LOGGER.debug("called close on DbBackedOutputStream [{}]", this);
-            writeOutputStreamToDatabase(this);
+            super.close();
         }
 
-        @Override
-        @SuppressWarnings("findbugs:RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
         public String toString() {
             long byteCount = this.toByteArray() == null ? -1 : this.toByteArray().length;
             return String.format("DbBackedOutputStream with bytes [%d] and with storageRef: [%s]", byteCount, storageReference);
@@ -196,22 +196,18 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     private static class JpaBasedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
 
-        private static final long serialVersionUID = 1L;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -4587251476768140113L;
 
-        private transient InputStream inputStream;
+		transient InputStream inputStream;
 
-        private transient OutputStream outputStream;
+        transient OutputStream outputStream;
 
-        private transient final DomibusConnectorBigDataPersistenceServiceJpaImpl bigDataPersistenceService;
+        boolean readable;
 
-        private boolean readable;
-
-        private boolean writeable;
-
-
-        JpaBasedDomibusConnectorBigDataReference(DomibusConnectorBigDataPersistenceServiceJpaImpl persistenceService) {
-            this.bigDataPersistenceService = persistenceService;
-        }
+        boolean writeable;
 
 
         @Override

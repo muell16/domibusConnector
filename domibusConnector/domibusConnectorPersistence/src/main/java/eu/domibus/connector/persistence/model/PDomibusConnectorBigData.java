@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 import java.sql.Blob;
@@ -27,12 +29,29 @@ public class PDomibusConnectorBigData {
 
     @Column(name="CONTENT")
     private Blob content;
+    
+    @Column(name="CHECKSUM")
+    private String checksum;
+    
+    @Column(name="CREATED")
+    private Date created;
 
 //    @ManyToOne(fetch=FetchType.LAZY)
 //    @JoinColumn(name="MESSAGE_ID", referencedColumnName="ID")
 //    private PDomibusConnectorMessage message;
     @Column(name="MESSAGE_ID")
     private Long message;
+    
+    @PrePersist
+    public void prePersist() {
+        if(created == null) 
+            created = new Date();
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+    	lastAccess = new Date();
+    }
 
 
     public Long getId() {
@@ -75,7 +94,15 @@ public class PDomibusConnectorBigData {
         this.content = content;
     }
 
-    public Long getMessage() {
+    public String getChecksum() {
+		return checksum;
+	}
+
+	public void setChecksum(String checksum) {
+		this.checksum = checksum;
+	}
+
+	public Long getMessage() {
         return message;
     }
 

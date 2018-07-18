@@ -321,7 +321,7 @@ public class DomibusSecurityContainer {
                             try {
                             	
                                 //LOGGER.trace("recieveContainerContents: Read following byte content [{}]", IOUtils.toString(docAsBytes, "UTF8"));
-                                DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+                                DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(container.getBusinessDocument().openStream(), message.getConnectorMessageId(), container.getBusinessDocument().getName(), container.getBusinessDocument().getMimeType().getMimeTypeString());
                                 
                                 LOGGER.trace("copying businessDocument input stream to bigDataReference output Stream");
                                 try (InputStream inputStream = container.getBusinessDocument().openStream();
@@ -439,7 +439,7 @@ public class DomibusSecurityContainer {
             throws IOException {
         LOGGER.trace("convertDocumentToMessageAttachment: called with message [{}], document [{}], identifier [{}]", message, document, identifier);
         
-        DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(message);
+        DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(document.openStream(), message.getConnectorMessageId(), document.getName(), document.getMimeType().getMimeTypeString());
         
         String documentName = document.getName();
         String mimeTypeString = MimeType.BINARY.getMimeTypeString();

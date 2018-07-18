@@ -39,18 +39,18 @@ public class BigDataWithMessagePersistenceServiceTest {
         return ref;
     }
 
-    @Test(timeout=20000)
-    public void testPersistAllBigFilesFromMessage() {
-        DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
-        
-        Mockito.when(bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class)))
-                .thenReturn(generateNewDomibusConnectorBigDataReferenceMemoryBacked());
-                
-        persistenceService.persistAllBigFilesFromMessage(msg);
-        
-        // 1 attachment and one document should saved to db makes 2 calls
-        Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class));
-    }
+//    @Test(timeout=20000)
+//    public void testPersistAllBigFilesFromMessage() {
+//        DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
+//        
+//        Mockito.when(bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class)))
+//                .thenReturn(generateNewDomibusConnectorBigDataReferenceMemoryBacked());
+//                
+//        persistenceService.persistAllBigFilesFromMessage(msg);
+//        
+//        // 1 attachment and one document should saved to db makes 2 calls
+//        Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class));
+//    }
 
     @Test(timeout=20000)
     public void testLoadAllBigFilesFromMessage() {
