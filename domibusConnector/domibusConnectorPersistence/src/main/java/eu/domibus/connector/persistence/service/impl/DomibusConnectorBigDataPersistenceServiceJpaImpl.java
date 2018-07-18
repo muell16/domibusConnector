@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.persistence.EntityManager;
@@ -110,30 +112,64 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     @Override
     @Transactional(readOnly = false)
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
+    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
-            LOGGER.trace("#createDomibusConnectorBigDataReference: called with message {}", message);
-            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+            LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
+            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
             JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference(this);
             reference.setReadable(false);
             reference.setWriteable(true);
 
             PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-            bigData.setName(reference.getName());
-            bigData.setMimeType(reference.getContentType());
+            bigData.setMessage(dbMessage.getId());
+            
+            bigData.setName(documentName);
+            bigData.setMimeType(documentContentType);
             bigData.setLastAccess(new Date());
-            //bigData.setContent();
+            
+            DbBackedOutputStream outputStream = new DbBackedOutputStream(bigData);
+            try {
+				StreamUtils.copy(in, outputStream);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+            byte[] toByteArray = outputStream.toByteArray();
+            
+            Session hibernateSession = entityManager.unwrap(Session.class);
+            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+            bigData.setContent(blob);
+            String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
+            bigData.setChecksum(md5DigestAsHex);
 
+            try {
             bigData = bigDataDao.save(bigData);
+            }catch (Exception e) {
+            	LOGGER.error("Exception saving big data to database!", e);
+            }
 
-            OutputStream outputStream = new DbBackedOutputStream(bigData);
+            
             reference.setOutputStream(outputStream);
+
+            
             reference.setStorageIdReference(Long.toString(bigData.getId()));
             return reference;
 
 
     }
+    
+//    @Override
+//    @Transactional(readOnly = false)
+//    public DomibusConnectorBigDataReference copyInputToOutputAndPersist(DomibusConnectorBigDataReference in, DomibusConnectorBigDataReference out) throws IOException {
+//    	OutputStream outStream = out.getOutputStream();
+//        StreamUtils.copy(in.getInputStream(), outStream);
+//        writeOutputStreamToDatabase((DbBackedOutputStream) outStream);
+//        outStream.flush();
+//        outStream.close();
+//        
+//        return out;
+//    }
     
     @Override
     @Transactional(readOnly = false)
@@ -150,23 +186,23 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     }
 
-    private void writeOutputStreamToDatabase(final DbBackedOutputStream dbBackedOutputStream) {
-        LOGGER.trace("#writeOutputStreamToDatabase: outputStream: [{}]", dbBackedOutputStream);
-        PDomibusConnectorBigData data = dbBackedOutputStream.getStorageReference();
-
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.execute( (status) -> {
-            Session hibernateSession = entityManager.unwrap(Session.class);
-            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(dbBackedOutputStream.toByteArray());
-            data.setContent(blob);
-            LOGGER.trace("#writeOutputStreamToDatabase: calling save");
-            bigDataDao.save(data);
-            return null;
-        });
-
-
-
-    }
+//    private void writeOutputStreamToDatabase(final DbBackedOutputStream dbBackedOutputStream) {
+//        LOGGER.trace("#writeOutputStreamToDatabase: outputStream: [{}]", dbBackedOutputStream);
+//        PDomibusConnectorBigData data = dbBackedOutputStream.getStorageReference();
+//
+//        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+//        transactionTemplate.execute( (status) -> {
+//            Session hibernateSession = entityManager.unwrap(Session.class);
+//            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(dbBackedOutputStream.toByteArray());
+//            data.setContent(blob);
+//            LOGGER.trace("#writeOutputStreamToDatabase: calling save");
+//            bigDataDao.save(data);
+//            return null;
+//        });
+//
+//
+//
+//    }
 
 
     private class DbBackedOutputStream extends ByteArrayOutputStream {
@@ -180,11 +216,18 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         public PDomibusConnectorBigData getStorageReference() {
             return storageReference;
         }
+        
+        @Override
+        public void flush() throws IOException {
+        	LOGGER.debug("called flush on DbBackedOutputStream [{}]", this);
+//            writeOutputStreamToDatabase(this);
+            super.flush();
+        }
 
         @Override
         public void close() throws IOException {
             LOGGER.debug("called close on DbBackedOutputStream [{}]", this);
-            writeOutputStreamToDatabase(this);
+            super.close();
         }
 
         public String toString() {

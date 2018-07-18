@@ -69,6 +69,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
         DomibusConnectorBackendClientInfo backendClientInfo = getBackendClientForMessage(message);
         backendMessage.setBackendClientInfo(backendClientInfo);
         message.getMessageDetails().setConnectorBackendClientName(backendClientInfo.getBackendName());
+        messagePersistenceService.mergeMessageWithDatabase(message);
 
 
         LOGGER.debug("#deliverMessageToBackend: decide message [{}] is push message: [{}]", backendMessage, backendMessage.getBackendClientInfo().isPushBackend());

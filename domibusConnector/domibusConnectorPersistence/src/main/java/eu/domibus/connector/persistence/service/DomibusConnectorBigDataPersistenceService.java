@@ -1,6 +1,9 @@
 
 package eu.domibus.connector.persistence.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
@@ -33,12 +36,15 @@ public interface DomibusConnectorBigDataPersistenceService {
      * @param message - the message the data is related to
      * @return the created DomibusConnectorBigDataReference with writeable OutputStream
      */
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message);
+    DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
+    		String documentContentType);
+//    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message);
     
     /**
      * will delete all messages related to the provides message
      * @param message the message
      */
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message);
+
     
 }

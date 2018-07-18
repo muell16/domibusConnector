@@ -44,35 +44,52 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     
     
     @Override
-    @Transactional
+    //@Transactional
     public DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message) {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#persistAllBigFilesFromMessage: is evidence message doing nothing...");
             return message;
         }
-        LOGGER.trace("persistAllBigFilesFromMessage: message [{}]", message);
-        try {
+        LOGGER.debug("persistAllBigFilesFromMessage: message [{}]", message);
+//        try {
             for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {                   
                 DomibusConnectorBigDataReference readFrom = attachment.getAttachment();
-                DomibusConnectorBigDataReference writeTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message);
-                OutputStream outStream = writeTo.getOutputStream();
-                StreamUtils.copy(readFrom.getInputStream(), outStream);
-                outStream.close();
+                DomibusConnectorBigDataReference writeTo = null;
+				try {
+					writeTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(readFrom.getInputStream(), message.getConnectorMessageId(), attachment.getName(), attachment.getMimeType());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//                OutputStream outStream = writeTo.getOutputStream();
+//                StreamUtils.copy(readFrom.getInputStream(), outStream);
+//                outStream.flush();
+//                outStream.close();
+//                writeTo = bigDataPersistenceServiceImpl.copyInputToOutputAndPersist(readFrom, writeTo);
                 attachment.setAttachment(writeTo);
             }
             DomibusConnectorMessageContent messageContent = message.getMessageContent();
             if (hasMainDocument(messageContent)) {
                 DomibusConnectorBigDataReference docReadFrom = messageContent.getDocument().getDocument();
-                DomibusConnectorBigDataReference docWriteTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message);
-                OutputStream outStream = docWriteTo.getOutputStream();
-                StreamUtils.copy(docReadFrom.getInputStream(), outStream);
-                outStream.close();
+                DomibusConnectorBigDataReference docWriteTo = null;
+				try {
+					docWriteTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(docReadFrom.getInputStream(), message.getConnectorMessageId(), messageContent.getDocument().getDocumentName(), messageContent.getDocument().getDocument().getContentType());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//                OutputStream outStream = docWriteTo.getOutputStream();
+//                StreamUtils.copy(docReadFrom.getInputStream(), outStream);
+//                outStream.flush();
+//                outStream.close();
+//                docWriteTo = bigDataPersistenceServiceImpl.copyInputToOutputAndPersist(docReadFrom, docWriteTo);
                 messageContent.getDocument().setDocument(docWriteTo);
             }
+            LOGGER.debug("persistAllBigFilesFromMessage: SUCCESS - message [{}]", message);
             return message;
-        } catch (IOException ioe) {
-            throw new PersistenceException("A exception occured during copying big data into storage", ioe);
-        }
+//        } catch (IOException ioe) {
+//            throw new PersistenceException("A exception occured during copying big data into storage", ioe);
+//        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersisten
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *
@@ -32,7 +33,8 @@ public class DomibusConnectorBigDataPersistenceServicePassthroughImpl implements
 	}
 
 	@Override
-	public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
+	public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
+    		String documentContentType) {
 		DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
 		dataRef.setOutputStream(new ByteArrayOutputStream());
 		return dataRef;
