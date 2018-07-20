@@ -119,7 +119,7 @@ public class MsgContentPersistenceService {
             toStoreList.add(mapContent(dbMessage, c));            
         }        
         this.msgContDao.deleteByMessage(dbMessage);   //delete old contents
-        this.msgContDao.save(toStoreList); //save new contents
+        this.msgContDao.saveAll(toStoreList); //save new contents
     }        
     
     PDomibusConnectorMsgCont mapToDb(PDomibusConnectorMessage message, DomibusConnectorMessageContent content) {

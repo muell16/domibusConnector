@@ -29,7 +29,7 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorParty getParty(String partyId, String role) {
         PDomibusConnectorPartyPK pk = new PDomibusConnectorPartyPK(partyId, role);
-        PDomibusConnectorParty party = partyDao.findOne(pk);
+        PDomibusConnectorParty party = partyDao.findById(pk).get();
         return PartyMapper.mapPartyToDomain(party);
     }
 

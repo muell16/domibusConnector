@@ -1,0 +1,64 @@
+.main-layout {
+	padding: 20px;
+}
+
+.vaadin-grid {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+.vaadin-grid-column {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+.vaadin-grid-cell {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+.cell {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+.vaadin-grid-cell-content {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+main-layout {
+	padding: 20px;
+}
+
+vaadin-grid {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+vaadin-grid-column {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+vaadin-grid-cell {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+cell {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+vaadin-grid-cell-content {
+	font-family: Roboto, sans-serif;
+	font-size: 13px;
+}
+
+element.style {
+    width: 1800px;
+    height: 100%;
+    touch-action: none;
+    font-size: 12px;
+}

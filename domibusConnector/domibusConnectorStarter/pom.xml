@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.domibus.connector</groupId>
+    <artifactId>domibusConnector</artifactId>
+    <version>4.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>domibusConnectorStarter</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  
+ 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- <exclusions>
+			<exclusion>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-tomcat</artifactId>
+			</exclusion>
+		</exclusions> -->
+        </dependency>
+        <!-- <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-jetty</artifactId>
+	</dependency> -->
+       <!--  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency> -->
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerAPI</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorController</artifactId>
+            <version>${project.version}</version>
+           <!-- <type>jar</type>
+             <exclusions>
+            	<exclusion>
+            		<groupId>org.apache.commons</groupId>
+            		<artifactId>commons-lang3</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.apache.tomcat</groupId>
+            		<artifactId>tomcat-jdbc</artifactId>
+            	</exclusion>
+            </exclusions> -->
+           <exclusions>
+           	<exclusion>
+           		<groupId>com.google.guava</groupId>
+           		<artifactId>guava</artifactId>
+           	</exclusion>
+           </exclusions>
+        </dependency>
+        <dependency>
+        	<groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorGatewayLink</artifactId>
+            <version>${project.version}</version>
+          <!--   <exclusions>
+            	<exclusion>
+            		<groupId>org.springframework.boot</groupId>
+            		<artifactId>spring-boot-starter-tomcat</artifactId>
+            	</exclusion>
+            </exclusions> -->
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorBackendLink</artifactId>
+            <version>${project.version}</version>
+            <!-- <exclusions>
+            	<exclusion>
+            		<groupId>org.springframework.boot</groupId>
+            		<artifactId>spring-boot-starter-tomcat</artifactId>
+            	</exclusion>
+            </exclusions> -->
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorWeb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.1</version>
+		</dependency>
+    </dependencies>
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

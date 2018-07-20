@@ -9,6 +9,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,8 +66,13 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
         try {
             long storageRef = Long.parseLong(storageReference);
+            PDomibusConnectorBigData bigData = null;
             LOGGER.debug("Loading big data with storage ref [{}] from database", storageRef);
-            PDomibusConnectorBigData bigData = bigDataDao.findOne(storageRef);
+            Optional<PDomibusConnectorBigData> bigDataOptional = bigDataDao.findById(storageRef);
+            
+            if(bigDataOptional.isPresent()) {
+            	bigData = bigDataOptional.get();
+            }
 
             JpaBasedDomibusConnectorBigDataReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedDomibusConnectorBigDataReference();
 
@@ -161,7 +167,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
         if (dbMessage != null) {
             List<PDomibusConnectorBigData> dataByMsg = bigDataDao.findAllByMessage(dbMessage.getId());
-            bigDataDao.delete(dataByMsg);
+            bigDataDao.deleteAll(dataByMsg);
         } else {
             LOGGER.warn(String.format("Did not delete big data of message with connector id [%s], because there was no entry in database", message));
         }

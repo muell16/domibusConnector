@@ -21,6 +21,8 @@
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
         <module>domibusConnectorDistribution</module>
+        <module>domibusConnectorStarter</module>
+        <module>domibusConnectorWebLib</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -55,7 +57,7 @@
         <http.proxy.host></http.proxy.host>
         <http.proxy.port></http.proxy.port>
         <https.proxy.port></https.proxy.port>          
-        <spring.boot.version>1.5.8.RELEASE</spring.boot.version> 
+        <spring.boot.version>2.0.2.RELEASE</spring.boot.version> 
     </properties>
 
     <scm>

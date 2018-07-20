@@ -57,7 +57,7 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
 
 
             dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
-            dbMessageInfo = messageInfoDao.findOne(dbMessageInfo.getId());
+            dbMessageInfo = messageInfoDao.findById(dbMessageInfo.getId()).get();
             this.validatePartyServiceActionOfMessageInfo(dbMessageInfo);
             dbMessage.setMessageInfo(dbMessageInfo);
 
@@ -72,22 +72,22 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     @Override
     public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         PDomibusConnectorAction dbAction = messageInfo.getAction();
-        PDomibusConnectorAction dbActionFound = actionDao.findOne(dbAction.getAction());
+        PDomibusConnectorAction dbActionFound = actionDao.findById(dbAction.getAction()).get();
         checkNull(dbAction, dbActionFound);
         messageInfo.setAction(dbActionFound);
 
         PDomibusConnectorService dbService = messageInfo.getService();
-        PDomibusConnectorService dbServiceFound = serviceDao.findOne(dbService.getService());
+        PDomibusConnectorService dbServiceFound = serviceDao.findById(dbService.getService()).get();
         checkNull(dbService, dbServiceFound);
         messageInfo.setService(dbServiceFound);
 
         PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
-        PDomibusConnectorParty dbFromPartyFound = partyDao.findOne(new PDomibusConnectorPartyPK(dbFromParty));
+        PDomibusConnectorParty dbFromPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbFromParty)).get();
         checkNull(dbFromParty, dbFromPartyFound);
         messageInfo.setFrom(dbFromPartyFound);
 
         PDomibusConnectorParty dbToParty = messageInfo.getTo();
-        PDomibusConnectorParty dbToPartyFound = partyDao.findOne(new PDomibusConnectorPartyPK(dbToParty));
+        PDomibusConnectorParty dbToPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbToParty)).get();
         checkNull(dbToParty, dbToPartyFound);
         messageInfo.setTo(dbToPartyFound);
 

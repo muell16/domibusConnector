@@ -78,7 +78,7 @@ public class DomibusConnectorActionPersistenceServiceImpl implements eu.domibus.
 
     @Override
     public DomibusConnectorAction getAction(String action) {
-        PDomibusConnectorAction findOne = actionDao.findOne(action);
+        PDomibusConnectorAction findOne = actionDao.findById(action).get();
         return ActionMapper.mapActionToDomain(findOne);
     }
 
