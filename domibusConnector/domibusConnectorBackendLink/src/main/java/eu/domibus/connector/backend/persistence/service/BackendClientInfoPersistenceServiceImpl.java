@@ -1,15 +1,11 @@
 
 package eu.domibus.connector.backend.persistence.service;
 
-import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
-import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 
-import eu.domibus.connector.domain.model.DomibusConnectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -17,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 
 /**
  *

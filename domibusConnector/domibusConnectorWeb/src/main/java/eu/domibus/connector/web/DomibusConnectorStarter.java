@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @PropertySource("classpath:/connector.properties")
-public class DomibusConnectorStarter {
+public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
         runSpringApplication(args);
@@ -30,5 +31,16 @@ public class DomibusConnectorStarter {
 
         ConfigurableApplicationContext appContext = springApplication.run(args);
         return appContext;
+    }
+    
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        application.properties("banner.location=classpath:/ascii/ecodex.txt", "spring.output.ansi.enabled=DETECT");
+        application.profiles("connector",
+                //"embedded",     //use embedded database
+                "gwlink-ws", //use gw webservice based impl
+                "backendlink-ws" //use backendlink ws based impl
+        );
+    	return application.sources(DomibusConnectorStarter.class);
     }
 }

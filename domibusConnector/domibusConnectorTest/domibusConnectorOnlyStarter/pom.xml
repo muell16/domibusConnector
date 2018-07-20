@@ -23,6 +23,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorController</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+           	<exclusion>
+           		<groupId>com.google.guava</groupId>
+           		<artifactId>guava</artifactId>
+           	</exclusion>
+           </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

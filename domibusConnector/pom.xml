@@ -10,7 +10,7 @@
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
         <module>domibusConnectorMonitoring</module>
-        <module>domibusConnectorWebAppModule</module>
+        <!-- <module>domibusConnectorWebAppModule</module> -->
         <module>domibusConnectorPersistence</module>
         <module>domibusConnectorDomain</module>
         <module>domibusConnectorGatewayLink</module>
@@ -23,6 +23,7 @@
         <module>domibusConnectorDistribution</module>
         <module>domibusConnectorStarter</module>
         <module>domibusConnectorWebLib</module>
+        <module>domibusConnectorWeb</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
