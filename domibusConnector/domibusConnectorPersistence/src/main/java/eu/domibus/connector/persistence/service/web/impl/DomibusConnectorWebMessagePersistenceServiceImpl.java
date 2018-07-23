@@ -35,6 +35,12 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		return mapDbMessagesToWebMessages(allMessages);
 	}
 	
+	@Override
+	public WebMessage getMessageByConnectorId(String connectorMessageId) {
+		PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+		return mapDbMessageToWebMessage(dbMessage);
+	}
+	
 	private LinkedList<WebMessage> mapDbMessagesToWebMessages(Iterable<PDomibusConnectorMessage> messages){
 		LinkedList<WebMessage> webMessages = new LinkedList<WebMessage>();
 		Iterator<PDomibusConnectorMessage> msgIt = messages.iterator();

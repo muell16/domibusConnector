@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 
-import eu.domibus.connector.web.viewAreas.Messages;
+import eu.domibus.connector.web.viewAreas.messages.Messages;
+import eu.domibus.connector.web.viewAreas.messages.MessagesList;
 
 @HtmlImport("styles/shared-styles.html")
 @Route

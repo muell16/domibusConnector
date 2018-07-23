@@ -20,22 +20,23 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
     public static ConfigurableApplicationContext runSpringApplication(String[] args) {
-        SpringApplication springApplication = new SpringApplicationBuilder()
+    	SpringApplicationBuilder builder =
+         new SpringApplicationBuilder()
                 .sources(DomibusConnectorStarter.class)
                 .profiles("connector",
                         //"embedded",     //use embedded database
                         "gwlink-ws", //use gw webservice based impl
                         "backendlink-ws" //use backendlink ws based impl
-                )
-                .build();
-
+                );
+    	builder.properties("banner.location=classpath:/ascii/domibusConnector.txt", "spring.output.ansi.enabled=DETECT");
+    	SpringApplication springApplication = builder.build();
         ConfigurableApplicationContext appContext = springApplication.run(args);
         return appContext;
     }
     
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        application.properties("banner.location=classpath:/ascii/ecodex.txt", "spring.output.ansi.enabled=DETECT");
+        application.properties("banner.location=classpath:/ascii/domibusConnector.txt", "spring.output.ansi.enabled=DETECT");
         application.profiles("connector",
                 //"embedded",     //use embedded database
                 "gwlink-ws", //use gw webservice based impl

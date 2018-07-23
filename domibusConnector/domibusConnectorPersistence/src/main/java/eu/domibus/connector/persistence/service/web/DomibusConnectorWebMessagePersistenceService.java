@@ -6,4 +6,5 @@ import eu.domibus.connector.web.dto.WebMessage;
 
 public interface DomibusConnectorWebMessagePersistenceService {
 	LinkedList<WebMessage> getAllMessages();
+	WebMessage getMessageByConnectorId(String connectorMessageId);
 }

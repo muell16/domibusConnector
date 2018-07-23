@@ -146,6 +146,10 @@ public class WebMessage {
 	public Date getDeliveredToBackend() {
 		return deliveredToBackend;
 	}
+	
+	public String getDeliveredToBackendString() {
+		return deliveredToBackend!=null?deliveredToBackend.toString():null;
+	}
 
 
 	public void setDeliveredToBackend(Date deliveredToBackend) {
@@ -155,6 +159,10 @@ public class WebMessage {
 
 	public Date getDeliveredToGateway() {
 		return deliveredToGateway;
+	}
+	
+	public String getDeliveredToGatewayString() {
+		return deliveredToGateway!=null?deliveredToGateway.toString():null;
 	}
 
 
@@ -166,6 +174,10 @@ public class WebMessage {
 	public Date getConfirmed() {
 		return confirmed;
 	}
+	
+	public String getConfirmedString() {
+		return confirmed!=null?confirmed.toString():null;
+	}
 
 
 	public void setConfirmed(Date confirmed) {
@@ -176,6 +188,10 @@ public class WebMessage {
 	public Date getRejected() {
 		return rejected;
 	}
+	
+	public String getRejectedString() {
+		return rejected!=null?rejected.toString():null;
+	}
 
 
 	public void setRejected(Date rejected) {
@@ -185,6 +201,10 @@ public class WebMessage {
 
 	public Date getCreated() {
 		return created;
+	}
+	
+	public String getCreatedString() {
+		return created!=null?created.toString():null;
 	}
 
 

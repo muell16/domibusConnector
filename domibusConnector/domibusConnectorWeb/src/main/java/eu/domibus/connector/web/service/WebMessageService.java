@@ -22,4 +22,7 @@ public class WebMessageService {
 		return messagePersistenceService.getAllMessages();
 	}
 
+	public WebMessage getMessageByConnectorId(String connectorMessageId) {
+		return messagePersistenceService.getMessageByConnectorId(connectorMessageId);
+	}
 }
