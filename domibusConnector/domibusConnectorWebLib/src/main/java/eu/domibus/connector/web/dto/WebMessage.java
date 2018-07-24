@@ -5,21 +5,13 @@ import java.util.Date;
 public class WebMessage {
 
 	private String connectorMessageId;
-	private String backendMessageId;
-	private String ebmsMessageId;
-	private String conversationId;
-	private String originalSender;
-	private String finalRecipient;
 	private String service;
 	private String action;
 	private String fromPartyId;
 	private String toPartyId;
 	private String backendClient;
-	private String direction;
 	private Date deliveredToBackend;
 	private Date deliveredToGateway;
-	private Date confirmed;
-	private Date rejected;
 	private Date created;
 	
 	
@@ -32,55 +24,6 @@ public class WebMessage {
 		this.connectorMessageId = connectorMessageId;
 	}
 
-
-	public String getBackendMessageId() {
-		return backendMessageId;
-	}
-
-
-	public void setBackendMessageId(String backendMessageId) {
-		this.backendMessageId = backendMessageId;
-	}
-
-
-	public String getEbmsMessageId() {
-		return ebmsMessageId;
-	}
-
-
-	public void setEbmsMessageId(String ebmsMessageId) {
-		this.ebmsMessageId = ebmsMessageId;
-	}
-
-
-	public String getConversationId() {
-		return conversationId;
-	}
-
-
-	public void setConversationId(String conversationId) {
-		this.conversationId = conversationId;
-	}
-
-
-	public String getOriginalSender() {
-		return originalSender;
-	}
-
-
-	public void setOriginalSender(String originalSender) {
-		this.originalSender = originalSender;
-	}
-
-
-	public String getFinalRecipient() {
-		return finalRecipient;
-	}
-
-
-	public void setFinalRecipient(String finalRecipient) {
-		this.finalRecipient = finalRecipient;
-	}
 
 
 	public String getService() {
@@ -133,15 +76,6 @@ public class WebMessage {
 	}
 
 
-	public String getDirection() {
-		return direction;
-	}
-
-
-	public void setDirection(String direction) {
-		this.direction = direction;
-	}
-
 
 	public Date getDeliveredToBackend() {
 		return deliveredToBackend;
@@ -170,33 +104,6 @@ public class WebMessage {
 		this.deliveredToGateway = deliveredToGateway;
 	}
 
-
-	public Date getConfirmed() {
-		return confirmed;
-	}
-	
-	public String getConfirmedString() {
-		return confirmed!=null?confirmed.toString():null;
-	}
-
-
-	public void setConfirmed(Date confirmed) {
-		this.confirmed = confirmed;
-	}
-
-
-	public Date getRejected() {
-		return rejected;
-	}
-	
-	public String getRejectedString() {
-		return rejected!=null?rejected.toString():null;
-	}
-
-
-	public void setRejected(Date rejected) {
-		this.rejected = rejected;
-	}
 
 
 	public Date getCreated() {

@@ -6,13 +6,17 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
+import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.service.impl.DomibusConnectorMessagePersistenceServiceImpl;
 import eu.domibus.connector.persistence.service.web.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.web.dto.WebMessage;
+import eu.domibus.connector.web.dto.WebMessageDetail;
+import eu.domibus.connector.web.dto.WebMessageEvidence;
 
 @org.springframework.stereotype.Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceServiceImpl implements DomibusConnectorWebMessagePersistenceService {
@@ -36,9 +40,9 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	}
 	
 	@Override
-	public WebMessage getMessageByConnectorId(String connectorMessageId) {
+	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
 		PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
-		return mapDbMessageToWebMessage(dbMessage);
+		return mapDbMessageToWebMessageDetail(dbMessage);
 	}
 	
 	private LinkedList<WebMessage> mapDbMessagesToWebMessages(Iterable<PDomibusConnectorMessage> messages){
@@ -57,6 +61,25 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 
 	private WebMessage mapDbMessageToWebMessage(PDomibusConnectorMessage pMessage) {
 		WebMessage message = new WebMessage();
+		
+		message.setConnectorMessageId(pMessage.getConnectorMessageId());
+		message.setBackendClient(pMessage.getBackendName());
+		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
+		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
+		message.setCreated(pMessage.getCreated());
+		
+		PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
+		message.setAction(pMessageInfo.getAction().getAction());
+		message.setService(pMessageInfo.getService().getService());
+		message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
+		message.setToPartyId(pMessageInfo.getTo().getPartyId());
+		
+		
+		return message;
+	}
+	
+	private WebMessageDetail mapDbMessageToWebMessageDetail(PDomibusConnectorMessage pMessage) {
+		WebMessageDetail message = new WebMessageDetail();
 		
 		message.setConnectorMessageId(pMessage.getConnectorMessageId());
 		message.setBackendMessageId(pMessage.getBackendMessageId());
@@ -78,6 +101,15 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
 		message.setToPartyId(pMessageInfo.getTo().getPartyId());
 		
+		if(!CollectionUtils.isEmpty(pMessage.getEvidences())) {
+			for(PDomibusConnectorEvidence dbEvidence:pMessage.getEvidences()) {
+				WebMessageEvidence evidence = new WebMessageEvidence();
+				evidence.setEvidenceType(dbEvidence.getType().name());
+				evidence.setDeliveredToGateway(dbEvidence.getDeliveredToGateway());
+				evidence.setDeliveredToBackend(dbEvidence.getDeliveredToNationalSystem());
+				message.getEvidences().add(evidence);
+			}
+		}
 		
 		return message;
 	}

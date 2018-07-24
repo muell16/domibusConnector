@@ -4,35 +4,39 @@ import java.util.Date;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
 import eu.domibus.connector.web.dto.WebMessage;
+import eu.domibus.connector.web.dto.WebMessageDetail;
+import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.viewAreas.messages.MessageDetails;
 
 @HtmlImport("styles/shared-styles.html")
 public class ConnectorMessageForm extends FormLayout {
 
-	private TextField connectorMessageId = getFormattedTextField();
-	private TextField backendMessageId = getFormattedTextField();
-	private TextField ebmsMessageId = getFormattedTextField();
-	private TextField conversationId = getFormattedTextField();
-	private TextField originalSender = getFormattedTextField();
-	private TextField finalRecipient = getFormattedTextField();
-	private TextField service = getFormattedTextField();
-	private TextField action = getFormattedTextField();
-	private TextField fromPartyId = getFormattedTextField();
-	private TextField toPartyId = getFormattedTextField();
-	private TextField backendClient = getFormattedTextField();
-	private TextField direction = getFormattedTextField();
-	private TextField deliveredToBackendString = getFormattedTextField();
-	private TextField deliveredToGatewayString = getFormattedTextField();
-	private TextField confirmedString = getFormattedTextField();
-	private TextField rejectedString = getFormattedTextField();
-	private TextField createdString = getFormattedTextField();
+	private TextField connectorMessageId = FormsUtil.getFormattedTextField();
+	private TextField backendMessageId = FormsUtil.getFormattedTextField();
+	private TextField ebmsMessageId = FormsUtil.getFormattedTextField();
+	private TextField conversationId = FormsUtil.getFormattedTextField();
+	private TextField originalSender = FormsUtil.getFormattedTextField();
+	private TextField finalRecipient = FormsUtil.getFormattedTextField();
+	private TextField service = FormsUtil.getFormattedTextField();
+	private TextField action = FormsUtil.getFormattedTextField();
+	private TextField fromPartyId = FormsUtil.getFormattedTextField();
+	private TextField toPartyId = FormsUtil.getFormattedTextField();
+	private TextField backendClient = FormsUtil.getFormattedTextField();
+	private TextField direction = FormsUtil.getFormattedTextField();
+	private TextField deliveredToBackendString = FormsUtil.getFormattedTextField();
+	private TextField deliveredToGatewayString = FormsUtil.getFormattedTextField();
+	private TextField confirmedString = FormsUtil.getFormattedTextField();
+	private TextField rejectedString = FormsUtil.getFormattedTextField();
+	private TextField createdString = FormsUtil.getFormattedTextField();
 	
-	private WebMessage message = null;
+	private WebMessageDetail message = null;
 
 	private Binder<WebMessage> binder = new Binder<>(WebMessage.class);
 	
@@ -61,29 +65,14 @@ public class ConnectorMessageForm extends FormLayout {
 		addFormItem(rejectedString, "Rejected at"); 
 		addFormItem(createdString, "Message created at"); 
 	}
-	
-	private TextField getFormattedTextField() {
-		TextField loc = new TextField();
-//		loc.setEnabled(false);
-		loc.setReadOnly(true);
-		loc.getStyle().set("fontSize", "13px");
-		loc.setWidth("600px");
-		return loc;
-	}
 
-	private TextArea getFormattedTextArea() {
-		TextArea loc = new TextArea();
-		loc.getStyle().set("fontSize", "13px");
-		loc.setWidth("600px");
-		return loc;
-	}
-
-
-	public void setConnectorMessage(WebMessage message, MessageDetails messageDetails) {
+	public void setConnectorMessage(WebMessageDetail message, MessageDetails messageDetails) {
 		this.removeAll();
 		fillForm();
 		this.message = message;
 		binder.setBean(message);
+		
+		
 	}
 
 }

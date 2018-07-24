@@ -15,13 +15,15 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import eu.domibus.connector.web.viewAreas.messages.Messages;
 import eu.domibus.connector.web.viewAreas.messages.MessagesList;
 
 @HtmlImport("styles/shared-styles.html")
-@Route
+@Route("domibusConnector/")
+@PageTitle("domibusConnector")
 public class MainView extends VerticalLayout {
 	
 	Div areaMessages = null;

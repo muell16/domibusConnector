@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.persistence.service.web.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.web.dto.WebMessage;
+import eu.domibus.connector.web.dto.WebMessageDetail;
 
 @Service("webMessageService")
 public class WebMessageService {
@@ -22,7 +23,7 @@ public class WebMessageService {
 		return messagePersistenceService.getAllMessages();
 	}
 
-	public WebMessage getMessageByConnectorId(String connectorMessageId) {
+	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
 		return messagePersistenceService.getMessageByConnectorId(connectorMessageId);
 	}
 }
