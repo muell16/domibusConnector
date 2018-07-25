@@ -18,23 +18,23 @@ import eu.domibus.connector.web.viewAreas.messages.MessageDetails;
 @HtmlImport("styles/shared-styles.html")
 public class ConnectorMessageForm extends FormLayout {
 
-	private TextField connectorMessageId = FormsUtil.getFormattedTextField();
-	private TextField backendMessageId = FormsUtil.getFormattedTextField();
-	private TextField ebmsMessageId = FormsUtil.getFormattedTextField();
-	private TextField conversationId = FormsUtil.getFormattedTextField();
-	private TextField originalSender = FormsUtil.getFormattedTextField();
-	private TextField finalRecipient = FormsUtil.getFormattedTextField();
-	private TextField service = FormsUtil.getFormattedTextField();
-	private TextField action = FormsUtil.getFormattedTextField();
-	private TextField fromPartyId = FormsUtil.getFormattedTextField();
-	private TextField toPartyId = FormsUtil.getFormattedTextField();
-	private TextField backendClient = FormsUtil.getFormattedTextField();
-	private TextField direction = FormsUtil.getFormattedTextField();
-	private TextField deliveredToBackendString = FormsUtil.getFormattedTextField();
-	private TextField deliveredToGatewayString = FormsUtil.getFormattedTextField();
-	private TextField confirmedString = FormsUtil.getFormattedTextField();
-	private TextField rejectedString = FormsUtil.getFormattedTextField();
-	private TextField createdString = FormsUtil.getFormattedTextField();
+	private TextField connectorMessageId = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField backendMessageId = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField ebmsMessageId = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField conversationId = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField originalSender = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField finalRecipient = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField service = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField action = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField fromPartyId = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField toPartyId = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField backendClient = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField direction = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField deliveredToBackendString = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField deliveredToGatewayString = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField confirmedString = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField rejectedString = FormsUtil.getFormattedTextFieldReadOnly();
+	private TextField createdString = FormsUtil.getFormattedTextFieldReadOnly();
 	
 	private WebMessageDetail message = null;
 

@@ -6,9 +6,17 @@ import com.vaadin.flow.component.textfield.TextField;
 public class FormsUtil {
 
 	
-	public static TextField getFormattedTextField() {
+	public static TextField getFormattedTextFieldReadOnly() {
 		TextField loc = new TextField();
 		loc.setReadOnly(true);
+		loc.getStyle().set("fontSize", "13px");
+		loc.setWidth("600px");
+		return loc;
+	}
+	
+	public static TextField getFormattedTextField() {
+		TextField loc = new TextField();
+//		loc.setReadOnly(true);
 		loc.getStyle().set("fontSize", "13px");
 		loc.setWidth("600px");
 		return loc;
