@@ -104,7 +104,7 @@ public class MainView extends VerticalLayout {
 		headerLayout.setAlignItems(Alignment.CENTER);
 		headerLayout.expand(domibusConnector);
 		headerLayout.setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.CENTER);
-		headerLayout.setWidth("100vw");
+		headerLayout.setWidth("100%");
 		headerLayout.getStyle().set("border-bottom", "1px solid #9E9E9E");
 		headerLayout.getStyle().set("padding-bottom", "16px");
 		
