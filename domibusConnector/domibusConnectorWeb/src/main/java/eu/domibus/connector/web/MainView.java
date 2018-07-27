@@ -72,6 +72,7 @@ public class MainView extends VerticalLayout {
 		});
 
 		add(header,TopMenu,pages);
+	
     }
 
 	private HorizontalLayout createHeader() {

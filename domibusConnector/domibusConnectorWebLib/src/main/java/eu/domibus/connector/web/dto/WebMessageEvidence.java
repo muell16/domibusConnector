@@ -27,6 +27,9 @@ public class WebMessageEvidence {
 	public void setDeliveredToGateway(Date deliveredToGateway) {
 		this.deliveredToGateway = deliveredToGateway;
 	}
+	
+	public void setDeliveredToGatewayString(String deliveredToGateway) {
+		}
 
 	public Date getDeliveredToBackend() {
 		return deliveredToBackend;
@@ -38,6 +41,9 @@ public class WebMessageEvidence {
 
 	public void setDeliveredToBackend(Date deliveredToBackend) {
 		this.deliveredToBackend = deliveredToBackend;
+	}
+	
+	public void setDeliveredToBackendString(String deliveredToBackend) {
 	}
 
 }

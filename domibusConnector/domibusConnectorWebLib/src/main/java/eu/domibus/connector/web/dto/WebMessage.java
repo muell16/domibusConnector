@@ -89,6 +89,9 @@ public class WebMessage {
 	public void setDeliveredToBackend(Date deliveredToBackend) {
 		this.deliveredToBackend = deliveredToBackend;
 	}
+	
+	public void setDeliveredToBackendString(String deliveredToBackend) {
+	}
 
 
 	public Date getDeliveredToGateway() {
@@ -104,6 +107,8 @@ public class WebMessage {
 		this.deliveredToGateway = deliveredToGateway;
 	}
 
+	public void setDeliveredToGatewayString(String deliveredToGateway) {
+	}
 
 
 	public Date getCreated() {
@@ -119,5 +124,7 @@ public class WebMessage {
 		this.created = created;
 	}
 
+	public void setCreatedString(String created) {
+	}
 
 }

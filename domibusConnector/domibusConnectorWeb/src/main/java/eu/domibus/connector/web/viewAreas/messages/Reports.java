@@ -1,10 +1,6 @@
 package eu.domibus.connector.web.viewAreas.messages;
 
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -16,8 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,12 +34,9 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Input;
-import com.vaadin.flow.component.html.NativeButton;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.StreamResource;
-import com.vaadin.flow.server.StreamResourceWriter;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.dto.WebReport;
@@ -78,14 +70,14 @@ public class Reports extends VerticalLayout {
 		fromDate.setLocale(Locale.ENGLISH);
 		fromDate.setLabel("From Date");
 		fromDate.setErrorMessage("From Date invalid!");
-		fromDate.addValueChangeListener(e1 -> updateFromDate(fromDate));
+		fromDate.addValueChangeListener(e1 -> fromDateValue = asDate(fromDate.getValue()));
 		details.add(fromDate);
 		
 		DatePicker toDate = new DatePicker();
 		toDate.setLocale(Locale.ENGLISH);
 		toDate.setLabel("To Date");
 		toDate.setErrorMessage("To Date invalid!");
-		toDate.addValueChangeListener(e2 -> updateToDate(toDate));
+		toDate.addValueChangeListener(e2 -> toDateValue = asDate(toDate.getValue()));
 		toDate.setEnabled(true);
 		details.add(toDate);
 		
@@ -101,11 +93,7 @@ public class Reports extends VerticalLayout {
 		
 		reportFormArea.add(details);
 		
-		
-		
-		//setAlignItems(Alignment.START);
 		setSizeFull();
-//		reportFormArea.setHeight("100vh");
 		reportFormArea.setWidth("300px");
 		add(reportFormArea);
 
@@ -114,21 +102,10 @@ public class Reports extends VerticalLayout {
 	
 	
 
-	private void updateToDate(DatePicker value) {
-		toDateValue = asDate(value.getValue());
-	}
-
-
-
-	private void updateFromDate(DatePicker value) {
-		fromDateValue = asDate(value.getValue());
-	}
-
 
 
 	private void generateReport() {
-		
-//		System.out.println("Here! "+fromDateValue + toDateValue + includeEvidencesValue);
+		//Date toDateInclusive = new Date(toDateValue.getTime() + TimeUnit.DAYS.toMillis( 1 ));
 		
 		List<WebReportEntry> generatedReport = reportsService.generateReport(fromDateValue, toDateValue, includeEvidencesValue);
 		
@@ -140,6 +117,7 @@ public class Reports extends VerticalLayout {
 			for(WebReport report:sortReport) {
 				Div details = new Div();
 				details.setWidth("100vw");
+				details.getStyle().set("margin", "unset");
 				
 				Grid<WebReportEntry> grid = new Grid<>();
 				
@@ -151,6 +129,8 @@ public class Reports extends VerticalLayout {
 				Column<WebReportEntry> sentCol = grid.addColumn(WebReportEntry::getSent).setHeader("Messages sent to").setWidth("300px");
 				
 				HeaderRow topRow = grid.prependHeaderRow();
+				
+				
 
 				HeaderCell informationCell = topRow.join(partyCol, serviceCol, receivedCol, sentCol);
 				informationCell.setText(report.getPeriod());
@@ -165,12 +145,12 @@ public class Reports extends VerticalLayout {
 				
 				grid.setWidth("1150px");
 				grid.setHeight("150px");
-				grid.setMultiSort(true);
+				grid.setMultiSort(false);
 				
-				for(Column<WebReportEntry> col : grid.getColumns()) {
-					col.setSortable(true);
-					col.setResizable(true);
-				}
+//				for(Column<WebReportEntry> col : grid.getColumns()) {
+//					col.setSortable(true);
+//					col.setResizable(true);
+//				}
 				details.add(grid);
 				
 				reportDataArea.add(details);

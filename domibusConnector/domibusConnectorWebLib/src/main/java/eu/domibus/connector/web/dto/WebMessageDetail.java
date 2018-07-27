@@ -90,6 +90,9 @@ public class WebMessageDetail extends WebMessage {
 	public void setConfirmed(Date confirmed) {
 		this.confirmed = confirmed;
 	}
+	
+	public void setConfirmedString(String confirmed) {
+	}
 
 
 	public Date getRejected() {
@@ -103,6 +106,9 @@ public class WebMessageDetail extends WebMessage {
 
 	public void setRejected(Date rejected) {
 		this.rejected = rejected;
+	}
+	
+	public void setRejectedString(String rejected) {
 	}
 
 

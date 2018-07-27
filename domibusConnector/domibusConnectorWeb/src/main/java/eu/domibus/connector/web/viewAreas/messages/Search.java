@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -228,6 +229,7 @@ public class Search extends VerticalLayout {
 	}
 
 	private void searchByPeriod(Date fromDate, Date toDate) {
+		toDate = new Date(toDate.getTime() + TimeUnit.DAYS.toMillis( 1 ));
 		LinkedList<WebMessage> fullList = messageService.getMessagesByPeriod(fromDate, toDate);
 		addGridWithData(fullList);
 	}
