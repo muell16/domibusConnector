@@ -73,7 +73,7 @@ public class MessageDetails extends VerticalLayout {
 			grid.addColumn(WebMessageEvidence::getDeliveredToBackendString).setHeader("Delivered to Backend").setWidth("300px");
 
 			grid.setWidth("1000px");
-			//				grid.setHeight("500px");
+			grid.setHeight("210px");
 			grid.setMultiSort(true);
 
 			for(Column<WebMessageEvidence> col : grid.getColumns()) {

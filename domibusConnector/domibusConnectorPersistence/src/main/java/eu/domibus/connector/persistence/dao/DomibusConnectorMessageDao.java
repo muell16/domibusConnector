@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
+
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,6 +42,11 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
         
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'GW_TO_NAT' AND m.deliveredToGateway is not null")
     public List<PDomibusConnectorMessage> findIncomingUnconfirmedMessages();
+    
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE (m.deliveredToNationalSystem is not null AND m.deliveredToNationalSystem between ?1 and ?2) "
+    		+ "OR (m.deliveredToGateway is not null AND m.deliveredToGateway between ?1 and ?2) "
+    		+ "OR (m.created is not null AND m.created between ?1 and ?2)")
+    public List<PDomibusConnectorMessage> findByPeriod(Date from, Date to);
         
     // if DB fields confirmed OR rejected are NOT NULL -> then true
     @Query("SELECT case when (count(m) > 0) then true else false end "

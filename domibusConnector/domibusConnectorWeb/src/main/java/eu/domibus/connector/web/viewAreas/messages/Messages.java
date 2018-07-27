@@ -24,23 +24,33 @@ import com.vaadin.flow.spring.annotation.UIScope;
 public class Messages extends VerticalLayout {
 
 	Div areaMessagesList = null;
+	Div areaSearch = null;
 	Div areaMessageDetails = null;
 	Div areaReports = null;
-	Tab messagesListTab = new Tab("Messages List");
+	
+	Tab messagesListTab = new Tab("All Messages");
+	Tab searchTab = new Tab("Message Search");
 	Tab messageDetailsTab = new Tab("Message Details");
-	Tab reportsTab = new Tab("Reports");
+	Tab reportsTab = new Tab("Messages Reports");
+	
 	Tabs messagesMenu = new Tabs();
 	
 	MessageDetails messageDetails;
 	
-	public Messages(@Autowired MessagesList messagesList, @Autowired MessageDetails messageDetails, @Autowired Reports reports)  {
+	public Messages(@Autowired MessagesList messagesList, @Autowired Search search, 
+			@Autowired MessageDetails messageDetails, @Autowired Reports reports)  {
 		
 		this.messageDetails = messageDetails;
 		messagesList.setMessagesView(this);
+		search.setMessagesView(this);
 		
 		areaMessagesList = new Div();
 		areaMessagesList.add(messagesList);
-		areaMessagesList.setVisible(true);
+		areaMessagesList.setVisible(false);
+		
+		areaSearch = new Div();
+		areaSearch.add(search);
+		areaSearch.setVisible(true);
 		
 		areaMessageDetails = new Div();
 		areaMessageDetails.add(messageDetails);
@@ -51,17 +61,18 @@ public class Messages extends VerticalLayout {
 		areaReports.setVisible(false);
 		
 		Map<Tab, Component> tabsToPages = new HashMap<>();
+		tabsToPages.put(searchTab, areaSearch);
 		tabsToPages.put(messagesListTab, areaMessagesList);
 		tabsToPages.put(messageDetailsTab, areaMessageDetails);
 		tabsToPages.put(reportsTab, areaReports);
 		
 		
-		messagesMenu.add(messagesListTab, messageDetailsTab, reportsTab);
+		messagesMenu.add(searchTab, messagesListTab, messageDetailsTab, reportsTab);
 		
 		
-		Div pages = new Div(areaMessagesList, areaMessageDetails, areaReports);
+		Div pages = new Div(areaSearch, areaMessagesList, areaMessageDetails, areaReports);
 		
-		Set<Component> pagesShown = Stream.of(areaMessagesList)
+		Set<Component> pagesShown = Stream.of(areaSearch)
 		        .collect(Collectors.toSet());
 		
 	

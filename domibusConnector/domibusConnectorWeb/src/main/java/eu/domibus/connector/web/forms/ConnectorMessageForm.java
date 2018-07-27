@@ -38,7 +38,7 @@ public class ConnectorMessageForm extends FormLayout {
 	
 	private WebMessageDetail message = null;
 
-	private Binder<WebMessage> binder = new Binder<>(WebMessage.class);
+	private Binder<WebMessageDetail> binder = new Binder<>(WebMessageDetail.class);
 	
 	public ConnectorMessageForm() {
 		fillForm();

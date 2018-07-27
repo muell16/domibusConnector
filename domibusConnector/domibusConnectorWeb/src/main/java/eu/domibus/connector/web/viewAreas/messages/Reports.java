@@ -1,6 +1,11 @@
 package eu.domibus.connector.web.viewAreas.messages;
 
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -12,10 +17,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -27,8 +35,16 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.HeaderRow.HeaderCell;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Input;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.StreamResourceWriter;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.dto.WebReport;
@@ -84,6 +100,9 @@ public class Reports extends VerticalLayout {
 		details.add(submit);
 		
 		reportFormArea.add(details);
+		
+		
+		
 		//setAlignItems(Alignment.START);
 		setSizeFull();
 //		reportFormArea.setHeight("100vh");
@@ -158,11 +177,53 @@ public class Reports extends VerticalLayout {
 				
 			}
 			
+			Div downloadExcel = new Div();
+			
+			Button download = new Button();
+			download.setIcon(new Image("frontend/images/xls.png", "XLS"));
+			
+			download.addClickListener(e -> {
+			
+				Element file = new Element("object");
+				Element dummy = new Element("object");
+				
+				Input oName = new Input();
+				
+				String name = "MessagesReport.xls";
+				
+				StreamResource resource = new StreamResource(name,() -> getMessagesReport(sortReport));
+				
+				resource.setContentType("application/xls");
+				
+				file.setAttribute("data", resource);
+				
+				Anchor link = null;
+				link = new Anchor(file.getAttribute("data"), "Download Document");
+				
+				UI.getCurrent().getElement().appendChild(oName.getElement(), file,
+						dummy);
+				oName.setVisible(false);
+				file.setVisible(false);
+				this.getUI().get().getPage().executeJavaScript("window.open('"+link.getHref()+"');");
+			});
+			
+			downloadExcel.add(download);
+			
+			reportDataArea.add(downloadExcel);
+			
 			reportDataArea.setHeight("100vh");
 			reportDataArea.setWidth("100vw");
 			add(reportDataArea);
 		}
 	}
+	
+	private InputStream getMessagesReport(List<WebReport> report) {
+		
+		
+		return reportsService.generateExcel(fromDateValue, toDateValue, report);
+	}
+	
+	
 	
 	private List<WebReport> sortReport(List<WebReportEntry> result) {
 		Map<String, WebReport> periodMap = new HashMap<String, WebReport>();

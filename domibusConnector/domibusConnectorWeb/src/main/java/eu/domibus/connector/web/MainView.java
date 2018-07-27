@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -19,7 +18,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import eu.domibus.connector.web.viewAreas.messages.Messages;
-import eu.domibus.connector.web.viewAreas.messages.MessagesList;
+import eu.domibus.connector.web.viewAreas.pmodes.PModes;
 
 @HtmlImport("styles/shared-styles.html")
 @Route("domibusConnector/")
@@ -27,29 +26,34 @@ import eu.domibus.connector.web.viewAreas.messages.MessagesList;
 public class MainView extends VerticalLayout {
 	
 	Div areaMessages = null;
+	Div areaPModes = null;
+	
 	Tab messagesTab = new Tab("Messages");
+	Tab pmodesTab = new Tab("PModes");
+	
 	Tabs TopMenu = new Tabs();
 
-    public MainView(@Autowired ExampleTemplate template, @Autowired Messages messages) {
-//        // This is just a simple label created via Elements API
-//        Button button = new Button("Click me",
-//                event -> template.setValue("Clicked!"));
-//        // This is a simple template example
-//        add(button, template);
-//        setClassName("main-layout");
+    public MainView(@Autowired Messages messages, @Autowired PModes pmodes) {
         
         areaMessages = new Div();
 		areaMessages.add(messages);
 		areaMessages.setVisible(true);
 		
+		areaPModes = new Div();
+		areaPModes.add(pmodes);
+		areaPModes.setVisible(false);
+		
 		Map<Tab, Component> tabsToPages = new HashMap<>();
 		tabsToPages.put(messagesTab, areaMessages);
+		tabsToPages.put(pmodesTab, areaPModes);
 		
 		
 		TopMenu.add(messagesTab);
-		Div pages = new Div(areaMessages);
+		TopMenu.add(pmodesTab);
 		
-		Set<Component> pagesShown = Stream.of(areaMessages)
+		Div pages = new Div(areaMessages, areaPModes);
+		
+		Set<Component> pagesShown = Stream.of(areaMessages, areaPModes)
 		        .collect(Collectors.toSet());
 		
 	

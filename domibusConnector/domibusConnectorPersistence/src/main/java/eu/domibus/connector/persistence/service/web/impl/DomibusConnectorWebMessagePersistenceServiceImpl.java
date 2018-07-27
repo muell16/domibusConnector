@@ -1,13 +1,17 @@
 package eu.domibus.connector.persistence.service.web.impl;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
@@ -40,10 +44,37 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	}
 	
 	@Override
+	public LinkedList<WebMessage> getMessagesWithinPeriod(Date from, Date to) {
+		Iterable<PDomibusConnectorMessage> allMessages = messageDao.findByPeriod(from, to);
+		return mapDbMessagesToWebMessages(allMessages);
+	}
+	
+	@Override
 	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
 		PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 		return mapDbMessageToWebMessageDetail(dbMessage);
 	}
+	
+	@Override
+    @Transactional(readOnly = true)
+    public WebMessageDetail findMessageByNationalId(String nationalMessageId) {
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
+        return mapDbMessageToWebMessageDetail(dbMessage);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public WebMessageDetail findMessageByEbmsId(String ebmsMessageId) {
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
+        return mapDbMessageToWebMessageDetail(dbMessage);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LinkedList<WebMessage> findMessagesByConversationId(String conversationId) {
+        List<PDomibusConnectorMessage> dbMessages = messageDao.findByConversationId(conversationId);
+        return mapDbMessagesToWebMessages(dbMessages);
+    }
 	
 	private LinkedList<WebMessage> mapDbMessagesToWebMessages(Iterable<PDomibusConnectorMessage> messages){
 		LinkedList<WebMessage> webMessages = new LinkedList<WebMessage>();
@@ -113,5 +144,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		
 		return message;
 	}
+
+
 
 }
