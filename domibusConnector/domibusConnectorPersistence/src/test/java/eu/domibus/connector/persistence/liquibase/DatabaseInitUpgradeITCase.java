@@ -59,14 +59,14 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     */
     protected void checkInstallDB(String profile, Properties props) {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInstallDB");
-        props.put("liquibase.change-log","classpath:/db/changelog/install/initial-4.0.xml");        
+        props.put("spring.liquibase.change-log","classpath:/db/changelog/install/initial-4.0.xml");
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)
                 .profiles("test", profile)                
                 .properties(props);
+
         
-        
-        ConfigurableApplicationContext ctx = springAppBuilder.run();        
+        ConfigurableApplicationContext ctx = springAppBuilder.run();
         try {
             DataSource ds = ctx.getBean(DataSource.class);
             //TODO: test DB
@@ -74,9 +74,9 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
             connection.createStatement().executeQuery("SELECT * FROM DOMIBUS_CONNECTOR_PARTY");
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }                
-        
-        ctx.close();
+        } finally {
+            ctx.close();
+        }
     }
 
 
@@ -115,9 +115,9 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
      */
     public void testMigrate3to4Database(String profile, Properties props) throws SQLException, DatabaseException, LiquibaseException, FileNotFoundException, IOException {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
-        props.put("liquibase.change-log","classpath:/db/changelog/v004/upgrade-3to4.xml");       
+        props.put("spring.liquibase.change-log","classpath:/db/changelog/v004/upgrade-3to4.xml");
 //        if (H2_PROFILE.equalsIgnoreCase(profile)) {
-        props.put("liquibase.enabled", "false"); //disable liquibase!
+        props.put("spring.liquibase.enabled", "false"); //disable liquibase!
 //        } else {
 //            
 //        }
@@ -185,7 +185,7 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     */
     protected void checkInital003DB(String profile, Properties props)  {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
-        props.put("liquibase.change-log","classpath:/db/changelog/v003/initial-3.0.xml");
+        props.put("spring.liquibase.change-log","classpath:/db/changelog/v003/initial-3.0.xml");
         
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)                

@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.testutil;
 
 import org.junit.BeforeClass;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -26,9 +27,10 @@ public class SetupPersistenceContext {
         String dbName = UUID.randomUUID().toString().substring(0,10); //create random db name to avoid conflicts between tests
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
                 .sources(sources)
-                .web(false)
+                .web(WebApplicationType.NONE)
                 .profiles("test", "db_h2")
-                .properties("liquibase.change-log=db/changelog/test/testdata.xml", "spring.datasource.url=jdbc:h2:mem:" + dbName)
+                .properties("spring.liquibase.change-log=db/changelog/test/testdata.xml",
+                        "spring.datasource.url=jdbc:h2:mem:" + dbName)
                 ;
         applicationContext = springAppBuilder.run();
         APPLICATION_CONTEXT = applicationContext;

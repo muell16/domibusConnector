@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class InternalMessageInfoPersistenceServiceImpl implements InternalMessageInfoPersistenceService {
@@ -72,32 +73,37 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     @Override
     public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         PDomibusConnectorAction dbAction = messageInfo.getAction();
-        PDomibusConnectorAction dbActionFound = actionDao.findById(dbAction.getAction()).get();
-        checkNull(dbAction, dbActionFound);
-        messageInfo.setAction(dbActionFound);
+        Optional<PDomibusConnectorAction> dbActionFound = actionDao.findById(dbAction.getAction());
+        checkNull(dbAction, dbActionFound,
+                String.format("No action [%s] is configured at the connector!", dbAction.getAction()));
+        messageInfo.setAction(dbActionFound.get());
 
         PDomibusConnectorService dbService = messageInfo.getService();
-        PDomibusConnectorService dbServiceFound = serviceDao.findById(dbService.getService()).get();
-        checkNull(dbService, dbServiceFound);
-        messageInfo.setService(dbServiceFound);
+        Optional<PDomibusConnectorService> dbServiceFound = serviceDao.findById(dbService.getService());
+        checkNull(dbService, dbServiceFound,
+                String.format("No service [%s] is configured at the connector!", dbService.getService()));
+        messageInfo.setService(dbServiceFound.get());
 
         PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
-        PDomibusConnectorParty dbFromPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbFromParty)).get();
-        checkNull(dbFromParty, dbFromPartyFound);
-        messageInfo.setFrom(dbFromPartyFound);
+        Optional<PDomibusConnectorParty> dbFromPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbFromParty));
+        checkNull(dbFromParty, dbFromPartyFound,
+                String.format("No party [%s] is configured at the connector!", new PDomibusConnectorPartyPK(dbFromParty)));
+        messageInfo.setFrom(dbFromPartyFound.get());
 
         PDomibusConnectorParty dbToParty = messageInfo.getTo();
-        PDomibusConnectorParty dbToPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbToParty)).get();
-        checkNull(dbToParty, dbToPartyFound);
-        messageInfo.setTo(dbToPartyFound);
+        Optional<PDomibusConnectorParty> dbToPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbToParty));
+        checkNull(dbToParty, dbToPartyFound,
+                String.format("No party [%s] is configured at the connector!", new PDomibusConnectorPartyPK(dbToParty)));
+        messageInfo.setTo(dbToPartyFound.get());
 
         return messageInfo;
     }
 
-    private void checkNull(Object provided, Object foundInDb) throws PersistenceException {
-        if (foundInDb == null) {
+    private void checkNull(Object provided, Optional foundInDb, String errorMessage) throws PersistenceException {
+        if (! foundInDb.isPresent()) {
             String error = String.format("%s [%s] is not configured in database!", provided.getClass().getSimpleName(), provided);
-            LOGGER.error("Throwing exception, because [{}]", error);
+            //TÒDO: BUSINESS_LOG
+            LOGGER.error("{} Check your p-modes or reimport them into the connector.", errorMessage);
             throw new PersistenceException(error);
         }
     }

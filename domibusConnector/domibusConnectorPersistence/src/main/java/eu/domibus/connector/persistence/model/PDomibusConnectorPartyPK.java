@@ -1,5 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.core.style.ToStringCreator;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -11,9 +14,7 @@ public class PDomibusConnectorPartyPK implements Serializable {
      */
     private static final long serialVersionUID = -5954185507117364904L;
 
-    @Column(name = "PARTY_ID")
     private String partyId;
-    @Column(name = "ROLE")
     private String role;
 
     public PDomibusConnectorPartyPK() {
@@ -74,6 +75,13 @@ public class PDomibusConnectorPartyPK implements Serializable {
         } else if (!role.equals(other.role))
             return false;
         return true;
+    }
+
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("partyId", partyId)
+                .append("role", role)
+                .toString();
     }
 
 }

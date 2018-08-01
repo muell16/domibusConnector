@@ -13,8 +13,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class InternalMessageInfoPersistenceServiceImplTest {
 
@@ -39,20 +41,20 @@ public class InternalMessageInfoPersistenceServiceImplTest {
         impl.setServiceDao(serviceDao);
 
         PDomibusConnectorParty partyAT = PersistenceEntityCreator.createPartyAT();
-        Mockito.when(partyDao.findOne(eq(new PDomibusConnectorPartyPK(partyAT))))
-                .thenReturn(partyAT);
+        Mockito.when(partyDao.findById(eq(new PDomibusConnectorPartyPK(partyAT))))
+                .thenReturn(Optional.of(partyAT));
 
         PDomibusConnectorParty domibusBlue = PersistenceEntityCreator.createPartyDomibusBLUE();
-        Mockito.when(partyDao.findOne(eq(new PDomibusConnectorPartyPK(domibusBlue))))
-                .thenReturn(domibusBlue);
+        Mockito.when(partyDao.findById(eq(new PDomibusConnectorPartyPK(domibusBlue))))
+                .thenReturn(Optional.of(domibusBlue));
 
         PDomibusConnectorService epoService = PersistenceEntityCreator.createServiceEPO();
-        Mockito.when(serviceDao.findOne(eq(epoService.getService())))
-                .thenReturn(epoService);
+        Mockito.when(serviceDao.findById(eq(epoService.getService())))
+                .thenReturn(Optional.of(epoService));
 
         PDomibusConnectorAction relayREMMDAcceptanceRejectionAction = PersistenceEntityCreator.createRelayREMMDAcceptanceRejectionAction();
-        Mockito.when(actionDao.findOne(eq(relayREMMDAcceptanceRejectionAction.getAction())))
-                .thenReturn(relayREMMDAcceptanceRejectionAction);
+        Mockito.when(actionDao.findById(eq(relayREMMDAcceptanceRejectionAction.getAction())))
+                .thenReturn(Optional.of(relayREMMDAcceptanceRejectionAction));
 
 
         this.internalMessageInfoPersistenceService = impl;

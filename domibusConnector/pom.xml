@@ -329,12 +329,25 @@
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
             </dependency>
-            
-       
+
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>jsp-api</artifactId>
                 <version>6.0.53</version>            
+            </dependency>
+
+            <!-- findbugs -->
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+
+            <!-- commons lang -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.4</version>
             </dependency>
        
             <!-- MANAGED TEST DEPENDENCIES -->

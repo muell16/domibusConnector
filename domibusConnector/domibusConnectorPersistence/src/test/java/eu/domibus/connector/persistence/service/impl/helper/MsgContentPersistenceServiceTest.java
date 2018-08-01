@@ -30,17 +30,15 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import org.springframework.util.StreamUtils;
+
 
 /**
  *
@@ -99,15 +97,17 @@ public class MsgContentPersistenceServiceTest {
         
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         Mockito.when(msgDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
-        
+
+
         Mockito.doAnswer(new Answer<Void>() {
             @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                Iterable iter = invocation.getArgumentAt(0, Iterable.class);
-                iter.forEach( c -> savedMsgCont.add((PDomibusConnectorMsgCont)c));                                                
+            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
+                Iterable iter = invocationOnMock.getArgument(0);
+                iter.forEach( c -> savedMsgCont.add((PDomibusConnectorMsgCont)c));
                 return null;
             }
-        }).when(this.msgContDao).save(any(Iterable.class));
+        }).when(this.msgContDao).save(any());
+
         
         this.msgContService.storeMsgContent(message);
         
@@ -131,11 +131,11 @@ public class MsgContentPersistenceServiceTest {
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                Iterable iter = invocation.getArgumentAt(0, Iterable.class);
+                Iterable iter = invocation.getArgument(0);
                 iter.forEach( c -> savedMsgCont.add((PDomibusConnectorMsgCont)c));                                                
                 return null;
             }
-        }).when(this.msgContDao).save(any(Iterable.class));
+        }).when(this.msgContDao).save(any());
         
         this.msgContService.storeMsgContent(message);
         

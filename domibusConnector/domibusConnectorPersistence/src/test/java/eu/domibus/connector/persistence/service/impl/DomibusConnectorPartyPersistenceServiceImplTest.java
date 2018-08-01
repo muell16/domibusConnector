@@ -8,11 +8,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
+
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyAT;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyPKforPartyAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class DomibusConnectorPartyPersistenceServiceImplTest {
 
@@ -32,8 +34,8 @@ public class DomibusConnectorPartyPersistenceServiceImplTest {
     @Test
     public void testGetParty() {
 
-        Mockito.when(this.domibusConnectorPartyDao.findOne(eq(createPartyPKforPartyAT())))
-                .thenReturn(createPartyAT());
+        Mockito.when(this.domibusConnectorPartyDao.findById(eq(createPartyPKforPartyAT())))
+                .thenReturn(Optional.of(createPartyAT()));
 
         eu.domibus.connector.domain.model.DomibusConnectorParty party = partyPersistenceService.getParty("AT", "GW");
 

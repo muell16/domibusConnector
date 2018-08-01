@@ -12,12 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import org.dbunit.database.AmbiguousTableNameException;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,9 +50,11 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
         
         //Load testdata
-        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorEvidence.xml").getInputStream()));
+        IDataSet dataSet = new FlatXmlDataSetBuilder()
+                .setColumnSensing(true)
+                .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorEvidence.xml").getInputStream()));
         
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);        
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
         
     }
@@ -110,6 +114,9 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         
          //check result in DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseConfig config = conn.getConfig();
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=83");
        
@@ -126,7 +133,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
 
         assertThat(result).isEqualTo(1);
         //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=85");
 
@@ -134,6 +141,8 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_NAT");
         assertThat(value).isNotNull();
         assertThat(value).isCloseTo(new Date(), 2000);
+
+        conn.close();
     }
 
 
@@ -141,13 +150,15 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     public void testSetDeliveredToBackend_updateNoneExistant_shouldReturnZero() {
         int result = evidenceDao.setDeliveredToBackend(83231L);        
         assertThat(result).isEqualTo(0); //check one row updated
+
+
     }
 
     @Test(timeout=20000)
     public void testSaveEvidence() {
         PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
         
-        PDomibusConnectorMessage dbMessage = messageDao.findOne(75L);  
+        PDomibusConnectorMessage dbMessage = messageDao.findById(75L).get();
         assertThat(dbMessage).isNotNull();
         
         byte[] evidence = "Hallo Welt".getBytes();

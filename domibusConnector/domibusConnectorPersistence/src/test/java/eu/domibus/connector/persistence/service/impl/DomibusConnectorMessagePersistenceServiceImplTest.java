@@ -28,10 +28,11 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  *
@@ -77,7 +78,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                DomibusConnectorMessageBuilder builder = invocation.getArgumentAt(0, DomibusConnectorMessageBuilder.class);
+                DomibusConnectorMessageBuilder builder = invocation.getArgument(0);
                 builder.setMessageContent(new DomibusConnectorMessageContent());
                 return null;
             }
@@ -310,7 +311,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
                 .then(new Answer<PDomibusConnectorMessage>() {
                     @Override
                     public PDomibusConnectorMessage answer(InvocationOnMock invocation) throws Throwable {
-                        PDomibusConnectorMessage message = invocation.getArgumentAt(0, PDomibusConnectorMessage.class);
+                        PDomibusConnectorMessage message = invocation.getArgument(0);
                         
                         //TODO: complete mapping check
                         assertThat(message.getEbmsMessageId()).isEqualTo("ebmsid");
@@ -370,7 +371,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         pMessage.setId(47L);        
         Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(pMessage);
 
-        Mockito.when(messageDao.findOne(47L)).thenReturn(pMessage);
+        Mockito.when(messageDao.findById(47L)).thenReturn(Optional.of(pMessage));
 
         messagePersistenceService.mergeMessageWithDatabase(message);
 

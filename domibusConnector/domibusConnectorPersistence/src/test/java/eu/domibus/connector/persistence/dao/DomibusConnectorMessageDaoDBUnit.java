@@ -7,6 +7,8 @@ import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.*;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
@@ -38,23 +40,24 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
 //        //Load testdata
         IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMessage.xml").getInputStream()));
         
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);        
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
+        conn.close();
         
     }
 
 
     @Test(timeout=20000)
-    public void testFindOneMessage() {
-        PDomibusConnectorMessage msg = messageDao.findOne(73L);
+    public void testFindById() {
+        PDomibusConnectorMessage msg = messageDao.findById(73L).get();
         assertThat(msg).isNotNull();
         assertThat(msg.getHashValue()).isEqualTo("31fb9a629e9640c4723cbd101adafd32");        
     }
 
     @Test(timeout=20000)
-    public void testFindOneMessage_doesNotExist_shouldRetNull() {
-        PDomibusConnectorMessage msg = messageDao.findOne(7231254123L);
-        assertThat(msg).isNull();        
+    public void testFindById_doesNotExist_shouldRetNull() {
+        Optional<PDomibusConnectorMessage> msg = messageDao.findById(7231254123L);
+        assertThat(msg).isEmpty();
     }
 
     @Test(timeout=20000)
@@ -123,7 +126,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         int upd = messageDao.confirmMessage(74L);
         
         //check result in DB        
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=74");
        
@@ -132,6 +135,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(value).isCloseTo(new Date(), 2000);
         
         assertThat(upd).as("one row must be updated").isEqualTo(1);
+        conn.close();
     }
 
     @Test(timeout=20000)
@@ -139,7 +143,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         int upd = messageDao.rejectMessage(73L);
         
         //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=73");
        
@@ -148,6 +152,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(value).isCloseTo(new Date(), 2000);
         
         assertThat(upd).as("one row must be updated!").isEqualTo(1);
+        conn.close();
     }
 
     @Test(timeout=20000)
@@ -167,13 +172,15 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
         
         //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=73");
        
         ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
         Date value = (Date) domibusConnectorTable.getValue(0, "delivered_gw");
         assertThat(value).isCloseTo(new Date(), 2000);
+
+        conn.close();
 
     }
 
@@ -186,13 +193,15 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
         
         //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=74");
        
         ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
         Date value = (Date) domibusConnectorTable.getValue(0, "delivered_backend");
         assertThat(value).isCloseTo(new Date(), 2000);
+
+        conn.close();
         
     }
 
@@ -209,7 +218,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         assertThat(savedMessage.getId()).isNotNull();
         
         //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+        DatabaseDataSourceConnection conn = getDbUnitConnection();
         QueryDataSet dataSet = new QueryDataSet(conn);
         dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=" + savedMessage.getId());
        
@@ -217,6 +226,8 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
         
         String connectorMessageId = (String) domibusConnectorTable.getValue(0, "CONNECTOR_MESSAGE_ID");
         assertThat(connectorMessageId).isEqualTo("msg201");
+
+        conn.close();
                 
     }
 
@@ -242,7 +253,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
 //    // if DB field rejected is NOT NULL -> then true
 //    @Query("SELECT case when (count(m) > 0) then true else false end FROM PDomibusConnectorMessage m WHERE m.id = ?1 AND m.rejected is not null")
 //    public boolean checkMessageRejected(Long messageId);     
-@Test(timeout=20000)
+    @Test(timeout=20000)
     public void checkMessageRejected_shouldBeTrue() {
         long id = 65L;
         boolean rejected = messageDao.checkMessageRejected(id);

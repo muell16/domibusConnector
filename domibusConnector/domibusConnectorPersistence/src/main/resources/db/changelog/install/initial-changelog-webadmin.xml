@@ -12,7 +12,7 @@
     <property name="varchar512.type" value="VARCHAR2(512 CHAR)" dbms="oracle"/>
 
 
-    <changeSet author="StephanSpindler" id="changelog-1.0_create_tbl_webadmin_user_pk">
+    <changeSet author="domibusConnector" id="changelog-1.0_create_tbl_webadmin_user_pk">
         <createTable tableName="DOMIBUS_WEBADMIN_USER">
             <column name="USERNAME" type="${varchar512.type}">
                 <constraints nullable="false" />
@@ -28,12 +28,12 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-1.0_create_webadmin_user_pk">
+    <changeSet author="domibusConnector" id="changelog-1.0_create_webadmin_user_pk">
         <addPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" columnNames="USERNAME" constraintName="PK_WEBADMIN_USER"/>
     </changeSet>
 
 
-    <changeSet author="StephanSpindler" id="changelog-1.1_create_tbl_webadmin_property">
+    <changeSet author="domibusConnector" id="changelog-1.1_create_tbl_webadmin_property">
         <createTable tableName="DOMIBUS_WEBADMIN_PROPERTY">
             <column name="KEY" type="${varchar512.type}">
                 <constraints nullable="false" />
@@ -41,11 +41,11 @@
             <column name="VALUE" type="${varchar512.type}"/>
         </createTable>
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-1.1_create_tbl_webadmin_property_pk">
+    <changeSet author="domibusConnector" id="changelog-1.1_create_tbl_webadmin_property_pk">
         <addPrimaryKey tableName="DOMIBUS_WEBADMIN_PROPERTY" columnNames="KEY" constraintName="PK_WEBAMDIN_PROPERTY"/>
     </changeSet>
 
-    <changeSet author="StephanSpindler" id="changelog-1.0_create_default_user_password">
+    <changeSet author="domibusConnector" id="changelog-1.0_create_default_user_password">
         <comment>Create default admin user with username admin and password admin</comment>
         <insert tableName="DOMIBUS_WEBADMIN_USER">
             <column name="USERNAME" value="admin"/>

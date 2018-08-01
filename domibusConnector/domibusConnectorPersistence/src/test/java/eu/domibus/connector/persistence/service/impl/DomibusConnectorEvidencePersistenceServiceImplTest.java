@@ -21,12 +21,13 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createDeliveryEvidence;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createNonDeliveryEvidence;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class DomibusConnectorEvidencePersistenceServiceImplTest {
 
@@ -63,7 +64,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                 .thenAnswer(new Answer<PDomibusConnectorEvidence>() {
                     @Override
                     public PDomibusConnectorEvidence answer(InvocationOnMock invocation) throws Throwable {
-                        PDomibusConnectorEvidence evidence = invocation.getArgumentAt(0, PDomibusConnectorEvidence.class);
+                        PDomibusConnectorEvidence evidence = invocation.getArgument(0);
                         assertThat(evidence.getDeliveredToGateway()).isNull();
                         assertThat(evidence.getDeliveredToNationalSystem()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
@@ -94,7 +95,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
         Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
 
         Mockito.when(domibusConnectorEvidenceDao.findByMessage_Id(eq(47L))).thenReturn(evidences);
-        Mockito.when(domibusConnectorMessageDao.findOne(eq(47L))).thenReturn(dbMessage);
+        Mockito.when(domibusConnectorMessageDao.findById(eq(47L))).thenReturn(Optional.of(dbMessage));
 
         evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, DomibusConnectorEvidenceType.DELIVERY);
 
@@ -118,7 +119,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                 .thenAnswer(new Answer<PDomibusConnectorEvidence>() {
                     @Override
                     public PDomibusConnectorEvidence answer(InvocationOnMock invocation) throws Throwable {
-                        PDomibusConnectorEvidence evidence = invocation.getArgumentAt(0, PDomibusConnectorEvidence.class);
+                        PDomibusConnectorEvidence evidence = invocation.getArgument(0);
                         assertThat(evidence.getDeliveredToGateway()).isNull();
                         assertThat(evidence.getDeliveredToNationalSystem()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
@@ -151,7 +152,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
         Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
 
         Mockito.when(domibusConnectorEvidenceDao.findByMessage_Id(eq(47L))).thenReturn(evidences);
-        Mockito.when(domibusConnectorMessageDao.findOne(eq(47L))).thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage());
+        Mockito.when(domibusConnectorMessageDao.findById(eq(47L))).thenReturn(Optional.of(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()));
 
         evidencePersistenceService.setEvidenceDeliveredToGateway(message, DomibusConnectorEvidenceType.DELIVERY);
 

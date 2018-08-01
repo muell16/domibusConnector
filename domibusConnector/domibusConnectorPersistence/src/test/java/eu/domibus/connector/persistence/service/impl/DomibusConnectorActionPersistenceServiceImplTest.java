@@ -9,8 +9,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class DomibusConnectorActionPersistenceServiceImplTest {
 
@@ -33,8 +35,8 @@ public class DomibusConnectorActionPersistenceServiceImplTest {
     @Test
     public void testGetAction() {
 
-        Mockito.when(this.actionDao.findOne(eq("action1")))
-                .thenReturn(PersistenceEntityCreator.createAction());
+        Mockito.when(this.actionDao.findById(eq("action1")))
+                .thenReturn(Optional.ofNullable(PersistenceEntityCreator.createAction()));
 
         eu.domibus.connector.domain.model.DomibusConnectorAction action = actionPersistenceService.getAction("action1");
 
@@ -44,8 +46,8 @@ public class DomibusConnectorActionPersistenceServiceImplTest {
 
     @Test
     public void testGetRelayREMMDAcceptanceRejectionAction() {
-        Mockito.when(this.actionDao.findOne(eq("RelayREMMDAcceptanceRejection")))
-                .thenReturn(PersistenceEntityCreator.createRelayREMMDAcceptanceRejectionAction());
+        Mockito.when(this.actionDao.findById(eq("RelayREMMDAcceptanceRejection")))
+                .thenReturn(Optional.ofNullable(PersistenceEntityCreator.createRelayREMMDAcceptanceRejectionAction()));
 
         eu.domibus.connector.domain.model.DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
 
@@ -55,8 +57,8 @@ public class DomibusConnectorActionPersistenceServiceImplTest {
 
     @Test
     public void testGetDeliveryNonDeliveryToRecipientAction() {
-        Mockito.when(this.actionDao.findOne(eq("DeliveryNonDeliveryToRecipient")))
-                .thenReturn(PersistenceEntityCreator.createDeliveryNonDeliveryToRecipientAction());
+        Mockito.when(this.actionDao.findById(eq("DeliveryNonDeliveryToRecipient")))
+                .thenReturn(Optional.ofNullable(PersistenceEntityCreator.createDeliveryNonDeliveryToRecipientAction()));
 
         eu.domibus.connector.domain.model.DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
@@ -67,8 +69,8 @@ public class DomibusConnectorActionPersistenceServiceImplTest {
     @Test
     public void testGetRetrievalNonRetrievalToRecipientAction() {
 
-        Mockito.when(this.actionDao.findOne(eq("RetrievalNonRetrievalToRecipient")))
-                .thenReturn(PersistenceEntityCreator.createRetrievalNonRetrievalToRecipientAction());
+        Mockito.when(this.actionDao.findById(eq("RetrievalNonRetrievalToRecipient")))
+                .thenReturn(Optional.ofNullable(PersistenceEntityCreator.createRetrievalNonRetrievalToRecipientAction()));
 
         eu.domibus.connector.domain.model.DomibusConnectorAction action = actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
 
@@ -78,8 +80,8 @@ public class DomibusConnectorActionPersistenceServiceImplTest {
 
     @Test
     public void testGetRelayREMMDFailure() {
-        Mockito.when(this.actionDao.findOne(eq("RelayREMMDFailure")))
-                .thenReturn(PersistenceEntityCreator.createRelayREMMDFailureAction());
+        Mockito.when(this.actionDao.findById(eq("RelayREMMDFailure")))
+                .thenReturn(Optional.ofNullable(PersistenceEntityCreator.createRelayREMMDFailureAction()));
 
         eu.domibus.connector.domain.model.DomibusConnectorAction action = actionPersistenceService.getRelayREMMDFailure();
 
