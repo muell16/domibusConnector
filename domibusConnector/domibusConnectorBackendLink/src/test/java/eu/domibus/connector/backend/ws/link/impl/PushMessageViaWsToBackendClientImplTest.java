@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 public class PushMessageViaWsToBackendClientImplTest {
 
@@ -46,16 +46,16 @@ public class PushMessageViaWsToBackendClientImplTest {
 
         Mockito.when(webServiceClientFactory.createWsClient(any(DomibusConnectorBackendClientInfo.class)))
                 .then((InvocationOnMock invocation) -> {
-                    DomibusConnectorBackendClientInfo backendInfo = invocation.getArgumentAt(0, DomibusConnectorBackendClientInfo.class);
+                    DomibusConnectorBackendClientInfo backendInfo = invocation.getArgument(0);
                     return createWebService(backendInfo);
                 });
 
         //just pass message through bigDataMessageService
         Mockito.when(bigDataMessageService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
-                .then((Answer<DomibusConnectorMessage>) invocation -> invocation.getArgumentAt(0, DomibusConnectorMessage.class));
+                .then((Answer<DomibusConnectorMessage>) invocation -> invocation.getArgument(0));
 
         Mockito.when(backendSubmissionService.processMessageBeforeDeliverToBackend(any(DomibusConnectorMessage.class)))
-                .then(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+                .then(invoc -> invoc.getArgument(0));
 
 
         PushMessageViaWsToBackendClientImpl pushMessageOverWs = new PushMessageViaWsToBackendClientImpl();

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 public class DomibusConnectorGatewayDeliveryServiceImplTest {
 
@@ -51,16 +51,16 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
 
         Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn("id1");
         Mockito.when(messagePersistenceService.persistMessageIntoDatabase(any(DomibusConnectorMessage.class), any(DomibusConnectorMessageDirection.class)))
-                .then((invoc) -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+                .then((invoc) -> invoc.getArgument(0));
 
         Mockito.when(bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
-                .then((invoc) -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+                .then((invoc) -> invoc.getArgument(0));
 
 
         Mockito.when(messagePersistenceService.mergeMessageWithDatabase(any(DomibusConnectorMessage.class)))
-                .then((invoc) -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+                .then((invoc) -> invoc.getArgument(0));
 
-        Mockito.doAnswer((invoc) -> putOnQueue.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer((invoc) -> putOnQueue.add(invoc.getArgument(0)))
                 .when(putMessageOnQueue).putMessageOnMessageQueue(any(DomibusConnectorMessage.class));
 
     }

@@ -148,7 +148,7 @@ public class BackendToGatewayMessageProcessorITCase {
     public void testProcessMessage_readAttachment() throws IOException, DataSetException, SQLException, DomibusConnectorGatewaySubmissionException, InterruptedException {
 
         Mockito.doAnswer(invoc -> {
-            DomibusConnectorMessage msg = invoc.getArgumentAt(0, DomibusConnectorMessage.class);
+            DomibusConnectorMessage msg = invoc.getArgument(0);
             InputStream inputStream = msg.getMessageAttachments().get(0).getAttachment().getInputStream();
             byte[] bytes = StreamUtils.copyToByteArray(inputStream);
 

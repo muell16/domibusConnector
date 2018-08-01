@@ -9,7 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Before;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mockito;
 
 import java.util.Arrays;

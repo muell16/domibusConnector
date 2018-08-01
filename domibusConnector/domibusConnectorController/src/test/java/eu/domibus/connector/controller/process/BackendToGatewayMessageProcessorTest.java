@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 
@@ -79,14 +79,14 @@ public class BackendToGatewayMessageProcessorTest {
         backendToGatewayMessageProcessor.setMessageIdGenerator(() -> UUID.randomUUID().toString());
         backendToGatewayMessageProcessor.setBigDataPersistenceService(bigDataPersistenceService);
         
-        Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
-        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgument(0)))
                 .when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
         Mockito.when(bigDataPersistenceService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
-                .thenAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class));
+                .thenAnswer(invoc -> invoc.getArgument(0));
 
         
         

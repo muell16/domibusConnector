@@ -30,8 +30,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 public class GatewayToBackendMessageProcessorTest {
@@ -91,23 +91,23 @@ public class GatewayToBackendMessageProcessorTest {
         gatewayToBackendMessageProcessor.setConnectorTestAction(CONNECTOR_TEST_ACTION_STRING);
         gatewayToBackendMessageProcessor.setConnectorTestService(CONNECTOR_TEST_SERVICE_STRING);
 
-        Mockito.doAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class))
+        Mockito.doAnswer(invoc -> invoc.getArgument(0))
                 .when(messagePersistenceService).mergeMessageWithDatabase(any(DomibusConnectorMessage.class));
         
-        Mockito.doAnswer(invoc -> toGwDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer(invoc -> toGwDeliveredMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
-        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgument(0)))
                 .when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
-        Mockito.doAnswer(invoc -> invoc.getArgumentAt(0, DomibusConnectorMessage.class))
+        Mockito.doAnswer(invoc -> invoc.getArgument(0))
                 .when(securityToolkit).validateContainer(any(DomibusConnectorMessage.class));
 
-        Mockito.doAnswer(invoc -> savedMessageErrors.add(invoc.getArgumentAt(1, DomibusConnectorMessageError.class)))
+        Mockito.doAnswer(invoc -> savedMessageErrors.add(invoc.getArgument(1)))
                 .when(messageErrorPersistenceService).persistMessageError(any(), any());
 
         Mockito.doAnswer(invoc -> {
-            DomibusConnectorEvidenceType type = invoc.getArgumentAt(0, DomibusConnectorEvidenceType.class);
+            DomibusConnectorEvidenceType type = invoc.getArgument(0);
             DomibusConnectorMessageConfirmation confirmation = DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation();
             confirmation.setEvidenceType(type);
             return confirmation;

@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 
 public class DeliverMessageFromControllerToBackendServiceTest {
@@ -56,11 +56,11 @@ public class DeliverMessageFromControllerToBackendServiceTest {
         deliverMessageFromControllerToBackendService = impl;
 
         //collect all messages put in wait queue
-        Mockito.doAnswer((invocation) -> waitQueueMessages.add(invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class)))
+        Mockito.doAnswer((invocation) -> waitQueueMessages.add(invocation.getArgument(0)))
                 .when(waitQueue).putMessageInWaitingQueue(any(DomibusConnectorBackendMessage.class));
 
         //collect all pushed messages in array list
-        Mockito.doAnswer((invocation) -> toClientPushedMessages.add(invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class)))
+        Mockito.doAnswer((invocation) -> toClientPushedMessages.add(invocation.getArgument(0)))
                 .when(pushMessageToBackendClient).push(any(DomibusConnectorBackendMessage.class));
 
         //send backend alice back, if conversation is conversation1

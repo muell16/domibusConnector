@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 public class GatewayToBackendConfirmationProcessorTest {
 
@@ -47,7 +47,7 @@ public class GatewayToBackendConfirmationProcessorTest {
 //        Mockito.doAnswer(invoc -> toGwDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
 //                .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
-        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgument(0)))
                 .when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
         gatewayToBackendConfirmationProcessor = new GatewayToBackendConfirmationProcessor();

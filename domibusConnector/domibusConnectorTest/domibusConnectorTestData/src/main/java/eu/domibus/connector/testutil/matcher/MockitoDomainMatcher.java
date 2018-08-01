@@ -2,39 +2,37 @@
 package eu.domibus.connector.testutil.matcher;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
+import org.mockito.ArgumentMatcher;
 
 /**
- *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 public class MockitoDomainMatcher {
 
-    
-    public static BaseMatcher<DomibusConnectorMessage> eqToRefToMessageId(String refToMessageId) {
+
+    public static ArgumentMatcher<DomibusConnectorMessage> eqToRefToMessageId(String refToMessageId) {
         return new RefToMessageIdMatcher(refToMessageId);
     }
-    
-    private static class RefToMessageIdMatcher extends BaseMatcher<DomibusConnectorMessage> {
+
+    private static class RefToMessageIdMatcher implements ArgumentMatcher<DomibusConnectorMessage> {
 
         private final String messageReference;
-                
+
         public RefToMessageIdMatcher(String messageReference) {
+            if (messageReference == null) {
+                throw new IllegalArgumentException("Message Reference cannot be null!");
+            }
             this.messageReference = messageReference;
-        }
-        
-        @Override
-        public void describeTo(Description description) {
-            
         }
 
         @Override
-        public boolean matches(Object item) {
-            DomibusConnectorMessage m = (DomibusConnectorMessage) item;
-            return messageReference.equals(m.getMessageDetails().getRefToMessageId());
+        public boolean matches(DomibusConnectorMessage message) {
+            if (message == null) {
+                return false;
+            }
+            return messageReference.equals(message.getMessageDetails().getRefToMessageId());
         }
-    
+
     }
-    
+
 }

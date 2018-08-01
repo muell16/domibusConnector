@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 public class BackendToGatewayConfirmationProcessorTest {
@@ -52,7 +52,7 @@ public class BackendToGatewayConfirmationProcessorTest {
 
         backendToGatewayConfirmationProcessor.setGwSubmissionService(gwSubmissionService);
 
-        Mockito.doAnswer( (invoc) -> toGwSubmittedMessages.add(invoc.getArgumentAt(0, DomibusConnectorMessage.class)))
+        Mockito.doAnswer( (invoc) -> toGwSubmittedMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
 //        Mockito.when(evidencesToolkit.createEvidence(any(DomibusConnectorEvidenceType.class),

@@ -1,27 +1,13 @@
 
 package eu.domibus.connector.backend.ws.link.impl;
 
-import eu.domibus.connector.backend.ws.link.impl.PushMessageToBackendClient;
-import eu.domibus.connector.backend.ws.link.impl.ToBackendClientJmsBasedWaitQueue;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.jms.Message;
-import javax.jms.Session;
-
-import org.junit.Ignore;
 import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Rule;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -38,8 +24,15 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+
+import javax.jms.Message;
+import javax.jms.Session;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  *
@@ -157,7 +150,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     public void testPushToBackend() throws InterruptedException {
         final List<String> messageIds = new ArrayList<>();
         Mockito.doAnswer((Answer<Void>) (InvocationOnMock invocation) -> {
-            DomibusConnectorBackendMessage msg = invocation.getArgumentAt(0, DomibusConnectorBackendMessage.class);
+            DomibusConnectorBackendMessage msg = invocation.getArgument(0);
             String msgId = msg.getDomibusConnectorMessage().getConnectorMessageId();
             messageIds.add(msgId);
             return null;
