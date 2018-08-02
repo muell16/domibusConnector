@@ -87,10 +87,10 @@ public class BackendLinkWsTestMessageFlowITCase {
         String[] backendProperties = new String[] {"server.port=0",
                 "spring.datasource.url=jdbc:h2:mem:" + dbName,
                 "logging.config=classpath:log4j2-test.xml",
-                "liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
+                "spring.liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
-                "liquibase.enabled=true",
+                "spring.liquibase.enabled=true",
                 "connector.backend.ws.key.store.path=classpath:/connector.jks"
         };
 
@@ -105,7 +105,11 @@ public class BackendLinkWsTestMessageFlowITCase {
     private static ApplicationContext setUpClientAlice(String backendAddress) {
         MDC.put("COLOR", "CYAN");
         String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
-        String[] properties = new String[]{"ws.backendclient.name=alice", "ws.backendclient.cn=alice", "server.port=0", "connector.backend.ws.address=" + backendAddress};
+        String[] properties = new String[]{
+                "ws.backendclient.name=alice",
+                "ws.backendclient.cn=alice",
+                "server.port=0",
+                "connector.backend.ws.address=" + backendAddress};
         ApplicationContext ctx = CommonBackendClient.startSpringApplication(profiles, properties);
         MDC.remove("COLOR");
         return ctx;
@@ -115,7 +119,11 @@ public class BackendLinkWsTestMessageFlowITCase {
     private static ApplicationContext setUpClientBob(String backendAddress) {
         MDC.put("COLOR", "BLUE");
         String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
-        String[] properties = new String[]{"ws.backendclient.name=bob", "ws.backendclient.cn=bob", "server.port=0", "connector.backend.ws.address=" + backendAddress};
+        String[] properties = new String[]{
+                "ws.backendclient.name=bob",
+                "ws.backendclient.cn=bob",
+                "server.port=0",
+                "connector.backend.ws.address=" + backendAddress};
         ApplicationContext ctx = CommonBackendClient.startSpringApplication(profiles, properties);
         MDC.remove("COLOR");
         return ctx;
@@ -124,7 +132,11 @@ public class BackendLinkWsTestMessageFlowITCase {
     private static ApplicationContext setUpClientCatrina(String backendAddress) {
 //        MDC.put("COLOR", "CYAN");
         String[] profiles = new String[]{"ws-backendclient-server", "ws-backendclient-client"};
-        String[] properties = new String[]{"ws.backendclient.name=catrina", "ws.backendclient.cn=catrina", "server.port=0", "connector.backend.ws.address=" + backendAddress};
+        String[] properties = new String[]{
+                "ws.backendclient.name=catrina",
+                "ws.backendclient.cn=catrina",
+                "server.port=0",
+                "connector.backend.ws.address=" + backendAddress};
         ApplicationContext ctx = CommonBackendClient.startSpringApplication(profiles, properties);
         MDC.remove("COLOR");
         return ctx;
