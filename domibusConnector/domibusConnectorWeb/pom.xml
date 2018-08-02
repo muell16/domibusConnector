@@ -60,7 +60,6 @@
 				<exclusion>
 					<groupId>org.webjars.bowergithub.vaadin</groupId>
 					<artifactId>vaadin-lumo-styles</artifactId>
-
 				</exclusion>
 				<exclusion>
 					<groupId>org.webjars.bowergithub.vaadin</groupId>
