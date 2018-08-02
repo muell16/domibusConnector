@@ -32,6 +32,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -106,16 +108,17 @@ public class MsgContentPersistenceServiceTest {
                 iter.forEach( c -> savedMsgCont.add((PDomibusConnectorMsgCont)c));
                 return null;
             }
-        }).when(this.msgContDao).save(any());
+        }).when(this.msgContDao).saveAll(any());
 
-        
         this.msgContService.storeMsgContent(message);
-        
+
+//        Mockito.verify(msgContDao, times(1)).save(any(PDomibusConnectorMsgCont.class));
+
         assertThat(savedMsgCont.stream()
                 .filter(c -> StoreType.MESSAGE_CONTENT.getDbString().equals(c.getContentType()))
                 .count()).as("There should be one MessageContent").isEqualTo(1);
         
-        Mockito.verify(msgContDao, Mockito.times(1)).deleteByMessage(eq(dbMessage));                        
+        Mockito.verify(msgContDao, times(1)).deleteByMessage(eq(dbMessage));
     }
     
    @Test
@@ -135,7 +138,7 @@ public class MsgContentPersistenceServiceTest {
                 iter.forEach( c -> savedMsgCont.add((PDomibusConnectorMsgCont)c));                                                
                 return null;
             }
-        }).when(this.msgContDao).save(any());
+        }).when(this.msgContDao).saveAll(any());
         
         this.msgContService.storeMsgContent(message);
         
@@ -143,7 +146,7 @@ public class MsgContentPersistenceServiceTest {
                 .filter(c -> StoreType.MESSAGE_CONTENT.getDbString().equals(c.getContentType()))
                 .count()).as("There should be one MessageContent").isEqualTo(1);
         
-        Mockito.verify(msgContDao, Mockito.times(1)).deleteByMessage(eq(dbMessage));                        
+        Mockito.verify(msgContDao, times(1)).deleteByMessage(eq(dbMessage));
     }
     
     

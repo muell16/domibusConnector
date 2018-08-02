@@ -27,15 +27,15 @@ public interface DomibusConnectorMessageErrorPersistenceService {
      */
     void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError);
 
-    /**
-     * creates a MessageError from an exception and persists this message error
-     * @param message - the message the exception is related to
-     * @param ex - the exception
-     * @param source - class/service where the exception occured
-     * @deprecated  use {@link #persistMessageError(java.lang.String, eu.domibus.connector.domain.model.DomibusConnectorMessageError) } instead:
-     * create a DomibusConnectorMessageError before and then call #persistMessageError
-     */
-    @Deprecated
-    void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source);
+//    /**
+//     * creates a MessageError from an exception and persists this message error
+//     * @param message - the message the exception is related to
+//     * @param ex - the exception
+//     * @param source - class/service where the exception occured
+//     * @deprecated  use {@link #persistMessageError(java.lang.String, eu.domibus.connector.domain.model.DomibusConnectorMessageError) } instead:
+//     * create a DomibusConnectorMessageError before and then call #persistMessageError
+//     */
+//    @Deprecated
+//    void persistMessageErrorFromException(DomibusConnectorMessage message, Throwable ex, Class<?> source);
 
 }
