@@ -1,5 +1,6 @@
 package eu.domibus.connector.security.spring;
 
+import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import javax.annotation.Resource;
 import static org.assertj.core.api.Assertions.*;
