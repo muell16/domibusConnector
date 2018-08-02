@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorWebAppModule</artifactId>
+            <artifactId>domibusConnectorWeb</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
