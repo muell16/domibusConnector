@@ -16,10 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.exception.DomibusConnectorBackendException;
+import eu.domibus.connector.controller.exception.DomibusConnectorBackendDeliveryException;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
-import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -29,16 +28,14 @@ import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebServ
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 
 /**
- *
  * Handles transmitting messages (push/pull) from and to backendClients over webservice
- *  pushing messages to backendClients are handled in different service: {@link PushMessageViaWsToBackendClientImpl}
- *
+ * pushing messages to backendClients are handled in different service: {@link PushMessageViaWsToBackendClientImpl}
  */
 @Service("connectorBackendImpl")
 public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWebService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorWsBackendImpl.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorWsBackendImpl.class);
+
     @Resource
     private WebServiceContext webServiceContext;
 
@@ -47,7 +44,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     private MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
 
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
-    
+
     //setter
     public void setWsContext(WebServiceContext webServiceContext) {
         this.webServiceContext = webServiceContext;
@@ -68,59 +65,49 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         this.backendSubmissionService = backendSubmissionService;
     }
 
-        
+
     @Override
     public DomibusConnectorMessagesType requestMessages(EmptyRequestType requestMessagesRequest) {
         DomibusConnectorBackendClientInfo backendClientInfoByName = null;
-		try {
-			backendClientInfoByName = checkBackendClient();
-			DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue = retrieveWaitingMessagesFromQueue(backendClientInfoByName);        
-        	return retrieveWaitingMessagesFromQueue;
-		} catch (DomibusConnectorBackendException e) {
-			LOGGER.error("Exception caught retrieving Messages from the backend queue!", e);
-			return null;
-		}
+        try {
+            backendClientInfoByName = checkBackendClient();
+            DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue = retrieveWaitingMessagesFromQueue(backendClientInfoByName);
+            return retrieveWaitingMessagesFromQueue;
+        } catch (DomibusConnectorBackendDeliveryException e) {
+            LOGGER.error("Exception caught retrieving Messages from the backend queue!", e);
+            return null;
+        }
     }
 
     @Transactional
-    DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) throws DomibusConnectorBackendException {
+    public DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) throws DomibusConnectorBackendDeliveryException {
         DomibusConnectorMessagesType messagesType = new DomibusConnectorMessagesType();
         try {
-        List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
-        messageIds.stream()
-                .forEach((message) -> {
-                    messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
-                    backendSubmissionService.processMessageAfterDeliveredToBackend(message);
-                });
-        }catch(Exception e) {
-        	throw new DomibusConnectorBackendException("Exception caught retrieving messages from backend queue!", e);
+            List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
+            messageIds.stream()
+                    .forEach((message) -> {
+                        messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
+                        backendSubmissionService.processMessageAfterDeliveredToBackend(message);
+                    });
+        } catch (Exception e) {
+            throw new DomibusConnectorBackendDeliveryException("Exception caught retrieving messages from backend queue!", e);
         }
         return messagesType;
     }
-    
+
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
-        message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-        DomibusConnectorMessageType transformDomainToTransition = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
-        return transformDomainToTransition;        
+        DomibusConnectorMessage processedMessage = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
+        return DomibusConnectorDomainMessageTransformer.transformDomainToTransition(processedMessage);
     }
-    
-    
-        
+
+
     @Override
-    public DomibsConnectorAcknowledgementType submitMessage(DomibusConnectorMessageType submitMessageRequest) {        
+    public DomibsConnectorAcknowledgementType submitMessage(DomibusConnectorMessageType submitMessageRequest) {
         DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
         try {
             LOGGER.debug("#submitMessage: message: [{}]", submitMessageRequest);
-        
             DomibusConnectorBackendClientInfo backendClientInfoByName = null;
-			try {
-				backendClientInfoByName = checkBackendClient();
-			} catch (DomibusConnectorBackendException e) {
-				answer.setResult(false);
-				answer.setMessageId(submitMessageRequest.getMessageDetails().getBackendMessageId());
-				answer.setResultMessage(e.getMessage());
-				return answer;
-			}
+            backendClientInfoByName = checkBackendClient();
 
             DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getBackendName());
@@ -130,44 +117,35 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             backendMessage.setDomibusConnectorMessage(msg);
             backendMessage.setBackendClientInfo(backendClientInfoByName);
 
-            try {
-            	backendSubmissionService.submitToController(backendMessage);
-            }catch(Exception e) {
-            	answer.setResult(false);
-				answer.setMessageId(submitMessageRequest.getMessageDetails().getBackendMessageId());
-				answer.setResultMessage(e.getMessage());
-				return answer;
-            }
-                       
+            backendSubmissionService.submitToController(backendMessage);
+
             answer.setResult(true);
             answer.setMessageId(msg.getConnectorMessageId());
-            
-            
-        } catch (DomibusConnectorControllerException e) {
+
+        } catch (Exception e) {
             LOGGER.error("Exception occured during submitMessage from backend", e);
-            answer.setResult(false);   
+            answer.setResult(false);
             answer.setMessageId(submitMessageRequest.getMessageDetails().getBackendMessageId());
             answer.setResultMessage(e.getMessage());
-            return answer;
-        }                
+        }
         return answer;
     }
 
-    
-    private DomibusConnectorBackendClientInfo checkBackendClient() throws DomibusConnectorBackendException {
+
+    private DomibusConnectorBackendClientInfo checkBackendClient() throws DomibusConnectorBackendDeliveryException {
         Principal userPrincipal = webServiceContext.getUserPrincipal();
         String backendName = userPrincipal == null ? null : userPrincipal.getName();
         if (userPrincipal == null || backendName == null) {
             String error = String.format("checkBackendClient: Cannot handle request because userPrincipal is [%s] the userName is [%s]. Cannot identify backend!", userPrincipal, backendName);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
-            throw new DomibusConnectorBackendException(error);            
+            throw new DomibusConnectorBackendDeliveryException(error);
         }
         backendName = backendName.replace("CN=", "");
         DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
-            throw new DomibusConnectorBackendException(error);
+            throw new DomibusConnectorBackendDeliveryException(error);
         }
 
         ///

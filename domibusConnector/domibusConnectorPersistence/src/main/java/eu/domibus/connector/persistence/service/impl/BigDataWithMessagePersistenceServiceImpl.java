@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import java.io.IOException;
 import java.io.OutputStream;
 

@@ -1,17 +1,19 @@
 
 package eu.domibus.connector.backend.ws.link.spring;
 
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.PostConstruct;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Properties;
 
 /**
@@ -20,6 +22,7 @@ import java.util.Properties;
  */
 @Component
 @ConfigurationProperties(prefix = WSBackendLinkConfigurationProperties.PREFIX)
+@Validated
 public class WSBackendLinkConfigurationProperties {
 
     public static final String PREFIX = "connector.backend.ws";
@@ -47,20 +50,26 @@ public class WSBackendLinkConfigurationProperties {
      *  the signing and wss is done with certificates
      *
      */
+    @Valid
     @NestedConfigurationProperty
+    @NotNull
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
     /**
      * Configuration of the key store which is used to sign the transferred soap-messages and
      * decrypt the from the backendClient received messages
      */
+    @Valid
     @NestedConfigurationProperty
+    @NotNull
     private KeyAndKeyStoreConfigurationProperties key;
 
     /**
      * Trust store which is used to verify the from the backendClient signed messages
      */
+    @Valid
     @NestedConfigurationProperty
+    @NotNull
     private CertAndStoreConfigurationProperties trust;
 
     public String getBackendPublishAddress() {
@@ -125,7 +134,6 @@ public class WSBackendLinkConfigurationProperties {
             LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
             p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
         } catch (Exception e) {
-//            LOGGER.debug("Trust Store Property: [" + PREFIX + ".trust.store.path]\n cannot be processed. ", e);
             LOGGER.info("Trust Store Property: [" + PREFIX + ".trust.store.path]" +
                     "\n cannot be processed. Using the configured key store [{}] as trust store",
                     p.getProperty("org.apache.wss4j.crypto.merlin.keystore.file"));
@@ -141,7 +149,7 @@ public class WSBackendLinkConfigurationProperties {
     public static class KeyAndKeyStoreConfigurationProperties {
         public KeyAndKeyStoreConfigurationProperties() {}
 
-        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, CertConfigurationProperties key) {
+        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, KeyConfigurationProperties key) {
             this.store = keyStore;
             this.key = key;
         }
@@ -156,7 +164,7 @@ public class WSBackendLinkConfigurationProperties {
          * Configures the default alias to use
          */
         @NestedConfigurationProperty
-        private CertConfigurationProperties key;
+        private KeyConfigurationProperties key;
 
         public StoreConfigurationProperties getStore() {
             return store;
@@ -166,11 +174,11 @@ public class WSBackendLinkConfigurationProperties {
             this.store = store;
         }
 
-        public CertConfigurationProperties getKey() {
+        public KeyConfigurationProperties getKey() {
             return key;
         }
 
-        public void setKey(CertConfigurationProperties key) {
+        public void setKey(KeyConfigurationProperties key) {
             this.key = key;
         }
 

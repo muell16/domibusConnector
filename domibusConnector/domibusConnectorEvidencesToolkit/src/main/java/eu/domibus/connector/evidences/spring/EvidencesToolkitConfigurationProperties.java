@@ -1,29 +1,36 @@
 package eu.domibus.connector.evidences.spring;
 
 import eu.domibus.connector.evidences.HashValueBuilder;
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.PostConstruct;
+
 @Component
-@ConfigurationProperties(prefix = "connector.evidences")
+@ConfigurationProperties(prefix = EvidencesToolkitConfigurationProperties.CONFIG_PREFIX)
 @Validated
 public class EvidencesToolkitConfigurationProperties {
+
+    public static final String CONFIG_PREFIX = "connector.evidences";
 
     /**
      * Configuration of the keyStore which holds the private key to sign the evidences
      */
     @NestedConfigurationProperty
-    StoreConfigurationProperties keystore = new StoreConfigurationProperties();
+    StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
 
     /**
      * Configuration of the private key which is used to sign the evidences
+     *
+     * property name connector.evidences.private-key
+     *
      */
     @NestedConfigurationProperty
-    CertConfigurationProperties key = new CertConfigurationProperties();
+    KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
     /**
      * The hashAlgorithm used for signing the evidences
@@ -31,20 +38,20 @@ public class EvidencesToolkitConfigurationProperties {
      */
     HashValueBuilder.HashAlgorithm hashAlgorithm = HashValueBuilder.HashAlgorithm.SHA256;
 
-    public StoreConfigurationProperties getKeystore() {
-        return keystore;
+    public StoreConfigurationProperties getKeyStore() {
+        return keyStore;
     }
 
-    public void setKeystore(StoreConfigurationProperties keystore) {
-        this.keystore = keystore;
+    public void setKeyStore(StoreConfigurationProperties keystore) {
+        this.keyStore = keystore;
     }
 
-    public CertConfigurationProperties getKey() {
-        return key;
+    public KeyConfigurationProperties getPrivateKey() {
+        return privateKey;
     }
 
-    public void setKey(CertConfigurationProperties key) {
-        this.key = key;
+    public void setPrivateKey(KeyConfigurationProperties privateKey) {
+        this.privateKey = privateKey;
     }
 
     public HashValueBuilder.HashAlgorithm getHashAlgorithm() {
@@ -53,5 +60,23 @@ public class EvidencesToolkitConfigurationProperties {
 
     public void setHashAlgorithm(HashValueBuilder.HashAlgorithm hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
+    }
+
+
+    @PostConstruct
+    public void checkValues() {
+        try {
+            this.getKeyStore().validatePathReadable();
+        } catch (StoreConfigurationProperties.ValidationException ve) {
+            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + ".keystore" , ve);
+        }
+        throwIfNull(getPrivateKey(), "key");
+        throwIfNull(getPrivateKey().getAlias(), "key.alias");
+    }
+
+    public void throwIfNull(Object nullcheck, String message) {
+        if (nullcheck == null) {
+            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + "." + message + " is not allowed to be null!");
+        }
     }
 }

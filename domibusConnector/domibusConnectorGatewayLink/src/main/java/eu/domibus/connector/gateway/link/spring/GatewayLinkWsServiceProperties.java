@@ -1,10 +1,11 @@
 
 package eu.domibus.connector.gateway.link.spring;
 
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component("GatewayLinkWsServiceProperties")
+@Profile("gwlink-ws")
 @ConfigurationProperties(prefix = "connector.gatewaylink.ws")
 public class GatewayLinkWsServiceProperties {
 
@@ -48,7 +50,7 @@ public class GatewayLinkWsServiceProperties {
      * The tlsKey is located in the tlsKeyStore and is used to authenticate against the Gateway
      */
     @NestedConfigurationProperty
-    private CertConfigurationProperties tlsKey = new CertConfigurationProperties();
+    private KeyConfigurationProperties tlsKey = new KeyConfigurationProperties();
 
     /**
      * SSL Trust Store configuration
@@ -92,11 +94,11 @@ public class GatewayLinkWsServiceProperties {
         this.tlsTrustStore = tlsTrustStore;
     }
 
-    public CertConfigurationProperties getTlsKey() {
+    public KeyConfigurationProperties getTlsKey() {
         return tlsKey;
     }
 
-    public void setTlsKey(CertConfigurationProperties tlsKey) {
+    public void setTlsKey(KeyConfigurationProperties tlsKey) {
         this.tlsKey = tlsKey;
     }
 }

@@ -5,11 +5,8 @@ import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperti
 import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerifier;
 import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidationServiceFactory;
 import eu.ecodex.dss.model.CertificateStoreInfo;
-import eu.ecodex.dss.model.ECodexContainer;
 import eu.ecodex.dss.model.EnvironmentConfiguration;
 import eu.ecodex.dss.model.SignatureParameters;
-import eu.ecodex.dss.model.token.AdvancedSystemType;
-import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexLegalValidationService;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
@@ -20,7 +17,6 @@ import eu.europa.esig.dss.EncryptionAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -74,8 +70,8 @@ public class ECodexContainerFactoryService {
             EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.RSA;
             DigestAlgorithm digestAlgorithm = DigestAlgorithm.SHA1;
 
-            String keyAlias = securityToolkitConfigurationProperties.getKey().getAlias();
-            String keyPassword = securityToolkitConfigurationProperties.getKey().getPassword();
+            String keyAlias = securityToolkitConfigurationProperties.getPrivateKey().getAlias();
+            String keyPassword = securityToolkitConfigurationProperties.getPrivateKey().getPassword();
 
             LOGGER.info("SignatureParameters are certStore [{}], keyAlias [{}], encryptionAlgorithm [{}], digestAlgorithm [{}]",
                     certStore.getLocation(), keyAlias, encryptionAlgorithm, digestAlgorithm);

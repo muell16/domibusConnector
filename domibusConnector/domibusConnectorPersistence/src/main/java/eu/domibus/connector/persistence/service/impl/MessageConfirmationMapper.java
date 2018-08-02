@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
+import eu.domibus.connector.persistence.service.impl.helper.MapperHelper;
 
 import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +24,7 @@ public class MessageConfirmationMapper {
     public static PDomibusConnectorEvidence mapFromDomainIntoDb(PDomibusConnectorEvidence evidence, DomibusConnectorMessageConfirmation confirmation) {
         evidence.setType(EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(confirmation.getEvidenceType()));
         if (confirmation.getEvidence() != null) {
-            evidence.setEvidence(convertByteArrayToString(confirmation.getEvidence()));
+            evidence.setEvidence(MapperHelper.convertByteArrayToString(confirmation.getEvidence()));
         }
         return evidence;
     }
@@ -33,15 +34,4 @@ public class MessageConfirmationMapper {
         return mapFromDomainIntoDb(evidence, confirmation);
     }
 
-    private static @Nullable
-    String convertByteArrayToString(@Nullable byte[] bytes) {
-        try {
-            if (bytes == null) {
-                return null;
-            }
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

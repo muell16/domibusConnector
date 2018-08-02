@@ -2,6 +2,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
+import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
@@ -19,10 +20,9 @@ import java.util.List;
 
 
 @Service
-public class DeliverMessageFromControllerToBackendService  implements DomibusConnectorBackendDeliveryService {
+public class DeliverMessageFromControllerToBackendService implements DomibusConnectorBackendDeliveryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliverMessageFromControllerToBackendService.class);
-
 
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
 
@@ -58,7 +58,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
     @Override
     public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
         if (message.getConnectorMessageId() == null) {
-            throw new RuntimeException("cannot handle message without message id");
+            throw new DomibusConnectorControllerException("cannot handle message without message id");
         }
 
         LOGGER.debug("#deliverMessageToBackend: message [{}]", message);
@@ -74,7 +74,9 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
 
         LOGGER.debug("#deliverMessageToBackend: decide message [{}] is push message: [{}]", backendMessage, backendMessage.getBackendClientInfo().isPushBackend());
         if (backendMessage.getBackendClientInfo().isPushBackend()) {
-            if (pushMessageToBackendClient == null) { throw new IllegalStateException("The client is configured as push client, but no push service is available!"); }
+            if (pushMessageToBackendClient == null) {
+                throw new DomibusConnectorBackendException("The client is configured as push client, but no push service is available!");
+            }
             LOGGER.debug("#deliverMessageToBackend: pushing message to backend client");
             pushMessageToBackendClient.push(backendMessage);
         } else {
@@ -85,39 +87,37 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
 
     /**
      * Determine correct backend by following strategy
+     * <p>
+     * 0) BackendId:            The message details contains a backendIdName, then this is used!
+     * <p>
+     * 1) RefToMessageId:      The message is related (usually its a evidence message) to a previous message. The relation is expressed by
+     * referencing the ebmsId OR nationalId of the previous message in the refToMessageId property.
+     * Load this previous message and set the backendClient to the same as the previous message.
+     * <p>
+     * 2) ConversationId:      The message is related to a previous message. The relation is expressed by the same conversationId
+     * Load this previous message and set the backendClient to the same as the previous message.
+     * <p>
+     * 3) Service:             Lookup the backendConfiguration and find the correct backendClient by the service name.
+     * <p>
+     * 4) DefaultBackend:      Lookup the backendConfiguration and find the default backend.
+     * <p>
+     * 5) ERROR:               If none of the previous conditions has matched a error will be thrown. No backend client found to process this message!
      *
-     *  0) BackendId:            The message details contains a backendIdName, then this is used!
-     *
-     *  1) RefToMessageId:      The message is related (usually its a evidence message) to a previous message. The relation is expressed by
-     *                          referencing the ebmsId OR nationalId of the previous message in the refToMessageId property.
-     *                          Load this previous message and set the backendClient to the same as the previous message.
-     *
-     *  2) ConversationId:      The message is related to a previous message. The relation is expressed by the same conversationId
-     *                          Load this previous message and set the backendClient to the same as the previous message.
-     *
-     *  3) Service:             Lookup the backendConfiguration and find the correct backendClient by the service name.
-     *
-     *  4) DefaultBackend:      Lookup the backendConfiguration and find the default backend.
-     *
-     *  5) ERROR:               If none of the previous conditions has matched a error will be thrown. No backend client found to process this message!
-     *
-     * @param msg
-     * @return
+     * @param msg - the processed message
+     * @return the determined connectorBackendClientInfo
      */
-    @Nonnull DomibusConnectorBackendClientInfo getBackendClientForMessage(DomibusConnectorMessage msg) {
+    @Nonnull
+    DomibusConnectorBackendClientInfo getBackendClientForMessage(DomibusConnectorMessage msg) {
         LOGGER.debug("#getBackendClientForMessage: determine correct backendClient");
 
         DomibusConnectorBackendClientInfo backendClientInfo;
 
         String backendConnectorClientName = msg.getMessageDetails().getConnectorBackendClientName();
-        if (backendConnectorClientName != null) {
-            backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName(backendConnectorClientName);
-            if (backendClientInfo != null) {
-                LOGGER.debug("#getBackendClientForMessage: used connectorBackendClientName [{}] in messageDetails to determine backend [{}]!",
-                        msg.getMessageDetails().getConnectorBackendClientName(), backendClientInfo);
-                return backendClientInfo;
-            }
-            LOGGER.debug("#getBackendClientForMessage: connectorBackendClientName is not set in messageDetails!");
+        backendClientInfo = getBackendClientInfoByClientNameOrReturnNull(backendConnectorClientName);
+        if (backendClientInfo != null) {
+            LOGGER.debug("#getBackendClientForMessage: used by message provided backend name [{}] to determine backend [{}]",
+                    backendConnectorClientName, backendClientInfo);
+            return backendClientInfo;
         }
 
         // 1 RefToMessageId
@@ -157,7 +157,22 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
         }
 
         //5 error
-        throw new RuntimeException(String.format("No backend found to handle message [%s]", msg));
+        throw new DomibusConnectorBackendException(String.format("No backend found to handle message [%s]", msg));
+    }
+
+    private DomibusConnectorBackendClientInfo getBackendClientInfoByClientNameOrReturnNull(String backendConnectorClientName) {
+        DomibusConnectorBackendClientInfo backendClientInfo;
+        if (backendConnectorClientName != null) {
+            backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName(backendConnectorClientName);
+            if (backendClientInfo != null) {
+                LOGGER.debug("#getBackendClientInfoByClientNameOrReturnNull: used connectorBackendClientName [{}] in messageDetails to determine backend [{}]!",
+                        backendConnectorClientName, backendClientInfo);
+                return backendClientInfo;
+            }
+            LOGGER.debug("#getBackendClientInfoByClientNameOrReturnNull: connectorBackendClientName is not set in messageDetails!");
+        }
+        LOGGER.debug("#getBackendClientInfoByClientNameOrReturnNull: backendConnectorClientName is null returning null!");
+        return null;
     }
 
     private DomibusConnectorBackendClientInfo getBackendClientInfoByRefToMessageIdOrReturnNull(String refToMessageId) {
@@ -171,8 +186,7 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
                 throw new IllegalStateException(String.format("Referenced message with ebmsid or nationalBackendId [%s] does not exist!", refToMessageId));
             }
             String connectorBackendClientName = referencedMessage.getMessageDetails().getConnectorBackendClientName();
-            DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
-            return backendClientInfoByServiceName;
+            return backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
         } else {
             LOGGER.debug("#getBackendClientInfoByRefToMessageIdOrReturnNull: refToMessageId is null returning null!");
             return null;
@@ -180,25 +194,26 @@ public class DeliverMessageFromControllerToBackendService  implements DomibusCon
     }
 
     private DomibusConnectorBackendClientInfo getBackendClientInfoByConversationIdOrReturnNull(String conversationId) {
-        if (conversationId != null) {
-            LOGGER.trace("#getBackendClientInfoByConversationIdOrReturnNull: try to find message by conversationId");
-            List<DomibusConnectorMessage> messagesByConversationId = messagePersistenceService.findMessagesByConversationId(conversationId);
-            if (messagesByConversationId.size() > 0) {
-                DomibusConnectorMessage message = messagesByConversationId.get(0);
-                String connectorBackendClientName = message.getMessageDetails().getConnectorBackendClientName();
-                if (connectorBackendClientName == null) {
-                    LOGGER.warn("Message [{}] has no backendClientName set!", message);
-                    return null;
-                }
-                DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
-                return backendClientInfoByServiceName;
-            } else {
-                LOGGER.debug("#getBackendClientInfoByConversationIdOrReturnNull: no messages found for conversationId [{}]", conversationId);
-                return null;
-            }
-        } else {
+        if (conversationId == null) {
             LOGGER.debug("#getBackendClientInfoByConversationIdOrReturnNull: conversationId is null returning null!");
             return null;
         }
+
+        LOGGER.trace("#getBackendClientInfoByConversationIdOrReturnNull: try to find message by conversationId");
+        List<DomibusConnectorMessage> messagesByConversationId = messagePersistenceService.findMessagesByConversationId(conversationId);
+        if (messagesByConversationId.isEmpty()) {
+            LOGGER.debug("#getBackendClientInfoByConversationIdOrReturnNull: no messages found for conversationId [{}]", conversationId);
+            return null;
+        }
+
+        DomibusConnectorMessage message = messagesByConversationId.get(0);
+        String connectorBackendClientName = message.getMessageDetails().getConnectorBackendClientName();
+        if (connectorBackendClientName == null) {
+            LOGGER.warn("Message [{}] has no backendClientName set!", message);
+            return null;
+        }
+        DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(connectorBackendClientName);
+        return backendClientInfoByServiceName;
+
     }
 }

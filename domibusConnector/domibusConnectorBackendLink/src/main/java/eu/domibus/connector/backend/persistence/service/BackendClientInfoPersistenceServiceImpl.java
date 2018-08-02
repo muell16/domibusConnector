@@ -1,11 +1,10 @@
 
 package eu.domibus.connector.backend.persistence.service;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
+import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -13,23 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
-import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
-import eu.domibus.connector.domain.model.DomibusConnectorService;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
- *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Service
 @Transactional
 public class BackendClientInfoPersistenceServiceImpl implements BackendClientInfoPersistenceService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(BackendClientInfoPersistenceServiceImpl.class); 
-    
+    private final static Logger LOGGER = LoggerFactory.getLogger(BackendClientInfoPersistenceServiceImpl.class);
+
     @Autowired
-    BackendClientDao backendClientDao;
+    private BackendClientDao backendClientDao;
 
     public void setBackendClientDao(BackendClientDao backendClientDao) {
         this.backendClientDao = backendClientDao;
@@ -37,7 +34,8 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
 
 
     @Override
-    public @Nullable DomibusConnectorBackendClientInfo getBackendClientInfoByName(String backendName) {
+    @Nullable
+    public DomibusConnectorBackendClientInfo getBackendClientInfoByName(String backendName) {
         if (backendName == null) {
             throw new IllegalArgumentException("backendName is not allowed to be null!");
         }
@@ -48,7 +46,8 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
     }
 
     @Override
-    public @Nullable DomibusConnectorBackendClientInfo getEnabledBackendClientInfoByName(String backendName) {
+    @Nullable
+    public DomibusConnectorBackendClientInfo getEnabledBackendClientInfoByName(String backendName) {
         if (backendName == null) {
             throw new IllegalArgumentException("backendName is not allowed to be null!");
         }
@@ -64,11 +63,11 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         if (service == null) {
             return null;
         }
-        List<BackendClientInfo>  backendInfos = backendClientDao.findByServices_serviceAndEnabledIsTrue(service.getService());
-        if (backendInfos.size() == 0) {
+        List<BackendClientInfo> backendInfos = backendClientDao.findByServices_serviceAndEnabledIsTrue(service.getService());
+        if (backendInfos.isEmpty()) {
             LOGGER.debug("#getEnabledBackendClientInfoByService: Found no backend to handle service [{}]", service.getService());
             return null;
-        } else if (backendInfos.size() == 1){
+        } else if (backendInfos.size() == 1) {
             BackendClientInfo dbBackendInfo = backendInfos.get(0);
             return mapDbEntityToDomainEntity(dbBackendInfo);
         } else {
@@ -93,7 +92,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         return this.mapDbEntityToDomainEntity(dbBackendClientInfo);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public DomibusConnectorBackendClientInfo getDefaultBackendClientInfo() {
         BackendClientInfo defaultBackend = backendClientDao.findOneByDefaultBackendIsTrue();
@@ -102,7 +101,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
 
     @Nullable
     DomibusConnectorBackendClientInfo mapDbEntityToDomainEntity(@Nullable BackendClientInfo dbBackendInfo) {
-        if (dbBackendInfo == null) {            
+        if (dbBackendInfo == null) {
             return null;
         }
         DomibusConnectorBackendClientInfo clientInfo = new DomibusConnectorBackendClientInfo();

@@ -60,7 +60,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorDomain</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -69,15 +68,8 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorDomain</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
             <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.57</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -92,6 +84,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerLIB</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.57</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 	

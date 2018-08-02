@@ -47,8 +47,8 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
     >
          
          <jaxws:properties>
-<!--            <entry key="security.username" value="bob" />
-            <entry key="security.password" value="test" />            -->
+<!--            <entry privateKey="security.username" value="bob" />
+            <entry privateKey="security.password" value="test" />            -->
 
             <entry key="security.encryption.properties" value-ref="encryptProperties" />
             <entry key="security.signature.properties" value-ref="encryptProperties"  />
@@ -56,7 +56,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
             <entry key="security.signature.username" value="${ws.backendclient.name}" />
 
             <entry key="security.enable.streaming" value="true" />
-<!--            <entry key="mtom-enabled" value="true"/> -->
+<!--            <entry privateKey="mtom-enabled" value="true"/> -->
                         
          </jaxws:properties>
          <jaxws:features>

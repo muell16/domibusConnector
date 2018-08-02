@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorMessageDocumentBuilder {
+public final class DomibusConnectorMessageDocumentBuilder {
 
 
     private DomibusConnectorBigDataReference documentContent;

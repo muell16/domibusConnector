@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( classes={SecurityToolKitContextITCase.TestContextConfiguration.class})
-@TestPropertySource(locations={"classpath:test.properties"}, 
+@TestPropertySource(locations={"classpath:test.properties", "classpath:test-auth.properties"},
         properties={"spring.liquibase.enabled=false"}
 )
 public class SecurityToolKitContextITCase {
@@ -33,14 +33,21 @@ public class SecurityToolKitContextITCase {
         DataSourceTransactionManagerAutoConfiguration.class, 
         HibernateJpaAutoConfiguration.class
     })
-    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.security", "eu.domibus.connector.persistence"})
+    @SpringBootApplication(
+            scanBasePackages = {"eu.domibus.connector.security", "eu.domibus.connector.persistence"},
+            scanBasePackageClasses = {CommonProperties.class})
     public static class TestContextConfiguration {
 
         @Bean
         public static PropertySourcesPlaceholderConfigurer
                 propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
-        }       
+        }
+
+        @Bean
+        public static CommonProperties commonProperties() {
+            return new CommonProperties();
+        }
                 
     }
     

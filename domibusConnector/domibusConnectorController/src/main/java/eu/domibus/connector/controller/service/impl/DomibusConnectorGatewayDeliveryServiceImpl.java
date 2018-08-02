@@ -19,7 +19,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.PersistenceException;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
 
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
@@ -67,7 +67,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     }
 
     @Override
-	public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+	public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
 		
 		//Check consistence of message:
 		// Either a message content, or at least one confirmation must exist for processing

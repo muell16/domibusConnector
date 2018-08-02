@@ -157,12 +157,13 @@ public class DeliverMessageFromControllerToBackendServiceTest {
     @Test
     public void testGetBackendClientForMessage_byConversationId() {
         DomibusConnectorMessage message = DomainEntityCreator.createEvidenceNonDeliveryMessage();
-        message.getMessageDetails().setRefToMessageId(null); //msg is related to msg2
+        message.getMessageDetails().setRefToMessageId(null); //msg is not related to any msg
         message.getMessageDetails().setConversationId("conversation1");
 
         DomibusConnectorBackendClientInfo backendClientForMessage = deliverMessageFromControllerToBackendService.getBackendClientForMessage(message);
 
         assertThat(backendClientForMessage).isNotNull();
+        assertThat(backendClientForMessage.getBackendName()).isEqualTo("alice");
     }
 
     @Test

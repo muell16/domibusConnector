@@ -1,46 +1,59 @@
 package eu.domibus.connector.security.spring;
 
-import eu.domibus.connector.lib.spring.configuration.CertConfigurationProperties;
+import eu.domibus.connector.common.spring.CommonProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * contains security toolkit related configuration in a
  * typesafe way
  */
 @Component
-@ConfigurationProperties(prefix = "connector.security")
+@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
 @PropertySource("classpath:/eu/domibus/connector/security/spring/security-default-configuration.properties")
 @Validated
 public class SecurityToolkitConfigurationProperties {
 
+    public static final String CONFIG_PREFIX = "connector.security";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityToolkitConfigurationProperties.class);
 
+//    @Autowired
+//    CommonProperties commonProperties;
+
     @Valid
+    @NotNull
     @NestedConfigurationProperty
-    StoreConfigurationProperties keystore = new StoreConfigurationProperties();
+    StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
 
+    @Valid
+    @NotNull
     @NestedConfigurationProperty
-    CertConfigurationProperties key = new CertConfigurationProperties();
+    KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
+    @Valid
+    @NotNull
     @NestedConfigurationProperty
     StoreConfigurationProperties ojStore = new StoreConfigurationProperties();
 
+    @Valid
+    @NotNull
     @NestedConfigurationProperty
-    StoreConfigurationProperties truststore = new StoreConfigurationProperties();
+    StoreConfigurationProperties trustStore = new StoreConfigurationProperties();
 
     /**
      * Should the trust store created if it is missing?
@@ -48,27 +61,27 @@ public class SecurityToolkitConfigurationProperties {
     boolean createOjStoreIfMissing = true;
 
     public StoreConfigurationProperties getKeyStore() {
-        return keystore;
+        return keyStore;
     }
 
     public void setKeyStore(StoreConfigurationProperties store) {
-        this.keystore = store;
+        this.keyStore = store;
     }
 
-    public CertConfigurationProperties getKey() {
-        return key;
+    public KeyConfigurationProperties getPrivateKey() {
+        return privateKey;
     }
 
-    public void setKey(CertConfigurationProperties key) {
-        this.key = key;
+    public void setPrivateKey(KeyConfigurationProperties key) {
+        this.privateKey = key;
     }
 
     public StoreConfigurationProperties getKeystore() {
-        return keystore;
+        return keyStore;
     }
 
     public void setKeystore(StoreConfigurationProperties keystore) {
-        this.keystore = keystore;
+        this.keyStore = keystore;
     }
 
     public StoreConfigurationProperties getOjStore() {
@@ -80,11 +93,19 @@ public class SecurityToolkitConfigurationProperties {
     }
 
     public StoreConfigurationProperties getTruststore() {
-        return truststore;
+        return trustStore;
     }
 
     public void setTruststore(StoreConfigurationProperties trustStore) {
-        this.truststore = trustStore;
+        this.trustStore = trustStore;
+    }
+
+    public StoreConfigurationProperties getTrustStore() {
+        return trustStore;
+    }
+
+    public void setTrustStore(StoreConfigurationProperties trustStore) {
+        this.trustStore = trustStore;
     }
 
     public boolean isCreateOjStoreIfMissing() {
@@ -94,4 +115,22 @@ public class SecurityToolkitConfigurationProperties {
     public void setCreateOjStoreIfMissing(boolean createOjStoreIfMissing) {
         this.createOjStoreIfMissing = createOjStoreIfMissing;
     }
+
+//    @PostConstruct
+//    public void checkValues() {
+//        throwIfNull(this.getPrivateKey(), "private-key");
+//        throwIfNull(this.getPrivateKey().getAlias(), "private-key.alias");
+//
+//    }
+//
+//    public void throwIfNull(Object prop, String propName) {
+//        if (prop == null) {
+//            String error = "Check property: " + CONFIG_PREFIX + "." + propName + " is not allowed to be null!";
+//            if (commonProperties.isFailOnInvalidProperty()) {
+//                throw new IllegalArgumentException(error);
+//            } else {
+//                LOGGER.warn(error);
+//            }
+//        }
+//    }
 }

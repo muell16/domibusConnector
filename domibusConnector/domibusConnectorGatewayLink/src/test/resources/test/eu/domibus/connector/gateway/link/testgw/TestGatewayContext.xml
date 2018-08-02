@@ -61,7 +61,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
    	<!--<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">-->
  <!---->
     <!--<http:tlsClientParameters>-->
-      <!--<sec:keyManagers keyPassword="${gateway.delivery.service.ssl.key.password}">-->
+      <!--<sec:keyManagers keyPassword="${gateway.delivery.service.ssl.privateKey.password}">-->
         <!--<sec:store type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"-->
                       <!--file="${gateway.delivery.service.ssl.keystore.store}"/>-->
       <!--</sec:keyManagers>-->
@@ -72,7 +72,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
       <!--<sec:cipherSuitesFilter>-->
         <!--&lt;!&ndash; these filters ensure that a ciphersuite with-->
              <!--export-suitable or null wss is used,-->
-             <!--but exclude anonymous Diffie-Hellman key change as-->
+             <!--but exclude anonymous Diffie-Hellman privateKey change as-->
              <!--this is vulnerable to man-in-the-middle attacks &ndash;&gt;-->
         <!--<sec:include>.*_EXPORT_.*</sec:include>-->
         <!--<sec:include>.*_EXPORT1024_.*</sec:include>-->

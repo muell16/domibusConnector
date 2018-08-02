@@ -4,7 +4,6 @@
 
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorWebAppModule</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <parent>
@@ -103,7 +102,7 @@
                 </dependency>
                 <dependency>
                     <groupId>org.apache.tomcat</groupId>
-                    <artifactId>jsp-api</artifactId>
+                    <artifactId>tomcat-jsp-api</artifactId>
                 </dependency>	
                 <dependency>
                     <groupId>com.oracle</groupId>
@@ -245,7 +244,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>jsp-api</artifactId>
+            <artifactId>tomcat-jsp-api</artifactId>
             <scope>provided</scope>
         </dependency>		
         <dependency>
@@ -521,7 +520,7 @@
                             <schemaIncludes>
                                 <include>domibus-pmode.xsd</include>
                             </schemaIncludes>
-                            <generateDirectory>src/main/java</generateDirectory>
+                            <!--<generateDirectory>src/main/java</generateDirectory>-->
                             <strict>true</strict>
                             <extension>true</extension>
                             <args>

@@ -3,8 +3,19 @@ package eu.domibus.connector.backend.service;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
+/**
+ * this interface is used in the backendLink only, and provides
+ * an abstraction layer for the different transport mechanics
+ *  push/pull over webservices, push/push over webservice,
+ *  async push/push over jms
+ *
+ */
 public interface DomibusConnectorBackendInternalDeliverToController {
 
+    /**
+     * submites message to controller
+     * @param message
+     */
     void submitToController(DomibusConnectorBackendMessage message);
 
     /**

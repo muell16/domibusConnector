@@ -5,18 +5,15 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
 import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Properties;
-
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Creates a web service client for pushing messages to backend client
@@ -25,13 +22,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class BackendClientWebServiceClientFactory {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(BackendClientWebServiceClientFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackendClientWebServiceClientFactory.class);
     
     @Autowired
-    WsPolicyLoader policyUtil;
+    private WsPolicyLoader policyUtil;
 
     @Autowired
-    WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
+    private WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
 
     //setter
     public void setPolicyUtil(WsPolicyLoader policyUtil) {
@@ -51,8 +48,7 @@ public class BackendClientWebServiceClientFactory {
         jaxWsProxyFactoryBean.setFeatures(Arrays.asList(new Feature[]{policyUtil.loadPolicyFeature()}));
         jaxWsProxyFactoryBean.setAddress(pushAddress);
         jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl"); //maybe load own wsdl instead of remote one?
-//        Properties encryptionProperties = loadEncryptionProperties();
-//        Properties signatureProperties = loadEncryptionProperties();
+
         HashMap<String, Object> props = new HashMap<>();
         props.put("security.encryption.properties", backendLinkConfigurationProperties.getWssProperties());
         props.put("security.signature.properties", backendLinkConfigurationProperties.getWssProperties());
@@ -61,8 +57,7 @@ public class BackendClientWebServiceClientFactory {
         LOGGER.debug("#createWsClient: Configuring WsClient with following properties: [{}]", props);
         jaxWsProxyFactoryBean.setProperties(props);
         //jaxWsProxyFactoryBean.set
-        DomibusConnectorBackendDeliveryWebService webServiceClientEndpoint = (DomibusConnectorBackendDeliveryWebService) jaxWsProxyFactoryBean.create();
-        return webServiceClientEndpoint;
+        return (DomibusConnectorBackendDeliveryWebService) jaxWsProxyFactoryBean.create();
     }
 
 

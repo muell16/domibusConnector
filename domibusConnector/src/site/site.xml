@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="domibusWebConnector">
-  <bannerLeft>
-    <name>e-CODEX making Justice Faster</name>
-    <src>images/logo_ecodex_0.png</src>
-<!--    <href>http://maven.apache.org/</href>-->
-  </bannerLeft>
+    <bannerLeft>
+        <name>e-CODEX making Justice Faster</name>
+        <src>images/logo_ecodex_0.png</src>
+        <!--    <href>http://maven.apache.org/</href>-->
+    </bannerLeft>
 
 
-  <body>
-    <links>
-      <item name="E-Codex Project" href="https://www.e-codex.eu/" />
-    </links>
+    <body>
+        <links>
+            <item name="E-Codex Project" href="https://www.e-codex.eu/"/>
+        </links>
 
-    <menu name="domibus WebConnector">
-      <item name="Overview" href="index.html" />
-      <item name="Module" href="modules.html" />
-      <item name="Use Cases" href="use_cases.html" />
-      <!--<item name="Evidence" href="evidence.html" />-->
-    </menu>
-    <menu name="Installation/Configuration">
-      <item name="Installation" href="installation/installation.html" />
-      <item name="Database Setup" href="installation/database.html" />
-      <item name="Deploy on Tomcat" href="installation/tomcat_deploy.html"/>
-      <item name="Deploy on Weblogic" href="installation/weblogic_deploy.html" />
-      <item name="Certificate Configuration" href="installation/certificates.html" />
-      <item name="Backend configuration" href="installation/backend_configuration.html" />
-    </menu>
-    <menu name="Technical/Developer Documentation">
-      <item name="Architecture" href="development/architecture_overview.html"/>
-      <item name="Changelog" href="development/changelog.html" />
-      <item name="Backend Message Routing" href="development/backend_message_routing.html" />
-    </menu>
+        <menu name="domibus WebConnector">
+            <item name="Overview" href="index.html"/>
+            <item name="Module" href="modules.html"/>
+            <item name="Use Cases" href="use_cases.html"/>
+            <!--<item name="Evidence" href="evidence.html" />-->
+        </menu>
+        <menu name="Installation/Configuration">
+            <item name="Installation" href="installation/installation.html"/>
+            <item name="Database Setup" href="installation/database.html"/>
+            <item name="Deploy on Tomcat" href="installation/tomcat_deploy.html"/>
+            <item name="Deploy on Weblogic" href="installation/weblogic_deploy.html"/>
+            <item name="Certificate Configuration" href="installation/certificates.html"/>
+            <item name="Backend configuration" href="installation/backend_configuration.html"/>
+        </menu>
+        <menu name="Technical/Developer Documentation">
+            <item name="Architecture" href="development/architecture_overview.html"/>
+            <item name="Changelog" href="development/changelog.html"/>
+            <item name="Backend Message Routing" href="development/backend_message_routing.html"/>
+        </menu>
+        <!--<menu ref="modules" />-->
+        <menu ref="reports"/>
 
 
-    
-    <footer></footer> <!-- empty footer -->
-    
-  </body>
+        <footer></footer> <!-- empty footer -->
+
+    </body>
 </project>

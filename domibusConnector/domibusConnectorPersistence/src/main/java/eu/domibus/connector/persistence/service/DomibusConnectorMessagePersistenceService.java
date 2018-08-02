@@ -3,6 +3,8 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

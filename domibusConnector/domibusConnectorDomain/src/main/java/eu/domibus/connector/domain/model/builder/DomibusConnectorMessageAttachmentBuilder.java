@@ -8,7 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorMessageAttachmentBuilder {
+public final class DomibusConnectorMessageAttachmentBuilder {
 
     private String identifier;
 	private DomibusConnectorBigDataReference attachment;

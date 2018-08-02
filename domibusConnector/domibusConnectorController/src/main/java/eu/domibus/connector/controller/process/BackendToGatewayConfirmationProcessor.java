@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionI
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageService;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.*;
+import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 /**
  * Takes an confirmation originalMessage from backend
@@ -89,7 +92,8 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             messagePersistenceService.confirmMessage(originalMessage);
         }
 
-        LOGGER.info("Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
+
+        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
 	}
 
 	private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {

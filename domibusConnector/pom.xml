@@ -24,6 +24,8 @@
         <module>domibusConnectorStarter</module>
         <module>domibusConnectorWebLib</module>
         <module>domibusConnectorWeb</module>
+        <module>domibusConnectorControllerLIB</module>
+        <module>domibusConnectorLinkCommon</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -31,10 +33,11 @@
         <!--		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>-->
         <org.apache.cxf.version>3.2.1</org.apache.cxf.version>
         <org.slf4j.version>1.7.11</org.slf4j.version>
+        <tomcat.version>8.5.32</tomcat.version>
         <!--		<hibernate.version>5.0.2.Final</hibernate.version>-->
         <quartz.version>2.2.1</quartz.version>
         <theme.version>1.0.10</theme.version>
-        <jsf.version>2.2.15</jsf.version>     
+        <jsf.version>2.2.15</jsf.version>
         <domibus.connector.version>4.0-SNAPSHOT</domibus.connector.version>
         <ecodex.monitoring.version>2.1</ecodex.monitoring.version>
         <org.primefaces.version>6.1</org.primefaces.version>
@@ -48,6 +51,8 @@
         <jacoco.outputDir>${project.build.directory}/jacoco</jacoco.outputDir>
         <jacoco.out.ut.file>jacoco-ut.exec</jacoco.out.ut.file>
         <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
+        <!--<jacoco.agent.it.arg></jacoco.agent.it.arg>-->
+        <!--<jacoco.agent.ut.arg></jacoco.agent.ut.arg>-->
         <sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
         <!-- if a proxy is used during build or test configure this properties by overwriting them in your settings.xml file -->
@@ -57,8 +62,13 @@
         <https.proxy.host></https.proxy.host>
         <http.proxy.host></http.proxy.host>
         <http.proxy.port></http.proxy.port>
-        <https.proxy.port></https.proxy.port>          
-        <spring.boot.version>2.0.2.RELEASE</spring.boot.version> 
+        <https.proxy.port></https.proxy.port>
+        <spring.boot.version>1.5.8.RELEASE</spring.boot.version>
+
+        <releases-repo.url></releases-repo.url>
+        <snapshots-repo.url></snapshots-repo.url>
+        <https.proxy.port></https.proxy.port>
+        <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
     </properties>
 
     <scm>
@@ -68,6 +78,12 @@
         <system>Jenkins</system>
         <url>https://secure.e-codex.eu/jenkins/view/domibusConnector/job/domibusWebConnector</url>
     </ciManagement>
+    <licenses>
+        <license>
+            <name>EUPL, version 1.2</name>
+            <url>https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12</url>
+        </license>
+    </licenses>
 
     <distributionManagement>
         <repository>
@@ -86,12 +102,53 @@
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorDomain</artifactId>
-                <version>${project.version}</version> 
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>domibusConnectorDomain</artifactId>
+                <classifier>tests</classifier>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorAPI</artifactId>
-                <version>${project.version}</version> 
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorAPI</artifactId>
+                <version>${project.version}</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorAPIlib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorControllerAPI</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorControllerLIB</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorTestData</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorLinkCommon</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <!-- E-CODEX LIBRARIES -->
             <dependency>
@@ -159,12 +216,12 @@
             </dependency>
                        
             <!-- jaxb -->
-            <dependency>                                   
+            <dependency>
                 <artifactId>jaxb-impl</artifactId>
                 <groupId>com.sun.xml.bind</groupId>
                 <version>${com.sun.xml.bind.jaxb.version}</version>
             </dependency>
-            <dependency>                                   
+            <dependency>
                 <artifactId>jaxb-core</artifactId>
                 <groupId>com.sun.xml.bind</groupId>
                 <version>${com.sun.xml.bind.jaxb.version}</version>
@@ -178,9 +235,9 @@
                 <artifactId>jaxb-xjc</artifactId>
                 <groupId>com.sun.xml.bind</groupId>
                 <version>${com.sun.xml.bind.jaxb.version}</version>
-            </dependency>        
-                         
-                           
+            </dependency>
+
+
             <!-- MANAGED Spring dependencies -->
             
             <dependency>
@@ -260,6 +317,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-jms</artifactId>
+                <version>${org.apache.cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http</artifactId>
                 <version>${org.apache.cxf.version}</version>
             </dependency>
@@ -275,7 +337,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.santuario</groupId>
-                <artifactId>xmlsec</artifactId>    
+                <artifactId>xmlsec</artifactId>
                 <version>2.0.5</version>
             </dependency>
             <!-- handle not matching dependencies in apache cxf package -->
@@ -295,13 +357,22 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
                 <version>${org.apache.cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
 
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.3.6.Final</version>
             </dependency>
 
             <!-- Other dependencies -->
@@ -347,10 +418,23 @@
                 <version>1.4.01</version>
             </dependency>
 
+
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>6.0.53</version>            
+                <artifactId>tomcat-jsp-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-el-api</artifactId>
+                <scope>test</scope>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper-el</artifactId>
+                <scope>test</scope>
+                <version>${tomcat.version}</version>
             </dependency>
 
             <!-- findbugs -->
@@ -359,6 +443,11 @@
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>3.0.1</version>
+            </dependency>
 
             <!-- commons lang -->
             <dependency>
@@ -366,7 +455,7 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.4</version>
             </dependency>
-       
+
             <!-- MANAGED TEST DEPENDENCIES -->
             <dependency>
                 <groupId>junit</groupId>
@@ -512,6 +601,9 @@
                                     <goal>integration-test</goal>
                                 </goals>
                                 <phase>integration-test</phase>
+                                <configuration>
+                                    <reportsDirectory>${project.build.directory}/ittest-reports</reportsDirectory>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -803,6 +895,8 @@
                                 <exclude>ch.qos.logback:logback-classic</exclude>
                                 <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
                                 <exclude>log4j:log4j</exclude>
+                                <exclude>org.apache.tomcat:jasper-el</exclude>
+                                <exclude>org.apache.tomcat:el-api</exclude>
                             </excludes>
                         </bannedDependencies>
                     </rules>
@@ -838,7 +932,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <copy todir="target/site/resources/doc-resources" overwrite="true" >
+                                <copy todir="target/site/resources/doc-resources" overwrite="true">
                                     <fileset dir="domibusConnectorDocumentation/src/main/resources/"/>
                                 </copy>
                             </tasks>
@@ -879,6 +973,26 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.21.0</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <skipSurefireReport>true</skipSurefireReport>
+                    <reportsDirectories>
+                        <directory>${project.build.directory}/ittest-reports</directory>
+                        <directory>${project.build.directory}/dbunit-reports</directory>
+                        <directory>${project.build.directory}/unittest-reports</directory>
+                    </reportsDirectories>
+                    <outputName>test-result-report</outputName>
+                </configuration>
+            </plugin>
+            <!--<plugin>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>findbugs-maven-plugin</artifactId>-->
+            <!--<version>3.0.5</version>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>

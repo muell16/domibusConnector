@@ -5,13 +5,18 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 /**
- * should be implemented by the GatewayLink module
- * to deliver messages from controller to the gateway
+ * is implemented by the connector controller
+ * to deliver the by the gw link module received messages to controller module
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 public interface DomibusConnectorGatewayDeliveryService {
 
-    public void deliverMessageFromGateway(DomibusConnectorMessage message) throws DomibusConnectorControllerException;
+    /**
+     *
+     * @param message the message
+     * @throws DomibusConnectorControllerException in case of errors: storing message to database, invalid message
+     */
+    public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException;
     
 }
