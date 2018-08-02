@@ -9,7 +9,7 @@
 	<files>
 
 		<file>
-			<source>${project.basedir}/../domibusConnectorWebAppModule/target/domibusConnectorWebAppModule.war
+			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb.war
 			</source>
 			<outputDirectory>../</outputDirectory>
 			<destName>domibusConnector-${project.version}.war</destName>
