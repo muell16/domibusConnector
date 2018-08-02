@@ -7,7 +7,7 @@
         <version>4.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorDistribution</artifactId>
-    <name>${artifactId}</name>
+    <name>${project.artifactId}</name>
     <description>This maven module contains the assembly scripts to create the different distribution packages</description>
     
     <build>
@@ -51,9 +51,9 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
+            <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
-            <!--<type>jar</type>-->
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

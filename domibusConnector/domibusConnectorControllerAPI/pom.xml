@@ -7,7 +7,7 @@
         <version>4.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorControllerAPI</artifactId>
-    <name>${artifactId}</name>
+    <name>${project.artifactId}</name>
     <description>This module provides the internal connector interfaces for binding a GatewayLink-Module or a BackendLink module to the connectorModule</description>
 
     <dependencies>

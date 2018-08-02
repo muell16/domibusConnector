@@ -6,7 +6,7 @@
         <version>4.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorBackendLink</artifactId>
-    <name>${artifactId}</name>
+    <name>${project.artifactId}</name>
     <description>The backendLink handles the communication with the connectorClients and routes the messages to the correct connectorClient.</description>
 
 

@@ -42,7 +42,7 @@
 	<files>
 
 		<file>
-			<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter.war
+			<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war
 			</source>
 			<outputDirectory>/webapp</outputDirectory>
 			<destName>domibusConnector.war</destName>
