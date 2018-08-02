@@ -6,7 +6,7 @@
     <version>4.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>domibusConnectorStarter</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <name>${project.artifactId}</name>
   
  
@@ -16,7 +16,7 @@
             <artifactId>domibusConnectorWeb</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+        <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar is not in public maven repo -->
         <dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc7</artifactId>
