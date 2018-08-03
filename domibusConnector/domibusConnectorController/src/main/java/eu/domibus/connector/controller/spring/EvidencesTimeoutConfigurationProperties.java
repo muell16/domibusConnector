@@ -1,12 +1,12 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.domibus.connector.lib.spring.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 
 @Component(EvidencesTimeoutConfigurationProperties.BEAN_NAME)

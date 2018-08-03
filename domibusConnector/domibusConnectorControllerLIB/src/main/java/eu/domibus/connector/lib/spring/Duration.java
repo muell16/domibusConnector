@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.spring;
+package eu.domibus.connector.lib.spring;
 
 import org.springframework.util.StringUtils;
 

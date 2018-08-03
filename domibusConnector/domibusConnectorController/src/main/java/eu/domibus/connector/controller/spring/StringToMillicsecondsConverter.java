@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.spring;
 
+import eu.domibus.connector.lib.spring.Duration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

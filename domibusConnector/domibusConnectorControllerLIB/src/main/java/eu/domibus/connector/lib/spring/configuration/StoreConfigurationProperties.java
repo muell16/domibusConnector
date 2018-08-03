@@ -9,7 +9,6 @@ import org.springframework.core.io.Resource;
 import java.io.InputStream;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -124,6 +123,9 @@ public class StoreConfigurationProperties {
 
     public KeyStore loadKeyStore() {
         validatePathReadable();
+        if (password == null) {
+            password = "";
+        }
         char[] pwdArray = password.toCharArray();
         try (InputStream inputStream = getPath().getInputStream()) {
             KeyStore keyStore = KeyStore.getInstance("JKS");

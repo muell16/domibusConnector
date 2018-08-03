@@ -9,9 +9,13 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import java.util.Set;
 
 public class StoreLoadableValidator implements ConstraintValidator<CheckStoreIsLoadable, StoreConfigurationProperties> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreLoadableValidator.class);
 
     private Validator validator;
 
@@ -23,18 +27,25 @@ public class StoreLoadableValidator implements ConstraintValidator<CheckStoreIsL
 
     @Override
     public boolean isValid(StoreConfigurationProperties value, ConstraintValidatorContext context) {
-        if (value == null) {
-            return true;
-        }
-        Set<ConstraintViolation<StoreConfigurationProperties>> path = validator.validateProperty(value, "path");
-        if (!path.isEmpty()) {
-            return false;
-        }
         try {
-            value.loadKeyStore();
-        } catch (StoreConfigurationProperties.CannotLoadKeyStoreException exception) {
-            //TODO: nice message!
-            context.buildConstraintViolationWithTemplate(exception.getCause().getMessage()).addConstraintViolation();
+            if (value == null) {
+                return true;
+            }
+            Set<ConstraintViolation<StoreConfigurationProperties>> path = validator.validateProperty(value, "path");
+            if (!path.isEmpty()) {
+                return false;
+            }
+            try {
+                value.loadKeyStore();
+            } catch (StoreConfigurationProperties.CannotLoadKeyStoreException exception) {
+                //TODO: nice message!
+                context.buildConstraintViolationWithTemplate(exception.getCause().getMessage()).addConstraintViolation();
+                return false;
+            }
+        } catch (Exception e) {
+            LOGGER.error("exception occured", e);
+            //throw new RuntimeException(e);
+//            context.buildConstraintViolationWithTemplate(e.getCause().getMessage()).addConstraintViolation();
             return false;
         }
 

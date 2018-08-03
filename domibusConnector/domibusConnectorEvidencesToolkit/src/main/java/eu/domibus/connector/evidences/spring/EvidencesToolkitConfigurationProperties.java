@@ -3,12 +3,14 @@ package eu.domibus.connector.evidences.spring;
 import eu.domibus.connector.evidences.HashValueBuilder;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.validation.CheckStoreIsLoadable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 
 @Component
 @ConfigurationProperties(prefix = EvidencesToolkitConfigurationProperties.CONFIG_PREFIX)
@@ -20,7 +22,9 @@ public class EvidencesToolkitConfigurationProperties {
     /**
      * Configuration of the keyStore which holds the private key to sign the evidences
      */
+    @Valid
     @NestedConfigurationProperty
+//    @CheckStoreIsLoadable
     StoreConfigurationProperties keyStore = new StoreConfigurationProperties();
 
     /**
@@ -29,7 +33,9 @@ public class EvidencesToolkitConfigurationProperties {
      * property name connector.evidences.private-key
      *
      */
+    @Valid
     @NestedConfigurationProperty
+//    @CheckStoreIsLoadable
     KeyConfigurationProperties privateKey = new KeyConfigurationProperties();
 
     /**
@@ -63,20 +69,21 @@ public class EvidencesToolkitConfigurationProperties {
     }
 
 
-    @PostConstruct
-    public void checkValues() {
-        try {
-            this.getKeyStore().validatePathReadable();
-        } catch (StoreConfigurationProperties.ValidationException ve) {
-            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + ".keystore" , ve);
-        }
-        throwIfNull(getPrivateKey(), "key");
-        throwIfNull(getPrivateKey().getAlias(), "key.alias");
-    }
+//    @PostConstruct
+//    public void checkValues() {
+//        try {
+//            this.getKeyStore().validatePathReadable();
+//        } catch (StoreConfigurationProperties.ValidationException ve) {
+//            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + ".keystore" , ve);
+//        }
+//        throwIfNull(getPrivateKey(), "key");
+//        throwIfNull(getPrivateKey().getAlias(), "key.alias");
+//    }
 
-    public void throwIfNull(Object nullcheck, String message) {
-        if (nullcheck == null) {
-            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + "." + message + " is not allowed to be null!");
-        }
-    }
+//    public void throwIfNull(Object nullcheck, String message) {
+//        if (nullcheck == null) {
+//            throw new IllegalArgumentException("Check property: " + CONFIG_PREFIX + "." + message + " is not allowed to be null!");
+//        }
+//    }
+
 }
