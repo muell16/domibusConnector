@@ -15,5 +15,6 @@
         <module>domibusConnectorTestSuite</module>
         <module>domibusConnectorTestData</module>
         <module>domibusConnectorDatabaseInitializer</module>
+        <module>domibusConnectorTestLogging</module>
     </modules>
 </project>
