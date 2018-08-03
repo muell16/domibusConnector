@@ -87,7 +87,7 @@
                             <artifacts>
                                 <artifact>
                                     <file>
-                                        ${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter.war
+                                        ${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war
                                     </file>
                                     <type>war</type>
                                 </artifact>
