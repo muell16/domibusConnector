@@ -11,6 +11,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
+import eu.domibus.connector.test.logging.MemoryAppender;
+import eu.domibus.connector.test.logging.MemoryAppenderAssert;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -100,6 +103,20 @@ public class DomibusConnectorSecurityToolkitITCase {
 	public void testUnsignedDoc() throws IOException {
 		
 		testDoc("ExamplePdfUnsigned.pdf", "unsignedResultToken");
+	}
+
+	@Test
+	/**
+	 * Ensures that a warning log message is generated
+	 * @Since(4.1)
+	 */
+	public void testUnsignedDoc_WarningLogMessageShouldGenerated() throws IOException {
+        testDoc("ExamplePdfUnsigned.pdf", "testUnsignedDoc_WarningLogMessageShouldGenerated");
+
+        MemoryAppenderAssert.assertThat(MemoryAppender.getAppender())
+//                .filterOnMarker(LoggingMarker.BUSINESS_CERT_LOG.toString())
+                .containsLogLine(DomibusSecurityContainer.RED_TOKEN_WARNING_MESSAGE);
+
 
 	}
 
@@ -129,16 +146,18 @@ public class DomibusConnectorSecurityToolkitITCase {
 			if (attachment.getName().equals("Token.xml")) {
 				writeResult(resultName +".xml", StreamUtils.copyToByteArray(result.getInputStream()));
 				//test xml
-                if ("signedResultToken".equals(resultName)) {
-//TODO: compare resulting xml!
-//                    Assert.assertThat(attachment.getAttachment(),
-//                            isSimilarTo("control xml").withNodeMatcher(
-//                                    new DefaultNodeMatcher(ElementSelectors.byName)));
-                } else if ("unsignedResultToken".equals(resultName)) {
 
-                } else {
-                    throw new IllegalStateException("should not end up here! Passed unsupported result name!");
-                }
+
+//                if ("signedResultToken".equals(resultName)) {
+////TODO: compare resulting xml!
+////                    Assert.assertThat(attachment.getAttachment(),
+////                            isSimilarTo("control xml").withNodeMatcher(
+////                                    new DefaultNodeMatcher(ElementSelectors.byName)));
+//                } else if ("unsignedResultToken".equals(resultName)) {
+//
+//                } else {
+//                    throw new IllegalStateException("should not end up here! Passed unsupported result name!");
+//                }
 
 
 

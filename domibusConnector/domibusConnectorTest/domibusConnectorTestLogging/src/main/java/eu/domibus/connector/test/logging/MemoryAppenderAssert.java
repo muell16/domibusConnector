@@ -29,13 +29,14 @@ public class MemoryAppenderAssert extends AbstractObjectAssert<MemoryAppenderAss
     }
 
     public MemoryAppenderAssert containsLogLine(String logLine) {
+        final String lowerCaseLogLine = logLine.toLowerCase();
         if (!getStream()
                 .map(LogEvent::getMessage)
                 .anyMatch( (Message m) ->  {
-                    System.out.println("Message: " + m.getFormattedMessage());
-                    return m.getFormattedMessage().contains(logLine);
+//                    System.out.println("Message: " + m.getFormattedMessage());
+                    return m.getFormattedMessage().toLowerCase().contains(lowerCaseLogLine);
                 })) {
-            failWithMessage("No log message found with logLine <%s>", logLine);
+            failWithMessage("No log message found with logLine <%s>", lowerCaseLogLine);
         }
         return this;
     }

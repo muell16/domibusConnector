@@ -8,6 +8,9 @@ import java.util.List;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
+import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.ecodex.dss.model.token.LegalTrustLevel;
+import eu.ecodex.dss.model.token.Token;
 import eu.ecodex.dss.service.ECodexContainerService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +54,9 @@ import org.springframework.util.StreamUtils;
  */
 @Component("domibusConnectorSecurityContainer")
 public class DomibusSecurityContainer {
-   
+
+    public static final String RED_TOKEN_WARNING_MESSAGE = "A RedToken was generated!";
+
     public static final String MAIN_DOCUMENT_NAME = "mainDocument";
     
     public static final String ASICS_CONTAINER_IDENTIFIER = "ASIC-S";
@@ -173,9 +178,17 @@ public class DomibusSecurityContainer {
             ECodexContainer container = containerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(message));
 
 
+            Token token = container.getToken();
+            if (LegalTrustLevel.NOT_SUCCESSFUL.equals(token.getValidation().getLegalResult().getTrustLevel())) {
+                LOGGER.warn(LoggingMarker.BUSINESS_CERT_LOG, "a RedToken was generated!");
+            }
+
+
             // KlarA: Added check of the container and the respective
             // error-handling
             CheckResult results = containerService.check(container);
+
+
 
             if (results.isSuccessful()) {
                 if (container != null) {                    

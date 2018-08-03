@@ -32,8 +32,6 @@ public class MemoryAppender extends AbstractAppender {
 
     @Override
     public void append(LogEvent logEvent) {
-        System.out.println("Appending log event with log line: " + logEvent.getMessage().getFormattedMessage());
-
         logEventList.add(logEvent.toImmutable());
     }
 
