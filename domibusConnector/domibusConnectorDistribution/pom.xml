@@ -19,24 +19,24 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>create-site-package</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <appendAssemblyId>true</appendAssemblyId>
-                                    <descriptors>
-                                        <descriptor>src/main/assembly/assemblySite.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!--<plugin>-->
+                        <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<id>create-site-package</id>-->
+                                <!--<phase>package</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>single</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<appendAssemblyId>true</appendAssemblyId>-->
+                                    <!--<descriptors>-->
+                                        <!--<descriptor>src/main/assembly/assemblySite.xml</descriptor>-->
+                                    <!--</descriptors>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
                 </plugins>
             </build>
         </profile>
