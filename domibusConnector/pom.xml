@@ -10,7 +10,6 @@
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
         <module>domibusConnectorMonitoring</module>
-        <!-- <module>domibusConnectorWebAppModule</module> -->
         <module>domibusConnectorPersistence</module>
         <module>domibusConnectorDomain</module>
         <module>domibusConnectorGatewayLink</module>
