@@ -1,9 +1,12 @@
 FROM java:8
 COPY maven /opt/
 
+RUN chmod 770 /opt/*.sh
 
 ENV DB_HOST db
 ENV DB_PORT 3306
+ENV server.port 8080
 
+EXPOSE 8080
 
-CMD /bin/bash /opt/connector/wait-for-it.sh ${DB_HOST}:${DB_PORT} -t 20 -- java -jar /maven/connector/connector.jar
+CMD /bin/bash /opt/wait-for-it.sh -h ${DB_HOST} -p ${DB_PORT} -t 20 && java -jar /opt/connector/connector.jar

@@ -9,7 +9,7 @@
     </file>
     <file>
       <source>src/main/sh/wait-for-it.sh</source>
-      <outputDirectory>/connector</outputDirectory>
+      <outputDirectory>/</outputDirectory>
     </file>
   </files>
 
