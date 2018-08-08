@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.spring;
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
@@ -15,6 +16,7 @@ import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
 @EntityScan(basePackageClasses={PDomibusConnectorPersistenceModel.class})
 @EnableJpaRepositories(basePackageClasses = {PackageDomibusConnectorRepositories.class} )
 @EnableTransactionManagement
+@PropertySource("/eu/domibus/connector/persistence/persistence.properties")
 public class DomibusConnectorPersistenceContext {
 
 }
