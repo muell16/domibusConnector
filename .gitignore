@@ -76,3 +76,5 @@ $Recycle.Bin
 /domibusConnector/domibusConnectorWebAppModule/src/main/java/eu/domibus/configuration/
 /domibusConnector/domibusConnectorAPIlib/nbproject/
 
+/domibusConnector/domibusConnectorWebLib/src/main/java/META-INF
+/domibusConnector/domibusConnectorWebLib/src/main/java/eu/domibus/configuration
