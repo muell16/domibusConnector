@@ -1,68 +1,81 @@
 package eu.domibus.connector.web.viewAreas.pmodes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 
-import javax.servlet.annotation.MultipartConfig;
-
-import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.service.WebPModeService;
+
 @HtmlImport("styles/shared-styles.html")
 @StyleSheet("styles/grid.css")
 @Component
 @UIScope
-@MultipartConfig
 public class Import extends VerticalLayout {
+	
+	WebPModeService pmodeService;
 
-	public Import() {
+	public Import(@Autowired WebPModeService pmodeService) {
+		this.pmodeService = pmodeService;
+		
 		Div areaImporter = new Div();
 		
-		MemoryBuffer buffer = new MemoryBuffer();
+		MemoryBuffer  buffer = new MemoryBuffer ();
 		
 		Upload upload = new Upload(buffer);
+		upload.setMaxFiles(1);
+		upload.setId("PModes-Upload");
 		upload.setAcceptedFileTypes("application/xml", "text/xml");
 
 		upload.addSucceededListener(event -> {
-//		    Component component = createComponent(event.getMIMEType(),
-//		            event.getFileName(),
-//		            buffer.getInputStream(event.getFileName()));
-		    
-		    showOutput(buffer.getInputStream());
+			boolean result = false;
+			byte[] contents = ((ByteArrayOutputStream) buffer.getFileData().getOutputBuffer())
+                            .toByteArray();
+		    result = pmodeService.importPModes(contents);
+		    showOutput(contents, result);
 		});
+		
 		
 		areaImporter.add(upload);
 		
 		add(areaImporter);
 	}
 
-	private void showOutput(InputStream inputStream) {
-		Div areaImporter = new Div();
-		StringWriter writer = new StringWriter();
-		try {
-			IOUtils.copy(inputStream, writer);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void showOutput(byte[] contents, boolean success) {
+		VerticalLayout areaResult = new VerticalLayout();
+		
+		Label resultLabel = new Label();
+		if(success) {
+			resultLabel.setText("PModes successfully imported!");
+			resultLabel.getStyle().set("color", "green");
+		}else {
+			resultLabel.setText("Import of PModes failed!");
+			resultLabel.getStyle().set("color", "red");
 		}
-		String theString = writer.toString();
+		areaResult.add(resultLabel);
 		
 		TextArea area = new TextArea();
-		area.setValue(theString);
+		try {
+			area.setValue(new String(contents, "UTF-8"));
+			area.setWidth("80vw");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		areaResult.setWidth("100vw");
+		areaResult.add(area);
 		
-		areaImporter.add(area);
-		
-		add(areaImporter);
+		add(areaResult);
 	}
 
 }
