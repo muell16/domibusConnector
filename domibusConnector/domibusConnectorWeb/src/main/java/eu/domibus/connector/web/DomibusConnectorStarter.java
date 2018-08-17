@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableAutoConfiguration
-@PropertySource("classpath:/connector.properties")
+@PropertySource({"classpath:/connector.properties", "classpath:/build-info.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {

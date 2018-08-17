@@ -57,6 +57,7 @@ public class MessageDetails extends VerticalLayout {
 			evidences.setWidth("100vw");
 			Label evidencesLabel = new Label();
 			evidencesLabel.setText("Evidences:");
+			evidencesLabel.getStyle().set("font-size", "20px");
 			evidences.add(evidencesLabel);
 
 			messageEvidencesArea.add(evidences);

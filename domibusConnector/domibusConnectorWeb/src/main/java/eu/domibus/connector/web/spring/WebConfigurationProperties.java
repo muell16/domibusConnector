@@ -1,11 +1,12 @@
 package eu.domibus.connector.web.spring;
 
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.stereotype.Component;
 
 @Component
 //@ConfigurationProperties(prefix = SecurityToolkitConfigurationProperties.CONFIG_PREFIX)
-@PropertySource("classpath:/eu/domibus/connector/web/spring/web-default-configuration.properties")
+@PropertySource({"classpath:/eu/domibus/connector/web/spring/web-default-configuration.properties", "classpath:/build-info.properties"})
 //@Validated
 public class WebConfigurationProperties {
 
