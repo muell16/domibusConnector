@@ -35,7 +35,7 @@ public class Configuration extends VerticalLayout {
 	
 	Tab backendConfigTab = new Tab("Backend Configuration");
 	Tab evidencesConfigTab = new Tab("Evidence Builder Configuration");
-	Tab securityConfigTab = new Tab("Security Configuration");
+	Tab securityConfigTab = new Tab("Security Toolkit Configuration");
 	Tab environmentConfigTab = new Tab("Environment Configuration");
 	
 	Tabs configMenu = new Tabs();
