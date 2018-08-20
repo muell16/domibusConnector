@@ -11,9 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -40,9 +44,8 @@ public class Configuration extends VerticalLayout {
 	
 	Tabs configMenu = new Tabs();
 
-	public Configuration(@Autowired ConfigurationControlBar configCtrlBar, @Autowired SecurityConfiguration secConfig, 
-			@Autowired EnvironmentConfiguration envConfig, @Autowired BackendConfiguration backendConfig,
-			@Autowired EvidenceBuilderConfiguration evidencesConfig) {
+	public Configuration(@Autowired SecurityConfiguration secConfig, @Autowired EnvironmentConfiguration envConfig, 
+			@Autowired BackendConfiguration backendConfig, @Autowired EvidenceBuilderConfiguration evidencesConfig) {
 		
 		areaBackendConfig = new Div();
 		areaBackendConfig.add(backendConfig);
@@ -85,11 +88,27 @@ public class Configuration extends VerticalLayout {
 
 		add(configMenu,pages);
 		
-		add(configCtrlBar);
+		add(createConfigurationButtonBar());
 		this.expand(pages);
 		this.setHeight("80vh");
 	}
 
-
+	private HorizontalLayout createConfigurationButtonBar() {
+		HorizontalLayout configurationButtonBar = new HorizontalLayout();
+		Button loadConfiguration = new Button(
+				new Icon(VaadinIcon.REFRESH));
+		loadConfiguration.setText("Load Configuration");
+		
+		Button saveConfiguration = new Button(
+				new Icon(VaadinIcon.EDIT));
+		saveConfiguration.setText("Save Configuration");
+		
+		configurationButtonBar.add(loadConfiguration);
+		configurationButtonBar.add(saveConfiguration);
+		configurationButtonBar.setWidth("100vw");
+		configurationButtonBar.setHeight("20px");
+		
+		return configurationButtonBar;
+	}
 
 }
