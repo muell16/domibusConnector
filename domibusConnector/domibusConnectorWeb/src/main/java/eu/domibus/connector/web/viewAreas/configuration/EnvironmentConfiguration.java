@@ -2,16 +2,28 @@ package eu.domibus.connector.web.viewAreas.configuration;
 
 import org.springframework.stereotype.Component;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
+
+import eu.domibus.connector.web.forms.FormsUtil;
+import eu.domibus.connector.web.viewAreas.configuration.ConfigurationLabels.ConfigurationLabel;
 
 @HtmlImport("styles/shared-styles.html")
 @StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class EnvironmentConfiguration extends VerticalLayout{
+	
+	TextField gatewaySubmissionServiceLink = FormsUtil.getFormattedTextField();
 
 	/**
 	 * This class should handle the following:
@@ -70,7 +82,61 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	 * 
 	 */
 	public EnvironmentConfiguration() {
-	
+		Div gatewayLink = createConfigurationTextFieldWithLabels(ConfigurationLabels.gatewaySubmissionLinkLabels, gatewaySubmissionServiceLink);
+		
+		add(gatewayLink);
+	}
+
+	private Div createConfigurationTextFieldWithLabels(ConfigurationLabel labels, TextField configTextField) {
+		Div configDiv = new Div();
+		configTextField.setLabel(labels.CONFIGURATION_ELEMENT_LABEL);
+		configDiv.add(configTextField);
+		Button infoButton = createInfoButton(labels);
+		configDiv.add(infoButton);
+		return configDiv;
+	}
+
+	private Button createInfoButton(ConfigurationLabel labels) {
+		Button infoButton = new Button(new Icon(VaadinIcon.INFO_CIRCLE_O));
+		Dialog dialog = new Dialog();
+		
+		Div headerContent = new Div();
+		Label header = new Label(labels.CONFIGURATION_ELEMENT_LABEL);
+		header.getStyle().set("font-weight", "bold");
+		header.getStyle().set("font-style", "italic");
+		headerContent.getStyle().set("text-align", "center");
+		headerContent.getStyle().set("padding", "10px");
+		headerContent.add(header);
+		dialog.add(headerContent);
+		
+		Div infoContent = new Div();
+		for(String info:labels.INFO_LABEL) {
+			Div infoLine = new Div();
+			infoLine.add(new Label(info));
+			infoContent.add(infoLine);
+		}
+		infoContent.getStyle().set("padding", "10px");
+		dialog.add(infoContent);
+		
+		Div propertyContent = new Div();
+		Label correspondingProperty = new Label("\n Corresponding property: ");
+		correspondingProperty.getStyle().set("font-weight", "bold");
+		propertyContent.add(correspondingProperty);
+		propertyContent.add(new Label(labels.PROPERTY_NAME_LABEL));
+		propertyContent.getStyle().set("padding", "10px");
+		dialog.add(propertyContent);
+		
+		Div closeButtonContent = new Div();
+		closeButtonContent.getStyle().set("text-align", "center");
+		Button closeButton = new Button("Close", event -> {
+		    dialog.close();
+		});
+		closeButtonContent.add(closeButton);
+		closeButtonContent.getStyle().set("padding", "10px");
+		dialog.add(closeButtonContent);
+
+		infoButton.addClickListener(event -> dialog.open());
+		return infoButton;
 	}
 
 }
