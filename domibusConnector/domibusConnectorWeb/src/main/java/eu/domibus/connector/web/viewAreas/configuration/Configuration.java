@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;
@@ -23,17 +25,32 @@ import com.vaadin.flow.spring.annotation.UIScope;
 @org.springframework.stereotype.Component
 public class Configuration extends VerticalLayout {
 	
+	protected final static Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
+	
+	Div areaBackendConfig = null;
+	Div areaEvidencesConfig = null;
 	Div areaSecurityConfig = null;
 	Div areaEnvironmentConfig = null;
 	Div areaConfigControl = null;
 	
+	Tab backendConfigTab = new Tab("Backend Configuration");
+	Tab evidencesConfigTab = new Tab("Evidence Builder Configuration");
 	Tab securityConfigTab = new Tab("Security Configuration");
 	Tab environmentConfigTab = new Tab("Environment Configuration");
 	
 	Tabs configMenu = new Tabs();
 
-	public Configuration(@Autowired ConfigurationControlBar configCtrlBar, @Autowired SecurityConfiguration secConfig, @Autowired EnvironmentConfiguration envConfig) {
+	public Configuration(@Autowired ConfigurationControlBar configCtrlBar, @Autowired SecurityConfiguration secConfig, 
+			@Autowired EnvironmentConfiguration envConfig, @Autowired BackendConfiguration backendConfig,
+			@Autowired EvidenceBuilderConfiguration evidencesConfig) {
 		
+		areaBackendConfig = new Div();
+		areaBackendConfig.add(backendConfig);
+		areaBackendConfig.setVisible(false);
+		
+		areaEvidencesConfig = new Div();
+		areaEvidencesConfig.add(evidencesConfig);
+		areaEvidencesConfig.setVisible(false);
 		
 		areaSecurityConfig = new Div();
 		areaSecurityConfig.add(secConfig);
@@ -44,15 +61,17 @@ public class Configuration extends VerticalLayout {
 		areaEnvironmentConfig.setVisible(true);
 		
 		Map<Tab, Component> tabsToPages = new HashMap<>();
-		tabsToPages.put(securityConfigTab, areaSecurityConfig);
 		tabsToPages.put(environmentConfigTab, areaEnvironmentConfig);
+		tabsToPages.put(securityConfigTab, areaSecurityConfig);
+		tabsToPages.put(backendConfigTab, areaBackendConfig);
+		tabsToPages.put(evidencesConfigTab, areaEvidencesConfig);
 		
-		configMenu.add(securityConfigTab, environmentConfigTab);
+		configMenu.add(environmentConfigTab, securityConfigTab, backendConfigTab, evidencesConfigTab);
 		
 		
-		Div pages = new Div(areaSecurityConfig, areaEnvironmentConfig);
+		Div pages = new Div(areaEnvironmentConfig, areaSecurityConfig, areaBackendConfig, areaEvidencesConfig);
 		
-		Set<Component> pagesShown = Stream.of(areaSecurityConfig)
+		Set<Component> pagesShown = Stream.of(areaEnvironmentConfig)
 		        .collect(Collectors.toSet());
 		
 	
@@ -70,5 +89,7 @@ public class Configuration extends VerticalLayout {
 		this.expand(pages);
 		this.setHeight("80vh");
 	}
+
+
 
 }
