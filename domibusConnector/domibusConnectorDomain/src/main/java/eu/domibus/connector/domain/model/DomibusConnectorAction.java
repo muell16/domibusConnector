@@ -10,6 +10,7 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorAction implements Serializable {
 
+
 	private String action;
 	private boolean documentRequired;
 
@@ -47,4 +48,28 @@ public class DomibusConnectorAction implements Serializable {
         return builder.toString();        
     }
     
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DomibusConnectorAction other = (DomibusConnectorAction) obj;
+		if (action == null) {
+			if (other.action != null)
+				return false;
+		} else if (!action.equals(other.action))
+			return false;
+		return true;
+	}
 }

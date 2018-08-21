@@ -69,7 +69,13 @@ public class WebPModeService {
 		this.partyPersistenceService = partyPersistenceService;
 	}
 
+	public DomibusConnectorService getService(String serviceName) {
+		return this.servicePersistenceService.getService(serviceName);
+	}
 	
+	public DomibusConnectorAction getAction(String actionName) {
+		return this.actionPersistenceService.getAction(actionName);
+	}
 
 	private void importServices(Configuration pmodes) {
 		Map<String, DomibusConnectorService> services = new HashMap<String, DomibusConnectorService>();

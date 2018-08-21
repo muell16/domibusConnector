@@ -1,6 +1,7 @@
 package eu.domibus.connector.web.viewAreas.configuration;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,6 +10,10 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -30,6 +35,9 @@ import com.vaadin.flow.spring.annotation.UIScope;
 public class Configuration extends VerticalLayout {
 	
 	protected final static Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
+	
+	@Autowired
+	Environment env;
 	
 	Div areaBackendConfig = null;
 	Div areaEvidencesConfig = null;
@@ -86,12 +94,23 @@ public class Configuration extends VerticalLayout {
 		    pagesShown.add(selectedPage);
 		});
 
+		add(createConfigurationButtonBar());
 		add(configMenu,pages);
 		
-		add(createConfigurationButtonBar());
+		
 		this.expand(pages);
 		this.setHeight("80vh");
 	}
+	
+//	private void properties() {
+//		for(Iterator it = ((AbstractEnvironment) env).getPropertySources().iterator(); it.hasNext(); ) {
+//            PropertySource propertySource = (PropertySource) it.next();
+//            propertySource.
+//            if (propertySource instanceof MapPropertySource) {
+//                map.putAll(((MapPropertySource) propertySource).getSource());
+//            }
+//        }
+//	}
 
 	private HorizontalLayout createConfigurationButtonBar() {
 		HorizontalLayout configurationButtonBar = new HorizontalLayout();
@@ -107,6 +126,8 @@ public class Configuration extends VerticalLayout {
 		configurationButtonBar.add(saveConfiguration);
 		configurationButtonBar.setWidth("100vw");
 		configurationButtonBar.setHeight("20px");
+		configurationButtonBar.setPadding(true);
+		configurationButtonBar.getStyle().set("padding-bottom", "30px");
 		
 		return configurationButtonBar;
 	}
