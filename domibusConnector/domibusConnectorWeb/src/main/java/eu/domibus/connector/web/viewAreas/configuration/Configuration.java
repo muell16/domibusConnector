@@ -30,6 +30,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.viewAreas.configuration.environment.EnvironmentConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfiguration;
+import eu.domibus.connector.web.viewAreas.configuration.security.SecurityConfiguration;
 
 @HtmlImport("styles/shared-styles.html")
 @StyleSheet("styles/grid.css")

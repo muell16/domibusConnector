@@ -88,7 +88,7 @@ public class EvidenceBuilderConfigurationLabels {
 			"connector.evidences.keyStore.path",
 			"The File-Path to the keystore holding the certificate with which generated evidences are signed. ",
 			"The path ideally should be absolute and with a \"file:\" prefix. Also \"\\\" should be replaced by \"/\" or \"\\\\\"",
-			"Example: file:C:/<anyPath/connector.properties"
+			"Example: file:C:/<anyPath>/connector.jks"
 			);
 	
 	public static final ConfigurationLabel evidencesKeyStorePasswordLabels = new ConfigurationLabel(
