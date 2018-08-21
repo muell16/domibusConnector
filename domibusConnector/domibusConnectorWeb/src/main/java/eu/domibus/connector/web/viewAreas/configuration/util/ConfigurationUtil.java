@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.viewAreas.configuration;
+package eu.domibus.connector.web.viewAreas.configuration.util;
 
 import java.util.Collection;
 
@@ -15,8 +15,6 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.textfield.TextField;
-
-import eu.domibus.connector.web.viewAreas.configuration.ConfigurationLabels.ConfigurationLabel;
 
 @Component
 public class ConfigurationUtil {

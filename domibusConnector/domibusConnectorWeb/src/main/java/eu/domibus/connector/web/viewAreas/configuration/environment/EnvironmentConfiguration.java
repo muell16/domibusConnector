@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.viewAreas.configuration;
+package eu.domibus.connector.web.viewAreas.configuration.environment;
 
 import java.util.List;
 
@@ -19,6 +19,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebPModeService;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 /**
  * @author riederb
@@ -113,7 +114,7 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	public EnvironmentConfiguration(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.util = util;
 		
-		Div gatewayLink = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.gatewaySubmissionLinkLabels, gatewaySubmissionServiceLinkField);
+		Div gatewayLink = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.gatewaySubmissionLinkLabels, gatewaySubmissionServiceLinkField);
 		add(gatewayLink);
 		
 		List<DomibusConnectorService> serviceList = pmodeService.getServiceList();
@@ -125,8 +126,8 @@ public class EnvironmentConfiguration extends VerticalLayout{
 				return item.getService();
 			}
 		});
-		DomibusConnectorService serviceValue = pmodeService.getService(util.getPropertyValue(ConfigurationLabels.connectorTestServiceLabels.PROPERTY_NAME_LABEL));
-		Div connectorTestService = util.createConfigurationComboBoxWithItemsAndLabels(ConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceList, serviceValue);
+		DomibusConnectorService serviceValue = pmodeService.getService(util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestServiceLabels.PROPERTY_NAME_LABEL));
+		Div connectorTestService = util.createConfigurationComboBoxWithItemsAndLabels(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceList, serviceValue);
 		add(connectorTestService);
 		
 		List<DomibusConnectorAction> actionList = pmodeService.getActionList();
@@ -137,8 +138,8 @@ public class EnvironmentConfiguration extends VerticalLayout{
 			}
 		});
 		
-		DomibusConnectorAction actionValue = pmodeService.getAction(util.getPropertyValue(ConfigurationLabels.connectorTestActionLabels.PROPERTY_NAME_LABEL));
-		Div connectorTestAction = util.createConfigurationComboBoxWithItemsAndLabels(ConfigurationLabels.connectorTestActionLabels, actionBox, actionList, actionValue);
+		DomibusConnectorAction actionValue = pmodeService.getAction(util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestActionLabels.PROPERTY_NAME_LABEL));
+		Div connectorTestAction = util.createConfigurationComboBoxWithItemsAndLabels(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionList, actionValue);
 //		Div connectorTestAction = util.createConfigurationComboBoxWithItemsAndLabels(ConfigurationLabels.connectorTestActionLabels, actionBox, actionList, null);
 		add(connectorTestAction);
 		
@@ -150,20 +151,20 @@ public class EnvironmentConfiguration extends VerticalLayout{
 			httpProxyUserField.setReadOnly(!e.getValue());
 			httpProxyPasswordField.setReadOnly(!e.getValue());
 		});
-		Div useHttpProxy = util.createConfigurationCheckboxWithLabels(ConfigurationLabels.useHttpProxyLabels, useHttpProxyBox);
+		Div useHttpProxy = util.createConfigurationCheckboxWithLabels(EnvironmentConfigurationLabels.useHttpProxyLabels, useHttpProxyBox);
 		add(useHttpProxy);
 		
-		Div httpProxyHost = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpProxyHostLabels, httpProxyHostField);
+		Div httpProxyHost = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyHostLabels, httpProxyHostField);
 		add(httpProxyHost);
 		
 		httpProxyPortField.setWidth("300px");
-		Div httpProxyPort = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpProxyPortLabels, httpProxyPortField);
+		Div httpProxyPort = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyPortLabels, httpProxyPortField);
 		add(httpProxyPort);
 		
-		Div httpProxyUser = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpProxyUserLabels, httpProxyUserField);
+		Div httpProxyUser = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyUserLabels, httpProxyUserField);
 		add(httpProxyUser);
 		
-		Div httpProxyPassword = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpProxyPasswordLabels, httpProxyPasswordField);
+		Div httpProxyPassword = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyPasswordLabels, httpProxyPasswordField);
 		add(httpProxyPassword);
 		
 		useHttpsProxyBox.addValueChangeListener(e -> {
@@ -172,37 +173,37 @@ public class EnvironmentConfiguration extends VerticalLayout{
 			httpsProxyUserField.setReadOnly(!e.getValue());
 			httpsProxyPasswordField.setReadOnly(!e.getValue());
 		});
-		Div useHttpsProxy = util.createConfigurationCheckboxWithLabels(ConfigurationLabels.useHttpsProxyLabels, useHttpsProxyBox);
+		Div useHttpsProxy = util.createConfigurationCheckboxWithLabels(EnvironmentConfigurationLabels.useHttpsProxyLabels, useHttpsProxyBox);
 		add(useHttpsProxy);
 		
-		Div httpsProxyHost = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpsProxyHostLabels, httpsProxyHostField);
+		Div httpsProxyHost = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyHostLabels, httpsProxyHostField);
 		add(httpsProxyHost);
 		
 		httpsProxyPortField.setWidth("300px");
-		Div httpsProxyPort = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpsProxyPortLabels, httpsProxyPortField);
+		Div httpsProxyPort = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyPortLabels, httpsProxyPortField);
 		add(httpsProxyPort);
 		
-		Div httpsProxyUser = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpsProxyUserLabels, httpsProxyUserField);
+		Div httpsProxyUser = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyUserLabels, httpsProxyUserField);
 		add(httpsProxyUser);
 		
-		Div httpsProxyPassword = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.httpsProxyPasswordLabels, httpsProxyPasswordField);
+		Div httpsProxyPassword = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyPasswordLabels, httpsProxyPasswordField);
 		add(httpsProxyPassword);
 		
 		add(util.createChapterDiv("Database Connection Configuration:"));
 		
-		Div databaseUrl = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
+		Div databaseUrl = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
 		add(databaseUrl);
 		
-		Div databaseUser = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.databaseUserLabels, databaseUserField);
+		Div databaseUser = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
 		add(databaseUser);
 		
-		Div databasePassword = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.databasePasswordLabels, databasePasswordField);
+		Div databasePassword = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
 		add(databasePassword);
 		
-		Div databaseDriver = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
+		Div databaseDriver = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
 		add(databaseDriver);
 		
-		Div databaseDialect = util.createConfigurationTextFieldWithLabels(ConfigurationLabels.databaseDialectLabels, databaseDialectField);
+		Div databaseDialect = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
 		add(databaseDialect);
 		
 	}
