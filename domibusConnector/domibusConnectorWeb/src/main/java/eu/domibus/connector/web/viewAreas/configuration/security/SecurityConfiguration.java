@@ -14,51 +14,28 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.forms.FormsUtil;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 /**
  * 
- * This class should handle the following:
+ * This class should handle the following properties:
  * 
- * Edit the token issuer information.
- * 
- * Edit the lotl settings
- * 
- * Edit the keystore/truststore for the security toolkit
- * 
- * ################ Properties for security toolkit from properties file: #######################
- * 
- * #############################  ASIC-S keystore  #############################
-
-		# To be able to sign the secure contents of the message, a keystore with certificate and private key integrated must be used. Here are the
-		# credentials to set.
-		connector.security.keyStore.path=file:C:/Entwicklung/EXEC-Installation-Workshop/EXECUser1/configuration/keystores/connector-execuser1.jks
-		connector.security.keyStore.password=12345
-		connector.security.privateKey.alias=execcon1
-		connector.security.privateKey.password=12345
-
-		#############################  connector truststore  #############################
-
-		# Holds all public keys of partners to validate the received ASIC-S containers against. Also contains public keys of signatures,
-		# if documents to be sent are signed.
-		connector.security.truststore.path=file:C:/Entwicklung/EXEC-Installation-Workshop/EXECUser1/configuration/keystores/connector-truststore.jks
-		connector.security.truststore.password=12345
-		
-		# Settings for the security library for generating the Token.
-			token.issuer.country=AT
-			token.issuer.service.provider=TestProvider
-			# This can rather be SIGNATURE_BASED, then the main document needs to be signed, or AUTHENTICATION_BASED, in that case the security interface needs
-			# to be implemented (see connector.security.toolkit.implementation.class.name)
-			token.issuer.aes.value=AUTHENTICATION_BASED
-			
-			# The connectors security lib is loading trusted lists over
-			# the network:
-			
-			security.lotl.scheme.uri=https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl.html
-			security.lotl.url=https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml
-			security.oj.url=http://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2016.233.01.0001.01.ENG
-
-
+ * connector.security.keyStore.path
+ * connector.security.keyStore.password
+ * connector.security.privateKey.alias
+ * connector.security.privateKey.password
+ *
+ * connector.security.truststore.path
+ * connector.security.truststore.password
+ *	
+ * token.issuer.country
+ * token.issuer.service.provider
+ * token.issuer.aes.value
+ *
+ * security.lotl.scheme.uri
+ * security.lotl.url
+ * security.oj.url
  * 
  */
 @HtmlImport("styles/shared-styles.html")
@@ -67,6 +44,11 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 @UIScope
 public class SecurityConfiguration extends VerticalLayout{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	ConfigurationUtil util;
 	
 	TextField tokenIssuerCountryField = FormsUtil.getFormattedTextField();
@@ -87,38 +69,43 @@ public class SecurityConfiguration extends VerticalLayout{
 	public SecurityConfiguration(@Autowired ConfigurationUtil util) {
 		this.util = util;
 		
-		add(util.createChapterDiv("Token issuer configuration:"));
+		add(new ConfigurationItemChapterDiv("Token issuer configuration:"));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.tokenIssuerCountryLabels, tokenIssuerCountryField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.tokenIssuerCountryLabels, tokenIssuerCountryField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.tokenIssuerServiceProviderLabels, tokenIssuerServiceProviderField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.tokenIssuerServiceProviderLabels, tokenIssuerServiceProviderField));
 		
-		List<String> items = new ArrayList<String>();
-		items.add("SIGNATURE_BASED");
-		items.add("AUTHENTICATION_BASED");
-		add(util.createConfigurationComboBoxWithItemsAndLabels(SecurityConfigurationLabels.tokenIssuerAESValueLabels, tokenIssuerAESValueBox, items, util.getPropertyValue(SecurityConfigurationLabels.tokenIssuerAESValueLabels.PROPERTY_NAME_LABEL)));
+		List<String> aesValues = new ArrayList<String>();
+		aesValues.add("SIGNATURE_BASED");
+		aesValues.add("AUTHENTICATION_BASED");
+		add(util.createConfigurationItemComboBoxDiv(
+				SecurityConfigurationLabels.tokenIssuerAESValueLabels, 
+				tokenIssuerAESValueBox, 
+				util.getPropertyValue(SecurityConfigurationLabels.tokenIssuerAESValueLabels.PROPERTY_NAME_LABEL), 
+				aesValues
+				));
 		
-		add(util.createChapterDiv("Trusted lists configuration:"));
+		add(new ConfigurationItemChapterDiv("Trusted lists configuration:"));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.lotlSchemeURILabels, lotlSchemeURIField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.lotlSchemeURILabels, lotlSchemeURIField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.lotlURLLabels, lotlURLField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.lotlURLLabels, lotlURLField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.ojURLLabels, ojURIField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.ojURLLabels, ojURIField));
 		
-		add(util.createChapterDiv("Keystore/Truststore configuration:"));
+		add(new ConfigurationItemChapterDiv("Keystore/Truststore configuration:"));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.securityKeyStorePathLabels, keyStorePathField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyStorePathLabels, keyStorePathField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.securityKeyStorePasswordLabels, keyStorePasswordField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyStorePasswordLabels, keyStorePasswordField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.securityKeyAliasLabels, keyAliasField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyAliasLabels, keyAliasField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.securityKeyPasswordLabels, keyPasswordField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyPasswordLabels, keyPasswordField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.securityTrustStorePathLabels, truststorePathField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityTrustStorePathLabels, truststorePathField));
 		
-		add(util.createConfigurationTextFieldWithLabels(SecurityConfigurationLabels.securityTrustStorePasswordLabels, truststorePasswordField));
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityTrustStorePasswordLabels, truststorePasswordField));
 	}
 
 }

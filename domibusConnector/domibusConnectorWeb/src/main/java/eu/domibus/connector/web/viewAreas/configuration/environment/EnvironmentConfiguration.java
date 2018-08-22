@@ -1,5 +1,6 @@
 package eu.domibus.connector.web.viewAreas.configuration.environment;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,65 +20,36 @@ import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebPModeService;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 /**
  * @author riederb
  *
- * This class should handle the following:
+ * This class should handle the following parameters:
  * 
- * Edit the properties for connection to the GW.
- * 
- * Edit the properties for Test PModes
- * 
- * Edit the Proxy Settings
- * 
- * Edit the datasource settings
- * 
- * ################ Properties for environment from properties file: #######################
- * 
- * 		# The connector is using this webservice address to submit messages to the gateway
-		connector.gatewaylink.ws.submissionEndpointAddress=http://127.0.0.1:8080/domibus/services/domibusConnectorSubmissionWebservice
+ * 	connector.gatewaylink.ws.submissionEndpointAddress
 
-		# Service and action entered here according to the p-modes used.
-		# Enabled and used messages received with that combination will not be sent to the backend of the connector, 
-		# but will be answered with evidences after processed in the connector.
-		connector.test.service=testService1
-		connector.test.action=tc2Action
+	connector.test.service
+	connector.test.action
 
-		# If the connector should use a http proxy for loading the trusted lists  you have to configure
-		# the proxy values here:
-		#
-		#HTTP proxy settings
-		http.proxy.enabled=true
-		http.proxy.host=172.30.9.12
-		http.proxy.port=8080
-		http.proxy.user=
-		http.proxy.password=
+	http.proxy.enabled
+	http.proxy.host
+	http.proxy.port
+	http.proxy.user=
+	http.proxy.password=
 
-		#HTTPS proxy settings
-		https.proxy.enabled=true
-		https.proxy.host=172.30.9.12
-		https.proxy.port=8080
-		https.proxy.user=
-		https.proxy.password=
+	https.proxy.enabled
+	https.proxy.host
+	https.proxy.port
+	https.proxy.user=
+	https.proxy.password=
 
-		# Application defined datasource:
-
-		# Fully qualified name of the JDBC driver. Auto-detected based on the URL by default.
-		spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
-
-		# Login username of the database.
-		spring.datasource.username=tbckenddb
-
-		# JDBC URL of the database.
-		spring.datasource.url=jdbc:oracle:thin:@sjusee:1521:sjusee
-
-		# Login password of the database.
-		spring.datasource.password=tbckenddb
-
-		spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
-  
+	spring.datasource.driver-class-name
+	spring.datasource.username
+	spring.datasource.url
+	spring.datasource.password
+	spring.jpa.properties.hibernate.dialect
 
  */
 @HtmlImport("styles/shared-styles.html")
@@ -86,6 +58,11 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 @UIScope
 public class EnvironmentConfiguration extends VerticalLayout{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	ConfigurationUtil util;
 	
 	TextField gatewaySubmissionServiceLinkField = FormsUtil.getFormattedTextField();
@@ -114,36 +91,13 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	public EnvironmentConfiguration(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.util = util;
 		
-		Div gatewayLink = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.gatewaySubmissionLinkLabels, gatewaySubmissionServiceLinkField);
-		add(gatewayLink);
+		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.gatewaySubmissionLinkLabels, gatewaySubmissionServiceLinkField));
 		
-		List<DomibusConnectorService> serviceList = pmodeService.getServiceList();
+		createAndAddServiceComboBox(pmodeService);
 		
-		serviceBox.setItemLabelGenerator(new ItemLabelGenerator<DomibusConnectorService>() {
-			
-			@Override
-			public String apply(DomibusConnectorService item) {
-				return item.getService();
-			}
-		});
-		DomibusConnectorService serviceValue = pmodeService.getService(util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestServiceLabels.PROPERTY_NAME_LABEL));
-		Div connectorTestService = util.createConfigurationComboBoxWithItemsAndLabels(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceList, serviceValue);
-		add(connectorTestService);
+		createAndAddActionComboBox(pmodeService);
 		
-		List<DomibusConnectorAction> actionList = pmodeService.getActionList();
-		actionBox.setItemLabelGenerator(new ItemLabelGenerator<DomibusConnectorAction>() {
-			@Override
-			public String apply(DomibusConnectorAction item) {
-				return item.getAction();
-			}
-		});
-		
-		DomibusConnectorAction actionValue = pmodeService.getAction(util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestActionLabels.PROPERTY_NAME_LABEL));
-		Div connectorTestAction = util.createConfigurationComboBoxWithItemsAndLabels(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionList, actionValue);
-//		Div connectorTestAction = util.createConfigurationComboBoxWithItemsAndLabels(ConfigurationLabels.connectorTestActionLabels, actionBox, actionList, null);
-		add(connectorTestAction);
-		
-		add(util.createChapterDiv("Proxy Configuration:"));
+		add(new ConfigurationItemChapterDiv("Proxy Configuration:"));
 		
 		useHttpProxyBox.addValueChangeListener(e -> {
 			httpProxyHostField.setReadOnly(!e.getValue());
@@ -151,20 +105,20 @@ public class EnvironmentConfiguration extends VerticalLayout{
 			httpProxyUserField.setReadOnly(!e.getValue());
 			httpProxyPasswordField.setReadOnly(!e.getValue());
 		});
-		Div useHttpProxy = util.createConfigurationCheckboxWithLabels(EnvironmentConfigurationLabels.useHttpProxyLabels, useHttpProxyBox);
+		Div useHttpProxy = util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.useHttpProxyLabels, useHttpProxyBox);
 		add(useHttpProxy);
 		
-		Div httpProxyHost = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyHostLabels, httpProxyHostField);
+		Div httpProxyHost = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpProxyHostLabels, httpProxyHostField);
 		add(httpProxyHost);
 		
 		httpProxyPortField.setWidth("300px");
-		Div httpProxyPort = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyPortLabels, httpProxyPortField);
+		Div httpProxyPort = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpProxyPortLabels, httpProxyPortField);
 		add(httpProxyPort);
 		
-		Div httpProxyUser = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyUserLabels, httpProxyUserField);
+		Div httpProxyUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpProxyUserLabels, httpProxyUserField);
 		add(httpProxyUser);
 		
-		Div httpProxyPassword = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpProxyPasswordLabels, httpProxyPasswordField);
+		Div httpProxyPassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpProxyPasswordLabels, httpProxyPasswordField);
 		add(httpProxyPassword);
 		
 		useHttpsProxyBox.addValueChangeListener(e -> {
@@ -173,39 +127,75 @@ public class EnvironmentConfiguration extends VerticalLayout{
 			httpsProxyUserField.setReadOnly(!e.getValue());
 			httpsProxyPasswordField.setReadOnly(!e.getValue());
 		});
-		Div useHttpsProxy = util.createConfigurationCheckboxWithLabels(EnvironmentConfigurationLabels.useHttpsProxyLabels, useHttpsProxyBox);
+		Div useHttpsProxy = util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.useHttpsProxyLabels, useHttpsProxyBox);
 		add(useHttpsProxy);
 		
-		Div httpsProxyHost = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyHostLabels, httpsProxyHostField);
+		Div httpsProxyHost = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpsProxyHostLabels, httpsProxyHostField);
 		add(httpsProxyHost);
 		
 		httpsProxyPortField.setWidth("300px");
-		Div httpsProxyPort = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyPortLabels, httpsProxyPortField);
+		Div httpsProxyPort = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpsProxyPortLabels, httpsProxyPortField);
 		add(httpsProxyPort);
 		
-		Div httpsProxyUser = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyUserLabels, httpsProxyUserField);
+		Div httpsProxyUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpsProxyUserLabels, httpsProxyUserField);
 		add(httpsProxyUser);
 		
-		Div httpsProxyPassword = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.httpsProxyPasswordLabels, httpsProxyPasswordField);
+		Div httpsProxyPassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.httpsProxyPasswordLabels, httpsProxyPasswordField);
 		add(httpsProxyPassword);
 		
-		add(util.createChapterDiv("Database Connection Configuration:"));
+		add(new ConfigurationItemChapterDiv("Database Connection Configuration:"));
 		
-		Div databaseUrl = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
+		Div databaseUrl = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseConnectionStringLabels, databaseConnectionStringField);
 		add(databaseUrl);
 		
-		Div databaseUser = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
+		Div databaseUser = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseUserLabels, databaseUserField);
 		add(databaseUser);
 		
-		Div databasePassword = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
+		Div databasePassword = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databasePasswordLabels, databasePasswordField);
 		add(databasePassword);
 		
-		Div databaseDriver = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
+		Div databaseDriver = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDriverClassNameLabels, databaseDriverClassField);
 		add(databaseDriver);
 		
-		Div databaseDialect = util.createConfigurationTextFieldWithLabels(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
+		Div databaseDialect = util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.databaseDialectLabels, databaseDialectField);
 		add(databaseDialect);
 		
+	}
+
+	private void createAndAddActionComboBox(WebPModeService pmodeService) {
+		Collection<DomibusConnectorAction> actionList = pmodeService.getActionList();
+		actionBox.setItemLabelGenerator(new ItemLabelGenerator<DomibusConnectorAction>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String apply(DomibusConnectorAction item) {
+				return item.getAction();
+			}
+		});
+		
+		DomibusConnectorAction actionValue = pmodeService.getAction(this.util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestActionLabels.PROPERTY_NAME_LABEL));
+		add(this.util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionValue, actionList));
+	}
+
+	private void createAndAddServiceComboBox(WebPModeService pmodeService) {
+		List<DomibusConnectorService> serviceList = pmodeService.getServiceList();
+		serviceBox.setItemLabelGenerator(new ItemLabelGenerator<DomibusConnectorService>() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String apply(DomibusConnectorService item) {
+				return item.getService();
+			}
+		});
+		DomibusConnectorService serviceValue = pmodeService.getService(util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestServiceLabels.PROPERTY_NAME_LABEL));
+		add(util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceValue, serviceList));
 	}
 	
 	
