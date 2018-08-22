@@ -5,7 +5,7 @@ RUN chmod 770 /opt/*.sh
 
 ENV DB_HOST db
 ENV DB_PORT 3306
-ENV server.port 8080
+ENV server_port 8080
 
 EXPOSE 8080
 

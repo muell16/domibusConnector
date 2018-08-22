@@ -16,7 +16,6 @@ import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
 @EntityScan(basePackageClasses={PDomibusConnectorPersistenceModel.class})
 @EnableJpaRepositories(basePackageClasses = {PackageDomibusConnectorRepositories.class} )
 @EnableTransactionManagement
-@PropertySource("/eu/domibus/connector/persistence/persistence.properties")
 public class DomibusConnectorPersistenceContext {
 
 }
