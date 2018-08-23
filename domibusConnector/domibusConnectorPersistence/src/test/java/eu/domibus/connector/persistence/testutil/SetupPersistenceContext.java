@@ -29,6 +29,8 @@ public class SetupPersistenceContext {
                 .sources(sources)
                 .web(WebApplicationType.NONE)
                 .profiles("test", "db_h2")
+                //start with JPA big file storage
+                .properties("connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
                 .properties("spring.liquibase.change-log=db/changelog/test/testdata.xml",
                         "spring.datasource.url=jdbc:h2:mem:" + dbName)
                 ;

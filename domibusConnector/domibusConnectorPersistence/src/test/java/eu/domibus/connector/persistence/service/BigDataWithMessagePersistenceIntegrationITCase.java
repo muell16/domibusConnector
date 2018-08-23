@@ -44,7 +44,9 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
 
     @BeforeClass
     public static void beforeClass() {
+
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext();
+
     }
 
     @AfterClass

@@ -21,7 +21,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-@ConditionalOnProperty("eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
+@ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
 public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements DomibusConnectorBigDataPersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceFilesystemImpl.class);
