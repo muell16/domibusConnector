@@ -45,7 +45,7 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
 
     @BeforeClass
     public static void beforeClass() {
-        Properties props = new Properties();
+        Properties props = SetupPersistenceContext.getDefaultProperties();
         props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(props);
     }

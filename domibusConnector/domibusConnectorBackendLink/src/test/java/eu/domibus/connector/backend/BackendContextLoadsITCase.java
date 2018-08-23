@@ -16,7 +16,10 @@ public class BackendContextLoadsITCase {
     public void testContextLoads() {
         ConfigurableApplicationContext startUpSpringApplication =
                 StartBackendOnly.startUpSpringApplication(new String[] {"backendlink-ws"}, new String[]
-                        {"server.port=0", "spring.liquibase.enabled=false", "connector.backend.ws.key.store.path=classpath:/connector.jks" });
+                        {"server.port=0",
+                                "spring.liquibase.enabled=false",
+                                "connector.backend.ws.key.store.path=classpath:/connector.jks",
+                                "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl"});
         assertThat(startUpSpringApplication).isNotNull();
     }
     

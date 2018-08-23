@@ -91,6 +91,7 @@ public class BackendLinkWsTestMessageFlowITCase {
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
                 "spring.liquibase.enabled=true",
+                "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
                 "connector.backend.ws.key.store.path=classpath:/connector.jks"
         };
 

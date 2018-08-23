@@ -14,16 +14,25 @@ import java.util.UUID;
 public class SetupPersistenceContext {
 
 
-
     static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
-    @BeforeClass
+    public static Properties getDefaultProperties() {
+        Properties props = new Properties();
+        String dbName = UUID.randomUUID().toString().substring(0,10); //create random db name to avoid conflicts between tests
+        props.put("dbname", dbName);
+        props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
+        props.put("spring.liquibase.change-log","db/changelog/test/testdata.xml");
+        props.put("spring.datasource.url","jdbc:h2:mem:" + dbName);
+        return props;
+    }
+
+//    @BeforeClass
     public static ConfigurableApplicationContext startApplicationContext() {
-        return startApplicationContext();
+        return startApplicationContext(getDefaultProperties());
     }
 
     public static ConfigurableApplicationContext startApplicationContext(Class<?>... sources) {
-        return startApplicationContext(new Properties(), sources);
+        return startApplicationContext(getDefaultProperties(), sources);
     }
 
     public static ConfigurableApplicationContext startApplicationContext(Properties props) {
@@ -32,15 +41,15 @@ public class SetupPersistenceContext {
 
     public static ConfigurableApplicationContext startApplicationContext(Properties props, Class<?>... sources) {
         ConfigurableApplicationContext applicationContext;
-        String dbName = UUID.randomUUID().toString().substring(0,10); //create random db name to avoid conflicts between tests
+
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
                 .sources(sources)
                 .web(WebApplicationType.NONE)
                 .profiles("test", "db_h2")
                 //start with JPA big file storage
-                .properties("connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
-                .properties("spring.liquibase.change-log=db/changelog/test/testdata.xml",
-                        "spring.datasource.url=jdbc:h2:mem:" + dbName)
+//                .properties("connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
+//                .properties("spring.liquibase.change-log=db/changelog/test/testdata.xml",
+//                        "spring.datasource.url=jdbc:h2:mem:" + dbName)
                 .properties(props)
                 ;
         applicationContext = springAppBuilder.run();
