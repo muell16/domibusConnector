@@ -22,8 +22,12 @@ public class SetupPersistenceContext {
         return startApplicationContext();
     }
 
+    public static ConfigurableApplicationContext startApplicationContext(Class<?>... sources) {
+        return startApplicationContext(new Properties(), sources);
+    }
+
     public static ConfigurableApplicationContext startApplicationContext(Properties props) {
-        return startApplicationContext(new Properties(), SetupPersistenceContext.class);
+        return startApplicationContext(props, SetupPersistenceContext.class);
     }
 
     public static ConfigurableApplicationContext startApplicationContext(Properties props, Class<?>... sources) {
