@@ -43,10 +43,10 @@ public interface DomibusConnectorBigDataPersistenceService {
     		String documentContentType);
     
     /**
-     * will delete all messages related to the provides message
-     * @param message the message
+     * will delete the provided bigDataReference
+     * @param bigDataReference the reference
      */
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message);
+    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference);
 
     
 }

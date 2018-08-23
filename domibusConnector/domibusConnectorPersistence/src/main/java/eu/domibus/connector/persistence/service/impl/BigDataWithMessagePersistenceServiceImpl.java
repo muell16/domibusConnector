@@ -10,6 +10,8 @@ import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersisten
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +97,30 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     @Override
     @Transactional
     public void cleanForMessage(DomibusConnectorMessage message) {
-        bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(message);
+//        bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(message);
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            LOGGER.debug("#deleteAllBigFilesFromMessage: is evidence message doing nothing...");
+        }
+        collectBigDataRefsOfMessage(message)
+                .stream()
+                .forEach(ref -> bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(ref));
+    }
+
+    private List<DomibusConnectorBigDataReference> collectBigDataRefsOfAttachments(DomibusConnectorMessage message) {
+        return message.getMessageAttachments().stream().map(DomibusConnectorMessageAttachment::getAttachment).collect(Collectors.toList());
+    }
+
+//    private void deleteBigDataRefOfAttachment() {
+////
+////    }
+
+    private List<DomibusConnectorBigDataReference> collectBigDataRefsOfMessage(DomibusConnectorMessage message) {
+        List<DomibusConnectorBigDataReference> collectedBigDataRefs = message.getMessageAttachments().stream().map(DomibusConnectorMessageAttachment::getAttachment).collect(Collectors.toList());
+        DomibusConnectorMessageContent messageContent = message.getMessageContent();
+        if (hasMainDocument(messageContent)) {
+            collectedBigDataRefs.add(messageContent.getDocument().getDocument());
+        }
+        return collectedBigDataRefs;
     }
 
     @Override

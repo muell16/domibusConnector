@@ -43,7 +43,7 @@ public class DomibusConnectorBigDataPersistenceServiceMemoryImpl implements Domi
 	}
 
     @Override
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
+    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference ref) {
         //Just do nothing!
     }
 

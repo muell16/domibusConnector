@@ -92,14 +92,14 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
         String storageRef = msgId + File.separator + "file1";
         fsRef.setStorageIdReference(storageRef);
 
-        DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
-        msg.setConnectorMessageId(msgId);
-        filesystemImpl.deleteDomibusConnectorBigDataReference(msg);
+//        DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
+//        msg.setConnectorMessageId(msgId);
+        filesystemImpl.deleteDomibusConnectorBigDataReference(fsRef);
 
 //        assertThat(fileExists(storageRef)).isFalse();
-
-        File f = new File(testStorageLocation.getAbsolutePath() + File.separator + msgId);
-        assertThat(f.exists()).isFalse();
+        String filePath = testStorageLocation.getAbsolutePath() + File.separator + msgId + File.separator + "file1";
+        File f = new File(filePath);
+        assertThat(f.exists()).as("file " + filePath + " should be deleted").isFalse();
 
     }
 

@@ -114,20 +114,24 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 //    }
 
     @Override
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
-        String connectorMessageId = message.getConnectorMessageId();
-        String storageFolder = getStoragePath() + File.separator + connectorMessageId;
-
-        Path file = getStoragePath().resolve(connectorMessageId);
+    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
 
 
-        File folder = new File(storageFolder);
-
-        boolean successfullyDeleted = FileSystemUtils.deleteRecursively(folder);
-
-        if (!successfullyDeleted) {
-            //TODO: throw exception OR just log WARNING?
+        Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
+        //TODO: logging, error logging
+        try {
+            Files.delete(storageFile);
+        } catch (IOException e) {
+            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
         }
+
+//        File folder = new File(storageFolder);
+//
+//        boolean successfullyDeleted = FileSystemUtils.deleteRecursively(folder);
+//
+//        if (!successfullyDeleted) {
+//            //TODO: throw exception OR just log WARNING?
+//        }
         
     }
 

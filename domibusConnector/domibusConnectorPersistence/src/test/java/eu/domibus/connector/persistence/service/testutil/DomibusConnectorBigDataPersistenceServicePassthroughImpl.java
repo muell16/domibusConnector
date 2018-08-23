@@ -41,7 +41,7 @@ public class DomibusConnectorBigDataPersistenceServicePassthroughImpl implements
 	}
 
 	@Override
-	public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
+	public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference ref) {
 		//just do nothing
 	}
 

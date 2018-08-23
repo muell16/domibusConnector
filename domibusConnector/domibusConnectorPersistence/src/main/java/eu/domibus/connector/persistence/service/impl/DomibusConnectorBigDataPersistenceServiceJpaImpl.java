@@ -163,17 +163,28 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
     
     @Override
     @Transactional(readOnly = false)
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorMessage message) {
-        LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data related to message {}", message);
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference) {
+        LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data {}", bigDataReference);
+//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        JpaBasedDomibusConnectorBigDataReference ref = (JpaBasedDomibusConnectorBigDataReference) bigDataReference;
+        long dataId = convertStorageIdReferenceToDbId(ref.getStorageIdReference());
 
-        if (dbMessage != null) {
-            List<PDomibusConnectorBigData> dataByMsg = bigDataDao.findAllByMessage(dbMessage.getId());
-            bigDataDao.deleteAll(dataByMsg);
-        } else {
-            LOGGER.warn(String.format("Did not delete big data of message with connector id [%s], because there was no entry in database", message));
-        }
+        LOGGER.debug("Deleting big data entry with db id: [{}]", dataId);
+        bigDataDao.deleteById(dataId);
 
+//        if (dbMessage != null) {
+//            List<PDomibusConnectorBigData> dataByMsg = bigDataDao.findAllByMessage(dbMessage.getId());
+//            bigDataDao.deleteAll(dataByMsg);
+//        } else {
+//            LOGGER.warn(String.format("Did not delete big data of message with connector id [%s], because there was no entry in database", message));
+//        }
+
+    }
+
+    private long convertStorageIdReferenceToDbId(String storageRef) {
+        //TODO: error handling!!!
+        long l = Long.parseLong(storageRef);
+        return l;
     }
 
     private class DbBackedOutputStream extends ByteArrayOutputStream {
