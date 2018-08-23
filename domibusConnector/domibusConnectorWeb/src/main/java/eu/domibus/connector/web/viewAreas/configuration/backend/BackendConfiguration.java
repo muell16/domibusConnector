@@ -97,7 +97,7 @@ public class BackendConfiguration  extends VerticalLayout {
 		
 		Button newBackendClientInfo = new Button(new Icon(VaadinIcon.PLUS));
 		newBackendClientInfo.setText("Add new Backend Client Info");
-		newBackendClientInfo.addClickListener(e -> openNewBackendClientInfoDialog());
+		newBackendClientInfo.addClickListener(e -> openNewBackendClientInfoDialog(null));
 		addBackendClientInfo.add(newBackendClientInfo);
 		
 		add(addBackendClientInfo);
@@ -105,22 +105,26 @@ public class BackendConfiguration  extends VerticalLayout {
 		fullList = backendClientService.getAllBackendClients();
 		
 		grid.setItems(fullList);
+		grid.addComponentColumn(domibusConnectorBackendClientInfo -> getDetailsLink(domibusConnectorBackendClientInfo)).setHeader("Details").setWidth("30px");
 		grid.addColumn(DomibusConnectorBackendClientInfo::getBackendName).setHeader("Backend Name").setWidth("250px").setSortable(true).setResizable(true);
 		grid.addColumn(DomibusConnectorBackendClientInfo::getBackendKeyAlias).setHeader("Key Alias").setWidth("150px").setSortable(true).setResizable(true);
 		grid.addComponentColumn(domibusConnectorBackendClientInfo -> getCheckboxForList(domibusConnectorBackendClientInfo.isDefaultBackend())).setHeader("Default").setWidth("100px");
 		grid.addComponentColumn(domibusConnectorBackendClientInfo -> getCheckboxForList(domibusConnectorBackendClientInfo.isPushBackend())).setHeader("Push Mode").setWidth("100px");
 		grid.addComponentColumn(domibusConnectorBackendClientInfo -> getCheckboxForList(domibusConnectorBackendClientInfo.isEnabled())).setHeader("Enabled").setWidth("100px");
 		grid.addColumn(DomibusConnectorBackendClientInfo::getBackendPushAddress).setHeader("Push Address").setWidth("500px").setSortable(true).setResizable(true);
-		grid.setItemDetailsRenderer(new ComponentRenderer<>(domibusConnectorBackendClientInfo -> {
-			return new BackendClientInfo(domibusConnectorBackendClientInfo, this, null);
-		    }));
 		grid.setWidth("1500px");
-		grid.setHeight("800px");
+		grid.setHeight("300px");
 		grid.setMultiSort(true);
 		
 		Div backendClientInfo = new Div();
 		backendClientInfo.add(grid);
 		add(backendClientInfo);
+	}
+	
+	private Button getDetailsLink(DomibusConnectorBackendClientInfo domibusConnectorBackendClientInfo) {
+		Button getDetails = new Button(new Icon(VaadinIcon.SEARCH));
+		getDetails.addClickListener(e -> openNewBackendClientInfoDialog(domibusConnectorBackendClientInfo));
+		return getDetails;
 	}
 	
 	public void reloadBackendList() {
@@ -137,12 +141,15 @@ public class BackendConfiguration  extends VerticalLayout {
 		return false;
 	}
 	
-	private void openNewBackendClientInfoDialog() {
-		DomibusConnectorBackendClientInfo newBackendClientInfo = new DomibusConnectorBackendClientInfo();
+	private void openNewBackendClientInfoDialog(DomibusConnectorBackendClientInfo backendClientInfo) {
+//		DomibusConnectorBackendClientInfo newBackendClientInfo = new DomibusConnectorBackendClientInfo();
 		Dialog newBackendClientDialog = new Dialog();
 		
 		Div headerContent = new Div();
 		Label header = new Label("Add a new backend client to configuration");
+		if(backendClientInfo!=null) {
+			header.setText("Edit a backend client");
+		}
 		header.getStyle().set("font-weight", "bold");
 		header.getStyle().set("font-style", "italic");
 		headerContent.getStyle().set("text-align", "center");
@@ -150,7 +157,7 @@ public class BackendConfiguration  extends VerticalLayout {
 		headerContent.add(header);
 		newBackendClientDialog.add(headerContent);
 		
-		BackendClientInfo view = new BackendClientInfo(newBackendClientInfo, this, newBackendClientDialog);
+		BackendClientInfo view = new BackendClientInfo(backendClientInfo!=null?backendClientInfo:new DomibusConnectorBackendClientInfo(), this, newBackendClientDialog);
 		newBackendClientDialog.add(view);
 		
 		newBackendClientDialog.open();

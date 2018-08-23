@@ -9,17 +9,14 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemCheckboxDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemTextFieldDiv;
-import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 public class BackendClientInfo extends VerticalLayout{
 
@@ -37,12 +34,14 @@ public class BackendClientInfo extends VerticalLayout{
 			backendNameDiv.setConfigurationItemValue(domibusConnectorBackendClientInfo.getBackendName());
 			backendNameDiv.getConfigurationItem().setReadOnly(true);
 		}
+		backendNameDiv.getConfigurationItem().setWidth("400px");
 		add(backendNameDiv);
 		
 		ConfigurationItemTextFieldDiv backendKeyAliasDiv = new ConfigurationItemTextFieldDiv(new TextField(), BackendClientInfoLabels.backendClientInfoKeyAliasLabels);
 		if(domibusConnectorBackendClientInfo.getBackendKeyAlias()!=null)
 			backendKeyAliasDiv.setConfigurationItemValue(domibusConnectorBackendClientInfo.getBackendKeyAlias());
 		backendKeyAliasDiv.getConfigurationItem().addValueChangeListener(e -> newBackendClientInfo.setBackendKeyAlias(e.getValue()));
+		backendKeyAliasDiv.getConfigurationItem().setWidth("400px");
 		add(backendKeyAliasDiv);
 		
 		ConfigurationItemCheckboxDiv defaultBackendDiv = new ConfigurationItemCheckboxDiv(new Checkbox(), BackendClientInfoLabels.backendClientInfoDefaultLabels);
@@ -59,12 +58,14 @@ public class BackendClientInfo extends VerticalLayout{
 		if(domibusConnectorBackendClientInfo.getBackendPushAddress()!=null)
 			pushAddressDiv.setConfigurationItemValue(domibusConnectorBackendClientInfo.getBackendPushAddress());
 		pushAddressDiv.getConfigurationItem().addValueChangeListener(e -> newBackendClientInfo.setBackendPushAddress(e.getValue()));
+		pushAddressDiv.getConfigurationItem().setWidth("400px");
 		add(pushAddressDiv);
 		
 		ConfigurationItemTextFieldDiv descriptionDiv = new ConfigurationItemTextFieldDiv(new TextField(), BackendClientInfoLabels.backendClientInfoDescriptionLabels);
 		if(domibusConnectorBackendClientInfo.getBackendDescription()!=null)
 			descriptionDiv.setConfigurationItemValue(domibusConnectorBackendClientInfo.getBackendDescription());
 		descriptionDiv.getConfigurationItem().addValueChangeListener(e -> newBackendClientInfo.setBackendDescription(e.getValue()));
+		descriptionDiv.getConfigurationItem().setWidth("400px");
 		add(descriptionDiv);
 		
 		ConfigurationItemDiv servicesDiv = new ConfigurationItemDiv(new Label("Services for backend client:"), BackendClientInfoLabels.backendClientInfoServicesLabels);
