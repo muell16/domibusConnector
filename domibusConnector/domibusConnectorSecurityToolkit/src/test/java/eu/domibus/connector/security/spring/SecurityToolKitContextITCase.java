@@ -25,7 +25,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( classes={SecurityToolKitContextITCase.TestContextConfiguration.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-auth.properties"},
-        properties={"spring.liquibase.enabled=false"}
+        properties={"spring.liquibase.enabled=false",
+                "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl"}
 )
 public class SecurityToolKitContextITCase {
 
