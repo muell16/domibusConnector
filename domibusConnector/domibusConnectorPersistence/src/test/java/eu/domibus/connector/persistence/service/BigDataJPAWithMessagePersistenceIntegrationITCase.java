@@ -22,13 +22,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class BigDataWithMessagePersistenceIntegrationITCase {
+public class BigDataJPAWithMessagePersistenceIntegrationITCase {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BigDataWithMessagePersistenceIntegrationITCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BigDataJPAWithMessagePersistenceIntegrationITCase.class);
 
     private static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
@@ -44,9 +45,9 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
 
     @BeforeClass
     public static void beforeClass() {
-
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext();
-
+        Properties props = new Properties();
+        props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(props);
     }
 
     @AfterClass
@@ -79,16 +80,13 @@ public class BigDataWithMessagePersistenceIntegrationITCase {
         transactionTemplate.execute((TransactionStatus status) -> {
                 DomibusConnectorMessage domibusConnectorMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
                 //message is in db
-
                 domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
-
                 assertThat(domibusConnectorMessage.getMessageContent().getDocument().getDocument().getStorageIdReference()).isNotNull();
-
                 return null;
             }
         );
 
-        //TODO: check database....
+        //check database....
         ITable bigdata = conn.createQueryTable("BIGDATA", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA");
         int rowCount = bigdata.getRowCount();
 

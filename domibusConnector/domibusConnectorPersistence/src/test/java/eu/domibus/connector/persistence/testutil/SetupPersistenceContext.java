@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.Properties;
 import java.util.UUID;
 
 
@@ -18,11 +19,14 @@ public class SetupPersistenceContext {
 
     @BeforeClass
     public static ConfigurableApplicationContext startApplicationContext() {
-        return startApplicationContext(SetupPersistenceContext.class);
+        return startApplicationContext();
     }
 
+    public static ConfigurableApplicationContext startApplicationContext(Properties props) {
+        return startApplicationContext(new Properties(), SetupPersistenceContext.class);
+    }
 
-    public static ConfigurableApplicationContext startApplicationContext(Class<?>... sources) {
+    public static ConfigurableApplicationContext startApplicationContext(Properties props, Class<?>... sources) {
         ConfigurableApplicationContext applicationContext;
         String dbName = UUID.randomUUID().toString().substring(0,10); //create random db name to avoid conflicts between tests
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
@@ -33,6 +37,7 @@ public class SetupPersistenceContext {
                 .properties("connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
                 .properties("spring.liquibase.change-log=db/changelog/test/testdata.xml",
                         "spring.datasource.url=jdbc:h2:mem:" + dbName)
+                .properties(props)
                 ;
         applicationContext = springAppBuilder.run();
         APPLICATION_CONTEXT = applicationContext;
