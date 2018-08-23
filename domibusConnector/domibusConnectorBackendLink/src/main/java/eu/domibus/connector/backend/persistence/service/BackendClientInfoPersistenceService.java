@@ -4,6 +4,8 @@ package eu.domibus.connector.backend.persistence.service;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,4 +45,6 @@ public interface BackendClientInfoPersistenceService {
      * @return the default backend
      */
     public @Nullable DomibusConnectorBackendClientInfo getDefaultBackendClientInfo();
+    
+    public List<DomibusConnectorBackendClientInfo> getAllBackendClients();
 }

@@ -2,9 +2,14 @@
 package eu.domibus.connector.backend.domain.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.core.style.ToStringCreator;
+
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 
 /**
  *
@@ -27,6 +32,8 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
     private boolean defaultBackend;
 
     private boolean enabled;
+    
+    private final Set<DomibusConnectorService> services = new HashSet<DomibusConnectorService>();
 
     public String getBackendName() {
         return backendName;
@@ -122,5 +129,8 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
         return this.backendPushAddress != null;
     }
 
+	public Set<DomibusConnectorService> getServices() {
+		return services;
+	}
 
 }
