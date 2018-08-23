@@ -4,7 +4,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
-import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
 import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl.FileBasedDomibusConnectorBigDataReference;
 import eu.domibus.connector.testutil.assertj.DomibusByteArrayAssert;
 import org.apache.poi.util.IOUtils;
