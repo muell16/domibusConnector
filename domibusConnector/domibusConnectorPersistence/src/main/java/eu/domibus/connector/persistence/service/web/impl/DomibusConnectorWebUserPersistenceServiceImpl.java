@@ -23,6 +23,8 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorUserPassword;
 import eu.domibus.connector.persistence.service.web.DomibusConnectorWebUserPersistenceService;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
+import eu.domibus.connector.web.exception.InitialPasswordException;
+import eu.domibus.connector.web.exception.UserLoginException;
 
 @org.springframework.stereotype.Service("webUserPersistenceService")
 public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusConnectorWebUserPersistenceService {
@@ -47,9 +49,50 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 	}
 
 	@Override
-	public WebUser login(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
+	public WebUser login(String username, String password) throws UserLoginException, InitialPasswordException {
+		PDomibusConnectorUser user = userDao.findOneByUsername(username);
+		if(user!=null) {
+			if(user.isLocked())
+				throw new UserLoginException("The user is locked! Please contact your administrator!");
+			
+			PDomibusConnectorUserPassword currentPassword = this.passwordDao.findCurrentByUser(user);
+			if(currentPassword==null) {
+				throw new UserLoginException("The user has no current password! Please contact your administrator!");
+			}
+			
+			String encrypted = null;
+			try {
+				encrypted = generatePasswordHashWithSaltOnlyPW(password, currentPassword.getSalt());
+			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+				throw new UserLoginException("The user could not be logged in! Please try again later or contact your administrator!");
+			}
+			
+			if(!encrypted.equals(currentPassword.getPassword())) {
+				long graceLoginsUsed = user.getGraceLoginsUsed().longValue();
+				long numberOfGraceLogins = user.getNumberOfGraceLogins().longValue();
+				
+				graceLoginsUsed = graceLoginsUsed +1;
+				user.setGraceLoginsUsed(user.getGraceLoginsUsed().longValue()+1);
+				if(graceLoginsUsed >= numberOfGraceLogins) {
+					user.setLocked(true);
+					userDao.save(user);
+					throw new UserLoginException("The given password is not correct! The user is locked now!");
+				}else {
+					userDao.save(user);
+					throw new UserLoginException("The given password is not correct! You have "+(numberOfGraceLogins-graceLoginsUsed)+" grace logins left.");
+				}
+				
+			}
+			
+			if(currentPassword.isInitialPassword()) {
+				throw new InitialPasswordException();
+			}
+			
+			return mapDbUserToWebUser(user);
+			
+		}
+		throw new UserLoginException("Cannot find given User!");
+		
 	}
 
 	@Override

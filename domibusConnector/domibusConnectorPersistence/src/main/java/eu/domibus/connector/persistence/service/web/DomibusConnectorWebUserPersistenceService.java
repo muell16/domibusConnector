@@ -5,10 +5,12 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import eu.domibus.connector.web.dto.WebUser;
+import eu.domibus.connector.web.exception.InitialPasswordException;
+import eu.domibus.connector.web.exception.UserLoginException;
 
 public interface DomibusConnectorWebUserPersistenceService {
 
-	WebUser login(String username, String password);
+	WebUser login(String username, String password) throws UserLoginException, InitialPasswordException;
 	
 	List<WebUser> listAllUsers();
 

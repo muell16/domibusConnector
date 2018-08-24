@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -21,6 +24,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -33,7 +38,7 @@ import eu.domibus.connector.web.viewAreas.users.Users;
 @HtmlImport("styles/shared-styles.html")
 @Route("domibusConnector/")
 @PageTitle("domibusConnector - Administrator")
-public class MainView extends VerticalLayout {
+public class MainView extends VerticalLayout implements BeforeEnterObserver {
 	
 	Map<Tab, Component> tabsToPages = new HashMap<>();
 	Tabs TopMenu = new Tabs();
@@ -92,6 +97,13 @@ public class MainView extends VerticalLayout {
 		add(header,TopMenu,pages);
 	
     }
+    
+    public void beforeEnter(BeforeEnterEvent event) {
+    	SecurityContext context = SecurityContextHolder.getContext();
+    	if (context.getAuthentication() instanceof AnonymousAuthenticationToken) {
+           event.rerouteTo("domibusConnector/login/");
+        }
+     }
 
 	
 	private void createTab(Div tabArea, String tabLabel, Icon tabIcon, boolean selected) {
