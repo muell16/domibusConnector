@@ -15,6 +15,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 /**
@@ -81,7 +82,6 @@ public class SecurityConfiguration extends VerticalLayout{
 		add(util.createConfigurationItemComboBoxDiv(
 				SecurityConfigurationLabels.tokenIssuerAESValueLabels, 
 				tokenIssuerAESValueBox, 
-				util.getPropertyValue(SecurityConfigurationLabels.tokenIssuerAESValueLabels.PROPERTY_NAME_LABEL), 
 				aesValues
 				));
 		

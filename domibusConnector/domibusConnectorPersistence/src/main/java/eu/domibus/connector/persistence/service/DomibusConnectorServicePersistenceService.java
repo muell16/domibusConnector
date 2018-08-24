@@ -20,4 +20,6 @@ public interface DomibusConnectorServicePersistenceService {
 
     public DomibusConnectorService getService(String service);
 
+	List<String> getServiceListString();
+
 }

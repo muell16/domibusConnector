@@ -182,9 +182,17 @@ public class WebPModeService {
 	public List<DomibusConnectorAction> getActionList() {
 		return this.actionPersistenceService.getActionList();
 	}
+	
+	public List<String> getActionListString(){
+		return this.actionPersistenceService.getActionListString();
+	}
 
 	public List<DomibusConnectorService> getServiceList() {
 		return this.servicePersistenceService.getServiceList();
+	}
+	
+	public List<String> getServiceListString() {
+		return this.servicePersistenceService.getServiceListString();
 	}
 
 	@Transactional(readOnly = false, value = "transactionManager")

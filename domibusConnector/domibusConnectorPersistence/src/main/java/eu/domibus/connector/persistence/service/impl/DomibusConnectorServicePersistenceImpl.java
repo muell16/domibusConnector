@@ -40,6 +40,15 @@ public class DomibusConnectorServicePersistenceImpl implements DomibusConnectorS
         }
         return services;
     }
+    
+    @Override
+    public List<String> getServiceListString() {
+        List<String> services = new ArrayList<>();
+        for (PDomibusConnectorService dbService : this.serviceDao.findAll()) {
+            services.add(dbService.getService());
+        }
+        return services;
+    }
 
     @Override
     public DomibusConnectorService updateService(DomibusConnectorService oldService, DomibusConnectorService newService) {

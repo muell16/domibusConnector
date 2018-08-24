@@ -29,4 +29,6 @@ public interface DomibusConnectorActionPersistenceService {
 
     public DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
 
+	List<String> getActionListString();
+
 }

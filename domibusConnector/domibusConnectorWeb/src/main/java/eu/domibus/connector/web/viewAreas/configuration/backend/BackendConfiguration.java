@@ -17,15 +17,12 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
-import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebBackendClientService;
-import eu.domibus.connector.web.viewAreas.configuration.security.SecurityConfigurationLabels;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
