@@ -16,8 +16,6 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
-import javafx.application.Application;
 import org.junit.*;
 import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWebServiceConfiguration;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
