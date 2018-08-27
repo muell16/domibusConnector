@@ -37,7 +37,7 @@ import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.service.WebMessageService;
 
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class Search extends VerticalLayout {

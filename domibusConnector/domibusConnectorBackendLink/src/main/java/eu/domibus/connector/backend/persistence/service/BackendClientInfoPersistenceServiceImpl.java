@@ -5,15 +5,22 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.model.PDomibusConnectorService;
+import eu.domibus.connector.persistence.service.impl.ServiceMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -84,10 +91,15 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
 
         BackendClientInfo oldDbBackendClientInfo = this.backendClientDao.findOneByBackendName(backendClientInfo.getBackendName());
         if (oldDbBackendClientInfo != null) { //update
-            BeanUtils.copyProperties(dbBackendClientInfo, oldDbBackendClientInfo, "services", "id"); //ignore services and id on update, TODO: implement service mapping!
+            BeanUtils.copyProperties(dbBackendClientInfo, oldDbBackendClientInfo, "id"); //ignore services and id on update, TODO: implement service mapping!
             dbBackendClientInfo = this.backendClientDao.save(oldDbBackendClientInfo);
         } else { //create
+        	Long maxIdExisting = this.backendClientDao.findHighestId();
+        	dbBackendClientInfo.setId(Long.valueOf(maxIdExisting.longValue()+1));
             dbBackendClientInfo = this.backendClientDao.save(dbBackendClientInfo);
+        }
+        if(!CollectionUtils.isEmpty(dbBackendClientInfo.getServices())){
+        	
         }
         return this.mapDbEntityToDomainEntity(dbBackendClientInfo);
     }
@@ -105,7 +117,11 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
             return null;
         }
         DomibusConnectorBackendClientInfo clientInfo = new DomibusConnectorBackendClientInfo();
-        BeanUtils.copyProperties(dbBackendInfo, clientInfo);
+        BeanUtils.copyProperties(dbBackendInfo, clientInfo, "services");
+        if(!CollectionUtils.isEmpty(dbBackendInfo.getServices())) {
+        	for(PDomibusConnectorService dbService:dbBackendInfo.getServices())
+        		clientInfo.getServices().add(ServiceMapper.mapServiceToDomain(dbService));
+        }
         return clientInfo;
     }
 
@@ -115,8 +131,27 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
             return null;
         }
         BackendClientInfo dbClientInfo = new BackendClientInfo();
-        BeanUtils.copyProperties(clientInfo, dbClientInfo);
+        BeanUtils.copyProperties(clientInfo, dbClientInfo, "services");
+        if(!CollectionUtils.isEmpty(clientInfo.getServices())) {
+        	for(DomibusConnectorService service:clientInfo.getServices())
+        		dbClientInfo.getServices().add(ServiceMapper.mapServiceToPersistence(service));
+        }
         return dbClientInfo;
     }
+
+
+	@Override
+	public List<DomibusConnectorBackendClientInfo> getAllBackendClients() {
+		Iterable<BackendClientInfo> allBackends = backendClientDao.findAll();
+		
+		List<DomibusConnectorBackendClientInfo> allBackendsDomain = new ArrayList<DomibusConnectorBackendClientInfo>();
+		
+		Iterator<BackendClientInfo> iterator = allBackends.iterator();
+		while(iterator.hasNext()) {
+			allBackendsDomain.add(mapDbEntityToDomainEntity(iterator.next()));
+		}
+		
+		return allBackendsDomain;
+	}
 
 }

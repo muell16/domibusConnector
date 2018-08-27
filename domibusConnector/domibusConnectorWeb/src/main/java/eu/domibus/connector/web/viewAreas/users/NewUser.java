@@ -22,7 +22,7 @@ import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.service.WebUserService;
 
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class NewUser extends VerticalLayout {

@@ -19,7 +19,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.service.WebPModeService;
 
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class Import extends VerticalLayout {

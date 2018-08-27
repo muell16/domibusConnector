@@ -8,21 +8,14 @@ public class ConfigurationItemCheckboxDiv extends ConfigurationItemDiv {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final Checkbox configurationItemCheckbox;
 	
-	public ConfigurationItemCheckboxDiv(Checkbox configurationItem, ConfigurationLabel labels) {
-		super(configurationItem,labels);
-		this.configurationItemCheckbox = configurationItem;
-		this.configurationItemCheckbox.setLabel(labels.CONFIGURATION_ELEMENT_LABEL);
+	public ConfigurationItemCheckboxDiv(Checkbox configurationItem, ConfigurationLabel labels, Boolean initialValue) {
+		super(configurationItem,labels, initialValue);
+		configurationItem.setValue(initialValue);
+		configurationItem.setLabel(labels.CONFIGURATION_ELEMENT_LABEL);
+		configurationItem.addValueChangeListener(e -> {
+			ConfigurationProperties.changeComponentValue(configurationItem, e.getValue().toString().toLowerCase());
+		});
 	}
-
 	
-	public Checkbox getConfigurationItemCheckbox() {
-		return configurationItemCheckbox;
-	}
-
-
-	public void setConfigurationItemValue(Boolean value) {
-		this.configurationItemCheckbox.setValue(value);
-	}
 }

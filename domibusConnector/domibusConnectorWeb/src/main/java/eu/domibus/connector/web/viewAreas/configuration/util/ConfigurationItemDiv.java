@@ -14,11 +14,16 @@ public class ConfigurationItemDiv extends Div {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private final Component configurationItem;
 
-	public ConfigurationItemDiv(Component component, ConfigurationLabel labels) {
+	public ConfigurationItemDiv(Component component, ConfigurationLabel labels, Object initialValue) {
+		configurationItem = component;
+		configurationItem.setId(labels.PROPERTY_NAME_LABEL);
 		add(component);
 		Button infoButton = createInfoButton(labels);
 		add(infoButton);
+		ConfigurationProperties.registerComponent(this.configurationItem, initialValue);
 	}
 	
 	private Button createInfoButton(ConfigurationLabel labels) {
@@ -63,6 +68,9 @@ public class ConfigurationItemDiv extends Div {
 		infoButton.addClickListener(event -> dialog.open());
 		return infoButton;
 	}
-	
+
+	public Component getConfigurationItem() {
+		return configurationItem;
+	}
 
 }

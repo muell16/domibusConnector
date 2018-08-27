@@ -62,6 +62,15 @@ public class DomibusConnectorActionPersistenceServiceImpl implements eu.domibus.
         }
         return actions;
     }
+    
+    @Override
+    public List<String> getActionListString(){
+    	List<String> actions = new ArrayList<>();
+    	for (PDomibusConnectorAction dbAction : this.actionDao.findAll()) {
+            actions.add(dbAction.getAction());
+        }
+        return actions;
+    }
 
     @Override
     public DomibusConnectorAction updateAction(DomibusConnectorAction oldAction, DomibusConnectorAction newAction) {

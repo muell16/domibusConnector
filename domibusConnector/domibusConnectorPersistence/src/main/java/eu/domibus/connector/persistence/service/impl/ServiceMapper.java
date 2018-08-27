@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 public class ServiceMapper {
 
     static @Nullable
+	public
     DomibusConnectorService mapServiceToDomain(@Nullable PDomibusConnectorService persistenceService) {
         if (persistenceService != null) {
             eu.domibus.connector.domain.model.DomibusConnectorService service
@@ -22,6 +23,7 @@ public class ServiceMapper {
     }
 
     static @Nullable
+	public
     PDomibusConnectorService mapServiceToPersistence(@Nullable DomibusConnectorService service) {
         if (service != null) {
             PDomibusConnectorService persistenceService = new PDomibusConnectorService();

@@ -1,17 +1,24 @@
 package eu.domibus.connector.web.service;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.domibus.connector.persistence.service.web.DomibusConnectorWebUserPersistenceService;
 import eu.domibus.connector.web.dto.WebUser;
+import eu.domibus.connector.web.exception.InitialPasswordException;
+import eu.domibus.connector.web.exception.UserLoginException;
 
 @Service("webUserService")
 public class WebUserService {
@@ -64,6 +71,26 @@ public class WebUserService {
 		
 		WebUser updated = persistenceService.updateUser(user);
 		return updated!=null;
+	}
+	
+	public void login(String username, String password) throws UserLoginException, InitialPasswordException {
+		WebUser user = persistenceService.login(username, password);
+		if(user!=null) {
+			SecurityContext context = SecurityContextHolder.getContext();
+			Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+//			authentication.setAuthenticated(true);
+			context.setAuthentication(authentication );
+		}
+	}
+	
+	public void changePasswordLogin(String username, String oldPassword, String newPassword) throws UserLoginException {
+		WebUser user = persistenceService.changePassword(username, oldPassword, newPassword);
+		if(user!=null) {
+			SecurityContext context = SecurityContextHolder.getContext();
+			Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+//			authentication.setAuthenticated(true);
+			context.setAuthentication(authentication );
+		}
 	}
 
 }

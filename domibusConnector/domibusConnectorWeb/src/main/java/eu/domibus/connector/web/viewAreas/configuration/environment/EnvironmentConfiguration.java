@@ -21,6 +21,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 /**
@@ -53,7 +54,7 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
  */
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class EnvironmentConfiguration extends VerticalLayout{
@@ -67,8 +68,8 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	
 	TextField gatewaySubmissionServiceLinkField = FormsUtil.getFormattedTextField();
 	
-	ComboBox<DomibusConnectorService> serviceBox = new ComboBox<DomibusConnectorService>();
-	ComboBox<DomibusConnectorAction> actionBox = new ComboBox<DomibusConnectorAction>();
+	ComboBox<String> serviceBox = new ComboBox<String>();
+	ComboBox<String> actionBox = new ComboBox<String>();
 	
 	Checkbox useHttpProxyBox = new Checkbox();
 	TextField httpProxyHostField = FormsUtil.getFormattedTextField();
@@ -163,39 +164,15 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	}
 
 	private void createAndAddActionComboBox(WebPModeService pmodeService) {
-		Collection<DomibusConnectorAction> actionList = pmodeService.getActionList();
-		actionBox.setItemLabelGenerator(new ItemLabelGenerator<DomibusConnectorAction>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String apply(DomibusConnectorAction item) {
-				return item.getAction();
-			}
-		});
+		Collection<String> actionList = pmodeService.getActionListString();
+		add(this.util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionList));
 		
-		DomibusConnectorAction actionValue = pmodeService.getAction(this.util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestActionLabels.PROPERTY_NAME_LABEL));
-		add(this.util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestActionLabels, actionBox, actionValue, actionList));
 	}
 
 	private void createAndAddServiceComboBox(WebPModeService pmodeService) {
-		List<DomibusConnectorService> serviceList = pmodeService.getServiceList();
-		serviceBox.setItemLabelGenerator(new ItemLabelGenerator<DomibusConnectorService>() {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String apply(DomibusConnectorService item) {
-				return item.getService();
-			}
-		});
-		DomibusConnectorService serviceValue = pmodeService.getService(util.getPropertyValue(EnvironmentConfigurationLabels.connectorTestServiceLabels.PROPERTY_NAME_LABEL));
-		add(util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceValue, serviceList));
+		List<String> serviceList = pmodeService.getServiceListString();
+		add(util.createConfigurationItemComboBoxDiv(EnvironmentConfigurationLabels.connectorTestServiceLabels, serviceBox, serviceList));
+		
 	}
 	
 	
