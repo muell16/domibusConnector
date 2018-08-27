@@ -10,8 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.StyleSheet;
@@ -24,9 +26,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.persistence.model.enums.UserRole;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
+import eu.domibus.connector.web.MainView;
+import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.viewAreas.configuration.backend.BackendConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.environment.EnvironmentConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfiguration;
@@ -35,10 +42,10 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProper
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
-public class Configuration extends VerticalLayout {
+public class Configuration extends VerticalLayout implements AfterNavigationObserver {
 	
 	protected final static Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 	
@@ -58,11 +65,19 @@ public class Configuration extends VerticalLayout {
 	
 	Tabs configMenu = new Tabs();
 	
+	WebUser authenticatedUser;
+	
+	Button saveConfiguration;
+	Button resetConfiguration;
+	Button reloadConfiguration;
+	
 	public Configuration(@Autowired SecurityConfiguration secConfig, @Autowired EnvironmentConfiguration envConfig, 
 			@Autowired BackendConfiguration backendConfig, @Autowired EvidenceBuilderConfiguration evidencesConfig,
 			@Autowired DomibusConnectorPropertiesPersistenceService propertiesPersistenceService, @Autowired ConfigurationUtil util) {
 		this.propertiesPersistenceService = propertiesPersistenceService;
 		this.util = util;
+		
+
 		
 		areaBackendConfig = new Div();
 		areaBackendConfig.add(backendConfig);
@@ -106,7 +121,6 @@ public class Configuration extends VerticalLayout {
 		add(createConfigurationButtonBar());
 		add(configMenu,pages);
 		
-		
 		this.expand(pages);
 		this.setHeight("80vh");
 	}
@@ -115,7 +129,7 @@ public class Configuration extends VerticalLayout {
 		HorizontalLayout configurationButtonBar = new HorizontalLayout();
 		
 		String reloadActionText = "Reload Configuration from context";
-		Button reloadConfiguration = new Button(
+		reloadConfiguration = new Button(
 				new Icon(VaadinIcon.FILE_REFRESH));
 		reloadConfiguration.setText(reloadActionText);
 		reloadConfiguration.addClickListener(e -> {
@@ -137,7 +151,7 @@ public class Configuration extends VerticalLayout {
 		configurationButtonBar.add(reloadConfiguration);
 		
 		String resetActionText = "Discard Changes";
-		Button resetConfiguration = new Button(
+		resetConfiguration = new Button(
 				new Icon(VaadinIcon.REFRESH));
 		resetConfiguration.setText(resetActionText);
 		resetConfiguration.addClickListener(e -> {
@@ -158,7 +172,7 @@ public class Configuration extends VerticalLayout {
 		
 		
 		String saveActionText = "Save Configuration";
-		Button saveConfiguration = new Button(
+		saveConfiguration = new Button(
 				new Icon(VaadinIcon.EDIT));
 		saveConfiguration.setText(saveActionText);
 		saveConfiguration.addClickListener(e -> {
@@ -228,6 +242,24 @@ public class Configuration extends VerticalLayout {
 		confirmDialog.add(confirmCancelButtonContent);
 		
 		return confirmDialog;
+	}
+
+	public WebUser getAuthenticatedUser() {
+		return authenticatedUser;
+	}
+
+	public void setAuthenticatedUser(WebUser authenticatedUser) {
+		this.authenticatedUser = authenticatedUser;
+	}
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent event) {
+		authenticatedUser = (WebUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ConfigurationProperties.updateOnRole(authenticatedUser.getRole());
+		boolean enabled = authenticatedUser.getRole().equals(eu.domibus.connector.web.enums.UserRole.ADMIN);
+		saveConfiguration.setEnabled(enabled);
+		reloadConfiguration.setEnabled(enabled);
+		resetConfiguration.setEnabled(enabled);
 	}
 
 }

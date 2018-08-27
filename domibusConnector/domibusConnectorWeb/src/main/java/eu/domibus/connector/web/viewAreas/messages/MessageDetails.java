@@ -18,7 +18,7 @@ import eu.domibus.connector.web.forms.ConnectorMessageForm;
 import eu.domibus.connector.web.service.WebMessageService;
 
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class MessageDetails extends VerticalLayout {

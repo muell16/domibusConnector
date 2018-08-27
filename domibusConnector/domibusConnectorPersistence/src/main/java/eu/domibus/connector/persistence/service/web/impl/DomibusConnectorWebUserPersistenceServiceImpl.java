@@ -50,6 +50,12 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 
 	@Override
 	public WebUser login(String username, String password) throws UserLoginException, InitialPasswordException {
+		PDomibusConnectorUser user = getAndCheckGivenUser(username, password);
+		return mapDbUserToWebUser(user);
+	}
+
+	private PDomibusConnectorUser getAndCheckGivenUser(String username, String password)
+			throws UserLoginException, InitialPasswordException {
 		PDomibusConnectorUser user = userDao.findOneByUsername(username);
 		if(user!=null) {
 			if(user.isLocked())
@@ -88,11 +94,56 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 				throw new InitialPasswordException();
 			}
 			
-			return mapDbUserToWebUser(user);
+			return user;
 			
 		}
 		throw new UserLoginException("Cannot find given User!");
+	}
+	
+	@Override
+	public WebUser changePassword(String username, String oldPassword, String newPassword) throws UserLoginException {
+		PDomibusConnectorUser user = null;
+		try {
+			user = getAndCheckGivenUser(username, oldPassword);
+		} catch (InitialPasswordException e) {
+			// This is expected here!
+			user = userDao.findOneByUsername(username);
+		}
 		
+		if(user!=null) {
+			PDomibusConnectorUserPassword currentPassword = this.passwordDao.findCurrentByUser(user);
+			
+			PDomibusConnectorUserPassword newDbPassword = new PDomibusConnectorUserPassword();
+			newDbPassword.setUser(user);
+			newDbPassword.setCurrentPassword(true);
+			newDbPassword.setInitialPassword(false);
+			
+			String salt = null;
+	        String passwordDB = null;
+			try {
+				salt = getHexSalt();
+				passwordDB = generatePasswordHashWithSaltOnlyPW(newPassword, salt);
+			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+				throw new UserLoginException("The password could not be changed! Please try again later or contact your administrator!");
+			}
+	        
+			newDbPassword.setSalt(salt);
+	        newDbPassword.setPassword(passwordDB);
+			
+	        newDbPassword = passwordDao.save(newDbPassword);
+	        
+	        user.getPasswords().add(newDbPassword);
+			
+	        currentPassword.setCurrentPassword(false);
+	        
+	        passwordDao.save(currentPassword);
+	        
+	        user = userDao.save(user);
+			
+			return mapDbUserToWebUser(user);
+	        
+		}
+		return null;
 	}
 
 	@Override

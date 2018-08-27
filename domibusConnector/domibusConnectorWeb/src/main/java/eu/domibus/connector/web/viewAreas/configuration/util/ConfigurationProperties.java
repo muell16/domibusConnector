@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.textfield.TextField;
+
+import eu.domibus.connector.web.enums.UserRole;
 
 
 public class ConfigurationProperties {
@@ -55,5 +60,19 @@ public class ConfigurationProperties {
 
 	public static HashMap<String, Component> getChangedcomponents() {
 		return changedComponents;
+	}
+	
+	public static void updateOnRole(UserRole userRole) {
+		for(String componentId: ConfigurationProperties.getConfigurationcomponents().keySet()) {
+			com.vaadin.flow.component.Component c = ConfigurationProperties.getConfigurationcomponents().get(componentId);
+			boolean readonly = !userRole.equals(UserRole.ADMIN);
+			if(c instanceof ComboBox<?>) {
+				((ComboBox<String>)c).setReadOnly(readonly);
+			}else if(c instanceof Checkbox) {
+					((Checkbox)c).setReadOnly(readonly);
+			}else if (c instanceof TextField) {
+					((TextField)c).setReadOnly(readonly);
+			}
+		}
 	}
 }

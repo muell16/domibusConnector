@@ -44,7 +44,7 @@ import eu.domibus.connector.web.dto.WebReportEntry;
 import eu.domibus.connector.web.service.WebReportsService;
 
 @HtmlImport("styles/shared-styles.html")
-@StyleSheet("styles/grid.css")
+//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class Reports extends VerticalLayout {

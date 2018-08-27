@@ -19,6 +19,8 @@ public interface DomibusConnectorWebUserPersistenceService {
 	WebUser createNewUser(WebUser newUser) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
 	WebUser updateUser(WebUser user);
+
+	WebUser changePassword(String username, String oldPassword, String newPassword) throws UserLoginException;
 	
 	
 }

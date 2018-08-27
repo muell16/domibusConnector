@@ -48,19 +48,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.invalidateHttpSession(true)
 //			.logoutSuccessUrl("/domibusConnector/login");
 			
-		http.authorizeRequests()
-            .antMatchers("/services/*").permitAll() //allow access to webservices
+//		http.authorizeRequests()
+//            .antMatchers("/services/*").permitAll() //allow access to webservices
 //			.antMatchers("/domibusConnector/login").permitAll()
-		
-			.antMatchers("/VAADIN/**", "/resources/**", "/icons/**", "/images/**",
-                    "/frontend/**",
-                    "/manifest.json",
-                    // (development mode) webjars
-                    "/webjars/**").permitAll()
-			.antMatchers("/css/**").permitAll()
-			.antMatchers("/images/**").permitAll();
-
-//                        .anyRequest().authenticated();
+//		
+//			.antMatchers("/VAADIN/**", "/resources/**", "/icons/**", "/images/**",
+//                    "/frontend/**",
+//                    "/styles/**",
+//                    "/favicon.ico",
+//                    "/?v-r**",
+//                    "/manifest.json",
+//                    // (development mode) webjars
+//                    "/webjars/**").permitAll()
+//			.antMatchers("/css/**", "/frontend/styles/**").permitAll()
+//			.antMatchers("/images/**").permitAll()
+//
+//                        .anyRequest().authenticated()
 //			.and()
 //				.exceptionHandling().defaultAuthenticationEntryPointFor(loginUrlauthenticationEntryPoint(), new AntPathRequestMatcher("/**"));
 	} 

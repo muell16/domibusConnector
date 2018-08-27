@@ -47,8 +47,9 @@ public class WebUserAuthenticationProvider implements AuthenticationProvider {
 				
 		UsernamePasswordAuthenticationToken pwAuth = (UsernamePasswordAuthenticationToken) authentication;
 		
-		String username = pwAuth.getName();
-		String password = pwAuth.getCredentials().toString();
+		WebUser authUser = (WebUser) pwAuth.getPrincipal();
+		String username = authUser.getUsername();
+		String password = authUser.getPassword();
 		
 		LOG.trace("authenticate: username is [{}], password is [{}]", username, password);
 //		WebUser user = webUserPersistenceService.login(username, password);

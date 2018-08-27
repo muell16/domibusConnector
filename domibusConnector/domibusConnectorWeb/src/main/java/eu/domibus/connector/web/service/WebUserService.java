@@ -78,7 +78,17 @@ public class WebUserService {
 		if(user!=null) {
 			SecurityContext context = SecurityContextHolder.getContext();
 			Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
-			authentication.setAuthenticated(true);
+//			authentication.setAuthenticated(true);
+			context.setAuthentication(authentication );
+		}
+	}
+	
+	public void changePasswordLogin(String username, String oldPassword, String newPassword) throws UserLoginException {
+		WebUser user = persistenceService.changePassword(username, oldPassword, newPassword);
+		if(user!=null) {
+			SecurityContext context = SecurityContextHolder.getContext();
+			Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+//			authentication.setAuthenticated(true);
 			context.setAuthentication(authentication );
 		}
 	}
