@@ -39,9 +39,8 @@ import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersisten
  * to an byte array (ByteArrayInputStream / ByteArrayOutputStream)
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Service
+//initialized by DomibusConnectorPersistenceContext.class
 @Transactional
-@ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
 public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements DomibusConnectorBigDataPersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceJpaImpl.class);

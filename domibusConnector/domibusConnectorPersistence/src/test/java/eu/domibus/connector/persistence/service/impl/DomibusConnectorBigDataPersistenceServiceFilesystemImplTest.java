@@ -10,12 +10,19 @@ import org.apache.poi.util.IOUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.FileSystemUtils;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +54,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 
         DomibusConnectorFilesystemPersistenceProperties fsProps = new DomibusConnectorFilesystemPersistenceProperties();
         fsProps.setStoragePath(Paths.get(testStorageLocation.getAbsolutePath()));
+        fsProps.setEncryptionActive(true);
 
         filesystemImpl = new DomibusConnectorBigDataPersistenceServiceFilesystemImpl();
         filesystemImpl.setFilesystemPersistenceProperties(fsProps);
@@ -67,9 +75,24 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 
         byte[] bytes = IOUtils.toByteArray(readableDataSource.getInputStream());
         DomibusByteArrayAssert.assertThat(bytes).containsUTF8String("Hallo Welt!");
-
-
     }
+
+//    @Test
+//    public void getReadableDataSource() throws IOException {
+//        FileBasedDomibusConnectorBigDataReference fsRef = new FileBasedDomibusConnectorBigDataReference();
+//        fsRef.setStorageIdReference("testmsg1" + File.separator + "file1");
+//        fsRef.setName("file1");
+//        fsRef.setMimetype("text");
+//        //fsRef.setEncryptionKey();
+//
+//        DomibusConnectorBigDataReference readableDataSource = filesystemImpl.getReadableDataSource(fsRef);
+//
+//        assertThat(readableDataSource).isNotNull();
+//        assertThat(readableDataSource.getInputStream()).isNotNull();
+//
+//        byte[] bytes = IOUtils.toByteArray(readableDataSource.getInputStream());
+//        DomibusByteArrayAssert.assertThat(bytes).containsUTF8String("Hallo Welt!");
+//    }
 
     @Test
     public void createDomibusConnectorBigDataReference() {
@@ -83,6 +106,25 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
         File f = new File(testStorageLocation + File.separator + storageIdReference);
         assertThat(f.exists()).as(String.format("A file <%s> should exist", f.getAbsolutePath())).isTrue();
 
+        FileBasedDomibusConnectorBigDataReference fRef = (FileBasedDomibusConnectorBigDataReference) domibusConnectorBigDataReference;
+        System.out.println("key: " + fRef.getEncryptionKey() + " iv: " + fRef.getInitVector() + " cipher-suite: " + fRef.getCipherSuite());
+    }
+
+
+    @Test
+    public void readEncryptedBigDataReference() throws IOException {
+        FileBasedDomibusConnectorBigDataReference fRef = new FileBasedDomibusConnectorBigDataReference();
+        fRef.setEncryptionKey("AES#@#kC6lanKld+xuiVfarsZNLQ==");
+        fRef.setInitVector("cO+U0ufVjzCheGnXYkfvXg==");
+        fRef.setCipherSuite("AES/CBC/PKCS5Padding");
+        fRef.setStorageIdReference("testmsg2/2de3f474-3f1a-42d7-ab7c-2151590c77f1");
+
+        DomibusConnectorBigDataReference readableDataSource = filesystemImpl.getReadableDataSource(fRef);
+
+        InputStream is = readableDataSource.getInputStream();
+        byte[] bytes = IOUtils.toByteArray(is);
+
+        assertThat(bytes).isEqualTo(input1);
     }
 
     @Test
@@ -106,6 +148,24 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 //    private boolean fileExists(String storageRef) {
 //        File f = new File(testStorageLocation + File.separator + storageRef);
 //        return f.exists();
+//    }
+
+    @Test
+    public void testConvertSecretKeyToString() throws NoSuchAlgorithmException {
+        SecureRandom random = new SecureRandom();
+        KeyGenerator kg = KeyGenerator.getInstance("AES");
+        kg.init(random);
+
+        SecretKeySpec sKey = new SecretKeySpec(Base64Utils.decodeFromString("sJ0kZ3pVBcG75ar4ADWwgg=="), "AES");
+
+        String s = filesystemImpl.convertSecretKeyToString(sKey);
+
+        assertThat(s).isEqualTo("AES#@#sJ0kZ3pVBcG75ar4ADWwgg==");
+    }
+
+//    @Test
+//    public void testLoadFromKeyString() {
+//
 //    }
 
 }

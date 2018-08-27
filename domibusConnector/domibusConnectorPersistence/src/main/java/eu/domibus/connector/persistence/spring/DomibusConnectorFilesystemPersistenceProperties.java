@@ -19,6 +19,12 @@ public class DomibusConnectorFilesystemPersistenceProperties {
      */
     private Path storagePath;
 
+    /**
+     * Should the written files be encrypted?
+     * Default is yes
+     */
+    private boolean encryptionActive = true;
+
     public Path getStoragePath() {
         return storagePath;
     }
@@ -27,4 +33,11 @@ public class DomibusConnectorFilesystemPersistenceProperties {
         this.storagePath = storagePath;
     }
 
+    public boolean isEncryptionActive() {
+        return encryptionActive;
+    }
+
+    public void setEncryptionActive(boolean encryptionActive) {
+        this.encryptionActive = encryptionActive;
+    }
 }

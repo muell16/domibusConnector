@@ -11,19 +11,25 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.keygen.BytesKeyGenerator;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.*;
+import java.util.Base64;
 import java.util.UUID;
 
-@Service
-@ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
-@ConditionalOnMissingBean(DomibusConnectorBigDataPersistenceService.class)
+//initialized by DomibusConnectorPersistenceContext.class
 public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements DomibusConnectorBigDataPersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceFilesystemImpl.class);
@@ -45,18 +51,20 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
         FileBasedDomibusConnectorBigDataReference fileBasedReference = (FileBasedDomibusConnectorBigDataReference)ref;
 
-
         String storageIdReference = fileBasedReference.getStorageIdReference();
         String filePath = getStoragePath() + File.separator + storageIdReference;
 
         try {
-            //TODO: create decrypted inputStream!
             FileInputStream fis = new FileInputStream(filePath);
-            fileBasedReference.setInputStream(fis);
+            if (fileBasedReference.getEncryptionKey() != null) {
+                fileBasedReference.setInputStream(generateDecryptedInputStream(fileBasedReference, fis));
+            } else {
+                fileBasedReference.setInputStream(fis);
+            }
+
         } catch (FileNotFoundException e) {
             throw new PersistenceException(String.format("Could not found the required file [{}]!", filePath), e);
         }
-
 
         return fileBasedReference;
     }
@@ -66,9 +74,6 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         FileBasedDomibusConnectorBigDataReference bigDataReference = new FileBasedDomibusConnectorBigDataReference();
         bigDataReference.setName(documentName);
         bigDataReference.setMimetype(documentContentType);
-
-
-        //Path f = getStoragePath();
 
         String folder = connectorMessageId;
         Path messageFolder = getStoragePath().resolve(folder); // //new File(f.getAbsolutePath() + File.separator + folder);
@@ -91,33 +96,26 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
 
         try (FileOutputStream fos = new FileOutputStream(storageFile.toFile())) {
-            //TODO: replace with encrypting outputstream...and set encrpytion key
-            //bigDataReference.setEncryptionKey(UUID.randomUUID().toString());
-            IOUtils.copy(input, fos);
+            OutputStream outputStream;
+            if (filesystemPersistenceProperties.isEncryptionActive()) {
+                LOGGER.debug("Encryption is activated creating encrypted output stream");
+                outputStream = generateEncryptedOutputStream(bigDataReference, fos);
+            } else {
+                outputStream = fos;
+            }
+            IOUtils.copy(input, outputStream);
+            outputStream.close();
         } catch (FileNotFoundException e) {
             throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
         } catch (IOException e) {
             throw new PersistenceException(String.format("Error while writing to file [%s]", storageFile), e);
         }
-
         return bigDataReference;
     }
 
-//    private File createNewFileOrThrow(Path storageFile) {
-//        try {
-//            if (Files.createFile()) {
-//
-//            }
-//            LOGGER.debug("Created new file [{}]", storageFile.getName());
-//        } catch (IOException e) {
-//            throw new PersistenceException(String.format("Error while creating file [%s]", storageFile), e);
-//        }
-//        return storageFile;
-//    }
 
     @Override
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
-
 
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
         //TODO: logging, error logging
@@ -126,15 +124,6 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         } catch (IOException e) {
             throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
         }
-
-//        File folder = new File(storageFolder);
-//
-//        boolean successfullyDeleted = FileSystemUtils.deleteRecursively(folder);
-//
-//        if (!successfullyDeleted) {
-//            //TODO: throw exception OR just log WARNING?
-//        }
-        
     }
 
     private Path getStoragePath() {
@@ -143,9 +132,97 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     @PostConstruct
     public void init() {
+        //TODO: check environment: path writable?
 //        File storagePath = getStoragePath();
-        //TODO: check if i can write...
+
     }
+
+    InputStream generateDecryptedInputStream(FileBasedDomibusConnectorBigDataReference bigDataReference, InputStream encryptedInputStream) {
+        IvParameterSpec ivspec = new IvParameterSpec(Base64Utils.decodeFromString(bigDataReference.getInitVector()));
+        SecretKey secretKey = loadFromKeyString(bigDataReference.getEncryptionKey());
+
+        Cipher ci = null;
+        try {
+            ci = Cipher.getInstance(bigDataReference.getCipherSuite());
+            ci.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
+            CipherInputStream inputStream = new CipherInputStream(encryptedInputStream, ci);
+            return inputStream;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    protected OutputStream generateEncryptedOutputStream(FileBasedDomibusConnectorBigDataReference bigDataReference, OutputStream outputStream) {
+
+        SecureRandom random;
+        try {
+            random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] iv = new byte[128/8];
+        random.nextBytes(iv);
+        IvParameterSpec ivspec = new IvParameterSpec(iv);
+
+        String initVector = Base64Utils.encodeToString(ivspec.getIV());
+        bigDataReference.setInitVector(initVector);
+
+
+        SecretKey sKey;
+        try {
+            KeyGenerator kg = KeyGenerator.getInstance("AES"); //TODO: load from properties
+            kg.init(random);
+            sKey = kg.generateKey();
+            bigDataReference.setEncryptionKey(convertSecretKeyToString(sKey));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Cannot initialize Key Generator!");
+        }
+
+        Cipher ci = null;
+        try {
+            String cipherSuite = "AES/CBC/PKCS5Padding"; //TODO: load from properties
+            ci = Cipher.getInstance(cipherSuite);
+            bigDataReference.setCipherSuite(cipherSuite);
+            ci.init(Cipher.ENCRYPT_MODE, sKey, ivspec);
+            CipherOutputStream cos = new CipherOutputStream(outputStream, ci);
+            return cos;
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    String convertSecretKeyToString(SecretKey key) {
+        String alg = key.getAlgorithm();
+        String base64KeyString = Base64Utils.encodeToString(key.getEncoded());
+        return alg + "#@#" + base64KeyString;
+    }
+
+    SecretKey loadFromKeyString(String str) {
+        String[] split = str.split("#@#");
+        if (split.length != 2) {
+            throw new IllegalArgumentException(String.format("The provided string [%s] does not match the format! Maybe the data is corrupted!", str));
+        }
+        String keyAlgorithm = split[0];
+        byte[] keyBinary = Base64Utils.decodeFromString(split[1]);
+        SecretKeySpec skey = new SecretKeySpec(keyBinary, keyAlgorithm);
+        return skey;
+    }
+
 
     /**
      *
@@ -171,6 +248,9 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
         private String encryptionKey;
 
+        private String initVector;
+
+        private String cipherSuite;
 
         @Override
         public InputStream getInputStream() throws IOException {
@@ -214,6 +294,22 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
         public void setEncryptionKey(String encryptionKey) {
             this.encryptionKey = encryptionKey;
+        }
+
+        public void setInitVector(String initVector) {
+            this.initVector = initVector;
+        }
+
+        public String getInitVector() {
+            return initVector;
+        }
+
+        public String getCipherSuite() {
+            return cipherSuite;
+        }
+
+        public void setCipherSuite(String cipherSuite) {
+            this.cipherSuite = cipherSuite;
         }
     }
 }

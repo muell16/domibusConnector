@@ -1,7 +1,10 @@
 FROM java:8
 COPY maven /opt/
 
+RUN mkdir /fsstorage
+
 RUN chmod 770 /opt/*.sh
+
 
 ENV DB_HOST db
 ENV DB_PORT 3306
