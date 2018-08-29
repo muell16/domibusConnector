@@ -104,7 +104,7 @@ public class BackendClientInfo extends VerticalLayout{
 		
 		Div saveButtonContent = new Div();
 		saveButtonContent.getStyle().set("text-align", "center");
-		Button saveButton = new Button(new Icon(VaadinIcon.EDIT));
+		Button saveButton = new Button(new Icon(VaadinIcon.CHECK));
 		saveButton.getElement().setAttribute("title", "Save Backend Client Info");
 		saveButton.setText("Save");
 		saveButton.addClickListener(e -> {backendConfiguration.saveBackendClientInfo(newBackendClientInfo);
@@ -112,6 +112,12 @@ public class BackendClientInfo extends VerticalLayout{
 				if(newBackendClientDialog!=null)newBackendClientDialog.close();
 				});
 		saveButtonContent.add(saveButton);
+
+		Button cancelButton = new Button(new Icon(VaadinIcon.CLOSE));
+		cancelButton.setText("Cancel");
+		cancelButton.addClickListener(e -> {if(newBackendClientDialog!=null)newBackendClientDialog.close();});
+		saveButtonContent.add(cancelButton);
+		
 		saveButtonContent.getStyle().set("padding", "10px");
 		add(saveButtonContent);
 		

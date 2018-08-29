@@ -7,10 +7,12 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.enums.UserRole;
 
-
+@org.springframework.stereotype.Component
+@UIScope
 public class ConfigurationProperties {
 	
 	private static final Properties properties = new Properties();
@@ -72,6 +74,21 @@ public class ConfigurationProperties {
 					((Checkbox)c).setReadOnly(readonly);
 			}else if (c instanceof TextField) {
 					((TextField)c).setReadOnly(readonly);
+			}
+		}
+	}
+	
+	public static void updateConfigurationComponentsOnProperties(Properties properties) {
+		for(String componentId: ConfigurationProperties.getConfigurationcomponents().keySet()) {
+			if(properties.containsKey(componentId)) {
+			com.vaadin.flow.component.Component c = ConfigurationProperties.getConfigurationcomponents().get(componentId);
+			if(c instanceof ComboBox<?>) {
+				((ComboBox<String>)c).setValue(properties.getProperty(componentId));
+			}else if(c instanceof Checkbox) {
+					((Checkbox)c).setValue(Boolean.valueOf(properties.getProperty(componentId)));
+			}else if (c instanceof TextField) {
+					((TextField)c).setValue(properties.getProperty(componentId));
+			}
 			}
 		}
 	}

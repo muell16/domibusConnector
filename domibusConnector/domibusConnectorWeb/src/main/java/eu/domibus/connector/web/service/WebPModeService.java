@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -40,7 +41,10 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorServiceBuilder;
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
+import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfigurationLabels;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 
 @Service("webPModeService")
 public class WebPModeService {
@@ -55,6 +59,9 @@ public class WebPModeService {
 
 	@Autowired
 	private DomibusConnectorPartyPersistenceService partyPersistenceService;
+	
+	@Autowired
+	private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
 
 	// SETTER //
 	public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
@@ -67,6 +74,10 @@ public class WebPModeService {
 
 	public void setPartyPersistenceService(DomibusConnectorPartyPersistenceService partyPersistenceService) {
 		this.partyPersistenceService = partyPersistenceService;
+	}
+
+	public void setPropertiesPersistenceService(DomibusConnectorPropertiesPersistenceService propertiesPersistenceService) {
+		this.propertiesPersistenceService = propertiesPersistenceService;
 	}
 
 	public DomibusConnectorService getService(String serviceName) {
@@ -117,6 +128,7 @@ public class WebPModeService {
 	}
 
 	private void importParties(Configuration pmodes) {
+		String homeParty = pmodes.getParty();
 		Map<String, String> roles = new HashMap<String, String>();
 		for (Role role : pmodes.getBusinessProcesses().getRoles().getRole()) {
 			roles.put(role.getName(), role.getValue());
@@ -129,10 +141,25 @@ public class WebPModeService {
 
 		Map<String, Identifier> partyIdentifiers = new HashMap<String, Identifier>();
 		for (Party party : pmodes.getBusinessProcesses().getParties().getParty()) {
+			if(party.getName().equals(homeParty)) {
+				//This is the home party of this PMode -> configuration properties to be set
+				String homePartyEndpointAddress = party.getEndpoint();
+				String homePartyIdentifierName = null;
+				if (!CollectionUtils.isEmpty(party.getIdentifier()) && party.getIdentifier().get(0) != null) {
+					homePartyIdentifierName = party.getIdentifier().get(0).getPartyId();
+				}
+				Properties homePartyProperties = new Properties();
+				homePartyProperties.put(EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homePartyIdentifierName);
+				homePartyProperties.put(EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homePartyEndpointAddress);
+				propertiesPersistenceService.saveProperties(homePartyProperties);
+				ConfigurationProperties.updateConfigurationComponentsOnProperties(homePartyProperties);
+				
+			}
 			if (!CollectionUtils.isEmpty(party.getIdentifier()) && party.getIdentifier().get(0) != null) {
 				partyIdentifiers.put(party.getName(), party.getIdentifier().get(0));
 			}
 		}
+		
 
 		Map<String, Map<String, DomibusConnectorParty>> dbParties = new HashMap<String, Map<String, DomibusConnectorParty>>();
 		for (final DomibusConnectorParty dbParty : getPartyList()) {

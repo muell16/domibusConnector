@@ -152,6 +152,7 @@ public class DataTables extends VerticalLayout {
 		layout.add(partyRole);
 		
 		Button edit = new Button(new Icon(VaadinIcon.EDIT));
+		edit.setText("Save");
 		edit.getElement().setAttribute("title", "Save Party");
 		edit.addClickListener(e -> {pmodeService.updateParty(domibusConnectorParty, newParty);
 				reloadParties();});
@@ -172,6 +173,7 @@ public class DataTables extends VerticalLayout {
 		
 		
 		Button edit = new Button(new Icon(VaadinIcon.EDIT));
+		edit.setText("Save");
 		edit.getElement().setAttribute("title", "Save Action");
 		edit.addClickListener(e -> {pmodeService.updateAction(domibusConnectorAction, newAction);
 				reloadActions();});
@@ -196,6 +198,7 @@ public class DataTables extends VerticalLayout {
 		layout.add(serviceType);
 		
 		Button edit = new Button(new Icon(VaadinIcon.EDIT));
+		edit.setText("Save");
 		edit.getElement().setAttribute("title", "Save Service");
 		edit.addClickListener(e -> {pmodeService.updateService(domibusConnectorService, newService);
 				reloadServices();});
