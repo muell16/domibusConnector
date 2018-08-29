@@ -17,13 +17,13 @@ public class ConfigurationItemDiv extends Div {
 	
 	private final Component configurationItem;
 
-	public ConfigurationItemDiv(Component component, ConfigurationLabel labels, Object initialValue) {
+	public ConfigurationItemDiv(Component component, ConfigurationLabel labels, Object initialValue, ConfigurationProperties configurationProperties) {
 		configurationItem = component;
 		configurationItem.setId(labels.PROPERTY_NAME_LABEL);
 		add(component);
 		Button infoButton = createInfoButton(labels);
 		add(infoButton);
-		ConfigurationProperties.registerComponent(this.configurationItem, initialValue);
+		configurationProperties.registerComponent(this.configurationItem, initialValue);
 	}
 	
 	private Button createInfoButton(ConfigurationLabel labels) {

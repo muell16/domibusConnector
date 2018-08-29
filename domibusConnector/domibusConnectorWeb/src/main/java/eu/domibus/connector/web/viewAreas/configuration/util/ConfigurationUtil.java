@@ -1,6 +1,7 @@
 package eu.domibus.connector.web.viewAreas.configuration.util;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
+import eu.domibus.connector.web.enums.UserRole;
 
 @Component
 public class ConfigurationUtil {
@@ -22,28 +24,51 @@ public class ConfigurationUtil {
 	@Autowired
 	DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
 	
+	@Autowired
+	ConfigurationProperties configurationProperties;
+	
 	public String getPropertyValue(String propertyName) {
 		return env.getProperty(propertyName);
 	}
 	
+	public Div createConfigurationItemDiv(ConfigurationLabel labels, com.vaadin.flow.component.Component c, Object initialValue) {
+		return new ConfigurationItemDiv(c, labels, initialValue, configurationProperties);
+	}
+	
+	public Div createConfigurationItemCheckboxDivWithValue(ConfigurationLabel labels, Checkbox configCheckbox, Boolean initialValue) {
+		ConfigurationItemCheckboxDiv checkboxDiv = new ConfigurationItemCheckboxDiv(configCheckbox, labels, initialValue, configurationProperties);
+		return checkboxDiv;
+	}
+	
 	public Div createConfigurationItemCheckboxDiv(ConfigurationLabel labels, Checkbox configCheckbox) {
-		ConfigurationItemCheckboxDiv checkboxDiv = new ConfigurationItemCheckboxDiv(configCheckbox, labels, Boolean.valueOf(getPropertyValue(labels.PROPERTY_NAME_LABEL)));
+		ConfigurationItemCheckboxDiv checkboxDiv = new ConfigurationItemCheckboxDiv(configCheckbox, labels, Boolean.valueOf(getPropertyValue(labels.PROPERTY_NAME_LABEL)), configurationProperties);
 		return checkboxDiv;
 	}
 
-	public Div createConfigurationItemComboBoxDiv(ConfigurationLabel labels, ComboBox<String> configComboBox, Collection<String> items) {
-		ConfigurationItemComboBoxDiv comboBoxDiv = new ConfigurationItemComboBoxDiv(configComboBox, labels, items, getPropertyValue(labels.PROPERTY_NAME_LABEL));
+	public Div createConfigurationItemComboBoxDivEmpty(ConfigurationLabel labels, ComboBox<String> configComboBox, Collection<String> items) {
+		ConfigurationItemComboBoxDiv comboBoxDiv = new ConfigurationItemComboBoxDiv(configComboBox, labels, items, "", configurationProperties);
 		return comboBoxDiv;
 	}
 	
+	public Div createConfigurationItemComboBoxDiv(ConfigurationLabel labels, ComboBox<String> configComboBox, Collection<String> items) {
+		ConfigurationItemComboBoxDiv comboBoxDiv = new ConfigurationItemComboBoxDiv(configComboBox, labels, items, getPropertyValue(labels.PROPERTY_NAME_LABEL), configurationProperties);
+		return comboBoxDiv;
+	}
+	
+	
+	public Div createConfigurationItemTextFieldDivEmpty(ConfigurationLabel labels, TextField configTextField) {
+		ConfigurationItemTextFieldDiv textFieldDiv = new ConfigurationItemTextFieldDiv(configTextField, labels, "", configurationProperties);
+		return textFieldDiv;
+	}
+	
 	public Div createConfigurationItemTextFieldDiv(ConfigurationLabel labels, TextField configTextField) {
-		ConfigurationItemTextFieldDiv textFieldDiv = new ConfigurationItemTextFieldDiv(configTextField, labels, getPropertyValue(labels.PROPERTY_NAME_LABEL));
+		ConfigurationItemTextFieldDiv textFieldDiv = new ConfigurationItemTextFieldDiv(configTextField, labels, getPropertyValue(labels.PROPERTY_NAME_LABEL), configurationProperties);
 		return textFieldDiv;
 	}
 	
 	public void reloadConfiguration() {
-		for(String componentId: ConfigurationProperties.getConfigurationcomponents().keySet()) {
-			com.vaadin.flow.component.Component c = ConfigurationProperties.getConfigurationcomponents().get(componentId);
+		for(String componentId: configurationProperties.getConfigurationcomponents().keySet()) {
+			com.vaadin.flow.component.Component c = configurationProperties.getConfigurationcomponents().get(componentId);
 			String contextValue = getPropertyValue(componentId);
 			String componentValue = null;
 			if(c instanceof ComboBox<?>) {
@@ -60,14 +85,14 @@ public class ConfigurationUtil {
 					((TextField)c).setValue(contextValue);
 			}
 		}
-		propertiesPersistenceService.resetProperties(ConfigurationProperties.getProperties());
-		ConfigurationProperties.clearChanges();
+		propertiesPersistenceService.resetProperties(configurationProperties.getProperties());
+		configurationProperties.clearChanges();
 	}
 	
 	public void resetConfiguration() {
-		for(String componentId: ConfigurationProperties.getChangedcomponents().keySet()) {
-			com.vaadin.flow.component.Component c = ConfigurationProperties.getChangedcomponents().get(componentId);
-			Object initialValue = ConfigurationProperties.getInitialproperties().get(componentId);
+		for(String componentId: configurationProperties.getChangedcomponents().keySet()) {
+			com.vaadin.flow.component.Component c = configurationProperties.getChangedcomponents().get(componentId);
+			Object initialValue = configurationProperties.getInitialproperties().get(componentId);
 			if(c instanceof ComboBox<?>) {
 				((ComboBox<String>)c).setValue((String) initialValue);
 			}else if(c instanceof Checkbox) {
@@ -76,13 +101,13 @@ public class ConfigurationUtil {
 				((TextField)c).setValue(getPropertyValue((String) initialValue));
 			}
 		}
-		ConfigurationProperties.clearChanges();
+		configurationProperties.clearChanges();
 	}
 	
 	public void saveConfiguration() {
-		propertiesPersistenceService.saveProperties(ConfigurationProperties.getProperties());
-		for(String componentId: ConfigurationProperties.getChangedcomponents().keySet()) {
-			com.vaadin.flow.component.Component c = ConfigurationProperties.getChangedcomponents().get(componentId);
+		propertiesPersistenceService.saveProperties(configurationProperties.getProperties());
+		for(String componentId: configurationProperties.getChangedcomponents().keySet()) {
+			com.vaadin.flow.component.Component c = configurationProperties.getChangedcomponents().get(componentId);
 			Object value = null;
 			if(c instanceof ComboBox<?>) {
 				value = ((ComboBox<String>)c).getValue();
@@ -92,9 +117,22 @@ public class ConfigurationUtil {
 				value = ((TextField)c).getValue();
 			}
 			if(value!=null)
-				ConfigurationProperties.getInitialproperties().put(componentId, value);
+				configurationProperties.getInitialproperties().put(componentId, value);
 		}
-		ConfigurationProperties.clearChanges();
+		configurationProperties.clearChanges();
+	}
+
+	public void updateOnRole(UserRole role) {
+		configurationProperties.updateOnRole(role);
+		
+	}
+	
+	public void unregisterComponent(com.vaadin.flow.component.Component c) {
+		configurationProperties.unregisterComponent(c);
+	}
+	
+	public void updateConfigurationComponentsOnProperties(Properties properties) {
+		configurationProperties.updateConfigurationComponentsOnProperties(properties);
 	}
 	
 }

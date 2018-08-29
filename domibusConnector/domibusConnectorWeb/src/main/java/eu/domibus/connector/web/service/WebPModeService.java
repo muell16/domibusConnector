@@ -45,6 +45,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersis
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfigurationLabels;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 @Service("webPModeService")
 public class WebPModeService {
@@ -62,7 +63,8 @@ public class WebPModeService {
 	
 	@Autowired
 	private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
-
+	
+	
 	// SETTER //
 	public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
 		this.actionPersistenceService = actionPersistenceService;
@@ -80,6 +82,7 @@ public class WebPModeService {
 		this.propertiesPersistenceService = propertiesPersistenceService;
 	}
 
+	
 	public DomibusConnectorService getService(String serviceName) {
 		return this.servicePersistenceService.getService(serviceName);
 	}
@@ -127,7 +130,7 @@ public class WebPModeService {
 		}
 	}
 
-	private void importParties(Configuration pmodes) {
+	private void importParties(Configuration pmodes, ConfigurationUtil util) {
 		String homeParty = pmodes.getParty();
 		Map<String, String> roles = new HashMap<String, String>();
 		for (Role role : pmodes.getBusinessProcesses().getRoles().getRole()) {
@@ -152,7 +155,7 @@ public class WebPModeService {
 				homePartyProperties.put(EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homePartyIdentifierName);
 				homePartyProperties.put(EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homePartyEndpointAddress);
 				propertiesPersistenceService.saveProperties(homePartyProperties);
-				ConfigurationProperties.updateConfigurationComponentsOnProperties(homePartyProperties);
+				util.updateConfigurationComponentsOnProperties(homePartyProperties);
 				
 			}
 			if (!CollectionUtils.isEmpty(party.getIdentifier()) && party.getIdentifier().get(0) != null) {
@@ -299,7 +302,7 @@ public class WebPModeService {
 	    }
 
 	 @Transactional(readOnly = false)
-	public boolean importPModes(byte[] contents) {
+	public boolean importPModes(byte[] contents, ConfigurationUtil util) {
 		if (contents == null || contents.length<1) {
             throw new IllegalArgumentException("pModes are not allowed to be null or empty!");
         }
@@ -316,7 +319,7 @@ public class WebPModeService {
 
         importActions(pmodes);
 
-        importParties(pmodes);
+        importParties(pmodes, util);
         
         return true;
 		

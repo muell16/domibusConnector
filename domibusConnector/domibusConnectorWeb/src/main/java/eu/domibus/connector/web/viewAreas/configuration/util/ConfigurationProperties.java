@@ -12,61 +12,60 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.enums.UserRole;
 
 @org.springframework.stereotype.Component
-@UIScope
 public class ConfigurationProperties {
 	
-	private static final Properties properties = new Properties();
+	private final Properties properties = new Properties();
 	
-	private static final HashMap<String, Object> initialProperties = new HashMap<String, Object>();
+	private final HashMap<String, Object> initialProperties = new HashMap<String, Object>();
 	
-	private static final HashMap<String, Component> configurationComponents = new HashMap<>();
+	private final HashMap<String, Component> configurationComponents = new HashMap<>();
 	
-	private static final HashMap<String, Component> changedComponents = new HashMap<>();
+	private final HashMap<String, Component> changedComponents = new HashMap<>();
 	
-	public static void registerComponent(Component component, Object initialValue) {
+	public void registerComponent(Component component, Object initialValue) {
 		configurationComponents.put(component.getId().get(),component);
 		initialProperties.put(component.getId().get(), initialValue);
 	}
 	
-	public static void unregisterComponent(Component component) {
+	public void unregisterComponent(Component component) {
 		configurationComponents.remove(component.getId().get());
 		initialProperties.remove(component.getId().get());
 	}
 	
-	public static void changeComponentValue(Component component, String newStringValue) {
+	public void changeComponentValue(Component component, String newStringValue) {
 		changedComponents.put(component.getId().get(),component);
 		properties.setProperty(component.getId().get(), newStringValue);
 	}
 	
-	public static void clearChanges() {
+	public void clearChanges() {
 		changedComponents.clear();
 		properties.clear();
 	}
 
-	public static Properties getProperties() {
+	public Properties getProperties() {
 		return properties;
 	}
 	
-	public static void clearProperties() {
+	public void clearProperties() {
 		properties.clear();
 		
 	}
 
-	public static HashMap<String, Object> getInitialproperties() {
+	public HashMap<String, Object> getInitialproperties() {
 		return initialProperties;
 	}
 
-	public static HashMap<String, Component> getConfigurationcomponents() {
+	public HashMap<String, Component> getConfigurationcomponents() {
 		return configurationComponents;
 	}
 
-	public static HashMap<String, Component> getChangedcomponents() {
+	public HashMap<String, Component> getChangedcomponents() {
 		return changedComponents;
 	}
 	
-	public static void updateOnRole(UserRole userRole) {
-		for(String componentId: ConfigurationProperties.getConfigurationcomponents().keySet()) {
-			com.vaadin.flow.component.Component c = ConfigurationProperties.getConfigurationcomponents().get(componentId);
+	public void updateOnRole(UserRole userRole) {
+		for(String componentId: getConfigurationcomponents().keySet()) {
+			com.vaadin.flow.component.Component c = getConfigurationcomponents().get(componentId);
 			boolean readonly = !userRole.equals(UserRole.ADMIN);
 			if(c instanceof ComboBox<?>) {
 				((ComboBox<String>)c).setReadOnly(readonly);
@@ -78,10 +77,10 @@ public class ConfigurationProperties {
 		}
 	}
 	
-	public static void updateConfigurationComponentsOnProperties(Properties properties) {
-		for(String componentId: ConfigurationProperties.getConfigurationcomponents().keySet()) {
+	public void updateConfigurationComponentsOnProperties(Properties properties) {
+		for(String componentId: getConfigurationcomponents().keySet()) {
 			if(properties.containsKey(componentId)) {
-			com.vaadin.flow.component.Component c = ConfigurationProperties.getConfigurationcomponents().get(componentId);
+			com.vaadin.flow.component.Component c = getConfigurationcomponents().get(componentId);
 			if(c instanceof ComboBox<?>) {
 				((ComboBox<String>)c).setValue(properties.getProperty(componentId));
 			}else if(c instanceof Checkbox) {

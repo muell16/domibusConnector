@@ -255,7 +255,7 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 	@Override
 	public void afterNavigation(AfterNavigationEvent event) {
 		authenticatedUser = (WebUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		ConfigurationProperties.updateOnRole(authenticatedUser.getRole());
+		util.updateOnRole(authenticatedUser.getRole());
 		boolean enabled = authenticatedUser.getRole().equals(eu.domibus.connector.web.enums.UserRole.ADMIN);
 		saveConfiguration.setEnabled(enabled);
 		reloadConfiguration.setEnabled(enabled);

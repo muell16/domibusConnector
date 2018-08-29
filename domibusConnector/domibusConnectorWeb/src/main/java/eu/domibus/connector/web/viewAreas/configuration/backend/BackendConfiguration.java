@@ -154,7 +154,7 @@ public class BackendConfiguration  extends VerticalLayout {
 		headerContent.add(header);
 		newBackendClientDialog.add(headerContent);
 		
-		BackendClientInfo view = new BackendClientInfo(backendClientInfo!=null?backendClientInfo:new DomibusConnectorBackendClientInfo(), this, newBackendClientDialog);
+		BackendClientInfo view = new BackendClientInfo(backendClientInfo!=null?backendClientInfo:new DomibusConnectorBackendClientInfo(), this, newBackendClientDialog, util);
 		newBackendClientDialog.add(view);
 		
 		newBackendClientDialog.open();
@@ -167,54 +167,6 @@ public class BackendConfiguration  extends VerticalLayout {
 	public List<DomibusConnectorService> getServiceList(){
 		return backendClientService.getServiceList();
 	}
-
-//	private VerticalLayout editBackendClientLayout( DomibusConnectorBackendClientInfo domibusConnectorBackendClientInfo) {
-//		VerticalLayout layout = new VerticalLayout();
-//		
-//		DomibusConnectorBackendClientInfo newBackendClientInfo = domibusConnectorBackendClientInfo;
-//		
-//		TextField backendName = new TextField("Backend name");
-//		backendName.setValue(domibusConnectorBackendClientInfo.getBackendName());
-//		backendName.setReadOnly(true);
-//		layout.add(backendName);
-//		
-//		TextField backendKeyAlias = new TextField("Backend Key Alias");
-//		if(domibusConnectorBackendClientInfo.getBackendKeyAlias()!=null)
-//			backendKeyAlias.setValue(domibusConnectorBackendClientInfo.getBackendKeyAlias());
-//		backendKeyAlias.addValueChangeListener(e -> newBackendClientInfo.setBackendKeyAlias(e.getValue()));
-//		layout.add(backendKeyAlias);
-//		
-//		Checkbox defaultBackend = new Checkbox("is Default Backend");
-//		defaultBackend.setValue(domibusConnectorBackendClientInfo.isDefaultBackend());
-//		defaultBackend.addValueChangeListener(e -> newBackendClientInfo.setDefaultBackend(e.getValue()));
-//		layout.add(defaultBackend);
-//		
-//		Checkbox enabled = new Checkbox("is Backend enabled");
-//		enabled.setValue(domibusConnectorBackendClientInfo.isEnabled());
-//		enabled.addValueChangeListener(e -> newBackendClientInfo.setEnabled(e.getValue()));
-//		layout.add(enabled);
-//		
-//		TextField pushAddress = new TextField("Push Address");
-//		if(domibusConnectorBackendClientInfo.getBackendPushAddress()!=null)
-//			pushAddress.setValue(domibusConnectorBackendClientInfo.getBackendPushAddress());
-//		pushAddress.addValueChangeListener(e -> newBackendClientInfo.setBackendPushAddress(e.getValue()));
-//		layout.add(pushAddress);
-//		
-//		TextField description = new TextField("Description");
-//		if(domibusConnectorBackendClientInfo.getBackendDescription()!=null)
-//			description.setValue(domibusConnectorBackendClientInfo.getBackendDescription());
-//		description.addValueChangeListener(e -> newBackendClientInfo.setBackendDescription(e.getValue()));
-//		layout.add(description);
-//		
-//		Button edit = new Button(new Icon(VaadinIcon.EDIT));
-//		edit.getElement().setAttribute("title", "Save Backend Client Info");
-//		edit.setText("Save");
-//		edit.addClickListener(e -> {backendClientService.updateBackendClientInfo(newBackendClientInfo);
-//				grid.setItems(backendClientService.getAllBackendClients());;});
-//		
-//		layout.add(edit);
-//		return layout;
-//	}
 	
 	private Checkbox getCheckboxForList(boolean checked) {
 		Checkbox isChecked = new Checkbox(checked);

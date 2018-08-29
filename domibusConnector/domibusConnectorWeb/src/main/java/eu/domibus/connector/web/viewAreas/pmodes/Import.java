@@ -17,6 +17,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.service.WebPModeService;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 @HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
@@ -26,7 +27,7 @@ public class Import extends VerticalLayout {
 	
 	WebPModeService pmodeService;
 
-	public Import(@Autowired WebPModeService pmodeService) {
+	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.pmodeService = pmodeService;
 		
 		Div areaImporter = new Div();
@@ -42,7 +43,7 @@ public class Import extends VerticalLayout {
 			boolean result = false;
 			byte[] contents = ((ByteArrayOutputStream) buffer.getFileData().getOutputBuffer())
                             .toByteArray();
-		    result = pmodeService.importPModes(contents);
+		    result = pmodeService.importPModes(contents, util);
 		    showOutput(contents, result);
 		});
 		

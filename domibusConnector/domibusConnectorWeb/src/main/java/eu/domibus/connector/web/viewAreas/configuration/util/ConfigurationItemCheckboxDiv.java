@@ -9,12 +9,12 @@ public class ConfigurationItemCheckboxDiv extends ConfigurationItemDiv {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public ConfigurationItemCheckboxDiv(Checkbox configurationItem, ConfigurationLabel labels, Boolean initialValue) {
-		super(configurationItem,labels, initialValue);
+	public ConfigurationItemCheckboxDiv(Checkbox configurationItem, ConfigurationLabel labels, Boolean initialValue, ConfigurationProperties configurationProperties) {
+		super(configurationItem,labels, initialValue, configurationProperties);
 		configurationItem.setValue(initialValue);
 		configurationItem.setLabel(labels.CONFIGURATION_ELEMENT_LABEL);
 		configurationItem.addValueChangeListener(e -> {
-			ConfigurationProperties.changeComponentValue(configurationItem, e.getValue().toString().toLowerCase());
+			configurationProperties.changeComponentValue(configurationItem, e.getValue().toString().toLowerCase());
 		});
 	}
 	

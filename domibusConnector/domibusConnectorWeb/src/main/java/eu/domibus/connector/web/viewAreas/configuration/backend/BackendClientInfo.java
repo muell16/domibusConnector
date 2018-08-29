@@ -18,6 +18,7 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemCh
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemTextFieldDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 public class BackendClientInfo extends VerticalLayout{
 
@@ -26,61 +27,61 @@ public class BackendClientInfo extends VerticalLayout{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public BackendClientInfo(DomibusConnectorBackendClientInfo domibusConnectorBackendClientInfo, BackendConfiguration backendConfiguration, Dialog newBackendClientDialog) {
+	public BackendClientInfo(DomibusConnectorBackendClientInfo domibusConnectorBackendClientInfo, BackendConfiguration backendConfiguration, Dialog newBackendClientDialog, ConfigurationUtil util) {
 		DomibusConnectorBackendClientInfo newBackendClientInfo = domibusConnectorBackendClientInfo;
 		
 		TextField backendName = new TextField();
-		ConfigurationItemTextFieldDiv backendNameDiv = new ConfigurationItemTextFieldDiv(backendName, BackendClientInfoLabels.backendClientInfoNameLabels, "");
+		Div backendNameDiv = util.createConfigurationItemTextFieldDivEmpty(BackendClientInfoLabels.backendClientInfoNameLabels, backendName);
 		if(domibusConnectorBackendClientInfo.getBackendName()!=null) {
 			backendName.setValue(domibusConnectorBackendClientInfo.getBackendName());
 			backendName.setReadOnly(true);
 		}
 		backendName.setWidth("400px");
-		ConfigurationProperties.unregisterComponent(backendName);
+		util.unregisterComponent(backendName);
 		add(backendNameDiv);
 		
 		TextField backendKeyAlias = new TextField();
-		ConfigurationItemTextFieldDiv backendKeyAliasDiv = new ConfigurationItemTextFieldDiv(backendKeyAlias, BackendClientInfoLabels.backendClientInfoKeyAliasLabels, "");
+		Div backendKeyAliasDiv = util.createConfigurationItemTextFieldDivEmpty(BackendClientInfoLabels.backendClientInfoKeyAliasLabels, backendKeyAlias);
 		if(domibusConnectorBackendClientInfo.getBackendKeyAlias()!=null)
 			backendKeyAlias.setValue(domibusConnectorBackendClientInfo.getBackendKeyAlias());
 		backendKeyAlias.addValueChangeListener(e -> newBackendClientInfo.setBackendKeyAlias(e.getValue()));
 		backendKeyAlias.setWidth("400px");
-		ConfigurationProperties.unregisterComponent(backendKeyAlias);
+		util.unregisterComponent(backendKeyAlias);
 		add(backendKeyAliasDiv);
 		
 		Checkbox defaultBackend = new Checkbox();
-		ConfigurationItemCheckboxDiv defaultBackendDiv = new ConfigurationItemCheckboxDiv(defaultBackend, BackendClientInfoLabels.backendClientInfoDefaultLabels, domibusConnectorBackendClientInfo.isDefaultBackend());
+		Div defaultBackendDiv = util.createConfigurationItemCheckboxDivWithValue(BackendClientInfoLabels.backendClientInfoDefaultLabels, defaultBackend, domibusConnectorBackendClientInfo.isDefaultBackend());
 		defaultBackend.addValueChangeListener(e -> newBackendClientInfo.setDefaultBackend(e.getValue()));
-		ConfigurationProperties.unregisterComponent(defaultBackend);
+		util.unregisterComponent(defaultBackend);
 		add(defaultBackendDiv);
 		
 		Checkbox enabled = new Checkbox();
-		ConfigurationItemCheckboxDiv enabledDiv = new ConfigurationItemCheckboxDiv(enabled, BackendClientInfoLabels.backendClientInfoEnabledLabels, domibusConnectorBackendClientInfo.isEnabled());
+		Div enabledDiv = util.createConfigurationItemCheckboxDivWithValue(BackendClientInfoLabels.backendClientInfoEnabledLabels, enabled, domibusConnectorBackendClientInfo.isEnabled());
 		enabled.addValueChangeListener(e -> newBackendClientInfo.setEnabled(e.getValue()));
-		ConfigurationProperties.unregisterComponent(enabled);
+		util.unregisterComponent(enabled);
 		add(enabledDiv);
 		
 		TextField pushAddress = new TextField();
-		ConfigurationItemTextFieldDiv pushAddressDiv = new ConfigurationItemTextFieldDiv(pushAddress, BackendClientInfoLabels.backendClientInfoPushAddressLabels, "");
+		Div pushAddressDiv = util.createConfigurationItemTextFieldDivEmpty(BackendClientInfoLabels.backendClientInfoPushAddressLabels, pushAddress);
 		if(domibusConnectorBackendClientInfo.getBackendPushAddress()!=null)
 			pushAddress.setValue(domibusConnectorBackendClientInfo.getBackendPushAddress());
 		pushAddress.addValueChangeListener(e -> newBackendClientInfo.setBackendPushAddress(e.getValue()));
 		pushAddress.setWidth("400px");
-		ConfigurationProperties.unregisterComponent(pushAddress);
+		util.unregisterComponent(pushAddress);
 		add(pushAddressDiv);
 		
 		TextField description = new TextField();
-		ConfigurationItemTextFieldDiv descriptionDiv = new ConfigurationItemTextFieldDiv(description, BackendClientInfoLabels.backendClientInfoDescriptionLabels, "");
+		Div descriptionDiv = util.createConfigurationItemTextFieldDivEmpty(BackendClientInfoLabels.backendClientInfoDescriptionLabels, description);
 		if(domibusConnectorBackendClientInfo.getBackendDescription()!=null)
 			description.setValue(domibusConnectorBackendClientInfo.getBackendDescription());
 		description.addValueChangeListener(e -> newBackendClientInfo.setBackendDescription(e.getValue()));
 		description.setWidth("400px");
-		ConfigurationProperties.unregisterComponent(description);
+		util.unregisterComponent(description);
 		add(descriptionDiv);
 		
 		Label servicesLabel = new Label("Services for backend client:");
-		ConfigurationItemDiv servicesDiv = new ConfigurationItemDiv(servicesLabel, BackendClientInfoLabels.backendClientInfoServicesLabels, "");
-		ConfigurationProperties.unregisterComponent(servicesLabel);
+		Div servicesDiv = util.createConfigurationItemDiv(BackendClientInfoLabels.backendClientInfoServicesLabels, servicesLabel, "");
+		util.unregisterComponent(servicesLabel);
 		add(servicesDiv);
 		
 		List<DomibusConnectorService> services = backendConfiguration.getServiceList();
