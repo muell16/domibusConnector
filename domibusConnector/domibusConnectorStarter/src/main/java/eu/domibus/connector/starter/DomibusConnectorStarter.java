@@ -10,8 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-@EnableAutoConfiguration
-@PropertySource("classpath:/connector.properties")
+@PropertySource("classpath:connector.properties")
 public class DomibusConnectorStarter {
 
 	public static void main(String[] args) {

@@ -3,6 +3,8 @@ package eu.domibus.connector.web.viewAreas.configuration.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vaadin.flow.component.html.Div;
+import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationLabel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,13 +24,13 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
  * 
  * This class should handle the following properties:
  * 
- * connector.security.keyStore.path
- * connector.security.keyStore.password
- * connector.security.privateKey.alias
- * connector.security.privateKey.password
+ * connector.security.key-store.path
+ * connector.security.key-store.password
+ * connector.security.private-key.alias
+ * connector.security.private-key.password
  *
- * connector.security.truststore.path
- * connector.security.truststore.password
+ * connector.security.trust-store.path
+ * connector.security.trust-store.password
  *	
  * token.issuer.country
  * token.issuer.service.provider
@@ -40,7 +42,6 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
  * 
  */
 @HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class SecurityConfiguration extends VerticalLayout{
@@ -94,8 +95,8 @@ public class SecurityConfiguration extends VerticalLayout{
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.ojURLLabels, ojURIField));
 		
 		add(new ConfigurationItemChapterDiv("Keystore/Truststore configuration:"));
-		
-		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyStorePathLabels, keyStorePathField));
+
+        add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyStorePathLabels, keyStorePathField));
 		
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyStorePasswordLabels, keyStorePasswordField));
 		

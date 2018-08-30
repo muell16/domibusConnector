@@ -26,7 +26,6 @@ public class SpringRouteRegistryInitializer extends RouteRegistryInitializer
     @Override
     public void onStartup(ServletContext servletContext)
             throws ServletException {
-    	System.out.println("Aber JEtzt!");
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
                 false);
         provider.addIncludeFilter(new AnnotationTypeFilter(Route.class));
