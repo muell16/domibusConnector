@@ -128,28 +128,8 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 	private HorizontalLayout createConfigurationButtonBar() {
 		HorizontalLayout configurationButtonBar = new HorizontalLayout();
 		
-		String reloadActionText = "Reload Configuration from context";
-		reloadConfiguration = new Button(
-				new Icon(VaadinIcon.FILE_REFRESH));
-		reloadConfiguration.setText(reloadActionText);
-		reloadConfiguration.addClickListener(e -> {
-			Button confirmButton = new Button("Confirm");
-			Dialog confirmDialog = createConfigurationConfirmDialog(
-					reloadActionText, 
-					confirmButton, 
-					"All configuration properties will be reloaded from the application context.",
-					"Be aware that this also effects configuration properties that have already been changed and saved since the last start of the domibusConnector!",
-					"If there are changed properties that are already saved, those changes will be reset in the database to the status of the last startup as well."
-					);
-			confirmButton.addClickListener(e2 -> {
-				util.reloadConfiguration();
-				confirmDialog.close();
-			});
-			
-			confirmDialog.open();
-		});
-		configurationButtonBar.add(reloadConfiguration);
 		
+		Div reset = new Div();
 		String resetActionText = "Discard Changes";
 		resetConfiguration = new Button(
 				new Icon(VaadinIcon.REFRESH));
@@ -157,7 +137,7 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 		resetConfiguration.addClickListener(e -> {
 			Button confirmButton = new Button("Confirm");
 			Dialog confirmDialog = createConfigurationConfirmDialog(
-					reloadActionText, 
+					resetActionText, 
 					confirmButton, 
 					"All changes since the last time of saving will be discarded."
 					);
@@ -168,10 +148,11 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 			
 			confirmDialog.open();
 		});
-		configurationButtonBar.add(resetConfiguration);
+		reset.add(resetConfiguration);
+		configurationButtonBar.add(reset);
 		
-		
-		String saveActionText = "Save Configuration";
+		Div save = new Div();
+		String saveActionText = "Save Changes";
 		saveConfiguration = new Button(
 				new Icon(VaadinIcon.EDIT));
 		saveConfiguration.setText(saveActionText);
@@ -191,9 +172,36 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 			
 			confirmDialog.open();
 		});
-		configurationButtonBar.add(saveConfiguration);
+		save.add(saveConfiguration);
+		configurationButtonBar.add(save);
 		
-		configurationButtonBar.setWidth("100vw");
+		Div reload = new Div();
+		String reloadActionText = "Reload Configuration";
+		reloadConfiguration = new Button(
+				new Icon(VaadinIcon.FILE_REFRESH));
+		reloadConfiguration.setText(reloadActionText);
+		reloadConfiguration.addClickListener(e -> {
+			Button confirmButton = new Button("Confirm");
+			Dialog confirmDialog = createConfigurationConfirmDialog(
+					reloadActionText, 
+					confirmButton, 
+					"All configuration properties will be reloaded to the state they had when the domibusConnector was started the last time.",
+					"Be aware that this also effects configuration properties that have already been changed and saved since the last start of the domibusConnector!",
+					"If there are changed properties that are already saved, those changes will be reset in the database to the status of the last startup as well."
+					);
+			confirmButton.addClickListener(e2 -> {
+				util.reloadConfiguration();
+				confirmDialog.close();
+			});
+			
+			confirmDialog.open();
+		});
+		reload.add(reloadConfiguration);
+		reload.getStyle().set("align", "right");
+		configurationButtonBar.add(reload);
+		
+		configurationButtonBar.setWidth("900px");
+		configurationButtonBar.expand(save);
 		configurationButtonBar.setHeight("20px");
 		configurationButtonBar.setPadding(true);
 		configurationButtonBar.getStyle().set("padding-bottom", "30px");

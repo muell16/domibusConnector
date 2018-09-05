@@ -13,5 +13,5 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorUser;
 @Repository
 public interface DomibusConnectorUserDao extends CrudRepository<PDomibusConnectorUser, Long> {
 
-	public PDomibusConnectorUser findOneByUsername(String username);
+	public PDomibusConnectorUser findOneByUsernameIgnoreCase(String username);
 }

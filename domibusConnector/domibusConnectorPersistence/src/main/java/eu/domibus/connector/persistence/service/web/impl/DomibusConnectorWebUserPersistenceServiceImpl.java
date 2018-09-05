@@ -56,7 +56,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 
 	private PDomibusConnectorUser getAndCheckGivenUser(String username, String password)
 			throws UserLoginException, InitialPasswordException {
-		PDomibusConnectorUser user = userDao.findOneByUsername(username);
+		PDomibusConnectorUser user = userDao.findOneByUsernameIgnoreCase(username);
 		if(user!=null) {
 			if(user.isLocked())
 				throw new UserLoginException("The user is locked! Please contact your administrator!");
@@ -94,6 +94,11 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 				throw new InitialPasswordException();
 			}
 			
+			if(user.getGraceLoginsUsed() > 0) {
+				user.setGraceLoginsUsed(0L);
+				userDao.save(user);
+			}
+			
 			return user;
 			
 		}
@@ -107,7 +112,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 			user = getAndCheckGivenUser(username, oldPassword);
 		} catch (InitialPasswordException e) {
 			// This is expected here!
-			user = userDao.findOneByUsername(username);
+			user = userDao.findOneByUsernameIgnoreCase(username);
 		}
 		
 		if(user!=null) {
@@ -154,7 +159,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 	
 	@Override
 	public WebUser resetUserPassword(WebUser user, String newInitialPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		PDomibusConnectorUser dbUser = userDao.findOneByUsername(user.getUsername());
+		PDomibusConnectorUser dbUser = userDao.findOneByUsernameIgnoreCase(user.getUsername());
 		
 		createNewInitialPasswordAndInvalidateOthers(dbUser, newInitialPassword);
 		
@@ -182,7 +187,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 	
 	@Override
 	public WebUser updateUser(WebUser user) {
-		PDomibusConnectorUser dbUser = userDao.findOneByUsername(user.getUsername());
+		PDomibusConnectorUser dbUser = userDao.findOneByUsernameIgnoreCase(user.getUsername());
 		
 		boolean changed = false;
 		
