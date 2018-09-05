@@ -71,11 +71,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.webjars.bowergithub.vaadin</groupId>
-			<artifactId>vaadin-lumo-styles</artifactId>
-			<version>1.1.0-alpha3</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.webjars.bowergithub.vaadin</groupId>-->
+			<!--<artifactId>vaadin-lumo-styles</artifactId>-->
+			<!--<version>1.1.0-alpha3</version>-->
+		<!--</dependency>-->
 
 		<dependency>
 			<groupId>org.webjars.bowergithub.vaadin</groupId>
