@@ -21,8 +21,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorStarter</artifactId>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorWeb</artifactId>
             <version>${project.version}</version>
         </dependency>
 
