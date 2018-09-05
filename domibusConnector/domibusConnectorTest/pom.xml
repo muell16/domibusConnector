@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <!-- deactivated due dependency issues - dep enforcer rules are violated -->
-        <!--<module>domibusConnectorOnlyStarter</module>-->
+        <module>domibusConnectorOnlyStarter</module>
         <module>domibusConnectorTestSuite</module>
         <module>domibusConnectorTestData</module>
         <module>domibusConnectorDatabaseInitializer</module>
