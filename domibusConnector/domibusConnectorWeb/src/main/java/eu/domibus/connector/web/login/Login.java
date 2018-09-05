@@ -2,6 +2,9 @@ package eu.domibus.connector.web.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyPressEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -28,6 +31,8 @@ public class Login extends VerticalLayout{
 
 	WebUserService userService;
 	
+	Button loginButton = new Button("Login");
+	
 	public Login(@Autowired WebUserService userService) {
 		this.userService = userService;
 		HorizontalLayout header = createHeader();
@@ -39,13 +44,31 @@ public class Login extends VerticalLayout{
 		Div usernameDiv = new Div();
 		TextField username = new TextField();
 		username.setLabel("Username");
+		username.setAutofocus(true);
+		username.addKeyPressListener(Key.ENTER, new ComponentEventListener<KeyPressEvent>() {
+			
+			@Override
+			public void onComponentEvent(KeyPressEvent event) {
+				loginButton.click();
+				
+			}
+		});
 		usernameDiv.add(username);
 		usernameDiv.getStyle().set("text-align", "center");
 		loginDialog.add(usernameDiv);
 		
+		
 		Div passwordDiv = new Div();
 		PasswordField password = new PasswordField();
 		password.setLabel("Password");
+		password.addKeyPressListener(Key.ENTER, new ComponentEventListener<KeyPressEvent>() {
+			
+			@Override
+			public void onComponentEvent(KeyPressEvent event) {
+				loginButton.click();
+				
+			}
+		});
 		passwordDiv.add(password);
 		passwordDiv.getStyle().set("text-align", "center");
 		loginDialog.add(passwordDiv);
@@ -55,8 +78,20 @@ public class Login extends VerticalLayout{
 		loginButtonContent.getStyle().set("text-align", "center");
 		loginButtonContent.getStyle().set("padding", "10px");
 		
-		Button loginButton = new Button("Login");
 		loginButton.addClickListener(e -> {
+			if(username.getValue().isEmpty()) {
+				Dialog errorDialog = createLoginErrorDialog("The field \"Username\" must not be empty!");
+				username.clear();
+				password.clear();
+				errorDialog.open();
+				return;
+			}
+			if(password.getValue().isEmpty()) {
+				Dialog errorDialog = createLoginErrorDialog("The field \"Password\" must not be empty!");
+				password.clear();
+				errorDialog.open();
+				return;
+			}
 			try {
 				userService.login(username.getValue(), password.getValue());
 			} catch (UserLoginException e1) {
@@ -79,6 +114,13 @@ public class Login extends VerticalLayout{
 		
 		Button changePasswordButton = new Button("Change Password");
 		changePasswordButton.addClickListener(e -> {
+			if(username.getValue().isEmpty()) {
+				Dialog errorDialog = createLoginErrorDialog("The field \"Username\" must not be empty!");
+				username.clear();
+				password.clear();
+				errorDialog.open();
+				return;
+			}
 			Dialog changePasswordDialog = createChangePasswordDialog(username.getValue(), password.getValue());
 			username.clear();
 			password.clear();
@@ -203,6 +245,7 @@ public class Login extends VerticalLayout{
 			
 			errorDialog.close();
 		});
+		okButton.setAutofocus(true);
 		okContent.add(okButton);
 		
 		
