@@ -28,7 +28,11 @@
     </modules>
     <!-- Shared version number properties -->
     <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <!--		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>-->
         <org.apache.cxf.version>3.2.1</org.apache.cxf.version>
         <org.slf4j.version>1.7.11</org.slf4j.version>
@@ -37,8 +41,8 @@
         <quartz.version>2.2.1</quartz.version>
         <theme.version>1.0.10</theme.version>
         <jsf.version>2.2.15</jsf.version>
-        <domibus.connector.version>4.0-SNAPSHOT</domibus.connector.version>
-        <ecodex.monitoring.version>2.1</ecodex.monitoring.version>
+        <!--<domibus.connector.version>4.0-SNAPSHOT</domibus.connector.version>-->
+        <!--<ecodex.monitoring.version>2.1</ecodex.monitoring.version>-->
         <org.primefaces.version>6.1</org.primefaces.version>
         <javax.ws.rs>1.1.1</javax.ws.rs>
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
@@ -67,7 +71,9 @@
         <releases-repo.url></releases-repo.url>
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
+
         <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
+        <vaadin.version>11.0.0</vaadin.version>
     </properties>
 
     <scm>
@@ -78,6 +84,10 @@
         <url>https://secure.e-codex.eu/jenkins/view/domibusConnector/job/domibusWebConnector</url>
     </ciManagement>
     <licenses>
+
+
+
+
         <license>
             <name>EUPL, version 1.2</name>
             <url>https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12</url>
@@ -656,6 +666,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-maven-plugin</artifactId>
+                    <version>${vaadin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>

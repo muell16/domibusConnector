@@ -1,71 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>eu.domibus.connector</groupId>
-		<artifactId>domibusConnector</artifactId>
-		<version>4.1.0-alpha2-SNAPSHOT</version>
-	</parent>
-	<artifactId>domibusConnectorWeb</artifactId>
-	<packaging>jar</packaging>
-
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-		<!-- Dependencies -->
-		<vaadin.version>10.0.5</vaadin.version>
-	</properties>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnector</artifactId>
+        <version>4.1.0-alpha2-SNAPSHOT</version>
+    </parent>
+    <artifactId>domibusConnectorWeb</artifactId>
+    <packaging>jar</packaging>
 
 
-	<!--<pluginRepositories>-->
-		<!--<pluginRepository>-->
-			<!--<id>vaadin-prereleases</id>-->
-			<!--<url>https://maven.vaadin.com/vaadin-prereleases</url>-->
-		<!--</pluginRepository>-->
-	<!--</pluginRepositories>-->
-
-	<!--<repositories>-->
-		<!--<repository>-->
-			<!--<id>vaadin-prereleases</id>-->
-			<!--<url>https://maven.vaadin.com/vaadin-prereleases</url>-->
-		<!--</repository>-->
-		<!--<repository>-->
-			<!--<id>Vaadin Directory</id>-->
-			<!--<url>http://maven.vaadin.com/vaadin-addons</url>-->
-		<!--</repository>-->
-	<!--</repositories>-->
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-bom</artifactId>
-				<version>${vaadin.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
-	<dependencies>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-spring-boot-starter</artifactId>
-			<!--<version>${vaadin.version}</version>-->
-			<exclusions>
-				<exclusion>
-					<groupId>org.webjars.bowergithub.vaadin</groupId>
-					<artifactId>vaadin-lumo-styles</artifactId>
-				</exclusion>
+    <dependencies>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-spring-boot-starter</artifactId>
+            <!--<version>${vaadin.version}</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.webjars.bowergithub.vaadin</groupId>
+                    <artifactId>vaadin-lumo-styles</artifactId>
+                </exclusion>
 
-				<exclusion>
-					<groupId>com.vaadin</groupId>
-					<artifactId>vaadin-testbench-bom</artifactId>
-				</exclusion>
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-testbench-bom</artifactId>
+                </exclusion>
                 <exclusion>
                     <!-- exclude due different dep versions in vaadin itself -->
                     <groupId>org.webjars.bowergithub.vaadin</groupId>
@@ -75,8 +47,8 @@
                     <groupId>org.webjars.bowergithub.vaadin</groupId>
                     <artifactId>vaadin-themable-mixin</artifactId>
                 </exclusion>
-			</exclusions>
-		</dependency>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.webjars.bowergithub.vaadin</groupId>
@@ -95,153 +67,150 @@
         </dependency>
 
 
-		
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorAPI</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorControllerAPI</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorController</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>domibusConnectorGatewayLink</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>domibusConnectorBackendLink</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.domibus.connector</groupId>
-			<artifactId>domibusConnectorWebLib</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerAPI</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorController</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorGatewayLink</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorBackendLink</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorWebLib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
-        <!--</dependency>-->
-		
-		<dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>
-        
+
         <dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-		</dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
     </dependencies>
 
-	<build>
-		<finalName>${project.artifactId}</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-        <execution>
-            <id>build-info</id>
-            <goals>
-                <goal>build-info</goal>
-            </goals>
-            <configuration>
-            	<outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
-            </configuration>
-        </execution>
-    </executions>
-				
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
 
-	<profiles>
-		<profile>
-			<id>productionMode</id>
-			<activation>
-				<property>
-					<name>vaadin.productionMode</name>
-				</property>
-			</activation>
+            </plugin>
+        </plugins>
+    </build>
 
-			<dependencies>
-				<dependency>
-					<groupId>com.vaadin</groupId>
-					<artifactId>flow-server-production-mode</artifactId>
-				</dependency>
-			</dependencies>
+    <profiles>
+        <profile>
+            <id>productionMode</id>
+            <activation>
+                <property>
+                    <name>vaadin.productionMode</name>
+                </property>
+            </activation>
 
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.vaadin</groupId>
-						<artifactId>vaadin-maven-plugin</artifactId>
-						<version>${vaadin.version}</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>copy-production-files</goal>
-									<goal>package-for-production</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<jvmArguments>-Dvaadin.productionMode</jvmArguments>
-						</configuration>
-						<executions>
-        <execution>
-            <id>build-info</id>
-            <goals>
-                <goal>build-info</goal>
-            </goals>
-        </execution>
-    </executions>
-						
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>flow-server-production-mode</artifactId>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <configuration>
+                            <ignoreMavenProxies>false</ignoreMavenProxies>
+                            
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>copy-production-files</goal>
+                                    <goal>package-for-production</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <jvmArguments>-Dvaadin.productionMode</jvmArguments>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build-info</id>
+                                <goals>
+                                    <goal>build-info</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
