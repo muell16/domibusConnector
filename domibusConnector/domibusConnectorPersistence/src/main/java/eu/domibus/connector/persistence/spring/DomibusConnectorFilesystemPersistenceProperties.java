@@ -25,6 +25,11 @@ public class DomibusConnectorFilesystemPersistenceProperties {
      */
     private boolean encryptionActive = true;
 
+    /**
+     * Should the directory be created if it does not exist?
+     */
+    private boolean createDir = true;
+
     public Path getStoragePath() {
         return storagePath;
     }
@@ -39,5 +44,13 @@ public class DomibusConnectorFilesystemPersistenceProperties {
 
     public void setEncryptionActive(boolean encryptionActive) {
         this.encryptionActive = encryptionActive;
+    }
+
+    public boolean isCreateDir() {
+        return createDir;
+    }
+
+    public void setCreateDir(boolean createDir) {
+        this.createDir = createDir;
     }
 }
