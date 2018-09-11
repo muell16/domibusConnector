@@ -9,8 +9,9 @@
 	<files>
 
 		<file>
-			<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war
-			</source>
+			<!--<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war-->
+			<!--</source>-->
+			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</source>
 			<outputDirectory>../</outputDirectory>
 			<destName>domibusConnector-${project.version}.war</destName>
 		</file>

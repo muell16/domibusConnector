@@ -12,6 +12,6 @@ import com.vaadin.flow.spring.annotation.EnableVaadin;
 @EnableWebMvc
 @EnableVaadin("eu.domibus.connector")
 @MultipartConfig
-public class DomibusConnectorWebContext {
+public class DomibusConnectorVaadinWebContext {
 
 }

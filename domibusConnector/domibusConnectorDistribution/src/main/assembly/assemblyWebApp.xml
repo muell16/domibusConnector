@@ -41,8 +41,15 @@
 	</fileSets>
 	<files>
 
+		<!--<file>-->
+			<!--<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war-->
+			<!--</source>-->
+			<!--<outputDirectory>/webapp</outputDirectory>-->
+			<!--<destName>domibusConnectorNoUi.war</destName>-->
+		<!--</file>-->
+
 		<file>
-			<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war
+			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
 			</source>
 			<outputDirectory>/webapp</outputDirectory>
 			<destName>domibusConnector.war</destName>

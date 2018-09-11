@@ -1,8 +1,9 @@
-package eu.domibus.connector.web.spring;
+package eu.domibus.connector.spring;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.domibus.connector.spring.WebUserAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Configures Spring Security
@@ -31,16 +29,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	WebUserAuthenticationProvider authProvider;
-	
-//	@Bean
-//	public AuthenticationEntryPoint loginUrlauthenticationEntryPoint(){
-//	    return new LoginUrlAuthenticationEntryPoint("/domibusConnector/login");
-//	}
+
 		
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-
+		//disable csrf so vaadin works!
 		http.csrf().disable();
 		
 //		http.logout()
@@ -79,8 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		authProviders.add(authProvider);
 		return new ProviderManager(authProviders);		
 	}
-	
-	
+
 	
 } 
 

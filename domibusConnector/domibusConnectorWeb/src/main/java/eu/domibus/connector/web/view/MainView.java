@@ -35,12 +35,14 @@ import eu.domibus.connector.web.viewAreas.pmodes.PModes;
 import eu.domibus.connector.web.viewAreas.users.Users;
 
 @HtmlImport("styles/shared-styles.html")
-@Route("admin/")
+@Route(MainView.MAIN_VIEW_ROUTE)
 @PageTitle("domibusConnector - Administrator")
 public class MainView extends VerticalLayout 
 implements BeforeEnterObserver 
 {
-	
+
+	public static final String MAIN_VIEW_ROUTE = "admin/";
+
 	Map<Tab, Component> tabsToPages = new HashMap<>();
 	Tabs TopMenu = new Tabs();
 	WebUser authenticatedUser;

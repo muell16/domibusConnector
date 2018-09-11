@@ -108,6 +108,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- define project module dependencies -->
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorDomain</artifactId>
@@ -152,6 +153,17 @@
                 <artifactId>domibusConnectorTestData</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorPersistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.domibus.connector</groupId>
+                <artifactId>domibusConnectorStarter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
 
 
             <dependency>
