@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
+import org.apache.cxf.helpers.FileUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -78,7 +79,12 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         String folder = connectorMessageId;
         Path messageFolder = getStoragePath().resolve(folder); // //new File(f.getAbsolutePath() + File.separator + folder);
         try {
+            LOGGER.debug("Creating message folder [{}]", messageFolder);
             Files.createDirectory(messageFolder);
+        } catch (java.nio.file.FileAlreadyExistsException alreadyExists) {
+            if (!Files.isDirectory(messageFolder)) {
+                throw new RuntimeException(String.format("Cannot use directory path [%s] because it is a file!"));
+            }
         } catch (IOException e) {
             throw new RuntimeException(String.format("Cannot create directory [%s]", messageFolder), e);
         }
@@ -132,8 +138,18 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     @PostConstruct
     public void init() {
-        //TODO: check environment: path writable?
-//        File storagePath = getStoragePath();
+        //TODO: check: path writable?
+        Path storagePath = filesystemPersistenceProperties.getStoragePath();
+        File f = storagePath.toFile();
+        if (!f.exists() && filesystemPersistenceProperties.isCreateDir()) {
+            LOGGER.info("Creating missing directory path [{}]", storagePath);
+            f.mkdirs();
+        } else if (!f.exists()) {
+            throw new IllegalArgumentException(String.format("The by configuration (%s) provided file path [%s] does not exist an file path creation (%s) is false!",
+                    "connector.persistence.filesystem.storage-path", //TODO: property service
+                    storagePath,
+                    "connector.persistence.filesystem.create-dir") ); //TODO: property service
+        }
 
     }
 

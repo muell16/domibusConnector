@@ -11,8 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-@EnableAutoConfiguration
-@PropertySource({"classpath:/connector.properties", "classpath:/build-info.properties"})
+@PropertySource({"classpath:connector.properties", "classpath:build-info.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
 	    
@@ -21,28 +20,24 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
     public static ConfigurableApplicationContext runSpringApplication(String[] args) {
-    	SpringApplicationBuilder builder =
-         new SpringApplicationBuilder()
-                .sources(DomibusConnectorStarter.class)
-                .profiles("connector",
-                        //"embedded",     //use embedded database
-                        "gwlink-ws", //use gw webservice based impl
-                        "backendlink-ws" //use backendlink ws based impl
-                );
-    	builder.properties("spring.banner.location=classpath:/ascii/domibusConnector.txt", "spring.output.ansi.enabled=DETECT");
+    	SpringApplicationBuilder builder = new SpringApplicationBuilder();
+        builder = configureApplicationContext(builder);
     	SpringApplication springApplication = builder.build();
         ConfigurableApplicationContext appContext = springApplication.run(args);
         return appContext;
     }
-    
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        application.properties("spring.banner.location=classpath:/ascii/domibusConnector.txt", "spring.output.ansi.enabled=DETECT");
+
+    public static SpringApplicationBuilder configureApplicationContext(SpringApplicationBuilder application) {
         application.profiles("connector",
                 //"embedded",     //use embedded database
                 "gwlink-ws", //use gw webservice based impl
                 "backendlink-ws" //use backendlink ws based impl
         );
-    	return application.sources(DomibusConnectorStarter.class);
+        return application.sources(DomibusConnectorStarter.class);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return configureApplicationContext(application);
     }
 }

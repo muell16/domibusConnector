@@ -11,6 +11,8 @@
 //
 
 
+node {
+
 
 	List MY_ENV = []
 	MY_ENV.add("GIT_SSL_NO_VERIFY=true")
@@ -18,7 +20,6 @@
 
 	withEnv(MY_ENV) {
 
-				node {
 				stage ("Checkout") {
 					cleanWs()
 					def commonJob

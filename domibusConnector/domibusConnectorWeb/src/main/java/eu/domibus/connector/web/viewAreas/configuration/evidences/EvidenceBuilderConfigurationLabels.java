@@ -85,7 +85,7 @@ public class EvidenceBuilderConfigurationLabels {
 	
 	public static final ConfigurationLabel evidencesKeyStorePathLabels = new ConfigurationLabel(
 			"Evidences Keystore",
-			"connector.evidences.keyStore.path",
+			"connector.evidences.key-store.path",
 			"The File-Path to the keystore holding the certificate with which generated evidences are signed. ",
 			"The path ideally should be absolute and with a \"file:\" prefix. Also \"\\\" should be replaced by \"/\" or \"\\\\\"",
 			"Example: file:C:/<anyPath>/connector.jks"
@@ -93,19 +93,19 @@ public class EvidenceBuilderConfigurationLabels {
 	
 	public static final ConfigurationLabel evidencesKeyStorePasswordLabels = new ConfigurationLabel(
 			"Evidences Keystore Password",
-			"connector.evidences.keyStore.password",
+			"connector.evidences.key-store.password",
 			"The Password of the keystore holding the certificate with which generated evidences are signed. "
 			);
 	
 	public static final ConfigurationLabel evidencesKeyAliasLabels = new ConfigurationLabel(
 			"Evidences Key Alias",
-			"connector.evidences.privateKey.alias",
+			"connector.evidences.private-key.alias",
 			"The alias of the private key with which generated evidences are signed. "
 			);
 
 	public static final ConfigurationLabel evidencesKeyPasswordLabels = new ConfigurationLabel(
 			"Evidences Key Password",
-			"connector.evidences.privateKey.password",
+			"connector.evidences.private-key.password",
 			"The Password of the private key with which generated evidences are signed. "
 			);
 }

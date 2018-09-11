@@ -27,9 +27,14 @@ public class ConfigurationUtil {
 	
 	@Autowired
 	ConfigurationProperties configurationProperties;
+
 	
 	public String getPropertyValue(String propertyName) {
-		return env.getProperty(propertyName);
+		String propertyValue = env.getProperty(propertyName);
+		if (propertyValue == null) {
+			throw new RuntimeException(String.format("Did not found property with name [%s] in environment", propertyName));
+		}
+		return propertyValue;
 	}
 	
 	public Div createConfigurationItemDiv(ConfigurationLabel labels, com.vaadin.flow.component.Component c, Object initialValue) {
@@ -52,7 +57,12 @@ public class ConfigurationUtil {
 	}
 	
 	public Div createConfigurationItemComboBoxDiv(ConfigurationLabel labels, ComboBox<String> configComboBox, Collection<String> items) {
-		ConfigurationItemComboBoxDiv comboBoxDiv = new ConfigurationItemComboBoxDiv(configComboBox, labels, items, getPropertyValue(labels.PROPERTY_NAME_LABEL), configurationProperties);
+        String val = getPropertyValue(labels.PROPERTY_NAME_LABEL);
+        //check if initialValue is part of the configured services...
+        if (!items.contains(val)) {
+            items.add(val);
+        }
+		ConfigurationItemComboBoxDiv comboBoxDiv = new ConfigurationItemComboBoxDiv(configComboBox, labels, items, val, configurationProperties);
 		return comboBoxDiv;
 	}
 	

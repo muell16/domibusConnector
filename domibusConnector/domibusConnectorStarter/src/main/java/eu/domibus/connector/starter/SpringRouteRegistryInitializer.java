@@ -26,21 +26,20 @@ public class SpringRouteRegistryInitializer extends RouteRegistryInitializer
     @Override
     public void onStartup(ServletContext servletContext)
             throws ServletException {
-    	System.out.println("Aber JEtzt!");
-        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
-                false);
-        provider.addIncludeFilter(new AnnotationTypeFilter(Route.class));
-        provider.addIncludeFilter(new AnnotationTypeFilter(RouteAlias.class));
-        Set<Class<?>> classSet = provider.findCandidateComponents(PACKAGE)
-                .stream().map(BeanDefinition::getBeanClassName)
-                .map(className -> {
-                    try {
-                        return Class.forName(className);
-                    } catch (ClassNotFoundException e) {
-                        return null;
-                    }
-                }).filter(Objects::nonNull).collect(Collectors.toSet());
-        super.onStartup(classSet, servletContext);
+//        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
+//                false);
+//        provider.addIncludeFilter(new AnnotationTypeFilter(Route.class));
+//        provider.addIncludeFilter(new AnnotationTypeFilter(RouteAlias.class));
+//        Set<Class<?>> classSet = provider.findCandidateComponents(PACKAGE)
+//                .stream().map(BeanDefinition::getBeanClassName)
+//                .map(className -> {
+//                    try {
+//                        return Class.forName(className);
+//                    } catch (ClassNotFoundException e) {
+//                        return null;
+//                    }
+//                }).filter(Objects::nonNull).collect(Collectors.toSet());
+//        super.onStartup(classSet, servletContext);
     }
 
 }
