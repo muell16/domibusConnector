@@ -13,6 +13,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.enums.UserRole;
 
 @Component
@@ -35,12 +36,12 @@ public class ConfigurationUtil {
 		return new ConfigurationItemDiv(c, labels, initialValue, configurationProperties);
 	}
 	
-	public Div createConfigurationItemCheckboxDivWithValue(ConfigurationLabel labels, Checkbox configCheckbox, Boolean initialValue) {
+	public Div createConfigurationItemCheckboxDivWithValue(ConfigurationLabel labels, LumoCheckbox configCheckbox, Boolean initialValue) {
 		ConfigurationItemCheckboxDiv checkboxDiv = new ConfigurationItemCheckboxDiv(configCheckbox, labels, initialValue, configurationProperties);
 		return checkboxDiv;
 	}
 	
-	public Div createConfigurationItemCheckboxDiv(ConfigurationLabel labels, Checkbox configCheckbox) {
+	public Div createConfigurationItemCheckboxDiv(ConfigurationLabel labels, LumoCheckbox configCheckbox) {
 		ConfigurationItemCheckboxDiv checkboxDiv = new ConfigurationItemCheckboxDiv(configCheckbox, labels, Boolean.valueOf(getPropertyValue(labels.PROPERTY_NAME_LABEL)), configurationProperties);
 		return checkboxDiv;
 	}

@@ -18,6 +18,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
@@ -71,13 +72,13 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	ComboBox<String> serviceBox = new ComboBox<String>();
 	ComboBox<String> actionBox = new ComboBox<String>();
 	
-	Checkbox useHttpProxyBox = new Checkbox();
+	LumoCheckbox useHttpProxyBox = new LumoCheckbox();
 	TextField httpProxyHostField = FormsUtil.getFormattedTextField();
 	TextField httpProxyPortField = FormsUtil.getFormattedTextField();
 	TextField httpProxyUserField = FormsUtil.getFormattedTextField();
 	TextField httpProxyPasswordField = FormsUtil.getFormattedTextField();
 	
-	Checkbox useHttpsProxyBox = new Checkbox();
+	LumoCheckbox useHttpsProxyBox = new LumoCheckbox();
 	TextField httpsProxyHostField = FormsUtil.getFormattedTextField();
 	TextField httpsProxyPortField = FormsUtil.getFormattedTextField();
 	TextField httpsProxyUserField = FormsUtil.getFormattedTextField();

@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.forms.WebUserForm;
 import eu.domibus.connector.web.service.WebUserService;
@@ -30,7 +31,7 @@ public class UserDetails extends VerticalLayout {
 	private WebUserService userService;
 	private WebUserForm userForm = new WebUserForm();
 	
-	Label result = new Label("");
+	LumoLabel result = new LumoLabel("");
 
 	public UserDetails(@Autowired WebUserService service) {
 		this.userService = service;
@@ -39,7 +40,7 @@ public class UserDetails extends VerticalLayout {
 		
 		result.getStyle().set("font-size", "20px");
 		resultDiv.add(result);
-		resultDiv.setHeight("100vh");
+//		resultDiv.setHeight("100vh");
 		resultDiv.setWidth("100vw");
 
 		VerticalLayout userDetailsArea = new VerticalLayout(); 
@@ -64,14 +65,14 @@ public class UserDetails extends VerticalLayout {
 		
 		userDetailsArea.add(edit);
 		
-		setSizeFull();
-		userDetailsArea.setHeight("100vh");
+//		setSizeFull();
+//		userDetailsArea.setHeight("100vh");
 		userDetailsArea.setWidth("500px");
 		add(userDetailsArea);
 
 		
 		Div reset = new Div();
-		Label resetPasswordLabel = new Label("Reset the user's password");
+		LumoLabel resetPasswordLabel = new LumoLabel("Reset the user's password");
 		resetPasswordLabel.getStyle().set("font-size", "20px");
 		reset.add(resetPasswordLabel);
 		
@@ -104,7 +105,7 @@ public class UserDetails extends VerticalLayout {
 		
 		add(resultDiv);
 		
-		setHeight("100vh");
+//		setHeight("100vh");
 	}
 	
 	

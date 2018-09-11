@@ -1,10 +1,5 @@
 package eu.domibus.connector.web;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @PropertySource({"classpath:/connector.properties", "classpath:/build-info.properties"})

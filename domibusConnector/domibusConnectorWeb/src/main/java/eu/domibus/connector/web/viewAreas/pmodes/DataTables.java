@@ -23,6 +23,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
@@ -61,7 +62,7 @@ public class DataTables extends VerticalLayout {
 	private Div createServicesDiv() {
 		Div services = new Div();
 		services.setWidth("100vw");
-		Label servicesLabel = new Label();
+		LumoLabel servicesLabel = new LumoLabel();
 		servicesLabel.setText("DOMIBUS_CONNECTOR_SERVICE:");
 		services.add(servicesLabel);
 		
@@ -85,7 +86,7 @@ public class DataTables extends VerticalLayout {
 	private Div createActionsDiv() {
 		Div actions = new Div();
 		actions.setWidth("100vw");
-		Label actionsLabel = new Label();
+		LumoLabel actionsLabel = new LumoLabel();
 		actionsLabel.setText("DOMIBUS_CONNECTOR_ACTION:");
 		actions.add(actionsLabel);
 		
@@ -108,7 +109,7 @@ public class DataTables extends VerticalLayout {
 	private Div createPartiesDiv() {
 		Div parties = new Div();
 		parties.setWidth("100vw");
-		Label partiesLabel = new Label();
+		LumoLabel partiesLabel = new LumoLabel();
 		partiesLabel.setText("DOMIBUS_CONNECTOR_PARTY:");
 		parties.add(partiesLabel);
 		

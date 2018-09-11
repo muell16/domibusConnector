@@ -32,8 +32,8 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.persistence.model.enums.UserRole;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
-import eu.domibus.connector.web.MainView;
 import eu.domibus.connector.web.dto.WebUser;
+import eu.domibus.connector.web.view.MainView;
 import eu.domibus.connector.web.viewAreas.configuration.backend.BackendConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.environment.EnvironmentConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfiguration;

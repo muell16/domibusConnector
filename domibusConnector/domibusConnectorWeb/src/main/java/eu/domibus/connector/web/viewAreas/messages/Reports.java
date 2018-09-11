@@ -38,7 +38,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.spring.annotation.UIScope;
+import com.vaadin.flow.theme.lumo.Lumo;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebReport;
 import eu.domibus.connector.web.dto.WebReportEntry;
 import eu.domibus.connector.web.service.WebReportsService;
@@ -81,7 +83,7 @@ public class Reports extends VerticalLayout {
 		toDate.setEnabled(true);
 		details.add(toDate);
 		
-		Checkbox includeEvidences = new Checkbox();
+		LumoCheckbox includeEvidences = new LumoCheckbox();
 		includeEvidences.setLabel("Include sent evidences as messages");
 		includeEvidences.addValueChangeListener(e -> includeEvidencesValue = includeEvidences.getValue().booleanValue());
 		details.add(includeEvidences);
@@ -97,7 +99,7 @@ public class Reports extends VerticalLayout {
 		reportFormArea.setWidth("300px");
 		add(reportFormArea);
 
-		setHeight("100vh");
+//		setHeight("100vh");
 	}
 	
 	
@@ -191,7 +193,7 @@ public class Reports extends VerticalLayout {
 			
 			reportDataArea.add(downloadExcel);
 			
-			reportDataArea.setHeight("100vh");
+//			reportDataArea.setHeight("100vh");
 			reportDataArea.setWidth("100vw");
 			add(reportDataArea);
 		}

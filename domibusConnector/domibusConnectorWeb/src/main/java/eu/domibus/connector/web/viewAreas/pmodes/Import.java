@@ -16,6 +16,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
@@ -56,7 +57,7 @@ public class Import extends VerticalLayout {
 	private void showOutput(byte[] contents, boolean success) {
 		VerticalLayout areaResult = new VerticalLayout();
 		
-		Label resultLabel = new Label();
+		LumoLabel resultLabel = new LumoLabel();
 		if(success) {
 			resultLabel.setText("PModes successfully imported!");
 			resultLabel.getStyle().set("color", "green");

@@ -2,6 +2,8 @@ package eu.domibus.connector.web.viewAreas.configuration.util;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
+
 public class ConfigurationItemCheckboxDiv extends ConfigurationItemDiv {
 
 	/**
@@ -9,7 +11,7 @@ public class ConfigurationItemCheckboxDiv extends ConfigurationItemDiv {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public ConfigurationItemCheckboxDiv(Checkbox configurationItem, ConfigurationLabel labels, Boolean initialValue, ConfigurationProperties configurationProperties) {
+	public ConfigurationItemCheckboxDiv(LumoCheckbox configurationItem, ConfigurationLabel labels, Boolean initialValue, ConfigurationProperties configurationProperties) {
 		super(configurationItem,labels, initialValue, configurationProperties);
 		configurationItem.setValue(initialValue);
 		configurationItem.setLabel(labels.CONFIGURATION_ELEMENT_LABEL);

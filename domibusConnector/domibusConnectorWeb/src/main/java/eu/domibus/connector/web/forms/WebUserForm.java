@@ -9,6 +9,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
 
@@ -17,7 +18,7 @@ public class WebUserForm extends FormLayout{
 
 	private TextField username = FormsUtil.getFormattedTextFieldReadOnly();
 	private ComboBox<UserRole> roleBox = new ComboBox<UserRole>("",EnumSet.allOf(UserRole.class));
-	private Checkbox lockedBox = new Checkbox();
+	private LumoCheckbox lockedBox = new LumoCheckbox();
 	private TextField createdString = FormsUtil.getFormattedTextFieldReadOnly();
 	
 	private WebUser user = null;

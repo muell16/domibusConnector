@@ -23,6 +23,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
@@ -41,7 +42,7 @@ public class UserList extends VerticalLayout {
 
 	TextField usernameFilterText = new TextField();
 	ComboBox<UserRole> roleFilterBox = new ComboBox<UserRole>();
-	Checkbox lockedFilterBox = new Checkbox();
+	LumoCheckbox lockedFilterBox = new LumoCheckbox();
 	
 	public void setUsersView(Users usersView) {
 		this.usersView = usersView;

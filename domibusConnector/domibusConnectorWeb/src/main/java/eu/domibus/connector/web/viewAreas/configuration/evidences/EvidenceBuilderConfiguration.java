@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
@@ -53,7 +54,7 @@ public class EvidenceBuilderConfiguration  extends VerticalLayout {
 
 	ConfigurationUtil util;
 	
-	Checkbox useEvidenceTimeout = new Checkbox();
+	LumoCheckbox useEvidenceTimeout = new LumoCheckbox();
 	TextField checkIntervalField = FormsUtil.getFormattedTextField();
 	TextField relayTimeoutField = FormsUtil.getFormattedTextField();
 	TextField deliveryTimoutField = FormsUtil.getFormattedTextField();

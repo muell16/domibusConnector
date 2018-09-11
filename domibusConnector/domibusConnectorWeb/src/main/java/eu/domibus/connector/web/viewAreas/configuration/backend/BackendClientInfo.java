@@ -14,6 +14,7 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemCheckboxDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemTextFieldDiv;
@@ -49,13 +50,13 @@ public class BackendClientInfo extends VerticalLayout{
 		util.unregisterComponent(backendKeyAlias);
 		add(backendKeyAliasDiv);
 		
-		Checkbox defaultBackend = new Checkbox();
+		LumoCheckbox defaultBackend = new LumoCheckbox();
 		Div defaultBackendDiv = util.createConfigurationItemCheckboxDivWithValue(BackendClientInfoLabels.backendClientInfoDefaultLabels, defaultBackend, domibusConnectorBackendClientInfo.isDefaultBackend());
 		defaultBackend.addValueChangeListener(e -> newBackendClientInfo.setDefaultBackend(e.getValue()));
 		util.unregisterComponent(defaultBackend);
 		add(defaultBackendDiv);
 		
-		Checkbox enabled = new Checkbox();
+		LumoCheckbox enabled = new LumoCheckbox();
 		Div enabledDiv = util.createConfigurationItemCheckboxDivWithValue(BackendClientInfoLabels.backendClientInfoEnabledLabels, enabled, domibusConnectorBackendClientInfo.isEnabled());
 		enabled.addValueChangeListener(e -> newBackendClientInfo.setEnabled(e.getValue()));
 		util.unregisterComponent(enabled);
@@ -86,7 +87,7 @@ public class BackendClientInfo extends VerticalLayout{
 		
 		List<DomibusConnectorService> services = backendConfiguration.getServiceList();
 		for(DomibusConnectorService service:services) {
-			Checkbox serviceBox = new Checkbox(service.getService());
+			LumoCheckbox serviceBox = new LumoCheckbox(service.getService());
 			if(domibusConnectorBackendClientInfo.getServices().contains(service)) {
 				newBackendClientInfo.getServices().add(service);
 				serviceBox.setValue(true);

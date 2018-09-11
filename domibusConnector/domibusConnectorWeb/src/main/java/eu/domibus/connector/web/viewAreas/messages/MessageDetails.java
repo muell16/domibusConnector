@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.forms.ConnectorMessageForm;
@@ -37,25 +36,27 @@ public class MessageDetails extends VerticalLayout {
 		messageDetailsArea.add(messageForm);
 		//setAlignItems(Alignment.START);
 		messageForm.setEnabled(true);
-		setSizeFull();
-		messageDetailsArea.setHeight("100vh");
+//		messageDetailsArea.setHeight("100vh");
 		messageDetailsArea.setWidth("500px");
 		add(messageDetailsArea);
+		
+		add(messageEvidencesArea);
 
-		setHeight("100vh");
+		setSizeFull();
+//		setHeight("100vh");
 	}
 
 
 	public void loadMessageDetails(String connectorMessageId) {
 		WebMessageDetail messageByConnectorId = messageService.getMessageByConnectorId(connectorMessageId);
-		messageForm.setConnectorMessage(messageByConnectorId, this);
+		messageForm.setConnectorMessage(messageByConnectorId);
 
 		if(!messageByConnectorId.getEvidences().isEmpty()) {
 			messageEvidencesArea.removeAll();
 
 			Div evidences = new Div();
 			evidences.setWidth("100vw");
-			Label evidencesLabel = new Label();
+			LumoLabel evidencesLabel = new LumoLabel();
 			evidencesLabel.setText("Evidences:");
 			evidencesLabel.getStyle().set("font-size", "20px");
 			evidences.add(evidencesLabel);
@@ -89,7 +90,7 @@ public class MessageDetails extends VerticalLayout {
 			messageEvidencesArea.add(details);
 
 			messageEvidencesArea.setWidth("100vw");
-			add(messageEvidencesArea);
+//			add(messageEvidencesArea);
 			messageEvidencesArea.setVisible(true);
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep.LabelsPosition;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -36,12 +37,11 @@ public class ConnectorMessageForm extends FormLayout {
 	private TextField rejectedString = FormsUtil.getFormattedTextFieldReadOnly();
 	private TextField createdString = FormsUtil.getFormattedTextFieldReadOnly();
 	
-	private WebMessageDetail message = null;
-
 	private Binder<WebMessageDetail> binder = new Binder<>(WebMessageDetail.class);
 	
 	public ConnectorMessageForm() {
 		fillForm();
+//		setResponsiveSteps(new ResponsiveStep("500px", 2, LabelsPosition.TOP));
 	}
 	
 	private void fillForm() {
@@ -66,10 +66,9 @@ public class ConnectorMessageForm extends FormLayout {
 		addFormItem(createdString, "Message created at"); 
 	}
 
-	public void setConnectorMessage(WebMessageDetail message, MessageDetails messageDetails) {
+	public void setConnectorMessage(WebMessageDetail message) {
 		this.removeAll();
 		fillForm();
-		this.message = message;
 		binder.setBean(message);
 		
 		

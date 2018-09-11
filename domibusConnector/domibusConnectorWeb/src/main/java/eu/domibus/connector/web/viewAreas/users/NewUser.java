@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.service.WebUserService;
@@ -51,10 +52,10 @@ public class NewUser extends VerticalLayout {
 		
 		Div createUserResult = new Div();
 		
-		Label resultLabel = new Label("");
+		LumoLabel resultLabel = new LumoLabel("");
 		resultLabel.getStyle().set("font-size", "20px");
 		createUserResult.add(resultLabel);
-		createUserResult.setHeight("100vh");
+//		createUserResult.setHeight("100vh");
 		createUserResult.setWidth("100vw");
 		
 		Button createUser = new Button(
@@ -73,7 +74,7 @@ public class NewUser extends VerticalLayout {
 		newUserArea.add(createUser);
 		
 		
-		setHeight("100vh");
+//		setHeight("100vh");
 		setWidth("100vw");
 		add(newUserArea);
 		add(createUserResult);

@@ -16,6 +16,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
+import eu.domibus.connector.web.component.LumoLabel;
+
 @HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @UIScope
@@ -34,7 +36,7 @@ public class Info extends VerticalLayout implements InitializingBean {
 	@Value("${spring.datasource.username:not available}")
 	public String dbUsername;
 	
-	Label connectorVersion = new Label("");
+	LumoLabel connectorVersion = new LumoLabel("");
 	TextField dbUrlTextField;
 	TextField dbDriverClassTextField;
 	TextField dbUsernameTextField;
@@ -54,7 +56,7 @@ public class Info extends VerticalLayout implements InitializingBean {
 		
 		VerticalLayout connectedDatabaseLayout = new VerticalLayout();
 		
-		Label header = new Label("Connected database information:");
+		LumoLabel header = new LumoLabel("Connected database information:");
 		header.getStyle().set("font-size", "20px");
 		
 		connectedDatabaseLayout.add(header);
@@ -87,7 +89,7 @@ public class Info extends VerticalLayout implements InitializingBean {
 		
 		HorizontalLayout connectorVersionLayout = new HorizontalLayout();
 		
-		Label connectorVersionLabel = new Label("domibusConnector Version:");
+		LumoLabel connectorVersionLabel = new LumoLabel("domibusConnector Version:");
 		connectorVersionLabel.getStyle().set("font-size", "20px");
 		
 //		connectorVersion = new TextField("domibusConnector Version: ");
@@ -97,6 +99,7 @@ public class Info extends VerticalLayout implements InitializingBean {
 		
 		connectorVersionLayout.add(connectorVersionLabel);
 		connectorVersionLayout.add(connectorVersion);
+		connectorVersionLayout.setPadding(true);
 		
 		areaConnectorVersion.add(connectorVersionLayout);
 		areaConnectorVersion.setVisible(true);
