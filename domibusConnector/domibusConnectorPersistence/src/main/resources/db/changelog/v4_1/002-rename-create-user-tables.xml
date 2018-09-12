@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <property name="varchar.type" value="VARCHAR" />
+    <property name="varchar.type" value="VARCHAR2" dbms="oracle" />
+
+    <property name="varchar.length.type" value="" />
+    <property name="varchar.length.type" value="CHAR" dbms="oracle" />
+
+    <property name="varchar255.type" value="VARCHAR(255)" />
+    <property name="varchar255.type" value="VARCHAR2(255 CHAR)" dbms="oracle" />
+
+    <property name="varchar512.type" value="VARCHAR(512)" />
+    <property name="varchar512.type" value="VARCHAR2(512 CHAR)" dbms="oracle" />
+
+    <property name="varchar1024.type" value="VARCHAR(1024)" />
+    <property name="varchar1024.type" value="VARCHAR2(1024 CHAR)" dbms="oracle" />
+
+    <property name="id.type" value="BIGINT" dbms="postgresql" />
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
+    <property name="id.type" value="NUMBER(10)" dbms="oracle" />
+
+    <property name="text.type" value="TEXT" dbms="h2,postgresql" />
+    <property name="text.type" value="CLOB" dbms="oracle" />
+    <property name="text.type" value="longtext" dbms="mysql" />
+
+    <property name="blob" value="BLOB" dbms="oracle,h2,postgresql"/>
+    <property name="blob" value="longblob" dbms="mysql" />
+
+
+
+    <changeSet author="domibusConnector" id="changelog_4.1_drop_pk">
+        <dropPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" />
+    </changeSet>
+
+    <changeSet author="domibusConnector" id="changelog_4.1_rename_user_table">
+        <renameTable oldTableName="DOMIBUS_WEBADMIN_USER" newTableName="DOMIBUS_CONNECTOR_USER" />
+    </changeSet>
+
+
+
+    <changeSet author="domibusConnector" id="changelog_4.1_add_user_columns">
+        <!--<renameColumn tableName="DOMIBUS_CONNECTOR_USER" oldColumnName="PROPERTIES_KEY" newColumnName="PROPERTY_KEY" />-->
+        <!--<renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="PROPERTIES_VALUE" newColumnName="PROPERTY_VALUE" />-->
+        <addColumn tableName="DOMIBUS_CONNECTOR_USER">
+            <column name="ID" type="${id.type}"></column>
+            <column name="ROLE" type="${varchar512.type}"></column>
+            <column name="LOCKED" type="BOOLEAN" />
+            <column name="NUMBER_OF_GRACE_LOGINS" type="integer" />
+            <column name="GRACE_LOGINS_USED" type="integer" />
+            <column name="CREATED" type="TIMESTAMP" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="domibusConnector" id="changelog_4.1_create_password_table">
+        <createTable tableName="DOMIBUS_CONNECTOR_USER_PWD">
+            <column name="ID" type="${id.type}"></column>
+            <column name="USER_ID" type="${id.type}"></column>
+            <column name="PASSWORD" type="${varchar1024.type}"></column>
+            <column name="SALT" type="${varchar512.type}"></column>
+            <column name="CURRENT_PWD" type="BOOLEAN"></column>
+            <column name="INITIAL_PWD" type="BOOLEAN"></column>
+            <column name="CREATED" type="TIMESTAMP"></column>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>

@@ -10,9 +10,9 @@
             because there is no previous db state before 3.5
     -->
     
-    <include file="db/changelog/v003/default/initial-changelog-domibus.xml"/> 
-    <include file="db/changelog/v003/default/initial-changelog-webadmin.xml"/> 
-    <include file="db/changelog/v003/default/initial-changelog-quartz.xml"/>    
+    <include file="db/changelog/v3_0/default/initial-changelog-domibus.xml"/>
+    <include file="db/changelog/v3_0/default/initial-changelog-webadmin.xml"/>
+    <include file="db/changelog/v3_0/default/initial-changelog-quartz.xml"/>
     
     
 </databaseChangeLog> 
