@@ -2,7 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 
     <property name="varchar.type" value="VARCHAR" />
@@ -47,8 +47,7 @@
         <!--<renameColumn tableName="DOMIBUS_CONNECTOR_USER" oldColumnName="PROPERTIES_KEY" newColumnName="PROPERTY_KEY" />-->
         <!--<renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="PROPERTIES_VALUE" newColumnName="PROPERTY_VALUE" />-->
         <addColumn tableName="DOMIBUS_CONNECTOR_USER">
-            <column name="ID" type="${id.type}"></column>
-            <column name="ROLE" type="${varchar512.type}"></column>
+            <column name="ID" type="${id.type}" />
             <column name="LOCKED" type="BOOLEAN" />
             <column name="NUMBER_OF_GRACE_LOGINS" type="integer" />
             <column name="GRACE_LOGINS_USED" type="integer" />
@@ -56,9 +55,50 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="domibusConnector" id="changelog_4.1_add_user_columns_id">
+        <preConditions onFail="MARK_RAN">
+                <dbms type="mysql" />
+        </preConditions>
+        <addColumn tableName="DOMIBUS_CONNECTOR_USER">
+            <column name="IDG" type="${id.type}" autoIncrement="true">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="domibusConnector" id="changelog_4.1_add_user_columns_id_mysql" >
+        <!-- mysql has no support for sequences! -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="mysql" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="GEN" />
+        <addColumn tableName="DOMIBUS_CONNECTOR_USER">
+            <column name="IDG" type="${id.type}" defaultValueSequenceNext="GEN">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <dropSequence sequenceName="GEN" />
+    </changeSet>
+
+    <changeSet author="domibusConnector" id="changelog_4.1_user_table_copy_generated_to_id">
+        <!-- copy generated values into the pk column -->
+        <sql>UPDATE DOMIBUS_CONNECTOR_USER SET ID=IDG</sql>
+        <dropColumn tableName="DOMIBUS_CONNECTOR_USER" columnName="IDG" />
+    </changeSet>
+
+
+    <changeSet author="domibusConnector" id="changelog_4.1_user_table_primary_key">
+        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_USER" columnName="ID" columnDataType="${id.type}" />
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_USER" columnNames="ID" constraintName="PK_CONNECTOR_USER" />
+    </changeSet>
+
     <changeSet author="domibusConnector" id="changelog_4.1_create_password_table">
         <createTable tableName="DOMIBUS_CONNECTOR_USER_PWD">
-            <column name="ID" type="${id.type}"></column>
+            <column name="ID" type="${id.type}" >
+                <constraints nullable="false" />
+            </column>
             <column name="USER_ID" type="${id.type}"></column>
             <column name="PASSWORD" type="${varchar1024.type}"></column>
             <column name="SALT" type="${varchar512.type}"></column>
@@ -68,5 +108,47 @@
         </createTable>
     </changeSet>
 
+    <!--<changeSet author="domibusConnector" id="changelog_4.1_user_pw_auto_increment" dbms="mysql">-->
+        <!--<addColumn tableName="DOMIBUS_CONNECTOR_USER_PWD">-->
+            <!--<column name="ID" type="${id.type}" autoIncrement="true"></column>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+    <!--<changeSet author="domibusConnector" id="changelog_4.1_user_pw_sequence">-->
+        <!--<preConditions>-->
+            <!--<not>-->
+                <!--<dbms type="mysql" />-->
+            <!--</not>-->
+        <!--</preConditions>-->
+        <!--<addColumn tableName="DOMIBUS_CONNECTOR_USER_PWD">-->
+            <!--<column name="ID" type="${id.type}" ></column>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+
+
+    <changeSet author="domibusConnector" id="changelog_4.1_user_pw_table_primary_key">
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_USER_PWD" columnNames="ID" constraintName="PK_CONNECTOR_PASSWORD" />
+    </changeSet>
+
+
+
+
+    <changeSet author="domibusConnector" id="changelog_4.1_update_admin_user">
+        <update tableName="DOMIBUS_CONNECTOR_USER">
+            <column name="NUMBER_OF_GRACE_LOGINS" value="5" />
+            <column name="GRACE_LOGINS_USED" value="0" />
+            <column name="LOCKED" value="false" />
+            <where>USERNAME='admin'</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="domibusConnector" id="changelog_4.1_update_admin_password">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_USER_PWD (ID, USER_ID, PASSWORD, SALT, CURRENT_PWD, INITIAL_PWD) VALUES
+            ( 1,
+            (SELECT ID FROM DOMIBUS_CONNECTOR_USER WHERE USERNAME = 'admin'),
+            '2bf5e637d0d82a75ca43e3be85df2c23febffc0cc221f5e010937005df478a19b5eaab59fe7e4e97f6b43ba648c169effd432e19817f386987d058c239236306',
+            '5b424031616564356639',
+            1, 1)
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

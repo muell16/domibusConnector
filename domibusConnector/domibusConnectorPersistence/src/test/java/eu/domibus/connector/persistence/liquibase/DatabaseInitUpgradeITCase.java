@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Properties;
 import javax.sql.DataSource;
+
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.change.Change;
@@ -22,8 +24,9 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.SqlStatement;
-import org.junit.jupiter.Disabled;
-import org.junit.jupiter.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -215,11 +218,13 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     
 
 //@Ignore    
-    @Test(timeout=20000)
+    @Test //(timeout=20000)
     public void testInitial003Database_h2() {
-        Properties props = super.loadH2TestProperties();
-        props.put("spring.datasource.url", "jdbc:h2:mem:install003");
-        checkInital003DB("db_h2", props);  
+        Assertions.assertTimeoutPreemptively(Duration.ofMinutes(2), ()-> {
+            Properties props = super.loadH2TestProperties();
+            props.put("spring.datasource.url", "jdbc:h2:mem:install003");
+            checkInital003DB("db_h2", props);
+        });
     }
 
     @Test //(timeout=20000)
@@ -231,4 +236,10 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     }
     
     //TODO: oracle tests
+
+
+
+
+
+
 }

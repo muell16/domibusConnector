@@ -10,8 +10,8 @@
     </changeSet>
 
     <changeSet author="domibusConnector" id="changelog_4.1_rename_property_columns">
-        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="PROPERTIES_KEY" newColumnName="PROPERTY_KEY" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="PROPERTIES_VALUE" newColumnName="PROPERTY_VALUE" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="KEY" newColumnName="PROPERTY_KEY" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" />
     </changeSet>
     
     
