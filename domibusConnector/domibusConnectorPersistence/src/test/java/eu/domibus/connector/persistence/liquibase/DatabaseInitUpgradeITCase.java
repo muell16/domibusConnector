@@ -22,8 +22,8 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.SqlStatement;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.Disabled;
+import org.junit.jupiter.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -80,15 +80,15 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     }
 
 
-    @Test(timeout=20000)
+    @Test //(timeout=20000)
     public void testInstall004Database_h2() {
         Properties props = loadH2TestProperties();
         props.put("spring.datasource.url", "jdbc:h2:mem:install004");
         checkInstallDB("db_h2", props);  
     }
 
-    @Test(timeout=20000)
-//    @Ignore
+    @Test //(timeout=20000)
+    @Disabled
     // setenv: test.mysql.db.enabled=true
     public void testInstall004Database_mysql() {        
         Properties p = loadMysqlTestProperties();
@@ -96,14 +96,15 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     }
 
 
-    @Test(timeout=20000)
+    @Test //(timeout=20000)
     public void testMigrate3to4_h2() throws SQLException, LiquibaseException, DatabaseException, IOException {
         Properties props = loadH2TestProperties();
         props.put("spring.datasource.url", "jdbc:h2:mem:3to4db");
         testMigrate3to4Database(H2_PROFILE, props);
     }
 
-    @Test(timeout=20000)
+    @Test //(timeout=20000)
+    @Disabled
     public void testMigrate3to4_mysql() throws SQLException, LiquibaseException, DatabaseException, IOException {
         Properties props = loadMysqlTestProperties();
         //props.setProperty("spring.datasource.url", "jdbc:h2:mem:");
@@ -115,7 +116,7 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
      */
     public void testMigrate3to4Database(String profile, Properties props) throws SQLException, DatabaseException, LiquibaseException, FileNotFoundException, IOException {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
-        props.put("spring.liquibase.change-log","classpath:/db/changelog/v004/upgrade-3to4.xml");
+        props.put("spring.liquibase.change-log","classpath:/db/changelog/v4_0/upgrade-3to4.xml");
 //        if (H2_PROFILE.equalsIgnoreCase(profile)) {
         props.put("spring.liquibase.enabled", "false"); //disable liquibase!
 //        } else {
@@ -147,7 +148,7 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         FileOutputStream fstream = new FileOutputStream(sqlFile);
         
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-        Liquibase liquibase = new Liquibase("db/changelog/v004/upgrade-3to4.xml", new ClassLoaderResourceAccessor(), database);
+        Liquibase liquibase = new Liquibase("db/changelog/v4_0/upgrade-3to4.xml", new ClassLoaderResourceAccessor(), database);
         
         DatabaseChangeLog databaseChangeLog = liquibase.getDatabaseChangeLog();
         for (ChangeSet set : databaseChangeLog.getChangeSets()) {
@@ -185,7 +186,7 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
     */
     protected void checkInital003DB(String profile, Properties props)  {
         System.out.println("\n\n\n######################\nRUNNING TEST: checkInital003DB");
-        props.put("spring.liquibase.change-log","classpath:/db/changelog/v003/initial-3.0.xml");
+        props.put("spring.liquibase.change-log","classpath:/db/changelog/v3_0/initial-3.0.xml");
         
         LOGGER.info("Running test with profile [{}] and \nProperties: [{}]", profile, props);
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(TestConfiguration.class)                
@@ -221,8 +222,9 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
         checkInital003DB("db_h2", props);  
     }
 
-    @Test(timeout=20000)
-    @Ignore
+    @Test //(timeout=20000)
+    //@Ignore
+    @Disabled
     public void testInitial003Database_mysql() {        
         Properties p = loadMysqlTestProperties();
         checkInital003DB("db_mysql", p);  
