@@ -6,8 +6,10 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
@@ -33,7 +35,7 @@ public class TestGW {
     public static ConfigurableApplicationContext startContext(String[] properties) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         SpringApplication springApp = builder.sources(TestGW.class)
-                .web(true)
+                .web(WebApplicationType.SERVLET)
                 .properties(properties)
                 .profiles("testgw")
                 .build();
@@ -43,7 +45,7 @@ public class TestGW {
     public static ConfigurableApplicationContext startContextWithArgs(String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         SpringApplication springApp = builder.sources(TestGW.class)
-                .web(true)
+                .web(WebApplicationType.SERVLET)
                 .profiles("testgw")
                 .build();
         return springApp.run(args);
