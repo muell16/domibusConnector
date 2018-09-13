@@ -19,12 +19,13 @@
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
-        <module>domibusConnectorDistribution</module>
         <module>domibusConnectorStarter</module>
         <module>domibusConnectorWebLib</module>
         <module>domibusConnectorWeb</module>
         <module>domibusConnectorControllerLIB</module>
         <module>domibusConnectorLinkCommon</module>
+        <!-- should be the last module -->
+        <module>domibusConnectorDistribution</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
