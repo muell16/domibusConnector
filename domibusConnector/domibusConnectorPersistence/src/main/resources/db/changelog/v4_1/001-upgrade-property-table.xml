@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+    
+    <changeSet author="domibusConnector" id="changelog_4.1_rename_property_table">
+        <renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTY" newTableName="DOMIBUS_CONNECTOR_PROPERTY" />
+    </changeSet>
+
+    <changeSet author="domibusConnector" id="changelog_4.1_rename_property_columns">
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="KEY" newColumnName="PROPERTY_KEY" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" />
+    </changeSet>
+    
+    
+</databaseChangeLog>

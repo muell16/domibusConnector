@@ -100,14 +100,10 @@
     </build>
 	
     <dependencies>
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorController</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorStarter</artifactId>
+            <artifactId>domibusConnectorWeb</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
