@@ -109,6 +109,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
         try {
 			securityToolkit.buildContainer(message);
 		} catch (DomibusConnectorSecurityException se) {
+        	LOGGER.warn("security toolkit build container failed. The exception will be logged to database", se);
 			createSubmissionRejectionAndReturnIt(message, se.getMessage());			
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
