@@ -1,12 +1,13 @@
 package eu.domibus.connector.configuration.testdata;
 
-import com.sun.istack.internal.NotNull;
+
 import eu.domibus.connector.configuration.annotation.ConfigurationDescription;
 import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
 @Component
 @ConfigurationProperties(prefix="connector.configuration")
