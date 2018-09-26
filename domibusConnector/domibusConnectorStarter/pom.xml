@@ -92,12 +92,16 @@
         </dependency>
 
         <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar is not in public maven repo -->
-        <dependency>
+        <!-- <dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc7</artifactId>
 			<version>12.1.0.1</version>
             <scope>provided</scope>
-		</dependency>
+		</dependency> -->
+		<!-- <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency> -->
 
     </dependencies>
 

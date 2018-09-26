@@ -5,16 +5,37 @@
 		<format>war</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
-
-	<files>
+	<baseDirectory>${project.basedir}/target</baseDirectory>
+	
+  <!-- <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</include>
+      </includes>
+    </dependencySet>
+  </dependencySets> -->
+	<!-- <files>
 
 		<file>
-			<!--<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war-->
-			<!--</source>-->
+			<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war
+			</source>
 			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</source>
-			<outputDirectory>../</outputDirectory>
+			<outputDirectory>.</outputDirectory>
 			<destName>domibusConnector-${project.version}.war</destName>
 		</file>
 
-	</files>
+	</files> -->
+	<fileSets>
+
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}
+			</directory>
+			<!-- <outputDirectory>/documentation/properties
+			</outputDirectory> -->
+			<includes>
+				<include>*.*</include>
+			</includes>
+		</fileSet>
+	
+	</fileSets>
 </assembly>

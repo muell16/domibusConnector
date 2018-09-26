@@ -58,7 +58,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
                                 <descriptor>src/main/assembly/assemblyWebApp.xml</descriptor>
-                                <descriptor>src/main/assembly/assemblyWebAppWAROnly.xml</descriptor>
+                                <!-- <descriptor>src/main/assembly/assemblyWebAppWAROnly.xml</descriptor> -->
                             </descriptors>
                         </configuration>
                     </execution>
