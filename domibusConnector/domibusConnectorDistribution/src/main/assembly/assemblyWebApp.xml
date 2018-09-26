@@ -54,6 +54,14 @@
 			<outputDirectory>/webapp</outputDirectory>
 			<destName>domibusConnector.war</destName>
 		</file>
+		
+		<!-- <file>
+			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
+			</source>
+			
+			<outputDirectory>${project.basedir}/target</outputDirectory>
+			<destName>domibusConnector-${project.version}.war</destName>
+		</file> -->
 
 		<file>
 			<source>${project.basedir}/../domibusConnectorTest/domibusConnectorDatabaseInitializer/target/domibusConnectorDatabaseInitializer-${project.version}.jar
