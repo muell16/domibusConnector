@@ -2,7 +2,6 @@ package eu.domibus.connector.lib.spring.configuration;
 
 import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -31,7 +30,7 @@ public class KeyAndKeyStoreAndTrustStoreConfigurationProperties {
     @NestedConfigurationProperty
     @Valid
     @NotNull
-    private KeyConfigurationProperties key;
+    private KeyConfigurationProperties privateKey;
 
 
     /**
@@ -50,12 +49,12 @@ public class KeyAndKeyStoreAndTrustStoreConfigurationProperties {
         this.keyStore = keyStore;
     }
 
-    public KeyConfigurationProperties getKey() {
-        return key;
+    public KeyConfigurationProperties getPrivateKey() {
+        return privateKey;
     }
 
-    public void setKey(KeyConfigurationProperties key) {
-        this.key = key;
+    public void setPrivateKey(KeyConfigurationProperties privateKey) {
+        this.privateKey = privateKey;
     }
 
     public StoreConfigurationProperties getTrustStore() {

@@ -1,13 +1,9 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -18,7 +14,6 @@ import java.util.Set;
 
 import static eu.domibus.connector.lib.spring.configuration.validation.ConstraintViolationSetHelper.printSet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 public class KeyFromKeyAndTrustStoreLoadableTest {
 
@@ -37,7 +32,7 @@ public class KeyFromKeyAndTrustStoreLoadableTest {
         props = new KeyAndKeyStoreAndTrustStoreConfigurationProperties();
 
         props.setKeyStore(ConstraintViolationSetHelper.generateTestStore());
-        props.setKey(ConstraintViolationSetHelper.generateTestKeyConfig());
+        props.setPrivateKey(ConstraintViolationSetHelper.generateTestKeyConfig());
         props.setTrustStore(ConstraintViolationSetHelper.generateTestStore());
 
     }

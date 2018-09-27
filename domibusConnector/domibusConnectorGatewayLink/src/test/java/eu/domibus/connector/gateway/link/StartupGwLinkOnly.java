@@ -45,7 +45,7 @@ public class StartupGwLinkOnly {
     public static ConfigurableApplicationContext startGwContext(String[] profiles, String[] properties) {
         SpringApplication application = new SpringApplicationBuilder()
                 .sources(StartupGwLinkOnly.class)
-                .web(true)
+//                .web(true)
                 .profiles(profiles)
                 .properties(properties)
                 .build();

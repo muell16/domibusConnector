@@ -28,7 +28,7 @@ public class KeyFromKeyAndTrustStoreLoadable implements ConstraintValidator<Chec
 
         context.disableDefaultConstraintViolation();
 
-        return HelperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getKey());
+        return HelperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getPrivateKey());
 
     }
 }
