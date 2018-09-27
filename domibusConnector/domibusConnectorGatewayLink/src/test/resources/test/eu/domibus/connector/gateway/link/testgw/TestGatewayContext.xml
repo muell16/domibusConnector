@@ -43,8 +43,54 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
     >
     </jaxws:endpoint>
 
+    <bean id="encryptProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="org.apache.ws.security.crypto.provider">org.apache.wss4j.common.crypto.Merlin</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.type">jks</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.password">12345</prop>
+                <prop key="org.apache.ws.security.crypto.merlin.keystore.file">#{ws.backendclient.name}.jks</prop>
+            </props>
+        </property>
+    </bean>
 
-        	<!--<jaxws:client -->
+
+    <!--<jaxws:client id="backendClient"-->
+                  <!--serviceClass="eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService"-->
+                  <!--address="${connector.backend.ws.address}"-->
+                  <!--serviceName="s:DomibusConnectorBackendWSService"-->
+                  <!--wsdlLocation="${connector.backend.ws.address}?wsdl"-->
+
+                  <!--xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"-->
+                  <!--xmlns:s="http://connector.domibus.eu/ws/backend/webservice"-->
+    <!--&gt;-->
+
+        <!--<jaxws:properties>-->
+            <!--&lt;!&ndash;            <entry privateKey="security.username" value="bob" />-->
+                        <!--<entry privateKey="security.password" value="test" />            &ndash;&gt;-->
+
+            <!--<entry key="security.encryption.properties" value-ref="encryptProperties" />-->
+            <!--<entry key="security.signature.properties" value-ref="encryptProperties"  />-->
+            <!--<entry key="security.encryption.username" value="connector" />-->
+            <!--<entry key="security.signature.username" value="${ws.backendclient.name}" />-->
+
+            <!--<entry key="security.enable.streaming" value="true" />-->
+            <!--&lt;!&ndash;            <entry privateKey="mtom-enabled" value="true"/> &ndash;&gt;-->
+
+        <!--</jaxws:properties>-->
+        <!--<jaxws:features>-->
+            <!--<p:policies>-->
+                <!--<wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>-->
+            <!--</p:policies>-->
+        <!--</jaxws:features>-->
+
+    <!--</jaxws:client>-->
+
+
+
+
+    <!--<jaxws:client -->
         <!--bus="#gwBus"-->
         <!--id="gwSubmissionClient" -->
         <!--serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"-->
