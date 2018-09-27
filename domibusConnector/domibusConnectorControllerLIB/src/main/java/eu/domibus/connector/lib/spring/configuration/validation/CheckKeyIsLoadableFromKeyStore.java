@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ TYPE, ANNOTATION_TYPE, FIELD, METHOD, PARAMETER })
 @Retention(RUNTIME)
-@Constraint(validatedBy = KeyFromKeyStoreLoadableValidator.class)
+@Constraint(validatedBy = {KeyFromKeyStoreLoadableValidator.class, })
 @Documented
 @NotNull
 public @interface CheckKeyIsLoadableFromKeyStore {

@@ -1,14 +1,9 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -33,20 +28,12 @@ public class KeyFromKeyStoreLoadableValidatorTest {
         validator = factory.getValidator();
     }
 
+
     @Before
     public void setUp() {
         props = new KeyAndKeyStoreConfigurationProperties();
-
-        StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
-        storeConfigurationProperties.setPath(new ClassPathResource("keystores/bob.jks"));
-        storeConfigurationProperties.setPassword("12345");
-        props.setStore(storeConfigurationProperties);
-
-        KeyConfigurationProperties keyConfigurationProperties = new KeyConfigurationProperties();
-        keyConfigurationProperties.setAlias("bob");
-        keyConfigurationProperties.setPassword("");
-        props.setKey(keyConfigurationProperties);
-
+        props.setStore(ConstraintViolationSetHelper.generateTestStore());
+        props.setKey(ConstraintViolationSetHelper.generateTestKeyConfig());
     }
 
 
