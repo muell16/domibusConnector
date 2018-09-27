@@ -20,7 +20,7 @@ public class KeyFromKeyAndTrustStoreLoadable implements ConstraintValidator<Chec
         if (value == null) {
             return true;
         }
-        Set<ConstraintViolation<KeyAndKeyStoreAndTrustStoreConfigurationProperties>> path = validator.validateProperty(value, "key");
+        Set<ConstraintViolation<KeyAndKeyStoreAndTrustStoreConfigurationProperties>> path = validator.validateProperty(value, "privateKey");
         path.addAll(validator.validateProperty(value, "keyStore"));
         if (!path.isEmpty()) {
             return false;
