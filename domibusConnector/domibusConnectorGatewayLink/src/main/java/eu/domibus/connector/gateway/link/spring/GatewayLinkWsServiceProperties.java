@@ -3,10 +3,7 @@ package eu.domibus.connector.gateway.link.spring;
 
 import eu.domibus.connector.configuration.annotation.ConfigurationDescription;
 import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
-import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.*;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckStoreIsLoadable;
 import org.hibernate.validator.constraints.NotBlank;
@@ -77,7 +74,7 @@ public class GatewayLinkWsServiceProperties {
     @NestedConfigurationProperty
     @NotNull
     @ConfigurationDescription("CXF encryption, signing, certs connector - GW")
-    private KeyAndKeyStoreAndTrustStoreConfigurationProperties cxf;
+    private CxfTrustKeyStoreConfigurationProperties cxf;
 
 
     @Valid
@@ -111,11 +108,11 @@ public class GatewayLinkWsServiceProperties {
         this.tls = tls;
     }
 
-    public KeyAndKeyStoreAndTrustStoreConfigurationProperties getCxf() {
+    public CxfTrustKeyStoreConfigurationProperties getCxf() {
         return cxf;
     }
 
-    public void setCxf(KeyAndKeyStoreAndTrustStoreConfigurationProperties cxf) {
+    public void setCxf(CxfTrustKeyStoreConfigurationProperties cxf) {
         this.cxf = cxf;
     }
 

@@ -37,7 +37,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
         <jaxws:properties>
             <entry key="mtom-enabled" value="true"/>
             <entry key="security.encryption.properties" value-ref="encryptProperties"/>
-            <entry key="security.encryption.username" value="gw" />
+            <entry key="security.encryption.username" value="#{GatewayLinkWsServiceProperties.cxf.encryptAlias}" /> <!-- TODO: LOAD VIA properties!!!! -->
             <entry key="security.signature.properties" value-ref="encryptProperties"/>
             <!--<entry key="security.signature.username" value="connector" />-->
         </jaxws:properties>
