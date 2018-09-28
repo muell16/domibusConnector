@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
@@ -28,14 +29,16 @@ public class DomibusConnectorPersistenceContext {
 
 
     @Bean
-    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
-    @ConditionalOnMissingBean(DomibusConnectorBigDataPersistenceService.class)
+//    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
+//    @ConditionalOnMissingBean(DomibusConnectorBigDataPersistenceService.class)
+    @Profile("storage-fs")
     public DomibusConnectorBigDataPersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
         return new DomibusConnectorBigDataPersistenceServiceFilesystemImpl();
     }
 
     @Bean
-    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
+    @Profile("storage-db")
+//    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
     public DomibusConnectorBigDataPersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
         return new DomibusConnectorBigDataPersistenceServiceJpaImpl();
     }

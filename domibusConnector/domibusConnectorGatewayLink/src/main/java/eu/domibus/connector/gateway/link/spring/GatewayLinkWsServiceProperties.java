@@ -8,6 +8,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * The Gateway Link Webservice Based Properties
@@ -16,11 +19,13 @@ import org.springframework.stereotype.Component;
 @Component("GatewayLinkWsServiceProperties")
 @Profile("gwlink-ws")
 @ConfigurationProperties(prefix = "connector.gatewaylink.ws")
+@Validated
 public class GatewayLinkWsServiceProperties {
 
     /**
      * Defines the URL for submitting messages to the Gateway
      */
+    @NotNull
     private String submissionEndpointAddress;
 
     /**
