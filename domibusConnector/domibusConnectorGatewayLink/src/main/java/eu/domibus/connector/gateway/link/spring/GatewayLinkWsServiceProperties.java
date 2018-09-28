@@ -27,12 +27,14 @@ import javax.validation.constraints.NotNull;
  * The Gateway Link Webservice Based Properties
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Component("GatewayLinkWsServiceProperties")
+@Component(GatewayLinkWsServiceProperties.BEAN_NAME)
 @Profile("gwlink-ws")
 @ConfigurationProperties(prefix = "connector.gatewaylink.ws")
 @Validated
 @Valid
 public class GatewayLinkWsServiceProperties {
+
+    public static final String BEAN_NAME = "GatewayLinkWsServiceProperties";
 
     /**
      * Defines the URL for submitting messages to the Gateway
