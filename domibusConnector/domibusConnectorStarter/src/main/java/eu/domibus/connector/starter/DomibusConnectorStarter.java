@@ -1,5 +1,7 @@
 package eu.domibus.connector.starter;
 
+import java.io.File;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -29,7 +31,13 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
     public static SpringApplicationBuilder configureApplicationContext(SpringApplicationBuilder application) {
-        connector4_0Compatibility();
+    	String connectorConfigFileLocation = System.getProperty("connector.config.file");
+        if (connectorConfigFileLocation != null) {
+        	System.setProperty("spring.cloud.bootstrap.name", connectorConfigFileLocation.substring(connectorConfigFileLocation.lastIndexOf(File.separatorChar)));
+        	System.setProperty("spring.cloud.bootstrap.location", connectorConfigFileLocation);
+        	System.setProperty("spring.config.location", connectorConfigFileLocation);
+        }
+//        connector4_0Compatibility();
 
 
         application.profiles("connector",
@@ -40,21 +48,21 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         return application.sources(DomibusConnectorStarter.class);
     }
 
-    /**
-     * this function is used to set the System properties for logging.config and connector.config.file 4.0 to be compatible with
-     * the connector 4.0
-     */
-    private static void connector4_0Compatibility() {
-        String connectorConfigFile = System.getProperty("connector.config.file");
-        if (connectorConfigFile != null) {
-            System.setProperty("spring.config.location", connectorConfigFile);
-        }
-        String connectorLoggingConfigFile = System.getProperty("connector.logging.config");
-        if (connectorLoggingConfigFile != null) {
-            System.setProperty("logging.config", connectorConfigFile);
-        }
-
-    }
+//    /**
+//     * this function is used to set the System properties for logging.config and connector.config.file 4.0 to be compatible with
+//     * the connector 4.0
+//     */
+//    private static void connector4_0Compatibility() {
+//        String connectorConfigFile = System.getProperty("connector.config.file");
+//        if (connectorConfigFile != null) {
+//            System.setProperty("spring.config.location", connectorConfigFile);
+//        }
+//        String connectorLoggingConfigFile = System.getProperty("connector.logging.config");
+//        if (connectorLoggingConfigFile != null) {
+//            System.setProperty("logging.config", connectorConfigFile);
+//        }
+//
+//    }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
