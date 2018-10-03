@@ -19,6 +19,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 //import javax.validation.constraints.NotBlank;
 //import javax.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * The Gateway Link Webservice Based Properties
@@ -52,19 +55,12 @@ public class GatewayLinkWsServiceProperties {
     
 //    private String name = "DeliverMessage";
 
-
-//    connector.gatewaylink.ws.tls.key-store.password=12345
-//    connector.gatewaylink.ws.tls.key-store.path=classpath:store.jks
-//    connector.gatewaylink.ws.tls.private-key.password=12345
-//
-//    connector.gatewaylink.ws.tls.trust-store.path=classpath:store.jks
-//    connector.gatewaylink.ws.tls.trust-store.password=1235
-
-
-//    private KeyAndKeyStoreConfigurationProperties tls;
-
-
-    @Valid
+    /**
+     * SSL Key Store configuration
+     *
+     * The SSL-Key Store holds the path to the keyStore and the keyStore password to access the private-key which is needed to establish the TLS connection
+     * to the Gateway. The private key is used to authenticate against the Gateway.
+     */
     @NestedConfigurationProperty
     @NotNull
     @ConfigurationDescription("TLS between GW - Connector")
