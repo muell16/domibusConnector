@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_PROPERTIES")
+@Table(name = "DOMIBUS_CONNECTOR_PROPERTY")
 public class PDomibusConnectorProperties implements Serializable {
 
     @Id
@@ -19,7 +19,7 @@ public class PDomibusConnectorProperties implements Serializable {
     @Column(name = "PROPERTY_VALUE")
     private String propertyValue;
 
-    
+
 
     public String getPropertyName() {
 		return propertyName;

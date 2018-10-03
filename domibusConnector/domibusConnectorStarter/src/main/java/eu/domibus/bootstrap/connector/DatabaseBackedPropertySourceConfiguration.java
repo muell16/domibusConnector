@@ -3,6 +3,8 @@ package eu.domibus.bootstrap.connector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -21,17 +23,28 @@ import javax.sql.DataSource;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class DatabaseBackedPropertySourceConfiguration  implements PropertySourceLocator {
+@org.springframework.context.annotation.PropertySource({"classpath:/default-bootstrap.properties"})
+public class DatabaseBackedPropertySourceConfiguration implements PropertySourceLocator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBackedPropertySourceConfiguration.class);
 
-    @Autowired
-    private ConfigurableEnvironment env;
+    private static final String BOOTSTRAP_DATASOURCE_PROPERTIES = "bootstrap_datasource_properties";
+
+    public static final String BOOTSTRAP_DATASOURCE = "bootstrap_datasource";
 
     @Bean
+    @Qualifier(BOOTSTRAP_DATASOURCE_PROPERTIES)
     @ConfigurationProperties(prefix="bootstrap.datasource")
+    public DataSourceProperties bootstrapDataSourceConfiguration() {
+        return new DataSourceProperties();
+    }
+
+    @Bean
+    @Qualifier(BOOTSTRAP_DATASOURCE)
     public DataSource bootstrapDataSource() {
-        return DataSourceBuilder.create().build();
+        DataSourceProperties properties = bootstrapDataSourceConfiguration();
+        System.err.println("Properties: " + properties.getUrl() + " username: " + properties.getUsername() + " pw: " + properties.getPassword());
+        return properties.initializeDataSourceBuilder().build();
     }
 
 

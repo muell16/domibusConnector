@@ -74,6 +74,7 @@
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
 
+        <spring.cloud.version>2.0.1.RELEASE</spring.cloud.version>
         <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
         <vaadin.version>11.0.0</vaadin.version>
     </properties>
@@ -270,6 +271,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-config</artifactId>
+                <version>${spring.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.junit</groupId>
@@ -525,6 +534,13 @@
                 <groupId>com.google</groupId>
                 <artifactId>guava</artifactId>
                 <version>18.0</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.12</version>
             </dependency>
         </dependencies>
 
