@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.LOWEST_PRECEDENCE)
 @org.springframework.context.annotation.PropertySource({"classpath:/default-bootstrap.properties"})
 public class DatabaseBackedPropertySourceConfiguration implements PropertySourceLocator {
 
@@ -42,8 +42,9 @@ public class DatabaseBackedPropertySourceConfiguration implements PropertySource
     @Bean
     @Qualifier(BOOTSTRAP_DATASOURCE)
     public DataSource bootstrapDataSource() {
+        System.out.println("INITIALIZE BOOTSTRAP DATASOURCE");
         DataSourceProperties properties = bootstrapDataSourceConfiguration();
-        System.err.println("Properties: " + properties.getUrl() + " username: " + properties.getUsername() + " pw: " + properties.getPassword());
+        LOGGER.trace("initialize bootstrap datasource with [{}]", properties);
         return properties.initializeDataSourceBuilder().build();
     }
 

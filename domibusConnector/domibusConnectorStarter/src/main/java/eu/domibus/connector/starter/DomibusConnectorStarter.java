@@ -31,10 +31,10 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
 
-	private static final String SPRING_CLOUD_BOOTSTRAP_NAME = "spring.cloud.bootstrap.name";
-    private static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
-    private static final String SPRING_CONFIG_LOCATION = "spring.config.location";
-    private static final String SPRING_CONFIG_NAME = "spring.config.name";
+	public static final String SPRING_CLOUD_BOOTSTRAP_NAME = "spring.cloud.bootstrap.name";
+    public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
+    public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
+    public static final String SPRING_CONFIG_NAME = "spring.config.name";
 
 	public static final String CONNECTOR_CONFIG_FILE = "connector.config.file";
 

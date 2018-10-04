@@ -1,15 +1,14 @@
 
-package eu.domibus.connector.gateway.link.spring;
+package eu.domibus.connector.gateway.link.ws.spring;
 
 import eu.domibus.connector.configuration.annotation.ConfigurationDescription;
 import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
 import eu.domibus.connector.lib.spring.configuration.*;
-import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;
-import eu.domibus.connector.lib.spring.configuration.validation.CheckStoreIsLoadable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -17,21 +16,22 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.GW_LINK_WS_PROFILE;
 //import javax.validation.constraints.NotBlank;
 //import javax.validation.constraints.NotNull;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * The Gateway Link Webservice Based Properties
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component(GatewayLinkWsServiceProperties.BEAN_NAME)
-@Profile("gwlink-ws")
+@Profile(GW_LINK_WS_PROFILE)
 @ConfigurationProperties(prefix = "connector.gatewaylink.ws")
 @Validated
 @Valid
+@PropertySource("classpath:eu/domibus/connector/gateway/link/ws/spring/gatewaylinkws-default.properties")
 public class GatewayLinkWsServiceProperties {
 
     public static final String BEAN_NAME = "GatewayLinkWsServiceProperties";
@@ -43,7 +43,7 @@ public class GatewayLinkWsServiceProperties {
     private String submissionEndpointAddress;
 
     /**
-     * defines the address for the deliver message service.
+     * defines the publishAddress for the deliver message service.
      *
      * The service url is defined relative to the url of the CXF-Servlet (usually configured under /service),
      * the defined url is appended. So the default url for pushing messages from domibus gateway to connector
@@ -51,7 +51,7 @@ public class GatewayLinkWsServiceProperties {
      *
      */
     @NotBlank
-    private String address = "/domibusConnectorDeliveryWebservice";
+    private String publishAddress = "/domibusConnectorDeliveryWebservice";
     
 //    private String name = "DeliverMessage";
 
@@ -62,7 +62,6 @@ public class GatewayLinkWsServiceProperties {
      * to the Gateway. The private key is used to authenticate against the Gateway.
      */
     @NestedConfigurationProperty
-    @NotNull
     @ConfigurationDescription("TLS between GW - Connector")
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties tls;
 
@@ -88,12 +87,12 @@ public class GatewayLinkWsServiceProperties {
         this.submissionEndpointAddress = submissionEndpointAddress;
     }
 
-    public String getAddress() {
-        return address;
+    public String getPublishAddress() {
+        return publishAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setPublishAddress(String publishAddress) {
+        this.publishAddress = publishAddress;
     }
 
     public KeyAndKeyStoreAndTrustStoreConfigurationProperties getTls() {

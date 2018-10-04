@@ -38,9 +38,9 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
     
     <jaxws:client id="backendClient"
                 serviceClass="eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService"
-                address="${connector.backend.ws.address}"     
+                publishAddress="${connector.backend.ws.publishAddress}"
                 serviceName="s:DomibusConnectorBackendWSService"    
-                wsdlLocation="${connector.backend.ws.address}?wsdl"
+                wsdlLocation="${connector.backend.ws.publishAddress}?wsdl"
                 
                 xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
                 xmlns:s="http://connector.domibus.eu/ws/backend/webservice"         

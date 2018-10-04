@@ -119,7 +119,7 @@ Contains information about the connectorClient
 | BACKEND_ENABLED          | Is the backend enabled, must be true if the connector should send messages to this backend |
 | BACKEND_DEFAULT          | The default backend will receive all messages which aren't delivered to another backend first |
 | BACKEND_DESCRIPTION      | A description of the backend, can be used by the admin to store information |
-| BACKEND_PUSH_ADDRESS     | If the backend is a push backend, push address must be defined here |
+| BACKEND_PUSH_ADDRESS     | If the backend is a push backend, push publishAddress must be defined here |
 
  
  

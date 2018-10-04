@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("gwlink-ws")
-@ImportResource("classpath:/spring/context/DomibusConnectorGatewayLinkContext.xml")
 public class GatewayLinkContextConfiguration {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(GatewayLinkContextConfiguration.class);

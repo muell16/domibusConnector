@@ -54,7 +54,7 @@
 	<wsdl:service name="DomibusConnectorBackendDeliveryWSService">
 		<wsdl:port binding="tns:DomibusConnectorBackendDeliveryWSBinding"
 			name="DomibusConnectorBackendDeliveryWebService">
-			<soap12:address
+			<soap12:publishAddress
 				location="http://connector.domibus.eu/ws/backend/delivery/webservice/" />
 		</wsdl:port>
 	</wsdl:service>

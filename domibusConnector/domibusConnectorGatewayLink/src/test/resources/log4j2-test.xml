@@ -9,11 +9,14 @@
         <Root level="info">
             <AppenderRef ref="Console" />
         </Root>
-        <org.liquibase level="debug" >
+        <!--<org.liquibase level="debug" >-->
+            <!--<AppenderRef ref="Console" />-->
+        <!--</org.liquibase>    -->
+        <!--<eu.domibus.connector.persistence level="trace" >-->
+            <!--<AppenderRef ref="Console" />-->
+        <!--</eu.domibus.connector.persistence>    -->
+        <org.apache.cxf level="debug" >
             <AppenderRef ref="Console" />
-        </org.liquibase>    
-        <eu.domibus.connector.persistence level="trace" >
-            <AppenderRef ref="Console" />
-        </eu.domibus.connector.persistence>    
+        </org.apache.cxf>
     </Loggers>
 </Configuration>

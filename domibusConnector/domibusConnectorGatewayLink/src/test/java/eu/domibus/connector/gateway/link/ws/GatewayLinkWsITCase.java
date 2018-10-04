@@ -49,7 +49,8 @@ public class GatewayLinkWsITCase {
 
         TEST_GW_APPLICATION_CONTEXT = TestGW.startContext(new String[]{
                 "server.port=" + portTestGW,
-                "connector.delivery.endpoint.address=" + GW_LINK_SERVER_ADDRESS,
+                "connector.delivery.endpoint.publishAddress=" + GW_LINK_SERVER_ADDRESS,
+                //"connector.delivery.endpoint.publish-address=
         });
         System.out.println(String.format("TEST GW APPLICATION CONTEXT STARTED with address [%s]", TEST_GW_SERVER_ADDRESS));
     }
@@ -66,6 +67,8 @@ public class GatewayLinkWsITCase {
         DomibusConnectorGatewayDeliveryWebService connectorDeliveryClient = TestGW.getConnectorDeliveryClient(TEST_GW_APPLICATION_CONTEXT);
         DomibusConnectorMessageType message = TransitionCreator.createMessage();
 
+//        Thread.sleep(2000000);
+
         connectorDeliveryClient.deliverMessage(message);
 
         List<DomibusConnectorMessage> fromGwReceivedMessagesList = StartupGwLinkOnly.getFromGwReceivedMessagesList(GW_LINK_APPLICATION_CONTEXT);
@@ -81,7 +84,6 @@ public class GatewayLinkWsITCase {
 
         LinkedBlockingQueue<DomibusConnectorMessageType> toGwSubmittedMessages = TestGW.getToGwSubmittedMessages(TEST_GW_APPLICATION_CONTEXT);
         assertThat(toGwSubmittedMessages).hasSize(1);
-
     }
 
 }

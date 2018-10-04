@@ -27,12 +27,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
     <jaxws:client
             id="gwSubmissionClient"
             serviceClass="eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService"
-            address="#{GatewayLinkWsServiceProperties.submissionEndpointAddress}"
+            publishAddress="#{GatewayLinkWsServiceProperties.submissionEndpointAddress}"
             serviceName="s:DomibusConnectorGatewaySubmissionWebService"
             xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice"
             wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl"
     >
-        <!--address="${gateway.submission.endpoint.address}" -->
+        <!--publishAddress="${gateway.submission.endpoint.publishAddress}" -->
         <!--&gt;-->
         <jaxws:properties>
             <entry key="mtom-enabled" value="true"/>
@@ -52,7 +52,7 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 
     <jaxws:endpoint id="domibusConnectorDeliveryServiceEndpoint"
                     implementor="#domibusConnectorDeliveryServiceImpl"
-                    address="#{GatewayLinkWsServiceProperties.address}"
+                    publishAddress="#{GatewayLinkWsServiceProperties.publishAddress}"
                     serviceName="s:DomibusConnectorGatewayDeliveryWebService"
                     wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl"
                     xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"

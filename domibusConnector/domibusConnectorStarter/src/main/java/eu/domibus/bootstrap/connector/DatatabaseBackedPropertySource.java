@@ -24,7 +24,7 @@ public class DatatabaseBackedPropertySource extends EnumerablePropertySource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatatabaseBackedPropertySource.class);
 
-    private static final String PROPERTY_TABLE_NAME = "DOMIBUS_CONNECTOR_PROPERTIES";
+    private static final String PROPERTY_TABLE_NAME = "DOMIBUS_CONNECTOR_PROPERTY";
     private static final String PROPERTY_NAME_COLUMN_NAME = "PROPERTY_NAME";
     private static final String PROPERTY_VALUE_COLUMN_NAME = "PROPERTY_VALUE";
 
@@ -76,7 +76,6 @@ public class DatatabaseBackedPropertySource extends EnumerablePropertySource {
             return null;
         }
         LOGGER.trace("getProperty called with property [{}]", name);
-        System.out.println("GET PROPERTY CALLED...");
         try {
             String query = String.format("SELECT %s FROM %s WHERE %s=:PROPERTY_NAME", PROPERTY_VALUE_COLUMN_NAME, PROPERTY_TABLE_NAME, PROPERTY_NAME_COLUMN_NAME);
             Map<String, String> params = new HashMap<>();
@@ -85,7 +84,7 @@ public class DatatabaseBackedPropertySource extends EnumerablePropertySource {
             LOGGER.trace("Resolved property: [{}]=[{}]", name, s);
             return s;
         } catch (EmptyResultDataAccessException emptyResultSet) {
-            LOGGER.debug("Cannot resolve property [{}]", name);
+            LOGGER.trace("Cannot resolve property [{}]", name);
             return null;
         }
     }
