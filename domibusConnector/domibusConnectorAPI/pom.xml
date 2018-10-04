@@ -39,22 +39,23 @@
                         <configuration>
                             <sourceRoot>${basedir}/src/main/java</sourceRoot>
                             <encoding>UTF-8</encoding>
+
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl
-                                    </wsdl>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl
-                                    </wsdl>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl
-                                    </wsdl>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorBackendDeliveryWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendWebService.wsdl
-                                    </wsdl>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorBackendWebService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorBackendWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
