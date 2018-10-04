@@ -25,6 +25,7 @@ import org.springframework.ws.config.annotation.EnableWs;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.soap.SOAPBinding;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -67,6 +68,7 @@ public class GatewayLinkWsContext {
         jaxWsProxyFactoryBean.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
         jaxWsProxyFactoryBean.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
+        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
 
         jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
 

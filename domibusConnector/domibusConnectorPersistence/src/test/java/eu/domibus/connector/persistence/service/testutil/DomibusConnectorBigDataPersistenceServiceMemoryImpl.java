@@ -35,12 +35,17 @@ public class DomibusConnectorBigDataPersistenceServiceMemoryImpl implements Domi
 	@Override
 	public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
     		String documentContentType) {
-		DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
-		dataRef.setOutputStream(new MyOutputStream(dataRef));
+		return createDomibusConnectorBigDataReference(connectorMessageId, documentName, documentContentType);
+	}
+
+    @Override
+    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+        DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
+        dataRef.setOutputStream(new MyOutputStream(dataRef));
         dataRef.setWriteable(true);
         dataRef.setReadable(false);
-		return dataRef;
-	}
+        return dataRef;
+    }
 
     @Override
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference ref) {

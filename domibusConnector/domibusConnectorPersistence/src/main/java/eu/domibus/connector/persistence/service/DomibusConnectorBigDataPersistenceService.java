@@ -37,10 +37,23 @@ public interface DomibusConnectorBigDataPersistenceService {
      * @param connectorMessageId the unique id of this message
      * @param documentName the name of this document
      * @param documentContentType the type of this document
-     * @return the created DomibusConnectorBigDataReference with writeable OutputStream
+     * @return the created DomibusConnectorBigDataReference with CLOSED OutputStream
      */
+    @Deprecated
     DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
     		String documentContentType);
+
+    /**
+     * will create a new instance of DomibusConnectorBigDataReference
+     * @param connectorMessageId the unique id of this message
+     * @param documentName the name of this document
+     * @param documentContentType the type of this document
+     * @return the created DomibusConnectorBigDataReference with OPEN OutputStream ready for WRITE,
+     *      but closed INPUT stream
+     *
+     */
+    DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType);
+
     
     /**
      * will delete the provided bigDataReference

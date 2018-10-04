@@ -467,7 +467,7 @@ public class DomibusSecurityContainer {
 //        
         LOGGER.debug("Copy input stream from dss document to output stream of big data reference");
         try (InputStream inputStream = document.openStream();
-        OutputStream outputStream = bigDataRef.getOutputStream()) {
+            OutputStream outputStream = bigDataRef.getOutputStream()) {
             int bytesCopied = StreamUtils.copy(inputStream, outputStream);
             if (bytesCopied == 0) {
                 throw new DomibusConnectorSecurityException("Cannot create attachment with empty content!");

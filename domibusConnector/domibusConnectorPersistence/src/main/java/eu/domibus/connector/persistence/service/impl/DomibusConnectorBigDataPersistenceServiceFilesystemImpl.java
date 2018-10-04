@@ -70,6 +70,12 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         return fileBasedReference;
     }
 
+
+    @Override
+    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+        return createDomibusConnectorBigDataReference(null, connectorMessageId, documentName, documentContentType);
+    }
+
     @Override
     public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName, String documentContentType) {
         FileBasedDomibusConnectorBigDataReference bigDataReference = new FileBasedDomibusConnectorBigDataReference();
@@ -108,9 +114,12 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
                 outputStream = generateEncryptedOutputStream(bigDataReference, fos);
             } else {
                 outputStream = fos;
+                bigDataReference.setOutputStream(outputStream);
             }
-            IOUtils.copy(input, outputStream);
-            outputStream.close();
+            if (input != null) {
+                IOUtils.copy(input, outputStream);
+                outputStream.close();
+            }
         } catch (FileNotFoundException e) {
             throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
         } catch (IOException e) {
@@ -118,6 +127,8 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
         return bigDataReference;
     }
+
+
 
 
     @Override

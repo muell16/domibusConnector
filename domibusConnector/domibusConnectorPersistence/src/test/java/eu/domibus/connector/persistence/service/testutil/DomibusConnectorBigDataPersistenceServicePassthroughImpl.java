@@ -41,6 +41,13 @@ public class DomibusConnectorBigDataPersistenceServicePassthroughImpl implements
 	}
 
 	@Override
+	public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+		DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
+		dataRef.setOutputStream(new ByteArrayOutputStream());
+		return dataRef;
+	}
+
+	@Override
 	public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference ref) {
 		//just do nothing
 	}

@@ -23,6 +23,7 @@ public class SetupPersistenceContext {
         props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
         props.put("spring.liquibase.change-log","db/changelog/test/testdata.xml");
         props.put("spring.datasource.url","jdbc:h2:mem:" + dbName);
+        props.put("spring.active.profiles", "connector,db-storage");
         return props;
     }
 

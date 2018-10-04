@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
@@ -111,6 +112,50 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     }
 
+
+    @Override
+    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+        LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+
+        JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
+        reference.setReadable(false);
+        reference.setWriteable(true);
+
+        PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
+        bigData.setMessage(dbMessage.getId());
+
+        bigData.setName(documentName);
+        bigData.setMimeType(documentContentType);
+        bigData.setLastAccess(new Date());
+
+        DbBackedOutputStream outputStream = new DbBackedOutputStream(bigData);
+//        try {
+//            StreamUtils.copy(in, outputStream);
+//        } catch (IOException e1) {
+//            LOGGER.error("Exception copy streams for big data to database!", e1);
+//        }
+        byte[] toByteArray = outputStream.toByteArray();
+
+        Session hibernateSession = entityManager.unwrap(Session.class);
+        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+        bigData.setContent(blob);
+        String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
+        bigData.setChecksum(md5DigestAsHex);
+
+//        try {
+//            bigData = bigDataDao.save(bigData);
+//        }catch (Exception e) {
+//            LOGGER.error("Exception saving big data to database!", e);
+//        }
+
+        reference.setOutputStream(outputStream);
+
+
+        reference.setStorageIdReference(Long.toString(bigData.getId()));
+        return reference;
+    }
+
     @Override
     @Transactional(readOnly = false)
     public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
@@ -120,7 +165,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
             JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
             reference.setReadable(false);
-            reference.setWriteable(true);
+            reference.setWriteable(false);
 
             PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
             bigData.setMessage(dbMessage.getId());
@@ -149,17 +194,16 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
             	LOGGER.error("Exception saving big data to database!", e);
             }
 
-            
-            reference.setOutputStream(outputStream);
+//            reference.setOutputStream(outputStream);
 
-            
             reference.setStorageIdReference(Long.toString(bigData.getId()));
             return reference;
 
 
     }
-    
-    
+
+
+
     @Override
     @Transactional(readOnly = false)
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference) {
@@ -180,6 +224,24 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    protected void saveOnClose(DbBackedOutputStream dbBackedOutputStream) {
+        PDomibusConnectorBigData bigData = bigDataDao.findById(dbBackedOutputStream.storageReference.getId()).get();
+
+        byte[] toByteArray = dbBackedOutputStream.toByteArray();
+
+        Session hibernateSession = entityManager.unwrap(Session.class);
+        Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob(toByteArray);
+        bigData.setContent(blob);
+        String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
+        bigData.setChecksum(md5DigestAsHex);
+
+        bigData.setLastAccess(new Date());
+
+        bigDataDao.save(bigData);
+
+    }
+
     private long convertStorageIdReferenceToDbId(String storageRef) {
         //TODO: error handling!!!
         long l = Long.parseLong(storageRef);
@@ -196,7 +258,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         
         @Override
         public void flush() throws IOException {
-        	LOGGER.debug("called flush on DbBackedOutputStream [{}]", this);
+        	LOGGER.debug("called flush on DbBackedOutputStream [{}] - flush is not implemented doing nothing!", this);
             super.flush();
         }
 
@@ -204,6 +266,8 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         public void close() throws IOException {
             LOGGER.debug("called close on DbBackedOutputStream [{}]", this);
             super.close();
+            DomibusConnectorBigDataPersistenceServiceJpaImpl.this.saveOnClose(this);
+
         }
 
         public String toString() {
@@ -211,6 +275,8 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
             return String.format("DbBackedOutputStream with bytes [%d] and with storageRef: [%s]", byteCount, storageReference);
         }
     }
+
+
 
     private static class JpaBasedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
 
