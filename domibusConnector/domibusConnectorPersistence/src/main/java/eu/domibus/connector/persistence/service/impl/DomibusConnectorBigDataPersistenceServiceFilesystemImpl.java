@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,10 @@ import java.security.*;
 import java.util.Base64;
 import java.util.UUID;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_FS_PROFILE_NAME;
+
 //initialized by DomibusConnectorPersistenceContext.class
+@Profile(STORAGE_FS_PROFILE_NAME)
 public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements DomibusConnectorBigDataPersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceFilesystemImpl.class);

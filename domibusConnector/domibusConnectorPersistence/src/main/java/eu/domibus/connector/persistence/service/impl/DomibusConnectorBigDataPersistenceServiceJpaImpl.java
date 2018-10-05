@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,8 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
+
 
 /**
  * this service uses jdbc to create an input / output stream with writing it 
@@ -42,6 +45,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersisten
  */
 //initialized by DomibusConnectorPersistenceContext.class
 @Transactional
+@Profile(STORAGE_DB_PROFILE_NAME)
 public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements DomibusConnectorBigDataPersistenceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceJpaImpl.class);

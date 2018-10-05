@@ -15,6 +15,10 @@ import org.junit.BeforeClass;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.sql.SQLException;
+import java.util.Properties;
+import java.util.Set;
+
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 
 /**
  *
@@ -27,7 +31,10 @@ public abstract class CommonPersistenceDBUnitITCase {
 
     @BeforeClass
     public static void beforeClass() {
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext();
+        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
+        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
+        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
     }
 
     @AfterClass

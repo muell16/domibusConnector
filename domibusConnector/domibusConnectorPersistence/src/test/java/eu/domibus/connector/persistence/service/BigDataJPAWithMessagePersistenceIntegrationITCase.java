@@ -22,8 +22,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -46,8 +49,10 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
     @BeforeClass
     public static void beforeClass() {
         Properties props = SetupPersistenceContext.getDefaultProperties();
-        props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(props);
+        //props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
+        Set<String> profiles = SetupPersistenceContext.getDefaultProfiles();
+        profiles.add(STORAGE_DB_PROFILE_NAME); //activate DB storage profile...
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(props, profiles);
     }
 
     @AfterClass

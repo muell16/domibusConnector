@@ -25,7 +25,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Properties;
+import java.util.Set;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -53,7 +56,10 @@ public class MessagePersistenceServiceITCase {
 
     @BeforeClass
     public static void InitClass() {
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext();
+        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
+        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
+        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
     }
 
     @AfterClass

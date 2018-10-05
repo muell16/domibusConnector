@@ -20,6 +20,9 @@ import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
 
 import javax.sql.DataSource;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_FS_PROFILE_NAME;
+
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -33,16 +36,17 @@ public class DomibusConnectorPersistenceContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceContext.class);
 
+
     @Bean
 //    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
 //    @ConditionalOnMissingBean(DomibusConnectorBigDataPersistenceService.class)
-    @Profile("storage-fs")
+    @Profile(STORAGE_FS_PROFILE_NAME)
     public DomibusConnectorBigDataPersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
         return new DomibusConnectorBigDataPersistenceServiceFilesystemImpl();
     }
 
     @Bean
-    @Profile("storage-db")
+    @Profile(STORAGE_DB_PROFILE_NAME)
 //    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
     public DomibusConnectorBigDataPersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
         return new DomibusConnectorBigDataPersistenceServiceJpaImpl();

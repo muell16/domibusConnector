@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 
 @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
@@ -27,6 +26,13 @@ public class SetupPersistenceContext {
         return props;
     }
 
+    public static Set<String> getDefaultProfiles() {
+        Set<String> defaultProfiles =  new HashSet<String>();
+        defaultProfiles.addAll(Arrays.asList(new String[]{"test", "db_h2"}));
+        return defaultProfiles;
+    }
+
+
 //    @BeforeClass
     public static ConfigurableApplicationContext startApplicationContext() {
         return startApplicationContext(getDefaultProperties());
@@ -36,23 +42,27 @@ public class SetupPersistenceContext {
         return startApplicationContext(getDefaultProperties(), sources);
     }
 
+    public static ConfigurableApplicationContext startApplicationContext(Properties props,  Set<String> profiles) {
+        return startApplicationContext(props, profiles, SetupPersistenceContext.class);
+    }
+
     public static ConfigurableApplicationContext startApplicationContext(Properties props) {
         return startApplicationContext(props, SetupPersistenceContext.class);
     }
 
     public static ConfigurableApplicationContext startApplicationContext(Properties props, Class<?>... sources) {
+        Set<String> profiles = getDefaultProfiles();
+        return startApplicationContext(props, profiles, sources);
+    }
+
+    public static ConfigurableApplicationContext startApplicationContext(Properties props, Set<String> profiles, Class<?>... sources) {
         ConfigurableApplicationContext applicationContext;
 
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
                 .sources(sources)
                 .web(WebApplicationType.NONE)
-                .profiles("test", "db_h2")
-                //start with JPA big file storage
-//                .properties("connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
-//                .properties("spring.liquibase.change-log=db/changelog/test/testdata.xml",
-//                        "spring.datasource.url=jdbc:h2:mem:" + dbName)
-                .properties(props)
-                ;
+                .profiles(profiles.toArray(new String[profiles.size()]))
+                .properties(props);
         applicationContext = springAppBuilder.run();
         APPLICATION_CONTEXT = applicationContext;
         System.out.println("APPCONTEXT IS STARTED...:" + applicationContext.isRunning());
