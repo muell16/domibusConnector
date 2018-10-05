@@ -24,6 +24,7 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,10 +58,10 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         FileBasedDomibusConnectorBigDataReference fileBasedReference = (FileBasedDomibusConnectorBigDataReference)ref;
 
         String storageIdReference = fileBasedReference.getStorageIdReference();
-        String filePath = getStoragePath() + File.separator + storageIdReference;
+        Path filePath = getStoragePath().resolve(storageIdReference);
 
         try {
-            FileInputStream fis = new FileInputStream(filePath);
+            FileInputStream fis = new FileInputStream(filePath.toFile());
             if (fileBasedReference.getEncryptionKey() != null) {
                 fileBasedReference.setInputStream(generateDecryptedInputStream(fileBasedReference, fis));
             } else {
@@ -102,38 +103,60 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         String storageFileName = UUID.randomUUID().toString();
         Path storageFileRelativePath = Paths.get(folder + File.separator + storageFileName);
         bigDataReference.setStorageIdReference(storageFileRelativePath.toString());
+
         Path storageFile = messageFolder.resolve(storageFileName);
         LOGGER.debug("Storage file path is [{}]", storageFile.toAbsolutePath());
 
         try {
             Files.createFile(storageFile);
+        } catch (FileAlreadyExistsException alreadyExistsException) {
+            throw new PersistenceException(String.format("Error while creating file [%s], looks like the file has already written! You can only write once to a bigDataReference OutputStream!", storageFile), alreadyExistsException);
         } catch (IOException e) {
             throw new PersistenceException(String.format("Error while creating file [%s]", storageFile), e);
         }
 
-        try (FileOutputStream fos = new FileOutputStream(storageFile.toFile())) {
-            OutputStream outputStream;
-            if (filesystemPersistenceProperties.isEncryptionActive()) {
-                LOGGER.debug("Encryption is activated creating encrypted output stream");
-                outputStream = generateEncryptedOutputStream(bigDataReference, fos);
-            } else {
-                outputStream = fos;
-                bigDataReference.setOutputStream(outputStream);
+
+        if (input != null) {
+            try (OutputStream os = getOutputStream(bigDataReference)) {
+                IOUtils.copy(input, os);
+                bigDataReference.setOutputStream(os);
+            } catch(FileNotFoundException e){
+                throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
+            } catch(IOException e){
+                throw new PersistenceException(String.format("Error while writing to file [%s]", storageFile), e);
             }
-            if (input != null) {
-                IOUtils.copy(input, outputStream);
-                outputStream.close();
+        } else {
+            try {
+                bigDataReference.setOutputStream(getOutputStream(bigDataReference));
+            } catch (FileNotFoundException e) {
+                throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
             }
-        } catch (FileNotFoundException e) {
-            throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
-        } catch (IOException e) {
-            throw new PersistenceException(String.format("Error while writing to file [%s]", storageFile), e);
         }
+
+
         return bigDataReference;
     }
 
+    OutputStream getOutputStream(FileBasedDomibusConnectorBigDataReference dataReference) throws FileNotFoundException {
+        Path storageFile = getStoragePath().resolve(dataReference.getStorageIdReference());
+        LOGGER.debug("Storage file path is [{}]", storageFile.toAbsolutePath());
 
 
+
+        if (!Files.exists(storageFile)) {
+            throw new PersistenceException(String.format("The requested file [%s] does not exist yet! Looks like this method is not called correctly!", storageFile));
+        }
+
+        FileOutputStream fos = new FileOutputStream(storageFile.toFile());
+        OutputStream outputStream;
+        if (filesystemPersistenceProperties.isEncryptionActive()) {
+            LOGGER.debug("Encryption is activated creating encrypted output stream");
+            outputStream = generateEncryptedOutputStream(dataReference, fos);
+            return outputStream;
+        }
+        return fos;
+
+    }
 
     @Override
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
@@ -190,7 +213,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     }
 
-    protected OutputStream generateEncryptedOutputStream(FileBasedDomibusConnectorBigDataReference bigDataReference, OutputStream outputStream) {
+    OutputStream generateEncryptedOutputStream(FileBasedDomibusConnectorBigDataReference bigDataReference, OutputStream outputStream) {
 
         SecureRandom random;
         try {
@@ -269,6 +292,8 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
          */
         private static final long serialVersionUID = 1;
 
+        transient DomibusConnectorBigDataPersistenceServiceFilesystemImpl fsService;
+
         transient InputStream inputStream;
 
         transient OutputStream outputStream;
@@ -342,5 +367,6 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         public void setCipherSuite(String cipherSuite) {
             this.cipherSuite = cipherSuite;
         }
+
     }
 }

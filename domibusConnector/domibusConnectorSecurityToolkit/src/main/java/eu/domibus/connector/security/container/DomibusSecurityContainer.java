@@ -452,7 +452,7 @@ public class DomibusSecurityContainer {
             throws IOException {
         LOGGER.trace("convertDocumentToMessageAttachment: called with message [{}], document [{}], identifier [{}]", message, document, identifier);
         
-        DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(document.openStream(), message.getConnectorMessageId(), document.getName(), document.getMimeType().getMimeTypeString());
+        DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), document.getName(), document.getMimeType().getMimeTypeString());
         
         String documentName = document.getName();
         String mimeTypeString = MimeType.BINARY.getMimeTypeString();
