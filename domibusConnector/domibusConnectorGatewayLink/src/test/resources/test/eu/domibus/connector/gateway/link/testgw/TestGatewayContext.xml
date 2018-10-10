@@ -58,12 +58,20 @@ http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/
 
     </jaxws:client>
 
+
+    <!--
+portName: DomibusConnectorGatewaySubmissionWebService
+serviceName: DomibusConnectorGatewaySubmissionWSService
+http://connector.domibus.eu/ws/gateway/submission/webservice
+            -->
+
     <jaxws:endpoint
             id="testGwSubmissionServiceEndpoint"
             implementor="#testGwSubmissionService"
 
             address="/submission"
-            serviceName="s:DomibusConnectorGatewaySubmissionWebService"
+            endpointName="s:DomibusConnectorGatewaySubmissionWebService"
+            serviceName="s:DomibusConnectorGatewaySubmissionWSService"
             xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice"
             wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl"
     >
