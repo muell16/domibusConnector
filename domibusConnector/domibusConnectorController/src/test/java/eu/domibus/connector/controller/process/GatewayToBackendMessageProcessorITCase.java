@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes={ITCaseTestContext.class, TokenIssuerFactory.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
-@ActiveProfiles("ITCaseTestContext")
+@ActiveProfiles({"ITCaseTestContext", "storage-db"})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class GatewayToBackendMessageProcessorITCase {

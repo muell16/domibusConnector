@@ -147,11 +147,11 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         String md5DigestAsHex = DigestUtils.md5DigestAsHex(toByteArray);
         bigData.setChecksum(md5DigestAsHex);
 
-//        try {
-//            bigData = bigDataDao.save(bigData);
-//        }catch (Exception e) {
-//            LOGGER.error("Exception saving big data to database!", e);
-//        }
+        try {
+            bigData = bigDataDao.save(bigData);
+        }catch (Exception e) {
+            LOGGER.error("Exception saving big data to database!", e);
+        }
 
         reference.setOutputStream(outputStream);
 

@@ -257,7 +257,8 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         try {
         	LOGGER.debug("Submitting messageConfirmation [{}] back to GW", messageConfirmation);
             gwSubmissionService.submitToGateway(evidenceMessage);
-            LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] for message [{}] successfully sent to gw", messageConfirmation.getEvidenceType(), originalMessage.getConnectorMessageId());
+            LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] confirmation for message [{}] successfully sent to gw", messageConfirmation.getEvidenceType(), originalMessage.getConnectorMessageId());
+            LOGGER.trace("Confirmation [{}] with sent successfully to gw, the content is:\n\n{}\n\n", messageConfirmation, new String(messageConfirmation.getEvidence(), "UTF-8"));
 
         } catch (Exception e) {
             //TODO: improve that!

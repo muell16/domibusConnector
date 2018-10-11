@@ -50,7 +50,7 @@ import org.springframework.test.context.jdbc.Sql;
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
-@ActiveProfiles("ITCaseTestContext")
+@ActiveProfiles({"ITCaseTestContext", "storage-db"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorMessageFlowITCase {
 
