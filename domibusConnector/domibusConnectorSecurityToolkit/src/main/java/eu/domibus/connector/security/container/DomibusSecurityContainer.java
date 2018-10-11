@@ -334,7 +334,7 @@ public class DomibusSecurityContainer {
                             try {
                             	
                                 //LOGGER.trace("recieveContainerContents: Read following byte content [{}]", IOUtils.toString(docAsBytes, "UTF8"));
-                                DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(container.getBusinessDocument().openStream(), message.getConnectorMessageId(), container.getBusinessDocument().getName(), container.getBusinessDocument().getMimeType().getMimeTypeString());
+                                DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), container.getBusinessDocument().getName(), container.getBusinessDocument().getMimeType().getMimeTypeString());
                                 
                                 LOGGER.trace("copying businessDocument input stream to bigDataReference output Stream");
                                 try (InputStream inputStream = container.getBusinessDocument().openStream();

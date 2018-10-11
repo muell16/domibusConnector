@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessageType;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
         if (ack != null && ack.isResult()) {
             String ebmsId = ack.getMessageId();
-            LOGGER.info("GW accepted message and sent id [{}] back", ebmsId);
+            LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW accepted message and sent id [{}] back", ebmsId);
             //message.getMessageDetails().setEbmsMessageId(ebmsId);
 
             state.setRemoteTransportId(ebmsId);
@@ -67,11 +68,6 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
             else
                 throw new DomibusConnectorGatewaySubmissionException("Undefined submission error!");
         }
-
-
-
-
-
 
 	}
 

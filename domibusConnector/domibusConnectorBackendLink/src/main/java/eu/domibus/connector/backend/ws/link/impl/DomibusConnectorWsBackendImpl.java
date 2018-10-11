@@ -8,6 +8,11 @@ import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.jaxws.context.WrappedMessageContext;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,12 +87,18 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     @Transactional
     public DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) throws DomibusConnectorBackendDeliveryException {
         DomibusConnectorMessagesType messagesType = new DomibusConnectorMessagesType();
+        MessageContext mContext = webServiceContext.getMessageContext();
+        WrappedMessageContext wmc = (WrappedMessageContext)mContext;
+        Message m = wmc.getWrappedMessage();
+
+        //TODO: put interceptor for message deletion in here!
         try {
             List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
             messageIds.stream()
                     .forEach((message) -> {
                         messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
-                        backendSubmissionService.processMessageAfterDeliveredToBackend(message);
+                        m.getInterceptorChain().add(new ProcessMessageAfterDeliveredToBackendInterceptor(message));
+                        //backendSubmissionService.processMessageAfterDeliveredToBackend(message);
                     });
         } catch (Exception e) {
             throw new DomibusConnectorBackendDeliveryException("Exception caught retrieving messages from backend queue!", e);
@@ -157,5 +168,21 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         return backendClientInfoByName;
     }
 
+
+    private class ProcessMessageAfterDeliveredToBackendInterceptor extends AbstractPhaseInterceptor<Message> {
+
+        private final DomibusConnectorMessage connectorMessage;
+
+        ProcessMessageAfterDeliveredToBackendInterceptor(DomibusConnectorMessage connectorMessage) {
+            super(Phase.SETUP_ENDING);
+            this.connectorMessage = connectorMessage;
+        }
+
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            LOGGER.trace("ProcessMessageAfterDeliveredToBackendInterceptor: handleMessage: invoking backendSubmissionService.processMessageAfterDeliveredToBackend");
+            backendSubmissionService.processMessageAfterDeliveredToBackend(connectorMessage);
+        }
+    }
 
 }
