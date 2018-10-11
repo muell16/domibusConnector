@@ -81,7 +81,7 @@ public class BackendLinkWsTestMessageFlowITCase {
     private static void setUpBackend() {
         MDC.put("COLOR", "GREEN");
         String dbName = UUID.randomUUID().toString().substring(0,10); //use random db name to avoid reusing db between test runs
-        String[] backendProfiles = new String[] {"db_h2", "backendlink-ws"};
+        String[] backendProfiles = new String[] {"db_h2", "backendlink-ws", "storage-db"};
         String[] backendProperties = new String[] {"server.port=0",
                 "spring.datasource.url=jdbc:h2:mem:" + dbName,
                 "logging.config=classpath:log4j2-test.xml",
@@ -89,7 +89,7 @@ public class BackendLinkWsTestMessageFlowITCase {
                 "spring.h2.console.enabled=true",
                 "spring.h2.console.path=/h2-console",
                 "spring.liquibase.enabled=true",
-                "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
+//                "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
                 "connector.backend.ws.key.store.path=classpath:/connector.jks"
         };
 

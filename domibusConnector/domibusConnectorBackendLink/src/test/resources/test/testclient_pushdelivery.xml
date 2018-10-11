@@ -26,11 +26,12 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
      
     <jaxws:endpoint id="connectorBackendClientDeliveryWS"
                     implementor="#backendDeliveryWebService"
-                    publishAddress="/backendDelivery"
+                    address="/backendDelivery"
                     
                     wsdlLocation="/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl"
-                    serviceName="s:DomibusConnectorBackendDeliveryWebServiceService" 
-                    
+                    serviceName="s:DomibusConnectorBackendDeliveryWSService"
+                    endpointName="s:DomibusConnectorBackendDeliveryWebService"
+
                     xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
                     xmlns:s="http://connector.domibus.eu/ws/backend/webservice"                                                           
     >

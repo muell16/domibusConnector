@@ -31,7 +31,9 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     
     @BeforeClass
     public static void beforeClass() {
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(BackendClientDaoDBUnit.TestConfiguration.class);
+        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(SetupPersistenceContext.getDefaultProperties(),
+                SetupPersistenceContext.getDefaultProfiles(),
+                BackendClientDaoDBUnit.TestConfiguration.class);
     }
     
 

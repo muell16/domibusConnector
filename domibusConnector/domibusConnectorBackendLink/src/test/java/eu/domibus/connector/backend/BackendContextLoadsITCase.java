@@ -15,7 +15,7 @@ public class BackendContextLoadsITCase {
     @Test
     public void testContextLoads() {
         ConfigurableApplicationContext startUpSpringApplication =
-                StartBackendOnly.startUpSpringApplication(new String[] {"backendlink-ws"}, new String[]
+                StartBackendOnly.startUpSpringApplication(new String[] {"backendlink-ws", "storage-db"}, new String[]
                         {"server.port=0",
                                 "spring.liquibase.enabled=false",
                                 "connector.backend.ws.key.store.path=classpath:/connector.jks",

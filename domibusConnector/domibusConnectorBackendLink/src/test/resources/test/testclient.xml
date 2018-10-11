@@ -38,11 +38,10 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
     
     <jaxws:client id="backendClient"
                 serviceClass="eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService"
-                publishAddress="${connector.backend.ws.publishAddress}"
-                serviceName="s:DomibusConnectorBackendWSService"    
-                wsdlLocation="${connector.backend.ws.publishAddress}?wsdl"
-                
-                xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
+                address="${connector.backend.ws.publishAddress}"
+                serviceName="s:DomibusConnectorBackendDeliveryWSService"
+                endpointName="s:DomibusConnectorBackendDeliveryWebService"
+                wsdlLocation="${connector.backend.ws.address}?wsdl"
                 xmlns:s="http://connector.domibus.eu/ws/backend/webservice"         
     >
          
