@@ -155,7 +155,6 @@
                 <groupId>eu.domibus.connector</groupId>
                 <artifactId>domibusConnectorLinkCommon</artifactId>
                 <version>${project.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>eu.domibus.connector</groupId>
@@ -174,12 +173,6 @@
             </dependency>
 
 
-
-            <dependency>
-                <groupId>eu.domibus.connector</groupId>
-                <artifactId>domibusConnectorLinkCommon</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <!-- E-CODEX LIBRARIES -->
             <dependency>
                 <groupId>eu.e-codex</groupId>
