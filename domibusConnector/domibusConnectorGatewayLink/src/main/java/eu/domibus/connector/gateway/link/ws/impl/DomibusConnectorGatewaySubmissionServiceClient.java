@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
@@ -44,7 +43,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setForTransport(message.getConnectorMessageId());
+        state.setTransportId(message.getConnectorMessageId());
 
 
 		LOGGER.debug("#submitToGateway: calling webservice to send request");

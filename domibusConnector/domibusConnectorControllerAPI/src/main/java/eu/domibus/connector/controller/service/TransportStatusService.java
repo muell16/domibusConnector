@@ -25,7 +25,7 @@ public interface TransportStatusService {
     public void setTransportStatusForTransportToBackendClient(DomibusConnectorTransportState transportState);
 
     public static class DomibusConnectorTransportState {
-        private String forTransport;
+        private String transportId;
         private String remoteTransportId; //in case of GW ebms id, in case of backend national id/backend id
         private TransportState status;
         private List<DomibusConnectorMessageError> messageErrorList;
@@ -38,12 +38,12 @@ public interface TransportStatusService {
             this.status = status;
         }
 
-        public String getForTransport() {
-            return forTransport;
+        public String getTransportId() {
+            return transportId;
         }
 
-        public void setForTransport(String forTransport) {
-            this.forTransport = forTransport;
+        public void setTransportId(String transportId) {
+            this.transportId = transportId;
         }
 
         public String getRemoteTransportId() {
@@ -65,7 +65,7 @@ public interface TransportStatusService {
         @Override
         public String toString() {
             return new ToStringCreator(this)
-                    .append("msgId", this.forTransport)
+                    .append("msgId", this.transportId)
                     .append("remote id", this.remoteTransportId)
                     .append("status", this.status)
                     .toString();

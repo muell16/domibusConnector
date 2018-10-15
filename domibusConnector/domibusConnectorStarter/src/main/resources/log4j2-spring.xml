@@ -16,22 +16,22 @@ How to configure log4j2:
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT" follow="true">
-            <!-- <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [msgid=%X{messageid}] %-5level %logger{36} - %msg%n" /> -->
             <PatternLayout pattern="${sys:CONN_CONSOLE_LOG_PATTERN}" />
         </Console>
         <!-- rolling file appender -->
+        <!--
         <RollingFile name="RollingFile" fileName="C:\Entwicklung\domibus\logs\connector.log" filePattern="C:\Entwicklung\domibus\logs\app-%d{MM-dd-yyyy}.log.gz"
                      ignoreExceptions="false">
             <PatternLayout pattern="${sys:CONN_FILE_LOG_PATTERN}" />
             <TimeBasedTriggeringPolicy />
-        </RollingFile>
+        </RollingFile> -->
     </Appenders>
 
     <!-- TODO: add BUSINESS LOGS, LOG MARKERS -->
 
     <Loggers>
         <!-- ROOT logger -->
-        <Root level="warn" additivity="false">
+        <Root level="info" additivity="false">
             <AppenderRef ref="Console" />
             <!-- <AppenderRef ref="RollingFile" /> -->
         </Root>
