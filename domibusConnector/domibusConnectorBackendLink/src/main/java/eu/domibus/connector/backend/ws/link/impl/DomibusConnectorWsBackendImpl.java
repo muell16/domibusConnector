@@ -105,6 +105,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
                     .forEach((message) -> {
                         messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
                         m.getInterceptorChain().add(new ProcessMessageAfterDeliveredToBackendInterceptor(message));
+
                     });
         } catch (Exception e) {
             throw new DomibusConnectorBackendDeliveryException("Exception caught retrieving messages from backend queue!", e);
@@ -174,7 +175,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
         private final DomibusConnectorMessage connectorMessage;
 
         ProcessMessageAfterDeliveredToBackendInterceptor(DomibusConnectorMessage connectorMessage) {
-            super(Phase.SETUP_ENDING);
+            super(Phase.POST_INVOKE);
             this.connectorMessage = connectorMessage;
         }
 

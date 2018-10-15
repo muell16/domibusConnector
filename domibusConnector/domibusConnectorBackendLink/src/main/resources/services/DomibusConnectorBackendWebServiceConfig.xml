@@ -28,9 +28,8 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd "
                     publish="true"
                     serviceName="s:DomibusConnectorBackendWSService"    
                     wsdlLocation="wsdl/DomibusConnectorBackendWebService.wsdl"
-                    xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
                     xmlns:s="http://connector.domibus.eu/ws/backend/webservice"
-                    endpointName="e:DomibusConnectorBackendWebService"
+                    endpointName="s:DomibusConnectorBackendWebService"
     >
         
         <jaxws:features>

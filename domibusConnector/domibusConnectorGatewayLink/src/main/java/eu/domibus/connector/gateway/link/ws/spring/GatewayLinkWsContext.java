@@ -57,6 +57,7 @@ public class GatewayLinkWsContext {
         jaxWsProxyFactoryBean.setBus(cxfBus);
         jaxWsProxyFactoryBean.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
         jaxWsProxyFactoryBean.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
+        jaxWsProxyFactoryBean.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
         jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
 
