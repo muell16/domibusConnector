@@ -5,6 +5,7 @@ import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebServ
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
@@ -50,7 +51,7 @@ public class CommonBackendClient {
                 .sources(CommonBackendClient.class)
                 .properties(properties)
                 .profiles(profiles)
-                .web(web)
+                .web(WebApplicationType.SERVLET)
                 .build();
 
         ConfigurableApplicationContext appContext = springApp.run();

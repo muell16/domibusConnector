@@ -88,8 +88,14 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     public DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) throws DomibusConnectorBackendDeliveryException {
         DomibusConnectorMessagesType messagesType = new DomibusConnectorMessagesType();
         MessageContext mContext = webServiceContext.getMessageContext();
+        if (mContext == null) {
+            throw new RuntimeException("Retrieved MessageContext mContext from WebServiceContext is null!");
+        }
         WrappedMessageContext wmc = (WrappedMessageContext)mContext;
         Message m = wmc.getWrappedMessage();
+        if (m == null) {
+            throw new RuntimeException("Retrieved Message m from WrappedMessageContext is null!");
+        }
 
         //TODO: put interceptor for message deletion in here!
         try {
@@ -98,7 +104,6 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
                     .forEach((message) -> {
                         messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
                         m.getInterceptorChain().add(new ProcessMessageAfterDeliveredToBackendInterceptor(message));
-                        //backendSubmissionService.processMessageAfterDeliveredToBackend(message);
                     });
         } catch (Exception e) {
             throw new DomibusConnectorBackendDeliveryException("Exception caught retrieving messages from backend queue!", e);
@@ -151,19 +156,12 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }
-        backendName = backendName.replace("CN=", "");
         DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }
-
-        ///
-        MessageContext messageContext = webServiceContext.getMessageContext();
-        LOGGER.trace("messageContext: [{}]", messageContext);
-        ///
-
 
         return backendClientInfoByName;
     }

@@ -52,10 +52,6 @@ public class GatewayLinkWsContext {
 
     @Bean
     public DomibusConnectorGatewaySubmissionWebService gwSubmissionClient() {
-
-//        WebServiceFeature[] wsFeatures = new WebServiceFeature[] {gwWsLinkPolicyLoader().loadPolicyFeature()};
-
-
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
         jaxWsProxyFactoryBean.setBus(cxfBus);
@@ -71,46 +67,11 @@ public class GatewayLinkWsContext {
         }
         jaxWsProxyFactoryBean.getProperties().put("mtom-enabled", true);
         jaxWsProxyFactoryBean.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());
-        jaxWsProxyFactoryBean.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getCxf().getEncryptAlias());
+        jaxWsProxyFactoryBean.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getEncryptAlias());
         jaxWsProxyFactoryBean.getProperties().put("security.signature.properties", gwWsLinkEncryptProperties());
 
         return jaxWsProxyFactoryBean.create(DomibusConnectorGatewaySubmissionWebService.class);
-
-
     }
-
-//    <cxf:bus>
-//        <cxf:features>
-//            <p:policies/>
-//        </cxf:features>
-//    </cxf:bus>
-//
-//    <jaxws:client
-//            id="gwSubmissionClient"
-//    serviceClass="eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService"
-//    address="#{GatewayLinkWsServiceProperties.submissionEndpointAddress}"
-//    serviceName="s:DomibusConnectorGatewaySubmissionWebService"
-//    xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice"
-//    wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl"
-//            >
-//        <!--address="${gateway.submission.endpoint.address}" -->
-//        <!--&gt;-->
-//        <jaxws:properties>
-//            <entry key="mtom-enabled" value="true"/>
-//            <entry key="security.encryption.properties" value-ref="encryptProperties"/>
-//            <entry key="security.encryption.username" value="#{GatewayLinkWsServiceProperties.cxf.encryptAlias}" /> <!-- TODO: LOAD VIA properties!!!! -->
-//            <entry key="security.signature.properties" value-ref="encryptProperties"/>
-//            <!--<entry key="security.signature.username" value="connector" />-->
-//        </jaxws:properties>
-//
-//        <jaxws:features>
-//            <p:policies>
-//                <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>
-//            </p:policies>
-//        </jaxws:features>
-//
-//    </jaxws:client>
-
 
 
     @Bean
@@ -136,44 +97,12 @@ public class GatewayLinkWsContext {
         return endpoint;
     }
 
-
-//    <jaxws:endpoint id="domibusConnectorDeliveryServiceEndpoint"
-//    implementor="#domibusConnectorDeliveryServiceImpl"
-//    address="#{GatewayLinkWsServiceProperties.address}"
-//    serviceName="s:DomibusConnectorGatewayDeliveryWebService"
-//    wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl"
-//    xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"
-//            >
-//        <!--
-//    serviceName="s:DomibusConnectorGatewayDeliveryWebService"
-//    endpointName="s:DomibusConnectorGatewayDeliveryWebService"
-//    xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
-//    xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"
-//            > -->
-//        <jaxws:properties>
-//            <entry key="mtom-enabled" value="true"/>
-//            <entry key="security.encryption.properties" value-ref="encryptProperties"/>
-//            <entry key="security.signature.properties" value-ref="encryptProperties"/>
-//            <entry key="security.encryption.username" value="useReqSigCert" />
-//        </jaxws:properties>
-//
-//        <jaxws:features>
-//            <p:policies>
-//                <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>
-//            </p:policies>
-//        </jaxws:features>
-//
-//    </jaxws:endpoint>
-//
-
-
-
     @Bean
     public Properties gwWsLinkEncryptProperties() {
         Properties props = new Properties();
 
-        CxfTrustKeyStoreConfigurationProperties cxf = gatewayLinkWsServiceProperties.getCxf();
-        StoreConfigurationProperties cxfKeyStore = gatewayLinkWsServiceProperties.getCxf().getKeyStore();
+        CxfTrustKeyStoreConfigurationProperties cxf = gatewayLinkWsServiceProperties; //.getCxf();
+        StoreConfigurationProperties cxfKeyStore = gatewayLinkWsServiceProperties.getKeyStore();
 
         props.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         props.put("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
@@ -187,31 +116,6 @@ public class GatewayLinkWsContext {
         props.put("org.apache.wss4j.crypto.merlin.truststore.password", cxf.getTrustStore().getPassword());
 
         return props;
-
     }
-
-
-//    <bean id="encryptProperties"
-//    class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-//        <property name="properties">
-//            <props>
-//                <!-- https://ws.apache.org/wss4j/config.html -->
-//                <prop key="org.apache.wss4j.crypto.provider">org.apache.wss4j.common.crypto.Merlin</prop>
-//                <!-- keystore -->
-//                <prop key="org.apache.wss4j.crypto.merlin.keystore.type">jks</prop>
-//                <prop key="org.apache.wss4j.crypto.merlin.keystore.file">#{GatewayLinkWsServiceProperties.cxf.keyStore.path.getFile().getPath()}</prop>
-//                <prop key="org.apache.wss4j.crypto.merlin.keystore.password">#{GatewayLinkWsServiceProperties.cxf.keyStore.password}</prop>
-//                <!--<prop key="org.apache.wss4j.crypto.merlin.keystore.file">keystore_cxf.jks</prop>-->
-//                <!--<prop key="org.apache.wss4j.crypto.merlin.keystore.password">12345</prop>-->
-//                <!-- default key alias -->
-//                <prop key="org.apache.wss4j.crypto.merlin.keystore.alias">#{GatewayLinkWsServiceProperties.cxf.privateKey.alias}</prop>
-//                <prop key="org.apache.wss4j.crypto.merlin.keystore.private.password">#{GatewayLinkWsServiceProperties.cxf.privateKey.password}</prop>
-//                <!-- truststore -->
-//                <prop key="org.apache.wss4j.crypto.merlin.truststore.type">jks</prop>
-//                <prop key="org.apache.wss4j.crypto.merlin.truststore.file">#{GatewayLinkWsServiceProperties.cxf.trustStore.path.getFile().getPath()}</prop>
-//                <prop key="org.apache.wss4j.crypto.merlin.truststore.password">#{GatewayLinkWsServiceProperties.cxf.trustStore.password}</prop>
-//            </props>
-//        </property>
-//    </bean>
 
 }

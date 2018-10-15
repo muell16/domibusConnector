@@ -2,6 +2,7 @@
 package eu.domibus.connector.backend;
 
 import static org.assertj.core.api.Assertions.*;
+
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 

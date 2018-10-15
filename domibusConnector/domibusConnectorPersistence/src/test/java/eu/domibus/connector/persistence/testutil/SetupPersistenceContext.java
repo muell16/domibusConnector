@@ -32,7 +32,7 @@ public class SetupPersistenceContext {
         return defaultProfiles;
     }
 
-    
+
     public static ConfigurableApplicationContext startApplicationContext() {
         return startApplicationContext(getDefaultProperties());
     }

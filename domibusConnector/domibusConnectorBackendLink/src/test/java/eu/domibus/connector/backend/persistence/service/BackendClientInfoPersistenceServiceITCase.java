@@ -68,7 +68,7 @@ public class BackendClientInfoPersistenceServiceITCase {
 
         //check db
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
-        ITable queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'alice'");
+        ITable queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'cn=alice'");
 
         BigDecimal id = (BigDecimal) queryAlice.getValue(0, "id");
         assertThat(id).isEqualTo(BigDecimal.valueOf(90));
@@ -77,7 +77,7 @@ public class BackendClientInfoPersistenceServiceITCase {
 
     @Test
     public void testLoadUpdate() throws SQLException, DataSetException {
-        DomibusConnectorBackendClientInfo backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
+        DomibusConnectorBackendClientInfo backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("cn=alice");
 
         backendClientInfo.setDefaultBackend(true);
         backendClientInfo.setBackendPushAddress("my-push-address");
@@ -87,12 +87,12 @@ public class BackendClientInfoPersistenceServiceITCase {
 
         //check db
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
-        ITable queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'alice'");
+        ITable queryAlice = conn.createQueryTable("QUERY_ALICE", "SELECT * FROM DOMIBUS_CONNECTOR_BACKEND_INFO WHERE BACKEND_NAME = 'cn=alice'");
 
         BigDecimal id = (BigDecimal) queryAlice.getValue(0, "id");
         assertThat(id).isEqualTo(BigDecimal.valueOf(90));
         String name = (String) queryAlice.getValue(0, "backend_name");
-        assertThat(name).isEqualTo("alice");
+        assertThat(name).isEqualTo("cn=alice");
 
         //load again from db
         backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
@@ -103,7 +103,7 @@ public class BackendClientInfoPersistenceServiceITCase {
 
     @Test
     public void findEnabledByName() {
-        DomibusConnectorBackendClientInfo alice = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName("alice");
+        DomibusConnectorBackendClientInfo alice = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName("cn=alice");
         assertThat(alice).isNotNull();
     }
 

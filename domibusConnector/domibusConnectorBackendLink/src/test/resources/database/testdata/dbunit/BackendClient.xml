@@ -40,7 +40,7 @@
 
     <DOMIBUS_CONNECTOR_BACKEND_INFO
         id="89"
-        backend_name="bob"       
+        backend_name="cn=bob"
         backend_key_alias="bob"
         backend_key_pass="12345"
         backend_enabled="true"
@@ -48,7 +48,7 @@
     
     <DOMIBUS_CONNECTOR_BACKEND_INFO 
         id="90"
-        backend_name="alice"
+        backend_name="cn=alice"
         backend_key_alias="alice"
         backend_enabled="true"
     />

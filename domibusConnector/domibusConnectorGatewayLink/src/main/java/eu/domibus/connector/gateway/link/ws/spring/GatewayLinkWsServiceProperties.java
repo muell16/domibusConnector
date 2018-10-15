@@ -4,6 +4,7 @@ package eu.domibus.connector.gateway.link.ws.spring;
 import eu.domibus.connector.configuration.annotation.ConfigurationDescription;
 import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
 import eu.domibus.connector.lib.spring.configuration.*;
+import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -18,21 +19,22 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.GW_LINK_WS_PROFILE;
-//import javax.validation.constraints.NotBlank;
-//import javax.validation.constraints.NotNull;
+
 
 
 /**
  * The Gateway Link Webservice Based Properties
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@CheckKeyIsLoadableFromKeyStore
 @Component(GatewayLinkWsServiceProperties.BEAN_NAME)
 @Profile(GW_LINK_WS_PROFILE)
 @ConfigurationProperties(prefix = "connector.gatewaylink.ws")
 @Validated
 @Valid
 @PropertySource("classpath:eu/domibus/connector/gateway/link/ws/spring/gatewaylinkws-default.properties")
-public class GatewayLinkWsServiceProperties {
+@ConfigurationDescription("Contains all properties which are related to configure the connection to the gateway over webservices (soap)")
+public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfigurationProperties {
 
     public static final String BEAN_NAME = "GatewayLinkWsServiceProperties";
 
@@ -66,11 +68,11 @@ public class GatewayLinkWsServiceProperties {
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties tls;
 
 
-    @Valid
-    @NestedConfigurationProperty
-    @NotNull
-    @ConfigurationDescription("CXF encryption, signing, certs connector - GW")
-    private CxfTrustKeyStoreConfigurationProperties cxf;
+//    @Valid
+//    @NestedConfigurationProperty
+//    @NotNull
+//    @ConfigurationDescription("CXF encryption, signing, certs connector - GW")
+//    private CxfTrustKeyStoreConfigurationProperties cxf;
 
 
     @Valid
@@ -104,13 +106,13 @@ public class GatewayLinkWsServiceProperties {
         this.tls = tls;
     }
 
-    public CxfTrustKeyStoreConfigurationProperties getCxf() {
-        return cxf;
-    }
-
-    public void setCxf(CxfTrustKeyStoreConfigurationProperties cxf) {
-        this.cxf = cxf;
-    }
+//    public CxfTrustKeyStoreConfigurationProperties getCxf() {
+//        return cxf;
+//    }
+//
+//    public void setCxf(CxfTrustKeyStoreConfigurationProperties cxf) {
+//        this.cxf = cxf;
+//    }
 
     public Resource getWsPolicy() {
         return wsPolicy;
