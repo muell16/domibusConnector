@@ -77,6 +77,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     private void checkNotRejectedNorConfirmedWithoutRelayREMMD() throws DomibusConnectorControllerException {
         //Request database to get all messages not rejected and not confirmed yet and without a RELAY_REMMD_ACCEPTANCE/REJECTION evidence
         List<DomibusConnectorMessage> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+        LOGGER.trace("Checking [{}] messages for confirmed withoutRelayREMMD", messages.size());
         Date now = new Date();
         if (messages != null && !messages.isEmpty()) {
             for (DomibusConnectorMessage message : messages) {

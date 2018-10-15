@@ -1,4 +1,4 @@
-package eu.domibus.connector.backend.ws.link.impl;
+package eu.domibus.connector.link.common;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ public class DefaultWsCallbackHandler implements CallbackHandler {
 
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        LOGGER.trace("default callback handler called with callbacks [{}]", callbacks);
+        LOGGER.trace("default callback handler called with callbacks [{}]", (Object[]) callbacks);
         //just do nothing...
     }
 
