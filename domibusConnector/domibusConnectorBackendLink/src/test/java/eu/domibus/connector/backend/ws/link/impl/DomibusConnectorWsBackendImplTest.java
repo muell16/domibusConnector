@@ -17,6 +17,10 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDat
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServiceMemoryImpl;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.interceptor.InterceptorChain;
+import org.apache.cxf.jaxws.context.WrappedMessageContext;
+import org.apache.cxf.message.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -55,11 +59,24 @@ public class  DomibusConnectorWsBackendImplTest {
     DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
     @Mock
     DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
-    
+
+    WrappedMessageContext wrappedMessageContext;
+
+    @Mock
+    Message message;
+
+    @Mock
+    InterceptorChain interceptorChain;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         webServiceContext = Mockito.mock(WebServiceContext.class);
+
+        Mockito.when(message.getInterceptorChain()).thenReturn(interceptorChain);
+        wrappedMessageContext = new WrappedMessageContext(message);
+
+        Mockito.when(webServiceContext.getMessageContext()).thenReturn(wrappedMessageContext);
      
         DomibusConnectorWsBackendImpl domibusConnectorBackendImpl = new DomibusConnectorWsBackendImpl();
         domibusConnectorBackendImpl.setWsContext(webServiceContext);

@@ -41,7 +41,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorWsBackendImpl.class);
 
-    @Resource
+
     private WebServiceContext webServiceContext;
 
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
@@ -51,6 +51,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
 
     //setter
+    @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
         this.webServiceContext = webServiceContext;
     }
