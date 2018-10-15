@@ -1,8 +1,8 @@
 package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.ws.helper.WsPolicyLoader;
 import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
+import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -21,8 +21,8 @@ public class BackendClientWebServiceClientFactoryTest {
 
     @Before
     public void setUp() {
-        WsPolicyLoader policyLoader = new WsPolicyLoader();
-        policyLoader.setBackendLinkConfigurationProperties(configurationProperties);
+        WsPolicyLoader policyLoader = new WsPolicyLoader(configurationProperties.getWsPolicy());
+//        policyLoader.setBackendLinkConfigurationProperties(configurationProperties);
 
         webServiceClientFactory = new BackendClientWebServiceClientFactory();
 
