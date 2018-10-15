@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -25,9 +26,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( classes={SecurityToolKitContextITCase.TestContextConfiguration.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-auth.properties"},
-        properties={"spring.liquibase.enabled=false",
-                "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl"}
+        properties={"spring.liquibase.enabled=false" }
 )
+@ActiveProfiles({"ittest", "storage-db"})
 public class SecurityToolKitContextITCase {
 
     @EnableAutoConfiguration(exclude = {
