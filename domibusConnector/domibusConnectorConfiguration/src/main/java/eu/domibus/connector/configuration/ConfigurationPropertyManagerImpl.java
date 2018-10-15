@@ -42,11 +42,7 @@ public class ConfigurationPropertyManagerImpl implements ConfigurationPropertyMa
     @Autowired
     private Validator validator;
 
-
-
     //TODO: isPropertyValid function....
-
-
 
     /**
      * Tests if the configuration is valid, all properties are loaded from the

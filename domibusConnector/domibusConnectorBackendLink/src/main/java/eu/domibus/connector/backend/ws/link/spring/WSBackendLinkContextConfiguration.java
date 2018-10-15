@@ -9,7 +9,9 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliverySe
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.backend.ws.link.impl.MessageToBackendClientWaitQueue;
 import eu.domibus.connector.backend.ws.link.impl.ToBackendClientJmsBasedWaitQueue;
+import eu.domibus.connector.link.common.WsPolicyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 
 import org.springframework.jms.annotation.EnableJms;
@@ -28,5 +30,16 @@ import org.springframework.messaging.MessagingException;
 @Profile("backendlink-ws")
 public class WSBackendLinkContextConfiguration {
 
+    public static final String BACKEND_POLICY_LOADER = "backendPolicyLoader";
+
+    @Autowired
+    WSBackendLinkConfigurationProperties configurationProperties;
+
+    @Bean
+    @Qualifier(BACKEND_POLICY_LOADER)
+    public WsPolicyLoader wsPolicyLoader() {
+        WsPolicyLoader wsPolicyLoader = new WsPolicyLoader(configurationProperties.getWsPolicy());
+        return wsPolicyLoader;
+    }
 
 }

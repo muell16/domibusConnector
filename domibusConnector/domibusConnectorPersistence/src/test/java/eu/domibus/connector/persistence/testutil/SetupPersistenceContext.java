@@ -28,12 +28,11 @@ public class SetupPersistenceContext {
 
     public static Set<String> getDefaultProfiles() {
         Set<String> defaultProfiles =  new HashSet<String>();
-        defaultProfiles.addAll(Arrays.asList(new String[]{"test", "db_h2"}));
+        defaultProfiles.addAll(Arrays.asList(new String[]{"test", "db_h2", "storage-db"}));
         return defaultProfiles;
     }
 
-
-//    @BeforeClass
+    
     public static ConfigurableApplicationContext startApplicationContext() {
         return startApplicationContext(getDefaultProperties());
     }

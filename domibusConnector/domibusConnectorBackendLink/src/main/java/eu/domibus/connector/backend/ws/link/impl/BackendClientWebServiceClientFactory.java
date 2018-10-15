@@ -11,10 +11,13 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.BACKEND_POLICY_LOADER;
 
 /**
  * Creates a web service client for pushing messages to backend client
@@ -26,6 +29,7 @@ public class BackendClientWebServiceClientFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendClientWebServiceClientFactory.class);
     
     @Autowired
+    @Qualifier(BACKEND_POLICY_LOADER)
     private WsPolicyLoader policyUtil;
 
     @Autowired

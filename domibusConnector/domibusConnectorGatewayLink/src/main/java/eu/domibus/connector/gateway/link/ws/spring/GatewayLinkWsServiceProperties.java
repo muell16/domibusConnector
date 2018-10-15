@@ -65,6 +65,7 @@ public class GatewayLinkWsServiceProperties {
     @ConfigurationDescription("TLS between GW - Connector")
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties tls;
 
+
     @Valid
     @NestedConfigurationProperty
     @NotNull
