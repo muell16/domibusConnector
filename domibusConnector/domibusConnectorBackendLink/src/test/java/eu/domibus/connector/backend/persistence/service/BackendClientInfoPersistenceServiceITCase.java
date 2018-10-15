@@ -95,7 +95,7 @@ public class BackendClientInfoPersistenceServiceITCase {
         assertThat(name).isEqualTo("cn=alice");
 
         //load again from db
-        backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
+        backendClientInfo = backendClientInfoPersistenceService.getBackendClientInfoByName("cn=alice");
         assertThat(backendClientInfo).isNotNull();
 
     }

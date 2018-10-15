@@ -166,14 +166,14 @@ public class BackendLinkWsTestMessageFlowITCase {
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
 
         //configure backendClient alice in DB
-        DomibusConnectorBackendClientInfo alice = backendClientInfoPersistenceService.getBackendClientInfoByName("alice");
+        DomibusConnectorBackendClientInfo alice = backendClientInfoPersistenceService.getBackendClientInfoByName("cn=alice");
         assertThat(alice).as("alice must not be null!").isNotNull();
         alice.setBackendPushAddress(getBackendClientPushServiceAddress(aliceApplicationContext));
         alice.setDefaultBackend(true);
         backendClientInfoPersistenceService.save(alice);
 
         //configure backendClient bob in DB
-        DomibusConnectorBackendClientInfo bob = backendClientInfoPersistenceService.getBackendClientInfoByName("bob");
+        DomibusConnectorBackendClientInfo bob = backendClientInfoPersistenceService.getBackendClientInfoByName("cn=bob");
         assertThat(bob).as("bob must not be null!").isNotNull();
         bob.setBackendPushAddress(null);
         assertThat(bob.isPushBackend()).isFalse();
