@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-How to configure log4j2:
-   https://logging.apache.org/log4j/2.x/manual/configuration.html
--->
-<Configuration status="INFO">
+
+<Configuration status="INFO" monitor="60" >
+    <!-- watch configuration file for changes, check every 60seconds -->
 
     <Properties>
         <Property name="PID">????</Property>
         <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
         <Property name="LOG_LEVEL_PATTERN">%5p</Property>
         <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
-        <Property name="CONN_CONSOLE_LOG_PATTERN">%clr{%d{${LOG_DATEFORMAT_PATTERN}}}{faint} %clr{${LOG_LEVEL_PATTERN}} %clr{${sys:PID}}{magenta} %clr{---}{faint} [tid=%38.38X{messageid}] %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
-        <Property name="CONN_FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} ${sys:PID} --- [tid=%64.64X{messageid}] [%t] %-40.40c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{${LOG_DATEFORMAT_PATTERN}}}{faint} %clr{${LOG_LEVEL_PATTERN}} %clr{${sys:PID}}{magenta} %clr{---}{faint} [tid=%38.-38X{messageid}] [processor=%20.-20X{message_processor}] %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+        <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} ${sys:PID} --- [tid=%64.-64X{messageid}] [%t] %-40.40c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
     </Properties>
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <!-- <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [msgid=%X{messageid}] %-5level %logger{36} - %msg%n" /> -->
-            <PatternLayout pattern="${sys:CONN_CONSOLE_LOG_PATTERN}" />
+            <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" />
         </Console>
-        <!-- rolling file appender -->
-        <RollingFile name="RollingFile" fileName="C:\Entwicklung\domibus\logs\connector.log" filePattern="C:\Entwicklung\domibus\logs\app-%d{MM-dd-yyyy}.log.gz"
-                     ignoreExceptions="false">
-            <PatternLayout pattern="${sys:CONN_FILE_LOG_PATTERN}" />
-            <TimeBasedTriggeringPolicy />
-        </RollingFile>
     </Appenders>
 
-    <!-- TODO: add BUSINESS LOGS, LOG MARKERS -->
+    <!-- TODO: add examples for BUSINESS, SECURITY, MARKER LOGGING -->
 
     <Loggers>
-        <!-- ROOT logger -->
-        <Root level="warn" additivity="false">
+        <Root level="info" additivity="false">
             <AppenderRef ref="Console" />
-            <!-- <AppenderRef ref="RollingFile" /> -->
         </Root>
-        <!-- connector log -->
-        <Logger name="eu.domibus.connector" level="info" additivity="false">
+        <Logger name="org.liquibase" level="info"  >
             <AppenderRef ref="Console" />
-            <!-- <AppenderRef ref="RollingFile" /> -->
+        </Logger>
+
+        <Logger name="eu.domibus.connector" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="eu.domibus.connector.persistence" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+
+        <Logger name="org.hibernate" level="info" additivity="false">
+            <AppenderRef ref="Console" />
         </Logger>
     </Loggers>
 </Configuration>
