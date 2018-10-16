@@ -116,8 +116,6 @@ public class BackendToGatewayMessageProcessorTest {
                         eq(DomibusConnectorMessageDirection.CONN_TO_NAT));
 
 
-        //verify originalMessage deliverd to gw status is persisted
-        Mockito.verify(messagePersistenceService, times(1)).setDeliveredToGateway(eq(epoMessage));
 
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);

@@ -57,15 +57,15 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
             );
         }
 
-//        if (!isEvidenceMessage(message)) {
-//            try {
-//                contentStorageService.cleanForMessage(message);
-//                LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of outgoing message [{}]", message.getConnectorMessageId());
-//            } catch (RuntimeException e) {
-//                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of incoming message", e);
-//            }
-//        }
-//          TODO: async trigger message deletion....!
+        if (!isEvidenceMessage(message)) {
+            try {
+                contentStorageService.cleanForMessage(message);
+                LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of outgoing message [{}]", message.getConnectorMessageId());
+            } catch (RuntimeException e) {
+                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of incoming message", e);
+            }
+        }
+
     }
 
 

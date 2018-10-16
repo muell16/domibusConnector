@@ -30,7 +30,7 @@ import java.util.concurrent.BlockingQueue;
         "eu.domibus.connector.evidences",   //load evidences toolkit
         "eu.domibus.connector.security"     //load security toolkit
 })
-@Profile("ittest")
+@Profile("ITCaseTestContext")
 public class ITCaseTestContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ITCaseTestContext.class);
