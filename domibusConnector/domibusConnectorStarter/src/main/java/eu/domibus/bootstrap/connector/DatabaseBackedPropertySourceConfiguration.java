@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @Order(Ordered.LOWEST_PRECEDENCE)
-//@org.springframework.context.annotation.PropertySource({"classpath:/default-bootstrap.properties"})
+@org.springframework.context.annotation.PropertySource({"classpath:default-bootstrap.properties"})
 public class DatabaseBackedPropertySourceConfiguration implements PropertySourceLocator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBackedPropertySourceConfiguration.class);
