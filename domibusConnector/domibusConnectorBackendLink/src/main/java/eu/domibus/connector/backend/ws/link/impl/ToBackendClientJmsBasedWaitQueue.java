@@ -11,6 +11,8 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.jms.*;
 
+import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
@@ -92,7 +94,9 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
     public void pushToBackend(ObjectMessage msg) throws JMSException {
         LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
         DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
+        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(backendMessage.getDomibusConnectorMessage().getConnectorMessageId());
         pushMessageToBackendCallback.push(backendMessage);
+        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC((String)null);
     }
 
     @Override

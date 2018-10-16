@@ -1,5 +1,6 @@
 package eu.domibus.connector.gateway.link.ws.impl;
 
+import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDe
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
         DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(deliverMessageRequest);
-
+        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {
             controllerService.deliverMessageFromGatewayToController(domainMessage);

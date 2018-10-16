@@ -24,9 +24,7 @@ import javax.servlet.ServletException;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-//@PropertySource({"classpath:connector.properties", "classpath:build-info.properties"}) //connector.properties should be loaded by default, because
-//spring.application.name=connector is set so spring boot is looking for ${spring.application.name}.properties
-@PropertySource({"classpath:build-info.properties"})
+@PropertySource({"classpath:build-info.properties", "classpath:default-bootstrap.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
@@ -83,8 +81,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             springProperties.setProperty(SPRING_CONFIG_NAME, configName);
 
         }else {
-        	LOGGER.error("Property \"{}\" not given or not resolveable! Startup failed!",CONNECTOR_CONFIG_FILE);
-        	System.exit(-1);
+        	LOGGER.warn("SystemProperty \"{}\" not given or not resolveable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE);
+//            System.exit(-1);
         }
         //map spring.config.location on connector.config.location: connector.config.location=${spring.config.location}
         //springProperties.setProperty(CONNECTOR_CONFIG_LOCATION, "${" + SPRING_CONFIG_LOCATION + "}");

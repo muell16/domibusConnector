@@ -36,7 +36,7 @@ public class HandleFromGwToConnectorSentResponse implements DomibusConnectorAsyn
             //TODO: map error list
             //transportState.setMessageErrorList();
         }
-        transportStatusService.setTransportStatusForTransportToGateway(transportState);
+        transportStatusService.updateTransportToGatewayStatus(transportState);
     }
 
 }

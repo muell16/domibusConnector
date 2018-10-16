@@ -53,14 +53,14 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
         if (ack != null && ack.isResult()) {
             String ebmsId = ack.getMessageId();
             LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW accepted message and sent id [{}] back", ebmsId);
-            //message.getMessageDetails().setEbmsMessageId(ebmsId);
+//            message.getMessageDetails().setEbmsMessageId(ebmsId);
 
             state.setRemoteTransportId(ebmsId);
             state.setStatus(TransportStatusService.TransportState.ACCEPTED);
-            gatewaySubmissionTransportStatusService.setTransportStatusForTransportToGateway(state);
+            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
         } else {
             state.setStatus(TransportStatusService.TransportState.FAILED);
-            gatewaySubmissionTransportStatusService.setTransportStatusForTransportToGateway(state);
+            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
 
             if (ack != null && !StringUtils.isEmpty(ack.getResultMessage()))
                 throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());

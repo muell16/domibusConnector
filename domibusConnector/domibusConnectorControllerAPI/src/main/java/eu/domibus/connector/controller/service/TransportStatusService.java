@@ -16,13 +16,13 @@ public interface TransportStatusService {
      * Sets the transport status for transports to GW
      * @param transportState the transport status to set, contains also the transport id / connector message id
      */
-    public void setTransportStatusForTransportToGateway(DomibusConnectorTransportState transportState);
+    public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState);
 
     /**
      * Sets the transport status for transport to backendClient
      * @param transportState the transport status to set, contains also the transport id / connector message id
      */
-    public void setTransportStatusForTransportToBackendClient(DomibusConnectorTransportState transportState);
+    public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState);
 
     public static class DomibusConnectorTransportState {
         private String transportId;

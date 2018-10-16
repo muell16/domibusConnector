@@ -17,26 +17,39 @@ import org.springframework.transaction.annotation.Transactional;
 import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isEvidenceMessage;
 
 @Service
+@Transactional
 public class DomibusConnectorTransportStatusService implements TransportStatusService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStatusService.class);
 
-    @Autowired
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-
-    @Autowired
     private DomibusConnectorPersistAllBigDataOfMessageService contentStorageService;
-
     private DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void setTransportStatusForTransportToGateway(DomibusConnectorTransportState transportState) {
+    @Autowired
+    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
+    }
 
+    @Autowired
+    public void setContentStorageService(DomibusConnectorPersistAllBigDataOfMessageService contentStorageService) {
+        this.contentStorageService = contentStorageService;
+    }
+
+    @Autowired
+    public void setErrorPersistenceService(DomibusConnectorMessageErrorPersistenceService errorPersistenceService) {
+        this.errorPersistenceService = errorPersistenceService;
+    }
+
+    @Override
+    @Transactional
+    public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState) {
         DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
+
         if (transportState.getStatus() == TransportState.ACCEPTED) {
             message.getMessageDetails().setEbmsMessageId(transportState.getRemoteTransportId());
             messagePersistenceService.mergeMessageWithDatabase(message);
+            messagePersistenceService.setDeliveredToGateway(message);
         } else if (transportState.getStatus() == TransportState.FAILED) {
             //TODO: reject message...
             transportState.getMessageErrorList().stream().forEach( error ->
@@ -53,13 +66,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
 //            }
 //        }
 //          TODO: async trigger message deletion....!
-
-
     }
 
 
     @Override
-    public void setTransportStatusForTransportToBackendClient(DomibusConnectorTransportState transportState) {
+    public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState) {
 
 //        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
 //        messagePersistenceService.confirmMessage(message);

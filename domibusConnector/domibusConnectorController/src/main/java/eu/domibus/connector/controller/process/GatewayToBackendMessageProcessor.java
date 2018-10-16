@@ -7,8 +7,10 @@ import javax.annotation.Nonnull;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
+import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -34,10 +36,12 @@ import eu.domibus.connector.security.exception.DomibusConnectorSecurityException
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_EVIDENCE_LOG;
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
-@Component("GatewayToBackendMessageProcessor")
+@Component(GatewayToBackendMessageProcessor.GW_TO_BACKEND_MESSAGE_PROCESSOR)
 public class GatewayToBackendMessageProcessor implements DomibusConnectorMessageProcessor {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(GatewayToBackendMessageProcessor.class);
+
+	public static final String GW_TO_BACKEND_MESSAGE_PROCESSOR = "GatewayToBackendMessageProcessor";
 	
 	@Value("${domibus.connector.to.connector.test.service:null}")
 	private String connectorTestService;
@@ -110,6 +114,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
     @Override
 	@StoreMessageExceptionIntoDatabase
+	@MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
 	public void processMessage(DomibusConnectorMessage message) {
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message); //set message on logging context
 		LOGGER.trace("#processMessage: start processing originalMessage [{}] with confirmations [{}]", message, message.getMessageConfirmations());

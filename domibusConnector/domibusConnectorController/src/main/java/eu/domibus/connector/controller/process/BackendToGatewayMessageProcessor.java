@@ -2,8 +2,11 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
  * and also wraps it into an asic container and delivers the
  * originalMessage to the gw
  */
-@Component("BackendToGatewayMessageProcessor")
+@Component(BackendToGatewayMessageProcessor.BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
 public class BackendToGatewayMessageProcessor implements DomibusConnectorMessageProcessor {
+
+	public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "BackendToGatewayMessageProcessor";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessor.class);
 
@@ -103,8 +108,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
     @Override
     @Transactional(propagation=Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
+    @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
 	public void processMessage(DomibusConnectorMessage message) {
-
 
         try {
 			securityToolkit.buildContainer(message);
@@ -142,7 +147,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			message = bigDataPersistenceService.loadAllBigFilesFromMessage(message);
 			gwSubmissionService.submitToGateway(message);
 		} catch (DomibusConnectorGatewaySubmissionException e) {
-		    LOGGER.warn("Cannot submit messate to gateway", e);
+		    LOGGER.warn("Cannot submit message to gateway", e);
 			createSubmissionRejectionAndReturnIt(message, e.getMessage());
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -151,8 +156,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .setCause(e)
                     .buildAndThrow();
 		}
-		messagePersistenceService.mergeMessageWithDatabase(message);
-		messagePersistenceService.setDeliveredToGateway(message);
+//		messagePersistenceService.mergeMessageWithDatabase(message);
+//		messagePersistenceService.setDeliveredToGateway(message);
 
         //also send evidence back to backend client:
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);

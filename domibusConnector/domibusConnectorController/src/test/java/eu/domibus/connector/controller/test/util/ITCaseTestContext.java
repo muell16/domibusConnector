@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,74 +30,72 @@ import java.util.concurrent.BlockingQueue;
         "eu.domibus.connector.evidences",   //load evidences toolkit
         "eu.domibus.connector.security"     //load security toolkit
 })
-@Profile("ITCaseTestContext")
+@Profile("ittest")
 public class ITCaseTestContext {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ITCaseTestContext.class);
 
-//
-//    //@EnableConfigurationProperties
-//    protected static class TestConfiguration {
 
-        public static final String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
-        public static final String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
+    public static final String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
+    public static final String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
 
-        public interface DomibusConnectorGatewaySubmissionServiceInterceptor {
-            public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException;
-        }
-
-//        public interface DomibusConnectorBackendDeliveryServiceInterceptor {
-//            public void deliverMessageToBackend(DomibusConnectorMessage message);
-//        }
+    public interface DomibusConnectorGatewaySubmissionServiceInterceptor {
+        public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException;
+    }
 
 
-        @Bean
-        public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-            return new PropertySourcesPlaceholderConfigurer();
-        }
+    @Bean
+    public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
-        @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
-            return new ArrayBlockingQueue<>(100);
-            //return Collections.synchronizedList(new ArrayList<>());
+    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
+        return new ArrayBlockingQueue<>(100);
+        //return Collections.synchronizedList(new ArrayList<>());
 
-        }
+    }
 
-        @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
-            return new ArrayBlockingQueue<>(100);
+    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
+        return new ArrayBlockingQueue<>(100);
 //            return Collections.synchronizedList(new ArrayList<>());
-        }
+    }
 
-        @Bean
-        public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
-            return Mockito.mock(DomibusConnectorGatewaySubmissionServiceInterceptor.class);
-        }
+    @Bean
+    public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
+        return Mockito.mock(DomibusConnectorGatewaySubmissionServiceInterceptor.class);
+    }
 
 
-        @Bean
-        public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
-            return new DomibusConnectorBackendDeliveryService() {
-                @Override
-                public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
-                    LOGGER.info("Delivered Message [{}] to Backend");
-                    toBackendDeliveredMessages().add(message);
-                }
-            };
-        }
+    @Bean
+    public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
+        return new DomibusConnectorBackendDeliveryService() {
+            @Override
+            public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+                LOGGER.info("Delivered Message [{}] to Backend");
+                toBackendDeliveredMessages().add(message);
+            }
+        };
+    }
 
-        @Bean
-        public DomibusConnectorGatewaySubmissionService sendMessageToGwService() {
-            return new DomibusConnectorGatewaySubmissionService() {
-                @Override
-                public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
-                    domibusConnectorGatewaySubmissionServiceInterceptor().submitToGateway(message);
-                    LOGGER.info("Delivered Message [{}] to Gateway");
-                    toGatewayDeliveredMessages().add(message);
-                }
-            };
-        }
+    @Bean
+    public DomibusConnectorGatewaySubmissionService sendMessageToGwService() {
+        return new DomibusConnectorGatewaySubmissionService() {
+            @Override
+            public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
+                domibusConnectorGatewaySubmissionServiceInterceptor().submitToGateway(message);
+                LOGGER.info("Delivered Message [{}] to Gateway");
+                toGatewayDeliveredMessages().add(message);
+            }
+        };
+    }
+
+    @Bean
+    public TaskScheduler taskScheduler() {
+        return new ConcurrentTaskScheduler();
+    }
 
 }

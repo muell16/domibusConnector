@@ -2,8 +2,10 @@ package eu.domibus.connector.controller.process;
 
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,12 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 
-@Component("GatewayToBackendConfirmationProcessor")
+@Component(GatewayToBackendConfirmationProcessor.GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
 public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMessageProcessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GatewayToBackendConfirmationProcessor.class);
+
+	public static final String GW_TO_BACKEND_CONFIRMATION_PROCESSOR = "GatewayToBackendConfirmationProcessor";
 
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
@@ -43,6 +47,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
     @Override
     @StoreMessageExceptionIntoDatabase
+    @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
 	public void processMessage(DomibusConnectorMessage confirmationMessage) {
 		String refToMessageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
