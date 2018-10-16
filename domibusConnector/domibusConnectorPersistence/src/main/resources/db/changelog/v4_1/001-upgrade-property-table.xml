@@ -6,12 +6,12 @@
     
     
     <changeSet author="domibusConnector" id="changelog_4.1_rename_property_table">
-        <renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTY" newTableName="DOMIBUS_CONNECTOR_PROPERTY" />
+        <renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTY" newTableName="DOMIBUS_CONNECTOR_PROPERTIES" />
     </changeSet>
 
     <changeSet author="domibusConnector" id="changelog_4.1_rename_property_columns">
-        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="KEY" newColumnName="PROPERTY_KEY" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTIES" oldColumnName="KEY" newColumnName="PROPERTY_NAME" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTIES" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" />
     </changeSet>
     
     
