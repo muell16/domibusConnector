@@ -18,7 +18,9 @@ public class SetMessageOnLoggingContext {
     public static void putConnectorMessageIdOnMDC(@Nullable DomibusConnectorMessage domibusConnectorMessage) {
         if (domibusConnectorMessage != null) {
             String connectorMessageId = domibusConnectorMessage.getConnectorMessageId();
-            MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId);
+            putConnectorMessageIdOnMDC(connectorMessageId);
+        } else {
+            putConnectorMessageIdOnMDC((String)null);
         }
     }
 
@@ -30,6 +32,8 @@ public class SetMessageOnLoggingContext {
     public static void putConnectorMessageIdOnMDC(@Nullable String domibusConnectorMessageId) {
         if (domibusConnectorMessageId != null) {
             MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, domibusConnectorMessageId);
+        } else {
+            MDC.remove(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME);
         }
     }
 
