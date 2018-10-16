@@ -24,7 +24,7 @@ public class DatatabaseBackedPropertySource extends EnumerablePropertySource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatatabaseBackedPropertySource.class);
 
-    private static final String PROPERTY_TABLE_NAME = "DOMIBUS_CONNECTOR_PROPERTY";
+    private static final String PROPERTY_TABLE_NAME = "DOMIBUS_CONNECTOR_PROPERTIES";
     private static final String PROPERTY_NAME_COLUMN_NAME = "PROPERTY_NAME";
     private static final String PROPERTY_VALUE_COLUMN_NAME = "PROPERTY_VALUE";
 

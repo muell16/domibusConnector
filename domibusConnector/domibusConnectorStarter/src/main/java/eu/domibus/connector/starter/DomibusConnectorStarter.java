@@ -63,20 +63,28 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             if (!Files.exists(connectorConfigFilePath)) {
                 throw new RuntimeException(String.format("Cannot start because the via System Property [%s] provided config file does not exist!", CONNECTOR_CONFIG_FILE));
             }
-            String connectorConfigLocation = connectorConfigFile.substring(0, connectorConfigFile.lastIndexOf(File.separatorChar));
-            String configName =  connectorConfigFile.substring(connectorConfigFile.lastIndexOf(File.separatorChar));
-
+            
+            int lastIndex = connectorConfigFile.contains(File.separator)?connectorConfigFile.lastIndexOf(File.separatorChar):connectorConfigFile.lastIndexOf("/");
+            lastIndex++;
+            String connectorConfigLocation = connectorConfigFile.substring(0, lastIndex);
+            String configName = connectorConfigFile.substring(lastIndex);
+           
             LOGGER.info(String.format("Setting:\n %s=%s\n%s=%s\n%s=%s\n%s=%s",
                     SPRING_CLOUD_BOOTSTRAP_NAME, configName,
                     SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigLocation,
                     SPRING_CONFIG_LOCATION, connectorConfigLocation,
                     SPRING_CONFIG_NAME, configName));
 
-            springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_NAME, configName);
-            springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigLocation);
+            //springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_NAME, configName);
+//            springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigLocation);
+            springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigFile);
+            
             springProperties.setProperty(SPRING_CONFIG_LOCATION, connectorConfigLocation);
             springProperties.setProperty(SPRING_CONFIG_NAME, configName);
 
+        }else {
+        	LOGGER.error("Property \"{}\" not given or not resolveable! Startup failed!",CONNECTOR_CONFIG_FILE);
+        	System.exit(-1);
         }
         //map spring.config.location on connector.config.location: connector.config.location=${spring.config.location}
         //springProperties.setProperty(CONNECTOR_CONFIG_LOCATION, "${" + SPRING_CONFIG_LOCATION + "}");
