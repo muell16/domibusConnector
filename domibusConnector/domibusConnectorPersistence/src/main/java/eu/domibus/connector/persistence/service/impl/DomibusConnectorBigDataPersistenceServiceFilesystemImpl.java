@@ -164,6 +164,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
         //TODO: logging, error logging
         try {
+            //TODO: find out which part is blocking the deletion, holding a file handle! OR implement async deletion...?
             Files.delete(storageFile);
         } catch (IOException e) {
             throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
