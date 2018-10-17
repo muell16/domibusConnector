@@ -80,3 +80,4 @@ $Recycle.Bin
 /domibusConnector/domibusConnectorWebLib/src/main/java/eu/domibus/configuration
 /domibusConnector/domibusConnectorStarter/src/main/resources/*.properties
 
+connector.properties

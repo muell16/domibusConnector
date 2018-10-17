@@ -21,6 +21,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebPModeService;
+import eu.domibus.connector.web.viewAreas.configuration.gateway.GatewayConfigurationLabels;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
@@ -67,7 +68,7 @@ public class EnvironmentConfiguration extends VerticalLayout{
 
 	ConfigurationUtil util;
 	
-	TextField gatewaySubmissionServiceLinkField = FormsUtil.getFormattedTextField();
+	TextField persistenceFSStoragePathField = FormsUtil.getFormattedTextField();
 	
 	ComboBox<String> serviceBox = new ComboBox<String>();
 	ComboBox<String> actionBox = new ComboBox<String>();
@@ -93,7 +94,7 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	public EnvironmentConfiguration(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.util = util;
 		
-		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.gatewaySubmissionLinkLabels, gatewaySubmissionServiceLinkField));
+		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePath, persistenceFSStoragePathField));
 		
 		createAndAddServiceComboBox(pmodeService);
 		

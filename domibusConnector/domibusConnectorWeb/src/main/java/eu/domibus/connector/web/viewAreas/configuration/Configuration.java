@@ -37,6 +37,7 @@ import eu.domibus.connector.web.view.MainView;
 import eu.domibus.connector.web.viewAreas.configuration.backend.BackendConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.environment.EnvironmentConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfiguration;
+import eu.domibus.connector.web.viewAreas.configuration.gateway.GatewayConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.security.SecurityConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
@@ -53,13 +54,15 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 	ConfigurationUtil util;
 	
 	Div areaBackendConfig = null;
+	Div areaGatewayConfig = null;
 	Div areaEvidencesConfig = null;
 	Div areaSecurityConfig = null;
 	Div areaEnvironmentConfig = null;
 	Div areaConfigControl = null;
 	
 	Tab backendConfigTab = new Tab("Backend Configuration");
-	Tab evidencesConfigTab = new Tab("Evidence Builder Configuration");
+	Tab gatewayConfigTab = new Tab("Gateway Configuration");
+	Tab evidencesConfigTab = new Tab("Evidences Configuration");
 	Tab securityConfigTab = new Tab("Security Toolkit Configuration");
 	Tab environmentConfigTab = new Tab("Environment Configuration");
 	
@@ -71,7 +74,7 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 	Button resetConfiguration;
 	Button reloadConfiguration;
 	
-	public Configuration(@Autowired SecurityConfiguration secConfig, @Autowired EnvironmentConfiguration envConfig, 
+	public Configuration(@Autowired SecurityConfiguration secConfig, @Autowired EnvironmentConfiguration envConfig, @Autowired GatewayConfiguration gwConfig,
 			@Autowired BackendConfiguration backendConfig, @Autowired EvidenceBuilderConfiguration evidencesConfig,
 			@Autowired DomibusConnectorPropertiesPersistenceService propertiesPersistenceService, @Autowired ConfigurationUtil util) {
 		this.propertiesPersistenceService = propertiesPersistenceService;
@@ -82,6 +85,10 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 		areaBackendConfig = new Div();
 		areaBackendConfig.add(backendConfig);
 		areaBackendConfig.setVisible(false);
+		
+		areaGatewayConfig = new Div();
+		areaGatewayConfig.add(gwConfig);
+		areaGatewayConfig.setVisible(false);
 		
 		areaEvidencesConfig = new Div();
 		areaEvidencesConfig.add(evidencesConfig);
@@ -98,13 +105,14 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 		Map<Tab, Component> tabsToPages = new HashMap<>();
 		tabsToPages.put(environmentConfigTab, areaEnvironmentConfig);
 		tabsToPages.put(securityConfigTab, areaSecurityConfig);
+		tabsToPages.put(gatewayConfigTab, areaGatewayConfig);
 		tabsToPages.put(backendConfigTab, areaBackendConfig);
 		tabsToPages.put(evidencesConfigTab, areaEvidencesConfig);
 		
-		configMenu.add(environmentConfigTab, securityConfigTab, backendConfigTab, evidencesConfigTab);
+		configMenu.add(environmentConfigTab, securityConfigTab, gatewayConfigTab, backendConfigTab, evidencesConfigTab);
 		
 		
-		Div pages = new Div(areaEnvironmentConfig, areaSecurityConfig, areaBackendConfig, areaEvidencesConfig);
+		Div pages = new Div(areaEnvironmentConfig, areaSecurityConfig, areaGatewayConfig, areaBackendConfig, areaEvidencesConfig);
 		
 		Set<Component> pagesShown = Stream.of(areaEnvironmentConfig)
 		        .collect(Collectors.toSet());
