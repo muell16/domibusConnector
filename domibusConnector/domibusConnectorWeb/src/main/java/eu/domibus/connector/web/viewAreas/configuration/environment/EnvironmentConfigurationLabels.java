@@ -4,11 +4,13 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationLabel;
 
 public class EnvironmentConfigurationLabels {
 
-	public static final ConfigurationLabel gatewaySubmissionLinkLabels = new ConfigurationLabel(
-			"Gateway submission webservice address",
-			"connector.gatewaylink.ws.submissionEndpointAddress",
-			"The connector is using this webservice address to submit messages to the gateway.",
-			"Example: http://127.0.0.1:8080/domibus/services/domibusConnectorSubmissionWebservice"
+	public static final ConfigurationLabel connectorPersistenceFileSystemStoragePath = new ConfigurationLabel(
+			"Message storage - filesystem path", 
+			"connector.persistence.filesystem.storagePath", 
+			"This path declares where messages should temporarily be stored while processed. As soon as the processing of the message is finished ",
+			"and the message is submitted, it gets deleted from that storage",
+			"The path ideally should be absolute and with a \"file:\" prefix. Also \"\\\" should be replaced by \"/\" or \"\\\\\"",
+			"Example: file:C:/<anyPath>/connector.jks"
 			);
 	
 	public static final ConfigurationLabel connectorTestServiceLabels = new ConfigurationLabel(
