@@ -88,9 +88,14 @@ class ConfigurationPropertyManagerImplTest {
         ConfigurationPropertySource configurationPropertySource = new MapConfigurationPropertySource(properties);
 
         Assertions.assertThrows( org.springframework.boot.context.properties.bind.BindException.class, () -> {
-            configurationPropertyManager.isConfigurationValid(configurationPropertySource, "eu.domibus.connector.configuration.testdata");
+            try {
+                configurationPropertyManager.isConfigurationValid(configurationPropertySource, "eu.domibus.connector.configuration.testdata");
+            } catch (org.springframework.boot.context.properties.bind.BindException be) {
+                LOGGER.info("Log bind Exception:", be);
+//                LOGGER.info("origin: [{}], Property: [{}], message: [{}] ", be.getProperty().getOrigin(), be.getMessage());
+                throw be;
+            }
         });
-
     }
 
 }
