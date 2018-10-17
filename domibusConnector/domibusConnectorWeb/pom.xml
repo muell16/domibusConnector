@@ -117,7 +117,13 @@
             <scope>provided</scope>
 		</dependency> -->
 
-
+        <!-- used to colorize output on windows systems -->
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.17.1</version>
+            <scope>runtime</scope>
+        </dependency>
 
 
 
@@ -149,7 +155,11 @@
                         </goals>
                         <configuration>
                             <classifier>standalone</classifier>
-                            <layout>JAR</layout>
+                            <!--<executable>true</executable>-->
+                            <!--<embeddedLaunchScriptProperties>-->
+                                <!--<log4j.skipJansi>false</log4j.skipJansi>-->
+                            <!--</embeddedLaunchScriptProperties>-->
+                            <!--<layout>JAR</layout>-->
                             <includes>
                                 <!-- mysql-connector-java is public available so we can leave it here as provided -->
                                 <include>
@@ -160,6 +170,10 @@
                                 <include>
                                     <groupId>org.postgresql</groupId>
                                     <artifactId>postgresql</artifactId>
+                                </include>
+                                <include>
+                                    <groupId>org.fusesource.jansi</groupId>
+                                    <artifactId>jansi</artifactId>
                                 </include>
                             </includes>
                         </configuration>
