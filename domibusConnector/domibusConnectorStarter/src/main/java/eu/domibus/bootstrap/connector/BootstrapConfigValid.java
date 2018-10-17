@@ -34,6 +34,7 @@ public class BootstrapConfigValid {
     public void postConstruct() {
         if (location == null) {
             LOGGER.warn("Cannot check bootstrap config.");
+            return;
         }
         Path path = Paths.get(location);
         if (!Files.exists(path)) {
