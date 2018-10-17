@@ -45,5 +45,25 @@ public class KeyFromKeyAndTrustStoreLoadableTest {
         assertThat(validate).hasSize(0);
     }
 
+    @Test
+    public void aliasNotNotReadable() {
+
+        props.getPrivateKey().setAlias("WRONG_ALIAS");
+
+        Set<ConstraintViolation<KeyAndKeyStoreAndTrustStoreConfigurationProperties>> validate = validator.validate(props);
+        printSet(validate);
+        assertThat(validate).hasSize(2);
+    }
+
+    @Test
+    public void aliasNotNotSet() {
+
+        props.getPrivateKey().setAlias(null);
+
+        Set<ConstraintViolation<KeyAndKeyStoreAndTrustStoreConfigurationProperties>> validate = validator.validate(props);
+        printSet(validate);
+        assertThat(validate).hasSize(1);
+    }
+
 
 }

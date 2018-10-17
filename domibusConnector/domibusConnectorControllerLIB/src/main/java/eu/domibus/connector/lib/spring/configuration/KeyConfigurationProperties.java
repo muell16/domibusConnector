@@ -23,9 +23,8 @@ public class KeyConfigurationProperties {
     /**
      * The alias of the Certificate/Key
      */
-    @Nonnull
     @NotNull(message = "an alias must be provided!")
-    @Length(min = 1, message = "Alias must have at least one charactar!")
+    @Length(min = 1, message = "Alias must have at least one character!")
     String alias;
 
     /**

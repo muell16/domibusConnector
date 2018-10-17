@@ -116,10 +116,8 @@
 			<version>12.1.0.1</version>
             <scope>provided</scope>
 		</dependency> -->
-		<!-- <dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency> -->
+
+
 
 
 
@@ -148,6 +146,20 @@
                         </goals>
                         <configuration>
                             <classifier>standalone</classifier>
+                            <includes>
+                                <!-- mysql-connector-java is public available so we can leave it here as provided -->
+                                <dependency>
+                                    <groupId>mysql</groupId>
+                                    <artifactId>mysql-connector-java</artifactId>
+                                    <scope>provided</scope>
+                                </dependency>
+                                <!-- provided postgresql connector here -->
+                                <dependency>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <scope>provided</scope>
+                                </dependency>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>

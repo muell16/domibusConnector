@@ -33,8 +33,8 @@ public class KeyFromKeyStoreLoadableValidatorTest {
     @Before
     public void setUp() {
         props = new KeyAndKeyStoreConfigurationProperties();
-        props.setStore(ConstraintViolationSetHelper.generateTestStore());
-        props.setKey(ConstraintViolationSetHelper.generateTestKeyConfig());
+        props.setKeyStore(ConstraintViolationSetHelper.generateTestStore());
+        props.setPrivateKey(ConstraintViolationSetHelper.generateTestKeyConfig());
     }
 
 
@@ -47,7 +47,7 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
     @Test
     public void isValid_wrongStorePath_shouldNotValidate() {
-        props.getStore().setPath(new ClassPathResource("/does/not/exist"));
+        props.getKeyStore().setPath(new ClassPathResource("/does/not/exist"));
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
@@ -57,7 +57,7 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
     @Test
     public void isValid_wrongKeyAlias_shouldNotValidate() {
-        props.getKey().setAlias("WRONG_ALIAS");
+        props.getPrivateKey().setAlias("WRONG_ALIAS");
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
@@ -66,7 +66,7 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
     @Test
     public void isValid_wrongKeyPassword_shouldNotValidate() {
-        props.getKey().setPassword("WRONG_PASSWORD");
+        props.getPrivateKey().setPassword("WRONG_PASSWORD");
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
@@ -76,20 +76,20 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
     @Test
     public void isValid_keyInformationIsNull() {
-        props.setKey(null);
+        props.setPrivateKey(null);
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
-        assertThat(validate).hasSize(2);
+        assertThat(validate).hasSize(1);
     }
 
     @Test
     public void isValid_keyStoreInformationIsNull() {
-        props.setStore(null);
+        props.setKeyStore(null);
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
-        assertThat(validate).hasSize(2);
+        assertThat(validate).hasSize(1);
     }
 
 

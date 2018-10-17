@@ -28,10 +28,6 @@ public class KeyAndKeyStoreConfigurationProperties {
     public KeyAndKeyStoreConfigurationProperties() {
     }
 
-    public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, KeyConfigurationProperties key) {
-        this.store = keyStore;
-        this.key = key;
-    }
 
     /**
      * Configuration of the (Key/Certificate)Store
@@ -39,7 +35,7 @@ public class KeyAndKeyStoreConfigurationProperties {
     @NestedConfigurationProperty
     @Valid
     @NotNull
-    private StoreConfigurationProperties store;
+    private StoreConfigurationProperties keyStore;
 
     /**
      * Configures the default alias to use
@@ -47,23 +43,41 @@ public class KeyAndKeyStoreConfigurationProperties {
     @NestedConfigurationProperty
     @Valid
     @NotNull
-    private KeyConfigurationProperties key;
+    private KeyConfigurationProperties privateKey;
 
+    @Deprecated
     public StoreConfigurationProperties getStore() {
-        return store;
+        return keyStore;
     }
 
+    @Deprecated
     public void setStore(StoreConfigurationProperties store) {
-        this.store = store;
+        this.keyStore = store;
     }
 
+    @Deprecated
     public KeyConfigurationProperties getKey() {
-        return key;
+        return privateKey;
     }
 
+    @Deprecated
     public void setKey(KeyConfigurationProperties key) {
-        this.key = key;
+        this.privateKey = key;
     }
 
+    public StoreConfigurationProperties getKeyStore() {
+        return keyStore;
+    }
 
+    public void setKeyStore(StoreConfigurationProperties keyStore) {
+        this.keyStore = keyStore;
+    }
+
+    public KeyConfigurationProperties getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(KeyConfigurationProperties privateKey) {
+        this.privateKey = privateKey;
+    }
 }
