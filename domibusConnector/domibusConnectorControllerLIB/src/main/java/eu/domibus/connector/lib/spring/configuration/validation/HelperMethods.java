@@ -12,7 +12,14 @@ public class HelperMethods {
         String alias = keyConfig.getAlias();
         String password = keyConfig.getPassword();
         char[] passwordArray = password.toCharArray();
-        KeyStore keyStore = storeConfig.loadKeyStore();
+
+        KeyStore keyStore;
+        try {
+            keyStore = storeConfig.loadKeyStore();
+        } catch (Exception e) {
+            context.buildConstraintViolationWithTemplate(e.getMessage()).addConstraintViolation(); //TODO: add PropertyNode
+            return false;
+        }
 
         try {
             Key key = keyStore.getKey(alias, passwordArray);
