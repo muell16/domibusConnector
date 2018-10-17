@@ -58,7 +58,6 @@ public class WSBackendLinkSendReceiveITCase {
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkSendReceiveITCase.class);
     
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.backend.ws.link.spring", },
-            scanBasePackageClasses= {WsPolicyLoader.class},
             exclude = {
         DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
     @Profile("WSBackendLinkSendReceiveITCase")
@@ -143,6 +142,7 @@ public class WSBackendLinkSendReceiveITCase {
     public void testCallBackendService_submitMessage() {
         String[] springProps = new String[] {       
             "ws.backendclient.name=bob",
+            "server.port=0",
             "connector.backend.ws.address=http://localhost:" + port + "/services/backend"
         };
         String[] springProfiles = new String[] {"ws-backend-client"};
