@@ -129,6 +129,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <id>build-info</id>
@@ -146,19 +149,20 @@
                         </goals>
                         <configuration>
                             <classifier>standalone</classifier>
+                            <layout>jar</layout>
                             <includes>
                                 <!-- mysql-connector-java is public available so we can leave it here as provided -->
-                                <dependency>
+                                <include>
                                     <groupId>mysql</groupId>
                                     <artifactId>mysql-connector-java</artifactId>
                                     <scope>provided</scope>
-                                </dependency>
+                                </include>
                                 <!-- provided postgresql connector here -->
-                                <dependency>
+                                <include>
                                     <groupId>org.postgresql</groupId>
                                     <artifactId>postgresql</artifactId>
                                     <scope>provided</scope>
-                                </dependency>
+                                </include>
                             </includes>
                         </configuration>
                     </execution>
