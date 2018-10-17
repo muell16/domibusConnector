@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.backend.ws.link.spring;
 
+import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.slf4j.Logger;
@@ -146,43 +147,43 @@ public class WSBackendLinkConfigurationProperties {
         return p;
     }
 
-    public static class KeyAndKeyStoreConfigurationProperties {
-        public KeyAndKeyStoreConfigurationProperties() {}
-
-        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, KeyConfigurationProperties key) {
-            this.store = keyStore;
-            this.key = key;
-        }
-
-        /**
-         * Configuration of the (Key/Certificate)Store
-         */
-        @NestedConfigurationProperty
-        private StoreConfigurationProperties store;
-
-        /**
-         * Configures the default alias to use
-         */
-        @NestedConfigurationProperty
-        private KeyConfigurationProperties key;
-
-        public StoreConfigurationProperties getStore() {
-            return store;
-        }
-
-        public void setStore(StoreConfigurationProperties store) {
-            this.store = store;
-        }
-
-        public KeyConfigurationProperties getKey() {
-            return key;
-        }
-
-        public void setKey(KeyConfigurationProperties key) {
-            this.key = key;
-        }
-
-    }
+//    public static class KeyAndKeyStoreConfigurationProperties {
+//        public KeyAndKeyStoreConfigurationProperties() {}
+//
+//        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, KeyConfigurationProperties key) {
+//            this.store = keyStore;
+//            this.key = key;
+//        }
+//
+//        /**
+//         * Configuration of the (Key/Certificate)Store
+//         */
+//        @NestedConfigurationProperty
+//        private StoreConfigurationProperties store;
+//
+//        /**
+//         * Configures the default alias to use
+//         */
+//        @NestedConfigurationProperty
+//        private KeyConfigurationProperties key;
+//
+//        public StoreConfigurationProperties getStore() {
+//            return store;
+//        }
+//
+//        public void setStore(StoreConfigurationProperties store) {
+//            this.store = store;
+//        }
+//
+//        public KeyConfigurationProperties getKey() {
+//            return key;
+//        }
+//
+//        public void setKey(KeyConfigurationProperties key) {
+//            this.key = key;
+//        }
+//
+//    }
 
 
     public static class CertAndStoreConfigurationProperties {
@@ -190,14 +191,14 @@ public class WSBackendLinkConfigurationProperties {
         public CertAndStoreConfigurationProperties() {}
 
         public CertAndStoreConfigurationProperties(StoreConfigurationProperties keyStore) {
-            this.store = keyStore;
+            this.trustStore = keyStore;
         }
 
         /**
          * Configuration of the (Key/Certificate)Store
          */
         @NestedConfigurationProperty
-        private StoreConfigurationProperties store;
+        private StoreConfigurationProperties trustStore;
 
         /**
          * Load system Ca Certs? (default false).
@@ -206,12 +207,14 @@ public class WSBackendLinkConfigurationProperties {
          */
         private boolean loadCaCerts = false;
 
+        @Deprecated
         public StoreConfigurationProperties getStore() {
-            return store;
+            return trustStore;
         }
 
+        @Deprecated
         public void setStore(StoreConfigurationProperties store) {
-            this.store = store;
+            this.trustStore = store;
         }
 
         public void setLoadCaCerts(boolean loadCaCerts) {
@@ -220,6 +223,14 @@ public class WSBackendLinkConfigurationProperties {
 
         public boolean isLoadCaCerts() {
             return loadCaCerts;
+        }
+
+        public StoreConfigurationProperties getTrustStore() {
+            return trustStore;
+        }
+
+        public void setTrustStore(StoreConfigurationProperties trustStore) {
+            this.trustStore = trustStore;
         }
     }
 

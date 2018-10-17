@@ -16,23 +16,6 @@ public class KeyAndKeyStoreAndTrustStoreConfigurationProperties extends KeyAndKe
     }
 
 
-//    /**
-//     * Configuration of the (Key/Certificate)Store
-//     */
-//    @NestedConfigurationProperty
-//    @Valid
-//    @NotNull
-//    private StoreConfigurationProperties keyStore;
-//
-//    /**
-//     * Configures the default alias to use
-//     */
-//    @NestedConfigurationProperty
-//    @Valid
-//    @NotNull
-//    private KeyConfigurationProperties privateKey;
-
-
     /**
      * Configuration of the TrustStore
      */
@@ -41,21 +24,6 @@ public class KeyAndKeyStoreAndTrustStoreConfigurationProperties extends KeyAndKe
     @NotNull
     private StoreConfigurationProperties trustStore;
 
-//    public StoreConfigurationProperties getKeyStore() {
-//        return keyStore;
-//    }
-//
-//    public void setKeyStore(StoreConfigurationProperties keyStore) {
-//        this.keyStore = keyStore;
-//    }
-//
-//    public KeyConfigurationProperties getPrivateKey() {
-//        return privateKey;
-//    }
-//
-//    public void setPrivateKey(KeyConfigurationProperties privateKey) {
-//        this.privateKey = privateKey;
-//    }
 
     public StoreConfigurationProperties getTrustStore() {
         return trustStore;
