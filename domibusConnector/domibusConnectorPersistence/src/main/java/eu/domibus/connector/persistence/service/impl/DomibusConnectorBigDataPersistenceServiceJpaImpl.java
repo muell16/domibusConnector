@@ -118,6 +118,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
 
     @Override
+    @Transactional
     public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);

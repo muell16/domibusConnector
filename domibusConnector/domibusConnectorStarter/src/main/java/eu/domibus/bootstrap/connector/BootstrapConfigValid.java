@@ -32,6 +32,10 @@ public class BootstrapConfigValid {
 
     @PostConstruct
     public void postConstruct() {
+        if (location == null) {
+            LOGGER.warn("Cannot check bootstrap config.");
+            return;
+        }
         Path path = Paths.get(location);
         if (!Files.exists(path)) {
             LOGGER.error("Cannot read defined settings file from path [{}] check your system/env/servlet property [{}]", location, CONNECTOR_CONFIG_FILE);

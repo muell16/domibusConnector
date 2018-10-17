@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -54,6 +55,7 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
 
 
     @Override
+    @Transactional
     public DomibusConnectorMessage persistAllBigFilesFromMessage(DomibusConnectorMessage message) {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#persistAllBigFilesFromMessage: is evidence message doing nothing...");
@@ -107,6 +109,7 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     }
 
     @Override
+    @Transactional
     public DomibusConnectorMessage loadAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message) {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#persistAllBigFilesFromMessage: is evidence message doing nothing...");

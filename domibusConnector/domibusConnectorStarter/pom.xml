@@ -153,6 +153,15 @@
 							<outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>standalone-jar</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>standalone</classifier>
+                        </configuration>
+                    </execution>
 				</executions>
 			</plugin>
             <!--<plugin>-->
