@@ -149,7 +149,7 @@
                         </goals>
                         <configuration>
                             <classifier>standalone</classifier>
-                            <layout>jar</layout>
+                            <layout>JAR</layout>
                             <includes>
                                 <!-- mysql-connector-java is public available so we can leave it here as provided -->
                                 <include>
