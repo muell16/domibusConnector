@@ -47,7 +47,17 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
 
 		LOGGER.debug("#submitToGateway: calling webservice to send request");
-		DomibsConnectorAcknowledgementType ack = submissionClient.submitMessage(request);
+		DomibsConnectorAcknowledgementType ack = null;
+		try {
+			ack = submissionClient.submitMessage(request);
+		}catch(Exception e) {
+			state.setStatus(TransportStatusService.TransportState.FAILED);
+            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
+            
+            //TODO: Create SubmissionRejection and send back to backend!
+            
+			throw new DomibusConnectorGatewaySubmissionException(e);
+		}
 		LOGGER.debug("#submitToGateway: received [{}] from gw", ack);
 
         if (ack != null && ack.isResult()) {
@@ -62,6 +72,8 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
             state.setStatus(TransportStatusService.TransportState.FAILED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
 
+          //TODO: Create SubmissionRejection and send back to backend!
+            
             if (ack != null && !StringUtils.isEmpty(ack.getResultMessage()))
                 throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());
             else
