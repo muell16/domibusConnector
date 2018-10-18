@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.cloud.config.client.ConfigServicePropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -23,9 +24,9 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 @Configuration
-@ConditionalOnProperty(name="bootstrap.database.property-loading.enabled", havingValue="true") //funktioniert das hier? TODO!!
-@Order(Ordered.LOWEST_PRECEDENCE)
-@org.springframework.context.annotation.PropertySource({"classpath:default.properties"})
+@ConditionalOnProperty(name="bootstrap.database.property-loading.enabled") //funktioniert das hier? TODO!!
+@Order(Ordered.HIGHEST_PRECEDENCE)
+//@org.springframework.context.annotation.PropertySource({"classpath:default.properties"})
 public class DatabaseBackedPropertySourceConfiguration implements PropertySourceLocator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBackedPropertySourceConfiguration.class);
