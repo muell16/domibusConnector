@@ -95,7 +95,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
             dbBackendClientInfo = this.backendClientDao.save(oldDbBackendClientInfo);
         } else { //create
         	Long maxIdExisting = this.backendClientDao.findHighestId();
-        	dbBackendClientInfo.setId(Long.valueOf(maxIdExisting.longValue()+1));
+        	dbBackendClientInfo.setId(maxIdExisting!=null?Long.valueOf(maxIdExisting.longValue()+1):1);
             dbBackendClientInfo = this.backendClientDao.save(dbBackendClientInfo);
         }
         if(!CollectionUtils.isEmpty(dbBackendClientInfo.getServices())){

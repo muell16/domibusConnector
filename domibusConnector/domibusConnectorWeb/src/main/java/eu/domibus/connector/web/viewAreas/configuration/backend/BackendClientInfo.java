@@ -36,6 +36,8 @@ public class BackendClientInfo extends VerticalLayout{
 		if(domibusConnectorBackendClientInfo.getBackendName()!=null) {
 			backendName.setValue(domibusConnectorBackendClientInfo.getBackendName());
 			backendName.setReadOnly(true);
+		}else {
+			backendName.addValueChangeListener(e -> newBackendClientInfo.setBackendName(e.getValue()));
 		}
 		backendName.setWidth("400px");
 		util.unregisterComponent(backendName);
