@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
 //@PropertySource({"classpath:build-info.properties", "classpath:default.properties"})
-@PropertySource({"classpath:build-info.properties"})
+@PropertySource({"classpath:/build-info.properties", "classpath:/default.properties", "classpath:/default-bootstrap.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
@@ -88,6 +88,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         //map spring.config.location on connector.config.location: connector.config.location=${spring.config.location}
         //springProperties.setProperty(CONNECTOR_CONFIG_LOCATION, "${" + SPRING_CONFIG_LOCATION + "}");
         //springProperties.setProperty("spring.cloud.config.enabled", "false");
+
+//        springProperties.put("spring.cloud.config.enabled", false);
 
         application.profiles("connector"); //always start with the connector profile!
         application.properties(springProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...

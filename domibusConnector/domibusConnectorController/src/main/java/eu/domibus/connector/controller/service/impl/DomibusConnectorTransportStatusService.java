@@ -47,9 +47,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
 
         if (transportState.getStatus() == TransportState.ACCEPTED) {
-            message.getMessageDetails().setEbmsMessageId(transportState.getRemoteTransportId());
-            messagePersistenceService.mergeMessageWithDatabase(message);
-            messagePersistenceService.setDeliveredToGateway(message);
+            if (message != null) {
+                message.getMessageDetails().setEbmsMessageId(transportState.getRemoteTransportId());
+                messagePersistenceService.mergeMessageWithDatabase(message);
+                messagePersistenceService.setDeliveredToGateway(message);
+            }
         } else if (transportState.getStatus() == TransportState.FAILED) {
             //TODO: reject message...
             transportState.getMessageErrorList().stream().forEach( error ->
