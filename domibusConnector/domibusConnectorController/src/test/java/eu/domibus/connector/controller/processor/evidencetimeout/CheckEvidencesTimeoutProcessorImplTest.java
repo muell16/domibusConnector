@@ -44,6 +44,7 @@ class CheckEvidencesTimeoutProcessorImplTest {
         evidencesTimeoutConfigurationProperties.setDeliveryTimeout(Duration.valueOf("5m"));
 //        evidencesTimeoutConfigurationProperties.setDeliveryWarnTimeout(Duration.valueOf("5m"));
 
+        
 
         checkEvidencesTimeoutProcessor = new CheckEvidencesTimeoutProcessorImpl();
 
