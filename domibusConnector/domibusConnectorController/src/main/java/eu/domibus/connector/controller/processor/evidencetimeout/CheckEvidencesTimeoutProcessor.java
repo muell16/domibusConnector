@@ -1,5 +1,5 @@
 
-package eu.domibus.connector.controller.process;
+package eu.domibus.connector.controller.processor.evidencetimeout;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 
