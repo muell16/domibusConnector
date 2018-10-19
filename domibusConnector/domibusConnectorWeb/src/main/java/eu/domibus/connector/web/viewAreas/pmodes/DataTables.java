@@ -208,17 +208,17 @@ public class DataTables extends VerticalLayout {
 		return layout;
 	}
 	
-	private void reloadParties() {
+	public void reloadParties() {
 		partyGrid.setItems(this.pmodeService.getPartyList());
 		
 	}
 	
-	private void reloadActions() {
+	public void reloadActions() {
 		actionGrid.setItems(this.pmodeService.getActionList());
 		
 	}
 	
-	private void reloadServices() {
+	public void reloadServices() {
 		serviceGrid.setItems(this.pmodeService.getServiceList());
 		
 	}
