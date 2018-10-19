@@ -69,6 +69,7 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	ConfigurationUtil util;
 	
 	TextField persistenceFSStoragePathField = FormsUtil.getFormattedTextField();
+	LumoCheckbox persistenceFSStorageCreateDirBox = new LumoCheckbox();
 	
 	ComboBox<String> serviceBox = new ComboBox<String>();
 	ComboBox<String> actionBox = new ComboBox<String>();
@@ -94,7 +95,11 @@ public class EnvironmentConfiguration extends VerticalLayout{
 	public EnvironmentConfiguration(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
 		this.util = util;
 		
-		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePath, persistenceFSStoragePathField));
+		add(util.createConfigurationItemTextFieldDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemStoragePathLabels, persistenceFSStoragePathField));
+		
+		add(util.createConfigurationItemCheckboxDiv(EnvironmentConfigurationLabels.connectorPersistenceFileSystemCreateDirLabels, persistenceFSStorageCreateDirBox));
+		
+		
 		
 		createAndAddServiceComboBox(pmodeService);
 		

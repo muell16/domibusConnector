@@ -4,13 +4,21 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationLabel;
 
 public class EnvironmentConfigurationLabels {
 
-	public static final ConfigurationLabel connectorPersistenceFileSystemStoragePath = new ConfigurationLabel(
+	public static final ConfigurationLabel connectorPersistenceFileSystemStoragePathLabels = new ConfigurationLabel(
 			"Message storage - filesystem path", 
 			"connector.persistence.filesystem.storagePath", 
 			"This path declares where messages should temporarily be stored while processed. As soon as the processing of the message is finished ",
 			"and the message is submitted, it gets deleted from that storage",
+			"ATTENTION: Be aware that the user of the server which runs the domibusConnector needs file access rights to that destination!",
 			"The path ideally should be absolute and with a \"file:\" prefix. Also \"\\\" should be replaced by \"/\" or \"\\\\\"",
 			"Example: file:C:/<anyPath>/connector.jks"
+			);
+	
+	public static final ConfigurationLabel connectorPersistenceFileSystemCreateDirLabels = new ConfigurationLabel(
+			"Create directories", 
+			"connector.persistence.filesystem.createDir", 
+			"When active the domibusConnector tries to create directories from the filesystem path given if not existing yet. ",
+			"ATTENTION: Be aware that the user of the server which runs the domibusConnector needs file access rights to that destination!"
 			);
 	
 	public static final ConfigurationLabel connectorTestServiceLabels = new ConfigurationLabel(
