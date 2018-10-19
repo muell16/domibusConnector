@@ -30,7 +30,7 @@ public class ClientPasswordCallback implements CallbackHandler {
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         System.out.println("%n%n###############%nHANDLE CALLBACK!%n%n%n%");
-        LOGGER.debug("#handle: callback: [{}]", callbacks);
+        LOGGER.debug("#handle: callback: [{}]", (Object[]) callbacks);
 //        WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
 //        // set the password for our message.
 //        pc.setPassword(password);

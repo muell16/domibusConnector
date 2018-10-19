@@ -78,7 +78,6 @@ $Recycle.Bin
 
 /domibusConnector/domibusConnectorWebLib/src/main/java/META-INF
 /domibusConnector/domibusConnectorWebLib/src/main/java/eu/domibus/configuration
-/domibusConnector/domibusConnectorStarter/src/main/resources/*.properties
 
 connector.properties
 /domibusConnector/domibusConnectorStarter/src/main/resources/log4j2-spring.xml

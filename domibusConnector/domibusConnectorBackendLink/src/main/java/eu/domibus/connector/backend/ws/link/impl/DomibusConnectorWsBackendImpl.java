@@ -159,6 +159,8 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             throw new DomibusConnectorBackendDeliveryException(error);
         }
         backendName = backendName.toLowerCase();
+        backendName = "cn=".equals(backendName.substring(0,3)) ? backendName.replaceFirst("cn=","") : backendName;
+        //replace leading "cn=" with "" so common name cn=alice becomes alice
         DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
