@@ -65,7 +65,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     
     @Test
     public void testFindOneBackendByBackendName() {
-        BackendClientInfo backendClientBob = backendClientDao.findOneBackendByBackendNameAndEnabledIsTrue("cn=bob");
+        BackendClientInfo backendClientBob = backendClientDao.findOneBackendByBackendNameAndEnabledIsTrue("bob");
         assertThat(backendClientBob).isNotNull();
     }
     
@@ -75,7 +75,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
         
         assertThat(backendClients).as("should containe exact one element!").hasSize(1);
         BackendClientInfo clientBob = backendClients.get(0);
-        assertThat(clientBob.getBackendName()).as("must be client bob").isEqualTo("cn=bob");
+        assertThat(clientBob.getBackendName()).as("must be client bob").isEqualTo("bob");
     }
     
     
