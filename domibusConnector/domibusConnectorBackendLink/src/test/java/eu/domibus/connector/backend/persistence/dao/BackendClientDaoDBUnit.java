@@ -56,7 +56,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
 //        this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
         
         //Load testdata
-        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/BackendClient.xml").getInputStream()));
+        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("/database/testdata/dbunit/BackendClient.xml").getInputStream()));
         
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);        
         DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
