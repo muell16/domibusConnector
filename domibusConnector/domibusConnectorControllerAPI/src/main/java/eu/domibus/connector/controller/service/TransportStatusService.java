@@ -4,6 +4,7 @@ package eu.domibus.connector.controller.service;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import org.springframework.core.style.ToStringCreator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public interface TransportStatusService {
         private String transportId;
         private String remoteTransportId; //in case of GW ebms id, in case of backend national id/backend id
         private TransportState status;
-        private List<DomibusConnectorMessageError> messageErrorList;
+        private List<DomibusConnectorMessageError> messageErrorList = new ArrayList<>();
 
         public TransportState getStatus() {
             return status;
