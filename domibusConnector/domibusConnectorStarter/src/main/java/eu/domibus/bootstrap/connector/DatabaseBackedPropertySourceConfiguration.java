@@ -26,10 +26,9 @@ import javax.sql.DataSource;
 @Configuration
 @ConditionalOnProperty(name="bootstrap.database.property-loading.enabled") //funktioniert das hier? TODO!!
 @Order(Ordered.HIGHEST_PRECEDENCE)
-//@org.springframework.context.annotation.PropertySource({"classpath:default.properties"})
 public class DatabaseBackedPropertySourceConfiguration implements PropertySourceLocator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBackedPropertySourceConfiguration.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBackedPropertySourceConfiguration.class);
 
     private static final String BOOTSTRAP_DATASOURCE_PROPERTIES = "bootstrap_datasource_properties";
 
@@ -47,18 +46,19 @@ public class DatabaseBackedPropertySourceConfiguration implements PropertySource
     public DataSource bootstrapDataSource() {
         System.out.println("INITIALIZE BOOTSTRAP DATASOURCE");
         DataSourceProperties properties = bootstrapDataSourceConfiguration();
-        LOGGER.trace("initialize bootstrap datasource with [{}]", properties);
+//        LOGGER.trace("initialize bootstrap datasource with [{}]", properties);
         return properties.initializeDataSourceBuilder().build();
     }
 
 
     @Override
     public PropertySource<?> locate(Environment environment) {
-        LOGGER.debug("added databaseBackedPropertySource to PropertySource");
+//        LOGGER.debug("added databaseBackedPropertySource to PropertySource");
         return databaseBackedPropertySource();
     }
 
     @Bean
+    @Lazy
     public DatatabaseBackedPropertySource databaseBackedPropertySource() {
         DatatabaseBackedPropertySource propertySource = new DatatabaseBackedPropertySource("DATABASE");
         propertySource.setDataSource(bootstrapDataSource());

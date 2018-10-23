@@ -36,13 +36,13 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
  * 
  * 
  * #############################  Properties for backend  #############################
-	connector.backend.ws.key.store.path
-	connector.backend.ws.key.store.password
-	connector.backend.ws.key.key.alias
-	connector.backend.ws.key.key.password
+	connector.backend.ws.key.key-store.path
+	connector.backend.ws.key.key-store.password
+	connector.backend.ws.key.private-key.alias
+	connector.backend.ws.key.private-key.password
 	
-	connector.backend.ws.trust.store.path
-	connector.backend.ws.trust.store.password
+	connector.backend.ws.trust.trust-store.path
+	connector.backend.ws.trust.trust-store.password
 
  * 
  */

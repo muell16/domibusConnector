@@ -6,7 +6,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE + 20)
+@Order(Ordered.HIGHEST_PRECEDENCE + 30)
 @PropertySource("classpath:/default-bootstrap.properties")
 public class BootstrapDefaultConfiguration {
 

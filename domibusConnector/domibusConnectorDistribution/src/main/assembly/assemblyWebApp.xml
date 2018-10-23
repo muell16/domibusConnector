@@ -8,15 +8,7 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/
-			</directory>
-			<outputDirectory>/documentation/properties
-			</outputDirectory>
-			<includes>
-				<include>*.properties</include>
-			</includes>
-		</fileSet>
+		
 
 		<fileSet>
 			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
@@ -71,7 +63,19 @@
 			<destName>domibusConnectorDatabaseInitializer.jar</destName>
 		</file>
 
-
+		<file>
+			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties
+			</source>
+			<outputDirectory>/documentation/config
+			</outputDirectory>
+		</file>
+		
+		<file>
+			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2-spring.xml
+			</source>
+			<outputDirectory>/documentation/config
+			</outputDirectory>
+		</file>
 
 	</files>
 </assembly>

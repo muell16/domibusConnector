@@ -1,6 +1,8 @@
 package eu.domibus.connector.starter;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,12 +21,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.SystemPropertyUtils;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 @SpringBootApplication(scanBasePackages = "eu.domibus.connector")
 @EnableTransactionManagement
-//@PropertySource({"classpath:build-info.properties", "classpath:default.properties"})
 @PropertySource({"classpath:/build-info.properties", "classpath:/default.properties", "classpath:/default-bootstrap.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
@@ -53,67 +55,87 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         return appContext;
     }
 
-    public static SpringApplicationBuilder configureApplicationContext(SpringApplicationBuilder application) {
-    	String connectorConfigFile = System.getProperty(CONNECTOR_CONFIG_FILE);
-        Properties springProperties = new Properties();
+
+    public static Properties loadConnectorConfigProperties(String connectorConfigFile) {
+        Properties p = new Properties();
         if (connectorConfigFile != null) {
-            connectorConfigFile = SystemPropertyUtils.resolvePlaceholders(connectorConfigFile);
             Path connectorConfigFilePath = Paths.get(connectorConfigFile);
             if (!Files.exists(connectorConfigFilePath)) {
                 throw new RuntimeException(String.format("Cannot start because the via System Property [%s] provided config file does not exist!", CONNECTOR_CONFIG_FILE));
             }
-            
+            try {
+                p.load(new FileInputStream(connectorConfigFilePath.toFile()));
+                return p;
+            } catch (IOException e) {
+                throw new RuntimeException(String.format("Cannot load properties from file [%s], is it a valid and readable properties file?", connectorConfigFilePath), e);
+            }
+        }
+        return p;
+    }
+
+    public static @Nullable
+    String getConnectorConfigFile() {
+        String connectorConfigFile = System.getProperty(CONNECTOR_CONFIG_FILE);
+        Properties springProperties = new Properties();
+        if (connectorConfigFile != null) {
+            connectorConfigFile = SystemPropertyUtils.resolvePlaceholders(connectorConfigFile);
+            return connectorConfigFile;
+        }
+        return null;
+    }
+
+
+
+//    public static Properties configureApplicationProperties() {
+//
+//        return springProperties;
+//    }
+
+
+    public static SpringApplicationBuilder configureApplicationContext(SpringApplicationBuilder application) {
+        String connectorConfigFile = getConnectorConfigFile();
+        Properties springProperties = new Properties();
+        if (connectorConfigFile != null) {
+
             int lastIndex = connectorConfigFile.contains(File.separator)?connectorConfigFile.lastIndexOf(File.separatorChar):connectorConfigFile.lastIndexOf("/");
             lastIndex++;
             String connectorConfigLocation = connectorConfigFile.substring(0, lastIndex);
             String configName = connectorConfigFile.substring(lastIndex);
-           
-            LOGGER.info(String.format("Setting:\n %s=%s\n%s=%s\n%s=%s\n%s=%s",
+
+            LOGGER.info(String.format("Setting:\n%s=%s\n%s=%s\n%s=%s\n%s=%s",
                     SPRING_CLOUD_BOOTSTRAP_NAME, configName,
                     SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigLocation,
                     SPRING_CONFIG_LOCATION, connectorConfigLocation,
                     SPRING_CONFIG_NAME, configName));
 
-            //springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_NAME, configName);
-//            springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigLocation);
             springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigFile);
-            
             springProperties.setProperty(SPRING_CONFIG_LOCATION, connectorConfigLocation);
             springProperties.setProperty(SPRING_CONFIG_NAME, configName);
 
         }else {
-        	LOGGER.warn("SystemProperty \"{}\" not given or not resolveable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE);
-//            System.exit(-1);
+            LOGGER.warn("SystemProperty \"{}\" not given or not resolveable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE);
         }
-        //map spring.config.location on connector.config.location: connector.config.location=${spring.config.location}
-        //springProperties.setProperty(CONNECTOR_CONFIG_LOCATION, "${" + SPRING_CONFIG_LOCATION + "}");
-        //springProperties.setProperty("spring.cloud.config.enabled", "false");
-
-//        springProperties.put("spring.cloud.config.enabled", false);
-
-        application.profiles("connector"); //always start with the connector profile!
         application.properties(springProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...
-
         return application.sources(DomibusConnectorStarter.class);
     }
+
 
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         this.servletContext = servletContext;
-	    super.onStartup(servletContext);
-    }
 
-
-    private void setFromSystemPropertyIfNotNull(String name, String setPropertyName) {
-        String value = System.getProperty(name);
-        LOGGER.info("Config name from SystemProperty is [{}] value is [{}]", name, value);
-        if (value != null) {
-            LOGGER.info("Setting servletInitParam [{}] to value [{}]", setPropertyName, value);
-            servletContext.setInitParameter(setPropertyName, value);
+        //read logging.config from connector properties and set it before the application context ist started
+        //so its already available for the spring logging servlet initializer to configure logging!
+        String connectorConfigFile = getConnectorConfigFile();
+        if (connectorConfigFile != null) {
+            Properties p = loadConnectorConfigProperties(connectorConfigFile);
+            String loggingConfig = p.getProperty("logging.config");
+            if (loggingConfig != null) {
+                servletContext.setInitParameter("logging.config", loggingConfig);
+            }
         }
-
-
+	    super.onStartup(servletContext);
     }
 
     private void setFromServletContextIfNotNull(String name, String setPropertyName) {
@@ -138,7 +160,6 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
 //        if (connectorLoggingConfigFile != null) {
 //            System.setProperty("logging.config", connectorConfigFile);
 //        }
-//
 //    }
 
     @Override

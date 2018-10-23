@@ -120,20 +120,20 @@ public class WSBackendLinkConfigurationProperties {
         Properties p = new Properties();
         p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
         p.setProperty("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.getKey().getStore().getPassword());
-        LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", this.getKey().getStore().getPath());
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.password", this.getKey().getKeyStore().getPassword());
+        LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", this.getKey().getKeyStore().getPath());
         try {
-            p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.getKey().getStore().getPathUrlAsString());
+            p.setProperty("org.apache.wss4j.crypto.merlin.keystore.file", this.getKey().getKeyStore().getPathUrlAsString());
         } catch (Exception e) {
             throw new RuntimeException("Error with property: [" + PREFIX + ".key.store.path]\n" +
-                    "value is [" + this.getKey().getStore().getPath() + "]");
+                    "value is [" + this.getKey().getKeyStore().getPath() + "]");
         }
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.getKey().getKey().getAlias());
-        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.private.password", this.getKey().getKey().getPassword());
-        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getStore().getPassword());
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.alias", this.getKey().getPrivateKey().getAlias());
+        p.setProperty("org.apache.wss4j.crypto.merlin.keystore.private.password", this.getKey().getPrivateKey().getPassword());
+        p.setProperty("org.apache.wss4j.crypto.merlin.truststore.password", this.getTrust().getTrustStore().getPassword());
         try {
-            LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getStore().getPath());
-            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getStore().getPathUrlAsString());
+            LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", this.getTrust().getTrustStore().getPath());
+            p.setProperty("org.apache.wss4j.crypto.merlin.truststore.file", this.getTrust().getTrustStore().getPathUrlAsString());
         } catch (Exception e) {
             LOGGER.info("Trust Store Property: [" + PREFIX + ".trust.store.path]" +
                     "\n cannot be processed. Using the configured key store [{}] as trust store",
@@ -146,45 +146,6 @@ public class WSBackendLinkConfigurationProperties {
 
         return p;
     }
-
-//    public static class KeyAndKeyStoreConfigurationProperties {
-//        public KeyAndKeyStoreConfigurationProperties() {}
-//
-//        public KeyAndKeyStoreConfigurationProperties(StoreConfigurationProperties keyStore, KeyConfigurationProperties key) {
-//            this.store = keyStore;
-//            this.key = key;
-//        }
-//
-//        /**
-//         * Configuration of the (Key/Certificate)Store
-//         */
-//        @NestedConfigurationProperty
-//        private StoreConfigurationProperties store;
-//
-//        /**
-//         * Configures the default alias to use
-//         */
-//        @NestedConfigurationProperty
-//        private KeyConfigurationProperties key;
-//
-//        public StoreConfigurationProperties getStore() {
-//            return store;
-//        }
-//
-//        public void setStore(StoreConfigurationProperties store) {
-//            this.store = store;
-//        }
-//
-//        public KeyConfigurationProperties getKey() {
-//            return key;
-//        }
-//
-//        public void setKey(KeyConfigurationProperties key) {
-//            this.key = key;
-//        }
-//
-//    }
-
 
     public static class CertAndStoreConfigurationProperties {
 
@@ -206,16 +167,6 @@ public class WSBackendLinkConfigurationProperties {
          * Whether or not to load the CA certs in ${java.home}/lib/security/cacerts (default is false)
          */
         private boolean loadCaCerts = false;
-
-        @Deprecated
-        public StoreConfigurationProperties getStore() {
-            return trustStore;
-        }
-
-        @Deprecated
-        public void setStore(StoreConfigurationProperties store) {
-            this.trustStore = store;
-        }
 
         public void setLoadCaCerts(boolean loadCaCerts) {
             this.loadCaCerts = loadCaCerts;

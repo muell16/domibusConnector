@@ -28,7 +28,7 @@ public class Import extends VerticalLayout {
 	
 	WebPModeService pmodeService;
 
-	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util) {
+	public Import(@Autowired WebPModeService pmodeService, @Autowired ConfigurationUtil util, @Autowired DataTables dataTables) {
 		this.pmodeService = pmodeService;
 		
 		Div areaImporter = new Div();
@@ -46,6 +46,9 @@ public class Import extends VerticalLayout {
                             .toByteArray();
 		    result = pmodeService.importPModes(contents, util);
 		    showOutput(contents, result);
+		    dataTables.reloadActions();
+		    dataTables.reloadParties();
+		    dataTables.reloadServices();
 		});
 		
 		

@@ -32,7 +32,8 @@ public class ConfigurationUtil {
 	public String getPropertyValue(String propertyName) {
 		String propertyValue = env.getProperty(propertyName);
 		if (propertyValue == null) {
-			throw new RuntimeException(String.format("Did not found property with name [%s] in environment", propertyName));
+//			throw new RuntimeException(String.format("Did not found property with name [%s] in environment", propertyName));
+			return "";
 		}
 		return propertyValue;
 	}
