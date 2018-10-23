@@ -80,7 +80,7 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
-        assertThat(validate).hasSize(1);
+        assertThat(validate).hasSize(2);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class KeyFromKeyStoreLoadableValidatorTest {
 
         Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> validate = validator.validate(props);
         printSet(validate);
-        assertThat(validate).hasSize(1);
+        assertThat(validate).hasSize(2);
     }
 
 
