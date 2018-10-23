@@ -20,8 +20,8 @@ public class KeyFromKeyStoreLoadableValidator  implements ConstraintValidator<Ch
         if (value == null) {
             return true;
         }
-        Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> path = validator.validateProperty(value, "key");
-        path.addAll(validator.validateProperty(value, "store"));
+        Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> path = validator.validateProperty(value, "privateKey");
+        path.addAll(validator.validateProperty(value, "keyStore"));
         if (!path.isEmpty()) {
             return false;
         }
@@ -29,7 +29,7 @@ public class KeyFromKeyStoreLoadableValidator  implements ConstraintValidator<Ch
         context.disableDefaultConstraintViolation();
 
 
-        return HelperMethods.checkKeyIsLoadable(context, value.getStore(), value.getKey());
+        return HelperMethods.checkKeyIsLoadable(context, value.getKeyStore(), value.getPrivateKey());
     }
 
 

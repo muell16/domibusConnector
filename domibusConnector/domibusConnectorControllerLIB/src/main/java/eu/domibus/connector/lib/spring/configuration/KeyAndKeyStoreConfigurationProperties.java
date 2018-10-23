@@ -45,26 +45,6 @@ public class KeyAndKeyStoreConfigurationProperties {
     @NotNull
     private KeyConfigurationProperties privateKey;
 
-    @Deprecated
-    public StoreConfigurationProperties getStore() {
-        return keyStore;
-    }
-
-    @Deprecated
-    public void setStore(StoreConfigurationProperties store) {
-        this.keyStore = store;
-    }
-
-    @Deprecated
-    public KeyConfigurationProperties getKey() {
-        return privateKey;
-    }
-
-    @Deprecated
-    public void setKey(KeyConfigurationProperties key) {
-        this.privateKey = key;
-    }
-
     public StoreConfigurationProperties getKeyStore() {
         return keyStore;
     }
