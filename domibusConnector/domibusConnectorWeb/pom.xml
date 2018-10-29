@@ -120,14 +120,16 @@
             <scope>provided</scope>
 		</dependency> -->
 
+
         <!-- used to colorize output on windows systems -->
+<!--
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>1.17.1</version>
             <scope>runtime</scope>
         </dependency>
-
+-->
 
 
     </dependencies>
@@ -170,10 +172,12 @@
                                     <groupId>org.postgresql</groupId>
                                     <artifactId>postgresql</artifactId>
                                 </include>
+<!--
                                 <include>
                                     <groupId>org.fusesource.jansi</groupId>
                                     <artifactId>jansi</artifactId>
                                 </include>
+-->
                             </includes>
                         </configuration>
                     </execution>

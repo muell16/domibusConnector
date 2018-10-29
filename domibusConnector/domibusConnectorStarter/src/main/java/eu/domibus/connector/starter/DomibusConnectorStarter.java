@@ -33,9 +33,9 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
 
 	public static final String SPRING_CLOUD_BOOTSTRAP_NAME = "spring.cloud.bootstrap.name";
-    public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
-    public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
-    public static final String SPRING_CONFIG_NAME = "spring.config.name";
+  public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
+  public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
+  public static final String SPRING_CONFIG_NAME = "spring.config.name";
 
 	public static final String CONNECTOR_CONFIG_FILE = "connector.config.file";
 
@@ -61,7 +61,9 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         if (connectorConfigFile != null) {
             Path connectorConfigFilePath = Paths.get(connectorConfigFile);
             if (!Files.exists(connectorConfigFilePath)) {
-                throw new RuntimeException(String.format("Cannot start because the via System Property [%s] provided config file does not exist!", CONNECTOR_CONFIG_FILE));
+                String errorString = String.format("Cannot start because the via System Property [%s] provided config file [%s] mapped to path [%s] does not exist!", CONNECTOR_CONFIG_FILE, connectorConfigFile, connectorConfigFilePath);
+                LOGGER.error(errorString);
+                throw new RuntimeException(errorString);
             }
             try {
                 p.load(new FileInputStream(connectorConfigFilePath.toFile()));
