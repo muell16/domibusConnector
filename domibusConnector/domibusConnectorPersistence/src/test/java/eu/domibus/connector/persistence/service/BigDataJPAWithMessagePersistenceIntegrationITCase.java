@@ -22,7 +22,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -83,7 +82,7 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
         message.setConnectorMessageId("msgid1");
 
         transactionTemplate.execute((TransactionStatus status) -> {
-                DomibusConnectorMessage domibusConnectorMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
+                DomibusConnectorMessage domibusConnectorMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
                 //message is in db
                 domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
                 assertThat(domibusConnectorMessage.getMessageContent().getDocument().getDocument().getStorageIdReference()).isNotNull();

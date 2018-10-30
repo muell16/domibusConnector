@@ -1,9 +1,11 @@
 package eu.domibus.connector.domain.model;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -32,6 +34,17 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	//the backend client name the message is received from or should be delivered to
 	@Nullable
 	private String connectorBackendClientName;
+
+	@Nullable
+	private Date deliveredToGateway;
+
+	@Nullable
+	private Date deliveredToBackend;
+
+	@Nullable
+	private String causedBy;
+
+	private DomibusConnectorMessageDirection direction;
 
 	public DomibusConnectorMessageDetails(){
 
@@ -164,6 +177,41 @@ public class DomibusConnectorMessageDetails implements Serializable {
 
 	public void setConnectorBackendClientName(@Nullable String connectorBackendClientName) {
 		this.connectorBackendClientName = connectorBackendClientName;
+	}
+
+	@Nullable
+	public Date getDeliveredToGateway() {
+		return deliveredToGateway;
+	}
+
+	public void setDeliveredToGateway(@Nullable Date deliveredToGateway) {
+		this.deliveredToGateway = deliveredToGateway;
+	}
+
+	@Nullable
+	public Date getDeliveredToBackend() {
+		return deliveredToBackend;
+	}
+
+	public void setDeliveredToBackend(@Nullable Date deliveredToBackend) {
+		this.deliveredToBackend = deliveredToBackend;
+	}
+
+	@Nullable
+	public String getCausedBy() {
+		return causedBy;
+	}
+
+	public void setCausedBy(@Nullable String causedBy) {
+		this.causedBy = causedBy;
+	}
+
+	public DomibusConnectorMessageDirection getDirection() {
+		return direction;
+	}
+
+	public void setDirection(DomibusConnectorMessageDirection direction) {
+		this.direction = direction;
 	}
 
 	@Override

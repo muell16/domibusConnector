@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.domain.testutil;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
@@ -9,6 +10,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -259,6 +263,10 @@ public class DomainEntityCreator {
         messageDetails.setFinalRecipient("finalRecipient");
         messageDetails.setOriginalSender("originalSender");
         messageDetails.setRefToMessageId("refToMessageId");
+
+        messageDetails.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+        messageDetails.setDeliveredToGateway(parseDateTime("2018-01-01 12:12:12"));
+        messageDetails.setDeliveredToBackend(parseDateTime("2018-01-01 12:12:12"));
         
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
@@ -322,6 +330,14 @@ public class DomainEntityCreator {
         }
     }
 
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
 
+    public static Date parseDateTime(String date) {
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException("date parse error!", e);
+        }
+    }
 
 }

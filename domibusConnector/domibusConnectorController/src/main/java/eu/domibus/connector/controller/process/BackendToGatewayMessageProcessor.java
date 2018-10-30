@@ -6,7 +6,6 @@ import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +161,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
         //also send evidence back to backend client:
 		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
 		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", returnMessage);
-        messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONN_TO_NAT);
+        messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
 		backendDeliveryService.deliverMessageToBackend(returnMessage);
 
 		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);

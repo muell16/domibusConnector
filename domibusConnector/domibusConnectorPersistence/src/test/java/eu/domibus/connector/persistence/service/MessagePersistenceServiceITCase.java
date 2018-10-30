@@ -83,7 +83,7 @@ public class MessagePersistenceServiceITCase {
 
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
         //message.setDbMessageId(null);
-        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        //MessageDirection messageDirection = MessageDirection.GATEWAY_TO_BACKEND;
         DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         
         messageDetails.setConversationId("conversation4211");
@@ -101,7 +101,7 @@ public class MessagePersistenceServiceITCase {
         messageDetails.setToParty(toPartyDE);
         
                 
-        DomibusConnectorMessage persistedMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+        DomibusConnectorMessage persistedMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         
         assertThat(persistedMessage).isNotNull();
 
@@ -146,7 +146,7 @@ public class MessagePersistenceServiceITCase {
         epoMessage.getMessageDetails().setEbmsMessageId("ebms9000");
         epoMessage.getMessageDetails().setConversationId("conversation4000");
 
-        epoMessage = messagePersistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GW_TO_NAT);
+        epoMessage = messagePersistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 
         assertThat(epoMessage).isNotNull();
 
@@ -179,7 +179,7 @@ public class MessagePersistenceServiceITCase {
 
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
         //message.setDbMessageId(null);
-        //MessageDirection messageDirection = MessageDirection.GW_TO_NAT;
+        //MessageDirection messageDirection = MessageDirection.GATEWAY_TO_BACKEND;
         DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         
         messageDetails.setConversationId("conversation421");
@@ -190,7 +190,7 @@ public class MessagePersistenceServiceITCase {
         messageDetails.setService(serviceUnkown); //set Unknown service
 
         //should throw exception, because UknownService is not configured in DB!
-        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
     }
     
     
@@ -217,7 +217,7 @@ public class MessagePersistenceServiceITCase {
         message.addConfirmation(confirmation);
         
         
-        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GW_TO_NAT;
+        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
         messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);
                 
         
@@ -244,7 +244,7 @@ public class MessagePersistenceServiceITCase {
         message.getMessageDetails().setEbmsMessageId("ebamdsafae3");
         message.getMessageDetails().setBackendMessageId("adfsöljabafklwefa");
         
-        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GW_TO_NAT;
+        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
         messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);
                 
         //TODO: make changes to message

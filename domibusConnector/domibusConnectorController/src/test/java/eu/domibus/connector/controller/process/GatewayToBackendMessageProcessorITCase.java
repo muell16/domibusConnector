@@ -7,7 +7,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +61,7 @@ public class GatewayToBackendMessageProcessorITCase {
         message.setConnectorMessageId("msg3");
 
 
-        message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+        message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
         message = messagePersistenceService.mergeMessageWithDatabase(message);
         message = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(message);

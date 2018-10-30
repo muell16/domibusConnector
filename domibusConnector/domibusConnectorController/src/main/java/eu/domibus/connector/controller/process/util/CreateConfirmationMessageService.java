@@ -17,7 +17,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateConfirmationMessageService {
+public class CreateConfirmationMessageService implements ConfirmationMessageBuilderFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageService.class);
 
@@ -46,6 +46,7 @@ public class CreateConfirmationMessageService {
         this.messageIdGenerator = idGenerator;
     }
 
+    @Override
     public ConfirmationMessageBuilder createConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
         ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(message, evidenceType);
 
@@ -55,6 +56,7 @@ public class CreateConfirmationMessageService {
         return confirmationMessageBuilder;
     }
 
+    @Override
     public DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
         switch (type) {
             case DELIVERY:

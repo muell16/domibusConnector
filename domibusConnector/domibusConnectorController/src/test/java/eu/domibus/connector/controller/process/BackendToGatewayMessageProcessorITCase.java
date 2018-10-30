@@ -234,7 +234,7 @@ public class BackendToGatewayMessageProcessorITCase {
                 .build();
         message.getMessageContent().setDocument(signedDocument);
 
-        message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
+        message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
         message = messagePersistenceService.mergeMessageWithDatabase(message);
         return message;

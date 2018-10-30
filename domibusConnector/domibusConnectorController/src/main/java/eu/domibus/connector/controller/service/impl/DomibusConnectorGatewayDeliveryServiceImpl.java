@@ -83,7 +83,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message);
 		
 		try {
-            message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GW_TO_NAT);
+            message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 		}catch(PersistenceException e) {
 			throw new DomibusConnectorControllerException("Message could not be persisted!", e);
 		}

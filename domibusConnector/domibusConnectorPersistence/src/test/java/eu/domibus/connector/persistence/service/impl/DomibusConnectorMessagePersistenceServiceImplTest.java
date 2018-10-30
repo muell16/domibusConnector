@@ -324,7 +324,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
                 });
 
 
-        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
+        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
         Mockito.verify(messageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
         
@@ -344,7 +344,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         message.getMessageDetails().setConnectorBackendClientName("BOB");
         message.getMessageDetails().setRefToMessageId("reftomsg1");
 
-        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.NAT_TO_GW);
+        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
         Mockito.verify(internalEvidencePersistenceService, Mockito.times(1)).persistAsEvidence(eq(message));
         Mockito.verifyZeroInteractions(messageDao);

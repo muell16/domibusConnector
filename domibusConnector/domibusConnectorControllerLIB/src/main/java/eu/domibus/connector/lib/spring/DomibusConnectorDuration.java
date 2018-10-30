@@ -2,13 +2,14 @@ package eu.domibus.connector.lib.spring;
 
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Duration {
+public class DomibusConnectorDuration {
 
     private static final Map<String, TimeUnit> UNITS = new HashMap<String, TimeUnit>() {
         {
@@ -25,13 +26,13 @@ public class Duration {
     private final long duration;
     private final TimeUnit unit;
 
-    private Duration(long value, TimeUnit unit) {
+    private DomibusConnectorDuration(long value, TimeUnit unit) {
         this.duration = value;
         this.unit = unit;
     }
 
 
-    public Duration(long milliseconds) {
+    public DomibusConnectorDuration(long milliseconds) {
         this(milliseconds, TimeUnit.MILLISECONDS);
     }
 
@@ -39,14 +40,18 @@ public class Duration {
         return unit.toMillis(duration);
     }
 
+    public Duration getDuration() {
+        return Duration.ofMillis(getMilliseconds());
+    }
+
     /**
      * Factory method constructing an instance from a string.
      *
      * @param s the input string representing the duration
-     * @return a {@link Duration} instance.
+     * @return a {@link DomibusConnectorDuration} instance.
      * @throws NumberFormatException in case the string does not represent a valid duration
      */
-    public static Duration valueOf(String s) throws NumberFormatException {
+    public static DomibusConnectorDuration valueOf(String s) throws NumberFormatException {
         if (!StringUtils.hasText(s)) {
             throw new NumberFormatException("Null or empty string cannot be converted to duration.");
         }
@@ -59,7 +64,7 @@ public class Duration {
         Long value = Long.valueOf(m.group(1));
         String unit = m.group(2);
 
-        return new Duration(value, UNITS.get(unit));
+        return new DomibusConnectorDuration(value, UNITS.get(unit));
     }
 
 

@@ -113,7 +113,7 @@ public class BackendToGatewayMessageProcessorTest {
         //verify that the evidence originalMessage is persisted into db (before put on queue!)
         Mockito.verify(messagePersistenceService, times(1))
                 .persistMessageIntoDatabase(Mockito.argThat(MockitoDomainMatcher.eqToRefToMessageId("backendmsg_1")),
-                        eq(DomibusConnectorMessageDirection.CONN_TO_NAT));
+                        eq(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND));
 
 
 

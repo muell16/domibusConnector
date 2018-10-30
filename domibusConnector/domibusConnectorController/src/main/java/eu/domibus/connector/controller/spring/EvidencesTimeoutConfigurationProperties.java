@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.spring;
 
-import eu.domibus.connector.lib.spring.Duration;
+import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * the default value is 1 minute (60000ms)
      */
     @NotNull
-    private Duration checkTimeout;
+    private DomibusConnectorDuration checkTimeout;
 
     /**
      * This property defines the timeout how long the connector should
@@ -41,7 +41,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * If the timeout exceeds the according timeoutProcessor is started
      */
     @NotNull
-    private Duration relayREMMDTimeout;
+    private DomibusConnectorDuration relayREMMDTimeout;
 
     /**
      * This property defines the timeout how long the connector should
@@ -52,7 +52,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * If the timeout exceeds the according warnTimeoutProcessor is started
      */
     @NotNull
-    private Duration relayREMMDWarnTimeout;
+    private DomibusConnectorDuration relayREMMDWarnTimeout;
 
     /**
      * this property defines the timeout how long the connector should
@@ -63,7 +63,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * If the timeout exceeds the according timeoutProcessor is started
      */
     @NotNull
-    private Duration deliveryTimeout;
+    private DomibusConnectorDuration deliveryTimeout;
 
     /**
      * this property defines the timeout how long the connector should
@@ -74,7 +74,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * If the timeout exceeds the according warnTimeoutProcessor is started
      */
     @NotNull
-    private Duration deliveryWarnTimeout;
+    private DomibusConnectorDuration deliveryWarnTimeout;
 
     /**
      * this property defines the timeout how long the connector should
@@ -85,7 +85,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * If the timeout exceeds the according timeoutProcessor is started
      */
     @NotNull
-    private Duration retrievalTimeout;
+    private DomibusConnectorDuration retrievalTimeout;
 
     /**
      * this property defines the timeout how long the connector should
@@ -96,7 +96,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * If the timeout exceeds the according warnTmeoutProcessor is started
      */
     @NotNull
-    private Duration retrievalWarnTimeout;
+    private DomibusConnectorDuration retrievalWarnTimeout;
 
 
     public boolean isTimeoutActive() {
@@ -107,59 +107,59 @@ public class EvidencesTimeoutConfigurationProperties {
         this.timeoutActive = timeoutActive;
     }
 
-    public Duration getRelayREMMDTimeout() {
+    public DomibusConnectorDuration getRelayREMMDTimeout() {
         return relayREMMDTimeout;
     }
 
-    public void setRelayREMMDTimeout(Duration relayREMMDTimeout) {
+    public void setRelayREMMDTimeout(DomibusConnectorDuration relayREMMDTimeout) {
         this.relayREMMDTimeout = relayREMMDTimeout;
     }
 
-    public Duration getDeliveryTimeout() {
+    public DomibusConnectorDuration getDeliveryTimeout() {
         return deliveryTimeout;
     }
 
-    public void setDeliveryTimeout(Duration deliveryTimeout) {
+    public void setDeliveryTimeout(DomibusConnectorDuration deliveryTimeout) {
         this.deliveryTimeout = deliveryTimeout;
     }
 
-    public Duration getRetrievalTimeout() {
+    public DomibusConnectorDuration getRetrievalTimeout() {
         return retrievalTimeout;
     }
 
-    public void setRetrievalTimeout(Duration retrievalTimeout) {
+    public void setRetrievalTimeout(DomibusConnectorDuration retrievalTimeout) {
         this.retrievalTimeout = retrievalTimeout;
     }
 
-    public Duration getCheckTimeout() {
+    public DomibusConnectorDuration getCheckTimeout() {
         return checkTimeout;
     }
 
-    public void setCheckTimeout(Duration checkTimeout) {
+    public void setCheckTimeout(DomibusConnectorDuration checkTimeout) {
         this.checkTimeout = checkTimeout;
     }
 
-    public Duration getRelayREMMDWarnTimeout() {
+    public DomibusConnectorDuration getRelayREMMDWarnTimeout() {
         return relayREMMDWarnTimeout;
     }
 
-    public void setRelayREMMDWarnTimeout(Duration relayREMMDWarnTimeout) {
+    public void setRelayREMMDWarnTimeout(DomibusConnectorDuration relayREMMDWarnTimeout) {
         this.relayREMMDWarnTimeout = relayREMMDWarnTimeout;
     }
 
-    public Duration getDeliveryWarnTimeout() {
+    public DomibusConnectorDuration getDeliveryWarnTimeout() {
         return deliveryWarnTimeout;
     }
 
-    public void setDeliveryWarnTimeout(Duration deliveryWarnTimeout) {
+    public void setDeliveryWarnTimeout(DomibusConnectorDuration deliveryWarnTimeout) {
         this.deliveryWarnTimeout = deliveryWarnTimeout;
     }
 
-    public Duration getRetrievalWarnTimeout() {
+    public DomibusConnectorDuration getRetrievalWarnTimeout() {
         return retrievalWarnTimeout;
     }
 
-    public void setRetrievalWarnTimeout(Duration retrievalWarnTimeout) {
+    public void setRetrievalWarnTimeout(DomibusConnectorDuration retrievalWarnTimeout) {
         this.retrievalWarnTimeout = retrievalWarnTimeout;
     }
 }

@@ -381,6 +381,9 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         details.setBackendMessageId(dbMessage.getBackendMessageId());
         details.setConversationId(dbMessage.getConversationId());
         details.setConnectorBackendClientName(dbMessage.getBackendName());
+        details.setDeliveredToBackend(dbMessage.getDeliveredToNationalSystem());
+        details.setDeliveredToGateway(dbMessage.getDeliveredToGateway());
+        details.setDirection(MessageDirectionMapper.mapFromPersistenceToDomain(dbMessage.getDirection()));
 
         //mapMessageInfoIntoMessageDetails(dbMessage, details);
         this.internalMessageInfoPersistenceService.mapMessageInfoIntoMessageDetails(dbMessage, details);
