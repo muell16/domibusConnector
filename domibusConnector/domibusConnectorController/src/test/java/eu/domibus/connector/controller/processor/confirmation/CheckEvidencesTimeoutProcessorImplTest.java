@@ -10,17 +10,16 @@ import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.testutil.logger.ListAppender;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Marker;
 
 import java.time.Duration;
 import java.time.Instant;
