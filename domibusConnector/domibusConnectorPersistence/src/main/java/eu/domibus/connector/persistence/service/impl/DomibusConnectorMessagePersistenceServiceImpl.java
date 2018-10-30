@@ -108,6 +108,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
             message = evidencePersistenceService.persistAsEvidence(message);
             return message;
         }
+        message.getMessageDetails().setDirection(direction);
 
         LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();

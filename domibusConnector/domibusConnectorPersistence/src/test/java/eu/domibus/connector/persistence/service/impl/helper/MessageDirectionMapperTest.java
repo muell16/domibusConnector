@@ -1,11 +1,8 @@
 package eu.domibus.connector.persistence.service.impl.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.enums.MessageDirection;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 public class MessageDirectionMapperTest {
 
@@ -20,7 +17,7 @@ public class MessageDirectionMapperTest {
     @Test
     public void mapFromPersistenceToDomain() throws Exception {
         for (MessageDirection direction : MessageDirection.values()) {
-            DomibusConnectorMessageDirection.valueOf(direction.name());
+            MessageDirectionMapper.mapFromPersistenceToDomain(direction);
         }
     }
 

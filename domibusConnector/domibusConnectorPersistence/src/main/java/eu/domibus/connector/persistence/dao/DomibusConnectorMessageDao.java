@@ -29,18 +29,18 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     
     public List<PDomibusConnectorMessage> findByConversationId(String conversationId);
     
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = BACKEND_TO_GATEWAY AND m.deliveredToGateway is not null ")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null ")
     public List<PDomibusConnectorMessage> findOutgoingUnconfirmedMessages();
         
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null "
         + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
     
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = BACKEND_TO_GATEWAY AND m.deliveredToGateway is not null "
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null "
         + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = GATEWAY_TO_BACKEND AND m.deliveredToGateway is not null")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'GW_TO_NAT' AND m.deliveredToGateway is not null")
     public List<PDomibusConnectorMessage> findIncomingUnconfirmedMessages();
     
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE (m.deliveredToNationalSystem is not null AND m.deliveredToNationalSystem between ?1 and ?2) "

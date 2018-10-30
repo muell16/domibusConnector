@@ -3,6 +3,8 @@ package eu.domibus.connector.persistence.model.test.util;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
+import eu.domibus.connector.persistence.model.enums.MessageDirection;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -135,6 +137,7 @@ public class PersistenceEntityCreator {
             msg.setConnectorMessageId("messagestamp");
             msg.setId(47L);
             msg.setEvidences(new HashSet<>());
+            msg.setDirection(MessageDirection.NAT_TO_GW);
             return msg;
         } catch (ParseException ex) {
             throw new RuntimeException("should not happen!");
