@@ -110,6 +110,9 @@ public class LoadStoreTransitionMessage {
         if (Files.exists(basicFolder) && !overwrite) {
             throw new RuntimeException(String.format("Overwrite is false, cannot overwrite message in folder %s", basicFolder));
         }
+        if (!Files.exists(basicFolder)) {
+            Files.createDirectory(basicFolder);
+        }
 
         Path propertiesResource = basicFolder.resolve(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
         File f = propertiesResource.toFile();
