@@ -2,10 +2,12 @@ package eu.domibus.connector.testdata;
 
 
 import eu.domibus.connector.domain.transition.*;
+import org.apache.cxf.helpers.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
@@ -14,9 +16,10 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.file.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -25,16 +28,18 @@ import javax.annotation.Nullable;
 /**
  * Load and store a Transition Message to the FileSystem
  * Very Simple - used for testing
- *
- *  TODO: add method for
- *
+ * <p>
+ * TODO: refactor this class to reduce file size
  */
 public class LoadStoreTransitionMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadStoreTransitionMessage.class);
 
+    public static final String READ_LOCK_FILE_NAME = "edit.lock";
+
     public static final String MESSAGE_PROPERTIES_PROPERTY_FILE_NAME = "message.properties";
-    public static final String SERVICE_PROP_NAME = "service";
+    public static final String SERVICE_NAME_PROP_NAME = "service";
+    public static final String SERVICE_TYPE_PROP_NAME = "service.type";
     public static final String NATIONAL_ID_PROP_NAME = "message.national-id";
     public static final String EBMS_ID_PROP_NAME = "message.ebms-id";
     public static final String BACKEND_CLIENT_NAME_PROP_NAME = "message.backend-client-name";
@@ -47,13 +52,16 @@ public class LoadStoreTransitionMessage {
     public static final String MESSAGE_DOCUMENT_SIGNATURE_TYPE_PROP_NAME = "message.content.document.signature.type";
     public static final String MESSAGE_DOCUMENT_SIGNATURE_NAME_PROP_NAME = "message.content.document.signature.name";
     public static final String FROM_PARTY_ID_PROP_NAME = "from.party.id";
+    public static final String FROM_PARTY_ID_TYPE_PROP_NAME = "from.party.id.type";
     public static final String FROM_PARTY_ROLE_PROP_NAME = "from.party.role";
     public static final String TO_PARTY_ID_PROP_NAME = "to.party.id";
+    public static final String TO_PARTY_ID_TYPE_PROP_NAME = "to.party.id.type";
     public static final String TO_PARTY_ROLE_PROP_NAME = "to.party.role";
     public static final String ACTION_PROP_NAME = "action";
     public static final String CONVERSATION_ID_PROP_NAME = "message.conversation-id";
     public static final String FINAL_RECIPIENT_PROP_NAME = "message.final-recipient";
     public static final String ORIGINAL_SENDER_NAME_PROP_NAME = "message.original-sender";
+    public static final String REF_TO_MESSAGE_ID_PROP_NAME = "message.ref-to-msg.id";
 
     public static String MESSAGE_CONFIRMATIONS_PREFIX = "message.confirmation";
     public static String MESSAGE_ATTACHMENT_PREFIX = "message.attachment";
@@ -105,24 +113,29 @@ public class LoadStoreTransitionMessage {
         }
     }
 
+    //TODO: java locking
     private void storeMessageTo(DomibusConnectorMessageType message, boolean overwrite) throws IOException {
         LOGGER.debug("storeMessage to [{}] with overwrite [{}]", basicFolder, overwrite);
+
         if (Files.exists(basicFolder) && !overwrite) {
             throw new RuntimeException(String.format("Overwrite is false, cannot overwrite message in folder %s", basicFolder));
         }
+
         if (!Files.exists(basicFolder)) {
             Files.createDirectory(basicFolder);
         }
 
+
         Path propertiesResource = basicFolder.resolve(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
         File f = propertiesResource.toFile();
-
 
         storeMessageContent(message.getMessageContent());
 
         storeMessageConfirmations(message.getMessageConfirmations());
 
         storeMessageAttachments(message.getMessageAttachments());
+
+        storeMessageDetails(message.getMessageDetails());
 
         try (FileOutputStream fout = new FileOutputStream(f)) {
             LOGGER.debug("writing properties file [{}]", f);
@@ -131,25 +144,63 @@ public class LoadStoreTransitionMessage {
 
         }
 
+
+    }
+
+    private void storeMessageDetails(DomibusConnectorMessageDetailsType messageDetails) {
+        putIfNotNull(NATIONAL_ID_PROP_NAME, messageDetails.getBackendMessageId());
+        putIfNotNull(EBMS_ID_PROP_NAME, messageDetails.getEbmsMessageId());
+        putIfNotNull(CONVERSATION_ID_PROP_NAME, messageDetails.getConversationId());
+        putIfNotNull(FINAL_RECIPIENT_PROP_NAME, messageDetails.getFinalRecipient());
+        putIfNotNull(ORIGINAL_SENDER_NAME_PROP_NAME, messageDetails.getOriginalSender());
+        putIfNotNull(REF_TO_MESSAGE_ID_PROP_NAME, messageDetails.getRefToMessageId());
+
+        if (messageDetails.getService() != null) {
+            putIfNotNull(SERVICE_NAME_PROP_NAME, messageDetails.getService().getService());
+            putIfNotNull(SERVICE_TYPE_PROP_NAME, messageDetails.getService().getServiceType());
+        }
+        if (messageDetails.getFromParty() != null) {
+            putIfNotNull(FROM_PARTY_ID_PROP_NAME, messageDetails.getFromParty().getPartyId());
+            putIfNotNull(FROM_PARTY_ROLE_PROP_NAME, messageDetails.getFromParty().getRole());
+            putIfNotNull(FROM_PARTY_ID_TYPE_PROP_NAME, messageDetails.getFromParty().getPartyIdType());
+        }
+        if (messageDetails.getToParty() != null) {
+            putIfNotNull(TO_PARTY_ID_PROP_NAME, messageDetails.getToParty().getPartyId());
+            putIfNotNull(TO_PARTY_ROLE_PROP_NAME, messageDetails.getToParty().getRole());
+            putIfNotNull(TO_PARTY_ID_TYPE_PROP_NAME, messageDetails.getToParty().getPartyIdType());
+        }
+
+        if (messageDetails.getAction() != null) {
+            putIfNotNull(ACTION_PROP_NAME, messageDetails.getAction().getAction());
+        }
+
+    }
+
+    private void putIfNotNull(String key, Object value) {
+        if (value != null) {
+            messageProperties.put(key, value);
+        } else {
+            LOGGER.trace("Not putting [{}] into message properties, because it's null!", key);
+        }
     }
 
     private void storeMessageAttachments(List<DomibusConnectorMessageAttachmentType> messageAttachments) {
         for (int i = 0; i < messageAttachments.size(); i++) {
 //            try {
-                DomibusConnectorMessageAttachmentType a = messageAttachments.get(i);
+            DomibusConnectorMessageAttachmentType a = messageAttachments.get(i);
 
-                String attachmentPropertyFile = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, i, "file");
+            String attachmentPropertyFile = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, i, "file");
 
-                String fileName = a.getName();
-                if (fileName == null) {
-                    fileName = a.getIdentifier();
-                }
-                Path attachmentOutputResource = basicFolder.resolve(fileName);
-                writeBigDataReferenceToResource(attachmentOutputResource, a.getAttachment());
-                messageProperties.put(attachmentPropertyFile, fileName);
+            String fileName = a.getName();
+            if (fileName == null) {
+                fileName = a.getIdentifier();
+            }
+            Path attachmentOutputResource = basicFolder.resolve(fileName);
+            writeBigDataReferenceToResource(attachmentOutputResource, a.getAttachment());
+            messageProperties.put(attachmentPropertyFile, fileName);
 
-                String attachmentPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, i, "identifier");
-                messageProperties.put(attachmentPropertyName, a.getIdentifier());
+            String attachmentPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, i, "identifier");
+            messageProperties.put(attachmentPropertyName, a.getIdentifier());
 //            } catch (IOException ioe) {
 //                throw new RuntimeException(ioe);
 //            }
@@ -245,7 +296,7 @@ public class LoadStoreTransitionMessage {
 
     private void writeXmlSourceToResource(Path r, Source xmlContent) throws IOException {
 //        File f = r.getFile();
-        try ( FileOutputStream fout = new FileOutputStream(r.toFile())) {
+        try (FileOutputStream fout = new FileOutputStream(r.toFile())) {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -268,19 +319,19 @@ public class LoadStoreTransitionMessage {
         this.basicFolder = basicFolder;
     }
 
+
+    //TODO: java locking
     private DomibusConnectorMessageType loadMessage() throws IOException {
         DomibusConnectorMessageType message = new DomibusConnectorMessageType();
 
-        Path propertiesResource = basicFolder.resolve(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
-        if (!Files.exists(propertiesResource)) {
-            throw new IOException("properties " + propertiesResource + " does not exist!");
+        Path propertiesPath = basicFolder.resolve(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
+        if (!Files.exists(propertiesPath)) {
+            throw new IOException("properties " + propertiesPath + " does not exist!");
         }
-
-        messageProperties.load(new FileInputStream(propertiesResource.toFile()));
-
+        
+        messageProperties.load(new FileInputStream(propertiesPath.toFile()));
 
         message.setMessageDetails(loadMessageDetails());
-
 
         Resource contentResource = createRelativeResource(messageProperties.getProperty(MESSAGE_CONTENT_XML_PROP_NAME));
         if (contentResource != null && contentResource.exists()) {
@@ -333,6 +384,7 @@ public class LoadStoreTransitionMessage {
 
         //load confirmations
         message.getMessageConfirmations().addAll(loadMessageConfirmations());
+
 
         return message;
     }
@@ -388,13 +440,13 @@ public class LoadStoreTransitionMessage {
                 .distinct()
                 .map((k) -> {
 //                    try {
-                        DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
-                        String filePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "file");
-                        String identifierPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "identifier");
-                        Path res = basicFolder.resolve(messageProperties.getProperty(filePropertyName));
-                        attachment.setAttachment(loadResourceAsDataHandler(new FileSystemResource(res.toFile())));
-                        attachment.setIdentifier(messageProperties.getProperty(identifierPropertyName));
-                        return attachment;
+                    DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
+                    String filePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "file");
+                    String identifierPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "identifier");
+                    Path res = basicFolder.resolve(messageProperties.getProperty(filePropertyName));
+                    attachment.setAttachment(loadResourceAsDataHandler(new FileSystemResource(res.toFile())));
+                    attachment.setIdentifier(messageProperties.getProperty(identifierPropertyName));
+                    return attachment;
 
 //                    } catch (IOException ioe) {
 //                        throw new RuntimeException(ioe);
@@ -431,41 +483,6 @@ public class LoadStoreTransitionMessage {
         }
     }
 
-    private void saveMessageDetails(DomibusConnectorMessageDetailsType messageDetails) {
-
-        DomibusConnectorActionType action = messageDetails.getAction();
-        if (action != null) {
-            setPropertyOrEmptyStringWhenNull(ACTION_PROP_NAME, action.getAction());
-        } else {
-            setPropertyOrEmptyStringWhenNull(ACTION_PROP_NAME, "");
-        }
-
-        DomibusConnectorPartyType fromParty = messageDetails.getFromParty();
-        if (fromParty != null) {
-            setPropertyOrEmptyStringWhenNull(FROM_PARTY_ID_PROP_NAME, fromParty.getPartyId());
-            setPropertyOrEmptyStringWhenNull(FROM_PARTY_ROLE_PROP_NAME, fromParty.getRole());
-        }
-
-        DomibusConnectorPartyType toParty = messageDetails.getToParty();
-        if (toParty != null) {
-            setPropertyOrEmptyStringWhenNull(TO_PARTY_ID_PROP_NAME, toParty.getPartyId());
-            setPropertyOrEmptyStringWhenNull(TO_PARTY_ROLE_PROP_NAME, toParty.getRole());
-        }
-
-        DomibusConnectorServiceType service = messageDetails.getService();
-        if (service != null) {
-            setPropertyOrEmptyStringWhenNull(SERVICE_PROP_NAME, service.getService());
-        } else {
-            setPropertyOrEmptyStringWhenNull(SERVICE_PROP_NAME, "");
-        }
-
-        setPropertyOrEmptyStringWhenNull(CONVERSATION_ID_PROP_NAME, messageDetails.getConversationId());
-        setPropertyOrEmptyStringWhenNull(EBMS_ID_PROP_NAME, messageDetails.getEbmsMessageId());
-        setPropertyOrEmptyStringWhenNull(NATIONAL_ID_PROP_NAME, messageDetails.getBackendMessageId());
-        setPropertyOrEmptyStringWhenNull(ORIGINAL_SENDER_NAME_PROP_NAME, messageDetails.getOriginalSender());
-        setPropertyOrEmptyStringWhenNull(FINAL_RECIPIENT_PROP_NAME, messageDetails.getFinalRecipient());
-
-    }
 
     private void setPropertyOrEmptyStringWhenNull(String key, String value) {
         if (value == null) {
@@ -485,21 +502,25 @@ public class LoadStoreTransitionMessage {
 
         DomibusConnectorPartyType fromParty = new DomibusConnectorPartyType();
         fromParty.setPartyId(messageProperties.getProperty(FROM_PARTY_ID_PROP_NAME));
+        fromParty.setPartyIdType(messageProperties.getProperty(FROM_PARTY_ID_TYPE_PROP_NAME));
         fromParty.setRole(messageProperties.getProperty(FROM_PARTY_ROLE_PROP_NAME));
         messageDetails.setFromParty(fromParty);
 
         DomibusConnectorPartyType toParty = new DomibusConnectorPartyType();
         toParty.setPartyId(messageProperties.getProperty(TO_PARTY_ID_PROP_NAME));
+        toParty.setPartyIdType(messageProperties.getProperty(TO_PARTY_ID_TYPE_PROP_NAME));
         toParty.setRole(messageProperties.getProperty(TO_PARTY_ROLE_PROP_NAME));
         messageDetails.setToParty(toParty);
 
         DomibusConnectorServiceType service = new DomibusConnectorServiceType();
-        service.setService(messageProperties.getProperty(SERVICE_PROP_NAME));
+        service.setService(messageProperties.getProperty(SERVICE_NAME_PROP_NAME));
+        service.setServiceType(messageProperties.getProperty(SERVICE_TYPE_PROP_NAME));
         messageDetails.setService(service);
 
         messageDetails.setConversationId(messageProperties.getProperty(CONVERSATION_ID_PROP_NAME));
 
         messageDetails.setEbmsMessageId(messageProperties.getProperty(EBMS_ID_PROP_NAME));
+        messageDetails.setRefToMessageId(messageProperties.getProperty(REF_TO_MESSAGE_ID_PROP_NAME));
 
         messageDetails.setBackendMessageId(messageProperties.getProperty(NATIONAL_ID_PROP_NAME));
 

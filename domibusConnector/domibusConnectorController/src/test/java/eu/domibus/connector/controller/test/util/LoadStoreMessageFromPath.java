@@ -388,7 +388,7 @@ public class LoadStoreMessageFromPath {
         }
 
         if (details.getService() != null && details.getService() != null) {
-            messageProperties.put(LoadStoreTransitionMessage.SERVICE_PROP_NAME, details.getService().getService());
+            messageProperties.put(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME, details.getService().getService());
         }
 
         if (details.getEbmsMessageId() != null) {
@@ -433,7 +433,7 @@ public class LoadStoreMessageFromPath {
         );
 
         messageDetails.setService(DomibusConnectorServiceBuilder.createBuilder()
-                .setService(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_PROP_NAME))
+                .setService(messageProperties.getProperty(LoadStoreTransitionMessage.SERVICE_NAME_PROP_NAME))
                 .build()
         );
 
