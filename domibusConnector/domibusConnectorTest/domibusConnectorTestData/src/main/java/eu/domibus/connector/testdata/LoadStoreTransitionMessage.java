@@ -73,6 +73,16 @@ public class LoadStoreTransitionMessage {
         }
     }
 
+    public static DomibusConnectorMessageType loadMessageFrom(Path path) {
+        LOGGER.info("Load message from path [{}]", path);
+        try {
+            LoadStoreTransitionMessage load = new LoadStoreTransitionMessage(path);
+            return load.loadMessage();
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
 
     public static void storeMessageTo(Path path, DomibusConnectorMessageType message, boolean overwrite) {
         LOGGER.debug("storeMessageTo [{}]", path);
