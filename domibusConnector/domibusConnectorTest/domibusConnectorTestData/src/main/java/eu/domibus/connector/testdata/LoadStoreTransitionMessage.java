@@ -1,12 +1,10 @@
 package eu.domibus.connector.testdata;
 
 
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.transition.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
@@ -16,11 +14,21 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
+/**
+ * Load and store a Transition Message to the FileSystem
+ * Very Simple - used for testing
+ *
+ *  TODO: add method for
+ *
+ */
 public class LoadStoreTransitionMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadStoreTransitionMessage.class);
@@ -50,13 +58,14 @@ public class LoadStoreTransitionMessage {
     public static String MESSAGE_CONFIRMATIONS_PREFIX = "message.confirmation";
     public static String MESSAGE_ATTACHMENT_PREFIX = "message.attachment";
 
-    private Resource basicFolder;
+    private Path basicFolder;
 
     private Properties messageProperties;
 
-    public static DomibusConnectorMessageType loadMessageFrom(Resource path) {
-        LOGGER.info("Load message from path [{}]", path);
+    public static DomibusConnectorMessageType loadMessageFrom(Resource resource) {
+        LOGGER.info("Load message from path [{}]", resource);
         try {
+            Path path = Paths.get(resource.getURI());
             LoadStoreTransitionMessage load = new LoadStoreTransitionMessage(path);
             return load.loadMessage();
         } catch (IOException ioe) {
@@ -65,7 +74,7 @@ public class LoadStoreTransitionMessage {
     }
 
 
-    public static void storeMessageTo(Resource path, DomibusConnectorMessageType message, boolean overwrite) {
+    public static void storeMessageTo(Path path, DomibusConnectorMessageType message, boolean overwrite) {
         LOGGER.debug("storeMessageTo [{}]", path);
         try {
             LoadStoreTransitionMessage store = new LoadStoreTransitionMessage(path);
@@ -75,14 +84,25 @@ public class LoadStoreTransitionMessage {
         }
     }
 
-    public void storeMessageTo(DomibusConnectorMessageType message, boolean overwrite) throws IOException {
+    public static void storeMessageTo(Resource resourcePath, DomibusConnectorMessageType message, boolean overwrite) {
+        LOGGER.debug("storeMessageTo [{}]", resourcePath);
+        try {
+            Path nioPath = Paths.get(resourcePath.getURI());
+            LoadStoreTransitionMessage store = new LoadStoreTransitionMessage(nioPath);
+            store.storeMessageTo(message, overwrite);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    private void storeMessageTo(DomibusConnectorMessageType message, boolean overwrite) throws IOException {
         LOGGER.debug("storeMessage to [{}] with overwrite [{}]", basicFolder, overwrite);
-        if (basicFolder.exists() && !overwrite) {
+        if (Files.exists(basicFolder) && !overwrite) {
             throw new RuntimeException(String.format("Overwrite is false, cannot overwrite message in folder %s", basicFolder));
         }
 
-        Resource propertiesResource = basicFolder.createRelative(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
-        File f = propertiesResource.getFile();
+        Path propertiesResource = basicFolder.resolve(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
+        File f = propertiesResource.toFile();
 
 
         storeMessageContent(message.getMessageContent());
@@ -102,7 +122,7 @@ public class LoadStoreTransitionMessage {
 
     private void storeMessageAttachments(List<DomibusConnectorMessageAttachmentType> messageAttachments) {
         for (int i = 0; i < messageAttachments.size(); i++) {
-            try {
+//            try {
                 DomibusConnectorMessageAttachmentType a = messageAttachments.get(i);
 
                 String attachmentPropertyFile = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, i, "file");
@@ -111,15 +131,15 @@ public class LoadStoreTransitionMessage {
                 if (fileName == null) {
                     fileName = a.getIdentifier();
                 }
-                Resource attachmentOutputResource = basicFolder.createRelative("/" + fileName);
+                Path attachmentOutputResource = basicFolder.resolve(fileName);
                 writeBigDataReferenceToResource(attachmentOutputResource, a.getAttachment());
                 messageProperties.put(attachmentPropertyFile, fileName);
 
                 String attachmentPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, i, "identifier");
                 messageProperties.put(attachmentPropertyName, a.getIdentifier());
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
+//            } catch (IOException ioe) {
+//                throw new RuntimeException(ioe);
+//            }
         }
     }
 
@@ -136,7 +156,7 @@ public class LoadStoreTransitionMessage {
                 String fileName = confirmation.getConfirmationType().name() + ".xml";
                 messageProperties.put(evidenceFilePropertyName, confirmation.getConfirmationType().name() + ".xml");
 
-                Resource r = basicFolder.createRelative(fileName);
+                Path r = basicFolder.resolve(fileName);
                 writeXmlSourceToResource(r, confirmation.getConfirmation());
 
             } catch (IOException ioe) {
@@ -150,7 +170,7 @@ public class LoadStoreTransitionMessage {
             return;
         }
         Source xmlContent = content.getXmlContent();
-        Resource r = basicFolder.createRelative(DEFAULT_CONTENT_XML_FILE_NAME);
+        Path r = basicFolder.resolve(DEFAULT_CONTENT_XML_FILE_NAME);
         messageProperties.put(LoadStoreTransitionMessage.MESSAGE_CONTENT_XML_PROP_NAME, LoadStoreTransitionMessage.DEFAULT_CONTENT_XML_FILE_NAME);
 
         writeXmlSourceToResource(r, xmlContent);
@@ -160,7 +180,7 @@ public class LoadStoreTransitionMessage {
         if (messageDocument != null) {
             messageDocument.getDocument();
             String fileName = messageDocument.getDocumentName() == null ? "document.pdf" : messageDocument.getDocumentName();
-            Resource d = basicFolder.createRelative(fileName);
+            Path d = basicFolder.resolve(fileName);
             writeBigDataReferenceToResource(d, messageDocument.getDocument());
 
             messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_FILE_PROP_NAME, fileName);
@@ -177,9 +197,9 @@ public class LoadStoreTransitionMessage {
 
                 String appendix = detachedSignatureMimeType.name().toLowerCase();
                 String detachedResourceFilename = detachedSignatureName + "." + appendix;
-                Resource res = basicFolder.createRelative(detachedResourceFilename);
+                Path res = basicFolder.resolve(detachedResourceFilename);
 
-                writeByteArrayToResource(res, detachedSignatureBytes);
+                writeByteArrayToFile(res, detachedSignatureBytes);
 
                 messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_SIGNATURE_FILE_PROP_NAME, detachedResourceFilename);
                 messageProperties.put(LoadStoreTransitionMessage.MESSAGE_DOCUMENT_SIGNATURE_TYPE_PROP_NAME, detachedSignatureMimeType.name());
@@ -190,8 +210,8 @@ public class LoadStoreTransitionMessage {
         }
     }
 
-    private void writeByteArrayToResource(Resource res, byte[] bytes) {
-        try (FileOutputStream fout = new FileOutputStream(res.getFile())) {
+    private void writeByteArrayToFile(Path res, byte[] bytes) {
+        try (FileOutputStream fout = new FileOutputStream(res.toFile())) {
             StreamUtils.copy(bytes, fout);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -200,8 +220,8 @@ public class LoadStoreTransitionMessage {
         }
     }
 
-    private void writeBigDataReferenceToResource(Resource d, DataHandler document) {
-        try (FileOutputStream fout = new FileOutputStream(d.getFile())) {
+    private void writeBigDataReferenceToResource(Path d, DataHandler document) {
+        try (FileOutputStream fout = new FileOutputStream(d.toFile())) {
             StreamUtils.copy(document.getInputStream(), fout);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -210,9 +230,9 @@ public class LoadStoreTransitionMessage {
         }
     }
 
-    private void writeXmlSourceToResource(Resource r, Source xmlContent) throws IOException {
-        File f = r.getFile();
-        try ( FileOutputStream fout = new FileOutputStream(f)) {
+    private void writeXmlSourceToResource(Path r, Source xmlContent) throws IOException {
+//        File f = r.getFile();
+        try ( FileOutputStream fout = new FileOutputStream(r.toFile())) {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -230,7 +250,7 @@ public class LoadStoreTransitionMessage {
     private LoadStoreTransitionMessage() {
     }
 
-    private LoadStoreTransitionMessage(Resource basicFolder) {
+    private LoadStoreTransitionMessage(Path basicFolder) {
         messageProperties = new Properties();
         this.basicFolder = basicFolder;
     }
@@ -238,12 +258,12 @@ public class LoadStoreTransitionMessage {
     private DomibusConnectorMessageType loadMessage() throws IOException {
         DomibusConnectorMessageType message = new DomibusConnectorMessageType();
 
-        Resource propertiesResource = basicFolder.createRelative(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
-        if (!propertiesResource.exists()) {
+        Path propertiesResource = basicFolder.resolve(MESSAGE_PROPERTIES_PROPERTY_FILE_NAME);
+        if (!Files.exists(propertiesResource)) {
             throw new IOException("properties " + propertiesResource + " does not exist!");
         }
 
-        messageProperties.load(propertiesResource.getInputStream());
+        messageProperties.load(new FileInputStream(propertiesResource.toFile()));
 
 
         message.setMessageDetails(loadMessageDetails());
@@ -259,9 +279,9 @@ public class LoadStoreTransitionMessage {
             String docFileName = messageProperties.getProperty(MESSAGE_DOCUMENT_FILE_PROP_NAME);
             if (docFileName != null) {
                 DomibusConnectorMessageDocumentType messageDoc = new DomibusConnectorMessageDocumentType();
-                Resource r = basicFolder.createRelative(docFileName);
+                Path r = basicFolder.resolve(docFileName);
 
-                messageDoc.setDocument(loadResourceAsDataHandler(r));
+                messageDoc.setDocument(loadResourceAsDataHandler(new FileSystemResource(r.toFile())));
                 String docName = messageProperties.getProperty(MESSAGE_DOCUMENT_NAME_PROP_NAME);
                 messageDoc.setDocumentName(docName);
 
@@ -278,8 +298,8 @@ public class LoadStoreTransitionMessage {
 
 //                    DetachedSignatureMimeType mimeType = DetachedSignatureMimeType.valueOf(messageProperties.getProperty("MESSAGE_DOCUMENT_SIGNATURE_TYPE_PROP_NAME"));
                     String name = messageProperties.getProperty(MESSAGE_DOCUMENT_SIGNATURE_NAME_PROP_NAME);
-                    Resource fResource = basicFolder.createRelative(signatureFileName);
-                    byte[] signatureBytes = loadResourceAsByteArray(fResource);
+                    Path fResource = basicFolder.resolve(signatureFileName);
+                    byte[] signatureBytes = loadResourceAsByteArray(new FileSystemResource(fResource.toFile()));
 
                     detachedSignature.setDetachedSignature(signatureBytes);
                     detachedSignature.setDetachedSignatureName(name);
@@ -354,18 +374,18 @@ public class LoadStoreTransitionMessage {
                 .map((k) -> k.split("\\.")[2])
                 .distinct()
                 .map((k) -> {
-                    try {
+//                    try {
                         DomibusConnectorMessageAttachmentType attachment = new DomibusConnectorMessageAttachmentType();
                         String filePropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "file");
                         String identifierPropertyName = String.format("%s.%s.%s", LoadStoreTransitionMessage.MESSAGE_ATTACHMENT_PREFIX, k, "identifier");
-                        Resource res = basicFolder.createRelative(messageProperties.getProperty(filePropertyName));
-                        attachment.setAttachment(loadResourceAsDataHandler(res));
+                        Path res = basicFolder.resolve(messageProperties.getProperty(filePropertyName));
+                        attachment.setAttachment(loadResourceAsDataHandler(new FileSystemResource(res.toFile())));
                         attachment.setIdentifier(messageProperties.getProperty(identifierPropertyName));
                         return attachment;
 
-                    } catch (IOException ioe) {
-                        throw new RuntimeException(ioe);
-                    }
+//                    } catch (IOException ioe) {
+//                        throw new RuntimeException(ioe);
+//                    }
                 })
                 .collect(Collectors.toList());
 
@@ -385,12 +405,8 @@ public class LoadStoreTransitionMessage {
         if (relativePath == null) {
             return null;
         }
-        try {
-            Resource contentResource = basicFolder.createRelative(relativePath);
-            return contentResource;
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        Path contentResource = basicFolder.resolve(relativePath);
+        return new FileSystemResource(contentResource.toFile());
     }
 
     private byte[] loadResourceAsByteArray(Resource res) {
