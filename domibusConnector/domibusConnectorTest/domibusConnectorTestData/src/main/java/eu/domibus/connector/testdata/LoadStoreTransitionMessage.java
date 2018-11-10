@@ -328,7 +328,7 @@ public class LoadStoreTransitionMessage {
         if (!Files.exists(propertiesPath)) {
             throw new IOException("properties " + propertiesPath + " does not exist!");
         }
-        
+
         messageProperties.load(new FileInputStream(propertiesPath.toFile()));
 
         message.setMessageDetails(loadMessageDetails());
@@ -484,13 +484,6 @@ public class LoadStoreTransitionMessage {
     }
 
 
-    private void setPropertyOrEmptyStringWhenNull(String key, String value) {
-        if (value == null) {
-            messageProperties.setProperty(key, "");
-        } else {
-            messageProperties.setProperty(key, value);
-        }
-    }
 
 
     private DomibusConnectorMessageDetailsType loadMessageDetails() {
