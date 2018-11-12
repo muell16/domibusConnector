@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 
-@Component
+@Component("ContentDeletionTimeoutConfigurationProperties")
 @ConfigurationProperties(prefix="connector.controller.content")
 @Validated
 public class ContentDeletionTimeoutConfigurationProperties {
@@ -21,6 +21,11 @@ public class ContentDeletionTimeoutConfigurationProperties {
     @ConfigurationLabel("Configures the fixed interval for checking if any message content can be deleted")
     private DomibusConnectorDuration checkTimeout;
 
+    public DomibusConnectorDuration getCheckTimeout() {
+        return checkTimeout;
+    }
 
-
+    public void setCheckTimeout(DomibusConnectorDuration checkTimeout) {
+        this.checkTimeout = checkTimeout;
+    }
 }

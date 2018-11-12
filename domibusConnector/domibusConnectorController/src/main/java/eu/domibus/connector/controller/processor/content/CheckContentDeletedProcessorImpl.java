@@ -37,9 +37,8 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
         this.messagePersistenceService = messagePersistenceService;
     }
 
-    //TODO: create scheduler
     @Override
-    @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkedTimeout.milliseconds}")
+    @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
         Map<DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences = bigDataPersistenceService.getAllAvailableReferences();
         allAvailableReferences.forEach(this::checkDeletion);

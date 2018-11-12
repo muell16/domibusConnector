@@ -23,7 +23,7 @@ public class DomibusConnectorMessage implements Serializable {
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<DomibusConnectorMessageAttachment>();
 	private final List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
 	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
-    private DomibusConnectorMessageId connectorMessageId;
+    private String connectorMessageId;
 
 	/**
 	 * This constructor initializes an instance of a DomibusConnectorMessage in case
@@ -53,7 +53,7 @@ public class DomibusConnectorMessage implements Serializable {
             final String connectorMessageId,
             final DomibusConnectorMessageDetails messageDetails, 
             final DomibusConnectorMessageContent messageContent){
-        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
+        this.connectorMessageId = connectorMessageId;
         this.messageDetails = messageDetails;
         this.messageContent = messageContent;
 	}
@@ -86,7 +86,7 @@ public class DomibusConnectorMessage implements Serializable {
             final String connectorMessageId, 
             final DomibusConnectorMessageDetails messageDetails, 
             final DomibusConnectorMessageConfirmation messageConfirmation) {
-        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
+        this.connectorMessageId = connectorMessageId;
         this.messageDetails = messageDetails;
         addConfirmation(messageConfirmation);
     }
@@ -146,11 +146,11 @@ public class DomibusConnectorMessage implements Serializable {
 	}
 
     public String getConnectorMessageId() {
-        return connectorMessageId.getConnectorMessageId();
+        return connectorMessageId;
     }
 
     public void setConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
+        this.connectorMessageId = connectorMessageId;
     }
 
     @Override
