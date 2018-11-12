@@ -7,9 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -227,6 +225,38 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 //            LOGGER.warn(String.format("Did not delete big data of message with connector id [%s], because there was no entry in database", message));
 //        }
 
+    }
+
+    @Override
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences() {
+
+        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> map = new HashMap<>();
+
+        Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
+        all.forEach(bigData -> {
+            Long messageId = bigData.getMessage();
+            Optional<PDomibusConnectorMessage> byId = messageDao.findById(messageId);
+
+            if (byId.isPresent()) {
+                DomibusConnectorMessage.DomibusConnectorMessageId connectorMessageId =
+                        new DomibusConnectorMessage.DomibusConnectorMessageId(byId.get().getConnectorMessageId());
+
+                if (!map.containsKey(connectorMessageId)) {
+                    map.put(connectorMessageId, new ArrayList<>());
+                }
+
+                List<DomibusConnectorBigDataReference> dataRefList = map.get(connectorMessageId);
+                JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
+                reference.setReadable(false);
+                reference.setWriteable(false);
+                reference.setStorageIdReference(Long.toString(bigData.getId()));
+                dataRefList.add(reference);
+
+            } else {
+                LOGGER.error(String.format("Found data reference [%s] which is not linked to a message with dbId [%s]! Possibly corrupted data!", bigData, messageId));
+            }
+        });
+        return map;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

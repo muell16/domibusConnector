@@ -3,6 +3,8 @@ package eu.domibus.connector.persistence.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -61,5 +63,8 @@ public interface DomibusConnectorBigDataPersistenceService {
      */
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference);
 
-    
+    /**
+     * Returns a map of ALL currently not deleted bigDataReferences
+     */
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences();
 }

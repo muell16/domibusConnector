@@ -10,6 +10,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -50,6 +53,12 @@ public class DomibusConnectorBigDataPersistenceServiceMemoryImpl implements Domi
     @Override
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference ref) {
         //Just do nothing!
+    }
+
+    @Override
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences() {
+	    //just return empty map
+        return new HashMap<>();
     }
 
     public static class MyOutputStream extends ByteArrayOutputStream {

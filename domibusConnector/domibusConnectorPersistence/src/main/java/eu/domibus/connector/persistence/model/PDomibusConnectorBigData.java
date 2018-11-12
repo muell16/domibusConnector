@@ -1,8 +1,6 @@
 package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 import java.sql.Blob;

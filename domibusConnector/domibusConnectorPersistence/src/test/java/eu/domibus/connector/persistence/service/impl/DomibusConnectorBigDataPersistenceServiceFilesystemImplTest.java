@@ -2,19 +2,17 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl.FileBasedDomibusConnectorBigDataReference;
+import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import eu.domibus.connector.testutil.assertj.DomibusByteArrayAssert;
 import org.apache.poi.util.IOUtils;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.FileSystemUtils;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -23,6 +21,8 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,11 +33,32 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 
     private static final byte[] input1 = "Hallo Welt, ich bin ein Testtext".getBytes();
 
-    private static File testStorageLocation;
+//    private static File testStorageLocation;
 
-    @BeforeClass
-    public static void initTests() throws IOException {
-        testStorageLocation = new File("./target/tests/" + DomibusConnectorBigDataPersistenceServiceFilesystemImplTest.class.getSimpleName() +  "/fsstorage/");
+    private File testStorageLocation;
+
+//    @BeforeClass
+//    public static void initTests() throws IOException {
+//        testStorageLocation = new File("./target/tests/" + DomibusConnectorBigDataPersistenceServiceFilesystemImplTest.class.getSimpleName() +  "/fsstorage/");
+//        FileSystemUtils.deleteRecursively(testStorageLocation);
+//        testStorageLocation.mkdirs();
+//
+//        File src = new File("./target/test-classes/testdata/fsstorage/");
+//
+//        //copy testdata to testfolder
+//        FileSystemUtils.copyRecursively(src, testStorageLocation);
+//    }
+
+    @BeforeEach
+    public void setUp(TestInfo testInfo) throws IOException {
+
+        String methodName = testInfo.getTestMethod().get().getName();
+
+        testStorageLocation = new File("./target/tests/"
+                + DomibusConnectorBigDataPersistenceServiceFilesystemImplTest.class.getSimpleName() + "/"
+                + methodName
+                +  "/fsstorage/");
+
         FileSystemUtils.deleteRecursively(testStorageLocation);
         testStorageLocation.mkdirs();
 
@@ -45,11 +66,6 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 
         //copy testdata to testfolder
         FileSystemUtils.copyRecursively(src, testStorageLocation);
-
-    }
-
-    @Before
-    public void setUp() {
 
 
         DomibusConnectorFilesystemPersistenceProperties fsProps = new DomibusConnectorFilesystemPersistenceProperties();
@@ -167,5 +183,15 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 //    public void testLoadFromKeyString() {
 //
 //    }
+
+    @Test
+    public void testGetAllAvailableReferences() {
+
+        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences =
+                filesystemImpl.getAllAvailableReferences();
+
+        assertThat(allAvailableReferences).hasSize(2);
+        assertThat(allAvailableReferences.get(new DomibusConnectorMessage.DomibusConnectorMessageId("testmsg2"))).hasSize(2);
+    }
 
 }

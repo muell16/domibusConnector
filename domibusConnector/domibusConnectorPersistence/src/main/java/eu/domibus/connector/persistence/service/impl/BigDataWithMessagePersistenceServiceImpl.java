@@ -85,27 +85,28 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     }
 
     @Override
+    @Transactional
     public void cleanForMessage(DomibusConnectorMessage message) {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#deleteAllBigFilesFromMessage: is evidence message doing nothing...");
         }
         collectBigDataRefsOfMessage(message)
                 .stream()
-                .forEach(ref -> bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(ref));
-    }
-
-    private List<DomibusConnectorBigDataReference> collectBigDataRefsOfAttachments(DomibusConnectorMessage message) {
-        return message.getMessageAttachments().stream().map(DomibusConnectorMessageAttachment::getAttachment).collect(Collectors.toList());
+                .forEach(ref ->  bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(ref));
     }
 
 
     private List<DomibusConnectorBigDataReference> collectBigDataRefsOfMessage(DomibusConnectorMessage message) {
-        List<DomibusConnectorBigDataReference> collectedBigDataRefs = message.getMessageAttachments().stream().map(DomibusConnectorMessageAttachment::getAttachment).collect(Collectors.toList());
+        List<DomibusConnectorBigDataReference> collectedBigDataRefs = collectBigDataRefsOfAttachments(message);
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (hasMainDocument(messageContent)) {
             collectedBigDataRefs.add(messageContent.getDocument().getDocument());
         }
         return collectedBigDataRefs;
+    }
+
+    private List<DomibusConnectorBigDataReference> collectBigDataRefsOfAttachments(DomibusConnectorMessage message) {
+        return message.getMessageAttachments().stream().map(DomibusConnectorMessageAttachment::getAttachment).collect(Collectors.toList());
     }
 
     @Override

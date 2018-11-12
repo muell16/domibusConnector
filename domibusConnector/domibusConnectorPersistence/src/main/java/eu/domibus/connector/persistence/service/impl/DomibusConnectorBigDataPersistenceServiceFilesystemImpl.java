@@ -5,19 +5,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
-import org.apache.cxf.helpers.FileUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.keygen.BytesKeyGenerator;
-import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
-import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.*;
@@ -29,8 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
-import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_FS_PROFILE_NAME;
 
@@ -87,8 +83,8 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         bigDataReference.setName(documentName);
         bigDataReference.setMimetype(documentContentType);
 
-        String folder = connectorMessageId;
-        Path messageFolder = getStoragePath().resolve(folder); // //new File(f.getAbsolutePath() + File.separator + folder);
+        String messageFolderName = connectorMessageId;
+        Path messageFolder = getStoragePath().resolve(messageFolderName); // //new File(f.getAbsolutePath() + File.separator + folder);
         try {
             LOGGER.debug("Creating message folder [{}]", messageFolder);
             Files.createDirectory(messageFolder);
@@ -101,8 +97,8 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
 
         String storageFileName = UUID.randomUUID().toString();
-        Path storageFileRelativePath = Paths.get(folder + File.separator + storageFileName);
-        bigDataReference.setStorageIdReference(storageFileRelativePath.toString());
+        String storageFileRelativPathName = createReferenceName(messageFolderName, storageFileName);
+        bigDataReference.setStorageIdReference(storageFileRelativPathName);
 
         Path storageFile = messageFolder.resolve(storageFileName);
         LOGGER.debug("Storage file path is [{}]", storageFile.toAbsolutePath());
@@ -170,6 +166,44 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
             throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
         }
     }
+
+    @Override
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences() {
+        Path storagePath = getStoragePath();
+        try {
+            return Files.list(storagePath)
+                    .collect(Collectors.toMap(
+                            path -> new DomibusConnectorMessage.DomibusConnectorMessageId(path.getFileName().toString()),
+                            this::listReferences
+                    ));
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Error while ls files in directory [%s]", storagePath));
+        }
+    }
+
+    private List<DomibusConnectorBigDataReference> listReferences(Path messageFolder) {
+        String messageFolderName = messageFolder.getFileName().toString();
+        try {
+            return Files.list(messageFolder)
+                    .map(p -> p.getFileName().toString())
+                    .map(s -> mapMessageFolderAndFileNameToReference(messageFolderName, s))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Error while listing all files in messageFolder [%s]", messageFolder));
+        }
+    }
+
+    private DomibusConnectorBigDataReference mapMessageFolderAndFileNameToReference(String messageFolderName, String fileName) {
+        String storageIdRef = createReferenceName(messageFolderName, fileName);
+        FileBasedDomibusConnectorBigDataReference ref = new FileBasedDomibusConnectorBigDataReference();
+        ref.setStorageIdReference(storageIdRef);
+        return ref;
+    }
+
+    private String createReferenceName(String messageFolderName, String fileName) {
+        return messageFolderName + File.separator + fileName;
+    }
+
 
     private Path getStoragePath() {
         return filesystemPersistenceProperties.getStoragePath();

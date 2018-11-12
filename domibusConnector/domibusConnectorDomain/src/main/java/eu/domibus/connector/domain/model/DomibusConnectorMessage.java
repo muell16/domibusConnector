@@ -23,7 +23,7 @@ public class DomibusConnectorMessage implements Serializable {
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<DomibusConnectorMessageAttachment>();
 	private final List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
 	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
-    private String connectorMessageId;
+    private DomibusConnectorMessageId connectorMessageId;
 
 	/**
 	 * This constructor initializes an instance of a DomibusConnectorMessage in case
@@ -53,7 +53,7 @@ public class DomibusConnectorMessage implements Serializable {
             final String connectorMessageId,
             final DomibusConnectorMessageDetails messageDetails, 
             final DomibusConnectorMessageContent messageContent){
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
         this.messageDetails = messageDetails;
         this.messageContent = messageContent;
 	}
@@ -86,7 +86,7 @@ public class DomibusConnectorMessage implements Serializable {
             final String connectorMessageId, 
             final DomibusConnectorMessageDetails messageDetails, 
             final DomibusConnectorMessageConfirmation messageConfirmation) {
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
         this.messageDetails = messageDetails;
         addConfirmation(messageConfirmation);
     }
@@ -146,11 +146,11 @@ public class DomibusConnectorMessage implements Serializable {
 	}
 
     public String getConnectorMessageId() {
-        return connectorMessageId;
+        return connectorMessageId.getConnectorMessageId();
     }
 
     public void setConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
     }
 
     @Override
@@ -159,6 +159,39 @@ public class DomibusConnectorMessage implements Serializable {
         builder.append("connectorMessageId", this.connectorMessageId);
         builder.append("messageDetails", this.messageDetails);
         return builder.toString();
+	}
+
+	public static class DomibusConnectorMessageId {
+		String connectorMessageId;
+
+		public DomibusConnectorMessageId() {}
+
+		public DomibusConnectorMessageId(String connectorMessageId) {
+			this.connectorMessageId = connectorMessageId;
+		}
+
+		public String getConnectorMessageId() {
+			return connectorMessageId;
+		}
+
+		public void setConnectorMessageId(String connectorMessageId) {
+			this.connectorMessageId = connectorMessageId;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof DomibusConnectorMessageId)) return false;
+
+			DomibusConnectorMessageId that = (DomibusConnectorMessageId) o;
+
+			return connectorMessageId != null ? connectorMessageId.equals(that.connectorMessageId) : that.connectorMessageId == null;
+		}
+
+		@Override
+		public int hashCode() {
+			return connectorMessageId != null ? connectorMessageId.hashCode() : 0;
+		}
 	}
     
 }

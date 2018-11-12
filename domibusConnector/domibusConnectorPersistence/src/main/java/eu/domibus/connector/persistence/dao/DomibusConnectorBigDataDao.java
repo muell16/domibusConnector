@@ -8,12 +8,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional
 public interface DomibusConnectorBigDataDao extends CrudRepository<PDomibusConnectorBigData, Long> {
 
     public List<PDomibusConnectorBigData> findAllByMessage(long dbMessageId);
+
+//    public Map<String, PDomibusConnectorBigData> findAllReferencesMappedBy
 
 
 }
