@@ -44,6 +44,9 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	@Nullable
 	private String causedBy;
 
+	@Nullable
+	private Date failed;
+
 	private DomibusConnectorMessageDirection direction;
 
 	public DomibusConnectorMessageDetails(){
@@ -212,6 +215,15 @@ public class DomibusConnectorMessageDetails implements Serializable {
 
 	public void setDirection(DomibusConnectorMessageDirection direction) {
 		this.direction = direction;
+	}
+
+	@Nullable
+	public Date getFailed() {
+		return failed;
+	}
+
+	public void setFailed(@Nullable Date failed) {
+		this.failed = failed;
 	}
 
 	@Override

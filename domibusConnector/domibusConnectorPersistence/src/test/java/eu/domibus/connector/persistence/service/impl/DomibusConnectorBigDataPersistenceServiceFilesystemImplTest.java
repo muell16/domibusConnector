@@ -186,7 +186,6 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
 
     @Test
     public void testGetAllAvailableReferences() {
-
         Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences =
                 filesystemImpl.getAllAvailableReferences();
 

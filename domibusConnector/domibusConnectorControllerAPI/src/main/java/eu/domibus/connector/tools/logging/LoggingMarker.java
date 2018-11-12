@@ -17,14 +17,17 @@ public class LoggingMarker {
     public static final String BUSINESS_LOG_MARKER_TEXT = "BUSINESS";
     public static final String BUSINESS_CERT_LOG_MARKER_TEXT = "BUSINESS_CERT";
     public static final String BUSINESS_EVIDENCE_LOG_MARKER_TEXT = "BUSINESS_EVIDENCE";
+    public static final String BUSINESS_CONTENT_LOG_MARKER_TEXT = "BUSINESS_CONTENT";
 
     public static final Marker BUSINESS_LOG = MarkerFactory.getMarker(BUSINESS_LOG_MARKER_TEXT);
     public static final Marker BUSINESS_CERT_LOG = MarkerFactory.getMarker(BUSINESS_CERT_LOG_MARKER_TEXT);
     public static final Marker BUSINESS_EVIDENCE_LOG = MarkerFactory.getMarker(BUSINESS_EVIDENCE_LOG_MARKER_TEXT);
+    public static final Marker BUSINESS_CONTENT_LOG = MarkerFactory.getMarker(BUSINESS_CONTENT_LOG_MARKER_TEXT);
 
     static {
         BUSINESS_CERT_LOG.add(BUSINESS_LOG);
         BUSINESS_EVIDENCE_LOG.add(BUSINESS_LOG);
+        BUSINESS_CONTENT_LOG.add(BUSINESS_LOG);
     }
 
 
