@@ -20,41 +20,36 @@ node {
 
 	withEnv(MY_ENV) {
 
-				stage ("Checkout") {
-					cleanWs()
-					def commonJob
-					def MAVEN_PROJECT_DIR 
-					
-						//sh 'git config credential.helper cache'
+		stage ("Checkout") {
+			cleanWs()
+			def commonJob
+			def MAVEN_PROJECT_DIR 
+			
+			
+			scmInfo = checkout([
+					$class: 'GitSCM',
+					branches: scm.branches,
+					doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+					extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
+					userRemoteConfigs: scm.userRemoteConfigs,
+			])
 
-						//TODO: set git username password
+							
+			//TODO: git push in extra function withCredentials!
 
-						scmInfo = checkout([
-								$class: 'GitSCM',
-								branches: scm.branches,
-								doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-								extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']],
-								userRemoteConfigs: scm.userRemoteConfigs,
-						])
+			println "scm : ${scmInfo}"
+			println "${scmInfo.GIT_COMMIT}"
 
-						//TODO: git push in extra function withCredentials!
+			sh "rm -Rf pipeline_sources"
+			dir('pipeline_sources') { // switch to subdir
+				git([url: "https://secure.e-codex.eu/gitblit/r/~spindlers/connector-jenkins-jobs.git", credentialsId: 'IT-NRW GIT Repo'])
+			}
+		
+			MAVEN_PROJECT_DIR = pwd() + "/domibusConnector"
+			commonJob = load("pipeline_sources/common-job")
 
-						println "scm : ${scmInfo}"
-						println "${scmInfo.GIT_COMMIT}"
-
-						sh "rm -Rf pipeline_sources"
-						dir('pipeline_sources') { // switch to subdir
-							git([url: "https://secure.e-codex.eu/gitblit/r/~spindlers/connector-jenkins-jobs.git", credentialsId: 'IT-NRW GIT Repo'])
-						}
-					
-						MAVEN_PROJECT_DIR = pwd() + "/domibusConnector"
-					  	commonJob = load("pipeline_sources/common-job")
-
-						  commonJob.execute(MAVEN_PROJECT_DIR)
-				}
-
-
-					
-
-				}
+			  commonJob.execute(MAVEN_PROJECT_DIR)
 		}
+
+	}
+}

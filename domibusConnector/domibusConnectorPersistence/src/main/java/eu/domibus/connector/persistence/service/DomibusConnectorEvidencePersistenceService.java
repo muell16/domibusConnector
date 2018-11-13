@@ -4,8 +4,10 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import org.springframework.lang.NonNull;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -13,64 +15,33 @@ import javax.annotation.Nonnull;
  */
 public interface DomibusConnectorEvidencePersistenceService {
 
+
+
     /**
      * Creates the evidence in storage
      *
      * @param message - the message related to the evidence
      * @param evidence - the evidence as byte[]
      * @param evidenceType - the type of the evidence
+     * @param transport - the message the evidence is transported with
      */
-    void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType);
-
-    default void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation) {
-        if (confirmation == null) {
-            throw new IllegalArgumentException("confirmation cannot be null!");
-        }
-        persistEvidenceForMessageIntoDatabase(message, confirmation.getEvidence(), confirmation.getEvidenceType());
-    }
-
-    /**
-     * Merges the message into the storage @see #mergeMessageWithDatabase
-     * and updates the delivered to gateway
-     * field with the current time of the corresponding
-     * evidence (the corresponding evidence is identified by the evidence type)
-     *
-     * @param message - the message
-     * @param evidenceType - the evidenceType
-     * @throws PersistenceException - if the message could not be updated
-     * in storage
-     *
-     *
-     */
-    void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
-
-    default void setEvidenceDeliveredToGateway(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
-        if (confirmation == null) {
-            throw new IllegalArgumentException("confirmation cannot be null!");
-        }
-        setEvidenceDeliveredToGateway(message, confirmation.getEvidenceType());
-    }
+    void persistEvidenceForMessageIntoDatabase(@NotNull DomibusConnectorMessage message,
+                                               byte[] evidence,
+                                               @NotNull DomibusConnectorEvidenceType evidenceType,
+                                               DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
 
     /**
-     * Merges the message into the storage @see #mergeMessageWithDatabase
-     * and updates the delivered to national_backend
-     * field with the current time of the corresponding
-     * evidence (the corresponding evidence is identified by the evidence type)
-     *
-     * @param message - the message
-     * @param evidenceType - the evidenceType
-     * @throws PersistenceException - if the message
-     * could not be updated in storage
-     *
+     * Sets the evidence as delivered to GW
+     * @param transport - the connector message id, which has transported the message
      */
-    void setEvidenceDeliveredToNationalSystem(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) throws PersistenceException;
+    void setEvidenceDeliveredToGateway(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
-    default void setEvidenceDeliveredToNationalSystem(@Nonnull DomibusConnectorMessage message, @Nonnull DomibusConnectorMessageConfirmation confirmation)  throws PersistenceException {
-        if (confirmation == null) {
-            throw new IllegalArgumentException("confirmation cannot be null!");
-        }
-        setEvidenceDeliveredToNationalSystem(message, confirmation.getEvidenceType());
-    }
+
+    /**
+     * Sets the evidence as delivered to national system
+     * @param transport - the connector message id, of the message which has transported the evidence
+     */
+    void setEvidenceDeliveredToNationalSystem(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
 }

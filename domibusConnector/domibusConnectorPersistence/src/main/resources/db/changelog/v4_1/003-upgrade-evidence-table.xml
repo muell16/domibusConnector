@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    
+    <changeSet author="domibusConnector" id="changelog_4.1_upgrade_evidence_table">
+        <addColumn tableName="DOMIBUS_CONNECTOR_EVIDENCE">
+            <column name="CONNECTOR_MESSAGE_ID" type="java.sql.Types.VARCHAR(255)"></column>
+        </addColumn>
+    </changeSet>
+
+
+
+</databaseChangeLog>

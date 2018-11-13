@@ -32,6 +32,9 @@ public class PDomibusConnectorEvidence {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "evidencesSeqStore")
     private Long id;
 
+    @Column(name = "CONNECTOR_MESSAGE_ID")
+    private String connectorMessageId;
+
     @ManyToOne
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
     private PDomibusConnectorMessage message;
@@ -121,6 +124,14 @@ public class PDomibusConnectorEvidence {
 
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    public String getConnectorMessageId() {
+        return connectorMessageId;
+    }
+
+    public void setConnectorMessageId(String connectorMessageId) {
+        this.connectorMessageId = connectorMessageId;
     }
 
     @Override

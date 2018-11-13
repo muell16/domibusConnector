@@ -258,6 +258,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
+
 		
         try {
         	LOGGER.debug("Submitting messageConfirmation [{}] back to GW", messageConfirmation);
