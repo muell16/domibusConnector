@@ -46,7 +46,10 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
 
     void checkDeletion(DomibusConnectorMessageId id, List<DomibusConnectorBigDataReference> references) {
         DomibusConnectorMessage msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
-
+        if (msg == null) {
+            LOGGER.warn("No message with connector message id [{}] found in database. This content will NOT be deleted. Please check and remove manual!", id.getConnectorMessageId());
+            return;
+        }
         DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
         Date transportFinishedDate = null;
         boolean failed = false;
