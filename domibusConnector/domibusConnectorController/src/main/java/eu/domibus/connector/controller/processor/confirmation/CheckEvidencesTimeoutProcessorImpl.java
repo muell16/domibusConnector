@@ -1,29 +1,30 @@
 package eu.domibus.connector.controller.processor.confirmation;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-
+import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageService;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
-import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
-import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.DomibusConnectorAction;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
+import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-
-import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
@@ -38,11 +39,17 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
 
     //setter
     @Autowired
     public void setEvidencesTimeoutConfigurationProperties(EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties) {
         this.evidencesTimeoutConfigurationProperties = evidencesTimeoutConfigurationProperties;
+    }
+
+    @Autowired
+    public void setConfirmationMessageBuilderFactory(ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory) {
+        this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
     }
 
     @Autowired
@@ -176,77 +183,42 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     void createRelayRemmdFailureAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
-        LOGGER.info("The RelayREMMDAcceptance/Rejection evidence for originalMessage {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
+        LOGGER.error(BUSINESS_LOG, "The RelayREMMDAcceptance/Rejection evidence for originalMessage {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
                 .getMessageDetails().getEbmsMessageId());
-
-        DomibusConnectorMessageConfirmation relayRemMDFailure = null;
-
-        try {
-            relayRemMDFailure = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
-        } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(originalMessage)
-                    .setText("Error creating RelayREMMDFailure for originalMessage!")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-        }
 
         DomibusConnectorAction action = actionPersistenceService.getRelayREMMDFailure();
 
-        sendEvidenceToNationalSystem(originalMessage, relayRemMDFailure, action);
+        CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder =
+                confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE);
+        confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
+        confirmationMessageBuilder.setAction(action);
+        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
+
+        build.persistEvidenceToMessage();
+        DomibusConnectorMessage evidenceMessage = build.getEvidenceMessage();
+
+        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
     }
 
     private void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
-        LOGGER.info("The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
-                .getMessageDetails().getEbmsMessageId());
-        DomibusConnectorMessageConfirmation nonDelivery = null;
-        try {
-            nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
-        } catch (DomibusConnectorEvidencesToolkitException e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(originalMessage)
-                    .setText("Error creating NonDelivery for originalMessage!")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-        }
+        LOGGER.error(BUSINESS_LOG, "The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
+            .getMessageDetails().getEbmsMessageId());
 
         DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
-        sendEvidenceToNationalSystem(originalMessage, nonDelivery, action);
+        CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
+        confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
+        confirmationMessageBuilder.setAction(action);
+        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
+
+        build.persistEvidenceToMessage();
+        DomibusConnectorMessage evidenceMessage = build.getEvidenceMessage();
+
+        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+
     }
 
-
-    private void sendEvidenceToNationalSystem(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation,
-                                              DomibusConnectorAction evidenceAction) throws DomibusConnectorControllerException,
-            DomibusConnectorMessageException {
-
-        try {
-
-            originalMessage.addConfirmation(confirmation);
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation.getEvidence(),
-                    confirmation.getEvidenceType());
-
-            DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-            details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
-            details.setConversationId(originalMessage.getMessageDetails().getConversationId());
-            details.setService(originalMessage.getMessageDetails().getService());
-            details.setAction(evidenceAction);
-
-            DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, confirmation);
-
-            backendDeliveryService.deliverMessageToBackend(evidenceMessage);
-
-            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(originalMessage, confirmation.getEvidenceType());
-            persistenceService.rejectMessage(originalMessage);
-        } catch (PersistenceException ex) {
-            LOGGER.error("PersistenceException occured", ex);
-            throw new RuntimeException(ex);
-            //TODO: handle exception
-        }
-    }
 
 }

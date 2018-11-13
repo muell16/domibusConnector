@@ -118,16 +118,32 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         return message;
     }
 
-    @Nullable
-    private PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
-        for (PDomibusConnectorEvidence evidence : evidences) {
-            if (evidence.getType().name().equals(evidenceType.name())) {
-                return evidence;
-            }
-        }
-        LOGGER.warn("Evidence of type [{}] was not found in evidences [{}]", evidenceType, evidences);
-        return null;
+    @Override
+    @Transactional
+    public void persistToMessage(PDomibusConnectorMessage dbMessage, DomibusConnectorMessageConfirmation c) {
+        PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
+
+//        EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);
+//        dbEvidence = evidenceDao.findByMessageAndEvidenceType(dbMessage, dbEvidenceType);
+
+        dbEvidence.setMessage(dbMessage);
+        dbEvidence.setConnectorMessageId(dbMessage.getConnectorMessageId());
+        dbEvidence.setEvidence(MapperHelper.convertByteArrayToString(c.getEvidence()));
+        dbEvidence.setType(EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(c.getEvidenceType()));
+
+        evidenceDao.save(dbEvidence);
     }
+
+//    @Nullable
+//    private PDomibusConnectorEvidence findEvidence(@Nonnull List<PDomibusConnectorEvidence> evidences, @Nonnull DomibusConnectorEvidenceType evidenceType) {
+//        for (PDomibusConnectorEvidence evidence : evidences) {
+//            if (evidence.getType().name().equals(evidenceType.name())) {
+//                return evidence;
+//            }
+//        }
+//        LOGGER.warn("Evidence of type [{}] was not found in evidences [{}]", evidenceType, evidences);
+//        return null;
+//    }
 
 //    /**
 //     * {@inheritDoc }
@@ -139,7 +155,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
 //    }
 
     @Transactional
-    public void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType, String transport) {
+    void persistEvidenceForMessageIntoDatabase(PDomibusConnectorMessage dbMessage, @Nullable byte[] evidence, DomibusConnectorEvidenceType evidenceType, String transport) {
         PDomibusConnectorEvidence dbEvidence;
 
         EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);

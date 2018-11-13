@@ -124,11 +124,13 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		DomibusConnectorMessageConfirmation confirmation = null;
+		DomibusConnectorMessage returnMessage = null;
 		try {
 			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
 			LOGGER.debug("#processMessage: created confirmation [{}] for originalMessage [{}]", confirmation, message);
 			// immediately persist new evidence into database
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation);
+			returnMessage = buildEvidenceMessage(confirmation, message);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation, new DomibusConnectorMessage.DomibusConnectorMessageId(returnMessage.getConnectorMessageId()));
             message.addConfirmation(confirmation);
 
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
@@ -159,7 +161,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 //		messagePersistenceService.setDeliveredToGateway(message);
 
         //also send evidence back to backend client:
-		DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
+
 		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", returnMessage);
         messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
 		backendDeliveryService.deliverMessageToBackend(returnMessage);
@@ -183,9 +185,13 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .build();
 		}
 
-		try {
+        DomibusConnectorMessage returnMessage = null;
+        try {
 			// immediately persist new evidence into database
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation);
+            returnMessage = buildEvidenceMessage(confirmation, message);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message,
+                    confirmation,
+                    new DomibusConnectorMessage.DomibusConnectorMessageId(returnMessage.getConnectorMessageId()));
 		} catch (Exception e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -196,13 +202,9 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 
-
 		try {
-            DomibusConnectorMessage returnMessage = buildEvidenceMessage(confirmation, message);
-
             backendDeliveryService.deliverMessageToBackend(returnMessage);
             LOGGER.info("Setting originalMessage confirmation [{}] as delivered to national system!", confirmation.getEvidenceType());
-            evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, confirmation);
             LOGGER.info("Setting originalMessage status to rejected");
 			messagePersistenceService.rejectMessage(message);
 

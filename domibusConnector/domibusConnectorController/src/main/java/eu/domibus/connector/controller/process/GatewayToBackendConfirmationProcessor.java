@@ -67,7 +67,9 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         originalMessage.addConfirmation(confirmation);
 
-        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, confirmation);
+        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage,
+                confirmation,
+                new DomibusConnectorMessage.DomibusConnectorMessageId(confirmationMessage.getConnectorMessageId()));
 
 
         if (originalMessage.getMessageDetails().getBackendMessageId() != null) {

@@ -44,4 +44,7 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void setEvidenceDeliveredToNationalSystem(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
+    default void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage originalMesssage, DomibusConnectorMessageConfirmation messageConfirmation, DomibusConnectorMessage.DomibusConnectorMessageId transportId) {
+        persistEvidenceForMessageIntoDatabase(originalMesssage, messageConfirmation.getEvidence(), messageConfirmation.getEvidenceType(), transportId);
+    }
 }

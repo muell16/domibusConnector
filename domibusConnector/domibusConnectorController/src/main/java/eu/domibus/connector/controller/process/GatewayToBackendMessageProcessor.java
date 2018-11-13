@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.lib.logging.MDC;
@@ -50,7 +51,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private String connectorTestAction;
 
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
-	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+//	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
 	private DomibusConnectorEvidencesToolkit evidencesToolkit;
@@ -67,15 +68,20 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		this.connectorTestAction = connectorTestAction;
 	}
 
+//    @Autowired
+//    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
+//        this.messageIdGenerator = messageIdGenerator;
+//    }
+
 	@Autowired
 	public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
 	}
 
-	@Autowired
-	public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-		this.evidencePersistenceService = evidencePersistenceService;
-	}
+//	@Autowired
+//	public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
+//		this.evidencePersistenceService = evidencePersistenceService;
+//	}
 
 	@Autowired
 	public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
@@ -245,7 +251,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         }
 
 		originalMessage.addConfirmation(messageConfirmation);
-		evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
+//		evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
 
 		DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
 		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
@@ -258,6 +264,8 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
+		evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+		messagePersistenceService.persistMessageIntoDatabase(evidenceMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY);
 
 		
         try {
@@ -288,13 +296,13 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
         }
 
 
-        try {
-            evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation);
-        } catch (PersistenceException ex) {
-        	String error = String.format("Confirmation [%s] could not set to 'delivered' to GW", messageConfirmation);
-            LOGGER.error(error, ex);
-            //TODO: further exception handling!
-        }
+//        try {
+//            evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation);
+//        } catch (PersistenceException ex) {
+//        	String error = String.format("Confirmation [%s] could not set to 'delivered' to GW", messageConfirmation);
+//            LOGGER.error(error, ex);
+//            //TODO: further exception handling!
+//        }
 	}
 
 }

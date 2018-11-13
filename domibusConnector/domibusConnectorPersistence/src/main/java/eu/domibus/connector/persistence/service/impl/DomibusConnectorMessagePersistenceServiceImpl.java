@@ -133,9 +133,19 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         this.msgContentService.storeMsgContent(message);
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
 
+        //TODO: store errors!
+
+        this.persistMessageConfirmationsOfMessage(dbMessage, message.getMessageConfirmations());
+
         return message;
     }
 
+
+    void persistMessageConfirmationsOfMessage(final PDomibusConnectorMessage dbMessage, final List<DomibusConnectorMessageConfirmation> confirmations) {
+        confirmations.stream().forEach(
+                c -> this.evidencePersistenceService.persistToMessage(dbMessage, c)
+        );
+    }
 
 
     /**

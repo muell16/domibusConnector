@@ -103,7 +103,9 @@ public class CreateConfirmationMessageService implements ConfirmationMessageBuil
 
         public void persistEvidenceToMessage() {
             LOGGER.trace("#persistEvidenceToMessage: persist evidence [{}] to message [{}]", messageConfirmation, originalMesssage);
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMesssage, messageConfirmation);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMesssage,
+                    messageConfirmation,
+                    new DomibusConnectorMessage.DomibusConnectorMessageId(evidenceMessage.getConnectorMessageId()));
         }
 
     }
