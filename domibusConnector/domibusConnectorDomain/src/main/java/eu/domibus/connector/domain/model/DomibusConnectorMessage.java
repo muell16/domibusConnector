@@ -192,6 +192,10 @@ public class DomibusConnectorMessage implements Serializable {
 		public int hashCode() {
 			return connectorMessageId != null ? connectorMessageId.hashCode() : 0;
 		}
+
+		public String toString() {
+			return this.connectorMessageId;
+		}
 	}
     
 }

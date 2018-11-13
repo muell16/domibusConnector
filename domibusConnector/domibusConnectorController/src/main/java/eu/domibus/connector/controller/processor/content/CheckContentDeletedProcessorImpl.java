@@ -41,7 +41,13 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
     @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
         Map<DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences = bigDataPersistenceService.getAllAvailableReferences();
-        allAvailableReferences.forEach(this::checkDeletion);
+        allAvailableReferences.forEach( (id, refList) -> {
+            try {
+                checkDeletion(id, refList);
+            } catch (Exception e) {
+                LOGGER.error("Exception occured while cleaning up content for message [{}]", id);
+            }
+        });
     }
 
     void checkDeletion(DomibusConnectorMessageId id, List<DomibusConnectorBigDataReference> references) {
@@ -55,7 +61,6 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
         boolean failed = false;
         if (direction == DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY) {
             transportFinishedDate = msg.getMessageDetails().getDeliveredToGateway();
-//            msg.getMessageDetails().isFailed();
         } else if (direction == DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND){
             transportFinishedDate = msg.getMessageDetails().getDeliveredToBackend();
         } else {
