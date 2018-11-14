@@ -13,6 +13,6 @@
     <include file="db/changelog/install/initial-changelog-webadmin.xml" />
     <include file="db/changelog/install/initial-changelog-data.sql" />
 
-    <includeAll path="db/changelog/v4_1/" />
+    <include file="db/changelog/v4_1/upgrade-to-41.xml" />
 
 </databaseChangeLog>
