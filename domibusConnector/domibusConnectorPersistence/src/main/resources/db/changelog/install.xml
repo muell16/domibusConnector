@@ -9,10 +9,10 @@
         Changelog to fresh install 4.1 DataModel
         OR upgrade from 4.0
     -->
-    <include file="/db/changelog/install/initial-changelog-domibus.xml" />
+    <include file="db/changelog/install/initial-changelog-domibus.xml" />
     <include file="db/changelog/install/initial-changelog-webadmin.xml" />
-    <include file="/db/changelog/install/initial-changelog-data.sql" />
+    <include file="db/changelog/install/initial-changelog-data.sql" />
 
-    <includeAll path="/db/changelog/v4_1/" />
+    <includeAll path="db/changelog/v4_1/" />
 
 </databaseChangeLog>
