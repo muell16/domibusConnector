@@ -31,6 +31,12 @@ public interface DomibusConnectorEvidencePersistenceService {
                                                DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
 
+    default void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage originalMesssage, DomibusConnectorMessageConfirmation messageConfirmation, DomibusConnectorMessage.DomibusConnectorMessageId transportId) {
+        persistEvidenceForMessageIntoDatabase(originalMesssage, messageConfirmation.getEvidence(), messageConfirmation.getEvidenceType(), transportId);
+    }
+
+
+
     /**
      * Sets the evidence as delivered to GW
      * @param transport - the connector message id, which has transported the message
@@ -44,7 +50,5 @@ public interface DomibusConnectorEvidencePersistenceService {
      */
     void setEvidenceDeliveredToNationalSystem(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
-    default void persistEvidenceForMessageIntoDatabase(DomibusConnectorMessage originalMesssage, DomibusConnectorMessageConfirmation messageConfirmation, DomibusConnectorMessage.DomibusConnectorMessageId transportId) {
-        persistEvidenceForMessageIntoDatabase(originalMesssage, messageConfirmation.getEvidence(), messageConfirmation.getEvidenceType(), transportId);
-    }
+
 }
