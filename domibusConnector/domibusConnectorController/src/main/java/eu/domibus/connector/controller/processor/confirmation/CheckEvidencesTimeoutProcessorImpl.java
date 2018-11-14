@@ -35,9 +35,6 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
     private EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties;
     private DomibusConnectorMessagePersistenceService persistenceService;
-    private DomibusConnectorActionPersistenceService actionPersistenceService;
-    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    private DomibusConnectorEvidencesToolkit evidencesToolkit;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
     private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
 
@@ -57,20 +54,6 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         this.persistenceService = persistenceService;
     }
 
-    @Autowired
-    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
-        this.actionPersistenceService = actionPersistenceService;
-    }
-
-    @Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
-    }
-
-    @Autowired
-    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
-        this.evidencesToolkit = evidencesToolkit;
-    }
 
     @Autowired
     public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
@@ -142,9 +125,6 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         Duration deliveryWarnTimeout = evidencesTimeoutConfigurationProperties.getDeliveryWarnTimeout().getDuration();
 
 
-//        Date delivered = new Date();
-//        long deliveryTimeoutT = delivered.getTime() + evidencesTimeoutConfigurationProperties.getDeliveryTimeout().getMilliseconds();
-//        Date now = new Date();
         //if it is later then the evaluated timeout given
         if (Duration.between(getDeliveryTime(message), Instant.now()).compareTo(deliveryTimeout) > 0) {
             try {
@@ -186,12 +166,11 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         LOGGER.error(BUSINESS_LOG, "The RelayREMMDAcceptance/Rejection evidence for originalMessage {} timed out. Sending RELAY_REMMD_FAILURE to backend!", originalMessage
                 .getMessageDetails().getEbmsMessageId());
 
-        DomibusConnectorAction action = actionPersistenceService.getRelayREMMDFailure();
 
         CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder =
                 confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE);
         confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
-        confirmationMessageBuilder.setAction(action);
+
         CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
 
         build.persistEvidenceToMessage();
@@ -206,11 +185,11 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         LOGGER.error(BUSINESS_LOG, "The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
             .getMessageDetails().getEbmsMessageId());
 
-        DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
+
 
         CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
         confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
-        confirmationMessageBuilder.setAction(action);
+
         CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
 
         build.persistEvidenceToMessage();
