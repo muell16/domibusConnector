@@ -158,12 +158,13 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
 
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
-        //TODO: logging, error logging
         try {
             //TODO: find out which part is blocking the deletion, holding a file handle! OR implement async deletion...?
             Files.delete(storageFile);
         } catch (IOException e) {
-            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
+            //TODO: make exception configurreable so on unix systems with deactivated timer job, this would be fatal
+//            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
+            LOGGER.info("Unable to delete file [%s]. File will be deleted later by timer jobs", storageFile, e);
         }
     }
 
