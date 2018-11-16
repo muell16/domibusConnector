@@ -1,2 +1,13 @@
 /domibusConnectorGatewayPluginClient/
 /domibusConnectorGatewayWebserviceClient/
+
+
+*.iml
+/*/target/
+
+*.project
+*.classpath
+
+nbactions.xml
+
+.settings
