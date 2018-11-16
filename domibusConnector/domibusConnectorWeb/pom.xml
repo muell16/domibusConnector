@@ -158,28 +158,28 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
-                        <configuration>
-                            <classifier>standalone</classifier>
-                            <layout>ZIP</layout>
-                            <includes>
-                                <!-- mysql-connector-java is public available so we can leave it here as provided -->
-                                <include>
-                                    <groupId>mysql</groupId>
-                                    <artifactId>mysql-connector-java</artifactId>
-                                </include>
-                                <!-- provided postgresql connector here -->
-                                <include>
-                                    <groupId>org.postgresql</groupId>
-                                    <artifactId>postgresql</artifactId>
-                                </include>
-<!--
-                                <include>
-                                    <groupId>org.fusesource.jansi</groupId>
-                                    <artifactId>jansi</artifactId>
-                                </include>
--->
-                            </includes>
-                        </configuration>
+                        <!--<configuration>-->
+                            <!--<classifier>standalone</classifier>-->
+                            <!--<layout>ZIP</layout>-->
+                            <!--<includes>-->
+                                <!--&lt;!&ndash; mysql-connector-java is public available so we can leave it here as provided &ndash;&gt;-->
+                                <!--<include>-->
+                                    <!--<groupId>mysql</groupId>-->
+                                    <!--<artifactId>mysql-connector-java</artifactId>-->
+                                <!--</include>-->
+                                <!--&lt;!&ndash; provided postgresql connector here &ndash;&gt;-->
+                                <!--<include>-->
+                                    <!--<groupId>org.postgresql</groupId>-->
+                                    <!--<artifactId>postgresql</artifactId>-->
+                                <!--</include>-->
+<!--&lt;!&ndash;-->
+                                <!--<include>-->
+                                    <!--<groupId>org.fusesource.jansi</groupId>-->
+                                    <!--<artifactId>jansi</artifactId>-->
+                                <!--</include>-->
+<!--&ndash;&gt;-->
+                            <!--</includes>-->
+                        <!--</configuration>-->
                     </execution>
                 </executions>
             </plugin>
