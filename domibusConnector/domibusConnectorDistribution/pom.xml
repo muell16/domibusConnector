@@ -11,7 +11,42 @@
     <description>This maven module contains the assembly scripts to create the different distribution packages
     </description>
 
+    <properties>
+        <run.env>test</run.env>
+    </properties>
+
     <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>ecodex-domibus-connector</name>
+                                    <build>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                            <tag>${run.env}</tag>
+                                        </tags>
+                                        <dockerFile>Dockerfile</dockerFile>
+                                        <assembl>
+                                            <descriptor>docker-assembly.xml</descriptor>
+                                        </assembl>
+                                    </build>
+
+                                </image>
+
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>site</id>
             <activation>
