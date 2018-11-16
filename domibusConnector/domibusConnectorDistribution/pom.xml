@@ -33,9 +33,9 @@
                                             <tag>${run.env}</tag>
                                         </tags>
                                         <dockerFile>Dockerfile</dockerFile>
-                                        <assembl>
+                                        <assembly>
                                             <descriptor>docker-assembly.xml</descriptor>
-                                        </assembl>
+                                        </assembly>
                                     </build>
 
                                 </image>
