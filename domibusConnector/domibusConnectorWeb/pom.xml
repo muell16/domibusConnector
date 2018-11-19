@@ -142,6 +142,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
+
                 </configuration>
                 <executions>
                     <execution>
@@ -160,6 +161,7 @@
                         </goals>
                         <configuration>
                             <classifier>standalone</classifier>
+
                             <!--<layout>ZIP</layout>-->
                             <!--<includes>-->
                                 <!--&lt;!&ndash; mysql-connector-java is public available so we can leave it here as provided &ndash;&gt;-->
