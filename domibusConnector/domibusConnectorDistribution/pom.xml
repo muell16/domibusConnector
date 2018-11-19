@@ -16,6 +16,7 @@
     </properties>
 
     <profiles>
+<!--
         <profile>
             <id>docker</id>
             <build>
@@ -46,6 +47,7 @@
                 </plugins>
             </build>
         </profile>
+-->
 
         <profile>
             <id>site</id>
