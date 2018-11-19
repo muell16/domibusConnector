@@ -158,8 +158,8 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
-                        <!--<configuration>-->
-                            <!--<classifier>standalone</classifier>-->
+                        <configuration>
+                            <classifier>standalone</classifier>
                             <!--<layout>ZIP</layout>-->
                             <!--<includes>-->
                                 <!--&lt;!&ndash; mysql-connector-java is public available so we can leave it here as provided &ndash;&gt;-->
@@ -179,7 +179,7 @@
                                 <!--</include>-->
 <!--&ndash;&gt;-->
                             <!--</includes>-->
-                        <!--</configuration>-->
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
