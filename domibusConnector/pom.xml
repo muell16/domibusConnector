@@ -27,6 +27,7 @@
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
         <module>domibusConnectorConfiguration</module>
+        <module>domibusConnectorLauncher</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>

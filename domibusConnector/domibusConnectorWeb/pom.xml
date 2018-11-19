@@ -137,52 +137,34 @@
 	<build>
 		<!--<finalName>${project.artifactId}</finalName>-->
 		<plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>build-info</id>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>standalone-jar</id>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>standalone</classifier>
+            <!--<plugin>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>build-info</id>-->
+                        <!--<goals>-->
+                            <!--<goal>build-info</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                        <!--<id>standalone-jar</id>-->
+                        <!--<goals>-->
+                            <!--<goal>repackage</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<classifier>standalone</classifier>-->
                             <!--<layout>ZIP</layout>-->
-                            <!--<includes>-->
-                                <!--&lt;!&ndash; mysql-connector-java is public available so we can leave it here as provided &ndash;&gt;-->
-                                <!--<include>-->
-                                    <!--<groupId>mysql</groupId>-->
-                                    <!--<artifactId>mysql-connector-java</artifactId>-->
-                                <!--</include>-->
-                                <!--&lt;!&ndash; provided postgresql connector here &ndash;&gt;-->
-                                <!--<include>-->
-                                    <!--<groupId>org.postgresql</groupId>-->
-                                    <!--<artifactId>postgresql</artifactId>-->
-                                <!--</include>-->
-<!--&lt;!&ndash;-->
-                                <!--<include>-->
-                                    <!--<groupId>org.fusesource.jansi</groupId>-->
-                                    <!--<artifactId>jansi</artifactId>-->
-                                <!--</include>-->
-<!--&ndash;&gt;-->
-                            <!--</includes>-->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 		</plugins>
 	</build>
 
