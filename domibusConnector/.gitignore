@@ -9,5 +9,11 @@
 *.classpath
 
 nbactions.xml
+nb-configuration.xml
+nbproject
 
 .settings
+
+.idea
+
+

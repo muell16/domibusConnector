@@ -145,3 +145,11 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+
+
+#generated code
+sun-jaxb.episode
+
+
+
