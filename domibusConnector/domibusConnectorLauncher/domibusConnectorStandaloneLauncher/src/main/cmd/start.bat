@@ -10,15 +10,16 @@ echo This environment variable is needed to run this program
 goto end
 :okJava
 
-set "PATH=%PATH%;%JAVA_HOME%\bin"
+rem set "PATH=%PATH%;%JAVA_HOME%\bin"
+
 set "CURRENT_DIR=%cd%"
 
 set "CLASSPATH=%CURRENT_DIR%\bin\*"
 echo %CLASSPATH%
 
-set "LIB_FOLDER=%CURRENT_DIR\lib\"
+REM set "LIB_FOLDER=%CURRENT_DIR%\lib\"
 
-set "CONFIG_FOLDER=%CURRENT_DIR\config\"
+set "CONFIG_FOLDER=%CURRENT_DIR%\config\"
 
 rem set "LOG_FOLDER=%CURRENT_DIR\logs\"
 
@@ -38,14 +39,13 @@ rem :okLogProps
 rem set "logging.properties=%LOGGING_PROPERTIES%"
 rem echo LOGGING_PROPERTIES set to "%LOGGING_PROPERTIES%"
 
-title "DomibusConnectorClient 10"
+title "DomibusConnector"
 
-"%JAVA_HOME%\bin\java" -D"spring.config.location=%CONFIG_FOLDER%" -D"spring.config.name=connector" -D"spring.cloud.bootstrap.location=%CONFIG_FOLDER%/bootstrap.properties" -D"loader.path=%LIB_FOLDER%" -cp "%CLASSPATH%" org.springframework.boot.loader.PropertiesLauncher
+rem -D"spring.config.location=%CONFIG_FOLDER%" -D"spring.config.name=connector" -D"spring.cloud.bootstrap.location=%CONFIG_FOLDER%bootstrap.properties" -D"loader.path=%LIB_FOLDER%"
+
+
+@echo on
+"%JAVA_HOME%\bin\java" -D"loader.path=./lib" -Dspring.config.name=connector -cp "%CLASSPATH%" "org.springframework.boot.loader.PropertiesLauncher"
 
 :end
 
-
-
-REM PS C:\Entwicklung\repos\domibusConnector\domibusConnector\domibusConnectorLauncher\domibusConnectorStandaloneLauncher> java -D"loader.debug=true" -D"loader.path=./target/lib/" -D"c
-REM onnector.config.file=C:\Entwicklung\ecodexENV\EXECUser10\software\domibusConnector-tomcat\conf\connector\connector_oracle.properties" -cp ".\target\domibusConnectorStandaloneLaunch
-REM er-4.1.0-RC2-SNAPSHOT-standalone.jar" org.springframework.boot.loader.PropertiesLauncher
