@@ -9,6 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <run.env>dev</run.env>
+    </properties>
+
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorStandaloneLauncher</artifactId>
 
@@ -167,6 +171,39 @@
                 </plugins>
             </build>
         </profile>
+
+
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>ecodex-domibus-connector</name>
+                                    <build>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                            <tag>${run.env}</tag>
+                                        </tags>
+                                        <dockerFile>Dockerfile</dockerFile>
+                                        <assembly>
+                                            <descriptor>docker-assembly.xml</descriptor>
+                                        </assembly>
+                                    </build>
+
+                                </image>
+
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 

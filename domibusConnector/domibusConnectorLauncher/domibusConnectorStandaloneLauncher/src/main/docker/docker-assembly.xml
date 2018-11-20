@@ -2,29 +2,44 @@
 <assembly>
     <id>Docker Assembly</id>
 
+
+
     <files>
         <file>
-            <source>${project.basedir}/target/${project.artifactId}-${project.version}-standalone.war</source>
+            <source>${project.basedir}/target/${project.artifactId}-${project.version}-standalone.jar</source>
             <destName>connector.jar</destName>
             <outputDirectory>bin</outputDirectory>
         </file>
         <file>
-            <source>${project.basedir}/src/bash/start.sh</source>
+            <source>${project.basedir}/src/main/bash/start.sh</source>
             <!--<outputDirectory>/</outputDirectory>-->
-        </file>
-        <file>
-            <source>${project.basedir}/src/cmd/start.bat</source>
-            <!--<outputDirectory>/</outputDirectory>-->
+            <fileMode>0777</fileMode>
+            <lineEnding>unix</lineEnding>
         </file>
     </files>
 
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/src/config</directory>
+            <directory>${project.basedir}/src/main/config</directory>
             <includes>
                 <include>*.properties</include>
+                <include>*.xml</include>
             </includes>
             <outputDirectory>/config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/lib</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/config/keystores</directory>
+            <includes>
+                <include>*.jks</include>
+            </includes>
+            <outputDirectory>/config/keystores</outputDirectory>
         </fileSet>
     </fileSets>
 

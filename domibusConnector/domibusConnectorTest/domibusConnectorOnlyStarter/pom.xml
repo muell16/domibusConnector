@@ -82,37 +82,8 @@
 						</goals>
 					</execution>
 				</executions>
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.springframework</groupId>-->
-                        <!--<artifactId>springloaded</artifactId>-->
-                        <!--<version>1.2.6.RELEASE</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
             </plugin>
-	    <plugin>
-              <groupId>io.fabric8</groupId>
-              <artifactId>docker-maven-plugin</artifactId>
-              <version>0.24.0</version>
-              <configuration>
-                <images>
-                  <image>
-                    <name>ecodex/domibusconnector:${project.version}</name>
-                    <build>
-                      <from>java:8</from>
-                      <dockerFile>Dockerfile</dockerFile>
-                      <assembly>
-                        <descriptor>docker-assembly.xml</descriptor>
-                      </assembly>
-                      <!--<cmd>-->
-                        <!--&lt;!&ndash;<shell>/maven/connector/init-db.sh; java -jar /maven/connector/connector.jar</shell> &ndash;&gt;-->
-                        <!--<shell>/maven/connector/wait-for-it.sh ${DB_HOST}:${DB_PORT} -t 20 &#45;&#45; java -jar /maven/connector/connector.jar</shell>-->
-                      <!--</cmd>-->
-                    </build>
-                  </image>
-                </images>
-              </configuration>
-            </plugin>
+
         </plugins>
     </build>
     
