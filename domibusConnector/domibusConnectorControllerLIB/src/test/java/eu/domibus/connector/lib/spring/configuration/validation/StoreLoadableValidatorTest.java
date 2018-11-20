@@ -31,7 +31,7 @@ public class StoreLoadableValidatorTest {
         StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
 
         storeConfigurationProperties.setPassword("12345");
-        storeConfigurationProperties.setPath(new ClassPathResource("keystores/backend.jks"));
+        storeConfigurationProperties.setPath(new ClassPathResource("keystores/connector-backend.jks"));
 
         Set<ConstraintViolation<StoreConfigurationProperties>> validate = validator.validate(storeConfigurationProperties);
 
@@ -44,7 +44,7 @@ public class StoreLoadableValidatorTest {
         StoreConfigurationProperties storeConfigurationProperties = new StoreConfigurationProperties();
 
         storeConfigurationProperties.setPassword("WRONG");
-        storeConfigurationProperties.setPath(new ClassPathResource("keystores/backend.jks"));
+        storeConfigurationProperties.setPath(new ClassPathResource("keystores/connector-backend.jks"));
 
         Set<ConstraintViolation<StoreConfigurationProperties>> validate = validator.validate(storeConfigurationProperties);
 
