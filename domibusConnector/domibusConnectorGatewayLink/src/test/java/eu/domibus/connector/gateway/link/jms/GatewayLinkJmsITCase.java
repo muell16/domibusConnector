@@ -9,9 +9,11 @@ import eu.domibus.connector.gateway.link.StartupGwLinkOnly;
 import eu.domibus.connector.gateway.link.jms.helper.TestGatewayToDeliveryServiceClient;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
 
@@ -35,7 +37,7 @@ public class GatewayLinkJmsITCase {
     private LinkedBlockingQueue<TransportStatusService.DomibusConnectorTransportState> setTransportState;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareEnv() throws Exception {
         //TODO: set up/prepare jms server
 
@@ -78,7 +80,7 @@ public class GatewayLinkJmsITCase {
     }
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         //TODO: configure connection factory of broker URL
         this.connectionFactory = new ActiveMQConnectionFactory();
@@ -92,6 +94,7 @@ public class GatewayLinkJmsITCase {
     }
 
 
+    @Disabled
     @Test
     public void testDeliverMessageToConnector() throws InterruptedException {
 
@@ -104,7 +107,8 @@ public class GatewayLinkJmsITCase {
     }
 
 
-    @Test(timeout = 10000)
+    @Disabled
+    @Test
     public void testDeliverResponseToConnector() throws InterruptedException {
 
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
@@ -121,6 +125,7 @@ public class GatewayLinkJmsITCase {
 
 
 
+    @Disabled
     @Test
     public void sendMessageToGateway() {
 //        TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
