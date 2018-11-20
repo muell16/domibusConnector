@@ -34,8 +34,6 @@
 
 
     <changeSet author="domibusConnector" id="changelog_4.1_add_user_columns">
-        <!--<renameColumn tableName="DOMIBUS_CONNECTOR_USER" oldColumnName="PROPERTIES_KEY" newColumnName="PROPERTY_KEY" />-->
-        <!--<renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="PROPERTIES_VALUE" newColumnName="PROPERTY_VALUE" />-->
         <addColumn tableName="DOMIBUS_CONNECTOR_USER">
             <column name="ID" type="${id.type}" />
             <column name="LOCKED" type="BOOLEAN" />
@@ -74,22 +72,6 @@
         </createTable>
     </changeSet>
 
-    <!--<changeSet author="domibusConnector" id="changelog_4.1_user_pw_auto_increment" dbms="mysql">-->
-    <!--<addColumn tableName="DOMIBUS_CONNECTOR_USER_PWD">-->
-    <!--<column name="ID" type="${id.type}" autoIncrement="true"></column>-->
-    <!--</addColumn>-->
-    <!--</changeSet>-->
-    <!--<changeSet author="domibusConnector" id="changelog_4.1_user_pw_sequence">-->
-    <!--<preConditions>-->
-    <!--<not>-->
-    <!--<dbms type="mysql" />-->
-    <!--</not>-->
-    <!--</preConditions>-->
-    <!--<addColumn tableName="DOMIBUS_CONNECTOR_USER_PWD">-->
-    <!--<column name="ID" type="${id.type}" ></column>-->
-    <!--</addColumn>-->
-    <!--</changeSet>-->
-
 
     <changeSet author="domibusConnector" id="changelog_4.1_user_pw_table_primary_key">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_USER_PWD" columnNames="ID" constraintName="PK_CONNECTOR_PASSWORD" />
@@ -108,13 +90,10 @@
 
 
 
-    <changeSet author="domibusConnector" id="changelog_4.1_update_admin_password">
-        <sql>INSERT INTO DOMIBUS_CONNECTOR_USER_PWD (ID, USER_ID, PASSWORD, SALT, CURRENT_PWD, INITIAL_PWD) VALUES
-            ( 1,
-            (SELECT ID FROM DOMIBUS_CONNECTOR_USER WHERE USERNAME = 'admin'),
-            '2bf5e637d0d82a75ca43e3be85df2c23febffc0cc221f5e010937005df478a19b5eaab59fe7e4e97f6b43ba648c169effd432e19817f386987d058c239236306',
-            '5b424031616564356639',
-            1, 1)
+    <changeSet author="domibusConnector" id="changelog_4.1_createa_admin_user">
+        <sql>
+            INSERT INTO DOMIBUS_CONNECTOR_USER (ID, USERNAME, ROLE, LOCKED, NUMBER_OF_GRACE_LOGINS, GRACE_LOGINS_USED, CREATED) VALUES (1, 'admin', 'ADMIN', 0, 5, 0, current_timestamp);
+            INSERT INTO DOMIBUS_CONNECTOR_USER_PWD (ID, USER_ID, PASSWORD, SALT, CURRENT_PWD, INITIAL_PWD, CREATED) VALUES (1, 1, '2bf5e637d0d82a75ca43e3be85df2c23febffc0cc221f5e010937005df478a19b5eaab59fe7e4e97f6b43ba648c169effd432e19817f386987d058c239236306', '5b424031616564356639', 1, 1, current_timestamp);
         </sql>
     </changeSet>
 
@@ -125,14 +104,6 @@
         </sql>
     </changeSet>
 
-    <!--INSERT INTO DOMIBUS_CONNECTOR_USER (ID, USERNAME, ROLE, LOCKED, NUMBER_OF_GRACE_LOGINS, GRACE_LOGINS_USED, CREATED) VALUES (1, 'admin', 'ADMIN', 0, 5, 0, current_timestamp);-->
-    <!--INSERT INTO DOMIBUS_CONNECTOR_USER_PWD (ID, USER_ID, PASSWORD, SALT, CURRENT_PWD, INITIAL_PWD, CREATED) VALUES (1, 1, '2bf5e637d0d82a75ca43e3be85df2c23febffc0cc221f5e010937005df478a19b5eaab59fe7e4e97f6b43ba648c169effd432e19817f386987d058c239236306', '5b424031616564356639', 1, 1, current_timestamp);-->
-
-    <!--INSERT INTO DOMIBUS_CONNECTOR_USER (ID, USERNAME, ROLE, LOCKED, NUMBER_OF_GRACE_LOGINS, GRACE_LOGINS_USED, CREATED) VALUES (2, 'user', 'USER', 0, 5, 0, current_timestamp);-->
-    <!--INSERT INTO DOMIBUS_CONNECTOR_USER_PWD (ID, USER_ID, PASSWORD, SALT, CURRENT_PWD, INITIAL_PWD, CREATED) VALUES (2, 2, '2bf5e637d0d82a75ca43e3be85df2c23febffc0cc221f5e010937005df478a19b5eaab59fe7e4e97f6b43ba648c169effd432e19817f386987d058c239236306', '5b424031616564356639', 1, 1, current_timestamp);-->
-
-    <!--INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE VALUES ('DOMIBUS_CONNECTOR_USER.ID', 3);-->
-    <!--INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE VALUES ('DOMIBUS_CONNECTOR_USER_PWD.ID', 3);-->
 
     <changeSet id="changelog_4.1_update_seq_table" author="domibusConnector">
         <!-- start with 20 to leave space for other ids -->
