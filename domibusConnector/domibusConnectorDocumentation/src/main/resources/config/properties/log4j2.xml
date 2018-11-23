@@ -2,6 +2,7 @@
 <Configuration status="INFO" monitor="10" >
 
 	<Properties>
+		<!-- change the base path!! -->
 		<Property name="basePath">./logs</Property>
 		<Property name="PID">????</Property>
 		<Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
@@ -48,7 +49,7 @@
 			<AppenderRef ref="File" />			
         </Root>
 		
-        <Logger name="org.liquibase" level="INFO"  >
+        <Logger name="org.liquibase" level="INFO" additivity="false" >
             <AppenderRef ref="Console" />
 			<AppenderRef ref="File" />
         </Logger>
@@ -75,10 +76,6 @@
 			<AppenderRef ref="File" />
         </Logger>
 
-		<Logger name="eu.domibus.connector.persistence" level="INFO" additivity="false">
-            <AppenderRef ref="Console" />
-			<AppenderRef ref="File" />
-        </Logger>
         	
     </Loggers>
 </Configuration>
