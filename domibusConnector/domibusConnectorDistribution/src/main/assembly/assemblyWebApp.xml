@@ -71,8 +71,7 @@
 		</file>
 		
 		<file>
-			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2-spring.xml
-			</source>
+			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml</source>
 			<outputDirectory>/documentation/config
 			</outputDirectory>
 		</file>
