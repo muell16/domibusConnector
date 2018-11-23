@@ -1,0 +1,3 @@
+tocTab[tocTab.length] = new Array("0.6.4:1", "", "domibus-connector-plugin", "EARoot/EA6/EA4/EA491.htm", "10.png", "E669", "0", "", "Component0","{4EC18269-DD6B-40a5-B8D2-3BEBC740708C}");
+tocTab[tocTab.length] = new Array("0.6.4:2", "", "ProvidedInterface1", "EARoot/EA6/EA4/EA493.htm", "112.png", "E670", "E669", "", "ProvidedInterface0","{D41E233A-414E-49d2-A586-D9AA2CF76E9E}");
+tocTab[tocTab.length] = new Array("0.6.4.1", "1", "eu.domibus.connector.plugin", "EARoot/EA6/EA4/EA1/EA494.htm", "4.png", "", "", "{4A48BB82-8D4C-4dd2-92AD-F11D9C4DA493}", "Package");
