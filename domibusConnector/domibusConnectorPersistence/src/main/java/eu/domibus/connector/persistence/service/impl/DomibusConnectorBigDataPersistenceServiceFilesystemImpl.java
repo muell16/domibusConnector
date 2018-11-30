@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.service.impl;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import org.apache.cxf.helpers.IOUtils;
@@ -162,9 +163,13 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
             //TODO: find out which part is blocking the deletion, holding a file handle! OR implement async deletion...?
             Files.delete(storageFile);
         } catch (IOException e) {
-            //TODO: make exception configurreable so on unix systems with deactivated timer job, this would be fatal
+            //TODO: make exception configureable so on systems with deactivated timer job, this would be fatal
 //            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
-            LOGGER.info("Unable to delete file [%s]. File will be deleted later by timer jobs", storageFile, e);
+//            LOGGER.info("Unable to delete file [{}].", storageFile);
+//            LOGGER.debug(String.format("Unable to delete file [%s] due exception:", storageFile), e);
+            LargeFileDeletionException largeFileDeletionException = new LargeFileDeletionException(String.format("Unable to delete file [%s] due exception:", storageFile), e);
+            largeFileDeletionException.setReferenceFailedToDelete(reference);
+            throw largeFileDeletionException;
         }
     }
 
@@ -271,7 +276,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
             KeyGenerator kg = KeyGenerator.getInstance("AES"); //TODO: load from properties
             kg.init(random);
             sKey = kg.generateKey();
-            bigDataReference.setEncryptionKey(convertSecretKeyToString(sKey));
+            bigDataReference.setEncryptionKey(convertSecretKeyToString(sKey)); //TODO: also put configureable part of key there - to avoid having the whole key stored into the database!
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Cannot initialize Key Generator!");
         }

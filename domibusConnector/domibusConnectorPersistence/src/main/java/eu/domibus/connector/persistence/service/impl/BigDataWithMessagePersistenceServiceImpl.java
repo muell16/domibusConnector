@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import org.apache.cxf.helpers.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,9 +92,23 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#deleteAllBigFilesFromMessage: is evidence message doing nothing...");
         }
+
+        List<LargeFileDeletionException> deletionExceptions = new ArrayList<>();
         collectBigDataRefsOfMessage(message)
                 .stream()
-                .forEach(ref ->  bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(ref));
+                .forEach(ref ->  {
+                    try {
+                        bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(ref);
+                    } catch (LargeFileDeletionException deletionException) {
+                        deletionExceptions.add(deletionException);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.trace(String.format("The following largeFile Reference [%s] will be deleted later by timer jobs.\n" +
+                                    "Because I was unable to delete it now due the following exception:", ref), deletionException);
+                        }
+                    }
+                });
+        String storageRefs = deletionExceptions.stream().map(d -> d.getReferenceFailedToDelete().getStorageIdReference()).collect(Collectors.joining(","));
+        LOGGER.info("The following storage references [{}] failed to be deleted immediatly. The will be deleted later by timer jobs.", storageRefs);
     }
 
 
