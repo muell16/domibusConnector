@@ -24,9 +24,17 @@
 			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
 			<outputDirectory>documentation/</outputDirectory>
 			<includes>
-				<include>domibusConnector_4.0_AdministrationGuide.pdf</include>
+				<include>domibusConnector_AdministrationGuide.pdf</include>
                 <include>domibusConnector_InstallationGuide.pdf</include>
                 <include>e-Codex_key_trust_stores.pdf</include>
+            </includes>
+		</fileSet>
+		
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>
+			<outputDirectory>documentation/</outputDirectory>
+			<includes>
+				<include>architecture.zip</include>
 			</includes>
 		</fileSet>
 
