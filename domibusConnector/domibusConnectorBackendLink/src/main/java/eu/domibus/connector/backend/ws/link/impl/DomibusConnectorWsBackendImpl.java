@@ -158,12 +158,26 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }
+        DomibusConnectorBackendClientInfo backendClientInfoByName;
+
         backendName = backendName.toLowerCase();
-        backendName = "cn=".equals(backendName.substring(0,3)) ? backendName.replaceFirst("cn=","") : backendName;
-        //replace leading "cn=" with "" so common name cn=alice becomes alice
-        DomibusConnectorBackendClientInfo backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
+        backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
+
         if (backendClientInfoByName == null) {
+
             String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
+            //should be marked deprecated the removal of leading cn=
+            backendName = backendName.toLowerCase();
+            backendName = "cn=".equals(backendName.substring(0, 3)) ? backendName.replaceFirst("cn=", "") : backendName;
+            //replace leading "cn=" with "" so common name cn=alice becomes alice
+
+            LOGGER.warn("#checkBackendClient: {}, Looking for 4.0 compatible connector backend naming [{}]", error, backendName);
+            backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
+        }
+        if (backendClientInfoByName == null) {
+            String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!\n" +
+                    "Connector takes the FQDN of the certificate and startes looking if in the database a backend with this name is found\n" +
+                    "Connector always converts the fqdn of the certificate to lower case letters!", backendName);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }

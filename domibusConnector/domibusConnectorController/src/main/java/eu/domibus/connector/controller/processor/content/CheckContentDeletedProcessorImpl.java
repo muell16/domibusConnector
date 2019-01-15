@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,12 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
                     msg, direction, failed ? "failed" : "finished", transportFinishedDate);
             references.stream().forEach(ref -> {
                         LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting file reference [{}]", ref.getStorageIdReference());
-                        bigDataPersistenceService.deleteDomibusConnectorBigDataReference(ref);
+                        try {
+                            bigDataPersistenceService.deleteDomibusConnectorBigDataReference(ref);
+                        } catch (LargeFileDeletionException delException) {
+                            LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [%s] in the timer job. The data must be manually deleted by the administrator!", ref);
+                            LOGGER.error("Was unable to delete due exception: ", delException);
+                        }
                     });
         }
     }

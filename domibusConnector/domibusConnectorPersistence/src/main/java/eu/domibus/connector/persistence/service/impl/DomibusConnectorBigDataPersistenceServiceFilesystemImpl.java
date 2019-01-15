@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.service.impl;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import org.apache.cxf.helpers.IOUtils;
@@ -158,12 +159,17 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
 
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
-        //TODO: logging, error logging
         try {
             //TODO: find out which part is blocking the deletion, holding a file handle! OR implement async deletion...?
             Files.delete(storageFile);
         } catch (IOException e) {
-            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
+            //TODO: make exception configureable so on systems with deactivated timer job, this would be fatal
+//            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
+//            LOGGER.info("Unable to delete file [{}].", storageFile);
+//            LOGGER.debug(String.format("Unable to delete file [%s] due exception:", storageFile), e);
+            LargeFileDeletionException largeFileDeletionException = new LargeFileDeletionException(String.format("Unable to delete file [%s] due exception:", storageFile), e);
+            largeFileDeletionException.setReferenceFailedToDelete(reference);
+            throw largeFileDeletionException;
         }
     }
 
@@ -270,7 +276,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
             KeyGenerator kg = KeyGenerator.getInstance("AES"); //TODO: load from properties
             kg.init(random);
             sKey = kg.generateKey();
-            bigDataReference.setEncryptionKey(convertSecretKeyToString(sKey));
+            bigDataReference.setEncryptionKey(convertSecretKeyToString(sKey)); //TODO: also put configureable part of key there - to avoid having the whole key stored into the database!
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Cannot initialize Key Generator!");
         }

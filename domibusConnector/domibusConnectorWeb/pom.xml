@@ -4,34 +4,10 @@
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
-		<version>4.1.0-RC1</version>
+		<version>4.1.0-RELEASE</version>
 	</parent>
 	<artifactId>domibusConnectorWeb</artifactId>
 	<packaging>war</packaging>
-
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-		<!-- Dependencies -->
-		<vaadin.version>10.0.5</vaadin.version>
-	</properties>
-
-
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-bom</artifactId>
-				<version>${vaadin.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 
     <dependencies>
@@ -134,57 +110,6 @@
 
     </dependencies>
 
-	<build>
-		<!--<finalName>${project.artifactId}</finalName>-->
-		<plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>build-info</id>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>standalone-jar</id>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>standalone</classifier>
-                            <layout>ZIP</layout>
-                            <includes>
-                                <!-- mysql-connector-java is public available so we can leave it here as provided -->
-                                <include>
-                                    <groupId>mysql</groupId>
-                                    <artifactId>mysql-connector-java</artifactId>
-                                </include>
-                                <!-- provided postgresql connector here -->
-                                <include>
-                                    <groupId>org.postgresql</groupId>
-                                    <artifactId>postgresql</artifactId>
-                                </include>
-<!--
-                                <include>
-                                    <groupId>org.fusesource.jansi</groupId>
-                                    <artifactId>jansi</artifactId>
-                                </include>
--->
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-		</plugins>
-	</build>
 
 	<profiles>
 		<profile>

@@ -67,6 +67,10 @@ public class CreateConfirmationMessageService implements ConfirmationMessageBuil
                 return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
             case NON_RETRIEVAL:
                 return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
+            case RELAY_REMMD_FAILURE:
+                return actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+            case RELAY_REMMD_ACCEPTANCE:
+                return actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
             default:
                 throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
         }
@@ -103,7 +107,9 @@ public class CreateConfirmationMessageService implements ConfirmationMessageBuil
 
         public void persistEvidenceToMessage() {
             LOGGER.trace("#persistEvidenceToMessage: persist evidence [{}] to message [{}]", messageConfirmation, originalMesssage);
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMesssage, messageConfirmation);
+            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMesssage,
+                    messageConfirmation,
+                    new DomibusConnectorMessage.DomibusConnectorMessageId(evidenceMessage.getConnectorMessageId()));
         }
 
     }

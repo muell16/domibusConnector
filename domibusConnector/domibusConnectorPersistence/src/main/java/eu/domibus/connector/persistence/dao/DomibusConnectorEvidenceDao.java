@@ -35,23 +35,23 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
     public int setDeliveredToGateway(Long evidenceId);
 
     /**
-     *
-     * @param msg - the database message the evidence belongs to
-     * @param type - the evidence type to set delivered
-     * @return modified rows
+     * sets the evidence with the connectorMessageId (transportId) as delivered to gateway
+     * @param connectorMessageId - the connector message id
+     * @return - count of updates
      */
     @Modifying
-    @Query("update PDomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.message = ?1 AND e.type = ?2")
-    public int setDeliveredToGateway(PDomibusConnectorMessage msg, EvidenceType type);
+    @Query("update PDomibusConnectorEvidence e set e.deliveredToGateway=CURRENT_TIMESTAMP where e.connectorMessageId = ?1")
+    public int setDeliveredToGateway(String connectorMessageId);
+
 
     /**
-     *
-     * @param evidenceId the evidence to change
-     * @return modified rows
+     * sets the evidence with the connectorMessageId (transportId) as delivered to national system/backend
+     * @param connectorMessageId - the connector message id
+     * @return - count of updates
      */
     @Modifying
-    @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.id = ?1")
-    public int setDeliveredToBackend(Long evidenceId);
+    @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.connectorMessageId = ?1")
+    public int setDeliveredToBackend(String connectorMessageId);
 
     /**
      *
@@ -63,4 +63,6 @@ public interface DomibusConnectorEvidenceDao extends CrudRepository<PDomibusConn
     @Query("update PDomibusConnectorEvidence e set e.deliveredToNationalSystem=CURRENT_TIMESTAMP where e.message = ?1 AND e.type = ?2")
     public int setDeliveredToBackend(PDomibusConnectorMessage message, EvidenceType type);
 
+    @Query("select e FROM PDomibusConnectorEvidence e WHERE e.connectorMessageId = ?1")
+    List<PDomibusConnectorEvidence> findByConnectorMessageId(String connectorMessageId);
 }

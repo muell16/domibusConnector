@@ -45,6 +45,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     @Transactional
     public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState) {
         DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
+        if (message == null) {
+            //cannot update a transport for a null message maybe a evidence message
+            return;
+        }
+
 
         if (transportState.getStatus() == TransportState.ACCEPTED) {
             if (message != null) {

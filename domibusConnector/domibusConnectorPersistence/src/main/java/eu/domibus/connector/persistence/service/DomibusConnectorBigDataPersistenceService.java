@@ -1,13 +1,14 @@
 
 package eu.domibus.connector.persistence.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 
 /**
  * This interface describes a service for storing large amount of data
@@ -22,6 +23,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+//TODO: rename BigData to LargeFile
 public interface DomibusConnectorBigDataPersistenceService {
 
     /**
@@ -60,8 +62,9 @@ public interface DomibusConnectorBigDataPersistenceService {
     /**
      * will delete the provided bigDataReference
      * @param bigDataReference the reference
+     * @throws LargeFileDeletionException - in case of anything fails to delete the file
      */
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference);
+    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference) throws LargeFileDeletionException;
 
     /**
      * Returns a map of ALL currently not deleted bigDataReferences

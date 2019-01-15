@@ -73,33 +73,9 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                     }
                 });
 
-        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
+        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY, new DomibusConnectorMessage.DomibusConnectorMessageId("msgid"));
 
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(PDomibusConnectorEvidence.class));
-    }
-
-    @Test
-    public void testSetEvidenceDeliveredToNationalSystem() throws PersistenceException {
-        DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation();
-
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
-
-
-        List<PDomibusConnectorEvidence> evidences = Arrays.asList(new PDomibusConnectorEvidence[]{
-                createDeliveryEvidence(),
-                createNonDeliveryEvidence()
-        });
-
-        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
-
-        Mockito.when(domibusConnectorEvidenceDao.findByMessage_Id(eq(47L))).thenReturn(evidences);
-        Mockito.when(domibusConnectorMessageDao.findById(eq(47L))).thenReturn(Optional.of(dbMessage));
-
-        evidencePersistenceService.setEvidenceDeliveredToNationalSystem(message, DomibusConnectorEvidenceType.DELIVERY);
-
-//        Mockito.verify(this.messageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
-//        Mockito.verify(this.evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(13L));
     }
 
 
@@ -128,38 +104,9 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                     }
                 });
 
-        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY);
+        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, evidence, DomibusConnectorEvidenceType.DELIVERY, new DomibusConnectorMessage.DomibusConnectorMessageId("msgid"));
 
         Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).save(any(PDomibusConnectorEvidence.class));
     }
-
-
-    @Test
-    public void testSetEvidenceDeliveredToGateway() throws PersistenceException {
-        DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation();
-
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
-        //message.setDbMessageId(47L);
-        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-
-
-        List<PDomibusConnectorEvidence> evidences = Arrays.asList(new PDomibusConnectorEvidence[]{
-                createDeliveryEvidence(),
-                createNonDeliveryEvidence()
-        });
-
-        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
-
-        Mockito.when(domibusConnectorEvidenceDao.findByMessage_Id(eq(47L))).thenReturn(evidences);
-        Mockito.when(domibusConnectorMessageDao.findById(eq(47L))).thenReturn(Optional.of(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()));
-
-        evidencePersistenceService.setEvidenceDeliveredToGateway(message, DomibusConnectorEvidenceType.DELIVERY);
-
-        //Mockito.verify(this.messageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
-        Mockito.verify(this.domibusConnectorEvidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(13L));
-
-    }
-
-
 
 }

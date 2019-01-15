@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.util.Date;
 
@@ -9,6 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_MSG_ERROR")
 public class PDomibusConnectorMessageError {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PDomibusConnectorMessageError.class);
 
     @Id
     @TableGenerator(name = "seqStoreMsgError", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_ERROR.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
@@ -22,7 +26,7 @@ public class PDomibusConnectorMessageError {
     /**
      * The short message of the exception
      */
-    @Column(name = "ERROR_MESSAGE")
+    @Column(name = "ERROR_MESSAGE", length = 2048)
     private String errorMessage;
 
     /**
@@ -44,6 +48,19 @@ public class PDomibusConnectorMessageError {
     public void prePersist() {
         if (this.created == null) {
             this.created = new Date();
+        }
+        truncateErrorMessage();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        truncateErrorMessage();
+    }
+
+    private void truncateErrorMessage() {
+        if (this.errorMessage.length() > 2047) {
+            LOGGER.warn("error message exceeded maximum length -> truncated to length of 2047");
+            this.errorMessage = this.errorMessage.substring(0, 2047);
         }
     }
 

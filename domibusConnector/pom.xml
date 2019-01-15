@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.1.0-RC1</version>
+    <version>4.1.0-RELEASE</version>
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorEvidencesToolkit</module>
@@ -27,6 +27,7 @@
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
         <module>domibusConnectorConfiguration</module>
+        <module>domibusConnectorLauncher</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -68,7 +69,7 @@
         <http.proxy.host></http.proxy.host>
         <http.proxy.port></http.proxy.port>
         <https.proxy.port></https.proxy.port>
-        <spring.boot.version>1.5.8.RELEASE</spring.boot.version>
+
 
         <releases-repo.url></releases-repo.url>
         <snapshots-repo.url></snapshots-repo.url>
@@ -76,7 +77,10 @@
 
         <spring.cloud.version>2.0.1.RELEASE</spring.cloud.version>
         <spring.boot.version>2.0.4.RELEASE</spring.boot.version>
-        <vaadin.version>11.0.0</vaadin.version>
+
+        <!--<vaadin.version>11.0.0</vaadin.version>-->
+
+        <vaadin.version>10.0.5</vaadin.version>
     </properties>
 
     <scm>
@@ -87,10 +91,6 @@
         <url>https://secure.e-codex.eu/jenkins/view/domibusConnector/job/domibusWebConnector</url>
     </ciManagement>
     <licenses>
-
-
-
-
         <license>
             <name>EUPL, version 1.2</name>
             <url>https://joinup.ec.europa.eu/collection/eupl/eupl-text-11-12</url>
@@ -267,7 +267,17 @@
 
 
             <!-- MANAGED Spring dependencies -->
-            
+
+
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -834,6 +844,11 @@
                             </additionalDependency>
                         </additionalDependencies>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.27.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>

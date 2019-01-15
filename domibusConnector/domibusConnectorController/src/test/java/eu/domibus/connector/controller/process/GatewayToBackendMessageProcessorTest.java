@@ -79,7 +79,7 @@ public class GatewayToBackendMessageProcessorTest {
 
         gatewayToBackendMessageProcessor = new GatewayToBackendMessageProcessor();
         gatewayToBackendMessageProcessor.setActionPersistenceService(actionPersistenceService);
-        gatewayToBackendMessageProcessor.setEvidencePersistenceService(evidencePersistenceService);
+//        gatewayToBackendMessageProcessor.setEvidencePersistenceService(evidencePersistenceService);
         gatewayToBackendMessageProcessor.setEvidencesToolkit(evidencesToolkit);
         gatewayToBackendMessageProcessor.setGwSubmissionService(gwSubmissionService);
         gatewayToBackendMessageProcessor.setMessagePersistenceService(messagePersistenceService);

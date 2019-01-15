@@ -95,15 +95,16 @@ public class ConnectorMessageFlowITCase {
     
     @Test(timeout = 20000)
     public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        DomibusConnectorMessage loadMessageFrom = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
+        DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
         
-        assertThat(loadMessageFrom).isNotNull();
-        loadMessageFrom.getMessageDetails().setFinalRecipient("final recipient");
-        loadMessageFrom.getMessageDetails().setOriginalSender("original sender");
+        assertThat(testMessage).isNotNull();
+        testMessage.getMessageDetails().setFinalRecipient("final recipient");
+        testMessage.getMessageDetails().setOriginalSender("original sender");
+        testMessage.getMessageDetails().setEbmsMessageId("EBMS_TEST_ID");
 
-        LOGGER.info("message with confirmations: [{}]", loadMessageFrom.getMessageConfirmations());
+        LOGGER.info("message with confirmations: [{}]", testMessage.getMessageConfirmations());
 
-        rcvMessageFromGwService.deliverMessageFromGatewayToController(loadMessageFrom);
+        rcvMessageFromGwService.deliverMessageFromGatewayToController(testMessage);
 
         DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
         assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
