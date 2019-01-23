@@ -74,7 +74,10 @@
                         <configuration>
                             <appendAssemblyId>true</appendAssemblyId>
                             <descriptors>
+                                <descriptor>src/main/assembly/connectorTestDataAssembly.xml</descriptor>
+                                <descriptor>src/main/assembly/testKeyStoresAssembly.xml</descriptor>
                                 <descriptor>src/main/assembly/connectorTestKeyStoresAssembly.xml</descriptor>
+                                <descriptor>src/main/assembly/gatewayTestKeyStoresAssembly.xml</descriptor>
                                 <!-- <descriptor>src/main/assembly/assemblyWebAppWAROnly.xml</descriptor> -->
                             </descriptors>
                         </configuration>

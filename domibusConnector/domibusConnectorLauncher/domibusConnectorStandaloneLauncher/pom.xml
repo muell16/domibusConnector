@@ -79,12 +79,34 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>domibusConnectorTestData</artifactId>
                                     <version>${project.version}</version>
-                                    <classifier>testkeystores</classifier>
+                                    <classifier>connectortestkeystores</classifier>
                                     <type>zip</type>
                                     <outputDirectory>${project.build.directory}/config</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                             <includes>*/**.jks</includes>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteReleases>true</overWriteReleases>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>get-testdata-database-scripts</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>domibusConnectorTestData</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>testdata-database-scripts</classifier>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}/testdata-database-scripts</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>*/**</includes>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <overWriteReleases>true</overWriteReleases>
                         </configuration>
