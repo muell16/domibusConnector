@@ -103,7 +103,7 @@
                                     <version>${project.version}</version>
                                     <classifier>testdata-database-scripts</classifier>
                                     <type>zip</type>
-                                    <outputDirectory>${project.build.directory}/testdata-database-scripts</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/config</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                             <includes>*/**</includes>
@@ -205,7 +205,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>ecodex-domibus-connector</name>
+                                    <name>ecodex/domibusconnector</name>
                                     <build>
                                         <tags>
                                             <tag>${project.version}</tag>

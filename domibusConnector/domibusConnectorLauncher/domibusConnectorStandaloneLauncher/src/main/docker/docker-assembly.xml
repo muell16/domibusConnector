@@ -41,6 +41,13 @@
             </includes>
             <outputDirectory>/config/keystores</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/config/database-scripts</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <outputDirectory>/config/database-scripts</outputDirectory>
+        </fileSet>
     </fileSets>
 
 
