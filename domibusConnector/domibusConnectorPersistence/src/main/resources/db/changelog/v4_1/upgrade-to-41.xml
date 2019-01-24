@@ -17,8 +17,8 @@
     </changeSet>
 
     <changeSet author="domibusConnector" id="changelog_4.1_rename_property_columns">
-        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="KEY" newColumnName="PROPERTY_NAME" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="KEY" newColumnName="PROPERTY_NAME" columnDataType="java.sql.Types.VARCHAR(2048)" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" columnDataType="java.sql.Types.VARCHAR(2048)" />
         <modifyDataType tableName="DOMIBUS_CONNECTOR_PROPERTY" columnName="PROPERTY_VALUE" newDataType="java.sql.Types.VARCHAR(2048)" />
         <modifyDataType tableName="DOMIBUS_CONNECTOR_PROPERTY" columnName="PROPERTY_NAME" newDataType="java.sql.Types.VARCHAR(2048)" />
     </changeSet>
@@ -128,7 +128,7 @@
             UPDATE DOMIBUS_CONNECTOR_MSG_ERROR SET ERROR_TEXT_CLOB = DETAILED_TEXT;
         </sql>
         <dropColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnName="DETAILED_TEXT" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" oldColumnName="ERROR_TEXT_CLOB" newColumnName="DETAILED_TEXT" />
+        <renameColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" oldColumnName="ERROR_TEXT_CLOB" columnDataType="java.sql.Types.CLOB" newColumnName="DETAILED_TEXT" />
     </changeSet>
 
 
