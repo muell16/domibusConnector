@@ -511,12 +511,18 @@ public class DomibusConnectorDomainMessageTransformer {
 
         //map partyTO
         DomibusConnectorPartyType toPartyTO = messageDetailsTO.getToParty();
+        if (toPartyTO == null) {
+            throw new IllegalArgumentException("toParty in messageDetails is not allowed to be null!");
+        }
         DomibusConnectorParty toParty =
                 new DomibusConnectorParty(toPartyTO.getPartyId(), toPartyTO.getPartyIdType(), toPartyTO.getRole());
         messageDetails.setToParty(toParty);
 
         //map partyFrom
         DomibusConnectorPartyType fromPartyTO = messageDetailsTO.getFromParty();
+        if (fromPartyTO == null) {
+            throw new IllegalArgumentException("fromParty in messageDetails is not allowed to be null!");
+        }
         DomibusConnectorParty fromParty =
                 new DomibusConnectorParty(fromPartyTO.getPartyId(), fromPartyTO.getPartyIdType(), fromPartyTO.getRole());
         messageDetails.setFromParty(fromParty);
