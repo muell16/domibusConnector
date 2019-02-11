@@ -37,7 +37,7 @@ public class StoreMessageExceptionIntoDatabaseAspect {
         try {
             pjp.proceed();
         } catch (DomibusConnectorMessageException exception) {
-         
+
             storeExceptionToDb(exception);
             
             if (passException) {

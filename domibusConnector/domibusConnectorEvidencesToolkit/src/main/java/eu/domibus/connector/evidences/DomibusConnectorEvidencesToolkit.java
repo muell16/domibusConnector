@@ -15,6 +15,6 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
  */
 public interface DomibusConnectorEvidencesToolkit {
 
-	DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException;
+	DomibusConnectorMessageConfirmation  createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException;
 	
 }

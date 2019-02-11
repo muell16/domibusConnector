@@ -38,6 +38,7 @@
                     <sp:AlgorithmSuite>
                         <wsp:Policy>
                             <sp:Basic256/>
+                            <!-- TODO: define more secure algorithm !Backward compatible? -->
                         </wsp:Policy>
                     </sp:AlgorithmSuite>
                     <sp:Layout>
@@ -51,7 +52,6 @@
             </sp:AsymmetricBinding>
             <sp:Wss11>
                 <wsp:Policy>
-                    <!--                    <sp:MustSupportRefKeyIdentifier/>-->
                     <sp:MustSupportRefKeyIdentifier />
                     <sp:MustSupportRefIssuerSerial />
                     <sp:MustSupportRefThumbprint />
