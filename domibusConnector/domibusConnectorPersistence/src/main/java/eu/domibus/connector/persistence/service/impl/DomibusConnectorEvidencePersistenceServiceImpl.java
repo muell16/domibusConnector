@@ -45,6 +45,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
 
 
     @Override
+    @Transactional
     public void persistEvidenceForMessageIntoDatabase(@Nonnull DomibusConnectorMessage message, byte[] evidence, @Nonnull DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage.DomibusConnectorMessageId transport) {
         PDomibusConnectorMessage dbMessage = findMessageByMessage(message);
         if (dbMessage == null) {
@@ -161,7 +162,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         EvidenceType dbEvidenceType = EvidenceTypeMapper.mapEvidenceTypeFromDomainToDb(evidenceType);
         dbEvidence = evidenceDao.findByMessageAndEvidenceType(dbMessage, dbEvidenceType);
         if (dbEvidence == null) {
-            LOGGER.trace("Creating new evidence in database!");
+            LOGGER.trace("No evidence of type [{}] found in database for message [{}] - creating a new evidence of type [{}] in database!", evidenceType, dbMessage.getConnectorMessageId(), evidenceType);
             dbEvidence = new PDomibusConnectorEvidence();
         } else {
             LOGGER.trace("updating evidence [{}] in database", dbEvidence);
