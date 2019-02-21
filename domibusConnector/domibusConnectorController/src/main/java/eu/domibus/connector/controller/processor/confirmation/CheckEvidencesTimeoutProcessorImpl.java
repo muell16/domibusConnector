@@ -181,14 +181,13 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
     }
 
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
         LOGGER.error(BUSINESS_LOG, "The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
             .getMessageDetails().getEbmsMessageId());
-
 
 
         CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
