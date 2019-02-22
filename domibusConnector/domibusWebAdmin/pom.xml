@@ -4,8 +4,14 @@
 
     <groupId>eu.domibus.webadmin</groupId>
     <artifactId>domibusWebAdmin</artifactId>
-    <version>3.2-RELEASE</version>
+    <version>3.5.2-SNAPSHOT</version>
     <packaging>war</packaging>
+
+    <parent>
+        <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnector</artifactId>
+        <version>3.5.2-SNAPSHOT</version>
+    </parent>
 
     <name>domibusWebAdmin</name>
     <url>http://maven.apache.org</url>
@@ -16,7 +22,7 @@
         <jsf.version>2.2.15</jsf.version> 
         <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
         <org.slf4j.version>1.7.11</org.slf4j.version>
-        <domibus.connector.version>3.5.1-RELEASE</domibus.connector.version>
+        <!--<domibus.connector.version>3.5.1-RELEASE</domibus.connector.version>-->
         <ecodex.monitoring.version>2.1</ecodex.monitoring.version>
         <org.primefaces.version>6.1</org.primefaces.version>
         <!-- 		<mojarra.version>2.1.6</mojarra.version> -->
@@ -57,7 +63,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorCommon</artifactId>
-            <version>${domibus.connector.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!--JSF -->
