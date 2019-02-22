@@ -85,9 +85,7 @@ public class JpaContext {
 		}
 		return props.setProperty(key, value);
 	}
-
-
-
+	
 	@Bean("transactionManager")
 	public PlatformTransactionManager transactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
