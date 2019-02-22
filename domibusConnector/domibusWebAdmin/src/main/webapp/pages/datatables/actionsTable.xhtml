@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+      			xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+<!-- 	<ui:param name="title" value="WebAdmin - Connector Action Table"/> -->
+	
+	
+<!-- 	<ui:define name="content" > -->
+<!--     <ui:define name="actionContent"> -->
+    <f:event type="preRenderView" listener="#{connectorActionsTableBean.init}" />
+         
+
+           
+         
+ 	<h:form enctype="multipart/form-data" id="actionForm"> 
+ 	
+ 		<p:dataTable id="actionTable" var="action" value="#{connectorActionsTableBean.actionList}" 
+ 			selection="#{connectorActionsTableBean.selectedActions}" 
+ 			rowKey="#{action.action}"
+ 			resizableColumns="true"
+ 			scrollable="true"
+ 			tableStyle="table-layout: auto;"
+ 			table-layout="auto" 			
+			>
+
+				<f:facet name="header" >
+					<p:panelGrid>
+						<p:row>
+							<p:column styleClass="ui-widget-header">
+
+									<p:commandButton id="showCreateActionDialog"    
+									 					ajax="true"          	
+									            		value="Create new" 
+														update="actionEditForm createEditActionDialog"
+														style="float:left;"
+									            		actionListener="#{connectorActionsTableBean.createNewAction}"
+									            	 	onsuccess="PF('createEditActionDialog').show()" >	
+							        		<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogTitle}" value="Create Connection Action" />
+											<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogConfirmButtonText}" value="Create" />
+									</p:commandButton>
+			   
+							</p:column>
+							<p:column styleClass="ui-widget-header" colspan="2" style="border:none;">
+								<h:outputText value=" domibusConnector configured Actions" />
+							</p:column>
+
+							<p:column styleClass="ui-widget-header"></p:column>
+						</p:row>
+
+					</p:panelGrid>
+				
+				</f:facet>
+
+				<p:column headerText="" selectionMode="multiple" />
+        
+ 		    
+        	<p:column headerText="Action">
+		        <h:outputText value="#{action.action}"/>  
+        	</p:column>
+            
+            <p:column headerText="PDF required">
+                <h:outputText value="#{action.pdfRequired}" />
+            </p:column>
+            
+            
+            <p:column>
+				<p:commandButton
+							icon="ui-icon-pencil" 
+							title="edit"
+							action="#{connectorActionsTableBean.editAction}"  
+							ajax="true" 
+							onsuccess="PF('createEditActionDialog').show()" 
+							update="createEditActionDialog actionEditForm" >
+				 	<f:setPropertyActionListener target="#{connectorActionsTableBean.action}" value="#{action}" />
+				 	<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogTitle}" value="Edit Action" />
+				 	<f:setPropertyActionListener target="#{connectorActionsTableBean.editDialogConfirmButtonText}" value="Save" />
+				</p:commandButton>
+            </p:column>
+        
+		<f:facet name="footer">
+            <!--  <p:commandButton process="checkboxDT" update=":form:multiCarDetail" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" /> 
+            actionListener="#{connectorActionsTableBean.deleteSelectedActions}"
+            -->
+            <p:toolbar name="header"> 
+				<f:facet name="left">
+            		<p:commandButton id="deleteSelectedActionsButton" 
+            			process="actionTable"
+            			update=":actionDialogForm:actionDelete"
+            			value="Delete Selected" oncomplete="PF('multiActionDialog').show()" />
+            	</f:facet>
+            </p:toolbar>
+        </f:facet>
+
+    </p:dataTable> 	 
+    
+ 	</h:form> 	
+ 	
+ 	<p:dialog appendTo="@(body)" header="For deletion selected actions:" widgetVar="multiActionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="520" dynamic="true" >
+ 		<h:form id="actionDialogForm"> 	 			
+	        <p:outputPanel id="actionDelete" style="text-align:center;">
+	            <ui:repeat value="#{connectorActionsTableBean.selectedActions}" var="action">	            	
+	                <h:outputText value="action: #{action.action} - pdf required: #{action.pdfRequired}" style="display:block"/>
+	            </ui:repeat>            
+	            <p:commandButton id="confirmDeleteSelectedActionsButton" actionListener="#{connectorActionsTableBean.confirmDeleteSelectedActions}" ajax="false" value="Delete" />
+	            <p:commandButton id="abbortDeleteSelectedActionsButton" ajax="false" value="Cancel" /> <!-- TODO: Styling, ordering -->             
+	        </p:outputPanel>
+        </h:form>
+    </p:dialog>
+ 	
+  	
+  	<!--  TODO: header variabel machen... -->
+  	
+ 		<p:dialog appendTo="@(body)"  widgetVar="createEditActionDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="50em" >
+ 				
+ 			<f:facet name="header">
+ 				<h:outputText id="createEditActionDialog" value="#{connectorActionsTableBean.editDialogTitle}" />
+ 			</f:facet>
+ 			<h:form id="actionEditForm">
+ 			<p:panelGrid columns="2" layout="grid" width="auto" >
+ 				<h:outputLabel for="actionEditAction" value="Action" />
+ 				<!--  changing pk components (action) is not allowed! -->
+ 				<p:inputText id="actionEditAction"  value="#{connectorActionsTableBean.action.action}" disabled="#{not(connectorActionsTableBean.createNewActionMode)}" /> 
+ 									
+				<h:outputLabel for="actionEditPdfRequired" value="pdf required" />
+				<p:selectBooleanCheckbox id="actionEditPdfRequired" value="#{connectorActionsTableBean.action.pdfRequired}" />
+				 					 					 					
+ 			</p:panelGrid>
+ 			<!--  TODO: Error Message Feld hier einbauen -->
+ 			
+ 			<p:commandButton id="confirmCreateAction" actionListener="#{connectorActionsTableBean.saveAction}" ajax="false" value="#{connectorActionsTableBean.editDialogConfirmButtonText}" />
+ 			
+ 			<p:commandButton id="cancelCreateAction" ajax="false" value="Cancel" >
+ 				<!--  setzt action auf null -->
+ 				<f:setPropertyActionListener target="#{connectorActionsTableBean.action}" value="#{doesnotexist}" /> 			
+ 			</p:commandButton>
+ 			 
+ 		
+ 	</h:form> 	
+ 	</p:dialog>
+ 	 
+ 	
+
+<!-- 	</ui:define> -->
+<!-- 	</ui:define> -->
+</ui:composition>
+

@@ -1,0 +1,359 @@
+@CHARSET "UTF-8";
+body
+{
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+	font-family: verdana, helvetica, sans-serif;
+	background-color: #E4EEE4;
+	color: #333;
+}
+
+form{
+	margin: 0;
+	padding: 0;
+}
+
+/* Navigation neu */
+
+div#navcontainer {
+	padding: 0 0 1em;
+}	
+
+#nav
+{
+	margin: 0;
+	font-size: 90%;
+	background-color: #36c;
+	padding: 2px 0 2px;
+}
+
+#nav li
+{
+	display: inline;
+	list-style-type: none;
+	padding-left: 30px;
+}
+
+#nav a:link, #nav a:visited
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+	padding: 0 2px;
+}
+
+#nav a:hover, #nav a:active
+{
+	color: black;
+	background-color: #9CD4F7;
+	padding: 0 2px;
+}
+
+#nav2
+{
+	margin: 0;
+	font-size: 80%;
+	background-color: #95B1BB;
+	padding: 2px 2px;
+}
+
+#nav2 li
+{
+	display: inline;
+	list-style-type: none;
+	padding-left: 30px;
+}
+
+#nav2 a:link, #nav2 a:visited
+{
+	color: black;
+	background-color: transparent;
+	text-decoration: none;
+	padding: 0 2px;
+}
+
+#nav2 a:hover, #nav2 a:active
+{
+	background-color: #BDD;
+	color: black;
+	padding: 0 2px;
+}
+
+/* Ende naviagtion neu */
+
+/* h1 sieht wie navcontainer aus */
+h1{
+	font-weight: bold;
+	border-top: 1px solid #36c;
+	border-bottom: 1px solid #36c;
+	background-color: #36c;
+	color: white;
+	padding: 2px 5px;
+	margin: 0 0 1em;
+}
+
+div#logo {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	background-color:#fff;
+}
+
+#version {
+	position:absolute;
+	margin-right: 0;
+	margin-top: 10px;
+	right:10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	font-weight: normal;
+	color:black;
+	text-decoration:none;
+	vertical-align: top;
+	text-align: right;
+	background-color:transparent;
+}
+
+table.data {
+	position: relative;
+	margin: 0 10px 15px;
+	padding: 0 5px;
+	background-color: #ccc;
+}
+
+td.title{
+	font-size: 100%;
+	font-weight: bold;
+	background-color: #95B1BB;
+	border-top: 1px solid #7f7f7f;
+	border-left: 1px solid #7f7f7f;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	color: white;
+	padding: 8px 5px 5px;
+}
+
+
+td.subtitle{
+	font-size: 90%;
+	font-weight: bold;
+	background-color: #BDD;
+	color: black;
+	padding: 8px 5px 5px;
+}
+
+
+td.subtitleplain{
+	font-size: 90%;
+	/* nicht bold! */
+	background-color: #BDD;
+	color: black;
+	padding: 8px 5px 5px;
+}
+
+td.label{
+	padding: 2px 5px;
+	color: #039;
+	font-size: 90%;
+	font-weight: bold;
+	background-color: #ddd;
+	text-align:right;
+}
+
+td.data,
+td.info {
+	background-color: #ddd;
+	padding: 2px 5px;
+}
+
+td.text {
+	background-color: #ddd;
+    padding: 2px 5px;
+	font-size: 90%;
+}
+
+
+th.label {
+	padding: 2px 5px;
+	color: #039;
+	font-size: 90%;
+	font-weight: bold;
+	background-color: #bdd;
+}
+
+th.labelright {
+	padding: 2px 5px;
+	color: #039;
+	font-size: 90%;
+	font-weight: bold;
+	background-color: #bdd;
+	text-align:right;
+}
+
+
+td.c0 {
+	background-color: #c0c0c0;
+	font-size: inherit;
+	padding: 4px;
+}
+
+td.e0 {
+	background-color: #e0e0e0;
+	font-size: inherit;
+	padding: 4px;
+}
+
+a#help{
+	background-color: teal;
+	color: white;
+	border: 1px solid teal;
+	padding: 0 5px;
+	font-weight: bold;
+	text-decoration:none;
+}
+
+span.red{
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #C40026;
+}
+
+span.small{
+	font-size: 70%;
+	color: black;
+}
+
+.invis {
+	display: none;
+}
+
+
+/* Formularelemente im Content-Bereich */
+select, option {
+	font-size: 1em;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 1.5em;
+	vertical-align: text-top;
+}
+
+input.rb, input.checkbox {
+	font-size: 1.1em;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 1.1em;
+	width: 1.1em;
+	vertical-align: middle;
+}
+
+input.text {
+	font-size: 1em;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 1.5em;
+	vertical-align: text-top;
+}
+
+textarea {
+	font-size: 1em;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: text-top;
+}
+
+/* Verarbeitungs-Indikation */
+table.verarbeitungs_indikation{
+	border: 2px dashed #ccc;
+	margin: 0 10px 15px;
+	padding: 0 5px;
+	background-color: #ddd;
+}
+
+td.vaWARNUNG{
+	padding: 2px 5px;
+	background-color:#ffb;
+}
+
+td.vaOK,
+td.gruen {
+	padding: 2px 5px;
+	background-color:#dfc;
+}
+
+td.vaFEHLER,
+td.rot {
+	padding: 2px 5px;
+	background-color:#fbb;
+}
+
+/* für displaytag */
+
+tr.aktiv td{
+    padding: 2px 5px;
+}
+
+tr.inaktiv td{
+    padding: 2px 5px;
+}
+
+td.plzaktiv {
+    text-align: right;
+    padding-right: 2px;
+}
+
+tr.aktiv td.plzaktiv {
+    background-color:#dfc;
+}
+
+tr.inaktiv td.plzaktiv {
+    background-color:#fbb;
+}
+
+*.pagelinks, *.exportlinks {
+	border: 2px solid #ccc;
+	margin: 0 10px 15px;
+	padding: 2px 5px;
+	background-color:#ddd;
+}
+
+caption.title {
+    margin: 0 10px;
+    font-size: 100%;
+    font-weight: bold;
+    background-color: #95B1BB;
+    border-top: 1px solid #36c;
+    border-left: 1px solid #36c;
+    color: white;
+	padding: 8px 5px 5px;
+}
+
+/* Ende displaytag */
+
+
+/*Link-Farben immer Einheitlich*/
+a:link {
+text-decoration:underline;
+color:Blue;
+}
+
+a:visited {
+text-decoration:underline; 
+color:Blue;
+}
+
+a:active,
+a:hover {
+text-decoration:underline;
+color:Black;
+background-color: #9CD4F7;
+}
+
+div#header-space  {
+   
+}
+
+div#header-space img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    min-width: 1000px;
+    padding-top: 1em;
+    text-align: center;
+}
