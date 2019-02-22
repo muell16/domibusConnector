@@ -32,23 +32,26 @@
 		<test.http.proxy.enabled>false</test.http.proxy.enabled>
 		<test.http.proxy.port>3128</test.http.proxy.port>
 		<test.http.proxy.host>localhost</test.http.proxy.host>
+
+
+
+
 	</properties>
 
 	<scm>
 		<developerConnection>scm:git:https://www.git.e-codex.eu/ecodex.git/domibusConnector</developerConnection>
 	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>nexus-releases</id>
-			<url>https://secure.e-codex.eu/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus-snapshots</id>
-			<url>https://secure.e-codex.eu/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
+    <distributionManagement>
+        <repository>
+            <id>${releases-repo.id}</id>
+            <url>${releases-repo.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>${snapshots-repo.id}</id>
+            <url>${snapshots-repo.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 	
 	<build>
 		<plugins>
