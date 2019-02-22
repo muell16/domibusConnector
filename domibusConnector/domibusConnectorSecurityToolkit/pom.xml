@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
 			<artifactId>ecodex-container</artifactId>
-			<version>1.11</version>
+			<version>1.12</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jaxb-impl</artifactId>
@@ -41,11 +41,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-             <artifactId>dss-utils-apache-commons</artifactId>
-             <version>5.1_ALT</version>
-       </dependency>
+		<!--<dependency>-->
+             <!--<groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+             <!--<artifactId>dss-utils-apache-commons</artifactId>-->
+             <!--<version>5.1_ALT</version>-->
+       <!--</dependency>-->
 
 		<!-- <dependency>
 			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
