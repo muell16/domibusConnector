@@ -36,6 +36,15 @@
         <test.http.proxy.port>3128</test.http.proxy.port>
         <test.http.proxy.host>localhost</test.http.proxy.host>
 
+        <!-- keep this properties -->
+        <https.proxy.enabled>false</https.proxy.enabled>
+        <http.proxy.enabled>false</http.proxy.enabled>
+        <https.proxy.host>172.30.9.12</https.proxy.host>
+        <http.proxy.host>172.30.9.12</http.proxy.host>
+        <http.proxy.port>8080</http.proxy.port>
+        <https.proxy.port>8080</https.proxy.port>
+
+        <dss.tools.version>5.4</dss.tools.version>
 
     </properties>
 
