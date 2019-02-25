@@ -55,13 +55,13 @@ public class DomibusConnectorSecurityToolkitTest {
 		
 		Message message = new Message(details, content);
 
-		try {
+//		try {
 			securityContainer.createContainer(message);
 
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			e.printStackTrace();
-		}
+//		} catch (Exception e) {
+//			LOGGER.error(e.getMessage());
+//			e.printStackTrace();
+//		}
 
 		Assert.notEmpty(message.getAttachments());
 
