@@ -76,7 +76,11 @@ public class CreateConfirmationMessageService implements ConfirmationMessageBuil
         }
     }
 
-
+    /**
+     * A Wrapper class which contains the message confirmation (ETSI-REM evidence)
+     * the business message the confirmation is related to
+     * and the evidenceMessage
+     */
     public class DomibusConnectorMessageConfirmationWrapper {
 
         public DomibusConnectorMessageConfirmation messageConfirmation;
@@ -114,6 +118,9 @@ public class CreateConfirmationMessageService implements ConfirmationMessageBuil
 
     }
 
+    /**
+     * The ConfirmationMessageBuilder helps to build a ConfirmationMessage
+     */
     public class ConfirmationMessageBuilder {
         DomibusConnectorMessage originalMessage;
         DomibusConnectorEvidenceType evidenceType;
@@ -158,6 +165,10 @@ public class CreateConfirmationMessageService implements ConfirmationMessageBuil
             return this;
         }
 
+        /**
+         * starts building the ETSI-REM evidence with the already provided parameters
+         * @return a {@link DomibusConnectorMessageConfirmationWrapper} which contains the related business message and the ConfirmationMessage
+         */
         public DomibusConnectorMessageConfirmationWrapper build() {
             try {
                 DomibusConnectorMessageConfirmation messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, rejectionDetails);

@@ -86,4 +86,8 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     @Query("update PDomibusConnectorMessage m set m.deliveredToNationalSystem=CURRENT_TIMESTAMP WHERE m.connectorMessageId = ?1")
     public int setMessageDeliveredToBackend(String connectorId);
 
+    @Modifying
+    @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=?2 WHERE m.connectorMessageId = ?1")
+    void setMessageDeliveredToGateway(String connectorid1, Date deliveryDate);
+
 }

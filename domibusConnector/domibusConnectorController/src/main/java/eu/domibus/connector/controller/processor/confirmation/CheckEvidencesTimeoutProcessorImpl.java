@@ -8,18 +8,16 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliverySe
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -87,7 +85,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     void checkNotRejectedNorConfirmedWithoutRelayREMMD() throws DomibusConnectorControllerException {
         //Request database to get all messages not rejected and not confirmed yet and without a RELAY_REMMD_ACCEPTANCE/REJECTION evidence
         List<DomibusConnectorMessage> messages = persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
-        LOGGER.trace("Checking [{}] messages for confirmed withoutRelayREMMD", messages.size());
+        LOGGER.trace("Checking [{}] messages for not rejected nor confirmed withoutRelayREMMD", messages.size());
         messages.forEach(this::checkNotRejectedNorConfirmedWithoutRelayREMMD);
     }
 
@@ -121,6 +119,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     }
 
     void checkNotRejectedWithoutDelivery(DomibusConnectorMessage message) {
+        LOGGER.trace("checkNotRejectedWithoutDelivery# checking message: [{}]");
         Duration deliveryTimeout = evidencesTimeoutConfigurationProperties.getDeliveryTimeout().getDuration();
         Duration deliveryWarnTimeout = evidencesTimeoutConfigurationProperties.getDeliveryWarnTimeout().getDuration();
 
@@ -160,6 +159,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         return deliveryDate.toInstant();
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void createRelayRemmdFailureAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
@@ -175,26 +175,29 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
         build.persistEvidenceToMessage();
         DomibusConnectorMessage evidenceMessage = build.getEvidenceMessage();
+        persistenceService.rejectMessage(originalMessage);
 
         backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+
     }
 
-    private void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    void createNonDeliveryAndSendIt(DomibusConnectorMessage originalMessage) throws DomibusConnectorControllerException,
             DomibusConnectorMessageException {
 
         LOGGER.error(BUSINESS_LOG, "The Delivery/NonDelivery evidence for originalMessage {} timed out. Sending NonDelivery to backend!", originalMessage
             .getMessageDetails().getEbmsMessageId());
 
 
-
         CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
         confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
 
-        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
+        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper wrappedConfirmationMessage = confirmationMessageBuilder.build();
 
-        build.persistEvidenceToMessage();
-        DomibusConnectorMessage evidenceMessage = build.getEvidenceMessage();
-
+        wrappedConfirmationMessage.persistEvidenceToMessage();
+        DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();
+        persistenceService.rejectMessage(originalMessage);
         backendDeliveryService.deliverMessageToBackend(evidenceMessage);
 
     }
