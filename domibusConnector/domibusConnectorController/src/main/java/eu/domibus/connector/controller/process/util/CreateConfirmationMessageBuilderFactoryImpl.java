@@ -17,12 +17,12 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateConfirmationMessageService implements ConfirmationMessageBuilderFactory {
+public class CreateConfirmationMessageBuilderFactoryImpl implements ConfirmationMessageBuilderFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageBuilderFactoryImpl.class);
 
-    DomibusConnectorEvidencesToolkit evidencesToolkit;
-    DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    private DomibusConnectorEvidencesToolkit evidencesToolkit;
+    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
     private DomibusConnectorActionPersistenceService actionPersistenceService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
 

@@ -2,6 +2,9 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
+import eu.domibus.connector.backend.ws.link.spring.CommonBackendLinkConfigurationProperties;
+import eu.domibus.connector.controller.exception.DomibusConnectorRejectDeliveryException;
+import eu.domibus.connector.controller.service.DomibusConnectorDeliveryRejectionService;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
@@ -36,6 +39,10 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     private DomibusConnectorBackendSubmissionService backendToControllerSubmissionService;
 
+    private CommonBackendLinkConfigurationProperties commonBackendLinkConfigurationProperties;
+
+    private DomibusConnectorDeliveryRejectionService deliveryRejectionService;
+
     //setter
     @Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
@@ -62,6 +69,10 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         this.backendToControllerSubmissionService = toControllerSubmissionService;
     }
 
+    @Autowired
+    public void setCommonBackendLinkConfigurationProperties(CommonBackendLinkConfigurationProperties commonBackendLinkConfigurationProperties) {
+        this.commonBackendLinkConfigurationProperties = commonBackendLinkConfigurationProperties;
+    }
 
     @Override
     public void submitToController(DomibusConnectorBackendMessage backendMessage) {
@@ -83,15 +94,30 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
         LOGGER.debug("#submitToController: message.getMessageDetails().getService() [{}]", message.getMessageDetails().getService());
 
-        String testPingConnectorMessage = "TEST-ping-connector"; //TODO: make configureable!
-        if (testPingConnectorMessage.equals(message.getMessageDetails().getService().getService())) {
-            LOGGER.debug("#submitToController: message is " + testPingConnectorMessage + " so just sending message back to backend!");
+        if (isTestPingMessage(message)) {
+            LOGGER.debug("#submitToController: message is ConnectorPingMessage so just sending message back to backend!\n(No Evidence-Confirmations are created)");
             toBackendDeliveryService.deliverMessageToBackend(message);
-
         } else {
             LOGGER.debug("#submitToController: 'normal' message.....");
             backendToControllerSubmissionService.submitToController(message);
         }
+    }
+
+    private boolean isTestPingMessage(DomibusConnectorMessage message) {
+        String testPingService = commonBackendLinkConfigurationProperties.getPing().getService();
+        String testPingAction = commonBackendLinkConfigurationProperties.getPing().getAction();
+
+        return (testPingService.equals(message.getMessageDetails().getService().getService()) &&
+                testPingAction.equals(message.getMessageDetails().getAction().getAction())
+        );
+    }
+
+    @Override
+    public void rejectDelivery(DomibusConnectorBackendMessage backendMessage, Throwable reason) {
+        DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
+        DomibusConnectorRejectDeliveryException rejectDeliveryException =
+                new DomibusConnectorRejectDeliveryException(message, reason);
+        deliveryRejectionService.rejectDelivery(rejectDeliveryException);
     }
 
     @Override

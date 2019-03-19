@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import org.springframework.beans.BeanUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
@@ -194,7 +195,8 @@ public class DomainEntityCreator {
     }
 
     public static DomibusConnectorMessage createDeliveryEvidenceForMessage(DomibusConnectorMessage message) {
-        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
 
         //messageDetails.setConversationId(null);      //first message no conversation set yet!
         messageDetails.setEbmsMessageId(null); //message from backend

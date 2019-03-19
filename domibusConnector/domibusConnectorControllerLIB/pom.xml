@@ -5,7 +5,7 @@
     <parent>
         <artifactId>domibusConnector</artifactId>
         <groupId>eu.domibus.connector</groupId>
-        <version>4.1.2-RELEASE</version>
+        <version>4.1.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * If the connector receives a message with the configured service and action
  * the message will not be delivered to the gateway
  *
- * @see {@link eu.domibus.connector.controller.process.GatewayToBackendMessageProcessor}
+ * see {@link eu.domibus.connector.controller.process.GatewayToBackendMessageProcessor}
  */
 @ConfigurationProperties(prefix="connector.test")
 @Component

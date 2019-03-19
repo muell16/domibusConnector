@@ -85,6 +85,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
                 backendSubmissionService.processMessageAfterDeliveredToBackend(message);
             } else {
                 String error = String.format("Error occured during push: [%s]", messageResponse.getResultMessage());
+
                 throw new RuntimeException(error);
                 //TODO: handle message error
             }
