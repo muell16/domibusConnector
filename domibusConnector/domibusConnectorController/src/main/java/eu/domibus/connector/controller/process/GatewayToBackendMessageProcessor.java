@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
@@ -43,15 +44,11 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private static final Logger LOGGER = LoggerFactory.getLogger(GatewayToBackendMessageProcessor.class);
 
 	public static final String GW_TO_BACKEND_MESSAGE_PROCESSOR = "GatewayToBackendMessageProcessor";
-	
-	@Value("${domibus.connector.to.connector.test.service:null}")
-	private String connectorTestService;
-	
-	@Value("${domibus.connector.to.connector.test.action:null}")
-	private String connectorTestAction;
 
+
+
+	public ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
-//	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
 	private DomibusConnectorEvidencesToolkit evidencesToolkit;
@@ -60,28 +57,15 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private DomibusConnectorActionPersistenceService actionPersistenceService;
 	private DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
 
-	public void setConnectorTestService(String connectorTestService) {
-		this.connectorTestService = connectorTestService;
+	@Autowired
+	public void setConnectorTestConfigurationProperties(ConnectorTestConfigurationProperties connectorTestConfigurationProperties) {
+		this.connectorTestConfigurationProperties = connectorTestConfigurationProperties;
 	}
-
-	public void setConnectorTestAction(String connectorTestAction) {
-		this.connectorTestAction = connectorTestAction;
-	}
-
-//    @Autowired
-//    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
-//        this.messageIdGenerator = messageIdGenerator;
-//    }
 
 	@Autowired
 	public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
 	}
-
-//	@Autowired
-//	public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-//		this.evidencePersistenceService = evidencePersistenceService;
-//	}
 
 	@Autowired
 	public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
@@ -153,6 +137,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 	
 	private boolean isConnector2ConnectorTest(DomibusConnectorMessage message) {
+		String connectorTestService = connectorTestConfigurationProperties.getService();
+		String connectorTestAction = connectorTestConfigurationProperties.getAction();
+
 		return (!StringUtils.isEmpty(connectorTestService) && message.getMessageDetails().getService().getService().equals(connectorTestService)) 
 				&& (!StringUtils.isEmpty(connectorTestAction) && message.getMessageDetails().getAction().getAction().equals(connectorTestAction));
 	}
