@@ -5,6 +5,7 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
+import eu.domibus.connector.controller.exception.DomibusConnectorRejectSubmissionException;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -87,13 +88,16 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
                 String error = String.format("Error occured during push: [%s]", messageResponse.getResultMessage());
 
                 throw new RuntimeException(error);
-                //TODO: handle message error
+
             }
 
         } catch (Exception ex) {
-            //TODO: handle message exception
-            LOGGER.error("exception occured throwing it again: [{}]", ex);
-            throw new RuntimeException(ex);
+            LOGGER.warn("Exception occured while submiting message to Backend", ex);
+
+            DomibusConnectorRejectSubmissionException rejectSubmissionException =
+                    new DomibusConnectorRejectSubmissionException(backendMessage.getDomibusConnectorMessage(), ex);
+            backendSubmissionService.rejectDelivery(backendMessage, rejectSubmissionException);
+
         }
     }
 
