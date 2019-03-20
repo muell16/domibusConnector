@@ -3,7 +3,7 @@
 
 	<Properties>
 		<!-- change the base path!! -->
-		<Property name="basePath">./logs</Property>
+		<Property name="basePath">../logs/</Property>
 		<Property name="PID">????</Property>
 		<Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
 		<Property name="LOG_LEVEL_PATTERN">%5p</Property>
