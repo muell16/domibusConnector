@@ -6,6 +6,7 @@ import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 @Component(GatewayToBackendConfirmationProcessor.GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
 public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMessageProcessor {
 	
-	private static final Logger logger = LoggerFactory.getLogger(GatewayToBackendConfirmationProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GatewayToBackendConfirmationProcessor.class);
 
 	public static final String GW_TO_BACKEND_CONFIRMATION_PROCESSOR = "GatewayToBackendConfirmationProcessor";
 
@@ -55,14 +56,17 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {
-            messagePersistenceService.rejectMessage(originalMessage);
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(originalMessage)
-                    .setText("Received evidence of type " + confirmation.getEvidenceType().toString() + 
-                            " for an already rejected Message with ebms ID " + refToMessageID)
+                    .setText("Received evidence of type " + confirmation.getEvidenceType() +
+                            " for an already in database marked as rejected Message with ebms ID " + refToMessageID)
                     .setSource(this.getClass())
                     .build();	
             
+        }
+        if (containsRejectionConfirmation(originalMessage)) {
+            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Confirmation message received of type [{}] - putting message into rejected state", confirmation.getEvidenceType());
+            messagePersistenceService.rejectMessage(originalMessage);
         }
 
         originalMessage.addConfirmation(confirmation);
@@ -86,7 +90,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         	}
         }
 
-        logger.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
+        LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
                 originalMessage.getConnectorMessageId());
 
 	}
@@ -95,17 +99,32 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
       if (messagePersistenceService.checkMessageRejected(message)) {
           return true;
       }
-      if (message.getMessageConfirmations() != null) {
-          for (DomibusConnectorMessageConfirmation confirmation : message.getMessageConfirmations()) {
-              if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION)
-                      || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_DELIVERY)
-                      || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_RETRIEVAL)) {
-                  messagePersistenceService.rejectMessage(message);
-                  return true;
-              }
-          }
-      }
       return false;
-  }
+    }
+
+    /**
+     *
+     *
+     * @return returns false if the message contains an evidence/confirmation which
+     * requires to put the message in rejected state. These evidences are:
+     * <ul>
+     *     <li>RELAY_REMMD_REJECTION</li>
+     *     <li>NON_DELIVERY</li>
+     *     <li>NON_RETRIEVAL</li>
+     * </ul>
+     */
+    private boolean containsRejectionConfirmation(DomibusConnectorMessage message) {
+        if (message.getMessageConfirmations() != null) {
+            for (DomibusConnectorMessageConfirmation confirmation : message.getMessageConfirmations()) {
+                if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION)
+                        || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_DELIVERY)
+                        || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_RETRIEVAL)) {
+                    messagePersistenceService.rejectMessage(message);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }
