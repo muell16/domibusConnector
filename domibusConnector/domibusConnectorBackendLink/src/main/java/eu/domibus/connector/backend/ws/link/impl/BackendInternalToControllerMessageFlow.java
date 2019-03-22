@@ -9,6 +9,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliverySe
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -74,6 +75,11 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         this.commonBackendLinkConfigurationProperties = commonBackendLinkConfigurationProperties;
     }
 
+    @Autowired
+    public void setDeliveryRejectionService(DomibusConnectorDeliveryRejectionService deliveryRejectionService) {
+        this.deliveryRejectionService = deliveryRejectionService;
+    }
+
     @Override
     public void submitToController(DomibusConnectorBackendMessage backendMessage) {
 
@@ -116,7 +122,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     public void rejectDelivery(DomibusConnectorBackendMessage backendMessage, Throwable reason) {
         DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
         DomibusConnectorRejectDeliveryException rejectDeliveryException =
-                new DomibusConnectorRejectDeliveryException(message, reason);
+                new DomibusConnectorRejectDeliveryException(message, DomibusConnectorRejectionReason.BACKEND_REJECTION, reason);
         deliveryRejectionService.rejectDelivery(rejectDeliveryException);
     }
 

@@ -20,4 +20,8 @@ public enum DomibusConnectorEvidenceType {
 	public int getPriority() {
 		return priority;
 	}
+
+	public String toString() {
+	    return this.name();
+    }
 }

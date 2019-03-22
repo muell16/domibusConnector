@@ -1,7 +1,9 @@
 
 package eu.domibus.connector.backend;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorRejectDeliveryException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
+import eu.domibus.connector.controller.service.DomibusConnectorDeliveryRejectionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
@@ -34,15 +36,33 @@ public class TestBackendContext {
     private final static Logger LOGGER = LoggerFactory.getLogger(TestBackendContext.class);
 
     public static final String SUBMITTED_MESSAGES_LIST_BEAN_NAME = "submittedMessages";
+    public static final String REJECTED_DELIVERIES_LIST_BEAN = "rejectedDeliveries";
+    public static final String AS_DELIVERED_SET_LIST_BEAN = "asDeliveredSetMessages";
     
-    @Bean("submittedMessages")
+    @Bean(SUBMITTED_MESSAGES_LIST_BEAN_NAME)
     public BlockingQueue<DomibusConnectorMessage> createList() {
         return new LinkedBlockingQueue<>();
     }
 
-    @Bean("asDeliveredSetMessages")
+    @Bean(AS_DELIVERED_SET_LIST_BEAN)
     public BlockingQueue<DomibusConnectorMessage> createSetAsDeliveredList() {
         return new LinkedBlockingQueue<>();
+    }
+
+    @Bean(REJECTED_DELIVERIES_LIST_BEAN)
+    public BlockingQueue<DomibusConnectorRejectDeliveryException> createRejectedDeliveriesList() {
+        return new LinkedBlockingQueue<>();
+    }
+
+    @Bean
+    public DomibusConnectorDeliveryRejectionService domibusConnectorDeliveryRejectionService() {
+        return new DomibusConnectorDeliveryRejectionService() {
+            @Override
+            public void rejectDelivery(DomibusConnectorRejectDeliveryException cause) {
+                BlockingQueue<DomibusConnectorRejectDeliveryException> rejectedDeliveriesList = createRejectedDeliveriesList();
+                rejectedDeliveriesList.add(cause);
+            }
+        };
     }
 
     @Bean

@@ -1,10 +1,12 @@
 package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
+import eu.domibus.connector.controller.exception.DomibusConnectorMessageTransportException;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -14,16 +16,19 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- * This processer generates for the message a NON_DELIVERY confirmation/evidence
+ * This MessageTransportExceptionProcessor generates for the message a NON_DELIVERY confirmation/evidence
  * and sends this evidence to the gateway/the sending party
  * The message is also marked as rejected in the database
  *
+ * It handles the Use Case of rejecting a messsage
+ *
  */
 @Component(DomibusConnectorDeliveryRejectionProcessor.DELIVERY_REJECTION_PROCESSOR_BEAN_NAME)
-public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnectorMessageProcessor {
+public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnectorMessageTransportExceptionProcessor {
 
     public static final String DELIVERY_REJECTION_PROCESSOR_BEAN_NAME = "DeliveryRejectionProcessor";
 
@@ -54,14 +59,18 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
 
     @Override
     @StoreMessageExceptionIntoDatabase
+    @Transactional
     @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = DELIVERY_REJECTION_PROCESSOR_BEAN_NAME)
-    public void processMessage(DomibusConnectorMessage originalMessage) {
+    public void processMessageTransportException(DomibusConnectorMessageTransportException messageTransportException) {
+        DomibusConnectorMessage originalMessage = messageTransportException.getConnectorMessage();
 
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
 
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessage = confirmationMessageBuilder
+                .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
                 .switchFromToParty()
                 .build();
+
 
         //persist evidence
         try {
