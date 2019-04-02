@@ -1,6 +1,8 @@
 package eu.domibus.connector.backend.service;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
+import eu.domibus.connector.controller.exception.DomibusConnectorRejectDeliveryException;
+import eu.domibus.connector.controller.service.DomibusConnectorDeliveryRejectionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 /**
@@ -13,10 +15,25 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 public interface DomibusConnectorBackendInternalDeliverToController {
 
     /**
-     * submites message to controller
+     * submites a message to the controller
      * @param message
      */
     void submitToController(DomibusConnectorBackendMessage message);
+
+
+    /**
+     * If the message cannot be delivered to the backend the message is going to be
+     * rejected by the backend transport mechanism. To inform the backendLinkController about that this method
+     * should be called.
+     * <p>
+     * The backendLinkController now has to deal with the fact, that the message
+     * cannot be delivered by the transport implementation. The BackendInternalDeliverToController implemenation
+     * can decide to do an retry or immediately reject the message.
+     * By calling {@link DomibusConnectorDeliveryRejectionService#rejectDelivery(DomibusConnectorRejectDeliveryException)}
+     *
+     *
+     */
+    void rejectDelivery(DomibusConnectorBackendMessage message, Throwable reason);
 
     /**
      * prepares message for delivery to national system

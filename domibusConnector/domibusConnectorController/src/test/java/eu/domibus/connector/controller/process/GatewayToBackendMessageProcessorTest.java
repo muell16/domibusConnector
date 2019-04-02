@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
@@ -70,6 +71,13 @@ public class GatewayToBackendMessageProcessorTest {
     private static final String CONNECTOR_TEST_ACTION_STRING = "connector-test";
     private static final String CONNECTOR_TEST_SERVICE_STRING = "connector-test";
 
+    private static ConnectorTestConfigurationProperties getConnectorTestConfigurationProperties() {
+        ConnectorTestConfigurationProperties connectorTestConfigurationProperties = new ConnectorTestConfigurationProperties();
+        connectorTestConfigurationProperties.setAction(CONNECTOR_TEST_ACTION_STRING);
+        connectorTestConfigurationProperties.setService(CONNECTOR_TEST_SERVICE_STRING);
+        return connectorTestConfigurationProperties;
+    }
+
     @Before
     public void setUp() throws DomibusConnectorGatewaySubmissionException {
         MockitoAnnotations.initMocks(this);
@@ -88,8 +96,8 @@ public class GatewayToBackendMessageProcessorTest {
         gatewayToBackendMessageProcessor.setMessageIdGenerator(() -> UUID.randomUUID().toString());
         gatewayToBackendMessageProcessor.setMessageErrorPersistenceService(messageErrorPersistenceService);
 
-        gatewayToBackendMessageProcessor.setConnectorTestAction(CONNECTOR_TEST_ACTION_STRING);
-        gatewayToBackendMessageProcessor.setConnectorTestService(CONNECTOR_TEST_SERVICE_STRING);
+        gatewayToBackendMessageProcessor.setConnectorTestConfigurationProperties(getConnectorTestConfigurationProperties());
+
 
         Mockito.doAnswer(invoc -> invoc.getArgument(0))
                 .when(messagePersistenceService).mergeMessageWithDatabase(any(DomibusConnectorMessage.class));

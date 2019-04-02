@@ -6,7 +6,13 @@ import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 public interface ConfirmationMessageBuilderFactory {
-    CreateConfirmationMessageService.ConfirmationMessageBuilder createConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType);
+
+    CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder createConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType);
 
     DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException;
+
+    public interface ConfirmationMessageBuilder {
+
+    }
+
 }

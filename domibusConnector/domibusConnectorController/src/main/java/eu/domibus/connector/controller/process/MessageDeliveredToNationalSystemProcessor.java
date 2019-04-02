@@ -1,12 +1,9 @@
 package eu.domibus.connector.controller.process;
 
-import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageService;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -33,7 +30,7 @@ public class MessageDeliveredToNationalSystemProcessor implements DomibusConnect
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     @Autowired
-    private CreateConfirmationMessageService confirmationMessageService;
+    private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
 
     @Override
     public void processMessage(DomibusConnectorMessage message) {

@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.processor.confirmation;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageService;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -167,11 +167,11 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
                 .getMessageDetails().getEbmsMessageId());
 
 
-        CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder =
+        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder =
                 confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE);
         confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
 
-        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
 
         build.persistEvidenceToMessage();
         DomibusConnectorMessage evidenceMessage = build.getEvidenceMessage();
@@ -190,10 +190,10 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
             .getMessageDetails().getEbmsMessageId());
 
 
-        CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
+        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
         confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
 
-        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper wrappedConfirmationMessage = confirmationMessageBuilder.build();
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmationMessage = confirmationMessageBuilder.build();
 
         wrappedConfirmationMessage.persistEvidenceToMessage();
         DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();

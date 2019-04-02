@@ -1,13 +1,12 @@
 package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageService;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.tools.logging.MDCHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +36,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
 	public static final String BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME = "BackendToGatewayConfirmationProcessor";
 
-    private CreateConfirmationMessageService confirmationMessageService;
+    private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 
     //setter
     @Autowired
-    public void setConfirmationMessageService(CreateConfirmationMessageService confirmationMessageService) {
+    public void setConfirmationMessageService(CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService) {
         this.confirmationMessageService = confirmationMessageService;
     }
 
@@ -76,10 +75,10 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             throw new RuntimeException(String.format("No message for refToMessageId [%s] found!", refToOriginalMessage));
         }
 
-        CreateConfirmationMessageService.ConfirmationMessageBuilder confirmationMessageBuilder
+        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
                 = confirmationMessageService.createConfirmationMessageBuilder(originalMessage, evidenceType);
 
-        CreateConfirmationMessageService.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation =
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation =
                 confirmationMessageBuilder
                 .switchFromToParty()
                 .build();
