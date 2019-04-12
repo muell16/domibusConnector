@@ -11,12 +11,13 @@ public class DomibusWebAdminUser {
 
 
 	@Id
+    @Column(name="USERNAME")
     private String username;
-	@Column
+	@Column(name="PASSWORD")
     private String password;
-	@Column
+	@Column(name="ROLE")
     private String role;
-    @Column
+    @Column(name="SALT")
     private String salt;
 
     public String getUsername() {

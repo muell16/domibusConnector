@@ -16,7 +16,7 @@ import eu.domibus.webadmin.blogic.connector.monitoring.IConnectorMonitoringServi
 import eu.domibus.webadmin.commons.SendMail;
 import eu.domibus.webadmin.commons.WebAdminProperties;
 
-@Component
+//@Component
 public class MonitoringTask implements ApplicationContextAware, InitializingBean {
 
     protected final Log logger = LogFactory.getLog(getClass());
