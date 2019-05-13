@@ -101,8 +101,8 @@ public class DomibusSecurityContainer {
         if (messageContent.getDocument() != null) {
             //
             DomibusConnectorMessageDocument document = messageContent.getDocument();
-            
-            
+
+            //TODO add MimeType to Document!
             //we are still assuming that the bussiness document is always a pdf!
             String pdfName = StringUtils.isEmpty(document.getDocumentName()) ? MAIN_DOCUMENT_NAME
                     + ".pdf"
@@ -145,6 +145,7 @@ public class DomibusSecurityContainer {
             LOGGER.debug("buildBusinessContent: detected mimeType [{}] in attachment [{}]", mimeType.getMimeTypeString(), attachment);
             
             DSSDocument dssInMemoryDoc = createInMemoryDocument(attachment.getAttachment(), attachment.getName(), mimeType);
+
             
             businessContent.addAttachment(dssInMemoryDoc);
         }

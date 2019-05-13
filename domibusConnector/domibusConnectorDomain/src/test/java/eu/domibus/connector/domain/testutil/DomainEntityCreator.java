@@ -90,6 +90,7 @@ public class DomainEntityCreator {
 
         attachment.setName("name");
         attachment.setMimeType("application/garbage");
+        attachment.setDescription("a description");
         return attachment;
     }
 

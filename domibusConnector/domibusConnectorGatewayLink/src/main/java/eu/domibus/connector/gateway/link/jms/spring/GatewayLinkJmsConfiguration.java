@@ -91,7 +91,7 @@ public class GatewayLinkJmsConfiguration {
     }
 
     /**
-     * Configure cxf client for sending a message reponse over jms queue
+     * Configure cxf client for sending a message response over jms queue
      * back to GW
      * @return - the cxf client
      */
