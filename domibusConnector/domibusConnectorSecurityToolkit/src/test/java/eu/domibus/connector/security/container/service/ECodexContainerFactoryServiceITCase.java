@@ -140,6 +140,9 @@ public class ECodexContainerFactoryServiceITCase {
 
         assertThat(check.isSuccessful()).isTrue();
 
+        DSSDocument dssDocument = eCodexContainer.getBusinessAttachments().get(0);
+        assertThat(dssDocument.getName()).isEqualTo("Addition.pdf");
+
     }
 
 //    @Test

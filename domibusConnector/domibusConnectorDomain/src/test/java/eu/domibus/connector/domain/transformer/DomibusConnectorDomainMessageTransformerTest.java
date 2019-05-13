@@ -111,6 +111,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         
         assertThat(attachmentTO.getMimeType()).isEqualTo("application/garbage");
         assertThat(attachmentTO.getName()).isEqualTo("name");
+        assertThat(attachmentTO.getDescription()).isEqualTo("a description");
         
     }
     
