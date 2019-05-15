@@ -18,10 +18,7 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.security.*;
 import java.util.List;
 import java.util.Map;
@@ -138,8 +135,6 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         Path storageFile = getStoragePath().resolve(dataReference.getStorageIdReference());
         LOGGER.debug("Storage file path is [{}]", storageFile.toAbsolutePath());
 
-
-
         if (!Files.exists(storageFile)) {
             throw new PersistenceException(String.format("The requested file [%s] does not exist yet! Looks like this method is not called correctly!", storageFile));
         }
@@ -160,8 +155,8 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
         try {
-            //TODO: find out which part is blocking the deletion, holding a file handle! OR implement async deletion...?
             Files.delete(storageFile);
+            deleteFolderIfEmpty(reference);
         } catch (IOException e) {
             //TODO: make exception configureable so on systems with deactivated timer job, this would be fatal
 //            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
@@ -170,6 +165,19 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
             LargeFileDeletionException largeFileDeletionException = new LargeFileDeletionException(String.format("Unable to delete file [%s] due exception:", storageFile), e);
             largeFileDeletionException.setReferenceFailedToDelete(reference);
             throw largeFileDeletionException;
+        }
+    }
+
+    private void deleteFolderIfEmpty(DomibusConnectorBigDataReference reference) {
+//        FileBasedDomibusConnectorBigDataReference ref = (FileBasedDomibusConnectorBigDataReference) reference;
+        String folderName = getFolderNameFromReferenceName(reference.getStorageIdReference());
+        Path messagePath = getStoragePath().resolve(folderName);
+        try {
+            Files.delete(messagePath);
+        } catch (DirectoryNotEmptyException notEmpty) {
+            LOGGER.trace("Directory [{}] is not empty - will no be deleted!", messagePath);
+        } catch (IOException e) {
+            LOGGER.warn("An IOException occured while trying to delete directory [{}]", messagePath);
         }
     }
 
@@ -210,6 +218,11 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         return messageFolderName + File.separator + fileName;
     }
 
+    private String getFolderNameFromReferenceName(String referenceName) {
+        int separatorPos = referenceName.indexOf(File.separator, 0);
+        return referenceName.substring(0, separatorPos - 1);
+    }
+
 
     private Path getStoragePath() {
         return filesystemPersistenceProperties.getStoragePath();
@@ -225,9 +238,9 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
             f.mkdirs();
         } else if (!f.exists()) {
             throw new IllegalArgumentException(String.format("The by configuration (%s) provided file path [%s] does not exist an file path creation (%s) is false!",
-                    "connector.persistence.filesystem.storage-path", //TODO: property service
+                    "connector.persistence.filesystem.storage-path", //TODO: call property service for correct property name
                     storagePath,
-                    "connector.persistence.filesystem.create-dir") ); //TODO: property service
+                    "connector.persistence.filesystem.create-dir") ); //TODO: call property service for correct property name
         }
 
     }
