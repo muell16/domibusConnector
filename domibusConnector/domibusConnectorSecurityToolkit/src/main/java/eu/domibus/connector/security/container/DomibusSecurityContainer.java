@@ -256,33 +256,11 @@ public class DomibusSecurityContainer {
             message.getMessageAttachments().remove(asicsAttachment);
             message.getMessageAttachments().remove(tokenXMLAttachment);
 
-            
-            DomibusConnectorBigDataReference asicContainerDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
-            InputStream asicInputStream;
-            try {                
-                asicInputStream = asicContainerDataRef.getInputStream();
-            } catch (IOException ioe) {                
-                throw new RuntimeException(String.format("error while initializing asicInputStream from big data reference %s", 
-                        asicContainerDataRef.getStorageIdReference()));
-            }
-            
-            DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(tokenXMLAttachment.getAttachment());
-            InputStream tokenStream; /// = xmlTokenDataRef.getInputStream();
-            try {
-                tokenStream = xmlTokenDataRef.getInputStream();
-            } catch (IOException ioe) {
-                throw new RuntimeException(String.format("error while initializing xmlTokenDataRef get input stream from %s",
-                        xmlTokenDataRef.getStorageIdReference()));
-            }
-
-
-            try {
-                if (LOGGER.isTraceEnabled()) {
-                    asicInputStream = logTraceStream(asicInputStream, "asicInputStream", false);
-                    tokenStream = logTraceStream(tokenStream, "tokenStream", true);
-                }
-
-
+            try (
+                    InputStream asicInputStream = getAsicsContainerInputStream(asicsAttachment);
+                    InputStream tokenStream = getTokenXmlStream(tokenXMLAttachment);
+                    )
+                {
                 ECodexContainer container = containerService.receive(asicInputStream, tokenStream);
 
                 // KlarA: Added check of the container and the respective
@@ -297,8 +275,7 @@ public class DomibusSecurityContainer {
                         LOGGER.trace("recieveContainerContents: check if businessContent contains detachedSignature [{}]", 
                                 container.getBusinessContent().getDetachedSignature() != null);
                         if (container.getBusinessContent().getDetachedSignature() != null) {
-                            try {
-                                InputStream is = container.getBusinessContent().getDetachedSignature().openStream();
+                            try (InputStream is = container.getBusinessContent().getDetachedSignature().openStream()) {
                                 byte[] docAsBytes = new byte[is.available()];
                                 is.read(docAsBytes);                                
                                 detachedSignatureBuilder.setSignature(docAsBytes);
@@ -364,8 +341,9 @@ public class DomibusSecurityContainer {
                                 if (MimeType.XML.getMimeTypeString().equals(container.getToken().getDocumentType())
                                         && !message.getMessageDetails().getAction().isDocumentRequired()) {
                                     LOGGER.trace("recieveContainerContents: Writing byteContent into MessageContent.setXmlContent");
-                                    InputStream businessContent = container.getBusinessDocument().openStream();
-                                    message.getMessageContent().setXmlContent(IOUtils.toByteArray(businessContent));
+                                    try (InputStream businessContent = container.getBusinessDocument().openStream();) {
+                                        message.getMessageContent().setXmlContent(IOUtils.toByteArray(businessContent));
+                                    }
                                 }
                             } catch (IOException e) {
                                 throw new DomibusConnectorSecurityException("Could not read business document!");
@@ -428,11 +406,44 @@ public class DomibusSecurityContainer {
                 }
             } catch (ECodexException e) {
                 throw new DomibusConnectorSecurityException(e);
+            } catch (IOException e) {
+                throw new DomibusConnectorSecurityException(e);
             }
         }
     }
 
+    private InputStream getAsicsContainerInputStream(DomibusConnectorMessageAttachment asicsAttachment) {
+        DomibusConnectorBigDataReference asicContainerDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
+        InputStream asicInputStream;
+        try {
+            asicInputStream = asicContainerDataRef.getInputStream();
+            if (LOGGER.isTraceEnabled()) {
+                asicInputStream = logTraceStream(asicInputStream, "asicInputStream", true);
+            }
+            return asicInputStream;
+        } catch (IOException ioe) {
+            throw new RuntimeException(String.format("error while initializing asicInputStream from big data reference %s",
+                    asicContainerDataRef.getStorageIdReference()), ioe);
+        }
+    }
+
+    private InputStream getTokenXmlStream(DomibusConnectorMessageAttachment tokenXMLAttachment) {
+        DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(tokenXMLAttachment.getAttachment());
+        InputStream tokenStream;
+        try {
+            tokenStream = xmlTokenDataRef.getInputStream();
+            if (LOGGER.isTraceEnabled()) {
+                tokenStream = logTraceStream(tokenStream, "tokenStream", true);
+            }
+            return tokenStream;
+        } catch (IOException ioe) {
+            throw new RuntimeException(String.format("error while initializing xmlTokenDataRef get input stream from %s",
+                    xmlTokenDataRef.getStorageIdReference()), ioe);
+        }
+    }
+
     private InputStream logTraceStream(InputStream inputStream, String name, boolean logStreamContent) {
+        //TODO: use teeStream! avoid copy into byte array!
         LOGGER.debug("#logTraceStream [{}]: into byte[]", name);
         try {
             byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
