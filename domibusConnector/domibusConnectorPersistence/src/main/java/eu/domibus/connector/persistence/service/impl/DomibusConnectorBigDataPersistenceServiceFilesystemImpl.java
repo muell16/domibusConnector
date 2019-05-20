@@ -152,7 +152,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     @Override
     public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
-
+        LOGGER.trace("#deleteDomibusConnectorBigDataReference:: called with reference [{}]", reference);
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
         try {
             Files.delete(storageFile);
@@ -174,10 +174,11 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         Path messagePath = getStoragePath().resolve(folderName);
         try {
             Files.delete(messagePath);
+            LOGGER.debug("#deleteFolderIfEmpty:: Directory [{}] deleted", messagePath);
         } catch (DirectoryNotEmptyException notEmpty) {
-            LOGGER.trace("Directory [{}] is not empty - will no be deleted!", messagePath);
+            LOGGER.debug("#deleteFolderIfEmpty:: Directory [{}] is not empty - will no be deleted!", messagePath);
         } catch (IOException e) {
-            LOGGER.warn("An IOException occured while trying to delete directory [{}]", messagePath);
+            LOGGER.warn("#deleteFolderIfEmpty:: An IOException occured while trying to delete directory [" + messagePath + "]", e);
         }
     }
 
@@ -220,7 +221,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     private String getFolderNameFromReferenceName(String referenceName) {
         int separatorPos = referenceName.indexOf(File.separator, 0);
-        return referenceName.substring(0, separatorPos - 1);
+        return referenceName.substring(0, separatorPos);
     }
 
 
