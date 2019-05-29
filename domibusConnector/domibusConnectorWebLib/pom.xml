@@ -3,7 +3,7 @@
   <parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.1.3-fix_JQEUP657-SNAPSHOT</version>
+    <version>4.1.4</version>
   </parent>
   <artifactId>domibusConnectorWebLib</artifactId>
   
