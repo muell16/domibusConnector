@@ -50,7 +50,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 		DomibsConnectorAcknowledgementType ack = null;
 		try {
 			ack = submissionClient.submitMessage(request);
-		}catch(Exception e) {
+		} catch(Exception e) {
 			state.setStatus(TransportStatusService.TransportState.FAILED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
             
@@ -66,14 +66,16 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
             state.setRemoteTransportId(ebmsId);
             state.setStatus(TransportStatusService.TransportState.ACCEPTED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
-        } else {
+        } else if (ack != null){
             state.setStatus(TransportStatusService.TransportState.FAILED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
-            
-            if (ack != null && !StringUtils.isEmpty(ack.getResultMessage()))
+            LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW declined message and sent [{}] back", ack.getResultMessage());
+            if (!StringUtils.isEmpty(ack.getResultMessage()))
                 throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());
             else
                 throw new DomibusConnectorGatewaySubmissionException("Undefined submission error!");
+        } else {
+            throw new DomibusConnectorGatewaySubmissionException("Unknown result from gateway!");
         }
 
 	}
