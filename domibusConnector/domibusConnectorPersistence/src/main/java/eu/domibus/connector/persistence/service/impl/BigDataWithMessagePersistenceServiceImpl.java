@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -94,7 +95,23 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
         }
 
         List<LargeFileDeletionException> deletionExceptions = new ArrayList<>();
-        collectBigDataRefsOfMessage(message)
+//        collectBigDataRefsOfMessage(message)
+//                .stream()
+//                .forEach(ref ->  {
+//                    try {
+//                        bigDataPersistenceServiceImpl.deleteDomibusConnectorBigDataReference(ref);
+//                    } catch (LargeFileDeletionException deletionException) {
+//                        deletionExceptions.add(deletionException);
+//                        if (LOGGER.isDebugEnabled()) {
+//                            LOGGER.trace(String.format("The following largeFile Reference [%s] will be deleted later by timer jobs.\n" +
+//                                    "Because I was unable to delete it now due the following exception:", ref), deletionException);
+//                        }
+//                    }
+//                });
+
+        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences = bigDataPersistenceServiceImpl.getAllAvailableReferences();
+        List<DomibusConnectorBigDataReference> domibusConnectorBigDataReferences = allAvailableReferences.getOrDefault(message.getConnectorMessageId(), new ArrayList<>());
+        domibusConnectorBigDataReferences
                 .stream()
                 .forEach(ref ->  {
                     try {
@@ -107,8 +124,10 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
                         }
                     }
                 });
+
         String storageRefs = deletionExceptions.stream().map(d -> d.getReferenceFailedToDelete().getStorageIdReference()).collect(Collectors.joining(","));
-        LOGGER.info("The following storage references [{}] failed to be deleted immediatly. The will be deleted later by timer jobs.", storageRefs);
+        LOGGER.info("The following storage references [{}] failed to be deleted immediately. The will be deleted later by timer jobs.", storageRefs);
+
     }
 
 

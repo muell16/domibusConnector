@@ -46,10 +46,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState) {
         DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
         if (message == null) {
-            //cannot update a transport for a null message maybe a evidence message
+            //cannot update a transport for a null message maybe it's a evidence message, but they don't have
+            // a relation to connector message id yet...so cannot set transport state for them!
+            LOGGER.debug("#updateTransportToGatewayStatus:: No message with transport id [{}] was found within database, maybe it's an evidence message", transportState.getTransportId());
             return;
         }
-
 
         if (transportState.getStatus() == TransportState.ACCEPTED) {
             if (message != null) {
@@ -58,7 +59,7 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
                 messagePersistenceService.setDeliveredToGateway(message);
             }
         } else if (transportState.getStatus() == TransportState.FAILED) {
-            //TODO: reject message...
+            //TODO: reject message async... -> inform backend async of rejection!
             transportState.getMessageErrorList().stream().forEach( error ->
                     errorPersistenceService.persistMessageError(transportState.getTransportId(), error)
             );
@@ -69,8 +70,10 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
                 contentStorageService.cleanForMessage(message);
                 LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of outgoing message [{}]", message.getConnectorMessageId());
             } catch (RuntimeException e) {
-                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of incoming message", e);
+                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of outgoing message", e);
             }
+        } else {
+            LOGGER.debug("#updateTransportToGatewayStatus:: Message is an evidence message, no content deletion will be triggered!");
         }
 
     }
