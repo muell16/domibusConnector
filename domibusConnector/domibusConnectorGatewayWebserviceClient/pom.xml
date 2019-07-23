@@ -24,6 +24,12 @@
 			<groupId>eu.e-codex</groupId>
 			<artifactId>discovery-library</artifactId>
 			<version>0.0.5-FINAL</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>

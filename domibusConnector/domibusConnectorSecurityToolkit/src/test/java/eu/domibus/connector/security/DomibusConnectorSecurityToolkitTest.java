@@ -33,14 +33,14 @@ public class DomibusConnectorSecurityToolkitTest {
 
 	@Test
 	public void testSignedDoc() {
-		
+		System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
 		testDoc("ExamplePdfSigned.pdf", "signedResultToken");
 
 	}
 	
 	@Test
 	public void testUnsignedDoc() {
-		
+		System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
 		testDoc("ExamplePdfUnsigned.pdf", "unsignedResultToken");
 
 	}

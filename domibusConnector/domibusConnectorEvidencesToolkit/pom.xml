@@ -6,37 +6,74 @@
 		<artifactId>domibusConnector</artifactId>
 		<version>3.5.2-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>domibusConnectorEvidencesToolkit</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorCommon</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jaxb-impl</artifactId>
-					<groupId>com.sun.xml.bind</groupId>
-				</exclusion>
-			</exclusions>
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<artifactId>jaxb-impl</artifactId>-->
+					<!--<groupId>com.sun.xml.bind</groupId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
 		</dependency>
 		<dependency>
 			<groupId>eu.ecodex.evidences</groupId>
 			<artifactId>EvidenceBuilder</artifactId>
-			<version>1.0.5.10</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jaxb-impl</artifactId>
-					<groupId>com.sun.xml.bind</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb-api</artifactId>
-					<groupId>javax.xml.bind</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jaxb-xjc</artifactId>
-					<groupId>com.sun.xml.bind</groupId>
-				</exclusion>
-			</exclusions>
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<artifactId>jaxb-impl</artifactId>-->
+					<!--<groupId>com.sun.xml.bind</groupId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<artifactId>jaxb-api</artifactId>-->
+					<!--<groupId>javax.xml.bind</groupId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<artifactId>jaxb-xjc</artifactId>-->
+					<!--<groupId>com.sun.xml.bind</groupId>-->
+				<!--</exclusion>-->
+
+				<!--<exclusion>-->
+					<!--<groupId>org.bouncycastle</groupId>-->
+					<!--<artifactId>bcprov-jdk15on</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>org.bouncycastle</groupId>-->
+					<!--<artifactId>bcmail-jdk15on</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+					<!--<artifactId>dss-document</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+					<!--<artifactId>dss-token</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+					<!--<artifactId>dss-xades</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+					<!--<artifactId>dss-service</artifactId>-->
+				<!--</exclusion>-->
+				<!--<exclusion>-->
+					<!--<groupId>eu.europa.ec.joinup.sd-dss</groupId>-->
+					<!--<artifactId>dss-utils-apache-commons</artifactId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
 		</dependency>
+
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 </project>
