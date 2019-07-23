@@ -41,239 +41,234 @@ public class ECodexEvidenceBuilder implements EvidenceBuilder {
     private static EvidenceUtils signer = null;
 
     public ECodexEvidenceBuilder(String javaKeyStorePath, String javaKeyStorePassword, String alias, String keyPassword) {
-	// signer = new EvidenceUtilsImpl(javaKeyStorePath,
-	// javaKeyStorePassword, alias, keyPassword);
-	signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
+        // signer = new EvidenceUtilsImpl(javaKeyStorePath,
+        // javaKeyStorePassword, alias, keyPassword);
+        signer = new EvidenceUtilsXades(javaKeyStorePath, javaKeyStorePassword, alias, keyPassword);
     }
 
     @Override
     public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, ECodexMessageDetails messageDetails)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-    	EventReasonType reason = null;
-    	
-		if (eventReason != null)
-		{
-			reason = new EventReasonType();
-			reason.setCode(eventReason.getEventCode());
-			reason.setDetails(eventReason.getEventDetails());
-		}
-		    
-		return createSubmissionAcceptanceRejection(isAcceptance, reason, evidenceIssuerDetails, messageDetails);
+        EventReasonType reason = null;
+
+        if (eventReason != null) {
+            reason = new EventReasonType();
+            reason.setCode(eventReason.getEventCode());
+            reason.setDetails(eventReason.getEventDetails());
+        }
+
+        return createSubmissionAcceptanceRejection(isAcceptance, reason, evidenceIssuerDetails, messageDetails);
     }
 
     @Override
     public byte[] createSubmissionAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, ECodexMessageDetails messageDetails)
-	    throws ECodexEvidenceBuilderException {
-	Date start = new Date();
-	
-	// This is the message and all related information
-	REMDispatchType dispatch = new REMDispatchType();
+            throws ECodexEvidenceBuilderException {
+        Date start = new Date();
 
-	MsgMetaData msgMetaData = new MsgMetaData();
-	EntityDetailsType recipient = new EntityDetailsType();
-	EntityDetailsType sender = new EntityDetailsType();
-	try {
-	    recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
-	    sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
-	} catch (MalformedURLException e) {
-	    e.printStackTrace();
-	}
+        // This is the message and all related information
+        REMDispatchType dispatch = new REMDispatchType();
 
-	Destinations destinations = new Destinations();
-	destinations.setRecipient(sender);
+        MsgMetaData msgMetaData = new MsgMetaData();
+        EntityDetailsType recipient = new EntityDetailsType();
+        EntityDetailsType sender = new EntityDetailsType();
+        try {
+            recipient.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getSenderAddress(), "displayName"));
+            sender.getAttributedElectronicAddressOrElectronicAddress().add(SpocsFragments.createElectoricAddress(messageDetails.getRecipientAddress(), "displayName"));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
-	Originators originators = new Originators();
-	originators.setFrom(recipient);
-	originators.setReplyTo(recipient);
-	originators.setSender(recipient);
+        Destinations destinations = new Destinations();
+        destinations.setRecipient(sender);
 
-	MsgIdentification msgIdentification = new MsgIdentification();
-	msgIdentification.setMessageID(messageDetails.getEbmsMessageId());
+        Originators originators = new Originators();
+        originators.setFrom(recipient);
+        originators.setReplyTo(recipient);
+        originators.setSender(recipient);
 
-	msgMetaData.setDestinations(destinations);
-	msgMetaData.setOriginators(originators);
-	msgMetaData.setMsgIdentification(msgIdentification);
+        MsgIdentification msgIdentification = new MsgIdentification();
+        msgIdentification.setMessageID(messageDetails.getEbmsMessageId());
 
-	GregorianCalendar cal = new GregorianCalendar();
-	XMLGregorianCalendar initialSend = null;
-	try {
-	    initialSend = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-	} catch (DatatypeConfigurationException e1) {
-	    e1.printStackTrace();
-	}
-	DeliveryConstraints deliveryConstraints = new DeliveryConstraints();
-	deliveryConstraints.setInitialSend(initialSend);
+        msgMetaData.setDestinations(destinations);
+        msgMetaData.setOriginators(originators);
+        msgMetaData.setMsgIdentification(msgIdentification);
 
-	msgMetaData.setDeliveryConstraints(deliveryConstraints);
+        GregorianCalendar cal = new GregorianCalendar();
+        XMLGregorianCalendar initialSend = null;
+        try {
+            initialSend = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+        } catch (DatatypeConfigurationException e1) {
+            e1.printStackTrace();
+        }
+        DeliveryConstraints deliveryConstraints = new DeliveryConstraints();
+        deliveryConstraints.setInitialSend(initialSend);
 
-	dispatch.setMsgMetaData(msgMetaData);
+        msgMetaData.setDeliveryConstraints(deliveryConstraints);
 
-	SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(evidenceIssuerDetails, dispatch, isAcceptance);
-	
-	if (eventReason != null)
-	    evidence.setEventReason(eventReason);
+        dispatch.setMsgMetaData(msgMetaData);
 
-	evidence.setUAMessageId(messageDetails.getNationalMessageId());
-	evidence.setHashInformation(messageDetails.getHashValue(), messageDetails.getHashAlgorithm());
+        SubmissionAcceptanceRejection evidence = new SubmissionAcceptanceRejection(evidenceIssuerDetails, dispatch, isAcceptance);
 
-	byte[] signedByteArray = signEvidence(evidence, false);
-	
-	LOG.info("Creation of SubmissionAcceptanceRejection Evidence finished in " + (System.currentTimeMillis() - start.getTime()) + " ms.");
-	
-	return signedByteArray;
+        if (eventReason != null)
+            evidence.setEventReason(eventReason);
+
+        evidence.setUAMessageId(messageDetails.getNationalMessageId());
+        evidence.setHashInformation(messageDetails.getHashValue(), messageDetails.getHashAlgorithm());
+
+        byte[] signedByteArray = signEvidence(evidence, false);
+
+        LOG.info("Creation of SubmissionAcceptanceRejection Evidence finished in " + (System.currentTimeMillis() - start.getTime()) + " ms.");
+
+        return signedByteArray;
     }
-    
+
     @Override
     public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-    	EventReasonType reason = null;
-    	
-		if (eventReason != null)
-		{
-			reason = new EventReasonType();
-			reason.setCode(eventReason.getEventCode());
-			reason.setDetails(eventReason.getEventDetails());
-		}
-		    
-		return createRelayREMMDAcceptanceRejection(isAcceptance, reason, evidenceIssuerDetails, previousEvidenceInByte);
+        EventReasonType reason = null;
+
+        if (eventReason != null) {
+            reason = new EventReasonType();
+            reason.setCode(eventReason.getEventCode());
+            reason.setDetails(eventReason.getEventDetails());
+        }
+
+        return createRelayREMMDAcceptanceRejection(isAcceptance, reason, evidenceIssuerDetails, previousEvidenceInByte);
     }
-    
+
     @Override
     public byte[] createRelayREMMDAcceptanceRejection(boolean isAcceptance, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+        REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
-	RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, previousEvidence, isAcceptance);
+        RelayREMMDAcceptanceRejection evidence = new RelayREMMDAcceptanceRejection(evidenceIssuerDetails, previousEvidence, isAcceptance);
 
-	if (eventReason != null)
-	    evidence.setEventReason(eventReason);
+        if (eventReason != null)
+            evidence.setEventReason(eventReason);
 
-	byte[] signedByteArray = signEvidence(evidence, true);
+        byte[] signedByteArray = signEvidence(evidence, true);
 
-	return signedByteArray;
+        return signedByteArray;
     }
-    
+
     @Override
     public byte[] createRelayREMMDFailure(REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-    	EventReasonType reason = null;
-    	
-		if (eventReason != null)
-		{
-			reason = new EventReasonType();
-			reason.setCode(eventReason.getEventCode());
-			reason.setDetails(eventReason.getEventDetails());
-		}
-		    
-		return createRelayREMMDFailure(reason, evidenceIssuerDetails, previousEvidenceInByte);
+        EventReasonType reason = null;
+
+        if (eventReason != null) {
+            reason = new EventReasonType();
+            reason.setCode(eventReason.getEventCode());
+            reason.setDetails(eventReason.getEventDetails());
+        }
+
+        return createRelayREMMDFailure(reason, evidenceIssuerDetails, previousEvidenceInByte);
     }
-    
+
     @Override
     public byte[] createRelayREMMDFailure(EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-    	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+        REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
-    	RelayREMMDFailure evidence = new RelayREMMDFailure(evidenceIssuerDetails, previousEvidence);
+        RelayREMMDFailure evidence = new RelayREMMDFailure(evidenceIssuerDetails, previousEvidence);
 
-    	if (eventReason != null)
-    	    evidence.setEventReason(eventReason);
+        if (eventReason != null)
+            evidence.setEventReason(eventReason);
 
-    	byte[] signedByteArray = signEvidence(evidence, true);
+        byte[] signedByteArray = signEvidence(evidence, true);
 
-    	return signedByteArray;
+        return signedByteArray;
     }
-    
+
     @Override
     public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
-    	EventReasonType reason = null;
-    	
-		if (eventReason != null)
-		{
-			reason = new EventReasonType();
-			reason.setCode(eventReason.getEventCode());
-			reason.setDetails(eventReason.getEventDetails());
-		}
-		    
-		return createDeliveryNonDeliveryToRecipient(isDelivery, reason, evidenceIssuerDetails, previousEvidenceInByte);
+            throws ECodexEvidenceBuilderException {
+        EventReasonType reason = null;
+
+        if (eventReason != null) {
+            reason = new EventReasonType();
+            reason.setCode(eventReason.getEventCode());
+            reason.setDetails(eventReason.getEventDetails());
+        }
+
+        return createDeliveryNonDeliveryToRecipient(isDelivery, reason, evidenceIssuerDetails, previousEvidenceInByte);
     }
-    
+
     @Override
     public byte[] createDeliveryNonDeliveryToRecipient(boolean isDelivery, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+        REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
-	DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
+        DeliveryNonDeliveryToRecipient evidence = new DeliveryNonDeliveryToRecipient(evidenceIssuerDetails, previousEvidence, isDelivery);
 
-	if (eventReason != null)
-	    evidence.setEventReason(eventReason);
+        if (eventReason != null)
+            evidence.setEventReason(eventReason);
 
-	byte[] signedByteArray = signEvidence(evidence, true);
+        byte[] signedByteArray = signEvidence(evidence, true);
 
-	return signedByteArray;
+        return signedByteArray;
     }
 
     @Override
     public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, REMErrorEvent eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-    	EventReasonType reason = null;
-    	
-		if (eventReason != null)
-		{
-			reason = new EventReasonType();
-			reason.setCode(eventReason.getEventCode());
-			reason.setDetails(eventReason.getEventDetails());
-		}
-		    
-		return createRetrievalNonRetrievalByRecipient(isRetrieval, reason, evidenceIssuerDetails, previousEvidenceInByte);
+        EventReasonType reason = null;
+
+        if (eventReason != null) {
+            reason = new EventReasonType();
+            reason.setCode(eventReason.getEventCode());
+            reason.setDetails(eventReason.getEventDetails());
+        }
+
+        return createRetrievalNonRetrievalByRecipient(isRetrieval, reason, evidenceIssuerDetails, previousEvidenceInByte);
 
     }
-    
+
     @Override
     public byte[] createRetrievalNonRetrievalByRecipient(boolean isRetrieval, EventReasonType eventReason, EDeliveryDetails evidenceIssuerDetails, byte[] previousEvidenceInByte)
-	    throws ECodexEvidenceBuilderException {
+            throws ECodexEvidenceBuilderException {
 
-	REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
+        REMEvidenceType previousEvidence = signer.convertIntoEvidenceType(previousEvidenceInByte);
 
-	RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
+        RetrievalNonRetrievalByRecipient evidence = new RetrievalNonRetrievalByRecipient(evidenceIssuerDetails, previousEvidence, isRetrieval);
 
-	if (eventReason != null)
-	    evidence.setEventReason(eventReason);
+        if (eventReason != null)
+            evidence.setEventReason(eventReason);
 
-	byte[] signedByteArray = signEvidence(evidence, true);
+        byte[] signedByteArray = signEvidence(evidence, true);
 
-	return signedByteArray;
+        return signedByteArray;
     }
 
     private byte[] signEvidence(Evidence evidenceToBeSigned, boolean removeOldSignature) {
 
-	if (removeOldSignature) {
-	    // delete old signature field
-	    evidenceToBeSigned.getXSDObject().setSignature(null);
-	    LOG.debug("Old Signature removed");
-	}
+        if (removeOldSignature) {
+            // delete old signature field
+            evidenceToBeSigned.getXSDObject().setSignature(null);
+            LOG.debug("Old Signature removed");
+        }
 
-	ByteArrayOutputStream fo = new ByteArrayOutputStream();
+        ByteArrayOutputStream fo = new ByteArrayOutputStream();
 
-	try {
+        try {
 
-	    evidenceToBeSigned.serialize(fo);
-	} catch (JAXBException e) {
-	    e.printStackTrace();
-	}
+            evidenceToBeSigned.serialize(fo);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
 
-	byte[] bytes = fo.toByteArray();
+        byte[] bytes = fo.toByteArray();
 
-	byte[] signedByteArray = signer.signByteArray(bytes);
+        byte[] signedByteArray = signer.signByteArray(bytes);
 
-	return signedByteArray;
+        return signedByteArray;
     }
 
 }

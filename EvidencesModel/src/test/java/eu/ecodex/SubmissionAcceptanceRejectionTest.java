@@ -1,17 +1,19 @@
 package eu.ecodex;
-import static org.junit.Assert.assertTrue;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.io.FileUtils;
 import org.etsi.uri._01903.v1_3.AnyType;
 import org.etsi.uri._02640.soapbinding.v1.DeliveryConstraints;
 import org.etsi.uri._02640.soapbinding.v1.Destinations;
@@ -26,8 +28,10 @@ import org.etsi.uri._02640.v2.EventReasonType;
 import org.etsi.uri._02640.v2.NamePostalAddressType;
 import org.etsi.uri._02640.v2.NamesPostalAddressListType;
 import org.etsi.uri._02640.v2.PostalAddressType;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import eu.ecodex.evidences.ECodexEvidenceBuilder;
 import eu.ecodex.evidences.EvidenceBuilder;
@@ -42,18 +46,29 @@ import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.PostalAdress;
 import eu.spocseu.edeliverygw.configuration.xsd.EDeliveryDetail.Server;
 import eu.spocseu.edeliverygw.messageparts.SpocsFragments;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class SubmissionAcceptanceRejectionTest  {
 
-	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/main/resources/keystore.jks", "test123", "new_Testcert", "test123");
-	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/main/resources/keystore.jks", "test123", "new_Testcert", "test123");
+	private static EvidenceBuilder builder = new ECodexEvidenceBuilder("file:src/test/resources/keystore.jks", "test123", "new_Testcert", "test123");
+	private static EvidenceUtils utils = new EvidenceUtilsXades("file:src/test/resources/keystore.jks", "test123", "new_Testcert", "test123");
 	
-	private static final String PATH_OUTPUT_FILES = "src/test/resources/";
+	private static final String PATH_OUTPUT_FILES = "target/test/SubmissionAcceptanceRejectionTest/";
 	private static final String SUBMISSION_ACCEPTANCE_FILE = "submissionAcceptance.xml";
 	private static final String RELAYREMMD_ACCEPTANCE_FILE = "relayremmdAcceptance.xml";
 	private static final String DELIVERY_ACCEPTANCE_FILE = "deliveryAcceptance.xml";
 	private static final String RETRIEVAL_ACCEPTANCE_FILE = "retrievalAcceptance.xml";
 	private static final String FAILURE_FILE = "failure.xml";
-	
+
+	@BeforeAll
+	public static void setUpTestEnv() throws IOException {
+		File testDir = Paths.get(PATH_OUTPUT_FILES).toFile();
+		try {
+			FileUtils.forceDelete(testDir);
+		} catch (IOException e) {}
+		FileUtils.forceMkdir(testDir);
+	}
+
 	private EDeliveryDetails createEntityDetailsObject() {
 		
 		PostalAdress address = new PostalAdress();
@@ -194,22 +209,6 @@ public class SubmissionAcceptanceRejectionTest  {
 		fos.close();
 	}
 	
-	@After
-	public void deleteOutputFiles() {
-	    File file = new File(PATH_OUTPUT_FILES+SUBMISSION_ACCEPTANCE_FILE);
-	    file.delete();
-	    
-	    file = new File(PATH_OUTPUT_FILES+RELAYREMMD_ACCEPTANCE_FILE);
-	    file.delete();
-	    
-	    file = new File(PATH_OUTPUT_FILES+DELIVERY_ACCEPTANCE_FILE);
-	    file.delete();
-	    
-	    file = new File(PATH_OUTPUT_FILES+RETRIEVAL_ACCEPTANCE_FILE);
-	    file.delete();
-	    
-	    file = new File(PATH_OUTPUT_FILES+FAILURE_FILE);
-	    file.delete();	    
-	}
+
 	
 }
