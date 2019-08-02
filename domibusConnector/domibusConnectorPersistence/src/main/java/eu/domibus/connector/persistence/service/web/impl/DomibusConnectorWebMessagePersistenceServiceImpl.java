@@ -39,7 +39,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
     
 	@Override
 	public LinkedList<WebMessage> getAllMessages() {
-		Iterable<PDomibusConnectorMessage> allMessages = messageDao.findAll();
+		Iterable<PDomibusConnectorMessage> allMessages = messageDao.findAllByOrderByCreatedDesc();
 		return mapDbMessagesToWebMessages(allMessages);
 	}
 	

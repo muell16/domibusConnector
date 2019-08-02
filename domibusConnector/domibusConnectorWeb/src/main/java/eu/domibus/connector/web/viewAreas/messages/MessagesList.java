@@ -177,13 +177,18 @@ public class MessagesList extends VerticalLayout {
 			actionFilterText.clear();
 			backendClientFilterText.clear();});
 		
+		Button refreshListBtn = new Button(new Icon(VaadinIcon.REFRESH));
+		refreshListBtn.setText("RefreshList");
+		refreshListBtn.addClickListener(e -> {reloadList();});
+		
 		HorizontalLayout filtering = new HorizontalLayout(
 				fromPartyIdFilterText,
 				toPartyIdFilterText,
 				serviceFilterText,
 				actionFilterText,
 				backendClientFilterText,
-				clearAllFilterTextBtn
+				clearAllFilterTextBtn,
+				refreshListBtn
 			    );
 		filtering.setWidth("100vw");
 		

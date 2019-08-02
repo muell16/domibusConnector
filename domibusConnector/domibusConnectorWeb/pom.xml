@@ -21,6 +21,12 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>xalan</groupId>
+            		<artifactId>xalan</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,12 +95,12 @@
 
 
         <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar is not in public maven repo -->
-         <!-- <dependency>
+         <dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc7</artifactId>
 			<version>12.1.0.1</version>
             <scope>provided</scope>
-		</dependency> -->
+		</dependency>
 
 
         <!-- used to colorize output on windows systems -->

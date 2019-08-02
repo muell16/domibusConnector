@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConnectorMessage, Long> {
+	
+	public List<PDomibusConnectorMessage> findAllByOrderByCreatedDesc();
 
     public PDomibusConnectorMessage findOneByBackendMessageId(String backendId);
     
