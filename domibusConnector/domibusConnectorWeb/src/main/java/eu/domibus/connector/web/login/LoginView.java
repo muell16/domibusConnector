@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -24,11 +25,16 @@ import eu.domibus.connector.web.view.DomibusConnectorAdminHeader;
 import eu.domibus.connector.web.view.MainView;
 
 @HtmlImport("styles/shared-styles.html")
-@Route("admin/login/")
+@Route("login/")
 @PageTitle("domibusConnector - Login")
 public class LoginView extends VerticalLayout{
 	
+	private LoginOverlay login = new LoginOverlay();
+	
 	public LoginView(@Autowired WebUserService userService, @Autowired DomibusConnectorAdminHeader header) {
+		
+		login.setAction("login"); // 
+        getElement().appendChild(login.getElement()); 
 		
 		add(header);
 		

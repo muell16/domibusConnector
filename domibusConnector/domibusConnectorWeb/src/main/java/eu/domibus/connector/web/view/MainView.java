@@ -41,7 +41,7 @@ public class MainView extends VerticalLayout
 implements BeforeEnterObserver 
 {
 
-	public static final String MAIN_VIEW_ROUTE = "admin/";
+	public static final String MAIN_VIEW_ROUTE = "";
 
 	Map<Tab, Component> tabsToPages = new HashMap<>();
 	Tabs TopMenu = new Tabs();
@@ -119,7 +119,7 @@ implements BeforeEnterObserver
     	}
     	
     	if (!authenticated) {
-           event.rerouteTo("admin/login/");
+           event.rerouteTo("login/");
         }
     	
      }
