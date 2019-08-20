@@ -1,12 +1,17 @@
 package eu.domibus.connector.web.viewAreas.messages;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.spring.annotation.UIScope;
 
@@ -29,6 +34,18 @@ public class MessageDetails extends VerticalLayout {
 	public MessageDetails(@Autowired WebMessageService messageService) {
 
 		this.messageService = messageService;
+		
+		Button refreshBtn = new Button(new Icon(VaadinIcon.REFRESH));
+		refreshBtn.setText("Refresh");
+		refreshBtn.addClickListener(e -> {
+			if(!StringUtils.isEmpty(messageForm.getConnectorMessageId()))loadMessageDetails(messageForm.getConnectorMessageId());
+			});
+		
+		HorizontalLayout buttons = new HorizontalLayout(
+				refreshBtn
+			    );
+		buttons.setWidth("100vw");
+		add(buttons);
 
 		VerticalLayout messageDetailsArea = new VerticalLayout(); 
 		messageForm.getStyle().set("margin-top","25px");

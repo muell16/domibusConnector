@@ -70,8 +70,10 @@ public class ConnectorMessageForm extends FormLayout {
 		this.removeAll();
 		fillForm();
 		binder.setBean(message);
-		
-		
+	}
+	
+	public String getConnectorMessageId() {
+		return this.connectorMessageId.getValue();
 	}
 
 }
