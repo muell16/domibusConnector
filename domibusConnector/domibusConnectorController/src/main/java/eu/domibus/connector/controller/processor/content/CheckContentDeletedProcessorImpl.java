@@ -83,7 +83,7 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
                         try {
                             bigDataPersistenceService.deleteDomibusConnectorBigDataReference(ref);
                         } catch (LargeFileDeletionException delException) {
-                            LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [%s] in the timer job. The data must be manually deleted by the administrator!", ref);
+                            LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
                             LOGGER.error("Was unable to delete due exception: ", delException);
                         }
                     });
