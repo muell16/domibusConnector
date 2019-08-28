@@ -39,6 +39,8 @@ public class GatewayConfiguration extends VerticalLayout{
 		
 		add(util.createConfigurationItemTextFieldDiv(GatewayConfigurationLabels.gatewayKeyStorePasswordLabels, gatewayKeyStorePasswordField));
 		
+		add(util.createKeystoreInformationGrid(gatewayKeyStorePathField, gatewayKeyStorePasswordField));
+		
 		add(util.createConfigurationItemTextFieldDiv(GatewayConfigurationLabels.gatewayKeyAliasLabels, gatewayKeyAliasField));
 		
 		add(util.createConfigurationItemTextFieldDiv(GatewayConfigurationLabels.gatewayKeyPasswordLabels, gatewayKeyPasswordField));
@@ -46,6 +48,8 @@ public class GatewayConfiguration extends VerticalLayout{
 		add(util.createConfigurationItemTextFieldDiv(GatewayConfigurationLabels.gatewayTrustStorePathLabels, gatewayTruststorePathField));
 		
 		add(util.createConfigurationItemTextFieldDiv(GatewayConfigurationLabels.gatewayTrustStorePasswordLabels, gatewayTruststorePasswordField));
+		
+		add(util.createKeystoreInformationGrid(gatewayTruststorePathField, gatewayTruststorePasswordField));
 		
 		add(util.createConfigurationItemTextFieldDiv(GatewayConfigurationLabels.gatewayEncryptAliasLabels, gatewayEncryptAliasField));
 	}

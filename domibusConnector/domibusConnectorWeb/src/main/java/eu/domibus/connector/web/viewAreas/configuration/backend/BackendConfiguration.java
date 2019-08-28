@@ -80,6 +80,8 @@ public class BackendConfiguration  extends VerticalLayout {
 		
 		add(util.createConfigurationItemTextFieldDiv(BackendConfigurationLabels.backendKeyStorePasswordLabels, backendKeyStorePasswordField));
 		
+		add(util.createKeystoreInformationGrid(backendKeyStorePathField, backendKeyStorePasswordField));
+		
 		add(util.createConfigurationItemTextFieldDiv(BackendConfigurationLabels.backendKeyAliasLabels, backendKeyAliasField));
 		
 		add(util.createConfigurationItemTextFieldDiv(BackendConfigurationLabels.backendKeyPasswordLabels, backendKeyPasswordField));
@@ -87,6 +89,8 @@ public class BackendConfiguration  extends VerticalLayout {
 		add(util.createConfigurationItemTextFieldDiv(BackendConfigurationLabels.backendTrustStorePathLabels, backendTruststorePathField));
 		
 		add(util.createConfigurationItemTextFieldDiv(BackendConfigurationLabels.backendTrustStorePasswordLabels, backendTruststorePasswordField));
+		
+		add(util.createKeystoreInformationGrid(backendTruststorePathField, backendTruststorePasswordField));
 		
 		add(new ConfigurationItemChapterDiv("Configured backend(s):"));
 		

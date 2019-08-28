@@ -1,6 +1,7 @@
 package eu.domibus.connector.web.viewAreas.configuration.util;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +10,16 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.enums.UserRole;
+import eu.domibus.connector.web.service.WebKeystoreService;
+import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 
 @Component
 public class ConfigurationUtil {
@@ -27,6 +32,9 @@ public class ConfigurationUtil {
 	
 	@Autowired
 	ConfigurationProperties configurationProperties;
+	
+	@Autowired 
+	WebKeystoreService keystoreService;
 
 	
 	public String getPropertyValue(String propertyName) {
@@ -36,6 +44,35 @@ public class ConfigurationUtil {
 			return "";
 		}
 		return propertyValue;
+	}
+	
+	public Grid<CertificateInfo> createKeystoreInformationGrid(TextField keyStorePathField, TextField keyStorePasswordField) {
+		if(keyStorePathField.getValue()!=null && !keyStorePasswordField.getValue().isEmpty()) {
+			List<CertificateInfo> evidencesKeyStore = keystoreService.loadStoreCertificatesInformation(keyStorePathField.getValue(), keyStorePasswordField.getValue());
+			Grid<CertificateInfo> grid = new Grid<>();
+			
+			grid.setItems(evidencesKeyStore);
+			
+			grid.addColumn(CertificateInfo::getAlias).setHeader("Alias").setWidth("200px");
+			grid.addColumn(CertificateInfo::getSubject).setHeader("Subject").setWidth("300px");
+			grid.addColumn(CertificateInfo::getIssuer).setHeader("Issuer").setWidth("300px");
+			grid.addColumn(CertificateInfo::getNotBefore).setHeader("Valid from").setWidth("300px");
+			grid.addColumn(CertificateInfo::getNotAfter).setHeader("Valid until").setWidth("300px");
+			grid.addColumn(CertificateInfo::getAlgorithm).setHeader("Algorithm").setWidth("200px");
+			grid.addColumn(CertificateInfo::getType).setHeader("Type").setWidth("200px");
+			
+			grid.setWidth("1800px");
+//			grid.setHeight("500px");
+			grid.setMultiSort(true);
+			
+			for(Column<CertificateInfo> col : grid.getColumns()) {
+				col.setSortable(true);
+				col.setResizable(true);
+			}
+			return grid;
+		}
+		
+		return null;
 	}
 	
 	public Div createConfigurationItemDiv(ConfigurationLabel labels, com.vaadin.flow.component.Component c, Object initialValue) {
