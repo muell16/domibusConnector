@@ -580,6 +580,34 @@
             </build>
         </profile>
         <profile>
+            <id>buildserver</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>jqassistant-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>scan</goal>
+                                    <goal>analyze</goal>
+                                </goals>
+                                <configuration>
+                                    <warnOnSeverity>MINOR</warnOnSeverity>
+                                    <failOnSeverity>MAJOR</failOnSeverity>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>deploy-ecodex</id>
             <distributionManagement>
                 <repository>
@@ -842,10 +870,15 @@
                     <artifactId>docker-maven-plugin</artifactId>
                     <version>0.27.2</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.buschmais.jqassistant</groupId>
+                    <artifactId>jqassistant-maven-plugin</artifactId>
+                    <version>1.7.0-MS3</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
-        <plugins>
+	<plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jgitflow-plugin</artifactId>
