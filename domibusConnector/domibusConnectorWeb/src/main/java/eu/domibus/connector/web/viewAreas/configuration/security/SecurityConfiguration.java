@@ -100,6 +100,8 @@ public class SecurityConfiguration extends VerticalLayout{
 		
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyStorePasswordLabels, keyStorePasswordField));
 		
+		add(util.createKeystoreInformationGrid(keyStorePathField, keyStorePasswordField));
+		
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyAliasLabels, keyAliasField));
 		
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityKeyPasswordLabels, keyPasswordField));
@@ -107,6 +109,8 @@ public class SecurityConfiguration extends VerticalLayout{
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityTrustStorePathLabels, truststorePathField));
 		
 		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.securityTrustStorePasswordLabels, truststorePasswordField));
+		
+		add(util.createKeystoreInformationGrid(truststorePathField, truststorePasswordField));
 	}
 
 }
