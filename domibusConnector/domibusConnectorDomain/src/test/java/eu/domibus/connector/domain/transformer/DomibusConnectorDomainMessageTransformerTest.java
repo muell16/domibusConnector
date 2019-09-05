@@ -14,14 +14,8 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.CannotBeMappedToTransitionException;
 import static eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.transformDomainToTransition;
-import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageAttachmentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageConfirmationType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDetailsType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageDocumentType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageErrorType;
-import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+
+import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +51,8 @@ public class DomibusConnectorDomainMessageTransformerTest {
         assertThat(messageType.getMessageAttachments()).as("must have 1 message attachment").hasSize(1);
         assertThat(messageType.getMessageErrors()).as("must have 1 message error!").hasSize(1);
     }
+
+
     
     @Test(expected=CannotBeMappedToTransitionException.class)
     public void testTransformDomainToTransition_finalRecipientIsNull_shouldThrowException() {
@@ -233,7 +229,30 @@ public class DomibusConnectorDomainMessageTransformerTest {
         assertThat(domainMessage.getMessageErrors()).as("message errors contains 1!").hasSize(1);        
         assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);                
     }
-    
+
+    @Test
+    public void testTransformTransitionToDomain_evidenceTriggerMessage() {
+        DomibusConnectorMessageType msg = new DomibusConnectorMessageType();
+        DomibusConnectorMessageDetailsType details = new DomibusConnectorMessageDetailsType();
+        details.setRefToMessageId("refmsg1");
+
+        //TODO: make it possible that the following empty action, service, parties are not required for evidence
+        //trigger message! if refToMessageId is set!
+        details.setAction(new DomibusConnectorActionType());
+        details.setService(new DomibusConnectorServiceType());
+        details.setFromParty(new DomibusConnectorPartyType());
+        details.setToParty(new DomibusConnectorPartyType());
+
+        msg.setMessageDetails(details);
+
+        DomibusConnectorMessageConfirmationType confirmation = new DomibusConnectorMessageConfirmationType();
+        confirmation.setConfirmationType(DomibusConnectorConfirmationType.RELAY_REMMD_FAILURE);
+
+        msg.getMessageConfirmations().add(confirmation);
+
+        DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(msg);
+    }
+
     @Test
     public void testTransformTransitionToDomain_withMessageContentNull() {
         DomibusConnectorMessageType transitionMessage = TransitionCreator.createMessage();
