@@ -131,5 +131,6 @@
         <renameColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" oldColumnName="ERROR_TEXT_CLOB" columnDataType="java.sql.Types.CLOB" newColumnName="DETAILED_TEXT" />
     </changeSet>
 
+    <include file="upgrade-to-415.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
