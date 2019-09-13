@@ -20,8 +20,12 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="createNewConstraints" author="domibusConnector">
+    <changeSet id="createNewPrimaryKey" author="domibusConnector" >
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="ID" />
+    </changeSet>
+
+    <!-- UNIQUE does not work on mysql, because key size is too big (2048bytes of column PROPERTY_NAME is too big) -->
+    <changeSet id="createNewConstraints" author="domibusConnector" dbms="h2,postgresql,oracle" >
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="PROPERTY_NAME"
                              constraintName="unique_property_name_at_domconprop"/>
     </changeSet>
