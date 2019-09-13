@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.1.5-SNAPSHOT</version>
+        <version>4.1.5</version>
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
-            <version>4.1.5-SNAPSHOT</version>
+            <version>4.1.5</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -180,7 +180,7 @@
         <dependency>
             <groupId>eu.domibus.connector.test</groupId>
             <artifactId>domibusConnectorTestLogging</artifactId>
-            <version>4.1.5-SNAPSHOT</version>
+            <version>4.1.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
