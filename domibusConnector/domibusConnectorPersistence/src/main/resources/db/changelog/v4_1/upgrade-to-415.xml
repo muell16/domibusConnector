@@ -20,10 +20,6 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="dropPrimaryKey" author="domibusConnector">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_PROPERTY"/>
-    </changeSet>
-
     <changeSet id="createNewConstraints" author="domibusConnector">
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="ID" />
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="PROPERTY_NAME"
