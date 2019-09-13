@@ -5,7 +5,7 @@
     <parent>
         <artifactId>domibusConnectorLauncher</artifactId>
         <groupId>eu.domibus.connector</groupId>
-        <version>git add -u</version>
+        <version>4.1.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

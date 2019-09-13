@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>git add -u</version>
+        <version>4.1.5-SNAPSHOT</version>
     </parent>
     <name>${project.artifactId}</name>
     <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>
