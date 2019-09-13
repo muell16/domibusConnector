@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorTest</artifactId>
-        <version>4.1.4</version>
+        <version>git add -u</version>
     </parent>
     <artifactId>domibusConnectorDatabaseInitializer</artifactId>
     <name>${project.artifactId}</name>

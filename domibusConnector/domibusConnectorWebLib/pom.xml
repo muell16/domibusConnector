@@ -3,7 +3,7 @@
   <parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.1.4</version>
+    <version>git add -u</version>
   </parent>
   <artifactId>domibusConnectorWebLib</artifactId>
   
