@@ -9,9 +9,11 @@
         <module>domibusConnectorEvidencesToolkit</module>
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
-        <module>domibusConnectorMonitoring</module>
+
+
+
         <module>domibusConnectorPersistence</module>
-        <module>domibusConnectorDomain</module>
+
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
@@ -26,8 +28,8 @@
         <module>domibusConnectorLinkCommon</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
-        <module>domibusConnectorConfiguration</module>
         <module>domibusConnectorLauncher</module>
+
     </modules>
     <!-- Shared version number properties -->
     <properties>
