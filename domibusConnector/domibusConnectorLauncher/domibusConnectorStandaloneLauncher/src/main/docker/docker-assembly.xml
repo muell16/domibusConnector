@@ -16,6 +16,12 @@
             <fileMode>0777</fileMode>
             <lineEnding>unix</lineEnding>
         </file>
+        <file>
+            <source>${project.basedir}/src/main/bash/wait-for-it.sh</source>
+            <!--<outputDirectory>/</outputDirectory>-->
+            <fileMode>0777</fileMode>
+            <lineEnding>unix</lineEnding>
+        </file>
     </files>
 
     <fileSets>
