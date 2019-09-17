@@ -63,13 +63,7 @@
 			<destName>domibusConnector-${project.version}.war</destName>
 		</file> -->
 
-		<file>
-			<source>${project.basedir}/../domibusConnectorTest/domibusConnectorDatabaseInitializer/target/domibusConnectorDatabaseInitializer-${project.version}.jar
-			</source>
-			<outputDirectory>/documentation/databaseInitializer
-			</outputDirectory>
-			<destName>domibusConnectorDatabaseInitializer.jar</destName>
-		</file>
+
 
 		<file>
 			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties

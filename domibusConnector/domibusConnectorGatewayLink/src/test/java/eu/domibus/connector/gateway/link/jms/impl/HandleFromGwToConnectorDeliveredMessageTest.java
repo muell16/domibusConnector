@@ -2,8 +2,9 @@ package eu.domibus.connector.gateway.link.jms.impl;
 
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+
 import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorReceiveResponseService;
+import eu.domibus.connector.testdata.TransitionCreator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

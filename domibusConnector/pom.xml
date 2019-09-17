@@ -9,13 +9,15 @@
         <module>domibusConnectorEvidencesToolkit</module>
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
-        <module>domibusConnectorMonitoring</module>
+
+
+
         <module>domibusConnectorPersistence</module>
-        <module>domibusConnectorDomain</module>
+
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
-        <module>domibusConnectorTest</module>
+        <module>domibusConnectorTestData</module>
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
@@ -26,8 +28,8 @@
         <module>domibusConnectorLinkCommon</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
-        <module>domibusConnectorConfiguration</module>
         <module>domibusConnectorLauncher</module>
+
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -470,6 +472,12 @@
                 <version>1.4.01</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>5.2</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
@@ -738,11 +746,38 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>report</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.ferstl</groupId>
+                        <artifactId>depgraph-maven-plugin</artifactId>
+                        <configuration>
+                            <graphFormat>puml</graphFormat>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>pre-site</phase>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
     
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.github.ferstl</groupId>
+                    <artifactId>depgraph-maven-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
                 <plugin>
                     <groupId>com.vaadin</groupId>
                     <artifactId>vaadin-maven-plugin</artifactId>
