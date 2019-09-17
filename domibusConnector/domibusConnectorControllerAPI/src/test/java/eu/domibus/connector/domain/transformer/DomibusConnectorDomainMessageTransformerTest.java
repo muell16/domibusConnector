@@ -16,11 +16,13 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import static eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.transformDomainToTransition;
 
 import eu.domibus.connector.domain.transition.*;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import javax.activation.DataHandler;
+
+import eu.domibus.connector.testdata.TransitionCreator;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
