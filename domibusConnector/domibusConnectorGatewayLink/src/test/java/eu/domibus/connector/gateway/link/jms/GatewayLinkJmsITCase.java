@@ -4,9 +4,9 @@ import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.gateway.link.StartupGwLinkOnly;
 import eu.domibus.connector.gateway.link.jms.helper.TestGatewayToDeliveryServiceClient;
+import eu.domibus.connector.testdata.TransitionCreator;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 

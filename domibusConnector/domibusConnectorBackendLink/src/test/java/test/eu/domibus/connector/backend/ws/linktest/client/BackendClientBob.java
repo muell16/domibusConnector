@@ -3,7 +3,7 @@ package test.eu.domibus.connector.backend.ws.linktest.client;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import java.net.MalformedURLException;
 import org.springframework.context.ApplicationContext;
