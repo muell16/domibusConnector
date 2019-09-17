@@ -16,6 +16,10 @@
         <renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTY" newTableName="DOMIBUS_CONNECTOR_PROPERTY" />
     </changeSet>
 
+    <changeSet id="dropPrimaryKey" author="domibusConnector">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_PROPERTY"/>
+    </changeSet>
+
     <changeSet author="domibusConnector" id="changelog_4.1_rename_property_columns">
         <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="KEY" newColumnName="PROPERTY_NAME" columnDataType="java.sql.Types.VARCHAR(2048)" />
         <renameColumn tableName="DOMIBUS_CONNECTOR_PROPERTY" oldColumnName="VALUE" newColumnName="PROPERTY_VALUE" columnDataType="java.sql.Types.VARCHAR(2048)" />
@@ -131,5 +135,6 @@
         <renameColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" oldColumnName="ERROR_TEXT_CLOB" columnDataType="java.sql.Types.CLOB" newColumnName="DETAILED_TEXT" />
     </changeSet>
 
+    <include file="upgrade-to-415.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
