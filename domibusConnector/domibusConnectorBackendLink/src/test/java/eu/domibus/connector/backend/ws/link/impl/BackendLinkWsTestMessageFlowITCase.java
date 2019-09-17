@@ -13,7 +13,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import org.junit.*;

@@ -190,6 +190,15 @@ public class TransitionCreator {
         return party;
     }
 
+    public static DomibusConnectorMessageResponseType createResponse() {
+        DomibusConnectorMessageResponseType responseType = new DomibusConnectorMessageResponseType();
+        responseType.setAssignedMessageId("EBMSID00");
+        responseType.setResult(true);
+        return responseType;
+
+
+    }
+
 
     
     private static class MyDataSource implements DataSource {
