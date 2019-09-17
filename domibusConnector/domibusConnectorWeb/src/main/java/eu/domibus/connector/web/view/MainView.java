@@ -32,6 +32,7 @@ import eu.domibus.connector.web.viewAreas.configuration.Configuration;
 import eu.domibus.connector.web.viewAreas.info.Info;
 import eu.domibus.connector.web.viewAreas.messages.Messages;
 import eu.domibus.connector.web.viewAreas.pmodes.PModes;
+import eu.domibus.connector.web.viewAreas.testing.ConnectorTests;
 import eu.domibus.connector.web.viewAreas.users.Users;
 
 @HtmlImport("styles/shared-styles.html")
@@ -50,7 +51,7 @@ implements BeforeEnterObserver
 	
     public MainView(@Autowired DomibusConnectorAdminHeader header, @Autowired UserInfo userInfo, @Autowired Messages messages, @Autowired PModes pmodes, 
     		@Autowired Configuration configuration, @Autowired Users users,
-    		@Autowired Info info) {
+    		@Autowired Info info, @Autowired ConnectorTests connectorTests) {
     	
     	this.userInfo = userInfo;
         
@@ -70,6 +71,10 @@ implements BeforeEnterObserver
 		areaUsers.add(users);
 		areaUsers.setVisible(false);
 		
+		Div areaTests = new Div();
+		areaTests.add(connectorTests);
+		areaTests.setVisible(false);
+		
 		Div areaInfo = new Div();
 		areaInfo.add(info);
 		areaInfo.setVisible(true);
@@ -78,16 +83,18 @@ implements BeforeEnterObserver
 		
 		createTab(areaPModes, "PModes", new Icon(VaadinIcon.FILE_CODE), false);
 		
-		createTab(areaConfiguration, "Configuration", new Icon(VaadinIcon.FILE_PROCESS), false);
+		createTab(areaConfiguration, "Configuration", new Icon(VaadinIcon.COG_O), false);
 		
 		createTab(areaUsers, "Users", new Icon(VaadinIcon.USERS), false);
+		
+		createTab(areaTests, "Connector Tests", new Icon(VaadinIcon.CONNECT_O), false);
 		
 		createTab(areaInfo, "Info", new Icon(VaadinIcon.INFO_CIRCLE_O), true);
 		
 		
-		Div pages = new Div(areaMessages, areaPModes, areaConfiguration, areaUsers, areaInfo);
+		Div pages = new Div(areaMessages, areaPModes, areaConfiguration, areaUsers, areaTests, areaInfo);
 		
-		Set<Component> pagesShown = Stream.of(areaMessages, areaPModes, areaConfiguration, areaUsers, areaInfo)
+		Set<Component> pagesShown = Stream.of(areaMessages, areaPModes, areaConfiguration, areaUsers, areaTests, areaInfo)
 		        .collect(Collectors.toSet());
 		
 		TopMenu.addSelectedChangeListener(event -> {
