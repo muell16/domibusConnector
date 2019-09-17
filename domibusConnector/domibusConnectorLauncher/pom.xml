@@ -11,7 +11,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorStandaloneLauncher</module>
-        <module>domibusConnectorWarLauncher</module>
     </modules>
 
     <groupId>eu.domibus.connector</groupId>
