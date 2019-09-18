@@ -10,8 +10,6 @@
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
 
-
-
         <module>domibusConnectorPersistence</module>
         <!--<module>domibusConnectorDomain</module>-->
         <module>domibusConnectorGatewayLink</module>
@@ -28,7 +26,7 @@
         <module>domibusConnectorLinkCommon</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
-        <module>domibusConnectorConfiguration</module>
+
         <module>domibusConnectorLauncher</module>
     </modules>
     <!-- Shared version number properties -->
@@ -236,7 +234,10 @@
                 <version>1.57</version>
                 <type>jar</type>
             </dependency>
-                       
+
+
+
+
             <!-- jaxb -->
             <dependency>
                 <artifactId>jaxb-impl</artifactId>
@@ -356,7 +357,14 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>1.3.3</version>
             </dependency>
-            
+
+
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>5.2</version>
+            </dependency>
+
             <!-- Apache CXF dependencies -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -470,12 +478,6 @@
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>5.2</version>
             </dependency>
 
 
