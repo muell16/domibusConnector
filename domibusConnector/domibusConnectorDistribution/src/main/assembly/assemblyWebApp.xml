@@ -1,88 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-	<id>WebConnectorWithDocumentation</id>
-	<formats>
-		<format>zip</format>
-		<format>dir</format>
-	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>
-	<fileSets>
+    <id>WebConnectorWithDocumentation</id>
+    <formats>
+        <format>zip</format>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
 
-		
 
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
-			</directory>
-			<outputDirectory>/documentation/database-scripts
-			</outputDirectory>
-			<includes>
-				<include>*/*.*</include>
-			</includes>
-		</fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
+            </directory>
+            <outputDirectory>/documentation/database-scripts
+            </outputDirectory>
+            <includes>
+                <include>*/*.*</include>
+            </includes>
+        </fileSet>
 
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
-			<outputDirectory>documentation/</outputDirectory>
-			<includes>
-				<include>domibusConnector_AdministrationGuide.pdf</include>
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
+            <outputDirectory>documentation/</outputDirectory>
+            <includes>
+                <include>domibusConnector_AdministrationGuide.pdf</include>
                 <include>domibusConnector_InstallationGuide.pdf</include>
                 <include>e-Codex_key_trust_stores.pdf</include>
             </includes>
-		</fileSet>
-		
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>
-			<outputDirectory>documentation/</outputDirectory>
-			<includes>
-				<include>architecture.zip</include>
-			</includes>
-		</fileSet>
+        </fileSet>
 
-	</fileSets>
-	<files>
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>
+            <outputDirectory>documentation/</outputDirectory>
+            <includes>
+                <include>architecture.zip</include>
+            </includes>
+        </fileSet>
 
-		<!--<file>-->
-			<!--<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war-->
-			<!--</source>-->
-			<!--<outputDirectory>/webapp</outputDirectory>-->
-			<!--<destName>domibusConnectorNoUi.war</destName>-->
-		<!--</file>-->
+    </fileSets>
+    <files>
 
-		<file>
-			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
-			</source>
-			<outputDirectory>/webapp</outputDirectory>
-			<destName>domibusConnector.war</destName>
-		</file>
-		
-		<!-- <file>
-			<source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
-			</source>
-			
-			<outputDirectory>${project.basedir}/target</outputDirectory>
-			<destName>domibusConnector-${project.version}.war</destName>
-		</file> -->
 
-		<file>
-			<source>${project.basedir}/../domibusConnectorTest/domibusConnectorDatabaseInitializer/target/domibusConnectorDatabaseInitializer-${project.version}.jar
-			</source>
-			<outputDirectory>/documentation/databaseInitializer
-			</outputDirectory>
-			<destName>domibusConnectorDatabaseInitializer.jar</destName>
-		</file>
+        <file>
+            <source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
+            </source>
+            <outputDirectory>/webapp</outputDirectory>
+            <destName>domibusConnector.war</destName>
+        </file>
 
-		<file>
-			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties
-			</source>
-			<outputDirectory>/documentation/config
-			</outputDirectory>
-		</file>
-		
-		<file>
-			<source>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml</source>
-			<outputDirectory>/documentation/config
-			</outputDirectory>
-		</file>
 
-	</files>
+        <file>
+            <source>
+                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties
+            </source>
+            <outputDirectory>/documentation/config
+            </outputDirectory>
+        </file>
+
+        <file>
+            <source>
+                ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml
+            </source>
+            <outputDirectory>/documentation/config
+            </outputDirectory>
+        </file>
+
+    </files>
 </assembly>

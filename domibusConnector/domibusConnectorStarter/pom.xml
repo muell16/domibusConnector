@@ -42,10 +42,7 @@
             <artifactId>domibusConnectorBackendLink</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorPersistence</artifactId>

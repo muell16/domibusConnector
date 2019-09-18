@@ -2,8 +2,8 @@ package eu.domibus.connector.gateway.link.ws;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import eu.domibus.connector.gateway.link.StartupGwLinkOnly;
+import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.junit.Before;

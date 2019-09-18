@@ -4,7 +4,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.MDC;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 public class SetMessageOnLoggingContext {
 

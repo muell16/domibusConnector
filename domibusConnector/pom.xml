@@ -11,11 +11,11 @@
         <module>domibusConnectorController</module>
         <module>domibusConnectorMonitoring</module>
         <module>domibusConnectorPersistence</module>
-        <module>domibusConnectorDomain</module>
+        <!--<module>domibusConnectorDomain</module>-->
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
-        <module>domibusConnectorTest</module>
+        <!--<module>domibusConnectorTest</module>-->
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
@@ -24,9 +24,12 @@
         <module>domibusConnectorWeb</module>
         <module>domibusConnectorControllerLIB</module>
         <module>domibusConnectorLinkCommon</module>
+
+        <module>domibusConnectorTestData</module>
+
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
-        <module>domibusConnectorConfiguration</module>
+
         <module>domibusConnectorLauncher</module>
     </modules>
     <!-- Shared version number properties -->
