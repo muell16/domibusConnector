@@ -33,33 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
 		//disable csrf so vaadin works!
 		http.csrf().disable();
-		
-//		http.logout()
-//			.logoutUrl("/logout")
-//			.invalidateHttpSession(true)
-//			.logoutSuccessUrl("/domibusConnector/login");
-			
-//		http.authorizeRequests()
-//            .antMatchers("/services/*").permitAll() //allow access to webservices
-//			.antMatchers("/domibusConnector/login").permitAll()
-//		
-//			.antMatchers("/VAADIN/**", "/resources/**", "/icons/**", "/images/**",
-//                    "/frontend/**",
-//                    "/styles/**",
-//                    "/favicon.ico",
-//                    "/?v-r**",
-//                    "/manifest.json",
-//                    // (development mode) webjars
-//                    "/webjars/**").permitAll()
-//			.antMatchers("/css/**", "/frontend/styles/**").permitAll()
-//			.antMatchers("/images/**").permitAll()
-//
-//                        .anyRequest().authenticated()
-//			.and()
-//				.exceptionHandling().defaultAuthenticationEntryPointFor(loginUrlauthenticationEntryPoint(), new AntPathRequestMatcher("/**"));
 	} 
 		
 	
