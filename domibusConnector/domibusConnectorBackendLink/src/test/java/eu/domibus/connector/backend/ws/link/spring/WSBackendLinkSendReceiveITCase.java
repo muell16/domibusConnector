@@ -8,21 +8,22 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.testdata.TransitionCreator;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import java.security.Security;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ import javax.security.auth.callback.CallbackHandler;
  *
  *
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @Import(WSBackendLinkSendReceiveITCase.TestConfiguration.class)
 @SpringBootTest(properties= {"server.port=0"}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"backendlink-ws", "WSBackendLinkSendReceiveITCase"})
@@ -107,7 +108,7 @@ public class WSBackendLinkSendReceiveITCase {
         
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         Security.setProperty("crypto.policy", "unlimited");
     }
@@ -127,12 +128,8 @@ public class WSBackendLinkSendReceiveITCase {
     
     @Autowired
     WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
-        
-    @Before
-    public void setUp() {
-    }
-    
-    
+
+
     /**
      * builds a test client via new spring ctx and calls the server
      */

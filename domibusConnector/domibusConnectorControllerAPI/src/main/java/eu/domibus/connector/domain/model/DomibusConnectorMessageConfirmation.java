@@ -4,7 +4,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import java.io.Serializable;
 import org.springframework.core.style.ToStringCreator;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * This is an object that internally represents the evidences for a message. It

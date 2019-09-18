@@ -4,7 +4,7 @@ package eu.domibus.connector.domain.model.helper;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * This class contains static helper methods

@@ -3,8 +3,8 @@ package test.eu.domibus.connector.backend.ws.linktest.client;
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
+import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import java.io.IOException;
 import java.io.InputStream;

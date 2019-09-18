@@ -192,15 +192,12 @@ public class TransitionCreator {
 
     public static DomibusConnectorMessageResponseType createResponse() {
         DomibusConnectorMessageResponseType responseType = new DomibusConnectorMessageResponseType();
-        responseType.setAssignedMessageId("EBMSID00");
         responseType.setResult(true);
+        responseType.setAssignedMessageId("EBMS1234");
         return responseType;
-
-
     }
 
 
-    
     private static class MyDataSource implements DataSource {
 
         private final String data;

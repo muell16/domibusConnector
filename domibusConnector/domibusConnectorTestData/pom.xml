@@ -3,12 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.domibus.connector</groupId>
-        <artifactId>domibusConnectorTest</artifactId>
+        <artifactId>domibusConnector</artifactId>
         <version>4.2.0-SNAPSHOT</version>
     </parent>
+    <name>${project.artifactId}</name>
+
     <artifactId>domibusConnectorTestData</artifactId>
-    <packaging>jar</packaging>
-    <name>domibusConnectorTestData</name>
+
     <description>This module contains testData for Tests. To make the TestData reusable through the different modules of the project.</description>
 
     <dependencies>
@@ -90,5 +91,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

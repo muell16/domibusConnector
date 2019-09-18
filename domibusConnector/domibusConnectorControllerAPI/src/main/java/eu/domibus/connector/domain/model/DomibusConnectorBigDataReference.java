@@ -2,10 +2,12 @@ package eu.domibus.connector.domain.model;
 
 import java.io.*;
 import java.util.Objects;
-import javax.annotation.Nullable;
+
 import javax.activation.DataSource;
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.lang.Nullable;
 
 /**
  * Represents a reference to a storage system for big files
@@ -23,14 +25,15 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
 
     public DomibusConnectorBigDataReference() {}
 
-    public DomibusConnectorBigDataReference(@Nonnull String storageIdReference) {
+    public DomibusConnectorBigDataReference(@NotNull String storageIdReference) {
         if (storageIdReference == null) {
             throw new IllegalArgumentException("StorageIdReference cannot be null!");
         }
         this.storageIdReference = storageIdReference;
     }
 
-    public @Nullable String getStorageIdReference() {
+    public @Nullable
+    String getStorageIdReference() {
         return storageIdReference;
     }
 

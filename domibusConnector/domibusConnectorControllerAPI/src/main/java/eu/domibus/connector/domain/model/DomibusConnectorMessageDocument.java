@@ -1,7 +1,7 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.core.style.ToStringCreator;
 
 

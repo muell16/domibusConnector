@@ -16,14 +16,12 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import static eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.transformDomainToTransition;
 
 import eu.domibus.connector.domain.transition.*;
-
+import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import javax.activation.DataHandler;
-
-import eu.domibus.connector.testdata.TransitionCreator;
-import org.apache.cxf.helpers.IOUtils;
+//import org.apache.cxf.helpers.IOUtils;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Ignore;
@@ -120,7 +118,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     private void compareDataHandlerContent(DataHandler dh, String content) {       
         try {
             InputStream is = dh.getInputStream();
-            byte[] attachmentBytes = IOUtils.readBytesFromStream(is);
+            byte[] attachmentBytes = StreamUtils.copyToByteArray(is);
             assertThat(new String(attachmentBytes, "UTF-8")).isEqualTo(content);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);

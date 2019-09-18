@@ -3,7 +3,9 @@ package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import javax.annotation.Nonnull;
+
+import javax.validation.constraints.NotNull;
+
 
 /**
  * Builder for @see eu.domibus.connector.domain.model.DetachedSignatureBuilder
@@ -27,7 +29,7 @@ public final class DetachedSignatureBuilder {
      * @param signature - the signature, must be not null
      * @return the builder
      */
-    public DetachedSignatureBuilder setSignature(@Nonnull byte[] signature) {
+    public DetachedSignatureBuilder setSignature(@NotNull byte[] signature) {
         this.detachedSignature = signature;
         return this;
     }
@@ -37,7 +39,7 @@ public final class DetachedSignatureBuilder {
      * @param name - the name
      * @return the builder
      */
-    public DetachedSignatureBuilder setName(@Nonnull String name) {
+    public DetachedSignatureBuilder setName(@NotNull String name) {
         this.detachedSignatureName = name;
         return this;
     }
@@ -47,7 +49,7 @@ public final class DetachedSignatureBuilder {
      * @param mimeType - mimeType
      * @return  the builder
      */
-    public DetachedSignatureBuilder setMimeType(@Nonnull DetachedSignatureMimeType mimeType) {
+    public DetachedSignatureBuilder setMimeType(@NotNull DetachedSignatureMimeType mimeType) {
         this.mimeType = mimeType;
         return this;
     }

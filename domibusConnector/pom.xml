@@ -13,7 +13,7 @@
 
 
         <module>domibusConnectorPersistence</module>
-
+        <!--<module>domibusConnectorDomain</module>-->
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
@@ -28,8 +28,8 @@
         <module>domibusConnectorLinkCommon</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
+        <module>domibusConnectorConfiguration</module>
         <module>domibusConnectorLauncher</module>
-
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -354,7 +354,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.2.2</version>
+                <version>1.3.3</version>
             </dependency>
             
             <!-- Apache CXF dependencies -->

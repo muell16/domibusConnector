@@ -4,7 +4,9 @@ package eu.domibus.connector.domain.model.builder;
 import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-import javax.annotation.Nonnull;
+
+import javax.validation.constraints.NotNull;
+
 
 /**
  *
@@ -25,12 +27,12 @@ public final class DomibusConnectorMessageDocumentBuilder {
     private DomibusConnectorMessageDocumentBuilder() {}
 
 
-    public DomibusConnectorMessageDocumentBuilder setName(@Nonnull String documentName) {
+    public DomibusConnectorMessageDocumentBuilder setName(@NotNull String documentName) {
         this.documentName = documentName;
         return this;
     }
     
-    public DomibusConnectorMessageDocumentBuilder setContent(@Nonnull DomibusConnectorBigDataReference documentContent) {
+    public DomibusConnectorMessageDocumentBuilder setContent(@NotNull DomibusConnectorBigDataReference documentContent) {
         this.documentContent = documentContent;
         return this;
     }

@@ -2,8 +2,9 @@ package eu.domibus.connector.domain.model;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.lang.Nullable;
 
-import javax.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.Date;
 

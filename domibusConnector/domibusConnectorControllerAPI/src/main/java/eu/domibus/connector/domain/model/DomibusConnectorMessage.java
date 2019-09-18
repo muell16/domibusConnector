@@ -3,7 +3,7 @@ package eu.domibus.connector.domain.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.springframework.core.style.ToStringCreator;
 
 /**
