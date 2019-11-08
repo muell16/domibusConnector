@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
@@ -9,11 +10,13 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
+import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.EvidencePersistenceException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
 import eu.domibus.connector.persistence.service.impl.helper.MapperHelper;
+import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,10 +111,15 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         }
         DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
         String refToMessageId = message.getMessageDetails().getRefToMessageId();
-        PDomibusConnectorMessage referencedMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+//        PDomibusConnectorMessage referencedMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+//        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence();
+        DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
+        PDomibusConnectorMessage referencedMessage = messageDao.
+                findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getSource())
+                .orElse(null);
         if (referencedMessage == null) {
-            String error = String.format("No message with ebmsId or backendId with [%s] found in database! " +
-                    "Cannot persist confirmation [%s]", refToMessageId, confirmation);
+            String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
+                    "Cannot persist confirmation [%s]", refToMessageId, direction.getTarget(), confirmation);
             throw new EvidencePersistenceException(error);
 
         }

@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.*;
+import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
@@ -22,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
@@ -77,6 +79,19 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     }
 
     @Override
+    public Optional<DomibusConnectorMessage> findMessageByEbmsIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection) {
+        return messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, messageDirection.getTarget())
+               .map(this::mapMessageToDomain);
+    }
+
+
+    @Override
+    public Optional<DomibusConnectorMessage> findMessageByNationalIdAndDirection(String nationalMessageId, DomibusConnectorMessageDirection messageDirection) {
+        return messageDao.findOneByBackendMessageIdAndDirectionTarget(nationalMessageId, messageDirection.getTarget())
+                .map(this::mapMessageToDomain);
+    }
+
+    @Override
     public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
         return this.messageDao.checkMessageConfirmedOrRejected(dbMessage.getId());        
@@ -113,7 +128,9 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
         PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
 
-        dbMessage.setDirection(MessageDirectionMapper.mapFromDomainToPersistence(direction));
+        dbMessage.setDirectionSource(direction.getSource());
+        dbMessage.setDirectionTarget(direction.getTarget());
+
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
@@ -256,24 +273,28 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
 
     PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
         String refToMessageId = msg.getMessageDetails().getRefToMessageId();
-        LOGGER.trace("#findByRefToMsg: find message by reference [{}] (should be ebmsId or NationalId)");
-        return messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
+        DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
+
+//        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence(direction);
+
+        LOGGER.trace("#findByRefToMsg: find message by reference [{}] for directionTarget [{}] (should be ebmsId or NationalId)", refToMessageId, direction);
+        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAAndDirectionTarget(refToMessageId, direction.getTarget()).get();
     }
 
 
-    @Override
-    @Transactional(readOnly = true)
-    public DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
-        return mapMessageToDomain(dbMessage);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
-        return mapMessageToDomain(dbMessage);
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
+//        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
+//        return mapMessageToDomain(dbMessage);
+//    }
+//
+//    @Override
+//    @Transactional(readOnly = true)
+//    public DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
+//        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
+//        return mapMessageToDomain(dbMessage);
+//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -383,7 +404,11 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         details.setConnectorBackendClientName(dbMessage.getBackendName());
         details.setDeliveredToBackend(dbMessage.getDeliveredToNationalSystem());
         details.setDeliveredToGateway(dbMessage.getDeliveredToGateway());
-        details.setDirection(MessageDirectionMapper.mapFromPersistenceToDomain(dbMessage.getDirection()));
+
+        details.setDirection(MessageDirectionMapper.mapFromPersistenceToDomain(dbMessage.getDirectionSource(), dbMessage.getDirectionTarget()));
+
+
+
         details.setFailed(dbMessage.getRejected());
 
         //mapMessageInfoIntoMessageDetails(dbMessage, details);

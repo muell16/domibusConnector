@@ -2,32 +2,29 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.test.util.MockedCreateConfirmationMessageBuilderFactoryImplProvider;
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 public class BackendToGatewayConfirmationProcessorTest {
@@ -48,7 +45,7 @@ public class BackendToGatewayConfirmationProcessorTest {
 
     private List<DomibusConnectorMessage> toGwSubmittedMessages;
 
-    @Before
+    @BeforeEach
     public void setUp() throws DomibusConnectorGatewaySubmissionException, DomibusConnectorEvidencesToolkitException {
 
         mockingProvider = new MockedCreateConfirmationMessageBuilderFactoryImplProvider();
@@ -77,24 +74,31 @@ public class BackendToGatewayConfirmationProcessorTest {
 
     }
 
-    @Test(expected = DomibusConnectorMessageException.class )
+    @Test
     public void testProcessMessage_gwSubmissionFails_shouldThrowException() throws DomibusConnectorEvidencesToolkitException, DomibusConnectorGatewaySubmissionException {
-        String connectorMessageId = "msg123456";
-        String ebmsId = "ebms1234";
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
-        epoMessage.setConnectorMessageId(connectorMessageId);
-        epoMessage.getMessageDetails().setEbmsMessageId(ebmsId);
+        Assertions.assertThrows(DomibusConnectorMessageException.class, () -> {
+            String connectorMessageId = "msg123456";
+            String ebmsId = "ebms1234";
+            DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+            epoMessage.setConnectorMessageId(connectorMessageId);
+            epoMessage.getMessageDetails().setEbmsMessageId(ebmsId);
+            //incoming epo message
+            epoMessage.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 
-        LOGGER.debug("LOG MESSAGE: [{}]", epoMessage);
-        Mockito.when(messagePersistenceService.findMessageByEbmsId(eq(ebmsId))).thenReturn(epoMessage);
+            LOGGER.debug("LOG MESSAGE: [{}]", epoMessage);
+            Mockito.when(messagePersistenceService.findMessageByEbmsIdAndDirection(eq(ebmsId), eq(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)))
+                    .thenReturn(Optional.of(epoMessage));
 
-        DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createDeliveryEvidenceForMessage(epoMessage);
-        confirmationMessage.getMessageDetails().setRefToMessageId(ebmsId);
+            //outgoing confirmation message
+            DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createDeliveryEvidenceForMessage(epoMessage);
+            confirmationMessage.getMessageDetails().setRefToMessageId(ebmsId);
+            confirmationMessage.getMessageDetails().setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
-        Mockito.doThrow(new DomibusConnectorGatewaySubmissionException("something failed..."))
-                .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
+            Mockito.doThrow(new DomibusConnectorGatewaySubmissionException("something failed..."))
+                    .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
-        backendToGatewayConfirmationProcessor.processMessage(confirmationMessage);
+            backendToGatewayConfirmationProcessor.processMessage(confirmationMessage);
+        });
 
     }
 
@@ -107,7 +111,8 @@ public class BackendToGatewayConfirmationProcessorTest {
         epoMessage.setConnectorMessageId(connectorMessageId);
         epoMessage.getMessageDetails().setEbmsMessageId(ebmsId);
 
-        Mockito.when(messagePersistenceService.findMessageByEbmsId(eq(ebmsId))).thenReturn(epoMessage);
+        Mockito.when(messagePersistenceService.findMessageByEbmsIdAndDirection(eq(ebmsId), eq(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)))
+                .thenReturn(Optional.of(epoMessage));
 
         DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createDeliveryEvidenceForMessage(epoMessage);
         confirmationMessage.getMessageDetails().setRefToMessageId(ebmsId);
@@ -134,11 +139,13 @@ public class BackendToGatewayConfirmationProcessorTest {
 
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testProcessMessage_noEvidenceMessage_shouldThrowException() {
-        DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
 
-        backendToGatewayConfirmationProcessor.processMessage(epoMessage);
+            backendToGatewayConfirmationProcessor.processMessage(epoMessage);
+        });
     }
 
 

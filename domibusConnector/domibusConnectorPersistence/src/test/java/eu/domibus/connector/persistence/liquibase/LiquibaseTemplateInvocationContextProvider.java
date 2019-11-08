@@ -60,7 +60,7 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
         if (H2_CONFIG.equals(prefix))
             return createDbConfig(prefix, new Properties());
 
-        //TODO: use container if available for mysql, oracle, db tests
+        //TODO: use docker container if available for mysql, oracle, db tests
 
         if("true".equalsIgnoreCase(System.getenv("test.db." + prefix + ".enabled"))) {
             return initDbConfigByEnvironment(prefix);

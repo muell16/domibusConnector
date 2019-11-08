@@ -21,9 +21,10 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import eu.domibus.connector.persistence.model.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 import java.io.Serializable;
-import javax.annotation.Nullable;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import org.springframework.core.style.ToStringCreator;
@@ -53,9 +54,15 @@ public class PDomibusConnectorMessage implements Serializable {
     @Column(name = "CONVERSATION_ID", length = 255)
     private String conversationId;
 
-    @Column(name = "DIRECTION", length = 10)
-    @Enumerated(EnumType.STRING)
-    private MessageDirection direction;
+//    @Column(name = "DIRECTION", length = 10)
+//    @Enumerated(EnumType.STRING)
+//    private PMessageDirection direction;
+
+    @Column(name = "DIRECTION_SOURCE", length = 10)
+    private MessageTargetSource directionSource;
+
+    @Column(name = "DIRECTION_TARGET", length = 10)
+    private MessageTargetSource directionTarget;
 
     @Column(name = "HASH_VALUE")
     private String hashValue;
@@ -135,13 +142,13 @@ public class PDomibusConnectorMessage implements Serializable {
         this.conversationId = conversationId;
     }
 
-    public MessageDirection getDirection() {
-        return direction;
-    }
-
-    public void setDirection(MessageDirection direction) {
-        this.direction = direction;
-    }
+//    public PMessageDirection getDirection() {
+//        return direction;
+//    }
+//
+//    public void setDirection(PMessageDirection direction) {
+//        this.direction = direction;
+//    }
 
     public String getHashValue() {
         return hashValue;
@@ -229,6 +236,22 @@ public class PDomibusConnectorMessage implements Serializable {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public MessageTargetSource getDirectionSource() {
+        return directionSource;
+    }
+
+    public void setDirectionSource(MessageTargetSource directionSource) {
+        this.directionSource = directionSource;
+    }
+
+    public MessageTargetSource getDirectionTarget() {
+        return directionTarget;
+    }
+
+    public void setDirectionTarget(MessageTargetSource directionTarget) {
+        this.directionTarget = directionTarget;
     }
 
     @Override

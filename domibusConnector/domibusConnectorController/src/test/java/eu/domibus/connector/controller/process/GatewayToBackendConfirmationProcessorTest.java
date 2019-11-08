@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,7 +56,8 @@ public class GatewayToBackendConfirmationProcessorTest {
         gatewayToBackendConfirmationProcessor.setEvidencePersistenceService(evidencePersistenceService);
         gatewayToBackendConfirmationProcessor.setMessagePersistenceService(messagePersistenceService);
 
-        Mockito.when(messagePersistenceService.findMessageByEbmsId(any())).thenReturn(DomainEntityCreator.createMessage());
+        Mockito.when(messagePersistenceService.findMessageByEbmsIdAndDirection(any(), any()))
+                .thenReturn(Optional.of(DomainEntityCreator.createMessage()));
     }
 
 

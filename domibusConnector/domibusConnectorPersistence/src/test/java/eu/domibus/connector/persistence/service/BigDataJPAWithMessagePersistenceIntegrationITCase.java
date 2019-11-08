@@ -8,10 +8,7 @@ import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
@@ -45,7 +43,7 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
     private TransactionTemplate transactionTemplate;
     private IDatabaseConnection conn;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         Properties props = SetupPersistenceContext.getDefaultProperties();
         //props.put("connector.persistence.big-data-impl-class","eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl");
@@ -54,13 +52,13 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(props, profiles);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         APPLICATION_CONTEXT.close();
     }
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws SQLException {
         this.applicationContext = APPLICATION_CONTEXT;
         messagePersistenceService = applicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
@@ -75,34 +73,36 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
      * test write a message with attachments / content into database
      * and ensure, that everything is written
      */
-    @Test(timeout=20000)
+    @Test
     public void testPersistMessageWithBigFiles() throws SQLException, DataSetException {
-        LOGGER.info("run test testPersistMessageWithBigFiles");
-        DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
-        message.setConnectorMessageId("msgid1");
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            LOGGER.info("run test testPersistMessageWithBigFiles");
+            DomibusConnectorMessage message = DomainEntityCreator.createEpoMessage();
+            message.setConnectorMessageId("msgid1");
 
-        transactionTemplate.execute((TransactionStatus status) -> {
-                DomibusConnectorMessage domibusConnectorMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-                //message is in db
-                domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
-                assertThat(domibusConnectorMessage.getMessageContent().getDocument().getDocument().getStorageIdReference()).isNotNull();
-                return null;
-            }
-        );
+            transactionTemplate.execute((TransactionStatus status) -> {
+                        DomibusConnectorMessage domibusConnectorMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+                        //message is in db
+                        domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
+                        assertThat(domibusConnectorMessage.getMessageContent().getDocument().getDocument().getStorageIdReference()).isNotNull();
+                        return null;
+                    }
+            );
 
-        //check database....
-        ITable bigdata = conn.createQueryTable("BIGDATA", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA");
-        int rowCount = bigdata.getRowCount();
+            //check database....
+            ITable bigdata = conn.createQueryTable("BIGDATA", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA");
+            int rowCount = bigdata.getRowCount();
 
-        assertThat(rowCount).isEqualTo(2);
-        byte[] attachmentContent = (byte[]) bigdata.getValue(0, "content");
-        assertThat(attachmentContent).isNotNull();
-        assertThat(new String(attachmentContent)).isEqualTo("attachment");
+            assertThat(rowCount).isEqualTo(2);
+            byte[] attachmentContent = (byte[]) bigdata.getValue(0, "content");
+            assertThat(attachmentContent).isNotNull();
+            assertThat(new String(attachmentContent)).isEqualTo("attachment");
 
-        byte[] documentContent = (byte[]) bigdata.getValue(1, "content");
-        assertThat(documentContent).isNotNull();
-        assertThat(new String(documentContent)).isEqualTo("documentbytes");
+            byte[] documentContent = (byte[]) bigdata.getValue(1, "content");
+            assertThat(documentContent).isNotNull();
+            assertThat(new String(documentContent)).isEqualTo("documentbytes");
 
+        });
     }
 
 }

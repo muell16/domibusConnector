@@ -1,28 +1,31 @@
 package eu.domibus.connector.persistence.service.impl.helper;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.persistence.model.enums.MessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 
 import javax.annotation.Nonnull;
+import java.util.stream.Stream;
 
 public class MessageDirectionMapper {
 
-    public static @Nonnull MessageDirection mapFromDomainToPersistence(@Nonnull DomibusConnectorMessageDirection direction) {
+    public static @Nonnull
+    PMessageDirection mapFromDomainToPersistence(@Nonnull DomibusConnectorMessageDirection direction) {
         switch (direction) {
             case BACKEND_TO_GATEWAY:
-                return MessageDirection.NAT_TO_GW;
+                return PMessageDirection.NAT_TO_GW;
             case GATEWAY_TO_BACKEND:
-                return MessageDirection.GW_TO_NAT;
+                return PMessageDirection.GW_TO_NAT;
             case CONNECTOR_TO_BACKEND:
-                return MessageDirection.CONN_TO_NAT;
+                return PMessageDirection.CONN_TO_NAT;
             case CONNECTOR_TO_GATEWAY:
-                return MessageDirection.CONN_TO_GW;
+                return PMessageDirection.CONN_TO_GW;
             default:
                 throw new IllegalArgumentException("Provided direction is invalid!");
         }
     }
 
-    public static @Nonnull DomibusConnectorMessageDirection mapFromPersistenceToDomain(@Nonnull MessageDirection direction) {
+    public static @Nonnull DomibusConnectorMessageDirection mapFromPersistenceToDomain(@Nonnull PMessageDirection direction) {
         if (direction == null) {
             throw new IllegalArgumentException("Cannot map null to a direction!");
         }
@@ -40,4 +43,15 @@ public class MessageDirectionMapper {
         }
     }
 
+    public static DomibusConnectorMessageDirection map(PMessageDirection direction) {
+        return mapFromPersistenceToDomain(direction);
+    }
+
+    public static PMessageDirection map(DomibusConnectorMessageDirection direction) {
+        return mapFromDomainToPersistence(direction);
+    }
+
+    public static DomibusConnectorMessageDirection mapFromPersistenceToDomain(MessageTargetSource directionSource, MessageTargetSource directionTarget) {
+        return DomibusConnectorMessageDirection.fromMessageTargetSource(directionSource, directionTarget);
+    }
 }

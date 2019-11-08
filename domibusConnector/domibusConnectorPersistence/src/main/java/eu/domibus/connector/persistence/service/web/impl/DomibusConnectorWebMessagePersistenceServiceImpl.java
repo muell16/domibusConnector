@@ -5,13 +5,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
@@ -57,15 +58,15 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	
 	@Override
     @Transactional(readOnly = true)
-    public WebMessageDetail findMessageByNationalId(String nationalMessageId) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
+    public WebMessageDetail findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction) {
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageIdAndDirectionTarget(nationalMessageId, direction.getTarget()).get();
         return mapDbMessageToWebMessageDetail(dbMessage);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public WebMessageDetail findMessageByEbmsId(String ebmsMessageId) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
+    public WebMessageDetail findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction) {
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, direction.getTarget()).get();
         return mapDbMessageToWebMessageDetail(dbMessage);
     }
 
@@ -119,7 +120,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		message.setBackendClient(pMessage.getBackendName());
 		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
 		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
-		message.setDirection(pMessage.getDirection().name());
+//		message.setDirection(pMessage.getDirection().name());
 		message.setConfirmed(pMessage.getConfirmed());
 		message.setRejected(pMessage.getRejected());
 		message.setCreated(pMessage.getCreated());

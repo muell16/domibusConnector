@@ -55,6 +55,10 @@ public class SetupPersistenceContext {
     }
 
     public static ConfigurableApplicationContext startApplicationContext(Properties props, Set<String> profiles, Class<?>... sources) {
+        return startApplicationContext(props, profiles, sources, new String[]{});
+    }
+
+    public static ConfigurableApplicationContext startApplicationContext(Properties props, Set<String> profiles, Class<?>[] sources, String[] args) {
         ConfigurableApplicationContext applicationContext;
 
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder()
@@ -62,9 +66,14 @@ public class SetupPersistenceContext {
                 .web(WebApplicationType.NONE)
                 .profiles(profiles.toArray(new String[profiles.size()]))
                 .properties(props);
-        applicationContext = springAppBuilder.run();
+        applicationContext = springAppBuilder.run(args);
         APPLICATION_CONTEXT = applicationContext;
         System.out.println("APPCONTEXT IS STARTED...:" + applicationContext.isRunning());
         return applicationContext;
+    }
+
+    public static void main(String... args) {
+
+        startApplicationContext(getDefaultProperties(), getDefaultProfiles(), new Class<?>[] {SetupPersistenceContext.class}, args);
     }
 }

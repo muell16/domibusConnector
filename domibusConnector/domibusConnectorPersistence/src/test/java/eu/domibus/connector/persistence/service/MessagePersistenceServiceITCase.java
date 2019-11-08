@@ -1,8 +1,6 @@
 package eu.domibus.connector.persistence.service;
 
 
-
-
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
@@ -17,14 +15,13 @@ import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.*;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
@@ -33,17 +30,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration Test for testing persistence service
- * 
+ * <p>
  * creates a embedded h2 database for tests
  * this tests are _WRITING_ to the database, there is no rollback
- * 
+ * <p>
  * then liquibase is used to initialize tables and basic testdata in
  * the testing database
- * 
+ * <p>
  * additional testdata is loaded by dbunit in setUp method
- * 
+ * <p>
  * database settings are configured in {@literal application-<profile>.properties}
- * 
+ *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at>}
  */
 public class MessagePersistenceServiceITCase {
@@ -54,7 +51,7 @@ public class MessagePersistenceServiceITCase {
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void InitClass() {
         Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
         Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
@@ -62,14 +59,14 @@ public class MessagePersistenceServiceITCase {
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         APPLICATION_CONTEXT.close();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws InterruptedException {
-        
+
         //lookup type
         this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
         //lookup name
@@ -83,13 +80,13 @@ public class MessagePersistenceServiceITCase {
 
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
         //message.setDbMessageId(null);
-        //MessageDirection messageDirection = MessageDirection.GATEWAY_TO_BACKEND;
+        //PMessageDirection messageDirection = PMessageDirection.GATEWAY_TO_BACKEND;
         DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
-        
+
         messageDetails.setConversationId("conversation4211");
         messageDetails.setEbmsMessageId("ebms4211");
         messageDetails.setBackendMessageId("backend4211");
-                     
+
         DomibusConnectorParty fromPartyAT = DomainEntityCreatorForPersistenceTests.createPartyAT();
         DomibusConnectorParty toPartyDE = DomibusConnectorPartyBuilder.createBuilder()
                 .copyPropertiesFrom(DomainEntityCreatorForPersistenceTests.createPartyDE())
@@ -99,29 +96,28 @@ public class MessagePersistenceServiceITCase {
 
         messageDetails.setFromParty(fromPartyAT);
         messageDetails.setToParty(toPartyDE);
-        
-                
+
+
         DomibusConnectorMessage persistedMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-        
+
         assertThat(persistedMessage).isNotNull();
 
         //check result in DB
         DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
         QueryDataSet dataSet = new QueryDataSet(conn);
-        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", 
+        dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE",
                 String.format("SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE CONNECTOR_MESSAGE_ID='%s'", connectorMessageId));
-       
+
         ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MESSAGE");
-        
+
         String ebmsId = (String) domibusConnectorTable.getValue(0, "ebms_message_id");
         assertThat(ebmsId).isEqualTo("ebms4211");
-        
+
         String conversationId = (String) domibusConnectorTable.getValue(0, "conversation_id");
         assertThat(conversationId).isEqualTo("conversation4211");
 
 
         DomibusConnectorMessageDetails persistedDetails = persistedMessage.getMessageDetails();
-
 
 
 //        assertThat(persistedDetails.getFromParty().getPartyIdType())
@@ -135,7 +131,6 @@ public class MessagePersistenceServiceITCase {
 
     /**
      * Test if an the test EpoMessage can be persisted into database
-     *
      */
     @Test
     public void testPersistEpoMessageIntoDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
@@ -165,177 +160,206 @@ public class MessagePersistenceServiceITCase {
         assertThat(conversationId).isEqualTo("conversation4000");
 
     }
-    
+
     /*
-     * test that, the persist throws an exception if an service is used which is not 
+     * test that, the persist throws an exception if an service is used which is not
      * configured in database!
-     *   
-     * TODO: improve specification to throw more specific exception!   
+     *
+     * TODO: improve specification to throw more specific exception!
      *
      */
-    @Test(timeout=20000, expected=PersistenceException.class) //(expected=TransientPropertyValueException.class)
+    @Test
     public void testPersistMessageIntoDatabase_serviceNotInDatabase_shouldThrowException() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-        String connectorMessageId = "msg0021";
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            Assertions.assertThrows(PersistenceException.class, () -> {
+                String connectorMessageId = "msg0021";
 
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
-        //message.setDbMessageId(null);
-        //MessageDirection messageDirection = MessageDirection.GATEWAY_TO_BACKEND;
-        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
-        
-        messageDetails.setConversationId("conversation421");
-        messageDetails.setEbmsMessageId("ebms421");
-        messageDetails.setBackendMessageId("backend421");
-        
-        DomibusConnectorService serviceUnkown = DomainEntityCreatorForPersistenceTests.createServiceUnknown();
-        messageDetails.setService(serviceUnkown); //set Unknown service
+                DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage(connectorMessageId);
+                //message.setDbMessageId(null);
+                //PMessageDirection messageDirection = PMessageDirection.GATEWAY_TO_BACKEND;
+                DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
 
-        //should throw exception, because UknownService is not configured in DB!
-        messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+                messageDetails.setConversationId("conversation421");
+                messageDetails.setEbmsMessageId("ebms421");
+                messageDetails.setBackendMessageId("backend421");
+
+                DomibusConnectorService serviceUnkown = DomainEntityCreatorForPersistenceTests.createServiceUnknown();
+                messageDetails.setService(serviceUnkown); //set Unknown service
+
+                //should throw exception, because UknownService is not configured in DB!
+                messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+            });
+        });
+
     }
-    
-    
+
+
     /**
      * tests complete message, if can be stored to DB
-     * and also loaded again from DB    
-     * 
+     * and also loaded again from DB
+     * <p>
      * test restore evidenceMessage!
      */
-    @Test(timeout=20000)
+    @Test
     public void testPersistMessageIntoDatabase_testContentPersist() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-        String ebmsId = "ebamHUGO1";
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("superid23");
-        message.getMessageDetails().setEbmsMessageId(ebmsId);
-        message.getMessageDetails().setBackendMessageId("fklwefa");
-        
-        DomibusConnectorBigDataReferenceMemoryBacked attachRef = 
-                new DomibusConnectorBigDataReferenceMemoryBacked("hallo welt".getBytes());
-        DomibusConnectorMessageAttachment attach1 = 
-                new DomibusConnectorMessageAttachment(attachRef, "idf");        
-        message.addAttachment(attach1);
-        
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType.DELIVERY, "hallowelt".getBytes());
-        message.addConfirmation(confirmation);
-        
-        
-        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
-        messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);
-                
-        
-        
-        //load persisted message again from db and run checks
-        DomibusConnectorMessage messageToCheck = messagePersistenceService.findMessageByEbmsId(ebmsId);
-        
-        assertThat(messageToCheck.getMessageContent()).isNotNull();
-        
-        assertThat(messageToCheck.getMessageAttachments()).as("should contain two attachments!").hasSize(2);
-        DomibusConnectorMessageAttachment messageAttachment = messageToCheck
-                .getMessageAttachments()
-                .stream()
-                .filter(a -> "idf".equals(a.getIdentifier()))
-                .findFirst()
-                .get();
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            String ebmsId = "aztebamHUGO1";
+            DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
+            DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("superid23");
+            message.getMessageDetails().setEbmsMessageId(ebmsId);
+            message.getMessageDetails().setBackendMessageId("fklwefa");
+            message.getMessageDetails().setDirection(messageDirection);
+
+            DomibusConnectorBigDataReferenceMemoryBacked attachRef =
+                    new DomibusConnectorBigDataReferenceMemoryBacked("hallo welt".getBytes());
+            DomibusConnectorMessageAttachment attach1 =
+                    new DomibusConnectorMessageAttachment(attachRef, "idf");
+            message.addAttachment(attach1);
+
+            DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType.DELIVERY, "hallowelt".getBytes());
+            message.addConfirmation(confirmation);
 
 
+            messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);
+
+
+            //load persisted message again from db and run checks
+            DomibusConnectorMessage messageToCheck = messagePersistenceService.findMessageByEbmsIdAndDirection(ebmsId, messageDirection).orElse(null);
+            assertThat(messageToCheck).as("message must exist").isNotNull();
+            assertThat(messageToCheck.getMessageContent()).as("message must have content!").isNotNull();
+
+            assertThat(messageToCheck.getMessageAttachments()).as("should contain two attachments!").hasSize(2);
+            DomibusConnectorMessageAttachment messageAttachment = messageToCheck
+                    .getMessageAttachments()
+                    .stream()
+                    .filter(a -> "idf".equals(a.getIdentifier()))
+                    .findFirst()
+                    .get();
+
+        });
     }
 
-    @Test(timeout=20000)
+    @Test
     public void testMergeMessageWithDatabase() throws PersistenceException, SQLException, AmbiguousTableNameException, DataSetException {
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("superid");
-        message.getMessageDetails().setEbmsMessageId("ebamdsafae3");
-        message.getMessageDetails().setBackendMessageId("adfsöljabafklwefa");
-        
-        DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
-        messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);
-                
-        //TODO: make changes to message
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("superid");
+            message.getMessageDetails().setEbmsMessageId("ebamdsafae3");
+            message.getMessageDetails().setBackendMessageId("adfsöljabafklwefa");
 
-        message = messagePersistenceService.mergeMessageWithDatabase(message);
+            DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
+            messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);
+
+            //TODO: make changes to message
+
+            message = messagePersistenceService.mergeMessageWithDatabase(message);
 
 
-        //message.getMessageDetails()
-
+            //message.getMessageDetails()
+        });
     }
 
-    @Test(timeout=20000, expected=PersistenceException.class)
+    @Test
     public void testMergeMessageWithDatabase_doesNotExistInDatabase() throws PersistenceException {
-        DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage();
-        messagePersistenceService.mergeMessageWithDatabase(message);
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            Assertions.assertThrows(PersistenceException.class, () -> {
+                DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage();
+                messagePersistenceService.mergeMessageWithDatabase(message);
+            });
+        });
     }
 
-    @Test(timeout=20000)
+    @Test
     public void testFindMessageByNationalId_doesNotExist_shouldBeNull() {
-        String nationalIdString = "TEST1";
-        DomibusConnectorMessage findMessageByNationalId = messagePersistenceService.findMessageByNationalId(nationalIdString);
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            String nationalIdString = "TEST1";
+            DomibusConnectorMessage findMessageByNationalId = messagePersistenceService
+                    .findMessageByNationalIdAndDirection(nationalIdString, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
+                    .orElse(null);
 
-        assertThat(findMessageByNationalId).isNull();
+            assertThat(findMessageByNationalId).isNull();
+        });
     }
 
 
     //TODO: test find message & check fromParty, toParty, service, action
 
-    @Test(timeout=20000)
+    @Test
     public void findMessageBy() {
-        messagePersistenceService.findMessageByConnectorMessageId("msg1");
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            String ebmsId = "ebamHUGO1";
+            DomibusConnectorMessageDirection messageDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
+            DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createMessage("msg665");
+            message.getMessageDetails().setEbmsMessageId(ebmsId);
+            message.getMessageDetails().setBackendMessageId("fklwefa");
+            message.getMessageDetails().setDirection(messageDirection);
 
+            DomibusConnectorBigDataReferenceMemoryBacked attachRef =
+                    new DomibusConnectorBigDataReferenceMemoryBacked("hallo welt".getBytes());
+            DomibusConnectorMessageAttachment attach1 =
+                    new DomibusConnectorMessageAttachment(attachRef, "idf");
+            message.addAttachment(attach1);
+            messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+
+            DomibusConnectorMessage msg1 = messagePersistenceService.findMessageByConnectorMessageId("msg665");
+            assertThat(msg1).as("message cannot be null!").isNotNull();
+        });
     }
 
 
-    
-    
     //TODO: test other methods/use cases
     /**
-     *  void persistMessageIntoDatabase(Message message, MessageDirection direction) throws PersistenceException;
+     *  void persistMessageIntoDatabase(Message message, PMessageDirection direction) throws PersistenceException;
 
-    void mergeMessageWithDatabase(Message message);
+     void mergeMessageWithDatabase(Message message);
 
-    void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, EvidenceType evidenceType);
+     void persistEvidenceForMessageIntoDatabase(Message message, byte[] evidence, EvidenceType evidenceType);
 
-    Message findMessageByNationalId(String nationalMessageId);
+     Message findMessageByNationalId(String nationalMessageId);
 
-    Message findMessageByEbmsId(String ebmsMessageId);
+     Message findMessageByEbmsId(String ebmsMessageId);
 
-    void setEvidenceDeliveredToGateway(Message message, EvidenceType evidenceType);
+     void setEvidenceDeliveredToGateway(Message message, EvidenceType evidenceType);
 
-    void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType);
+     void setEvidenceDeliveredToNationalSystem(Message message, EvidenceType evidenceType);
 
-    void setDeliveredToGateway(Message message);
+     void setDeliveredToGateway(Message message);
 
-    void setMessageDeliveredToNationalSystem(Message message);
+     void setMessageDeliveredToNationalSystem(Message message);
 
-    List<Message> findOutgoingUnconfirmedMessages();
+     List<Message> findOutgoingUnconfirmedMessages();
 
-    List<Message> findIncomingUnconfirmedMessages();
+     List<Message> findIncomingUnconfirmedMessages();
 
-    void confirmMessage(Message message);
+     void confirmMessage(Message message);
 
-    void rejectMessage(Message message);
+     void rejectMessage(Message message);
 
-    DomibusConnectorAction getAction(String action);
+     DomibusConnectorAction getAction(String action);
 
-    DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction();
+     DomibusConnectorAction getRelayREMMDAcceptanceRejectionAction();
 
-    DomibusConnectorAction getRelayREMMDFailure();
+     DomibusConnectorAction getRelayREMMDFailure();
 
-    DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction();
+     DomibusConnectorAction getDeliveryNonDeliveryToRecipientAction();
 
-    DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
+     DomibusConnectorAction getRetrievalNonRetrievalToRecipientAction();
 
-    DomibusConnectorService getService(String service);
+     DomibusConnectorService getService(String service);
 
-    DomibusConnectorParty getParty(String partyId, String role);
+     DomibusConnectorParty getParty(String partyId, String role);
 
-    DomibusConnectorParty getPartyByPartyId(String partyId);
+     DomibusConnectorParty getPartyByPartyId(String partyId);
 
-    List<Message> findMessagesByConversationId(String conversationId);
+     List<Message> findMessagesByConversationId(String conversationId);
 
-    void persistMessageError(MessageError messageError);
+     void persistMessageError(MessageError messageError);
 
-    List<MessageError> getMessageErrors(Message message) throws Exception;
+     List<MessageError> getMessageErrors(Message message) throws Exception;
 
-    void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) throws PersistenceException;
+     void persistMessageErrorFromException(Message message, Throwable ex, Class<?> source) throws PersistenceException;
 
-	List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery();
+     List<Message> findOutgoingMessagesNotRejectedAndWithoutDelivery();
 
-	List<Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
+     List<Message> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
      */
 }

@@ -3,20 +3,21 @@ package eu.domibus.connector.backend.persistence.dao;
 
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.persistence.dao.CommonPersistenceDBUnitITCase;
-import java.util.List;
-
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
-import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -29,7 +30,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     static class TestConfiguration {
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(SetupPersistenceContext.getDefaultProperties(),
                 SetupPersistenceContext.getDefaultProfiles(),
@@ -37,7 +38,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
     }
     
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         APPLICATION_CONTEXT.close();
     }
@@ -47,7 +48,7 @@ public class BackendClientDaoDBUnit extends CommonPersistenceDBUnitITCase {
 
 
     
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

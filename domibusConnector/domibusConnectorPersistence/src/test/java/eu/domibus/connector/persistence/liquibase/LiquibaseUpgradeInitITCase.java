@@ -54,6 +54,14 @@ public class LiquibaseUpgradeInitITCase {
         checkLiquibaseRuns(props);
     }
 
+    @TestTemplate
+    @ExtendWith(LiquibaseTemplateInvocationContextProvider.class)
+    protected void checkInitialV4_2Scripts(Properties props) {
+        System.out.println("\n\n\n######################\nRUNNING TEST: checkInstallDB");
+        props.put("spring.liquibase.change-log","classpath:/db/changelog/install-4.2.xml");
+        checkLiquibaseRuns(props);
+    }
+
 
 
 

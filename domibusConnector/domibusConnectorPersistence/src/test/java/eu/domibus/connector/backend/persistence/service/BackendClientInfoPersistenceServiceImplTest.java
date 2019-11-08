@@ -6,13 +6,15 @@ import eu.domibus.connector.backend.persistence.dao.BackendClientDao;
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.backend.persistence.model.testutil.BackendPersistenceEntityCreator;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
-import org.junit.Test;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Before;
-import static org.mockito.ArgumentMatchers.eq;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  *
@@ -25,7 +27,7 @@ public class BackendClientInfoPersistenceServiceImplTest {
     
     BackendClientInfoPersistenceServiceImpl backendInfoPersistenceService;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         backendClientDao = Mockito.mock(BackendClientDao.class);
         
@@ -76,15 +78,17 @@ public class BackendClientInfoPersistenceServiceImplTest {
         assertThat(backendClientInfoByServiceName).isNotNull();
     }
 
-    @Test(expected = java.lang.IllegalStateException.class)
+    @Test
     public void testFindByService_multipleBackends_shouldThrow() {
-        BackendClientInfo bob = createBackendClientInfoBob();
-        BackendClientInfo alice = createBackendClientInfoAlice();
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            BackendClientInfo bob = createBackendClientInfoBob();
+            BackendClientInfo alice = createBackendClientInfoAlice();
 
-        Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO-Service"))).thenReturn(Arrays.asList(new BackendClientInfo[] {bob, alice}));
+            Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO-Service"))).thenReturn(Arrays.asList(new BackendClientInfo[] {bob, alice}));
 
-        DomibusConnectorService service = new DomibusConnectorService("EPO-Service", "");
-        DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendInfoPersistenceService.getEnabledBackendClientInfoByService(service);
+            DomibusConnectorService service = new DomibusConnectorService("EPO-Service", "");
+            DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendInfoPersistenceService.getEnabledBackendClientInfoByService(service);
+        });
     }
 
 

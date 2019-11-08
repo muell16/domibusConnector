@@ -10,9 +10,9 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -36,12 +36,12 @@ public class BackendClientInfoPersistenceServiceITCase {
     static class TestConfiguration {
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(TestConfiguration.class);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException, DatabaseUnitException, SQLException {
         this.applicationContext = APPLICATION_CONTEXT;
 
