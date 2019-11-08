@@ -6,6 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
 
-    <include file="db/changelog/install-4.2.xml" />
+    <include file="/db/changelog/install-4.1.xml" />
+    <include file="/db/changelog/v4_2/upgrade-to-42.xml" />
 
 </databaseChangeLog>

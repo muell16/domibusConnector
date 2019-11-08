@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -52,7 +53,9 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 	public void processMessage(DomibusConnectorMessage confirmationMessage) {
 		String refToMessageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
-        DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToMessageID);
+        DomibusConnectorMessage originalMessage = messagePersistenceService
+                .findMessageByEbmsIdAndDirection(refToMessageID, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
+                .orElse(null);
         DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {

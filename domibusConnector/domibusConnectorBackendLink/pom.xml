@@ -29,6 +29,7 @@
             <artifactId>domibusConnectorAPI</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
+            <classifier>tests</classifier>
             <version>${project.version}</version>
         </dependency>
         <dependency>

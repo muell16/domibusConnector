@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -41,20 +42,22 @@ public interface DomibusConnectorMessagePersistenceService {
     DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId);
 
     /**
+     *
+     *
      * @param ebmsMessageId - the ebmsId of the message
-     * @return the found message or null if no message found with this ebmsId
+     * @param messageDirection - the direction of the message
+     * @return the found message or an empty Optional if no message found with this ebmsId and direction
      */
-    @Nullable
-    DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId);
+    Optional<DomibusConnectorMessage> findMessageByEbmsIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection);
 
     /**
-     * finds the message by the national id
+     * finds the message by the national id and direction
      * the nationalId is not set if the message was received from the gw
      * @param nationalMessageId - the nationalMessageId
-     * @return the found message or null if no message found with this nationalMessageId
+     * @param messageDirection - the direction of the message
+     * @return the found message or an empty Optional if no message found with this nationalMessageId and direction
      */
-    @Nullable
-    DomibusConnectorMessage findMessageByNationalId(String nationalMessageId);
+    Optional<DomibusConnectorMessage> findMessageByNationalIdAndDirection(String nationalMessageId, DomibusConnectorMessageDirection messageDirection);
 
     /**
      * returns all messages related to the
@@ -142,5 +145,6 @@ public interface DomibusConnectorMessagePersistenceService {
      * @param message - the message, which should be marked
      */
     void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
+
 
 }

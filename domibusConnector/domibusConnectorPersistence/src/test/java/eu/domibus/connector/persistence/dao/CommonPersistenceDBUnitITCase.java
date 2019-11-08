@@ -12,6 +12,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.sql.SQLException;
@@ -29,6 +32,7 @@ public abstract class CommonPersistenceDBUnitITCase {
     protected static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
 
+    @BeforeAll
     @BeforeClass
     public static void beforeClass() {
         Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
@@ -37,6 +41,7 @@ public abstract class CommonPersistenceDBUnitITCase {
         APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
     }
 
+    @AfterAll
     @AfterClass
     public static void afterClass() {
         APPLICATION_CONTEXT.close();
@@ -46,6 +51,7 @@ public abstract class CommonPersistenceDBUnitITCase {
     private DatabaseDataSourceConnection dbUnitConnection;
     protected ConfigurableApplicationContext applicationContext;
         
+    @BeforeEach
     @Before
     public void setUp() throws Exception {        
         this.applicationContext = APPLICATION_CONTEXT;

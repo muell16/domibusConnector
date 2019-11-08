@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
@@ -69,10 +70,15 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         LOGGER.debug("#processMessage: refToMessageId is [{}]", refToOriginalMessage);
         DomibusConnectorEvidenceType evidenceType = DomainModelHelper.getEvidenceTypeOfEvidenceMessage(message);
 
-        DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByEbmsId(refToOriginalMessage);
+        DomibusConnectorMessageDirection origMsgDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
+        DomibusConnectorMessage originalMessage = messagePersistenceService
+                .findMessageByEbmsIdAndDirection(refToOriginalMessage, origMsgDirection)
+                .orElse(null);
         LOGGER.debug("#processMessage: processing evidence [{}] of original message [{}]", evidenceType, originalMessage);
         if (originalMessage == null) {
-            throw new RuntimeException(String.format("No message for refToMessageId [%s] found!", refToOriginalMessage));
+            throw new RuntimeException(String.format("No message for refToMessageId [%s] with direction [%s] found!",
+                    refToOriginalMessage,
+                    origMsgDirection));
         }
 
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder

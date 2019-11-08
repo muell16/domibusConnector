@@ -7,11 +7,10 @@ import eu.domibus.connector.domain.testutil.DomibusConnectorBigDataReferenceGetS
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
-//import eu.domibus.connector.test.logging.MemoryAppender;
-//import eu.domibus.connector.test.logging.MemoryAppenderAssert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import eu.domibus.connector.test.logging.MemoryAppender;
+import eu.domibus.connector.test.logging.MemoryAppenderAssert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.Resource;
@@ -44,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes={DomibusConnectorSecurityToolkitITCase.TestContextConfiguration.class, CommonProperties.class})
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-sig.properties"}, 
         properties= {   "liquibase.enabled=false"
@@ -106,13 +105,12 @@ public class DomibusConnectorSecurityToolkitITCase {
 	 * Ensures that a warning log message is generated
 	 * @Since(4.1)
 	 */
-	@Ignore
 	public void testUnsignedDoc_WarningLogMessageShouldGenerated() throws IOException {
         testDoc("ExamplePdfUnsigned.pdf", "testUnsignedDoc_WarningLogMessageShouldGenerated");
 
-//        MemoryAppenderAssert.assertThat(MemoryAppender.getAppender())
+        MemoryAppenderAssert.assertThat(MemoryAppender.getAppender())
 //                .filterOnMarker(LoggingMarker.BUSINESS_CERT_LOG.toString())
-//                .containsLogLine(DomibusSecurityContainer.RED_TOKEN_WARNING_MESSAGE);
+                .containsLogLine(DomibusSecurityContainer.RED_TOKEN_WARNING_MESSAGE);
 
 
 	}

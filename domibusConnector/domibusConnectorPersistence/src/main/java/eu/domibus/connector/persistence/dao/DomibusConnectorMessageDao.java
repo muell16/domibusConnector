@@ -1,9 +1,14 @@
 package eu.domibus.connector.persistence.dao;
 
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
+import eu.domibus.connector.persistence.model.enums.PMessageDirection;
+import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -20,29 +25,33 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
 	
 	public List<PDomibusConnectorMessage> findAllByOrderByCreatedDesc();
 
-    public PDomibusConnectorMessage findOneByBackendMessageId(String backendId);
-    
-    public PDomibusConnectorMessage findOneByEbmsMessageId(String ebmsMessageId);
+    public List<PDomibusConnectorMessage> findByBackendMessageId(String backendId);
 
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.ebmsMessageId = ?1 OR m.backendMessageId = ?1")
-    public PDomibusConnectorMessage findOneByEbmsMessageIdOrBackendMessageId(String id);
+    public Optional<PDomibusConnectorMessage> findOneByBackendMessageIdAndDirectionTarget(String backendId, MessageTargetSource directionTarget);
+    
+    public List<PDomibusConnectorMessage> findByEbmsMessageId(String ebmsMessageId);
+
+    public Optional<PDomibusConnectorMessage> findOneByEbmsMessageIdAndDirectionTarget(String ebmsMessageId, MessageTargetSource directionTarget);
+
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE (m.ebmsMessageId = ?1 OR m.backendMessageId = ?1) AND m.directionTarget = ?2 ")
+    public Optional<PDomibusConnectorMessage> findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(String id, MessageTargetSource directionTarget);
     
     public PDomibusConnectorMessage findOneByConnectorMessageId(String messageConnectorId);
     
     public List<PDomibusConnectorMessage> findByConversationId(String conversationId);
     
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null ")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null ")
     public List<PDomibusConnectorMessage> findOutgoingUnconfirmedMessages();
         
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null "
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
         + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
     
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'NAT_TO_GW' AND m.deliveredToGateway is not null "
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
         + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         
-    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.direction = 'GW_TO_NAT' AND m.deliveredToGateway is not null")
+    @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'BACKEND' AND m.deliveredToGateway is not null")
     public List<PDomibusConnectorMessage> findIncomingUnconfirmedMessages();
     
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE (m.deliveredToNationalSystem is not null AND m.deliveredToNationalSystem between ?1 and ?2) "
@@ -90,6 +99,6 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
 
     @Modifying
     @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=?2 WHERE m.connectorMessageId = ?1")
-    void setMessageDeliveredToGateway(String connectorid1, Date deliveryDate);
+    void setMessageDeliveredToGateway(String connectorid, Date deliveryDate);
 
 }
