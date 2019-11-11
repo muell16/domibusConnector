@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.persistence.service;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 import javax.annotation.Nonnull;
@@ -19,7 +20,7 @@ public interface DomibusConnectorPersistAllBigDataOfMessageService {
 
     /**
      * The implementation can assumte that, the message is already persisted
-     * with DomibusConnectorMessagePersistenceService also see: {@link eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService#persistMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage, eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection) }
+     * with DomibusConnectorMessagePersistenceService also see: {@link eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService#persistMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage, DomibusConnectorMessageDirection) }
      * 
      * @param message - the message
      * @return the message with storage references (ready to read)
@@ -32,7 +33,7 @@ public interface DomibusConnectorPersistAllBigDataOfMessageService {
      * into storage
      * 
      * The implementation can assume that, the message was already persisted first 
-     * with DomibusConnectorMessagePersistenceService also see: {@link eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService#persistMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage, eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection) }
+     * with DomibusConnectorMessagePersistenceService also see: {@link eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService#persistMessageIntoDatabase(eu.domibus.connector.domain.model.DomibusConnectorMessage, DomibusConnectorMessageDirection) }
      * 
      * @param message the message, with storage references
      * @return the message, with refreshed storage references (ready to read)

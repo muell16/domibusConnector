@@ -1,50 +1,39 @@
 package eu.domibus.connector.evidences;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-
-import javax.annotation.Resource;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 
-import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
-import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {DomibusConnectorEvidencesToolkitTest.DomibusConnectorEvidencesToolkitTestContext.class,
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {
+        DomibusConnectorEvidencesToolkitTest.DomibusConnectorEvidencesToolkitTestContext.class,
         DomibusConnectorEvidencesToolkitContext.class,
         EvidencesToolkitConfigurationProperties.class,
-        DomibusConnectorEvidencesToolkitContext.class
 })
 @TestPropertySource(locations = "classpath:test.properties")
 @EnableConfigurationProperties
@@ -68,28 +57,21 @@ public class DomibusConnectorEvidencesToolkitTest {
     @Autowired
     private EvidencesToolkitConfigurationProperties evidencesToolkitConfigurationProperties;
 
+
     @Test
     public void testCreateSubmissionAcceptance() throws DomibusConnectorEvidencesToolkitException, TransformerException {
         LOG.info("Started testCreateSubmissionAcceptance");
 
         DomibusConnectorMessage message = buildTestMessage();
 
-//        try {
+        assertThat(evidencesToolkit).as("evidences toolkit must be init!").isNotNull();
+        assertThat(message).as("message must not be null!").isNotNull();
 
-            DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
-            Assert.assertNotNull(confirmation);
-            String evidencePretty = prettyPrint(confirmation.getEvidence());
-            LOG.info(evidencePretty);
-//        } catch (DomibusConnectorEvidencesToolkitException e) {
-//            e.printStackTrace();
-//            Assert.fail();
-//        } catch (TransformerFactoryConfigurationError e) {
-//            e.printStackTrace();
-//            Assert.fail();
-//        } catch (TransformerException e) {
-//            e.printStackTrace();
-//            Assert.fail();
-//        }
+        DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+        Assertions.assertNotNull(confirmation);
+        String evidencePretty = prettyPrint(confirmation.getEvidence());
+        LOG.info(evidencePretty);
+
         LOG.info("Finished testCreateSubmissionAcceptance");
     }
 
@@ -104,18 +86,18 @@ public class DomibusConnectorEvidencesToolkitTest {
                     DomibusConnectorEvidenceType.SUBMISSION_REJECTION,
                     message,
                     DomibusConnectorRejectionReason.OTHER, null);
-            Assert.assertNotNull(confirmation);
+            Assertions.assertNotNull(confirmation);
             String evidencePretty = prettyPrint(confirmation.getEvidence());
             LOG.info(evidencePretty);
         } catch (DomibusConnectorEvidencesToolkitException e) {
             e.printStackTrace();
-            Assert.fail();
+            Assertions.fail();
         } catch (TransformerFactoryConfigurationError e) {
             e.printStackTrace();
-            Assert.fail();
+            Assertions.fail();
         } catch (TransformerException e) {
             e.printStackTrace();
-            Assert.fail();
+            Assertions.fail();
         }
         LOG.info("Finished testCreateSubmissionRejection");
     }

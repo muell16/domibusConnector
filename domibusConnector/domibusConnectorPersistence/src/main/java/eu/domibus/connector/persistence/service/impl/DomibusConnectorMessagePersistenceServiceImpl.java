@@ -7,10 +7,8 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
-import eu.domibus.connector.persistence.service.impl.helper.EvidenceTypeMapper;
 import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
 import org.slf4j.Logger;
@@ -278,7 +276,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
 //        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence(direction);
 
         LOGGER.trace("#findByRefToMsg: find message by reference [{}] for directionTarget [{}] (should be ebmsId or NationalId)", refToMessageId, direction);
-        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAAndDirectionTarget(refToMessageId, direction.getTarget()).get();
+        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget()).get();
     }
 
 

@@ -1,6 +1,5 @@
 package eu.domibus.connector.controller.processor.content;
 
-import eu.domibus.connector.controller.spring.ContentDeletionTimeoutConfigurationProperties;
 import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
@@ -13,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 

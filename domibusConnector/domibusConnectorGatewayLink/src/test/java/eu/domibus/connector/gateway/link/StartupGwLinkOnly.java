@@ -1,4 +1,3 @@
-
 package eu.domibus.connector.gateway.link;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;

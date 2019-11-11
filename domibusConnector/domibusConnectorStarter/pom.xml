@@ -15,6 +15,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
@@ -46,6 +47,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorPersistence</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
 

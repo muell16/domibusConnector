@@ -3,7 +3,7 @@ package eu.domibus.connector.domain.transition.tools;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageConfirmationType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageContentType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
 /**

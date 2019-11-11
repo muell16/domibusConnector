@@ -1,13 +1,11 @@
 package eu.domibus.connector.controller.processor.confirmation;
 
-import eu.domibus.connector.controller.test.util.ITCaseTestAnnotation;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.transaction.TransactionManager;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

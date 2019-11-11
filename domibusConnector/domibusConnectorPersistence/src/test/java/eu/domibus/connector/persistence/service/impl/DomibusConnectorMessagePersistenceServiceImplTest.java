@@ -3,7 +3,6 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
@@ -13,10 +12,8 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
 import org.junit.Before;
@@ -453,7 +450,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         message.getMessageDetails().setRefToMessageId("firstmsg");
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(messageDao.findOneByEbmsMessageIdOrBackendMessageIdAAndDirectionTarget(eq("firstmsg"), eq(GATEWAY))).thenReturn(Optional.of(dbMessage));
+        Mockito.when(messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(eq("firstmsg"), eq(GATEWAY))).thenReturn(Optional.of(dbMessage));
 
         messagePersistenceService.setDeliveredToGateway(message);
 
@@ -480,7 +477,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         dbMessage.setId(81L);
-        Mockito.when(messageDao.findOneByEbmsMessageIdOrBackendMessageIdAAndDirectionTarget(eq("reftomsg"), eq(GATEWAY))).thenReturn(Optional.of(dbMessage));
+        Mockito.when(messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(eq("reftomsg"), eq(GATEWAY))).thenReturn(Optional.of(dbMessage));
 
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
 

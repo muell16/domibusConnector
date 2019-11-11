@@ -6,8 +6,9 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -23,10 +24,12 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.jms.Message;
 import javax.jms.Session;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
  *
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class, BackendLinkInternalWaitQueueProperties.class})
 @TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue",
         "spring.activemq.packages.trusted=eu.domibus.connector.backend.domain.model,eu.domibus.connector.domain.model,java.util,eu.domibus.connector.domain.testutil,eu.domibus.connector.domain.enums"})
@@ -130,20 +133,22 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     /**
      * explorative test to find out how message selector is working
      */
-    @Test(timeout=2000)
+    @Test
     public void testJmsMessageSelector() {
-        String queueName = "my-test-queue";
-        jmsTemplate.send(queueName, (Session s) -> {
-            Message msg = s.createMessage();
-            msg.setStringProperty("backendname", "bob");
-            return msg;
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            String queueName = "my-test-queue";
+            jmsTemplate.send(queueName, (Session s) -> {
+                Message msg = s.createMessage();
+                msg.setStringProperty("backendname", "bob");
+                return msg;
+            });
+
+            jmsTemplate.setReceiveTimeout(0);
+
+            Message receiveSelected = jmsTemplate.receiveSelected(queueName, "backendname='bob'");
+
+            assertThat(receiveSelected).isNotNull();
         });
-        
-        jmsTemplate.setReceiveTimeout(0);
-        
-        Message receiveSelected = jmsTemplate.receiveSelected(queueName, "backendname='bob'");
-        
-        assertThat(receiveSelected).isNotNull();
     }
 
     @Test

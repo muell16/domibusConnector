@@ -16,7 +16,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.testdata.TransitionCreator;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWebServiceConfiguration;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
@@ -30,28 +30,26 @@ import org.slf4j.MDC;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
 /**
- *
  * This test class starts backend SpringApplicationContext on random web port
- *  and also start clients alice and bob on random web ports
- *
- *  Tests messages flow
- *      from controller to backendClient
- *  and
- *      from backendClient to controller
- * 
+ * and also start clients alice and bob on random web ports
+ * <p>
+ * Tests messages flow
+ * from controller to backendClient
+ * and
+ * from backendClient to controller
+ * <p>
  * so message tests between the ports can be done...
- *  colorizing the outputs from the different spring contexts is not working!
- * 
- *
+ * colorizing the outputs from the different spring contexts is not working!
  */
 public class BackendLinkWsTestMessageFlowITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BackendLinkWsTestMessageFlowITCase.class);
-    
+
     static ConfigurableApplicationContext backendApplicationContext;
     static ApplicationContext aliceApplicationContext;
     static ApplicationContext bobApplicationContext;
@@ -59,30 +57,30 @@ public class BackendLinkWsTestMessageFlowITCase {
 
     private BlockingQueue<DomibusConnectorMessage> toControllerSubmittedMessages;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         setUpBackend();
-        
+
         bobApplicationContext = setUpClientBob(getBackendServiceWsAddress(backendApplicationContext));
         aliceApplicationContext = setUpClientAlice(getBackendServiceWsAddress(backendApplicationContext));
 //        catrinaApplicationcontext = setUpClientCatrina(getBackendServiceWsAddress(backendApplicationContext));
-        
-        LOGGER.info("SERVER ADDRESS " +  getBackendServiceWsAddress(backendApplicationContext));
+
+        LOGGER.info("SERVER ADDRESS " + getBackendServiceWsAddress(backendApplicationContext));
         LOGGER.info("CLIENT BOB ADDRESS " + getBackendClientPushServiceAddress(bobApplicationContext));
-                
+
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws InterruptedException {
 //        Thread.sleep(120000);
     }
-    
+
     //setup and start connector backend
     private static void setUpBackend() {
         MDC.put("COLOR", "GREEN");
-        String dbName = UUID.randomUUID().toString().substring(0,10); //use random db name to avoid reusing db between test runs
-        String[] backendProfiles = new String[] {"db_h2", "backendlink-ws", "storage-db"};
-        String[] backendProperties = new String[] {"server.port=0",
+        String dbName = UUID.randomUUID().toString().substring(0, 10); //use random db name to avoid reusing db between test runs
+        String[] backendProfiles = new String[]{"db_h2", "backendlink-ws", "storage-db"};
+        String[] backendProperties = new String[]{"server.port=0",
                 "spring.datasource.url=jdbc:h2:mem:" + dbName,
                 "logging.config=classpath:log4j2-test.xml",
                 "spring.liquibase.change-log=classpath:/backend/database/testdata/init-db.xml",
@@ -96,7 +94,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         backendApplicationContext = StartBackendOnly.startUpSpringApplication(backendProfiles, backendProperties);
         System.out.println("backend context started...");
         LOGGER.info("backendServiceStarted....");
-        MDC.remove("COLOR");        
+        MDC.remove("COLOR");
     }
 
 
@@ -145,16 +143,16 @@ public class BackendLinkWsTestMessageFlowITCase {
         String serverPort = appContext.getEnvironment().getProperty("local.server.port");
         return "http://localhost:" + serverPort + "/services/backendDelivery";
     }
-    
+
     protected static String getBackendServiceWsAddress(ApplicationContext appContext) {
         String serverPort = appContext.getEnvironment().getProperty("local.server.port");
         return "http://localhost:" + serverPort + "/services/backend";
     }
-    
-    @Before
+
+    @BeforeEach
     public void setUp() throws InterruptedException {
         System.out.println("###########################RUN TEST#######################################");
-        System.out.println("SERVER ADDRESS: " +  getBackendServiceWsAddress(backendApplicationContext));
+        System.out.println("SERVER ADDRESS: " + getBackendServiceWsAddress(backendApplicationContext));
         System.out.println("CLIENT BOB ADDRESS: " + getBackendClientPushServiceAddress(bobApplicationContext));
         System.out.println("CLIENT ALICE ADDRESS: " + getBackendClientPushServiceAddress(aliceApplicationContext));
         System.out.println("wait 3 seconds....");
@@ -179,24 +177,24 @@ public class BackendLinkWsTestMessageFlowITCase {
         assertThat(bob.isPushBackend()).isFalse();
         backendClientInfoPersistenceService.save(bob);
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws InterruptedException {
         System.out.println("###########################AFTER TEST#####################################");
         System.out.println("wait 3 seconds....");
         Thread.sleep(3000);
     }
-    
+
     @Test
     public void testSubmitMessageToBackendService() throws InterruptedException {
 
         //send message from bob to connector
         DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
-        
+
         DomibusConnectorMessageType msg = TransitionCreator.createEpoMessage();
         DomibsConnectorAcknowledgementType submitMessage = bobClientEndpoint.submitMessage(msg);
         assertThat(submitMessage).isNotNull();
-      
+
     }
 
     @Test
@@ -253,44 +251,44 @@ public class BackendLinkWsTestMessageFlowITCase {
      * message to backend for backend delivery, backend is pulling message...
      */
     //@Ignore("not working because embedded broker is closed before queue is queried")
-    @Test(timeout=5000)
+    @Test
     public void testSendMessageFromConnectorToBackend_withPull() throws InterruptedException {
-        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
-        message.setConnectorMessageId("msgid2");
-        message.getMessageDetails().setService(new DomibusConnectorService("BOB", "service_type"));
-        message.getMessageDetails().setEbmsMessageId("ebms_23");
-        message.getMessageDetails().setRefToMessageId(null);
-        message.getMessageDetails().setBackendMessageId(null);
-        message.getMessageDetails().setConversationId(null);
+        Assertions.assertTimeout(Duration.ofSeconds(50), () -> {
+            DomibusConnectorMessage message = DomainEntityCreator.createMessage();
+            message.setConnectorMessageId("msgid2");
+            message.getMessageDetails().setService(new DomibusConnectorService("BOB", "service_type"));
+            message.getMessageDetails().setEbmsMessageId("ebms_23");
+            message.getMessageDetails().setRefToMessageId(null);
+            message.getMessageDetails().setBackendMessageId(null);
+            message.getMessageDetails().setConversationId(null);
 
-        BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
-        DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-        DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
+            BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
+            DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
+            DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
 
-        persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-        bigDataPersistence.persistAllBigFilesFromMessage(message);
+            persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+            bigDataPersistence.persistAllBigFilesFromMessage(message);
 
-        //start message processing in backendLinkModule
-        DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
-        messageToBackend.deliverMessageToBackend(message); //message should be on queue
-
-
+            //start message processing in backendLinkModule
+            DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
+            messageToBackend.deliverMessageToBackend(message); //message should be on queue
 
 
-        //Thread.sleep(3000); //to be sure wait a little bit before calling backendService
+            //Thread.sleep(3000); //to be sure wait a little bit before calling backendService
 
-        //ok client bob is now trying to fetch message
-        DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
+            //ok client bob is now trying to fetch message
+            DomibusConnectorBackendWebService bobClientEndpoint = bobApplicationContext.getBean("backendClient", DomibusConnectorBackendWebService.class);
 
-        DomibusConnectorMessagesType domibusConnectorMessagesType;
-        do {
-            EmptyRequestType emptyRequest = new EmptyRequestType();
-            domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
-            Thread.sleep(500);
-        } while( domibusConnectorMessagesType != null && domibusConnectorMessagesType.getMessages().size() == 0);
+            DomibusConnectorMessagesType domibusConnectorMessagesType;
+            do {
+                EmptyRequestType emptyRequest = new EmptyRequestType();
+                domibusConnectorMessagesType = bobClientEndpoint.requestMessages(emptyRequest);
+                Thread.sleep(500);
+            } while (domibusConnectorMessagesType != null && domibusConnectorMessagesType.getMessages().size() == 0);
 
-        assertThat(domibusConnectorMessagesType.getMessages()).hasSize(1);
+            assertThat(domibusConnectorMessagesType.getMessages()).hasSize(1);
 
+        });
     }
 
 }

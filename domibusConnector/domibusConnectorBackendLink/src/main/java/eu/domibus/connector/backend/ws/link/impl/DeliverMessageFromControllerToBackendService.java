@@ -6,6 +6,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorBackendExceptio
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -178,9 +179,13 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
     private DomibusConnectorBackendClientInfo getBackendClientInfoByRefToMessageIdOrReturnNull(String refToMessageId) {
         if (refToMessageId != null) {
             LOGGER.trace("#getBackendClientInfoByRefToMessageIdOrReturnNull: try to find message by refToMessageId [{}]", refToMessageId);
-            DomibusConnectorMessage referencedMessage = messagePersistenceService.findMessageByEbmsId(refToMessageId);
+            DomibusConnectorMessage referencedMessage = messagePersistenceService
+                    .findMessageByEbmsIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)
+                    .orElse(null);
             if (referencedMessage == null) {
-                referencedMessage = messagePersistenceService.findMessageByNationalId(refToMessageId);
+                referencedMessage = messagePersistenceService
+                        .findMessageByNationalIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)
+                        .orElse(null);
             }
             if (referencedMessage == null) {
                 throw new IllegalStateException(String.format("Referenced message with ebmsid or nationalBackendId [%s] does not exist!", refToMessageId));
