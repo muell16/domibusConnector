@@ -1,6 +1,8 @@
 
 package eu.domibus.connector.gateway.link.ws.spring;
 
+//import eu.domibus.connector.configuration.annotation.ConfigurationDescription;
+//import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;

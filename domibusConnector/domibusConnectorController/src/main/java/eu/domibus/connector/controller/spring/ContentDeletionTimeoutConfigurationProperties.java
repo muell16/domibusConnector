@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.spring;
 
+//import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
 import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

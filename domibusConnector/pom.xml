@@ -269,6 +269,11 @@
             </dependency>
 
 
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>7.1</version>
+            </dependency>
 
             <!-- Apache CXF dependencies -->
             <dependency>
@@ -313,6 +318,7 @@
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.4.1</version>
             </dependency>
+
             <dependency>
                 <!-- overwrite dependency version in org.apache.neethi:neethi:3.0.3 and org.apache.santuario:xmlsec -->
                 <groupId>org.apache.cxf</groupId>
