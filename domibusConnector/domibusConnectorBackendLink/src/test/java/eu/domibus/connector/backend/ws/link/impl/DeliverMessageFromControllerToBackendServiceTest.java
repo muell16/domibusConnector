@@ -3,19 +3,21 @@ package eu.domibus.connector.backend.ws.link.impl;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,7 +44,7 @@ public class DeliverMessageFromControllerToBackendServiceTest {
 
     private List<DomibusConnectorBackendMessage> waitQueueMessages;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         toClientPushedMessages = new ArrayList<>();
         waitQueueMessages = new ArrayList<>();
@@ -84,14 +86,16 @@ public class DeliverMessageFromControllerToBackendServiceTest {
         relatedEbmsMessage.setConnectorMessageId("msg2");
         relatedEbmsMessage.getMessageDetails().setConnectorBackendClientName("catrina");
         relatedEbmsMessage.getMessageDetails().setEbmsMessageId("ebms_msg2");
-        Mockito.when(messagePersistenceService.findMessageByEbmsId(eq("ebms_msg2"))).thenReturn(relatedEbmsMessage);
+        Mockito.when(messagePersistenceService.findMessageByEbmsIdAndDirection(eq("ebms_msg2"), eq(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)))
+                .thenReturn(Optional.of(relatedEbmsMessage));
 
         //relatedMessage with id msg2, has backendClient name catrina
         DomibusConnectorMessage relatedNationalMessage = DomainEntityCreator.createMessage();
         relatedNationalMessage.setConnectorMessageId("msg2");
         relatedNationalMessage.getMessageDetails().setConnectorBackendClientName("catrina");
         relatedNationalMessage.getMessageDetails().setBackendMessageId("backend_msg2");
-        Mockito.when(messagePersistenceService.findMessageByNationalId(eq("backend_msg2"))).thenReturn(relatedNationalMessage);
+        Mockito.when(messagePersistenceService.findMessageByNationalIdAndDirection(eq("backend_msg2"), eq(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)))
+                .thenReturn(Optional.of(relatedNationalMessage));
 
         Mockito.when(backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(eq("catrina"))).thenReturn(createBackendClientInfoCatrina());
 
@@ -145,13 +149,15 @@ public class DeliverMessageFromControllerToBackendServiceTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
+    @Test //(expected = IllegalStateException.class)
     public void testGetBackendClientForMessage_byRefToMessageId_referencedMessageDoesNotExist() {
-        DomibusConnectorMessage message = DomainEntityCreator.createEvidenceNonDeliveryMessage();
-        message.getMessageDetails().setRefToMessageId("msg123"); //msg is related to msg123 which does not exist
-        message.getMessageDetails().setConversationId(null);
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            DomibusConnectorMessage message = DomainEntityCreator.createEvidenceNonDeliveryMessage();
+            message.getMessageDetails().setRefToMessageId("msg123"); //msg is related to msg123 which does not exist
+            message.getMessageDetails().setConversationId(null);
 
-        DomibusConnectorBackendClientInfo backendClientForMessage = deliverMessageFromControllerToBackendService.getBackendClientForMessage(message);
+            DomibusConnectorBackendClientInfo backendClientForMessage = deliverMessageFromControllerToBackendService.getBackendClientForMessage(message);
+        });
     }
 
     @Test
@@ -204,7 +210,6 @@ public class DeliverMessageFromControllerToBackendServiceTest {
 
         assertThat(backendClientForMessage).isEqualToComparingFieldByField(createBackendClientInfoBob());
     }
-
 
 
     private DomibusConnectorBackendClientInfo createBackendClientInfoBob() {

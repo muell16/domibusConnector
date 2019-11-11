@@ -5,7 +5,6 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 
 import javax.annotation.Nonnull;
-import java.util.stream.Stream;
 
 public class MessageDirectionMapper {
 
@@ -25,7 +24,8 @@ public class MessageDirectionMapper {
         }
     }
 
-    public static @Nonnull DomibusConnectorMessageDirection mapFromPersistenceToDomain(@Nonnull PMessageDirection direction) {
+    public static @Nonnull
+    DomibusConnectorMessageDirection mapFromPersistenceToDomain(@Nonnull PMessageDirection direction) {
         if (direction == null) {
             throw new IllegalArgumentException("Cannot map null to a direction!");
         }

@@ -1,7 +1,5 @@
 package eu.domibus.connector.domain.enums;
 
-import org.apache.logging.log4j.message.Message;
-
 import java.util.stream.Stream;
 
 import static eu.domibus.connector.domain.enums.MessageTargetSource.*;

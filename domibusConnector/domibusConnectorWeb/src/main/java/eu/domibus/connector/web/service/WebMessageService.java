@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -36,11 +37,11 @@ public class WebMessageService {
 	}
 
 	public WebMessageDetail getMessageByEbmsId(String ebmsId) {
-		return messagePersistenceService.findMessageByEbmsId(ebmsId);
+		return messagePersistenceService.findMessageByEbmsId(ebmsId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 	}
 
 	public WebMessageDetail getMessageByBackendMessageId(String backendMessageId) {
-		return messagePersistenceService.findMessageByNationalId(backendMessageId);
+		return messagePersistenceService.findMessageByNationalId(backendMessageId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 	}
 
 	public LinkedList<WebMessage> getMessagesByPeriod(Date fromDate, Date toDate){

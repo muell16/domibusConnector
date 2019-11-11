@@ -2,18 +2,15 @@ package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import eu.domibus.connector.persistence.model.enums.PMessageDirection;
-import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *

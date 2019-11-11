@@ -13,6 +13,7 @@ import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.*;
 
 import org.springframework.jms.annotation.EnableJms;
@@ -43,6 +44,7 @@ public class WSBackendLinkContextConfiguration {
         return wsPolicyLoader;
     }
 
+    @ConditionalOnMissingBean(name = "defaultCallbackHandler")
     @Bean("defaultCallbackHandler")
     public DefaultWsCallbackHandler defaultCallbackHandler() {
         return new DefaultWsCallbackHandler();

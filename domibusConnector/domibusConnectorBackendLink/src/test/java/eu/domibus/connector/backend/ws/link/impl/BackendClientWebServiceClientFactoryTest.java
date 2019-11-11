@@ -4,14 +4,13 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Ignore("TODO: convert to ITCase!")
+@Disabled("TODO: convert to ITCase!")
 public class BackendClientWebServiceClientFactoryTest {
 
     BackendClientWebServiceClientFactory webServiceClientFactory;
@@ -19,7 +18,7 @@ public class BackendClientWebServiceClientFactoryTest {
     WSBackendLinkConfigurationProperties configurationProperties = new WSBackendLinkConfigurationProperties();
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         WsPolicyLoader policyLoader = new WsPolicyLoader(configurationProperties.getWsPolicy());
 //        policyLoader.setBackendLinkConfigurationProperties(configurationProperties);

@@ -1,25 +1,24 @@
 package eu.domibus.connector.evidences;
 
-import java.security.NoSuchAlgorithmException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import eu.domibus.connector.evidences.HashValueBuilder;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HashValueBuilderTest {
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWrongAlgorithm() {
-        new HashValueBuilder("SHI-1");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            new HashValueBuilder("SHI-1");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoAlgorithm() {
-        new HashValueBuilder("");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            new HashValueBuilder("");
+        });
     }
 
     @Test
