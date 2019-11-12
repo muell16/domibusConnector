@@ -9,12 +9,13 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
-import org.apache.cxf.helpers.IOUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
 
     private void copyDataRef(DomibusConnectorBigDataReference readFrom, DomibusConnectorBigDataReference writeTo) {
         try (InputStream is = readFrom.getInputStream(); OutputStream os = writeTo.getOutputStream()) {
-            IOUtils.copy(is, os);
+            StreamUtils.copy(is, os);
         } catch (IOException e) {
             String error = String.format("IOException occured while writing [%s] to storage", readFrom.getName());
             LOGGER.error(error, e);

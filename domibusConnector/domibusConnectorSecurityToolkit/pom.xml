@@ -8,7 +8,9 @@
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
-    <description>The securityToolkitModule resolves and creates the ASIC-S Container. Its a bridge betweent the connector and the securityLib</description>
+    <description>The securityToolkitModule resolves and creates the ASIC-S Container. Its a bridge betweent the
+        connector and the securityLib
+    </description>
 
 
     <dependencies>
@@ -132,7 +134,7 @@
             <version>2.2.11</version>
             <scope>test</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorPersistence</artifactId>
             <version>${project.version}</version>
@@ -184,15 +186,23 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerAPI</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment,
                BUT only filter specific folder!!! so the other resources are not malformed during filtering!
         -->
-<!-- activate resource filtering to provide the tests with correct properties for the environment 
-            BUT only filter resources from specific folder to avoid malforming the other resources
-        -->
+        <!-- activate resource filtering to provide the tests with correct properties for the environment
+                    BUT only filter resources from specific folder to avoid malforming the other resources
+                -->
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
@@ -232,7 +242,6 @@
                                     <destFileName>log4j2-test.xml</destFileName>
                                 </artifactItem>
                             </artifactItems>
-
 
 
                         </configuration>
