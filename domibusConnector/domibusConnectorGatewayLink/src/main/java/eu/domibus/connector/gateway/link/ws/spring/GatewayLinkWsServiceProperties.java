@@ -1,9 +1,8 @@
 
 package eu.domibus.connector.gateway.link.ws.spring;
 
-import eu.domibus.connector.configuration.annotation.ConfigurationDescription;
-import eu.domibus.connector.configuration.annotation.ConfigurationLabel;
-import eu.domibus.connector.lib.spring.configuration.*;
+import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -33,7 +32,7 @@ import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.G
 @Validated
 @Valid
 @PropertySource("classpath:eu/domibus/connector/gateway/link/ws/spring/gatewaylinkws-default.properties")
-@ConfigurationDescription("Contains all properties which are related to configure the connection to the gateway over webservices (soap)")
+//@ConfigurationDescription("Contains all properties which are related to configure the connection to the gateway over webservices (soap)")
 public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfigurationProperties {
 
     public static final String BEAN_NAME = "GatewayLinkWsServiceProperties";
@@ -64,7 +63,7 @@ public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfiguratio
      * to the Gateway. The private key is used to authenticate against the Gateway.
      */
     @NestedConfigurationProperty
-    @ConfigurationDescription("TLS between GW - Connector")
+//    @ConfigurationDescription("TLS between GW - Connector")
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties tls;
 
 
@@ -78,8 +77,8 @@ public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfiguratio
     @Valid
     @NestedConfigurationProperty
     @NotNull
-    @ConfigurationLabel("WS Policy for GW <-> Connector Link")
-    @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway")
+//    @ConfigurationLabel("WS Policy for GW <-> Connector Link")
+//    @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway")
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
     public String getSubmissionEndpointAddress() {
