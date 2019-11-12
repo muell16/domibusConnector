@@ -22,18 +22,12 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorAPI</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
-            <classifier>tests</classifier>
+            <type>test-jar</type>
             <scope>test</scope>
             <version>${project.version}</version>
         </dependency>
@@ -141,6 +135,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
