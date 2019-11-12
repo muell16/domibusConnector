@@ -215,32 +215,32 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <!-- copy log4j2-test.xml from domibusConnectorLoggingTest module -->
-                        <id>copy-log4j2-test</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>eu.domibus.connector.test</groupId>
-                                    <artifactId>domibusConnectorTestLogging</artifactId>
-                                    <classifier>log4j2-test</classifier>
-                                    <version>${project.version}</version>
-                                    <type>xml</type>
-                                    <overWrite>true</overWrite>
-                                    <!--<outputAbsoluteArtifactFilename>target/test-classes/log4j2-test.xml</outputAbsoluteArtifactFilename>-->
-                                    <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-                                    <destFileName>log4j2-test.xml</destFileName>
-                                </artifactItem>
-                            </artifactItems>
+<!--                    <execution>-->
+<!--                        &lt;!&ndash; copy log4j2-test.xml from domibusConnectorLoggingTest module &ndash;&gt;-->
+<!--                        <id>copy-log4j2-test</id>-->
+<!--                        <phase>process-resources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <artifactItems>-->
+<!--                                <artifactItem>-->
+<!--                                    <groupId>eu.domibus.connector.test</groupId>-->
+<!--                                    <artifactId>domibusConnectorTestLogging</artifactId>-->
+<!--                                    <classifier>log4j2-test</classifier>-->
+<!--                                    <version>${project.version}</version>-->
+<!--                                    <type>xml</type>-->
+<!--                                    <overWrite>true</overWrite>-->
+<!--                                    &lt;!&ndash;<outputAbsoluteArtifactFilename>target/test-classes/log4j2-test.xml</outputAbsoluteArtifactFilename>&ndash;&gt;-->
+<!--                                    <outputDirectory>${project.build.directory}/test-classes</outputDirectory>-->
+<!--                                    <destFileName>log4j2-test.xml</destFileName>-->
+<!--                                </artifactItem>-->
+<!--                            </artifactItems>-->
 
 
-                        </configuration>
+<!--                        </configuration>-->
 
-                    </execution>
+<!--                    </execution>-->
                 </executions>
             </plugin>
         </plugins>
