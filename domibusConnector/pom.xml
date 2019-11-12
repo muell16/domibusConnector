@@ -105,13 +105,8 @@
         <dependencies>
             <!-- define project module dependencies -->
             <dependency>
-                <groupId>eu.domibus.connector</groupId>
-                <artifactId>domibusConnectorDomain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>domibusConnectorDomain</artifactId>
+                <artifactId>domibusConnectorAPI</artifactId>
                 <classifier>tests</classifier>
                 <version>${project.version}</version>
                 <scope>test</scope>

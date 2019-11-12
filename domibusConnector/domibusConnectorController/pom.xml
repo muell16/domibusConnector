@@ -32,11 +32,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorMonitoring</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorPersistence</artifactId>
             <version>${project.version}</version>
@@ -84,7 +79,7 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
+            <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
