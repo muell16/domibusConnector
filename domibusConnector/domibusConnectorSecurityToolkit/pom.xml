@@ -178,12 +178,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>eu.domibus.connector.test</groupId>
-            <artifactId>domibusConnectorTestLogging</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
