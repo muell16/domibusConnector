@@ -16,10 +16,7 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorAPI</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorLinkCommon</artifactId>
@@ -57,8 +54,6 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
