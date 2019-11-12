@@ -188,10 +188,6 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper-el</artifactId>
         </dependency>
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorConfiguration</artifactId>
-        </dependency>
     </dependencies>
     <build>        <!-- activate resource filtering to provide the tests with correct properties for the environment
             BUT only filter resources from specific folder to avoid malforming the other resources

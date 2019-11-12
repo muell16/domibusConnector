@@ -161,11 +161,6 @@
                 <artifactId>domibusConnectorStarter</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>eu.domibus.connector</groupId>
-                <artifactId>domibusConnectorConfiguration</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
 
             <!-- E-CODEX LIBRARIES -->
