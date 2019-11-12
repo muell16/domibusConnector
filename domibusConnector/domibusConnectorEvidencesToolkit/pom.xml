@@ -108,6 +108,10 @@
             <artifactId>tomcat-jasper-el</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerAPI</artifactId>
+        </dependency>
     </dependencies>
 	
     <build>

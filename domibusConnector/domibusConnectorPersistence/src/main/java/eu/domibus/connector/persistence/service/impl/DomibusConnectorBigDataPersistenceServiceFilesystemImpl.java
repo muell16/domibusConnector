@@ -6,12 +6,13 @@ import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersisten
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
-import org.apache.cxf.helpers.IOUtils;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.StreamUtils;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.*;
@@ -112,7 +113,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
         if (input != null) {
             try (OutputStream os = getOutputStream(bigDataReference)) {
-                IOUtils.copy(input, os);
+                StreamUtils.copy(input, os);
                 bigDataReference.setOutputStream(os);
             } catch(FileNotFoundException e){
                 throw new PersistenceException(String.format("Error while creating FileOutpuStream for file [%s]", storageFile), e);
