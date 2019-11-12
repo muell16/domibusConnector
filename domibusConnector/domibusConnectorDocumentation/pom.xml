@@ -15,10 +15,5 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
-    <dependency>
-      <groupId>eu.domibus.connector</groupId>
-      <artifactId>domibusConnectorDatabaseInitializer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 </project>
