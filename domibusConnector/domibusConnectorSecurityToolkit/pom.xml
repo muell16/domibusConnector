@@ -12,11 +12,7 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>		
-            <version>${project.version}</version>	
-        </dependency>
+
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
@@ -145,7 +141,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
+            <artifactId>domibusConnectorAPI</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

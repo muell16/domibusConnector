@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
+            <artifactId>domibusConnectorAPI</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
             <version>${project.version}</version>

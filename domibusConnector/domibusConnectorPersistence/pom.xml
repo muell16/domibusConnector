@@ -12,11 +12,7 @@
     <description>This module is responsibly for persisting the messages and message contents into a persistent storage (Database).</description>
     
     <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
 			<groupId>eu.domibus.connector</groupId>
 			<artifactId>domibusConnectorWebLib</artifactId>
@@ -118,7 +114,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorDomain</artifactId>
+            <artifactId>domibusConnectorAPI</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
