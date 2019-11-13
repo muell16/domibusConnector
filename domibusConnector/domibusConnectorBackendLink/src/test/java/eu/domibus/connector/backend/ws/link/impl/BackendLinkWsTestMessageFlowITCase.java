@@ -228,6 +228,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         epoMessage.setConnectorMessageId("msgid1");
         epoMessage.getMessageDetails().setRefToMessageId(null);
         epoMessage.getMessageDetails().setBackendMessageId(null);
+        epoMessage.getMessageDetails().setService(new DomibusConnectorService("ALICE", "service_type"));
 
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
         DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
