@@ -1,21 +1,8 @@
 package eu.domibus.connector.persistence.liquibase;
 
 
-
-import org.junit.Assume;
 import org.junit.jupiter.api.extension.*;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.bind.BindResult;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
-import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.env.PropertySource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 
-import javax.sql.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

@@ -10,19 +10,19 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.UUID;
+import java.time.Duration;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCase {
 
@@ -38,7 +38,7 @@ public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCas
 
     private DatabaseDataSourceConnection conn;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -57,29 +57,31 @@ public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCas
     }
 
 
-    @Test(timeout=20000)
+    @Test
     public void testSave() throws SQLException, DataSetException {
-        long msgId = 72L;
-        PDomibusConnectorMessage msg = messageDao.findById(msgId).get();
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            long msgId = 72L;
+            PDomibusConnectorMessage msg = messageDao.findById(msgId).get();
 
-        PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-        bigData.setMessage(msgId);
+            PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
+            bigData.setMessage(msgId);
 
-        transactionTemplate.execute( status -> {
-            Session hibernateSession = entityManager.unwrap(Session.class);
-            Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob("HELLO WORLD I AM A VERY LONG CONTENT".getBytes());
-            bigData.setContent(blob);
-            bigData.setMimeType("application/octet-stream");
-            bigData.setName("name");
+            transactionTemplate.execute(status -> {
+                Session hibernateSession = entityManager.unwrap(Session.class);
+                Blob blob = Hibernate.getLobCreator(hibernateSession).createBlob("HELLO WORLD I AM A VERY LONG CONTENT".getBytes());
+                bigData.setContent(blob);
+                bigData.setMimeType("application/octet-stream");
+                bigData.setName("name");
 
-            bigDataDao.save(bigData);
-            return null;
+                bigDataDao.save(bigData);
+                return null;
+            });
+
+            //check database
+            ITable dataTable = this.conn.createQueryTable("DATARES", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA WHERE MESSAGE_ID = " + msgId);
+            int rowCount = dataTable.getRowCount();
+
+            assertThat(rowCount).isEqualTo(1);
         });
-
-        //check database
-        ITable dataTable = this.conn.createQueryTable("DATARES", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA WHERE MESSAGE_ID = " + msgId);
-        int rowCount = dataTable.getRowCount();
-
-        assertThat(rowCount).isEqualTo(1);
     }
 }

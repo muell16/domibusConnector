@@ -13,6 +13,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
+import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,9 @@ public class GatewayLinkWsContext {
         jaxWsProxyFactoryBean.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
         jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
+        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
 
-        jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
+//        jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
 
         if (jaxWsProxyFactoryBean.getProperties() == null) {
             jaxWsProxyFactoryBean.setProperties(new HashMap<>());

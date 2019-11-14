@@ -26,9 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -39,6 +40,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
@@ -46,8 +48,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-
+@ExtendWith(SpringExtension.class)
 public class MsgContentPersistenceServiceTest {
 
 
@@ -60,7 +61,7 @@ public class MsgContentPersistenceServiceTest {
     @InjectMocks   
     MsgContentPersistenceService msgContService;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }

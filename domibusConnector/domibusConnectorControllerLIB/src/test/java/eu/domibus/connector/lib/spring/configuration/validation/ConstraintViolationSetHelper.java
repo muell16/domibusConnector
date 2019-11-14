@@ -1,6 +1,5 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
-import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;

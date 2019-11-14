@@ -5,6 +5,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
@@ -21,8 +22,9 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -40,7 +42,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
     private DomibusConnectorMessageDao messageDao;
 
     
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -59,33 +61,39 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
         
     }
 
-    @Test(timeout=20000)
+    @Test
     public void testFindEvidencesForMessage() {
-        
-        List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(73L);
-        
-        assertThat(evidences).hasSize(3);
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+
+            List<PDomibusConnectorEvidence> evidences = evidenceDao.findByMessage_Id(73L);
+
+            assertThat(evidences).hasSize(3);
+        });
     }
 
-    @Test(timeout=20000)
-    public void testSetDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {                
-        int result = evidenceDao.setDeliveredToGateway(82L);        
-        assertThat(result).isEqualTo(1); //check on row updated
-        
-         //check result in DB
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
-        QueryDataSet dataSet = new QueryDataSet(conn);
-        dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=82");
-       
-        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
-        Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_GW");
-        assertThat(value).isCloseTo(new Date(), 2000);        
+    @Test
+    public void testSetDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            int result = evidenceDao.setDeliveredToGateway(82L);
+            assertThat(result).isEqualTo(1); //check on row updated
+
+            //check result in DB
+            DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+            QueryDataSet dataSet = new QueryDataSet(conn);
+            dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=82");
+
+            ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
+            Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_GW");
+            assertThat(value).isCloseTo(new Date(), 2000);
+        });
     }
 
-    @Test(timeout=20000)
+    @Test
     public void testSetDeliveredToGateway_updateNonExistant_shouldReturnZero() {
-        int result = evidenceDao.setDeliveredToGateway(882L);        
-        assertThat(result).isEqualTo(0); //check on row updated
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            int result = evidenceDao.setDeliveredToGateway(882L);
+            assertThat(result).isEqualTo(0); //check on row updated
+        });
     }
 
 //    @Test(timeout=20000)
@@ -125,24 +133,26 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
 //        assertThat(value).isCloseTo(new Date(), 2000);
 //    }
 
-    @Test(timeout=20000)
+    @Test
     public void testSetDeliveredToBackend_ByMessageIdAndType() throws SQLException, DataSetException {
-        PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
-        dbMessage.setId(74L);
-        int result = evidenceDao.setDeliveredToBackend(dbMessage, EvidenceType.SUBMISSION_ACCEPTANCE);
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
+            dbMessage.setId(74L);
+            int result = evidenceDao.setDeliveredToBackend(dbMessage, EvidenceType.SUBMISSION_ACCEPTANCE);
 
-        assertThat(result).isEqualTo(1);
-        //check result in DB
-        DatabaseDataSourceConnection conn = getDbUnitConnection();
-        QueryDataSet dataSet = new QueryDataSet(conn);
-        dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=85");
+            assertThat(result).isEqualTo(1);
+            //check result in DB
+            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            QueryDataSet dataSet = new QueryDataSet(conn);
+            dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=85");
 
-        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
-        Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_NAT");
-        assertThat(value).isNotNull();
-        assertThat(value).isCloseTo(new Date(), 2000);
+            ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_EVIDENCE");
+            Date value = (Date) domibusConnectorTable.getValue(0, "DELIVERED_NAT");
+            assertThat(value).isNotNull();
+            assertThat(value).isCloseTo(new Date(), 2000);
 
-        conn.close();
+            conn.close();
+        });
     }
 
 
@@ -152,23 +162,25 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
 //        assertThat(result).isEqualTo(0); //check one row updated
 //    }
 
-    @Test(timeout=20000)
+    @Test
     public void testSaveEvidence() {
-        PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
-        
-        PDomibusConnectorMessage dbMessage = messageDao.findById(75L).get();
-        assertThat(dbMessage).isNotNull();
-        
-        byte[] evidence = "Hallo Welt".getBytes();
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
 
-        dbEvidence.setMessage(dbMessage);
-        dbEvidence.setEvidence(new String(evidence));
-        dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
-        dbEvidence.setDeliveredToGateway(null);
-        dbEvidence.setDeliveredToNationalSystem(null);
-        dbEvidence.setConnectorMessageId("testid");
-        
-        evidenceDao.save(dbEvidence);
+            PDomibusConnectorMessage dbMessage = messageDao.findById(75L).get();
+            assertThat(dbMessage).isNotNull();
+
+            byte[] evidence = "Hallo Welt".getBytes();
+
+            dbEvidence.setMessage(dbMessage);
+            dbEvidence.setEvidence(new String(evidence));
+            dbEvidence.setType(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
+            dbEvidence.setDeliveredToGateway(null);
+            dbEvidence.setDeliveredToNationalSystem(null);
+            dbEvidence.setConnectorMessageId("testid");
+
+            evidenceDao.save(dbEvidence);
+        });
     }
 
 

@@ -9,8 +9,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -39,7 +40,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
 
     private List<DomibusConnectorMessage> putOnQueue;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         putOnQueue = new ArrayList<>();
@@ -88,20 +89,24 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
 
     }
 
-    @Test(expected = DomibusConnectorControllerException.class)
+    @Test
     public void testDeliverMessageFromGateway_null_shouldThrowException() {
-        deliveryService.deliverMessageFromGatewayToController(null);
+        Assertions.assertThrows(DomibusConnectorControllerException.class, () -> {
+            deliveryService.deliverMessageFromGatewayToController(null);
+        });
     }
 
-    @Test(expected =  DomibusConnectorControllerException.class)
+    @Test
     public void testDeliveryMessageFromGateway_illegalMessage_shouldThrowException() {
-        DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
-                .setMessageDetails(DomainEntityCreator.createDomibusConnectorMessageDetails())
-                .addConfirmation(DomainEntityCreator.createMessageDeliveryConfirmation())
-                .build();
-        message.getMessageConfirmations().clear();
+        Assertions.assertThrows(DomibusConnectorControllerException.class, () -> {
+            DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
+                    .setMessageDetails(DomainEntityCreator.createDomibusConnectorMessageDetails())
+                    .addConfirmation(DomainEntityCreator.createMessageDeliveryConfirmation())
+                    .build();
+            message.getMessageConfirmations().clear();
 
-        deliveryService.deliverMessageFromGatewayToController(message);
+            deliveryService.deliverMessageFromGatewayToController(message);
+        });
     }
 
 }

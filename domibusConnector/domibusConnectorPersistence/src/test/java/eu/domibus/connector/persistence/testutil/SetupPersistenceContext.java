@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.testutil;
 
-import org.junit.BeforeClass;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

@@ -3,13 +3,11 @@ package eu.domibus.connector.persistence.service.impl;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import javax.swing.text.html.Option;
 
 import java.util.Optional;
 
@@ -23,7 +21,7 @@ public class DomibusConnectorServicePersistenceImplTest {
 
     DomibusConnectorServicePersistenceService servicePersistenceService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         DomibusConnectorServicePersistenceImpl impl = new DomibusConnectorServicePersistenceImpl();

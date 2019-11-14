@@ -7,8 +7,9 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -31,7 +32,7 @@ public class InternalMessageInfoPersistenceServiceImplTest {
 
     private InternalMessageInfoPersistenceService internalMessageInfoPersistenceService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         InternalMessageInfoPersistenceServiceImpl impl = new InternalMessageInfoPersistenceServiceImpl();
@@ -62,7 +63,6 @@ public class InternalMessageInfoPersistenceServiceImplTest {
     }
 
 
-
     @Test
     public void testValidatePartyServiceActionOfMessageInfo() {
         PDomibusConnectorMessageInfo messageInfo = PersistenceEntityCreator.createSimpleMessageInfo();
@@ -84,16 +84,17 @@ public class InternalMessageInfoPersistenceServiceImplTest {
         assertThat(messageInfo.getAction().isDocumentRequired()).isFalse();
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
     public void testValidatePartyServiceActionOfMessageInfo_partyNotConfigured() {
-        PDomibusConnectorMessageInfo messageInfo = PersistenceEntityCreator.createSimpleMessageInfo();
-        PDomibusConnectorParty unknownParty = new PDomibusConnectorParty();
-        unknownParty.setRole("GW");
-        unknownParty.setPartyId("id2");
-        messageInfo.setFrom(unknownParty);
+        Assertions.assertThrows(PersistenceException.class, () -> {
+            PDomibusConnectorMessageInfo messageInfo = PersistenceEntityCreator.createSimpleMessageInfo();
+            PDomibusConnectorParty unknownParty = new PDomibusConnectorParty();
+            unknownParty.setRole("GW");
+            unknownParty.setPartyId("id2");
+            messageInfo.setFrom(unknownParty);
 
-        internalMessageInfoPersistenceService.validatePartyServiceActionOfMessageInfo(messageInfo);
-
+            internalMessageInfoPersistenceService.validatePartyServiceActionOfMessageInfo(messageInfo);
+        });
 
 
     }

@@ -5,7 +5,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import eu.domibus.connector.domain.transition.DomibusConnectorDetachedSignatureMimeType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 

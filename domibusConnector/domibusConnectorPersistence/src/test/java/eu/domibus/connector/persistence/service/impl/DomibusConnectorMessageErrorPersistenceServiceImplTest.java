@@ -8,8 +8,8 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageError;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -34,7 +34,7 @@ public class DomibusConnectorMessageErrorPersistenceServiceImplTest {
 
     DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         DomibusConnectorMessageErrorPersistenceServiceImpl impl = new DomibusConnectorMessageErrorPersistenceServiceImpl();

@@ -22,9 +22,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import javax.activation.DataHandler;
 //import org.apache.cxf.helpers.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -54,27 +55,34 @@ public class DomibusConnectorDomainMessageTransformerTest {
 
 
     
-    @Test(expected=CannotBeMappedToTransitionException.class)
+    @Test
     public void testTransformDomainToTransition_finalRecipientIsNull_shouldThrowException() {
-        DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();        
-        domainMessage.getMessageDetails().setFinalRecipient(null);        
-        DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+        Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
+            DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
+            domainMessage.getMessageDetails().setFinalRecipient(null);
+            DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+        });
     }
     
-    @Test(expected=CannotBeMappedToTransitionException.class)
+    @Test
     public void testTransformDomainToTransition_originalSenderIsNull_shouldThrowException() {
-        DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();        
-        domainMessage.getMessageDetails().setOriginalSender(null);        
-        DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+        Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
+            DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
+            domainMessage.getMessageDetails().setOriginalSender(null);
+            DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+        });
     }
     
     
     
-    @Test(expected=CannotBeMappedToTransitionException.class)
+    @Test
     public void testTransformDomainToTransition_messageContentIsNull_shouldThrowException() {
-        DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
-        DomibusConnectorMessage domainMessage = new DomibusConnectorMessage(null, createMessageDeliveryConfirmation);
-        DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+            Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
+
+                DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
+                DomibusConnectorMessage domainMessage = new DomibusConnectorMessage(null, createMessageDeliveryConfirmation);
+                DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+            });
     }
             
     @Test
@@ -89,13 +97,15 @@ public class DomibusConnectorDomainMessageTransformerTest {
         
     }
     
-    @Test(expected=CannotBeMappedToTransitionException.class)
+    @Test
     public void testTransformMessageConfirmationDomainToTransition_getEvidenceIsNull_shouldThrowIllegalArgumentException() {
-         DomibusConnectorMessageConfirmation messageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
-         messageDeliveryConfirmation.setEvidence(null); //set evidence to null to provoke exception
-         
-         DomibusConnectorMessageConfirmationType messageConfirmationTO = 
-                DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);         
+        Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
+            DomibusConnectorMessageConfirmation messageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
+            messageDeliveryConfirmation.setEvidence(null); //set evidence to null to provoke exception
+
+            DomibusConnectorMessageConfirmationType messageConfirmationTO =
+                    DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
+        });
     }
     
     @Test
@@ -126,13 +136,15 @@ public class DomibusConnectorDomainMessageTransformerTest {
     }
     
     
-    @Test(expected=CannotBeMappedToTransitionException.class)
+    @Test
     public void testTransformMessageConfirmationDomainToTransition_getEvidenceTypeIsNull_shouldThrowIllegalArgumentException() {
+        Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
          DomibusConnectorMessageConfirmation messageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
          messageDeliveryConfirmation.setEvidenceType(null); //set evidence to null to provoke exception
          
          DomibusConnectorMessageConfirmationType messageConfirmationTO = 
-                DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);         
+                DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
+        });
     }
     
     @Test

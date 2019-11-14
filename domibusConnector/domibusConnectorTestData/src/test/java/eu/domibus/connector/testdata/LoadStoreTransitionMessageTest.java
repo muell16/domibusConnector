@@ -7,14 +7,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.FileSystemUtils;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +21,7 @@ public class LoadStoreTransitionMessageTest {
 
     @BeforeAll
     public static void beforeAll() throws IOException {
+        System.out.println("running beforeAll");
         Path p = Paths.get(TEST_DIR);
         FileSystemUtils.deleteRecursively(p);
         Files.createDirectory(p);
@@ -46,7 +40,7 @@ public class LoadStoreTransitionMessageTest {
 
     @Test
     public void testStoreMessage() throws Exception {
-        Path p = Paths.get(TEST_DIR).resolve("testmsg1");
+        Path p = Paths.get(TEST_DIR).resolve("testmsg1").normalize();
 
         FileSystemResource resource = new FileSystemResource(p.toFile());
         DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
@@ -59,7 +53,7 @@ public class LoadStoreTransitionMessageTest {
     public void testStoreThanLoad() throws Exception {
         DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
 
-        Path p = Paths.get(TEST_DIR).resolve("testmsg2");
+        Path p = Paths.get(TEST_DIR).resolve("testmsg2").normalize();
         LoadStoreTransitionMessage.storeMessageTo(p, testmessage, true);
 
         DomibusConnectorMessageType testmsg2 = LoadStoreTransitionMessage.loadMessageFrom(p);

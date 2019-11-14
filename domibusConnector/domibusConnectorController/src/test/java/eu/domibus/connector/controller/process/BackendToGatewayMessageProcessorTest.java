@@ -21,8 +21,8 @@ import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.domibus.connector.testutil.matcher.MockitoDomainMatcher;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -62,7 +62,7 @@ public class BackendToGatewayMessageProcessorTest {
 
     private List<DomibusConnectorMessage> toBackendDeliveredMessages;
 
-    @Before
+    @BeforeEach
     public void setUp() throws DomibusConnectorGatewaySubmissionException {
         MockitoAnnotations.initMocks(this);
         toGwDeliveredMessages = new ArrayList<>();

@@ -14,7 +14,7 @@
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
-        <module>domibusConnectorTestData</module>
+        <!--<module>domibusConnectorTest</module>-->
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>
@@ -23,6 +23,9 @@
         <module>domibusConnectorWeb</module>
         <module>domibusConnectorControllerLIB</module>
         <module>domibusConnectorLinkCommon</module>
+
+        <module>domibusConnectorTestData</module>
+
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
 
@@ -173,7 +176,7 @@
 
 
 
-
+                       
             <!-- jaxb -->
             <dependency>
                 <artifactId>jaxb-api</artifactId>
@@ -232,8 +235,15 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.5.2</version>
+                <version>${org.junit.jupiter.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.opentest4j</groupId>
+                <artifactId>opentest4j</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
@@ -253,6 +263,18 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <groupId>net.shibboleth.utilities</groupId>
                 <artifactId>java-support</artifactId>
@@ -338,6 +360,11 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
 
             <dependency>
                 <groupId>javax.validation</groupId>
@@ -427,12 +454,13 @@
             </dependency>
 
             <!-- MANAGED TEST DEPENDENCIES -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>junit</groupId>-->
+            <!--                <artifactId>junit</artifactId>-->
+            <!--                <version>4.12</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
+
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
@@ -457,9 +485,15 @@
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
                 <version>2.5.4</version>
-            </dependency>    
-            
-             <!-- google code findbugs annotations -->                 
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- google code findbugs annotations -->
 
             <dependency>
                 <groupId>com.google</groupId>
@@ -476,8 +510,21 @@
         </dependencies>
 
     </dependencyManagement>
-    
-    <profiles>        
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
         <profile>
             <id>javadoc</id>
             <build>
@@ -616,7 +663,7 @@
             </build>
         </profile>
         <profile>
-        <!--  starts during integration-test phase long running database tests -->
+            <!--  starts during integration-test phase long running database tests -->
             <id>dbunit-testing</id>
             <build>
                 <plugins>
@@ -625,8 +672,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
-                            <skipTests>true</skipTests>                            
-                        </configuration>                        
+                            <skipTests>true</skipTests>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -769,11 +816,25 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${org.junit.jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.22.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${org.junit.jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>                                         
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -950,6 +1011,7 @@
                                 <exclude>log4j:log4j</exclude>
                                 <exclude>org.apache.tomcat:jasper-el</exclude>
                                 <exclude>org.apache.tomcat:el-api</exclude>
+                                <exclude>junit:junit</exclude>
                             </excludes>
                         </bannedDependencies>
                     </rules>

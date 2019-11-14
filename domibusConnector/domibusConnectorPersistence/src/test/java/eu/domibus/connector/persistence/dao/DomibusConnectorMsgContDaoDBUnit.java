@@ -2,10 +2,6 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-
-import java.sql.SQLException;
-
-import static org.assertj.core.api.Assertions.*;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
@@ -14,9 +10,15 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
+
+import java.sql.SQLException;
+import java.time.Duration;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -28,7 +30,7 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
        
     private DomibusConnectorMessageDao messageDao;
     
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();        
@@ -43,21 +45,23 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
         
     }
 
-    @Test(timeout=20000)
+    @Test
     public void testDeleteByMessage() throws SQLException, AmbiguousTableNameException, DataSetException {
-        PDomibusConnectorMessage message = messageDao.findOneByConnectorMessageId("conn1");
-        msgContDao.deleteByMessage(message);
-        
-        //check result in DB        
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
-        QueryDataSet dataSet = new QueryDataSet(conn);
-        dataSet.addTable("DOMIBUS_CONNECTOR_MSG_CONT", "SELECT * FROM DOMIBUS_CONNECTOR_MSG_CONT");
-       
-        ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MSG_CONT");
-        
-        int rows = domibusConnectorTable.getRowCount();
-        
-        assertThat(rows).isEqualTo(1);
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            PDomibusConnectorMessage message = messageDao.findOneByConnectorMessageId("conn1");
+            msgContDao.deleteByMessage(message);
+
+            //check result in DB
+            DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+            QueryDataSet dataSet = new QueryDataSet(conn);
+            dataSet.addTable("DOMIBUS_CONNECTOR_MSG_CONT", "SELECT * FROM DOMIBUS_CONNECTOR_MSG_CONT");
+
+            ITable domibusConnectorTable = dataSet.getTable("DOMIBUS_CONNECTOR_MSG_CONT");
+
+            int rows = domibusConnectorTable.getRowCount();
+
+            assertThat(rows).isEqualTo(1);
+        });
     }
     
     

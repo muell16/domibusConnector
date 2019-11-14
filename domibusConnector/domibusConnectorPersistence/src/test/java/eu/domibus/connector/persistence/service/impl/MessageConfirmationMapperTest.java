@@ -4,8 +4,8 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,12 +42,12 @@ public class MessageConfirmationMapperTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void mapFromDomainIntoDb() throws Exception {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void mapFromDomainToDb() throws Exception {
     }
 

@@ -1,22 +1,16 @@
 
 package eu.domibus.connector.persistence.dao;
 
-import javax.sql.DataSource;
-
-import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServiceMemoryImpl;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Set;
@@ -33,7 +27,6 @@ public abstract class CommonPersistenceDBUnitITCase {
 
 
     @BeforeAll
-    @BeforeClass
     public static void beforeClass() {
         Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
         Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
@@ -42,7 +35,6 @@ public abstract class CommonPersistenceDBUnitITCase {
     }
 
     @AfterAll
-    @AfterClass
     public static void afterClass() {
         APPLICATION_CONTEXT.close();
     }
@@ -52,7 +44,6 @@ public abstract class CommonPersistenceDBUnitITCase {
     protected ConfigurableApplicationContext applicationContext;
         
     @BeforeEach
-    @Before
     public void setUp() throws Exception {        
         this.applicationContext = APPLICATION_CONTEXT;
         //lookup type
@@ -61,7 +52,7 @@ public abstract class CommonPersistenceDBUnitITCase {
 //        this.persistenceService = APPLICATION_CONTEXT.getBean("persistenceService", DomibusConnectorPersistenceService.class);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws  Exception {
         closeConnection();
     }

@@ -5,11 +5,15 @@ import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+
+import java.time.Duration;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+
+import org.junit.jupiter.api.Assertions;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -25,7 +29,7 @@ public class BigDataWithMessagePersistenceServiceTest {
 
     DomibusConnectorPersistAllBigDataOfMessageService persistenceService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         BigDataWithMessagePersistenceServiceImpl impl = new BigDataWithMessagePersistenceServiceImpl();
@@ -52,13 +56,15 @@ public class BigDataWithMessagePersistenceServiceTest {
 //        Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).createDomibusConnectorBigDataReference(any(DomibusConnectorMessage.class));
 //    }
 
-    @Test(timeout=20000)
+    @Test
     public void testLoadAllBigFilesFromMessage() {
-        DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
-        persistenceService.loadAllBigFilesFromMessage(msg);
-        
-        // 2 attachments should be load from db: one document, one attachment
-        Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).getReadableDataSource(any(DomibusConnectorBigDataReference.class));
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            DomibusConnectorMessage msg = DomainEntityCreatorForPersistenceTests.createMessage();
+            persistenceService.loadAllBigFilesFromMessage(msg);
+
+            // 2 attachments should be load from db: one document, one attachment
+            Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).getReadableDataSource(any(DomibusConnectorBigDataReference.class));
+        });
     }
     
 }

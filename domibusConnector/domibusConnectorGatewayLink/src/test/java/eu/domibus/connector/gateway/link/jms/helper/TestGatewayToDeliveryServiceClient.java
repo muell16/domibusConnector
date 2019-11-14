@@ -2,8 +2,8 @@ package eu.domibus.connector.gateway.link.jms.helper;
 
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorReceiveResponseService;
-import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorService;
+//import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorReceiveResponseService;
+//import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorService;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
@@ -18,8 +18,9 @@ import javax.jms.ConnectionFactory;
 import java.util.HashMap;
 import java.util.Properties;
 
-public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsyncDeliverToConnectorService,
-        DomibusConnectorAsyncDeliverToConnectorReceiveResponseService {
+public class TestGatewayToDeliveryServiceClient {
+//        ] implements DomibusConnectorAsyncDeliverToConnectorService,
+//        DomibusConnectorAsyncDeliverToConnectorReceiveResponseService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestGatewayToDeliveryServiceClient.class);
     public static final String TO_CONNECTOR_MESSAGE_QUEUE_NAME = "eu.domibus.connector.external.gatewayToControllerQueue";
@@ -32,18 +33,18 @@ public class TestGatewayToDeliveryServiceClient implements DomibusConnectorAsync
     }
 
 
-    @Override
-    public void deliverMessage(DomibusConnectorMessageType message ) {
-        DomibusConnectorAsyncDeliverToConnectorService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorService.class, TO_CONNECTOR_MESSAGE_QUEUE_NAME);
-        client.deliverMessage(message);
-
-    }
-
-    @Override
-    public void deliverResponse(DomibusConnectorMessageResponseType response) {
-        DomibusConnectorAsyncDeliverToConnectorReceiveResponseService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorReceiveResponseService.class, TO_CONNECTOR_RESPONSE_QUEUE_NAME);
-        client.deliverResponse(response);
-    }
+//    @Override
+//    public void deliverMessage(DomibusConnectorMessageType message ) {
+//        DomibusConnectorAsyncDeliverToConnectorService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorService.class, TO_CONNECTOR_MESSAGE_QUEUE_NAME);
+//        client.deliverMessage(message);
+//
+//    }
+//
+//    @Override
+//    public void deliverResponse(DomibusConnectorMessageResponseType response) {
+//        DomibusConnectorAsyncDeliverToConnectorReceiveResponseService client = this.createClient(DomibusConnectorAsyncDeliverToConnectorReceiveResponseService.class, TO_CONNECTOR_RESPONSE_QUEUE_NAME);
+//        client.deliverResponse(response);
+//    }
 
     private <T> T createClient(Class<T> serviceClazz, String queue) {
         JMSConfiguration jmsConfig = new JMSConfiguration();

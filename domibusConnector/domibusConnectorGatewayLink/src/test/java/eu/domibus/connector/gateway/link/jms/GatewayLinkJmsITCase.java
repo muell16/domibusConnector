@@ -100,7 +100,7 @@ public class GatewayLinkJmsITCase {
 
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
         DomibusConnectorMessageType testmessage = TransitionCreator.createMessage();
-        testClient.deliverMessage(testmessage);
+//        testClient.deliverMessage(testmessage);
 
         Thread.sleep(1000L);
         assertThat(fromGwReceivedMessagesList).hasSize(1);
@@ -113,7 +113,7 @@ public class GatewayLinkJmsITCase {
 
         TestGatewayToDeliveryServiceClient testClient = new TestGatewayToDeliveryServiceClient(this.connectionFactory);
         DomibusConnectorMessageResponseType response = TransitionCreator.createResponse();
-        testClient.deliverResponse(response);
+//        testClient.deliverResponse(response);
 
 
         TransportStatusService.DomibusConnectorTransportState state = setTransportState.take();

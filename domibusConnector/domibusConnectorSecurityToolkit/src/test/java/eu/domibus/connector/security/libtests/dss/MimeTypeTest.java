@@ -4,7 +4,9 @@ package eu.domibus.connector.security.libtests.dss;
 import eu.europa.esig.dss.DSSException;
 import eu.europa.esig.dss.MimeType;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -22,10 +24,12 @@ public class MimeTypeTest {
         
     }
     
-    @Test(expected=DSSException.class)
+    @Test
     public void testFromMimeTypeString_withIllegalMimeType_shouldThrowException() {
-        String illegalMimeType = "kljdasfhihlaerö";        
-        MimeType mimeType = MimeType.fromMimeTypeString(illegalMimeType);                
+        Assertions.assertThrows(DSSException.class, () -> {
+                String illegalMimeType = "kljdasfhihlaerö";
+        MimeType mimeType = MimeType.fromMimeTypeString(illegalMimeType);
+        });
     }
     
     @Test
