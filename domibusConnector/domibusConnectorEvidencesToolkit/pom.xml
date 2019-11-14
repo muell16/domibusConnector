@@ -59,6 +59,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
@@ -82,17 +83,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-<!--            <version>1.57</version>-->
-<!--            <type>jar</type>-->
         </dependency>
-
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-el-api</artifactId>

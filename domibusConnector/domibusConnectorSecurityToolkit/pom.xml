@@ -186,6 +186,12 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>eu.ecodex.connector.utils</groupId>
+            <artifactId>logging-tester</artifactId>
+            <version>0.0.5-RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment,
