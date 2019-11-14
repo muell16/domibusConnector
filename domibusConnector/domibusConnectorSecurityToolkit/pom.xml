@@ -234,10 +234,10 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>eu.domibus.connector.test</groupId>
-                                    <artifactId>domibusConnectorTestLogging</artifactId>
+                                    <groupId>eu.ecodex.connector.utils</groupId>
+                                    <artifactId>logging-tester</artifactId>
                                     <classifier>log4j2-test</classifier>
-                                    <version>${project.version}</version>
+                                    <version>0.0.5-RELEASE</version>
                                     <type>xml</type>
                                     <overWrite>true</overWrite>
                                     <!--<outputAbsoluteArtifactFilename>target/test-classes/log4j2-test.xml</outputAbsoluteArtifactFilename>-->

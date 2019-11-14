@@ -1,32 +1,22 @@
 package eu.domibus.connector.domain.transformer;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageContentBuilder;
-import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.CannotBeMappedToTransitionException;
-import static eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.transformDomainToTransition;
-
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.StreamUtils;
+
+import javax.activation.DataHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import javax.activation.DataHandler;
-//import org.apache.cxf.helpers.IOUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.jupiter.api.Disabled;
-import org.springframework.util.StreamUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  *
