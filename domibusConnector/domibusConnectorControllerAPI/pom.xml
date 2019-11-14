@@ -36,7 +36,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -52,7 +51,6 @@
             <artifactId>cxf-core</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 
