@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
@@ -38,12 +39,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <org.slf4j.version>1.7.11</org.slf4j.version>
         <tomcat.version>8.5.32</tomcat.version>
         <quartz.version>2.2.1</quartz.version>
-        <theme.version>1.0.10</theme.version>
-        <jsf.version>2.2.15</jsf.version>
-        <org.primefaces.version>6.1</org.primefaces.version>
+
+
         <javax.ws.rs>1.1.1</javax.ws.rs>
         <org.codehaus.jackson>1.9.12</org.codehaus.jackson>
         <maven.surefire.plugin.version>2.12.4</maven.surefire.plugin.version>
@@ -70,9 +69,10 @@
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
 
-        <org.apache.cxf.version>3.3.4</org.apache.cxf.version>
+        <org.apache.cxf.version>3.2.11</org.apache.cxf.version>
         <spring.cloud.version>2.1.3.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.1.10.RELEASE</spring.boot.version>
+        <spring.boot.version>2.0.5.RELEASE</spring.boot.version>
+        <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
 
         <vaadin.version>14.0.12</vaadin.version>
     </properties>
@@ -105,8 +105,6 @@
 
     <dependencyManagement>
         <dependencies>
-
-
 
 
             <!-- E-CODEX LIBRARIES -->
@@ -175,8 +173,6 @@
             </dependency>
 
 
-
-                       
             <!-- jaxb -->
             <dependency>
                 <artifactId>jaxb-api</artifactId>
@@ -235,8 +231,15 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.5.2</version>
+                <version>${org.junit.jupiter.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.opentest4j</groupId>
+                <artifactId>opentest4j</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
@@ -256,6 +259,18 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <groupId>net.shibboleth.utilities</groupId>
                 <artifactId>java-support</artifactId>
@@ -341,6 +356,11 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
 
             <dependency>
                 <groupId>javax.validation</groupId>
@@ -378,13 +398,13 @@
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
             </dependency>
-		
+
             <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
                 <version>${javax.ws.rs}</version>
             </dependency>
-		
+
             <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
@@ -430,12 +450,13 @@
             </dependency>
 
             <!-- MANAGED TEST DEPENDENCIES -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>junit</groupId>-->
+            <!--                <artifactId>junit</artifactId>-->
+            <!--                <version>4.12</version>-->
+            <!--                <scope>test</scope>-->
+            <!--            </dependency>-->
+
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
@@ -455,14 +476,20 @@
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-core</artifactId>
                 <version>2.5.1</version>
-            </dependency>  
+            </dependency>
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
                 <version>2.5.4</version>
-            </dependency>    
-            
-             <!-- google code findbugs annotations -->                 
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- google code findbugs annotations -->
 
             <dependency>
                 <groupId>com.google</groupId>
@@ -479,8 +506,21 @@
         </dependencies>
 
     </dependencyManagement>
-    
-    <profiles>        
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
         <profile>
             <id>javadoc</id>
             <build>
@@ -542,7 +582,7 @@
             </distributionManagement>
         </profile>
         <profile>
-        <!--  activates long running integration tests -->
+            <!--  activates long running integration tests -->
             <id>unit-testing-with-failsafe</id>
             <build>
                 <plugins>
@@ -552,7 +592,7 @@
                         <configuration>
                             <skip>true</skip>
                             <skipTests>true</skipTests>
-                        </configuration>                        
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -584,7 +624,7 @@
             </build>
         </profile>
         <profile>
-        <!--  activates long running integration tests -->
+            <!--  activates long running integration tests -->
             <id>integration-testing</id>
             <build>
                 <plugins>
@@ -594,7 +634,7 @@
                         <configuration>
                             <skip>true</skip>
                             <skipTests>true</skipTests>
-                        </configuration>                        
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -619,7 +659,7 @@
             </build>
         </profile>
         <profile>
-        <!--  starts during integration-test phase long running database tests -->
+            <!--  starts during integration-test phase long running database tests -->
             <id>dbunit-testing</id>
             <build>
                 <plugins>
@@ -628,8 +668,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>true</skip>
-                            <skipTests>true</skipTests>                            
-                        </configuration>                        
+                            <skipTests>true</skipTests>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -660,7 +700,7 @@
             </build>
         </profile>
     </profiles>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -726,7 +766,7 @@
                         <nonFilteredFileExtensions>
                             <nonFilteredFileExtension>jks</nonFilteredFileExtension>
                         </nonFilteredFileExtensions>
-                        <encoding>UTF-8</encoding>                        
+                        <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -745,13 +785,27 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${org.junit.jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.22.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${org.junit.jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
-                <plugin>                                         
+                <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
                     <artifactId>maven-jaxb2-plugin</artifactId>
                     <version>0.12.0</version>
@@ -799,7 +853,7 @@
             </plugins>
         </pluginManagement>
 
-	<plugins>
+        <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jgitflow-plugin</artifactId>
@@ -849,17 +903,17 @@
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>            
+                <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
                         <exclude>**/*.docx</exclude>
                         <exclude>**/*.pdf</exclude>
                         <exclude>**/*.zip</exclude>
                     </excludes>
-                </configuration>   
+                </configuration>
                 <executions>
-<!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info
-                    to be passed to the JVM hosting the code being tested. -->
+                    <!-- Prepares a variable, jacoco.agent.ut.arg, that contains the info
+                                        to be passed to the JVM hosting the code being tested. -->
                     <execution>
                         <id>prepare-ut-agent</id>
                         <phase>process-test-classes</phase>
@@ -872,12 +926,12 @@
                             <append>true</append>
                         </configuration>
                     </execution>
-<!--<!– Prepares a variable, jacoco.agent.it.arg, that contains the info
-                    to be passed to the JVM hosting the code being tested. –>-->
+                    <!--<!– Prepares a variable, jacoco.agent.it.arg, that contains the info
+                                        to be passed to the JVM hosting the code being tested. –>-->
                     <execution>
                         <id>prepare-it-agent</id>
-<!--<!– moved to package phase to be sure all pre-integration test have
-                        it already set to bring up environments with jacoco agent as JVM params –>-->
+                        <!--<!– moved to package phase to be sure all pre-integration test have
+                                                it already set to bring up environments with jacoco agent as JVM params –>-->
                         <phase>package</phase>
                         <goals>
                             <goal>prepare-agent-integration</goal>
@@ -888,18 +942,18 @@
                             <append>true</append>
                         </configuration>
                     </execution>
-                </executions>                    
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <executions>                    
+                <executions>
                     <execution>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
                     </execution>
-                </executions>                
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -920,12 +974,13 @@
                         <bannedDependencies>
                             <searchTransitive>true</searchTransitive>
                             <excludes>
-<!--                                <exclude>commons-logging:commons-logging</exclude>-->
+                                <!--                                <exclude>commons-logging:commons-logging</exclude>-->
                                 <exclude>ch.qos.logback:logback-classic</exclude>
                                 <exclude>org.springframework.boot:spring-boot-starter-logging</exclude>
                                 <exclude>log4j:log4j</exclude>
                                 <exclude>org.apache.tomcat:jasper-el</exclude>
                                 <exclude>org.apache.tomcat:el-api</exclude>
+                                <exclude>junit:junit</exclude>
                             </excludes>
                         </bannedDependencies>
                     </rules>
@@ -933,7 +988,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>                
+                <artifactId>maven-site-plugin</artifactId>
                 <version>3.3</version>
             </plugin>
             <plugin>
@@ -971,7 +1026,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>
@@ -1025,13 +1080,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <!--<configuration>-->
-                    <!--&lt;!&ndash; fix error javax.interceptor.InterceptorBinding not found &ndash;&gt;-->
-                    <!--<additionalDependencies>-->
-                        <!--<additionalDependency>-->
-                            <!--<groupId>javax.interceptor</groupId>-->
-                            <!--<artifactId>javax.interceptor-api</artifactId>-->
-                        <!--</additionalDependency>-->
-                    <!--</additionalDependencies>-->
+                <!--&lt;!&ndash; fix error javax.interceptor.InterceptorBinding not found &ndash;&gt;-->
+                <!--<additionalDependencies>-->
+                <!--<additionalDependency>-->
+                <!--<groupId>javax.interceptor</groupId>-->
+                <!--<artifactId>javax.interceptor-api</artifactId>-->
+                <!--</additionalDependency>-->
+                <!--</additionalDependencies>-->
                 <!--</configuration>-->
                 <reportSets>
                     <reportSet><!-- by default, id = "default" -->
@@ -1048,9 +1103,9 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-            </plugin>            
+            </plugin>
         </plugins>
     </reporting>
 
-    
+
 </project>

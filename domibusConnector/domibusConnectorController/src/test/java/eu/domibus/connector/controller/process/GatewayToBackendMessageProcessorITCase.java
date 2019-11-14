@@ -8,8 +8,9 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -19,15 +20,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={ITCaseTestContext.class, TokenIssuerFactory.class})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {ITCaseTestContext.class, TokenIssuerFactory.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
 @ActiveProfiles({"ITCaseTestContext", "storage-db"})
@@ -54,28 +56,28 @@ public class GatewayToBackendMessageProcessorITCase {
     @Autowired
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataWithMessagePersistenceService;
 
-    @Test(timeout=20000)
+    @Test
     public void testProcessMessage() throws IOException {
-        //create test originalMessage and persist originalMessage into DB
-        DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
-        message.setConnectorMessageId("msg3");
-        message.getMessageDetails().setEbmsMessageId("EBMS1");
+        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+            //create test originalMessage and persist originalMessage into DB
+            DomibusConnectorMessage message = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
+            message.setConnectorMessageId("msg3");
+            message.getMessageDetails().setEbmsMessageId("EBMS1");
 
 
-        message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-        message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
-        message = messagePersistenceService.mergeMessageWithDatabase(message);
-        message = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(message);
+            message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+            message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
+            message = messagePersistenceService.mergeMessageWithDatabase(message);
+            message = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(message);
 
-        //start test
-        gatewayToBackendMessageProcessor.processMessage(message);
+            //start test
+            gatewayToBackendMessageProcessor.processMessage(message);
 
 
-        //validate test results
-        assertThat(toBackendDeliveredMessages).as("One originalMessage should be delivered to backendlink").hasSize(1);
-
+            //validate test results
+            assertThat(toBackendDeliveredMessages).as("One originalMessage should be delivered to backendlink").hasSize(1);
+        });
     }
-
 
 
 }

@@ -1,9 +1,9 @@
 package eu.domibus.connector.lib.spring.configuration.validation;
 
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -21,13 +21,13 @@ public class KeyFromKeyAndTrustStoreLoadableTest {
 
     private KeyAndKeyStoreAndTrustStoreConfigurationProperties props;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         props = new KeyAndKeyStoreAndTrustStoreConfigurationProperties();
 

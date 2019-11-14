@@ -91,13 +91,13 @@ public class DomibusConnectorEvidencesToolkitTest {
             LOG.info(evidencePretty);
         } catch (DomibusConnectorEvidencesToolkitException e) {
             e.printStackTrace();
-            Assertions.fail();
+            Assertions.fail("");
         } catch (TransformerFactoryConfigurationError e) {
             e.printStackTrace();
-            Assertions.fail();
+            Assertions.fail("");
         } catch (TransformerException e) {
             e.printStackTrace();
-            Assertions.fail();
+            Assertions.fail("");
         }
         LOG.info("Finished testCreateSubmissionRejection");
     }

@@ -1,11 +1,13 @@
 
 package eu.domibus.connector.persistence.liquibase;
 
+
+import org.junit.jupiter.api.Assumptions;
+
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import org.junit.Assume;
 
 /**
  *
@@ -44,7 +46,7 @@ public abstract class CommonDatabaseMigrationITCase {
      *
      */
     protected Properties loadProperties(String prefix) {
-        Assume.assumeTrue("true".equalsIgnoreCase(System.getenv("test.db." + prefix + ".enabled")));
+        Assumptions.assumeTrue("true".equalsIgnoreCase(System.getenv("test.db." + prefix + ".enabled")));
         final String p = "test." + prefix;
         Properties props = new Properties();
         Map<String, String> env = System.getenv();

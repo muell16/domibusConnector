@@ -16,8 +16,9 @@ import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -61,7 +62,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     public DomibusConnectorMessagePersistenceServiceImplTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         DomibusConnectorMessagePersistenceServiceImpl impl = new DomibusConnectorMessagePersistenceServiceImpl();
@@ -237,21 +238,25 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         Mockito.verify(messageDao, Mockito.times(1)).confirmMessage(eq(78L));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testConfirmMessage_noMessageIdSet_shouldThrowIllegalArgumentException() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(null);
         messagePersistenceService.confirmMessage(message);
+        });
     }
     
-    @Test(expected=RuntimeException.class)
+    @Test //(expected=RuntimeException.class)
     public void testConfirmMessage_confirmFails_shouldThrowException() {
+        Assertions.assertThrows(RuntimeException.class, () -> {
         Mockito.when(messageDao.confirmMessage(any(Long.class)))
                 .thenReturn(0); //tell service nothing has been updated!                
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(78L);
         messagePersistenceService.confirmMessage(message);
         Mockito.verify(messageDao, Mockito.times(1)).confirmMessage(eq(78L));
+        });
     }
 
     
@@ -272,21 +277,25 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     }
     
         
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testRejectMessage_noMessageIdSet_shouldThrowIllegalArgumentException() {
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
-        //message.setDbMessageId(null);
-        messagePersistenceService.rejectMessage(message);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+            //message.setDbMessageId(null);
+            messagePersistenceService.rejectMessage(message);
+        });
     }
     
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testRejectMessage_confirmFails_shouldThrowException() {
-        Mockito.when(messageDao.rejectMessage(any(Long.class)))
-                .thenReturn(0); //tell service nothing has been updated!                
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
-        //message.setDbMessageId(78L);
-        messagePersistenceService.rejectMessage(message);
-        Mockito.verify(messageDao, Mockito.times(1)).rejectMessage(eq(78L));
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            Mockito.when(messageDao.rejectMessage(any(Long.class)))
+                    .thenReturn(0); //tell service nothing has been updated!
+            eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+            //message.setDbMessageId(78L);
+            messagePersistenceService.rejectMessage(message);
+            Mockito.verify(messageDao, Mockito.times(1)).rejectMessage(eq(78L));
+        });
     }
     
     
@@ -382,20 +391,24 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         Mockito.verify(this.msgContService, Mockito.times(1)).storeMsgContent(eq(message));
     }
     
-    @Test(expected=PersistenceException.class)
+    @Test
     public void testMergeMessageWithDatabase_messageIdNotSet_shouldThrowPersistenceException() throws PersistenceException {
+        Assertions.assertThrows(PersistenceException.class, () -> {
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(null); //message id not set!
 
         messagePersistenceService.mergeMessageWithDatabase(message);
+        });
     }
     
-    @Test(expected=PersistenceException.class)
+    @Test
     public void testMergeMessageWithDatabase_doesNotExistInDB_shouldThrowPersistenceException() throws PersistenceException {
-        eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
-        //message.setDbMessageId(89L); //does not exist in db, because dao will return null anyway is not mocked!
+        Assertions.assertThrows(PersistenceException.class, () -> {
+            eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
+            //message.setDbMessageId(89L); //does not exist in db, because dao will return null anyway is not mocked!
 
-        messagePersistenceService.mergeMessageWithDatabase(message);
+            messagePersistenceService.mergeMessageWithDatabase(message);
+        });
     }
 
     @Test

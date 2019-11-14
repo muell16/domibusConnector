@@ -3,9 +3,7 @@ package eu.domibus.connector.security.configuration;
 
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
-import eu.ecodex.dss.model.EnvironmentConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 public class DomibusConnectorEnvironmentConfigurationTest {

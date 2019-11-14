@@ -2,8 +2,8 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -13,7 +13,6 @@ import java.util.Optional;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyAT;
 import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyPKforPartyAT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class DomibusConnectorPartyPersistenceServiceImplTest {
@@ -23,7 +22,7 @@ public class DomibusConnectorPartyPersistenceServiceImplTest {
 
     DomibusConnectorPartyPersistenceService partyPersistenceService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         DomibusConnectorPartyPersistenceServiceImpl partyPersistenceServiceImpl = new DomibusConnectorPartyPersistenceServiceImpl();

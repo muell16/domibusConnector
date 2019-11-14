@@ -25,21 +25,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.util.StreamUtils;
 
 /**
  * Exploration tests for DSSEcodexContainerService
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@Ignore("test is failing on ci server")
+@Disabled("test is failing on ci server")
 public class DSSEcodexContainerServiceTest {
 
     private Properties properties;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         this.properties = loadTestProperties();
     }

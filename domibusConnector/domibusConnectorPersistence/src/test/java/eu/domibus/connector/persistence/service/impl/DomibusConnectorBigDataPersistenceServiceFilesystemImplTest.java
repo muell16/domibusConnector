@@ -5,12 +5,13 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl.FileBasedDomibusConnectorBigDataReference;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import eu.domibus.connector.testutil.assertj.DomibusByteArrayAssert;
-import org.apache.poi.util.IOUtils;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.FileSystemUtils;
+import org.springframework.util.StreamUtils;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
@@ -89,7 +90,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
         assertThat(readableDataSource).isNotNull();
         assertThat(readableDataSource.getInputStream()).isNotNull();
 
-        byte[] bytes = IOUtils.toByteArray(readableDataSource.getInputStream());
+        byte[] bytes = StreamUtils.copyToByteArray(readableDataSource.getInputStream());
         DomibusByteArrayAssert.assertThat(bytes).containsUTF8String("Hallo Welt!");
     }
 
@@ -138,7 +139,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImplTest {
         DomibusConnectorBigDataReference readableDataSource = filesystemImpl.getReadableDataSource(fRef);
 
         InputStream is = readableDataSource.getInputStream();
-        byte[] bytes = IOUtils.toByteArray(is);
+        byte[] bytes = StreamUtils.copyToByteArray(is);
 
         assertThat(bytes).isEqualTo(input1);
     }

@@ -1,10 +1,7 @@
 package eu.domibus.connector.persistence.liquibase;
 
-import org.junit.Assume;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,7 +41,8 @@ public class DatabaseProvider {
      */
     protected Properties loadProperties(String prefix) {
 
-        Assume.assumeTrue("true".equalsIgnoreCase(System.getenv("test.db." + prefix + ".enabled")));
+        Assumptions.assumeTrue("true".equalsIgnoreCase(System.getenv("test.db." + prefix + ".enabled")));
+
         final String p = "test." + prefix;
         Properties props = new Properties();
         Map<String, String> env = System.getenv();

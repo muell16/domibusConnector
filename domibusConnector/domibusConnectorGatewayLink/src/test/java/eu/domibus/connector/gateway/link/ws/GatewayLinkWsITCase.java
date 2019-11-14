@@ -6,9 +6,9 @@ import eu.domibus.connector.gateway.link.StartupGwLinkOnly;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
 import test.eu.domibus.connector.gateway.link.testgw.TestGW;
@@ -27,7 +27,7 @@ public class GatewayLinkWsITCase {
     private static ConfigurableApplicationContext GW_LINK_APPLICATION_CONTEXT;
     private static ConfigurableApplicationContext TEST_GW_APPLICATION_CONTEXT;
 
-   @BeforeClass
+   @BeforeAll
     public static void beforeClass() {
 
         int portTestGW = SocketUtils.findAvailableTcpPort();
@@ -55,7 +55,7 @@ public class GatewayLinkWsITCase {
         System.out.println(String.format("TEST GW APPLICATION CONTEXT STARTED with address [%s]", TEST_GW_SERVER_ADDRESS));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         System.out.println(String.format("GW LINK APPLICATION CONTEXT STARTED with address [%s]", GW_LINK_SERVER_ADDRESS));
         System.out.println(String.format("TEST GW APPLICATION CONTEXT STARTED with address [%s]", TEST_GW_SERVER_ADDRESS));

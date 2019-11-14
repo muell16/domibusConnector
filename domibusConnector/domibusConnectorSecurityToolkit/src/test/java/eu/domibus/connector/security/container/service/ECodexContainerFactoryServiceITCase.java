@@ -8,17 +8,16 @@ import eu.domibus.connector.security.validation.DomibusConnectorCertificateVerif
 import eu.domibus.connector.security.validation.DomibusConnectorTechnicalValidationServiceFactory;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
 import eu.ecodex.dss.service.ECodexContainerService;
 import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.DSSDocument;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +26,16 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 
-
 import java.io.*;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
+
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes={
         DomibusConnectorEnvironmentConfiguration.class,
         DomibusConnectorCertificateVerifier.class,
@@ -67,7 +65,7 @@ public class ECodexContainerFactoryServiceITCase {
     TokenIssuerFactory tokenIssuerFactory;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void initClass() {
         String dir = System.getenv().getOrDefault(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
         dir = dir + "/" + ECodexContainerFactoryServiceITCase.class.getSimpleName();
@@ -77,7 +75,7 @@ public class ECodexContainerFactoryServiceITCase {
     }
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
     }
