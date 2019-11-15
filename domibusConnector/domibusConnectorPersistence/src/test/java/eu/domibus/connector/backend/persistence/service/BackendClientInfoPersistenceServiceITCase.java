@@ -1,7 +1,12 @@
 package eu.domibus.connector.backend.persistence.service;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.spring.DBRiderTestExecutionListener;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
+import eu.domibus.connector.backend.persistence.dao.BackendClientDaoDBUnit;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
+import eu.domibus.connector.persistence.testutil.RecreateDbByLiquibaseTestExecutionListener;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseDataSourceConnection;
@@ -13,9 +18,14 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -24,38 +34,56 @@ import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+@SpringBootTest(classes = BackendClientInfoPersistenceServiceITCase.TestConfiguration.class)
+@TestPropertySource(properties = {
+        "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
+        "spring.liquibase.change-log=db/changelog/test/testdata.xml",
+        "spring.datasource.url=jdbc:h2:mem:${random.int(100)}", //use different randomly named dbs to seperate tests..
+        "spring.active.profiles=connector,db-storage"
+})
+@ActiveProfiles({"test", "db_h2", "storage-db"})
+@TestExecutionListeners(
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS,
+        listeners = {RecreateDbByLiquibaseTestExecutionListener.class, //drop and create db by liquibase after each TestClass
+                DBRiderTestExecutionListener.class, //activate @DBRider
+        })
+@DataSet(value = "/database/testdata/dbunit/BackendClient.xml")
 public class BackendClientInfoPersistenceServiceITCase {
 
-    private static ConfigurableApplicationContext APPLICATION_CONTEXT;
+//    private static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
+    @Autowired
     private DataSource dataSource;
-    private ConfigurableApplicationContext applicationContext;
+//    @Autowired
+//    private ConfigurableApplicationContext applicationContext;
+    @Autowired
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
 
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence", "eu.domibus.connector.backend.persistence"})
     static class TestConfiguration {
     }
 
-    @BeforeAll
-    public static void beforeClass() {
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(TestConfiguration.class);
-    }
+//    @BeforeAll
+//    public static void beforeClass() {
+//        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(TestConfiguration.class);
+//    }
 
-    @BeforeEach
-    public void setUp() throws IOException, DatabaseUnitException, SQLException {
-        this.applicationContext = APPLICATION_CONTEXT;
-
-        this.dataSource = applicationContext.getBean(DataSource.class);
-        this.backendClientInfoPersistenceService = applicationContext.getBean(BackendClientInfoPersistenceService.class);
-
-//        this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
-
-        //Load testdata
-        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/BackendClient.xml").getInputStream()));
-
-        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
-        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-    }
+//    @BeforeEach
+//    public void setUp() throws IOException, DatabaseUnitException, SQLException {
+//        this.applicationContext = APPLICATION_CONTEXT;
+//
+//        this.dataSource = applicationContext.getBean(DataSource.class);
+//        this.backendClientInfoPersistenceService = applicationContext.getBean(BackendClientInfoPersistenceService.class);
+//
+////        this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
+//
+//        //Load testdata
+//        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/BackendClient.xml").getInputStream()));
+//
+//        DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
+//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
+//    }
 
     @Test
     public void testUpdate() throws SQLException, DataSetException {

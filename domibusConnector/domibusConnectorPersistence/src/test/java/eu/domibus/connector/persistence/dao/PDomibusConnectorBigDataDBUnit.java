@@ -1,19 +1,17 @@
 package eu.domibus.connector.persistence.dao;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -24,36 +22,43 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCase {
+@CommonPersistenceTest
+@DataSet(value = "/database/testdata/dbunit/DomibusConnectorBigDataContent.xml", cleanBefore = true)
+public class PDomibusConnectorBigDataDBUnit {
 
+    @Autowired
     private DomibusConnectorBigDataDao bigDataDao;
 
+    @Autowired
     private DomibusConnectorMessageDao messageDao;
 
+    @Autowired
     private EntityManager entityManager;
 
+    @Autowired
     private PlatformTransactionManager transactionManager;
 
+//    @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
     private DatabaseDataSourceConnection conn;
 
     @BeforeEach
-    @Override
     public void setUp() throws Exception {
-        super.setUp();
-        this.bigDataDao = applicationContext.getBean(DomibusConnectorBigDataDao.class);
-        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
-        this.entityManager = applicationContext.getBean(EntityManager.class);
-        this.transactionManager = applicationContext.getBean(PlatformTransactionManager.class);
+//        super.setUp();
+//        this.bigDataDao = applicationContext.getBean(DomibusConnectorBigDataDao.class);
+//        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
+//        this.entityManager = applicationContext.getBean(EntityManager.class);
+//        this.transactionManager = applicationContext.getBean(PlatformTransactionManager.class);
 
         this.transactionTemplate = new TransactionTemplate(transactionManager);
-
-        //Load testdata
-        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorBigDataContent.xml").getInputStream()));
-
-        this.conn = new DatabaseDataSourceConnection(ds);
-        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
+//
+//        //Load testdata
+//        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorBigDataContent.xml").getInputStream()));
+//
+//        this.conn = new DatabaseDataSourceConnection(ds);
+//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
     }
 
 
