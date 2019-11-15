@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         listeners = {RecreateDbByLiquibaseTestExecutionListener.class, //drop and create db by liquibase after each TestClass
                 DBRiderTestExecutionListener.class, //activate @DBRider
         })
-@DataSet(value = "/database/testdata/dbunit/BackendClient.xml", cleanAfter = true, cleanBefore = true)
+@DataSet(value = "/database/testdata/dbunit/BackendClient.xml")
 public class BackendClientDaoDBUnit {
 
     @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence", "eu.domibus.connector.backend.persistence"})
