@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
 
-    <domibus_connector_message 
+    <DOMIBUS_CONNECTOR_MESSAGE 
         id="72" 
         ebms_message_id="ebms1"	
         connector_message_id="msg1"
@@ -11,7 +11,7 @@
         updated="2017-12-12 12:34:23.000000000"
     />
     
-    <domibus_connector_message 
+    <DOMIBUS_CONNECTOR_MESSAGE 
         id="73" 
         ebms_message_id="ebms2"	
         connector_message_id="conn1"
@@ -21,7 +21,7 @@
         updated="2017-12-12 12:34:23.000000000"
     />
     
-    <domibus_connector_bigdata
+    <DOMIBUS_CONNECTOR_BIGDATA
             name="f1"
             id="id1"
             message_id="73"

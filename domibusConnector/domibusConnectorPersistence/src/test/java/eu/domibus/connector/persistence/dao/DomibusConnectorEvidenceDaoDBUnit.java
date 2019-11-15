@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.persistence.dao;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 
@@ -8,58 +9,48 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-import static org.assertj.core.api.Assertions.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import org.dbunit.database.AmbiguousTableNameException;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitITCase {
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@CommonPersistenceTest
+@DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true)
+public class DomibusConnectorEvidenceDaoDBUnit {
 
+    @Autowired
     private DomibusConnectorEvidenceDao evidenceDao;
-    
-    private TransactionTemplate transactionTemplate;
-    
+
+    @Autowired
     private DomibusConnectorMessageDao messageDao;
 
+    @Autowired
+    private DatabaseDataSourceConnection ddsc;
     
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        this.evidenceDao = applicationContext.getBean(DomibusConnectorEvidenceDao.class);
-        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
-        
-        this.transactionTemplate = new TransactionTemplate(applicationContext.getBean(PlatformTransactionManager.class));
-        
-        //Load testdata
-        IDataSet dataSet = new FlatXmlDataSetBuilder()
-                .setColumnSensing(true)
-                .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorEvidence.xml").getInputStream()));
-        
-        DatabaseDataSourceConnection conn = getDbUnitConnection();
-        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-        
-    }
+////    @BeforeEach
+//    public void setUp() throws Exception {
+//        //Load testdata
+//        IDataSet dataSet = new FlatXmlDataSetBuilder()
+//                .setColumnSensing(true)
+//                .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorEvidence.xml").getInputStream()));
+//
+//        DatabaseDataSourceConnection conn = ddsc;
+//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
+//
+//    }
 
     @Test
     public void testFindEvidencesForMessage() {
@@ -78,7 +69,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
             assertThat(result).isEqualTo(1); //check on row updated
 
             //check result in DB
-            DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(ds);
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=82");
 
@@ -142,7 +133,7 @@ public class DomibusConnectorEvidenceDaoDBUnit extends CommonPersistenceDBUnitIT
 
             assertThat(result).isEqualTo(1);
             //check result in DB
-            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_EVIDENCE", "SELECT * FROM DOMIBUS_CONNECTOR_EVIDENCE WHERE ID=85");
 

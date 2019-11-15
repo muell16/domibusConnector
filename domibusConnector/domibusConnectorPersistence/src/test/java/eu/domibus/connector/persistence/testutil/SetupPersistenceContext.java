@@ -1,16 +1,40 @@
 package eu.domibus.connector.persistence.testutil;
 
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseDataSourceConnection;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.*;
 
 
 @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
 public class SetupPersistenceContext {
 
+    private DatabaseDataSourceConnection dbUnitConnection;
+
+    @Bean
+    public DatabaseDataSourceConnection getDbUnitConnection(DataSource ds) {
+        if (this.dbUnitConnection != null) {
+            return dbUnitConnection;
+        }
+        try {
+            DatabaseDataSourceConnection conn = null;
+            conn = new DatabaseDataSourceConnection(ds);
+            DatabaseConfig config = conn.getConfig();
+            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new org.dbunit.ext.h2.H2DataTypeFactory());
+            this.dbUnitConnection = conn;
+            return conn;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     static ConfigurableApplicationContext APPLICATION_CONTEXT;
 

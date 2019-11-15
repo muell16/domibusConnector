@@ -1,9 +1,18 @@
 
 package eu.domibus.connector.persistence.dao;
 
+import com.github.database.rider.core.api.dataset.DataSet;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
+import org.dbunit.database.AmbiguousTableNameException;
+import org.dbunit.database.DatabaseDataSourceConnection;
+import org.dbunit.database.QueryDataSet;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.ITable;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
 import java.time.Duration;
@@ -11,43 +20,36 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-
-import org.dbunit.database.AmbiguousTableNameException;
-import org.dbunit.database.DatabaseDataSourceConnection;
-import org.dbunit.database.QueryDataSet;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.DatabaseOperation;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
+import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITCase {
+@CommonPersistenceTest
+@DataSet(value = "/database/testdata/dbunit/DomibusConnectorMessage.xml", strategy = CLEAN_INSERT)
+public class DomibusConnectorMessageDaoDBUnit {
 
+    @Autowired
     private DomibusConnectorMessageDao messageDao;
 
+    @Autowired
+    private DatabaseDataSourceConnection ddsc;
 
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
-
-//        //Load testdata
-        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMessage.xml").getInputStream()));
-
-        DatabaseDataSourceConnection conn = getDbUnitConnection();
-        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-        conn.close();
-
-    }
+//    @BeforeEach
+//    @Override
+//    public void setUp() throws Exception {
+////        super.setUp();
+////        this.messageDao = applicationContext.getBean(DomibusConnectorMessageDao.class);
+//
+////        //Load testdata
+//        IDataSet dataSet = new FlatXmlDataSetBuilder().setColumnSensing(true).build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorMessage.xml").getInputStream()));
+//
+//        DatabaseDataSourceConnection conn = ddsc;
+//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
+//        conn.close();
+//
+//    }
 
 
     @Test
@@ -172,7 +174,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
             int upd = messageDao.confirmMessage(74L);
 
             //check result in DB
-            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=74");
 
@@ -191,7 +193,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
             int upd = messageDao.rejectMessage(73L);
 
             //check result in DB
-            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=73");
 
@@ -225,7 +227,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
             assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
 
             //check result in DB
-            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=73");
 
@@ -249,7 +251,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
             assertThat(upd).as("exactly one row should be updated!").isEqualTo(1);
 
             //check result in DB
-            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=74");
 
@@ -276,7 +278,7 @@ public class DomibusConnectorMessageDaoDBUnit extends CommonPersistenceDBUnitITC
             assertThat(savedMessage.getId()).isNotNull();
 
             //check result in DB
-            DatabaseDataSourceConnection conn = getDbUnitConnection();
+            DatabaseDataSourceConnection conn = ddsc;
             QueryDataSet dataSet = new QueryDataSet(conn);
             dataSet.addTable("DOMIBUS_CONNECTOR_MESSAGE", "SELECT * FROM DOMIBUS_CONNECTOR_MESSAGE WHERE ID=" + savedMessage.getId());
 

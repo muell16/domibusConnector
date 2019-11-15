@@ -8,8 +8,8 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
-import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
@@ -17,15 +17,13 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.util.Properties;
-import java.util.Set;
 
-import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -43,35 +41,39 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at>}
  */
+@CommonPersistenceTest
 public class MessagePersistenceServiceITCase {
 
-    static ConfigurableApplicationContext APPLICATION_CONTEXT;
+//    static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
+    @Autowired
     private DataSource ds;
+
+    @Autowired
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
 
-    @BeforeAll
-    public static void InitClass() {
-        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
-        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
-        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
-        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
-    }
+//    @BeforeAll
+//    public static void InitClass() {
+//        Properties defaultProperties = SetupPersistenceContext.getDefaultProperties();
+//        Set<String> defaultProfiles = SetupPersistenceContext.getDefaultProfiles();
+//        defaultProfiles.add(STORAGE_DB_PROFILE_NAME);
+//        APPLICATION_CONTEXT = SetupPersistenceContext.startApplicationContext(defaultProperties, defaultProfiles);
+//    }
 
-    @AfterAll
-    public static void afterClass() {
-        APPLICATION_CONTEXT.close();
-    }
-
-    @BeforeEach
-    public void setUp() throws InterruptedException {
-
-        //lookup type
-        this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
-        //lookup name
-        this.messagePersistenceService = APPLICATION_CONTEXT.getBean(DomibusConnectorMessagePersistenceService.class);
-    }
+//    @AfterAll
+//    public static void afterClass() {
+//        APPLICATION_CONTEXT.close();
+//    }
+//
+//    @BeforeEach
+//    public void setUp() throws InterruptedException {
+//
+//        //lookup type
+//        this.ds = APPLICATION_CONTEXT.getBean(DataSource.class);
+//        //lookup name
+//        this.messagePersistenceService = APPLICATION_CONTEXT.getBean(DomibusConnectorMessagePersistenceService.class);
+//    }
 
 
     @Test
