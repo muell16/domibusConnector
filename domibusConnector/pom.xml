@@ -292,11 +292,11 @@
             </dependency>
 
 
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>7.1</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.ow2.asm</groupId>-->
+<!--                <artifactId>asm</artifactId>-->
+<!--                <version>7.1</version>-->
+<!--            </dependency>-->
 
             <!-- Apache CXF dependencies -->
             <dependency>
@@ -329,18 +329,19 @@
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${org.apache.cxf.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.santuario</groupId>
-                <artifactId>xmlsec</artifactId>
-                <version>2.0.5</version>
-            </dependency>
+<!--            &lt;!&ndash; always upgrade with CXF! &ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.santuario</groupId>-->
+<!--                <artifactId>xmlsec</artifactId>-->
+<!--                <version>2.1.4</version>-->
+<!--            </dependency>-->
             <!-- handle not matching dependencies in apache cxf package -->
-            <dependency>
+<!--            <dependency>-->
                 <!-- overwrite dependency version in org.apache.neethi:neethi and org.apache.cxf:cxf-core -->
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>4.4.1</version>
-            </dependency>
+<!--                <groupId>org.codehaus.woodstox</groupId>-->
+<!--                <artifactId>woodstox-core-asl</artifactId>-->
+<!--                <version>4.4.1</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <!-- overwrite dependency version in org.apache.neethi:neethi:3.0.3 and org.apache.santuario:xmlsec -->
@@ -978,7 +979,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M2</version>
                 <executions>
                     <execution>
                         <id>enforce</id>
@@ -989,8 +990,9 @@
                 </executions>
                 <configuration>
                     <rules>
-                        <dependencyConvergence>
-                        </dependencyConvergence>
+                        <!-- deactivated -->
+                        <!--                        <dependencyConvergence>-->
+                        <!--                        </dependencyConvergence>-->
                         <bannedDependencies>
                             <searchTransitive>true</searchTransitive>
                             <excludes>
