@@ -29,7 +29,10 @@
         </Logger>  
         <Logger name="org.apache.cxf" level="debug" additivity="false" >
             <AppenderRef ref="Console" />
-        </Logger>  
+        </Logger>
+        <Logger name="org.apache.wss4j.policy" level="TRACE" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
         <Logger name="org.springframework" level="debug" additivity="false" >
             <AppenderRef ref="Console" />
         </Logger>

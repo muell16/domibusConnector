@@ -45,6 +45,9 @@ public class KeyAndKeyStoreConfigurationProperties {
     @NotNull
     private KeyConfigurationProperties privateKey;
 
+
+    private String type = "JKS";
+
     public StoreConfigurationProperties getKeyStore() {
         return keyStore;
     }
@@ -59,5 +62,13 @@ public class KeyAndKeyStoreConfigurationProperties {
 
     public void setPrivateKey(KeyConfigurationProperties privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -16,9 +16,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
+
 import java.security.Security;
 
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -46,21 +48,22 @@ import javax.security.auth.callback.CallbackHandler;
 
 /**
  *
- *
  */
 @ExtendWith(SpringExtension.class)
 @Import(WSBackendLinkSendReceiveITCase.TestConfiguration.class)
-@SpringBootTest(properties= {"server.port=0"}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(properties =
+        {"server.port=0", "trace=true"},
+        webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"backendlink-ws", "WSBackendLinkSendReceiveITCase"})
 public class WSBackendLinkSendReceiveITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WSBackendLinkSendReceiveITCase.class);
-    
-    @SpringBootApplication(scanBasePackages={"eu.domibus.connector.backend.ws.link.spring", },
+
+    @SpringBootApplication(scanBasePackages = {"eu.domibus.connector.backend.ws.link.spring",},
             exclude = {
-        DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+                    DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
     @Profile("WSBackendLinkSendReceiveITCase")
-    public static class TestConfiguration {     
+    public static class TestConfiguration {
 
         @Bean("defaultBackendClientInfo")
         public DomibusConnectorBackendClientInfo defaultBackendClientInfo() {
@@ -73,7 +76,8 @@ public class WSBackendLinkSendReceiveITCase {
         @Bean("defaultCallbackHandler")
         @ConditionalOnMissingBean
         CallbackHandler defaultCallbackHandler() {
-            return (Callback[] cbk) -> {};
+            return (Callback[] cbk) -> {
+            };
         }
 
 
@@ -85,8 +89,8 @@ public class WSBackendLinkSendReceiveITCase {
             Mockito.when(mock.getEnabledBackendClientInfoByService(any(DomibusConnectorService.class))).thenReturn(defaultBackendClientInfo());
             return mock;
         }
-        
-        
+
+
         @Bean("connectorBackendImpl")
         @ConditionalOnMissingBean
         DomibusConnectorBackendWebService domibusConnectorBackendWebService() {
@@ -105,27 +109,27 @@ public class WSBackendLinkSendReceiveITCase {
                 }
             };
         }
-        
+
     }
-    
-    @BeforeAll
-    public static void beforeClass() {
-        Security.setProperty("crypto.policy", "unlimited");
-    }
-    
+
+//    @BeforeAll
+//    public static void beforeClass() {
+//        Security.setProperty("crypto.policy", "unlimited");
+//    }
+
     //mock backend impl
 //    @MockBean(name="connectorBackendImpl")
 //    DomibusConnectorBackendWebService domibusConnectorBackendWebService;
-    
+
     @LocalServerPort //use with WebEnvironment.RANDOM_PORT
-    int port;
-    
+            int port;
+
     @Value("${spring.webservices.path}")
     String webservicesPath;
-    
+
     @Autowired
     DomibusConnectorBackendWebService backendWebService;
-    
+
     @Autowired
     WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
 
@@ -135,22 +139,22 @@ public class WSBackendLinkSendReceiveITCase {
      */
     @Test
     public void testCallBackendService_submitMessage() {
-        String[] springProps = new String[] {       
-            "ws.backendclient.name=bob",
-            "server.port=0",
-            "connector.backend.ws.address=http://localhost:" + port + "/services/backend"
+        String[] springProps = new String[]{
+                "ws.backendclient.name=bob",
+                "server.port=0",
+                "connector.backend.ws.address=http://localhost:" + port + "/services/backend"
         };
-        String[] springProfiles = new String[] {"ws-backend-client"};
-        
-        
+        String[] springProfiles = new String[]{"ws-backend-client"};
+
+
         ApplicationContext clientCtx = CommonBackendClient.startSpringApplication(springProfiles, springProps);
-               
+
         DomibusConnectorBackendWebService domibusConnectorBackendWebService = clientCtx.getBean("backendClient", DomibusConnectorBackendWebService.class);
 
         DomibusConnectorMessageType msg = TransitionCreator.createMessage();
         DomibsConnectorAcknowledgementType response = domibusConnectorBackendWebService.submitMessage(msg);
         System.out.println("RESPONSE result: " + response.isResult());
-        
+
         assertThat(response).isNotNull();
         assertThat(response.isResult()).isTrue();
     }
@@ -160,6 +164,6 @@ public class WSBackendLinkSendReceiveITCase {
 //
 //    }
 
-    
+
 }
 
