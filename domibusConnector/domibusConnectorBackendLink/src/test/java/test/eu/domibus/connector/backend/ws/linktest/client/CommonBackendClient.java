@@ -6,15 +6,20 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.PropertySourcesPropertyResolver;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,9 +29,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootApplication(scanBasePackageClasses = CommonBackendClient.class, exclude = {
-    DataSourceAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class,
+        DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+        LiquibaseAutoConfiguration.class
 })
 @Configuration
 @ImportResource("classpath:/test/testclient.xml")
@@ -38,6 +44,11 @@ public class CommonBackendClient {
     public static final String PROPERTY_BACKENDCLIENT_KEY_ALIAS = "ws.backendclient.cn";
     public static final String PROPERTY_BACKENDCLIENT_KEY_PASSWORD = "ws.backendclient.password";
     public static final String PROPERTY_CONNECTOR_BACKEND_ADDRESS = "connector.backend.ws.address";
+
+//    @Bean
+//    public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+//        return new PropertySourcesPlaceholderConfigurer();
+//    }
 
     public static ConfigurableApplicationContext startSpringApplication(String[] profiles, String[] properties) {
 
@@ -75,7 +86,7 @@ public class CommonBackendClient {
         return (LinkedBlockingQueue<DomibusConnectorMessageType>) ctx.getBean(BackendClientPushWebServiceConfiguration.PUSH_DELIVERED_MESSAGES_LIST_BEAN_NAME);
     }
 
-    public static DomibusConnectorBackendWebService getBackendWebServiceClient(ConfigurableApplicationContext ctx) {
+    public static DomibusConnectorBackendWebService getBackendWebServiceClient(ApplicationContext ctx) {
         return ctx.getBean("backendClient", DomibusConnectorBackendWebService.class);
     }
 
