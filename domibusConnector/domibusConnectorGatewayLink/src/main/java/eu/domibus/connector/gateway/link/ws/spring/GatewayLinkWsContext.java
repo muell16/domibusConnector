@@ -110,13 +110,13 @@ public class GatewayLinkWsContext {
         StoreConfigurationProperties cxfKeyStore = gatewayLinkWsServiceProperties.getKeyStore();
 
         props.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
-        props.put("org.apache.wss4j.crypto.merlin.keystore.type", "jks");
+        props.put("org.apache.wss4j.crypto.merlin.keystore.type", cxf.getType());
         props.put("org.apache.wss4j.crypto.merlin.keystore.file", cxfKeyStore.getPathUrlAsString());
         props.put("org.apache.wss4j.crypto.merlin.keystore.password", cxfKeyStore.getPassword());
         props.put("org.apache.wss4j.crypto.merlin.keystore.alias", cxf.getPrivateKey().getAlias());
         props.put("org.apache.wss4j.crypto.merlin.keystore.private.password", cxf.getPrivateKey().getPassword());
 
-        props.put("org.apache.wss4j.crypto.merlin.truststore.type", "jks");
+        props.put("org.apache.wss4j.crypto.merlin.truststore.type", cxf.getType());
         props.put("org.apache.wss4j.crypto.merlin.truststore.file", cxf.getTrustStore().getPathUrlAsString());
         props.put("org.apache.wss4j.crypto.merlin.truststore.password", cxf.getTrustStore().getPassword());
 
