@@ -71,6 +71,12 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 return actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
             case RELAY_REMMD_ACCEPTANCE:
                 return actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+            case SUBMISSION_ACCEPTANCE:
+                //is not really a business action...
+                return new DomibusConnectorAction("SubmissionAcceptanceRejection", false);
+            case SUBMISSION_REJECTION:
+                //is not really a business action...
+                return new DomibusConnectorAction("SubmissionAcceptanceRejection", false);
             default:
                 throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
         }
@@ -141,6 +147,17 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
             return this;
         }
 
+        /**
+         * Sets the nationalMessageId as the refToMessageId
+         * within the MessageDetails, used when the message is just
+         * transported back only to the connectorClient system
+         *
+         */
+        public ConfirmationMessageBuilder useNationalIdAsRefToMessageId() {
+            this.details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
+            return this;
+        }
+
         public ConfirmationMessageBuilder setDetails(String details) {
             this.rejectionDetails = details;
             return this;
@@ -198,8 +215,9 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 return wrapper;
 
             } catch (DomibusConnectorEvidencesToolkitException e) {
-                LOGGER.error("A Exception occured while generating evdince of type [{}]", evidenceType);
-                throw new RuntimeException(e);
+                String message = String.format("A Exception occured while generating evidence of type [%s]", evidenceType);
+                LOGGER.error(message, e);
+                throw new RuntimeException(message, e);
             }
         }
 

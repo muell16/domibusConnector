@@ -62,9 +62,9 @@ public class GatewayLinkWsContext {
         jaxWsProxyFactoryBean.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
         jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
-        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
+//        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
 
-//        jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
+        jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
 
         if (jaxWsProxyFactoryBean.getProperties() == null) {
             jaxWsProxyFactoryBean.setProperties(new HashMap<>());
@@ -89,7 +89,7 @@ public class GatewayLinkWsContext {
 
         WSPolicyFeature wsPolicyFeature = gwWsLinkPolicyLoader().loadPolicyFeature();
         endpoint.getFeatures().add(wsPolicyFeature);
-        //endpoint.getFeatures().add(new MTOMFeature());
+//        endpoint.getFeatures().add(new MTOMFeature());
 
         endpoint.getProperties().put("mtom-enabled", true);
         endpoint.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());

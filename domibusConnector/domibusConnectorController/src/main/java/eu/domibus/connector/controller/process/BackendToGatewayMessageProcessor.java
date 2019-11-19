@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
@@ -42,22 +43,24 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessor.class);
 
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
-
-	private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-
-	private DomibusConnectorActionPersistenceService actionPersistenceService;
-
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-
-	private DomibusConnectorEvidencesToolkit evidencesToolkit;
-
 	private DomibusConnectorSecurityToolkit securityToolkit;
-
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
-
-	private DomibusConnectorMessageIdGenerator messageIdGenerator;
-
 	private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
+
+	@Autowired
+	private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
+
+	@Autowired
+	private CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService;
+
+	public void setCreateConfirmationMessageBuilderFactoryImpl(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl) {
+		this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
+	}
+
+	public void setCreateSubmissionRejectionAndReturnItService(CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService) {
+		this.createSubmissionRejectionAndReturnItService = createSubmissionRejectionAndReturnItService;
+	}
 
 	@Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
@@ -70,23 +73,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 	}
 
     @Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
-    }
-
-    @Autowired
-    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
-        this.actionPersistenceService = actionPersistenceService;
-    }
-
-    @Autowired
     public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
         this.gwSubmissionService = gwSubmissionService;
-    }
-
-    @Autowired
-    public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
-        this.evidencesToolkit = evidencesToolkit;
     }
 
     @Autowired
@@ -99,11 +87,6 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
         this.backendDeliveryService = backendDeliveryService;
     }
 
-    @Autowired
-    public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
-        this.messageIdGenerator = messageIdGenerator;
-    }
-
     @Override
     @Transactional(propagation=Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
@@ -114,7 +97,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			securityToolkit.buildContainer(message);
 		} catch (DomibusConnectorSecurityException se) {
         	LOGGER.warn("security toolkit build container failed. The exception will be logged to database", se);
-			createSubmissionRejectionAndReturnIt(message, se.getMessage());			
+        	messagePersistenceService.rejectMessage(message);
+			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, se.getMessage());
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText(se.getMessage())
@@ -123,20 +107,22 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .buildAndThrow();
 		}
 
-		DomibusConnectorMessageConfirmation confirmation = null;
-		DomibusConnectorMessage returnMessage = null;
+		DomibusConnectorMessage submissionAcceptanceConfirmationMessage = null;
 		try {
-			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
-			LOGGER.debug("#processMessage: created confirmation [{}] for originalMessage [{}]", confirmation, message);
-			// immediately persist new evidence into database
-			returnMessage = buildEvidenceMessage(confirmation, message);
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message, confirmation, new DomibusConnectorMessage.DomibusConnectorMessageId(returnMessage.getConnectorMessageId()));
-            message.addConfirmation(confirmation);
 
+
+			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = confirmationMessageBuilder
+					.useNationalIdAsRefToMessageId()
+					.build();
+			confirmationMessage.persistEvidenceToMessage();
+
+			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
 			//TODO: better logging....
 		    LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
-			createSubmissionRejectionAndReturnIt(message, ete.getMessage());
+			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, ete.getMessage());
+			messagePersistenceService.rejectMessage(message);
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText("Could not generate evidence submission acceptance! ")
@@ -150,7 +136,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			gwSubmissionService.submitToGateway(message);
 		} catch (DomibusConnectorGatewaySubmissionException e) {
 		    LOGGER.warn("Cannot submit message to gateway", e);
-			createSubmissionRejectionAndReturnIt(message, e.getMessage());
+			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, e.getMessage());
+			messagePersistenceService.rejectMessage(message);
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText("Could not submit originalMessage to gateway! ")
@@ -163,102 +150,14 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
         //also send evidence back to backend client:
 
-		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", returnMessage);
-        messagePersistenceService.persistMessageIntoDatabase(returnMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
-		backendDeliveryService.deliverMessageToBackend(returnMessage);
+		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", submissionAcceptanceConfirmationMessage);
+        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+		backendDeliveryService.deliverMessageToBackend(submissionAcceptanceConfirmationMessage);
 
 		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
 
 	}
 
-	void createSubmissionRejectionAndReturnIt(DomibusConnectorMessage message, String errorMessage){
-        LOGGER.debug("#createSubmissionRejectionAndReturnIt: with error [{}]", errorMessage);
-		DomibusConnectorMessageConfirmation confirmation = null;
-		try {
-			confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_REJECTION, message, DomibusConnectorRejectionReason.OTHER,
-					errorMessage);
-		} catch (DomibusConnectorEvidencesToolkitException e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not even generate submission rejection! ")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-		}
 
-        DomibusConnectorMessage returnMessage = null;
-        try {
-			// immediately persist new evidence into database
-            returnMessage = buildEvidenceMessage(confirmation, message);
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message,
-                    confirmation,
-                    new DomibusConnectorMessage.DomibusConnectorMessageId(returnMessage.getConnectorMessageId()));
-		} catch (Exception e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not persist evidence of type SUBMISSION_REJECTION! ")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();            
-		}
-
-
-		try {
-            backendDeliveryService.deliverMessageToBackend(returnMessage);
-            LOGGER.info("Setting originalMessage confirmation [{}] as delivered to national system!", confirmation.getEvidenceType());
-            LOGGER.info("Setting originalMessage status to rejected");
-			messagePersistenceService.rejectMessage(message);
-
-		} catch (PersistenceException persistenceException) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not set evidence of type SUBMISSION_REJECTION as delivered!")
-                    .setSource(this.getClass())
-                    .setCause(persistenceException)
-                    .build();
-
-		} catch (Exception e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not set evidence of type SUBMISSION_REJECTION as delivered!")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-        }
-
-	}
-
-    /**
-     * prepares an evidence originalMessage for sending back to the backend
-     *  for this purpose the action is set to SubmissionAcceptanceRejection
-     *  which is the action for submission -acceptance and -rejection evidences
-     *
-     *  all other attributes are set to the same as the original originalMessage!
-     *
-     * @param confirmation the confirmation to send back
-     * @param originalMessage the originalMessage the confirmation belongs to
-     * @return the created evidence originalMessage
-     */
-	private DomibusConnectorMessage buildEvidenceMessage(DomibusConnectorMessageConfirmation confirmation, DomibusConnectorMessage originalMessage) {
-		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-        DomibusConnectorMessageDetails originalMessageDetails = originalMessage.getMessageDetails();
-
-		details.setRefToMessageId(originalMessageDetails.getBackendMessageId());
-		details.setBackendMessageId(originalMessageDetails.getBackendMessageId());
-		details.setService(originalMessageDetails.getService());
-		details.setFinalRecipient(originalMessageDetails.getFinalRecipient());
-		details.setOriginalSender(originalMessageDetails.getOriginalSender());
-
-		details.setFromParty(originalMessageDetails.getFromParty());
-		details.setToParty(originalMessageDetails.getToParty());
-
-		DomibusConnectorAction action = actionPersistenceService.getAction("SubmissionAcceptanceRejection");
-		details.setAction(action);
-
-		DomibusConnectorMessage returnMessage = new DomibusConnectorMessage(details, confirmation);
-        returnMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
-
-		return returnMessage;
-	}
 
 }

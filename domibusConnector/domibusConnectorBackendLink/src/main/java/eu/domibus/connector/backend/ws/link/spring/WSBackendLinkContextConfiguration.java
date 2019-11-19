@@ -39,7 +39,6 @@ import java.util.Properties;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Configuration
-//@ImportResource({"classpath:services/DomibusConnectorBackendWebServiceConfig.xml"})
 @EnableJms
 @PropertySource("classpath:/eu/domibus/connector/backend/config/backend-default-config.properties")
 @Profile("backendlink-ws")
@@ -89,7 +88,7 @@ public class WSBackendLinkContextConfiguration {
         endpoint.getProperties().put("security.encryption.username", "useReqSigCert");
 
         endpoint.publish();
-        LOGGER.debug("Published WebService {} under {}", DomibusConnectorBackendWSService.class, endpoint.getPublishedEndpointUrl());
+        LOGGER.debug("Published WebService {} under {}", DomibusConnectorBackendWSService.class, configurationProperties.getBackendPublishAddress());
         return endpoint;
     }
 

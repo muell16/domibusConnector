@@ -112,7 +112,7 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
 //        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence();
         DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
         PDomibusConnectorMessage referencedMessage = messageDao.
-                findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getSource())
+                findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget())
                 .orElse(null);
         if (referencedMessage == null) {
             String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
