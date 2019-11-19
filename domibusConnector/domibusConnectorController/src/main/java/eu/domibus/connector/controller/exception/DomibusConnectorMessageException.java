@@ -25,6 +25,7 @@ public class DomibusConnectorMessageException extends RuntimeException {
         super(cause);
         this.domibusConnectorMessage = message;
         this.source = source;
+        this.setStackTrace(cause.getStackTrace());
     }
 
     public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, String text) {
@@ -36,7 +37,8 @@ public class DomibusConnectorMessageException extends RuntimeException {
     public DomibusConnectorMessageException(DomibusConnectorMessage message, Class<?> source, Throwable cause, String text) {
         super(text, cause);
         this.domibusConnectorMessage = message;
-        this.source = source;        
+        this.source = source;
+        this.setStackTrace(cause.getStackTrace());
     }
 
     public DomibusConnectorMessage getDomibusConnectorMessage() {

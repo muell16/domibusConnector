@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
@@ -56,6 +57,8 @@ public class BackendToGatewayMessageProcessorTest {
     @Mock
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
 
+
+
     BackendToGatewayMessageProcessor backendToGatewayMessageProcessor;
 
     private List<DomibusConnectorMessage> toGwDeliveredMessages;
@@ -65,30 +68,42 @@ public class BackendToGatewayMessageProcessorTest {
     @BeforeEach
     public void setUp() throws DomibusConnectorGatewaySubmissionException {
         MockitoAnnotations.initMocks(this);
+
+
+        CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory = new CreateConfirmationMessageBuilderFactoryImpl();
+        createConfirmationMessageBuilderFactory.setActionPersistenceService(actionPersistenceService);
+        createConfirmationMessageBuilderFactory.setEvidencePersistenceService(evidencePersistenceService);
+        createConfirmationMessageBuilderFactory.setEvidencesToolkit(evidencesToolkit);
+        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> UUID.randomUUID().toString());
+
+        CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService = new CreateSubmissionRejectionAndReturnItService();
+        createSubmissionRejectionAndReturnItService.setBackendDeliveryService(backendDeliveryService);
+        createSubmissionRejectionAndReturnItService.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
+        createSubmissionRejectionAndReturnItService.setMessagePersistenceService(messagePersistenceService);
+
         toGwDeliveredMessages = new ArrayList<>();
         toBackendDeliveredMessages = new ArrayList<>();
         backendToGatewayMessageProcessor = new BackendToGatewayMessageProcessor();
-        backendToGatewayMessageProcessor.setActionPersistenceService(actionPersistenceService);
-        backendToGatewayMessageProcessor.setEvidencePersistenceService(evidencePersistenceService);
-        backendToGatewayMessageProcessor.setEvidencesToolkit(evidencesToolkit);
+        backendToGatewayMessageProcessor.setCreateSubmissionRejectionAndReturnItService(createSubmissionRejectionAndReturnItService);
+        backendToGatewayMessageProcessor.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
         backendToGatewayMessageProcessor.setGwSubmissionService(gwSubmissionService);
-        backendToGatewayMessageProcessor.setActionPersistenceService(actionPersistenceService);
         backendToGatewayMessageProcessor.setMessagePersistenceService(messagePersistenceService);
         backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);
         backendToGatewayMessageProcessor.setSecurityToolkit(securityToolkit);
-        backendToGatewayMessageProcessor.setMessageIdGenerator(() -> UUID.randomUUID().toString());
         backendToGatewayMessageProcessor.setBigDataPersistenceService(bigDataPersistenceService);
         
         Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
 
-        Mockito.doAnswer( invoc -> toBackendDeliveredMessages.add(invoc.getArgument(0)))
-                .when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
+        Mockito.doAnswer( invoc -> {
+            toBackendDeliveredMessages.add(invoc.getArgument(0));
+            return null;
+        }).when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
         Mockito.when(bigDataPersistenceService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
                 .thenAnswer(invoc -> invoc.getArgument(0));
 
-        
+
         
     }
 
@@ -98,10 +113,13 @@ public class BackendToGatewayMessageProcessorTest {
         String backendMessageId = "backendmsg_1";
         DomibusConnectorMessage epoMessage = DomainEntityCreator.createEpoMessage();
         epoMessage.getMessageDetails().setBackendMessageId(backendMessageId);
+        epoMessage.getMessageDetails().setEbmsMessageId(null); //No ebms id yet!
 
         DomibusConnectorMessageConfirmation submissionAcceptanceConfirmation = DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation();
-        Mockito.when(evidencesToolkit.createEvidence(any(DomibusConnectorEvidenceType.class), any(DomibusConnectorMessage.class), eq(null), eq(null)))
+        Mockito.when(evidencesToolkit.createEvidence(eq(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE), any(DomibusConnectorMessage.class), eq(null), eq(null)))
                 .thenReturn(submissionAcceptanceConfirmation);
+        Mockito.when(evidencesToolkit.createEvidence(eq(DomibusConnectorEvidenceType.SUBMISSION_REJECTION), any(DomibusConnectorMessage.class), eq(null), eq(null)))
+                .thenReturn(DomainEntityCreator.createMessageSubmissionRejectionConfirmation());
 
         //test method
         backendToGatewayMessageProcessor.processMessage(epoMessage);
@@ -120,7 +138,7 @@ public class BackendToGatewayMessageProcessorTest {
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
         DomibusConnectorMessage toGwMsg = toGwDeliveredMessages.get(0);
-        assertThat(toGwMsg.getMessageConfirmations()).hasSize(1); //should contain one SUBMISSION_ACCEPTANCE evidence
+        assertThat(toGwMsg.getMessageConfirmations()).as("Message should have only one SubmissionAcceptance Evidence").hasSize(1); //should contain one SUBMISSION_ACCEPTANCE evidence
 
 
         //verify originalMessage is handed over to backend for delivery

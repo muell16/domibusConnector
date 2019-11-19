@@ -19,15 +19,15 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-ws-security</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.cxf</groupId>-->
+<!--            <artifactId>cxf-rt-ws-security</artifactId>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>javax.jms</groupId>-->
+<!--            <artifactId>javax.jms-api</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorWeb</artifactId>

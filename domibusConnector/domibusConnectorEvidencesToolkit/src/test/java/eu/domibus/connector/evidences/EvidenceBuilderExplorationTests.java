@@ -18,10 +18,18 @@ public class EvidenceBuilderExplorationTests {
     public void testEvidenceBuilderWithoutValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
         ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder("", "", "", "");
 
-        EDeliveryDetails details;
         byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
         //if there is an error the generated evidence gets null!
         Assertions.assertThat(submissionAcceptanceRejection).isNull();
+    }
+
+    @Test
+    public void testEvidenceBuilderWithtValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
+        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder("file:./src/test/resources/keystore/evidence_test.jks", "test1234", "test", "test1234");
+
+        byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
+
+        Assertions.assertThat(submissionAcceptanceRejection).isNotNull();
     }
 
     private EDeliveryDetails buildEDeliveryDetails() {

@@ -31,6 +31,7 @@ public class WsPolicyLoader {
     }
 
     public WSPolicyFeature loadPolicyFeature() {
+        LOGGER.debug("Loading policy from resource: [{}]", wsPolicy);
         WSPolicyFeature policyFeature = new WSPolicyFeature();
         policyFeature.setEnabled(true);
 

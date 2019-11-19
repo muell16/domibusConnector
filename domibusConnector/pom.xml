@@ -69,9 +69,9 @@
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
 
-        <org.apache.cxf.version>3.3.4</org.apache.cxf.version>
-        <spring.cloud.version>2.1.3.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.2.1.RELEASE</spring.boot.version>
+        <org.apache.cxf.version>3.2.11</org.apache.cxf.version>
+        <spring.cloud.version>2.0.4.RELEASE</spring.cloud.version>
+        <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
         <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
 
         <vaadin.version>14.0.12</vaadin.version>
@@ -279,24 +279,24 @@
                 </exclusions>
             </dependency>
 
+            <!--            <dependency>-->
+            <!--                <groupId>net.shibboleth.utilities</groupId>-->
+            <!--                <artifactId>java-support</artifactId>-->
+            <!--                <version>7.3.0</version>-->
+            <!--                <exclusions>-->
+            <!--                    <exclusion>-->
+            <!--                        <groupId>com.google.guava</groupId>-->
+            <!--                        <artifactId>guava</artifactId>-->
+            <!--                    </exclusion>-->
+            <!--                </exclusions>-->
+            <!--            </dependency>-->
+
+
             <dependency>
-                <groupId>net.shibboleth.utilities</groupId>
-                <artifactId>java-support</artifactId>
-                <version>7.3.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>7.1</version>
             </dependency>
-
-
-<!--            <dependency>-->
-<!--                <groupId>org.ow2.asm</groupId>-->
-<!--                <artifactId>asm</artifactId>-->
-<!--                <version>7.1</version>-->
-<!--            </dependency>-->
 
             <!-- Apache CXF dependencies -->
             <dependency>
@@ -329,19 +329,19 @@
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${org.apache.cxf.version}</version>
             </dependency>
-<!--            &lt;!&ndash; always upgrade with CXF! &ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.santuario</groupId>-->
-<!--                <artifactId>xmlsec</artifactId>-->
-<!--                <version>2.1.4</version>-->
-<!--            </dependency>-->
+            <!-- always upgrade with CXF! -->
+            <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>2.1.4</version>
+            </dependency>
             <!-- handle not matching dependencies in apache cxf package -->
-<!--            <dependency>-->
-                <!-- overwrite dependency version in org.apache.neethi:neethi and org.apache.cxf:cxf-core -->
-<!--                <groupId>org.codehaus.woodstox</groupId>-->
-<!--                <artifactId>woodstox-core-asl</artifactId>-->
-<!--                <version>4.4.1</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!-- overwrite dependency version in org.apache.neethi:neethi and org.apache.cxf:cxf-core -->
+            <!--                <groupId>org.codehaus.woodstox</groupId>-->
+            <!--                <artifactId>woodstox-core-asl</artifactId>-->
+            <!--                <version>4.4.1</version>-->
+            <!--            </dependency>-->
 
             <dependency>
                 <!-- overwrite dependency version in org.apache.neethi:neethi:3.0.3 and org.apache.santuario:xmlsec -->
@@ -990,9 +990,9 @@
                 </executions>
                 <configuration>
                     <rules>
-                        <!-- deactivated -->
-                        <!--                        <dependencyConvergence>-->
-                        <!--                        </dependencyConvergence>-->
+
+                        <dependencyConvergence>
+                        </dependencyConvergence>
                         <bannedDependencies>
                             <searchTransitive>true</searchTransitive>
                             <excludes>
