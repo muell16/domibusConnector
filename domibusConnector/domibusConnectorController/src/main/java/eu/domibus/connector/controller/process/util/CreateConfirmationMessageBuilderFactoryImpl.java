@@ -204,6 +204,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 }
 
                 details.setAction(action);
+                details.setCausedBy(originalMessage.getConnectorMessageId());
 
                 DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
                 evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());

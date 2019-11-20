@@ -118,6 +118,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         }
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("#persistMessageIntoDatabase: messge is an evidence message, persisting as evidence!");
+            message.getMessageDetails().setDirection(direction);
             message = evidencePersistenceService.persistAsEvidence(message);
             return message;
         }
@@ -256,10 +257,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         PDomibusConnectorMessage dbMessage;
         LOGGER.trace("#setMessageDeliveredToNationalSystem: with message [{}]", message);
         if (DomainModelHelper.isEvidenceMessage(message)) {
-            DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-            dbMessage = findByRefToMsg(message);
-            LOGGER.trace("#setMessageDeliveredToNationalSystem: set evidence with type [{}] of message db id [{}] as delivered to national system",
-                    confirmation.getEvidenceType(), dbMessage.getId());
+//            DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
+//            dbMessage = findByRefToMsg(message);
+//            LOGGER.trace("#setMessageDeliveredToNationalSystem: set evidence with type [{}] of message db id [{}] as delivered to national system",
+//                    confirmation.getEvidenceType(), dbMessage.getId());
             evidenceDao.setDeliveredToBackend(message.getConnectorMessageId());
         } else {
             LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
@@ -269,15 +270,15 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         }
     }
 
-    PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
-        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
-        DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
-
-//        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence(direction);
-
-        LOGGER.trace("#findByRefToMsg: find message by reference [{}] for directionTarget [{}] (should be ebmsId or NationalId)", refToMessageId, direction);
-        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget()).get();
-    }
+//    PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
+//        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
+//        DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
+//
+////        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence(direction);
+//
+//        LOGGER.trace("#findByRefToMsg: find message by reference [{}] for directionTarget [{}] (should be ebmsId or NationalId)", refToMessageId, direction);
+//        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget()).get();
+//    }
 
 
 //    @Override

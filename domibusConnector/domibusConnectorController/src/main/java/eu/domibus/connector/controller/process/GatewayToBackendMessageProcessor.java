@@ -160,7 +160,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
-		sendEvidenceToBackToGateway(originalMessage, action, delivery);
+		sendEvidenceBackToGateway(originalMessage, action, delivery);
 
 		messagePersistenceService.confirmMessage(originalMessage);
 	}
@@ -182,7 +182,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
 
-		sendEvidenceToBackToGateway(originalMessage, action, nonDelivery);
+		sendEvidenceBackToGateway(originalMessage, action, nonDelivery);
 
 		messagePersistenceService.rejectMessage(originalMessage);
 	}
@@ -201,7 +201,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
                 messageConfirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
             }
             LOGGER.trace("generated confirmation is [{}]", messageConfirmation);
-            sendEvidenceToBackToGateway(originalMessage, action, messageConfirmation);
+            sendEvidenceBackToGateway(originalMessage, action, messageConfirmation);
 
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
@@ -228,8 +228,8 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		}
 	}
 	
-	private void sendEvidenceToBackToGateway(DomibusConnectorMessage originalMessage, DomibusConnectorAction action,
-			@Nonnull DomibusConnectorMessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
+	private void sendEvidenceBackToGateway(DomibusConnectorMessage originalMessage, DomibusConnectorAction action,
+										   @Nonnull DomibusConnectorMessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
 	DomibusConnectorMessageException {
         if (messageConfirmation == null) {
             throw new IllegalArgumentException("messageConfirmation is not allowed to be null!");
@@ -246,9 +246,10 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		details.setToParty(originalDetails.getFromParty());
 		details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
 		details.setAction(action);
-
+		details.setCausedBy(originalMessage.getConnectorMessageId());
 
 		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
+
 		evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
 		messagePersistenceService.persistMessageIntoDatabase(evidenceMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY);
 

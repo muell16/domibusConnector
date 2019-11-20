@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
+import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
@@ -49,6 +50,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
         deliveryService.setMessagePersistenceService(messagePersistenceService);
         deliveryService.setBigDataOfMessagePersistenceService(bigDataOfMessagePersistenceService);
         deliveryService.setPutMessageOnQueue(putMessageOnQueue);
+        deliveryService.setDomibusGatewayLoopbackReceiveProcessor(new DomibusGatewayLoopbackReceiveProcessor());
 
         Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn("id1");
         Mockito.when(messagePersistenceService.persistMessageIntoDatabase(any(DomibusConnectorMessage.class), any(DomibusConnectorMessageDirection.class)))

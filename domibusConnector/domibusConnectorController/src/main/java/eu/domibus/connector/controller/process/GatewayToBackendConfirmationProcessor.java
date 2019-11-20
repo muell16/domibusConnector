@@ -55,7 +55,8 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         DomibusConnectorMessage originalMessage = messagePersistenceService
                 .findMessageByEbmsIdAndDirection(refToMessageID, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
-                .orElse(null);
+                .get();
+
         DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {
