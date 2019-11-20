@@ -9,7 +9,7 @@
         <Root level="info" additivity="false">
             <AppenderRef ref="Console" />
         </Root>
-        <logger name="org.liquibase" level="debug" additivity="false">
+        <logger name="org.liquibase" level="info" additivity="false">
             <AppenderRef ref="Console" />
         </logger>
         <logger name="eu.domibus.connector.persistence" level="trace" additivity="false" >

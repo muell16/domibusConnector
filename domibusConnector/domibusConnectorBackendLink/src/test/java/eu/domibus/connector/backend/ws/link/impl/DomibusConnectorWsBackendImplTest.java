@@ -17,7 +17,6 @@ import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersisten
 import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServiceMemoryImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
-import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
