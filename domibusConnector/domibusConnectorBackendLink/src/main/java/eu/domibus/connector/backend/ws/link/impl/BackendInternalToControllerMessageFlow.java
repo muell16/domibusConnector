@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * this service handles the message transport from controller to the backend
@@ -88,7 +89,12 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
         message.getMessageDetails().setConnectorBackendClientName(backendMessage.getBackendClientInfo().getBackendName());
 
-        message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+        String msgId = messageIdGenerator.generateDomibusConnectorMessageId();
+        if (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
+            LOGGER.debug("No ebmsId was passed from the client, setting ebmsId to [{}]", msgId);
+            message.getMessageDetails().setEbmsMessageId(msgId);
+        }
+        message.setConnectorMessageId(msgId);
         LOGGER.debug("#submitToController: start to process message with message id [{}]", message.getConnectorMessageId());
         MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, message.getConnectorMessageId());
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);

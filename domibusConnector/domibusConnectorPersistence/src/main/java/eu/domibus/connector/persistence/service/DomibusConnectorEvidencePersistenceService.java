@@ -51,4 +51,5 @@ public interface DomibusConnectorEvidencePersistenceService {
     void setEvidenceDeliveredToNationalSystem(@NotNull  DomibusConnectorMessage.DomibusConnectorMessageId transport);
 
 
+    DomibusConnectorMessage persistAsEvidenceTo(DomibusConnectorMessage message, DomibusConnectorMessage relatedMessage);
 }

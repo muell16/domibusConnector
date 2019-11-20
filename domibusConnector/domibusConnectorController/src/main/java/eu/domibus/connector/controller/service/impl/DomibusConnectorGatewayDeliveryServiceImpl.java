@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.service.impl;
 
+import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
@@ -31,8 +32,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService;
 	private DomibusConnectorMessageIdGenerator messageIdGenerator;
-    private DomibusConnectorEvidencesToolkit evidencesToolkit;
-    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
+    private DomibusGatewayLoopbackReceiveProcessor domibusGatewayLoopbackReceiveProcessor;
 
     //setter
     @Autowired
@@ -57,13 +57,8 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     }
 
     @Autowired
-	public void setEvidencesToolki(DomibusConnectorEvidencesToolkit evidencesToolki) {
-    	this.evidencesToolkit = evidencesToolki;
-	}
-
-	@Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
+    public void setDomibusGatewayLoopbackReceiveProcessor(DomibusGatewayLoopbackReceiveProcessor domibusGatewayLoopbackReceiveProcessor) {
+        this.domibusGatewayLoopbackReceiveProcessor = domibusGatewayLoopbackReceiveProcessor;
     }
 
     @Override
@@ -73,7 +68,9 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 		// Either a message content, or at least one confirmation must exist for processing
 		if(!checkMessageForProcessability(message))
 			throw new DomibusConnectorControllerException("Message cannot be processed as it contains neither message content, nor message confirmation!");
-		
+
+		domibusGatewayLoopbackReceiveProcessor.processMessage(message);
+
 		String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
 
 		if(StringUtils.isEmpty(connectorMessageId))

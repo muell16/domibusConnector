@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusConnectorEvidencePersistenceService, InternalEvidencePersistenceService {
@@ -102,23 +103,61 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
 
     @Override
     @Transactional
+    public DomibusConnectorMessage persistAsEvidenceTo(DomibusConnectorMessage message, DomibusConnectorMessage relatedMessage) {
+        if (!DomainModelHelper.isEvidenceMessage(message)) {
+            throw new IllegalArgumentException("The provided message is NOT an evidence message!");
+        }
+        DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
+
+        String relatedMessageEbmsOrBackendId = Stream.of(relatedMessage.getMessageDetails().getEbmsMessageId(), relatedMessage.getMessageDetails().getBackendMessageId())
+                .filter(p -> p != null)
+                .findFirst().get();
+        DomibusConnectorMessageDirection relatedMessageDirection = relatedMessage.getMessageDetails().getDirection();
+
+        PDomibusConnectorMessage referencedMessage = messageDao.
+                findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(relatedMessageEbmsOrBackendId, relatedMessageDirection.getTarget())
+                .orElse(null);
+        if (referencedMessage == null) {
+            String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
+                    "Cannot persist confirmation [%s]", relatedMessageEbmsOrBackendId, relatedMessageDirection.getTarget(), confirmation);
+            throw new EvidencePersistenceException(error);
+
+        }
+        this.persistToMessage(referencedMessage, confirmation);
+
+//        this.persistEvidenceForMessageIntoDatabase(referencedMessage, confirmation.getEvidence(), confirmation.getEvidenceType(), message.getConnectorMessageId());
+        return message;
+    }
+
+    @Override
+    @Transactional
     public DomibusConnectorMessage persistAsEvidence(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isEvidenceMessage(message)) {
             throw new IllegalArgumentException("The provided message is NOT an evidence message!");
         }
         DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-        String refToMessageId = message.getMessageDetails().getRefToMessageId();
-//        PDomibusConnectorMessage referencedMessage = messageDao.findOneByEbmsMessageIdOrBackendMessageId(refToMessageId);
-//        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence();
-        DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
-        PDomibusConnectorMessage referencedMessage = messageDao.
-                findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget())
-                .orElse(null);
-        if (referencedMessage == null) {
-            String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
-                    "Cannot persist confirmation [%s]", refToMessageId, direction.getTarget(), confirmation);
-            throw new EvidencePersistenceException(error);
 
+        PDomibusConnectorMessage referencedMessage = null;
+        String connectorId = message.getMessageDetails().getCausedBy();
+        if (connectorId != null) {
+            referencedMessage = messageDao.findOneByConnectorMessageId(connectorId);
+            if (referencedMessage == null) {
+                String error = String.format("No message with connectorId [%s] found" +
+                        "Cannot persist confirmation [%s]", connectorId, confirmation);
+                throw new EvidencePersistenceException(error);
+            }
+        } else if (referencedMessage == null) {
+            String refToMessageId = message.getMessageDetails().getRefToMessageId();
+            DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
+            referencedMessage = messageDao.
+                    findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget())
+                    .orElse(null);
+
+            if (referencedMessage == null) {
+                String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
+                        "Cannot persist confirmation [%s]", refToMessageId, direction.getTarget(), confirmation);
+                throw new EvidencePersistenceException(error);
+            }
         }
         this.persistEvidenceForMessageIntoDatabase(referencedMessage, confirmation.getEvidence(), confirmation.getEvidenceType(), message.getConnectorMessageId());
         return message;
