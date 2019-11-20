@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @TestPropertySource(properties = {
         "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
         "spring.liquibase.change-log=db/changelog/test/testdata.xml",
-        "spring.datasource.url=jdbc:h2:mem:testdb",
+        "spring.datasource.url=jdbc:h2:mem:t2",
         "spring.active.profiles=connector,db-storage"
 })
 @TestExecutionListeners(
@@ -32,5 +32,6 @@ import java.lang.annotation.*;
 @ActiveProfiles({"test", "db_h2", "storage-db"})
 @DBUnit(allowEmptyFields = true)
 @Inherited
+@ExtendWith(SpringExtension.class)
 public @interface CommonPersistenceTest {
 }

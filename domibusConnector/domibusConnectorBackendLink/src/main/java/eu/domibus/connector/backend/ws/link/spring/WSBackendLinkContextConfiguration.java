@@ -1,22 +1,10 @@
 
 package eu.domibus.connector.backend.ws.link.spring;
 
-import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
-import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.ws.link.impl.DomibusConnectorWsBackendImpl;
-import eu.domibus.connector.backend.ws.link.impl.PushMessageToBackendClient;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.backend.ws.link.impl.MessageToBackendClientWaitQueue;
-import eu.domibus.connector.backend.ws.link.impl.ToBackendClientJmsBasedWaitQueue;
-import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
-import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
-import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.logging.log4j.LogManager;
@@ -27,12 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.*;
 
 import org.springframework.jms.annotation.EnableJms;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessagingException;
-
-import javax.xml.ws.soap.MTOMFeature;
-import java.util.Properties;
 
 /**
  * Configure the backend link web services

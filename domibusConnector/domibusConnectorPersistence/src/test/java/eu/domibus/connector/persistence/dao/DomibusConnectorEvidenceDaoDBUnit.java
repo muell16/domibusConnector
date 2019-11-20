@@ -17,10 +17,15 @@ import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  *
@@ -28,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @CommonPersistenceTest
-@DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true)
 public class DomibusConnectorEvidenceDaoDBUnit {
 
     @Autowired
@@ -40,7 +44,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
     @Autowired
     private DatabaseDataSourceConnection ddsc;
     
-////    @BeforeEach
+//    @BeforeEach
 //    public void setUp() throws Exception {
 //        //Load testdata
 //        IDataSet dataSet = new FlatXmlDataSetBuilder()
@@ -53,6 +57,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
 //    }
 
     @Test
+    @DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true, disableConstraints = true)
     public void testFindEvidencesForMessage() {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
 
@@ -63,6 +68,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
     }
 
     @Test
+    @DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true, disableConstraints = true)
     public void testSetDeliveredToGateway() throws SQLException, AmbiguousTableNameException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             int result = evidenceDao.setDeliveredToGateway(82L);
@@ -80,6 +86,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
     }
 
     @Test
+    @DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true, disableConstraints = true)
     public void testSetDeliveredToGateway_updateNonExistant_shouldReturnZero() {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             int result = evidenceDao.setDeliveredToGateway(882L);
@@ -125,6 +132,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
 //    }
 
     @Test
+    @DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true, disableConstraints = true)
     public void testSetDeliveredToBackend_ByMessageIdAndType() throws SQLException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
@@ -154,6 +162,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
 //    }
 
     @Test
+    @DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true, disableConstraints = true)
     public void testSaveEvidence() {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
             PDomibusConnectorEvidence dbEvidence = new PDomibusConnectorEvidence();
