@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.2.0-alpha1-UNSTABLE</version>
     </parent>
     <name>${project.artifactId}</name>
     <description>        Does the business work with the messages: Generates the evidences, resolves and verifies the ASIC-S container, creates the TRUST-Tokens.        It hands over the messages to the GWLink module for GW-Communication and to the BackendLinkModule for communication with the connectorClients.
