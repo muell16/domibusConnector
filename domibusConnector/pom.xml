@@ -10,7 +10,6 @@
         <module>domibusConnectorEvidencesToolkit</module>
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
-
         <module>domibusConnectorPersistence</module>
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
@@ -24,13 +23,10 @@
         <module>domibusConnectorWeb</module>
         <module>domibusConnectorControllerLIB</module>
         <module>domibusConnectorLinkCommon</module>
-
         <module>domibusConnectorTestData</module>
-
+        <module>domibusConnectorLauncher</module>
         <!-- should be the last module -->
         <module>domibusConnectorDistribution</module>
-
-        <module>domibusConnectorLauncher</module>
     </modules>
     <!-- Shared version number properties -->
     <properties>
@@ -238,6 +234,21 @@
                 <groupId>org.opentest4j</groupId>
                 <artifactId>opentest4j</artifactId>
                 <version>1.1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>1.12.4</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.12.4</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>
