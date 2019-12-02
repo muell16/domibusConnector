@@ -24,7 +24,6 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
 
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
-        DatabaseProvider databaseProvider = new DatabaseProvider();
         try {
             return Stream.of(H2_CONFIG, "mysql", "oracle")
                     .map(this::loadProperties)
