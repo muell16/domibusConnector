@@ -25,9 +25,12 @@ public class MysqlContainerDataSourceProvider implements DataSourceProvider {
     }
 
     @Override
-    public DataSource createNewDataSource() {
-
+    public DataSource createNewDataSource(String version) {
         Assumptions.assumeTrue(Optional.ofNullable(System.getProperty("DOCKER_HOST")).isPresent(), "No docker available!");
+        if (version != null) {
+//            throw new RuntimeException("Cannot provide db with data in version " + version);
+            Assumptions.assumeTrue(true, "Cannot provide db with data in version " + version);
+        }
 
         MySQLContainer mysql = new MySQLContainer();
 

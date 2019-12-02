@@ -18,5 +18,5 @@ public interface DataSourceProvider {
     /**
      * should create on each call a new fresh database
      */
-    DataSource createNewDataSource();
+    DataSource createNewDataSource(String version);
 }

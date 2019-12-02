@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
@@ -25,87 +26,73 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 public class HandWrittenDatabaseScriptsITCase {
 
     public static final String INITIAL_SCRIPTS_CLASSPATH = "/dbscripts/initial/";
+    public static final String MIGRATE_SCRIPTS_CLASSPATH = "/dbscripts/migrate/";
 
     public static List<String> INITIAL_VERSIONS = Stream
             .of("4.1.0")
             .collect(Collectors.toList());
 
     public List<DataSourceProvider> dataSourceFactoryStream = Stream
-            .of(h2OracleDataSourceFactory(), h2MysqlDataSourceFactory(), new MysqlDataSourceProvider(), new MysqlContainerDataSourceProvider())
+            .of(H2DataSourceProvider.h2Oracle(), H2DataSourceProvider.h2Mysql(), new MysqlDataSourceProvider(), new MysqlContainerDataSourceProvider())
             .collect(Collectors.toList());
 
 
+    public static final List<UpgradePath> UPGRADE_PATHS = Stream
+            .of(upgradePath("3.5.x").to("4.0.0"))
+            .collect(Collectors.toList());
 
-    public DataSourceProvider h2MysqlDataSourceFactory() {
-        DataSourceProvider dsf = new DataSourceProvider() {
-            @Override
-            public String getDatabaseType() {
-                return "mysql";
-            }
-
-            @Override
-            public String getVersion() {
-                return "0";
-            }
-
-            @Override
-            public String getName() {
-                return "H2 mysql";
-            }
-
-            @Override
-            public DataSource createNewDataSource() {
-                JdbcDataSource ds = new JdbcDataSource();
-                ds.setURL("jdbc:h2:mem:" + UUID.randomUUID().toString().substring(0,6) + ";MODE=MYSQL");
-                ds.setUser("sa");
-                return ds;
-            }
-        };
-        return dsf;
+    static UpgradePath upgradePath(String fromVersion) {
+        UpgradePath up = new UpgradePath();
+        up.fromVersion = fromVersion;
+        return up;
     }
 
+    public static class UpgradePath {
+        String fromVersion;
+        List<String> toVersion;
 
-    public DataSourceProvider h2OracleDataSourceFactory() {
-        DataSourceProvider dsf = new DataSourceProvider() {
-            @Override
-            public String getDatabaseType() {
-                return "oracle";
-            }
-
-            @Override
-            public String getVersion() {
-                return "0";
-            }
-
-            @Override
-            public String getName() {
-                return "H2 oracle";
-            }
-
-            @Override
-            public DataSource createNewDataSource() {
-                JdbcDataSource ds = new JdbcDataSource();
-                ds.setURL("jdbc:h2:mem:" + UUID.randomUUID().toString().substring(0,6) + ";MODE=Oracle");
-                ds.setUser("sa");
-                return ds;
-            }
-        };
-        return dsf;
+        public UpgradePath to(String... version) {
+            toVersion = Stream.of(version).collect(Collectors.toList());
+            return this;
+        }
     }
 
+    @TestFactory
+    public Stream<DynamicContainer> testMigrateScripts() {
+        return UPGRADE_PATHS.stream()
+                .map(upgradePath -> dynamicContainer("From " + upgradePath.fromVersion,
+                    upgradePath.toVersion.stream().map(toVersion -> dynamicContainer("migrate to " + toVersion, createMigrateToTest(upgradePath.fromVersion, toVersion)))
+                ));
+    }
+
+    public Stream<DynamicNode> createMigrateToTest(String from, String toVersion) {
+        return dataSourceFactoryStream.stream()
+                .map(d -> dynamicTest(d.getName(), () -> migrateToScriptTest(from, toVersion, d)));
+    }
+
+    public void migrateToScriptTest(String from, String toVersion, DataSourceProvider dataSourceFactory) throws SQLException {
+        String migrateScriptLocation = MIGRATE_SCRIPTS_CLASSPATH + dataSourceFactory.getDatabaseType() + "_migrate_" + from + "_to_" + toVersion + ".sql";
+        Resource migrateScriptResource = new ClassPathResource(migrateScriptLocation);
+
+        Assertions.assertThat(migrateScriptResource.exists()).as("The migrate database script mus be available under %s", migrateScriptLocation).isTrue();
+
+        DataSource dataSource = dataSourceFactory.createNewDataSource(from);
+        Connection connection = dataSource.getConnection();
+        ScriptUtils.executeSqlScript(connection, migrateScriptResource);
+    }
 
     @TestFactory
     public Stream<DynamicContainer> testInitialScripts() {
         return INITIAL_VERSIONS.stream()
                 .map(version -> {
-                    DynamicContainer dynamicContainer = dynamicContainer(version, checkInitialScriptTest(version));
+                    DynamicContainer dynamicContainer = dynamicContainer("Initial to " + version, checkInitialScriptTest(version));
                     return dynamicContainer;
                 });
     }
 
     public Stream<DynamicNode> checkInitialScriptTest(String version) {
         return dataSourceFactoryStream.stream()
-                .map(d -> dynamicTest(d.getName() + " " + d.getVersion(),
+                .map(d -> dynamicTest(d.getName(),
                         () -> checkInitialScriptTest(version, d)));
     }
 
@@ -118,7 +105,7 @@ public class HandWrittenDatabaseScriptsITCase {
 
         Assertions.assertThat(initialScriptResource.exists()).as("The initial database script mus be available under %s", initialScriptLocation).isTrue();
 
-        DataSource dataSource = dataSourceFactory.createNewDataSource();
+        DataSource dataSource = dataSourceFactory.createNewDataSource(null);
         Connection connection = dataSource.getConnection();
         ScriptUtils.executeSqlScript(connection, initialScriptResource);
 
