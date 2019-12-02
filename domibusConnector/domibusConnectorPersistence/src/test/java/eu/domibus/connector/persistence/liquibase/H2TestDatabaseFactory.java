@@ -2,38 +2,31 @@ package eu.domibus.connector.persistence.liquibase;
 
 import org.assertj.core.api.Assertions;
 import org.h2.jdbcx.JdbcDataSource;
-import org.springframework.core.io.AbstractResource;
+import org.h2.tools.RunScript;
+import org.junit.jupiter.api.Assumptions;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class H2DataSourceProvider implements DataSourceProvider {
+public class H2TestDatabaseFactory implements TestDatabaseFactory {
 
     public static final String INITIAL_TEST_SCRIPTS_LOCATION = "dbscripts/test/h2/";
 
     String version;
-//    String initialScript;
     String dbType;
 
-    public static H2DataSourceProvider h2Oracle() {
-        H2DataSourceProvider h2DataSourceProvider = new H2DataSourceProvider();
+    public static H2TestDatabaseFactory h2Oracle() {
+        H2TestDatabaseFactory h2DataSourceProvider = new H2TestDatabaseFactory();
         h2DataSourceProvider.dbType = "oracle";
-//        if (version != null) {
-//            h2DataSourceProvider.setInitialScript(INITIAL_TEST_SCRIPTS_LOCATION + h2DataSourceProvider.dbType + "_" + version + ".sql");
-//        }
         return h2DataSourceProvider;
     }
 
-    public static H2DataSourceProvider h2Mysql() {
-        H2DataSourceProvider h2DataSourceProvider = new H2DataSourceProvider();
+    public static H2TestDatabaseFactory h2Mysql() {
+        H2TestDatabaseFactory h2DataSourceProvider = new H2TestDatabaseFactory();
         h2DataSourceProvider.dbType = "mysql";
-//        if (version != null) {
-//            h2DataSourceProvider.setInitialScript(INITIAL_TEST_SCRIPTS_LOCATION + h2DataSourceProvider.dbType + "_" + version + ".sql");
-//        }
         return h2DataSourceProvider;
     }
 
@@ -41,13 +34,6 @@ public class H2DataSourceProvider implements DataSourceProvider {
         this.version = version;
     }
 
-//    public String getInitialScript() {
-//        return initialScript;
-//    }
-//
-//    public void setInitialScript(String initialScript) {
-//        this.initialScript = initialScript;
-//    }
 
     @Override
     public String getDatabaseType() {
@@ -64,9 +50,33 @@ public class H2DataSourceProvider implements DataSourceProvider {
         return String.format("H2 %s data: [%s]", dbType, version == null ? "empty" : version);
     }
 
+    class H2TestDatabase implements TestDatabase {
+
+        JdbcDataSource ds;
+
+        @Override
+        public DataSource getDataSource() {
+            return ds;
+        }
+
+        @Override
+        public void close() throws Exception {
+            RunScript.execute(ds.getURL(), ds.getUser(), ds.getPassword(), "classpath:/dbscripts/test/h2/shutdown.sql", null, false);
+        }
+    }
+
     @Override
-    public DataSource createNewDataSource(String version) {
+    public boolean isAvailable(String version) {
+        return true;
+    }
+
+    @Override
+    public TestDatabase createNewDatabase(String version) {
+        H2TestDatabase testDatabase = new H2TestDatabase();
+
         JdbcDataSource ds = new JdbcDataSource();
+        testDatabase.ds = ds;
+
         String jdbcUrl = "jdbc:h2:mem:" + UUID.randomUUID().toString().substring(0,6) + ";MODE=" + dbType;
 
         ds.setURL(jdbcUrl);
@@ -83,6 +93,6 @@ public class H2DataSourceProvider implements DataSourceProvider {
             }
         }
 
-        return ds;
+        return testDatabase;
     }
 }

@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 public class LiquibaseTemplateInvocationContextProvider implements TestTemplateInvocationContextProvider {
 
     public static final String H2_CONFIG = "H2";
+    public static final String MYSQL_CONFIG = "mysql";
+    public static final String ORACLE_CONFIG = "oracle";
     public static final String H2_PROFILE = "db_h2";
     public static final String MYSQL_PROFILE = "db_mysql";
     public static final String ORACLE_PROFILE = "db_oracle";
@@ -25,7 +27,7 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
     @Override
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext extensionContext) {
         try {
-            return Stream.of(H2_CONFIG, "mysql", "oracle")
+            return Stream.of(H2_CONFIG, MYSQL_CONFIG, ORACLE_CONFIG)
                     .map(this::loadProperties)
                     .filter(p -> p != null)
                     .map(c -> invocationContext(c));
