@@ -23,7 +23,11 @@ public class MysqlDataSourceProvider implements DataSourceProvider {
     }
 
     @Override
-    public DataSource createNewDataSource() {
+    public DataSource createNewDataSource(String version) {
+        if (version != null) {
+//            throw new RuntimeException("Cannot provide db with data in version " + version);
+            Assumptions.assumeTrue(true, "Cannot provide db with data in version " + version);
+        }
         Assumptions.assumeTrue("true".equalsIgnoreCase(System.getProperty("test.db.mysql.enabled")),
                 "\nNative Mysql not available! Enable by setting following properties" +
                         "\ntest.db.mysql.enabled=true" +
