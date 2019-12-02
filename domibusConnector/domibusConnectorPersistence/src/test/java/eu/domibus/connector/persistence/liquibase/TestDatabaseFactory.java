@@ -1,8 +1,6 @@
 package eu.domibus.connector.persistence.liquibase;
 
-import javax.sql.DataSource;
-
-public interface DataSourceProvider {
+public interface TestDatabaseFactory {
     /**
      * @return type of the database
      */
@@ -15,8 +13,10 @@ public interface DataSourceProvider {
 
     String getName();
 
+    boolean isAvailable(String version);
+
     /**
      * should create on each call a new fresh database
      */
-    DataSource createNewDataSource(String version);
+    TestDatabase createNewDatabase(String version);
 }

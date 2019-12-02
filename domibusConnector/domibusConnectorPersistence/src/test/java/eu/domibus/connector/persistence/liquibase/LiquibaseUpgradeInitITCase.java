@@ -20,23 +20,6 @@ public class LiquibaseUpgradeInitITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LiquibaseUpgradeInitITCase.class);
 
-//    @TestTemplate
-//    @ExtendWith(LiquibaseTemplateInvocationContextProvider.class)
-//    void testConnectivity(Properties p) {
-//        System.out.println(p.getProperty("spring.datasource.url"));
-//        Assertions.assertNotNull(p);
-//    }
-
-    /*
-     * INSTALL VERSION 4 Tests
-    */
-//    @TestTemplate
-//    @ExtendWith(LiquibaseTemplateInvocationContextProvider.class)
-//    protected void checkInitialV4_0Scripts(Properties props) {
-//        System.out.println("\n\n\n######################\nRUNNING TEST: checkInstallDB");
-//        props.put("spring.liquibase.change-log","classpath:/db/changelog/install/initial-4.0.xml");
-//        checkLiquibaseRuns(props);
-//    }
 
     @TestTemplate
     @ExtendWith(LiquibaseTemplateInvocationContextProvider.class)
