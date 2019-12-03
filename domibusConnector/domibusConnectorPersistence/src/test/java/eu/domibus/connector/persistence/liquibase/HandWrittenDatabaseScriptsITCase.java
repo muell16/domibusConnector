@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.liquibase;
 
+import eu.domibus.connector.persistence.testutil.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
