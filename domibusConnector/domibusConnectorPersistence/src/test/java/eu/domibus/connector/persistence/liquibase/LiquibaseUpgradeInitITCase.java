@@ -23,6 +23,7 @@ import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.SqlStatement;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -88,6 +89,7 @@ public class LiquibaseUpgradeInitITCase {
 
 
     public void checkLiquibaseRuns(Properties props) {
+        Assumptions.assumeTrue(props.get("testdb.name") != null, "Test database must be available!");
         LOGGER.info("Running test with Properties: [{}]", props);
 
         SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(LiquibaseUpgradeInitITCase.LiquibaseUpgradeTestConfiguration.class)

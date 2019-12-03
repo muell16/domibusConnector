@@ -95,12 +95,13 @@
 
 
         <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar is not in public maven repo -->
-         <dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.1</version>
-            <scope>provided</scope>
-		</dependency>
+        <!-- activate dependency with profile oracle 'mvn -Poracle install' instead -->
+<!--         <dependency>-->
+<!--			<groupId>com.oracle</groupId>-->
+<!--			<artifactId>ojdbc7</artifactId>-->
+<!--			<version>12.1.0.1</version>-->
+<!--            <scope>provided</scope>-->
+<!--		</dependency>-->
 
 
         <!-- used to colorize output on windows systems -->

@@ -4,6 +4,8 @@ package eu.domibus.connector.persistence.testutil;
 import eu.domibus.connector.persistence.testutil.H2TestDatabaseFactory;
 import eu.domibus.connector.persistence.testutil.TestDatabase;
 import eu.domibus.connector.persistence.testutil.TestDatabaseFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Method;
@@ -13,6 +15,15 @@ import java.util.stream.Stream;
 
 public class LiquibaseTemplateInvocationContextProvider implements TestTemplateInvocationContextProvider {
 
+    private static final Logger LOGGER = LogManager.getLogger(LiquibaseTemplateInvocationContextProvider.class);
+
+    public static final List<TestDatabaseFactory> AVAILABLE_DBMS = Stream.of(
+
+//            new PostgresContainerTestDatabaseFactory(), //not supported yet!
+            H2TestDatabaseFactory.h2Mysql(),
+            H2TestDatabaseFactory.h2Oracle(),
+            new MysqlContainerTestDatabaseFactory()
+    ).collect(Collectors.toList());
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext extensionContext) {
@@ -26,17 +37,22 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
         Method testMethod = extensionContext.getTestMethod().get();
         FromVersion[] annotationsByType = testMethod.getAnnotationsByType(FromVersion.class);
 
-        return Stream.of(H2TestDatabaseFactory.h2Mysql(), H2TestDatabaseFactory.h2Oracle())
+        return AVAILABLE_DBMS.stream()
+                .map(f -> {
+                    LOGGER.info("Processing TestDBFactory [{}]", f);
+                    return f;
+                })
                 .map(tdbfactory -> Stream.of(annotationsByType)
                                 .map(fromVersion -> fromVersion.value())
                                 .map(s -> s.isEmpty() ? null : s)
-                                .map(v -> invocationContext(tdbfactory.createNewDatabase(v))
-                )).flatMap(i -> i)
-                ;
+                                .filter(version -> tdbfactory.isAvailable(version))
+                                .map(version -> invocationContext(tdbfactory.createNewDatabase(version))
+                )).flatMap(i -> i);
     }
 
 
     private TestTemplateInvocationContext invocationContext(TestDatabase testDatabase) {
+        LOGGER.info("Creating test context for DB [{}]", testDatabase);
         return new TestTemplateInvocationContext() {
 
             @Override
@@ -61,7 +77,6 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
                 }, (BeforeEachCallback) extensionContext -> {
 
                     String id = extensionContext.getUniqueId();
-//                    TestDatabase testDatabase = configuration.createNewDatabase(null);
                     extensionContext.getStore(ExtensionContext.Namespace.GLOBAL).put(id + "testdb", testDatabase);
 
                 }, (AfterEachCallback) extensionContext -> {

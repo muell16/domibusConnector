@@ -68,6 +68,7 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
             p.setProperty("spring.datasource.url", ds.getURL());
             p.setProperty("spring.datasource.username", ds.getUser());
             p.setProperty("spring.datasource.password", ds.getPassword());
+            p.setProperty("testdb.name", getName());
             return p;
         }
 
