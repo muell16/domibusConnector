@@ -1,632 +1,209 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <!-- 
         Changelog to upgrade from 3.0 database to 4.0 database
-    -->   
-    <property name="varchar.type" value="VARCHAR" />
-    <property name="varchar.type" value="VARCHAR2" dbms="oracle" />
-    
-    <property name="varchar.length.type" value="" />
-    <property name="varchar.length.type" value="CHAR" dbms="oracle" />
-    
-    <property name="varchar255.type" value="VARCHAR(255)" />
-    <property name="varchar255.type" value="VARCHAR2(255 CHAR)" dbms="oracle" />
-    
-    <property name="varchar512.type" value="VARCHAR(512)" />
-    <property name="varchar512.type" value="VARCHAR2(512 CHAR)" dbms="oracle" />
+    -->
+    <property name="varchar.type" value="VARCHAR"/>
+    <property name="varchar.type" value="VARCHAR2" dbms="oracle"/>
 
-    <property name="id.type" value="BIGINT" dbms="postgresql" />
-    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
-    <property name="id.type" value="NUMBER(10)" dbms="oracle" />
+    <property name="varchar.length.type" value=""/>
+    <property name="varchar.length.type" value="CHAR" dbms="oracle"/>
 
-    <property name="text.type" value="TEXT" dbms="h2,postgresql" />
-    <property name="text.type" value="CLOB" dbms="oracle" />
-    <property name="text.type" value="longtext" dbms="mysql" />
+    <property name="varchar255.type" value="VARCHAR(255)"/>
+    <property name="varchar255.type" value="VARCHAR2(255 CHAR)" dbms="oracle"/>
+
+    <property name="varchar512.type" value="VARCHAR(512)"/>
+    <property name="varchar512.type" value="VARCHAR2(512 CHAR)" dbms="oracle"/>
+
+    <property name="id.type" value="BIGINT" dbms="postgresql"/>
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql"/>
+    <property name="id.type" value="NUMBER(10)" dbms="oracle"/>
+
+    <property name="text.type" value="TEXT" dbms="h2,postgresql"/>
+    <property name="text.type" value="CLOB" dbms="oracle"/>
+    <property name="text.type" value="longtext" dbms="mysql"/>
 
     <property name="blob" value="BLOB" dbms="oracle,h2,postgresql"/>
-    <property name="blob" value="longblob" dbms="mysql" />
+    <property name="blob" value="longblob" dbms="mysql"/>
 
-    <include file="db/changelog/v4_0/upgrade_qrtz_tables.xml" />
-     
-    <changeSet id="3to4_upgrade_001.0_pre_setup" author="StephanSpindler">
+    <include file="db/changelog/v4_0/upgrade_qrtz_tables.xml"/>
+
+
+<!--    <changeSet id="3to4_upgrade_001.01_pre_setup" author="StephanSpindler">-->
+<!--        <preConditions onFail="CONTINUE">-->
+<!--            <tableExists tableName="DOMIBUS_CONNECTOR_EVIDENCES"/>-->
+<!--        </preConditions>-->
+<!--        <comment>Drop FK on DOMIBUS_CONNECTOR_EVIDENCES by recreating column - it works on all supported DB</comment>-->
+<!--        <addColumn tableName="DOMIBUS_CONNECTOR_EVIDENCES">-->
+<!--            <column name="MESSAGE_ID_OLD" type="${id.type}">-->
+<!--                <constraints nullable="false" unique="false"/>-->
+<!--            </column>-->
+<!--        </addColumn>-->
+<!--        <update tableName="DOMIBUS_CONNECTOR_EVIDENCES">-->
+<!--            <column name="MESSAGE_ID_OLD" type="${id.type}" valueComputed="MESSAGE_ID"/>-->
+<!--        </update>-->
+<!--        <dropColumn columnName="MESSAGE_ID" tableName="DOMIBUS_CONNECTOR_EVIDENCES"/>-->
+<!--        <addColumn tableName="DOMIBUS_CONNECTOR_EVIDENCES">-->
+<!--            <column name="MESSAGE_ID" type="${id.type}">-->
+<!--                <constraints nullable="false" unique="false"/>-->
+<!--            </column>-->
+<!--        </addColumn>-->
+<!--        <update tableName="DOMIBUS_CONNECTOR_EVIDENCES">-->
+<!--            <column name="MESSAGE_ID" type="${id.type}" valueComputed="MESSAGE_ID_OLD"/>-->
+<!--        </update>-->
+<!--        <dropColumn columnName="MESSAGE_ID_OLD" tableName="DOMIBUS_CONNECTOR_EVIDENCES"/>-->
+<!--    </changeSet>-->
+
+    <changeSet id="3to4_upgrade_001_pre_setup" author="StephanSpindler">
         <preConditions onFail="CONTINUE">
-            <not>
-                <dbms type="h2" />
-            </not>
+            <tableExists tableName="DOMIBUS_CONNECTOR_ACTION"/>
         </preConditions>
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SERVICE" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_PARTY" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_ACTION" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_EVIDENCES" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MESSAGES" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
-        <dropAllForeignKeyConstraints baseTableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
+        <comment>Create temp table of DOMIBUS_CONNECTOR_ACTION</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_ACTION" newTableName="DOMIBUS_CONNECTOR_ACTION_OLD" />
     </changeSet>
 
-    <changeSet id="3to4_upgrade_001.1_pre_setup_drop_primary_keys" author="StephanSpindler">
-        <comment>Drop all primary keys, they are regenerated with named constraints</comment>
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.2_drop_pk_evidences" author="StephanSpindler" failOnError="false">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCES" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.3_drop_pk_msg_info" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.4_drop_pk_messages" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGES" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.5_pre_setup_drop_pk_msg_error" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.6_drop_pk_party" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.7_drop_pk_seq_store" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.8_drop_pk_service" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.9_drop_pk_webadmin_users" author="StephanSpindler">
-        <dropPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_001.32_pk_create_action" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION"/>
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_001.33_pk_create_message_info" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="ID" constraintName="PK_MSG_INFO" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.34_pk_create_msg_error" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnNames="ID" constraintName="PK_MSG_ERROR" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.35_pk_create_party" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="PARTY_ID, ROLE" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.36_pk_create_seq_store" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnNames="SEQ_NAME" constraintName="PK_DOMIBUS_CONNECTOR_SEQ_STORE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_001.37_pk_create_service" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
-    </changeSet>
-
-
-       
-    <changeSet id="3to4_upgrade_001_tb_DOMIBUS_CONNECTOR_SERVICE" author="StephanSpindler" >
-        <preConditions>
-            <tableExists tableName="DOMIBUS_CONNECTOR_SERVICE" />
+    <changeSet id="3to4_upgrade_002_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_EVIDENCES"/>
         </preConditions>
-        <modifyDataType 
-            columnName="SERVICE"
-            newDataType="${varchar255.type}"            
-            tableName="DOMIBUS_CONNECTOR_SERVICE" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_SERVICE" 
-            columnName="SERVICE_TYPE" 
-            newDataType="${varchar512.type}" />
-    </changeSet>
-    
-    <changeSet id="3to4_upgrade_002_tb_DOMIBUS_CONNECTOR_PARTY" author="StephanSpinlder">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_PARTY" 
-            columnName="PARTY_ID" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType tableName="DOMIBUS_CONNECTOR_PARTY" 
-                        columnName="ROLE" 
-                        newDataType="${varchar255.type}" />
-        <modifyDataType tableName="DOMIBUS_CONNECTOR_PARTY" 
-                        columnName="PARTY_ID_TYPE" 
-                        newDataType="${varchar512.type}"
-        />        
+        <comment>Create temp table of DOMIBUS_CONNECTOR_EVIDENCES</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_EVIDENCES" newTableName="DOMIBUS_CONNECTOR_EVIDENCES_OLD" />
     </changeSet>
 
-    <changeSet id="3to4_upgrade_003_tb_DOMIBUS_CONNECTOR_MSG_ERROR" author="StephanSpindler">
-        <modifyDataType
-            tableName="DOMIBUS_CONNECTOR_MSG_ERROR"
-            columnName="ID"
-            newDataType="${id.type}" 
-        />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
-            columnName="MESSAGE_ID" 
-            newDataType="${id.type}"
-        />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
-            columnName="ERROR_MESSAGE" 
-            newDataType="${varchar512.type}" />
+    <changeSet id="3to4_upgrade_003_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_MESSAGE_INFO</comment>
 
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
-            columnName="CREATED" 
-            newDataType="TIMESTAMP" />        
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" newTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO_OLD" />
     </changeSet>
-    <changeSet id="3to4_upgrade_003_tb_DOMIBUS_CONNECTOR_MSG_ERROR_mysql" author="StephanSpindler" dbms="mysql">
-        <modifyDataType
-                tableName="DOMIBUS_CONNECTOR_MSG_ERROR"
-                columnName="DETAILED_TEXT"
-                newDataType="${text.type}" />
-        <modifyDataType
-                tableName="DOMIBUS_CONNECTOR_MSG_ERROR"
-                columnName="ERROR_SOURCE"
-                newDataType="${text.type}" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_003_tb_DOMIBUS_CONNECTOR_MSG_ERROR_convert_error_source_to_clob" author="StephanSpindler" dbms="oracle">
-        <addColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR">
-            <column name="ERROR_SOURCE_TEMP" type="${text.type}"></column>
-        </addColumn>
-        <sql>UPDATE DOMIBUS_CONNECTOR_MSG_ERROR SET ERROR_SOURCE_TEMP=ERROR_SOURCE</sql>
-        <dropColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnName="ERROR_SOURCE" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_MSG_ERROR" oldColumnName="ERROR_SOURCE_TEMP" newColumnName="ERROR_SOURCE" />
-    </changeSet>
-    
-    <changeSet id="3to4_upgrade_004_tb_create_DOMIBUS_CONNECTOR_MSG_CONT" author="StephanSpindler" >
-        <createTable tableName="DOMIBUS_CONNECTOR_MSG_CONT">
-            <column name="ID" type="${id.type}" >
-                <constraints nullable="false" />
-            </column>
-            <column name="MESSAGE_ID" type="${id.type}" >
-                <constraints nullable="false" />
-            </column> 
-            <column name="CONTENT_TYPE" type="${varchar255.type}" />
-            <column name="CONTENT" type="BLOB" />
-            <column name="CHECKSUM" type="${text.type}" />
-            <column name="CREATED" type="DATETIME" />
-        </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MSG__01" />
+
+    <changeSet id="3to4_upgrade_004_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_MESSAGES"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_MESSAGES</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_MESSAGES" newTableName="DOMIBUS_CONNECTOR_MESSAGES_OLD" />
     </changeSet>
 
 
-    <changeSet id="3to4_upgrade_005_tb_update_DOMIBUS_CONNECTOR_MESSAGE_INFO" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="ID" 
-            newDataType="${id.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="MESSAGE_ID" 
-            newDataType="${id.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="FROM_PARTY_ID" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="FROM_PARTY_ROLE" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="TO_PARTY_ID" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="TO_PARTY_ROLE" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="ORIGINAL_SENDER" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="FINAL_RECIPIENT" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="SERVICE" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="ACTION" 
-            newDataType="${varchar255.type}" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="CREATED" 
-            newDataType="TIMESTAMP" />
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            columnName="UPDATED"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-    <!--<changeSet id="3to4_upgrade_005_tb_update_DOMIBUS_CONNECTOR_MESSAGE_INFO_created" author="StephanSpindler">-->
-        <!--&lt;!&ndash;<addNotNullConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnName="CREATED" />&ndash;&gt;-->
-        <!--&lt;!&ndash;<addNotNullConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnName="UPDATED" />&ndash;&gt;-->
-    <!--</changeSet>-->
-    <changeSet id="3to4_upgrade_005_tb_update_DOMIBUS_CONNECTOR_MESSAGE_INFO_add_message_id_unique" author="StephanSpindler" dbms="mysql">
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnNames="MESSAGE_ID" constraintName="MSG_INFO_UNIQ_MSG_ID"/>
-    </changeSet>
-        
-    <changeSet id="3to4_upgrade_006_tb_rename_DOMIBUS_CONNECTOR_MESSAGE" author="StephanSpindler">
-        <renameTable oldTableName="DOMIBUS_CONNECTOR_MESSAGES" newTableName="DOMIBUS_CONNECTOR_MESSAGE" />        
-    </changeSet>
-    <changeSet id="3to4_upgrade_006_pk_create_message" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_MESSAGE"/>
+    <changeSet id="3to4_upgrade_005_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_MSG_ERROR"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_MSG_ERROR</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_MSG_ERROR" newTableName="DOMIBUS_CONNECTOR_MSG_ERROR_OLD" />
     </changeSet>
 
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_modify_id" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            columnName="ID" 
-            newDataType="${id.type}" />
+    <changeSet id="3to4_upgrade_006_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_PARTY"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_PARTY</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_PARTY" newTableName="DOMIBUS_CONNECTOR_PARTY_OLD" />
     </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_rename_nat_message_id" author="StephanSpindler">
-        <renameColumn 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            oldColumnName="NAT_MESSAGE_ID" 
-            newColumnName="BACKEND_MESSAGE_ID"
-            columnDataType="${varchar255.type}"
-        />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_confirmed_timestamp" author="StephanSpindler">
-        <modifyDataType
-            tableName="DOMIBUS_CONNECTOR_MESSAGE"
-            columnName="CONFIRMED"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_rejected_timestamp" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            columnName="REJECTED"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_delivered_gw_timestamp" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            columnName="DELIVERED_GW"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_updated_timestamp" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            columnName="UPDATED"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_delivered_backend_timestamp" author="StephanSpindler">
-        <renameColumn 
-            tableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            oldColumnName="DELIVERED_NAT" 
-            newColumnName="DELIVERED_BACKEND"
-            columnDataType="TIMESTAMP"
-        />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_add_Column_backend_name" author="StephanSpindler">
-        <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE">
-            <column name="BACKEND_NAME" type="${varchar255.type}" />
-        </addColumn>
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_add_Column_connector_id" author="StephanSpindler">
-        <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE">
-            <column name="CONNECTOR_MESSAGE_ID" type="${varchar255.type}" />
-        </addColumn>
+
+    <changeSet id="3to4_upgrade_007_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_SEQ_STORE"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_SEQ_STORE</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_SEQ_STORE" newTableName="DOMIBUS_CONNECTOR_SEQ_STORE_OLD" />
     </changeSet>
 
 
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_hashValue_mysql" author="StephanSpindler" dbms="mysql">
-        <modifyDataType
-                tableName="DOMIBUS_CONNECTOR_MESSAGE"
-                columnName="HASH_VALUE"
-                newDataType="${text.type}" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_007_tb_update_DOMIBUS_CONNECTOR_MESSAGE_hashValue_oracle" author="StephanSpindler" dbms="oracle">
-        <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE">
-            <column name="HASH_VALUE_TEMP" type="${text.type}"></column>
-        </addColumn>
-        <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE SET HASH_VALUE_TEMP=HASH_VALUE</sql>
-        <dropColumn tableName="DOMIBUS_CONNECTOR_MESSAGE" columnName="HASH_VALUE" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_MESSAGE" oldColumnName="HASH_VALUE_TEMP" newColumnName="HASH_VALUE" />
-    </changeSet>
-    
-    <changeSet id="3to4_upgrade_008_tb_ren_DOMIBUS_CONNECTOR_EVIDENCE" author="StephanSpindler">
-        <renameTable oldTableName="DOMIBUS_CONNECTOR_EVIDENCES" newTableName="DOMIBUS_CONNECTOR_EVIDENCE" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_008_pk_create_evidence" author="StephanSpindler">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_EVIDENCE" />
+    <changeSet id="3to4_upgrade_008_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_SERVICE"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_SERVICE</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_SERVICE" newTableName="DOMIBUS_CONNECTOR_SERVICE_OLD" />
     </changeSet>
 
-    <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_mod_id_type" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            columnName="ID"
-            newDataType="${id.type}" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_mod_message_id_type" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            columnName="MESSAGE_ID"
-            newDataType="${id.type}" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_mode_evidence_mysql" author="StephanSpindler" dbms="mysql">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            columnName="EVIDENCE"
-            newDataType="${text.type}" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_mode_evidence_oracle" author="StephanSpindler" dbms="oracle">
-        <addColumn tableName="DOMIBUS_CONNECTOR_EVIDENCE">
-            <column name="EVIDENCE_TEMP" type="${text.type}"></column>
-        </addColumn>
-        <sql>UPDATE DOMIBUS_CONNECTOR_EVIDENCE SET EVIDENCE_TEMP = EVIDENCE</sql>
-        <dropColumn tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnName="EVIDENCE" />
-        <renameColumn tableName="DOMIBUS_CONNECTOR_EVIDENCE" oldColumnName="EVIDENCE_TEMP" newColumnName="EVIDENCE" />
+    <changeSet id="3to4_upgrade_009_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_CONNECTOR_ACTION"/>
+        </preConditions>
+        <comment>Create temp table of DOMIBUS_CONNECTOR_ACTION</comment>
+
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_ACTION" newTableName="DOMIBUS_CONNECTOR_ACTION_OLD" />
     </changeSet>
 
-    <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_delivered_nat_timestamp" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            columnName="DELIVERED_NAT"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_009_tb_update_DOMIBUS_CONNECTOR_EVIDENCE_delivered_gw_timestamp" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            columnName="DELIVERED_GW"
-            newDataType="TIMESTAMP" />
-    </changeSet>
-
-    
-    <changeSet id="3to4_upgrade_011_tb_create_DOMIBUS_CONNECTOR_BACKEND_INFO" author="StephanSpindler">
-        <createTable tableName="DOMIBUS_CONNECTOR_BACKEND_INFO">
-            <column name="ID" type="${id.type}">
-                <constraints nullable="false" />
-            </column>
-            <column name="BACKEND_NAME" type="${varchar255.type}" >
-                <constraints nullable="false" />
-            </column>
-            <column name="BACKEND_KEY_ALIAS" type="${varchar255.type}" >
-                <constraints nullable="false" />
-            </column>
-            <column name="BACKEND_KEY_PASS" type="${varchar255.type}" >
-            </column>
-            <column name="BACKEND_SERVICE_TYPE" type="${varchar512.type}" ></column>
-            <column name="BACKEND_ENABLED" type="BOOLEAN" defaultValueBoolean="true"></column>
-            <column name="BACKEND_DEFAULT" type="BOOLEAN" defaultValueBoolean="false"></column>
-            <column name="BACKEND_DESCRIPTION" type="${text.type}" ></column>
-            <column name="BACKEND_PUSH_ADDRESS" type="${text.type}"></column>
-        </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_BACK_01" />
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_NAME" constraintName="UN_DOMIBUS_CONNECTOR_BACK_01" />
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnNames="BACKEND_KEY_ALIAS" constraintName="UN_DOMIBUS_CONNECTOR_BACK_02" />
-    </changeSet>
-    
-    <changeSet id="3to4_upgrade_012_tb_create_DOMIBUS_CONNECTOR_BACK_2_S" author="StephanSpindler">
-        <createTable tableName="DOMIBUS_CONNECTOR_BACK_2_S">
-            <column name="DOMIBUS_CONNECTOR_SERVICE_ID" type="${varchar255.type}" >
-                <constraints nullable="false" />
-            </column>
-            <column name="DOMIBUS_CONNECTOR_BACKEND_ID" type="${id.type}" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_012_tb_create_DOMIBUS_CONNECTOR_BACK_2_S_connector_to_service_rel_primary_key">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BACK_2_S" columnNames="DOMIBUS_CONNECTOR_SERVICE_ID, DOMIBUS_CONNECTOR_BACKEND_ID" constraintName="PK_DOMIBUS_CONN_01" />
-    </changeSet>
-    
-    <changeSet id="3to4_upgrade_013_tb_update_DOMIBUS_CONNECTOR_ACTION" author="StephanSpindler">
-        <modifyDataType 
-            tableName="DOMIBUS_CONNECTOR_ACTION" 
-            columnName="ACTION" 
-            newDataType="${varchar255.type}" />
-    </changeSet>
-    <changeSet id="3to4_upgrade_013.1_tb_update_DOMIBUS_CONNECTOR_ACTION_pdf_required" author="StephanSpindler">
-        <addDefaultValue tableName="DOMIBUS_CONNECTOR_ACTION" columnName="PDF_REQUIRED" defaultValueBoolean="0" />
-    </changeSet>
-
-    <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_CONT_TYPE">
-        <comment>Create Content Type Table</comment>
-        <createTable tableName="DOMIBUS_CONNECTOR_CONT_TYPE">
-            <column name="MESSAGE_CONTENT_TYPE" type="${varchar255.type}">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_CONT_TYPE_primary_key">
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_CONT_TYPE" columnNames="MESSAGE_CONTENT_TYPE" constraintName="PK_MSG_CONT_TYPE" />
+    <changeSet id="3to4_upgrade_010_pre_setup" author="StephanSpindler">
+        <preConditions onFail="CONTINUE">
+            <tableExists tableName="DOMIBUS_WEBADMIN_USER"/>
+        </preConditions>
+        <comment>Rename table for historic purpose</comment>
+        <renameTable oldTableName="DOMIBUS_WEBADMIN_USER" newTableName="DOMIBUS_WEBADMIN_USER_OLD" />
     </changeSet>
 
 
-    <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_BIGDATA">
-        <createTable tableName="DOMIBUS_CONNECTOR_BIGDATA">
-            <column name="ID" type="${varchar255.type}" >
-                <constraints nullable="false" />
-            </column>
-            <column name="CHECKSUM" type="${text.type}" />
-            <column name="CREATED" type="DATETIME" />
-            <column name="MESSAGE_ID" type="DECIMAL(10,0)" />
-            <column name="LAST_ACCESS" type="DATETIME" />
-            <column name="NAME" type="${text.type}" />
-            <column name="CONTENT" type="${blob}" />
-            <column name="MIMETYPE" type="${varchar255.type}" />
-        </createTable>
-        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_BIGDATA" columnNames="ID" />
+    <include file="/db/changelog/v4_0/initial-changelog-domibus.xml" />
+
+    <changeSet id="3to4_upgrade_020_copy_action_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_ACTION (ACTION, PDF_REQUIRED) SELECT ACTION, PDF_REQUIRED FROM DOMIBUS_CONNECTOR_ACTION_OLD</sql>
+<!--        <sql dbms="h2">-->
+<!--            INSERT INTO DOMIBUS_CONNECTOR_ACTION (ACTION) VALUES SELECT (ACTION) FROM DOMIBUS_CONNECTOR_ACTION_OLD WHERE PDF_REQUIRED=1;-->
+<!--            INSERT INTO DOMIBUS_CONNECTOR_ACTION (ACTION) VALUES SELECT (ACTION) FROM DOMIBUS_CONNECTOR_ACTION_OLD WHERE PDF_REQUIRED=0;-->
+<!--        </sql>-->
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_021_copy_service_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_SERVICE (SERVICE, SERVICE_TYPE) SELECT SERVICE, SERVICE_TYPE FROM DOMIBUS_CONNECTOR_SERVICE_OLD</sql>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_022_copy_party_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_PARTY (PARTY_ID, ROLE, PARTY_ID_TYPE) SELECT PARTY_ID, ROLE, PARTY_ID_TYPE FROM DOMIBUS_CONNECTOR_PARTY_OLD</sql>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_023_copy_messages_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_MESSAGE
+                (ID, EBMS_MESSAGE_ID, BACKEND_MESSAGE_ID, CONVERSATION_ID, DIRECTION, HASH_VALUE, CONFIRMED, REJECTED, DELIVERED_BACKEND, DELIVERED_GW, UPDATED) SELECT
+                 ID, EBMS_MESSAGE_ID, NAT_MESSAGE_ID,     CONVERSATION_ID, DIRECTION, HASH_VALUE, CONFIRMED, REJECTED, DELIVERED_NAT,     DELIVERED_GW, UPDATED FROM DOMIBUS_CONNECTOR_MESSAGES_OLD</sql>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_24_copy_message_info_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_MESSAGE_INFO
+            (ID, MESSAGE_ID, FROM_PARTY_ID, FROM_PARTY_ROLE, TO_PARTY_ID, TO_PARTY_ROLE, ORIGINAL_SENDER, FINAL_RECIPIENT, SERVICE, ACTION, CREATED, UPDATED) SELECT
+             ID, MESSAGE_ID, FROM_PARTY_ID, FROM_PARTY_ROLE, TO_PARTY_ID, TO_PARTY_ROLE, ORIGINAL_SENDER, FINAL_RECIPIENT, SERVICE, ACTION, CREATED, UPDATED FROM DOMIBUS_CONNECTOR_MESSAGE_INFO_OLD</sql>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_025_copy_evidences_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_EVIDENCE
+            (ID, MESSAGE_ID, TYPE, EVIDENCE, DELIVERED_NAT, DELIVERED_GW, UPDATED) SELECT
+             ID, MESSAGE_ID, TYPE, EVIDENCE, DELIVERED_NAT, DELIVERED_GW, UPDATED FROM DOMIBUS_CONNECTOR_EVIDENCES_OLD</sql>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_026_copy_msg_error_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_MSG_ERROR
+            (ID, MESSAGE_ID, ERROR_MESSAGE, DETAILED_TEXT, ERROR_SOURCE, CREATED) SELECT
+             ID, MESSAGE_ID, ERROR_MESSAGE, DETAILED_TEXT, ERROR_SOURCE, CREATED FROM DOMIBUS_CONNECTOR_MSG_ERROR_OLD</sql>
+    </changeSet>
+
+    <changeSet id="3to4_upgrade_027_copy_seq_table" author="StephanSpindler">
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE
+            (SEQ_NAME, SEQ_VALUE) SELECT
+             SEQ_NAME, SEQ_VALUE FROM DOMIBUS_CONNECTOR_SEQ_STORE_OLD</sql>
     </changeSet>
 
 
-
-    <changeSet author="StephanSpindler" id="3to4_upgrade_014_tb_create_DOMIBUS_CONNECTOR_BIGDATA_constraints">
-        <addForeignKeyConstraint
-                baseTableName="DOMIBUS_CONNECTOR_BIGDATA"
-                baseColumnNames="MESSAGE_ID"
-                constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA"
-                referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
-                referencedColumnNames="ID"
-                onDelete="NO ACTION"
-                onUpdate="NO ACTION" />
-    </changeSet>
-
-    <changeSet author="StephanSpindler" id="3to4_upgrade_015_tb_modify_WEBADMIN_USER">
-        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
-                        columnName="USERNAME"
-                        newDataType="${varchar512.type}" />
-        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
-                        columnName="PASSWORD"
-                        newDataType="${varchar512.type}" />
-        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
-                        columnName="SALT"
-                        newDataType="${varchar255.type}" />
-        <modifyDataType tableName="DOMIBUS_WEBADMIN_USER"
-                        columnName="ROLE"
-                        newDataType="${varchar255.type}" />
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_015_tb_modify_WEBADMIN_USER_primary_key">
-        <addPrimaryKey tableName="DOMIBUS_WEBADMIN_USER" columnNames="USERNAME"  constraintName="PK_WEBADMIN_USER" />
-    </changeSet>
-
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_rename_WEBADMIN_PROPERTIES_drop_pk" failOnError="false">
-        <dropPrimaryKey tableName="DOMIBUS_WEBADMIN_PROPERTIES" />
-    </changeSet>
-
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_rename_WEBADMIN_PROPERTIES">
-        <renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTIES" newTableName="DOMIBUS_WEBADMIN_PROPERTY" />
-    </changeSet>
-
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_key_rename">
-        <renameColumn tableName="DOMIBUS_WEBADMIN_PROPERTY" oldColumnName="PROPERTIES_KEY" newColumnName="KEY" columnDataType="${varchar512.type}"/>
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_key_mod">
-        <modifyDataType tableName="DOMIBUS_WEBADMIN_PROPERTY"
-                        columnName="KEY"
-                        newDataType="${varchar512.type}" />
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_value_rename">
-        <renameColumn tableName="DOMIBUS_WEBADMIN_PROPERTY" oldColumnName="PROPERTIES_VALUE" newColumnName="VALUE" columnDataType="${varchar512.type}"/>
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_modify_WEBADMIN_PROPERTY_value_modify">
-        <modifyDataType tableName="DOMIBUS_WEBADMIN_PROPERTY"
-                        columnName="VALUE"
-                        newDataType="${varchar512.type}" />
-    </changeSet>
-    <changeSet author="StephanSpindler" id="3to4_upgrade_016_tb_WEBADMIN_PROPERTY_add_primary_key" failOnError="false">
-        <addPrimaryKey tableName="DOMIBUS_WEBADMIN_PROPERTY" columnNames="KEY" constraintName="PK_WEBAMDIN_PROPERTY" />
-    </changeSet>
-
-    
-    <changeSet id="3to4_upgrade_020_fk_create_msg_error_message" author="StephanSpindler">
-        <comment>Create Foreign Key Message Error to Message</comment>
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR" 
-            baseColumnNames="MESSAGE_ID" 
-            constraintName="FK_DOMIBUS_CONNECTOR_MSG_ERROR" 
-            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            referencedColumnNames="ID" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION" />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_022_fk_create_msg_cont_message" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MSG_CONT" 
-            baseColumnNames="MESSAGE_ID" 
-            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_04" 
-            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            referencedColumnNames="ID" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"/>
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_023_fk_create_message_info_action_to_action_table" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="ACTION" 
-            constraintName="FK_MSGI_ACTION"
-            referencedTableName="DOMIBUS_CONNECTOR_ACTION" 
-            referencedColumnNames="ACTION" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"/>
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_024_fk_create_message_info_service_to_service_table" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="SERVICE" 
-            constraintName="FK_MSGI_SERVICE"
-            referencedTableName="DOMIBUS_CONNECTOR_SERVICE" 
-            referencedColumnNames="service" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION" />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_025_fk_create_message_info_from_party_to_party_table" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="FROM_PARTY_ID, FROM_PARTY_ROLE" 
-            constraintName="FK_MSGI_FROM_PARTY"
-            referencedTableName="DOMIBUS_CONNECTOR_PARTY" 
-            referencedColumnNames="PARTY_ID, ROLE" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION" />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_026_fk_create_message_info_to_party_to_party_table" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" 
-            baseColumnNames="TO_PARTY_ID, TO_PARTY_ROLE" 
-            constraintName="FK_MSGI_TO_PARTY"
-            referencedTableName="DOMIBUS_CONNECTOR_PARTY" 
-            referencedColumnNames="PARTY_ID, ROLE" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"/>
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_027_fk_create_message_info_to_message" author="StephanSpindler">
-        <addForeignKeyConstraint    
-            baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"     
-            baseColumnNames="MESSAGE_ID"         
-            constraintName="FK_MSGI_MSGID"
-            referencedColumnNames="ID"
-            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"       
-        />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_028_fk_create_evidence_to_message" author="StephanSpindler">
-        <addForeignKeyConstraint
-            baseTableName="DOMIBUS_CONNECTOR_EVIDENCE" 
-            baseColumnNames="MESSAGE_ID" 
-            constraintName="FK_DOMIBUS_CONNECTOR_EVIDENCES" 
-            referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" 
-            referencedColumnNames="ID"
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"  
-        />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_029_fk_create_b2s_to_backend" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_BACK_2_S" 
-            baseColumnNames="DOMIBUS_CONNECTOR_BACKEND_ID" 
-            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_01" 
-            referencedTableName="DOMIBUS_CONNECTOR_BACKEND_INFO" 
-            referencedColumnNames="ID"
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"  
-        />
-    </changeSet>
-
-    <changeSet id="3to4_upgrade_030_fk_create_b2s_to_service" author="StephanSpindler">
-        <addForeignKeyConstraint 
-            baseTableName="DOMIBUS_CONNECTOR_BACK_2_S" 
-            baseColumnNames="DOMIBUS_CONNECTOR_SERVICE_ID" 
-            constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_02" 
-            referencedTableName="DOMIBUS_CONNECTOR_SERVICE" 
-            referencedColumnNames="SERVICE"
-            onDelete="NO ACTION" 
-            onUpdate="NO ACTION"  
-        />
-    </changeSet>
-
-
+    <!-- TODO: implement optional drop of temp tables -->
 
 
     <changeSet id="tag-db-domibus-4.0" author="StephanSpindler">
-        <tagDatabase tag="DOMIBUS_DB_V4.0" />
+        <tagDatabase tag="DOMIBUS_DB_V4.0"/>
     </changeSet>
-   
+
 </databaseChangeLog> 

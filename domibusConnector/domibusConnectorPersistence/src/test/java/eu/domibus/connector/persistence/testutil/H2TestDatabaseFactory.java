@@ -1,21 +1,22 @@
-package eu.domibus.connector.persistence.liquibase;
+package eu.domibus.connector.persistence.testutil;
 
+import org.apache.poi.poifs.property.PropertyTable;
 import org.assertj.core.api.Assertions;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.RunScript;
-import org.junit.jupiter.api.Assumptions;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.UUID;
 
 public class H2TestDatabaseFactory implements TestDatabaseFactory {
 
     public static final String INITIAL_TEST_SCRIPTS_LOCATION = "dbscripts/test/h2/";
 
-    String version;
+//    String version;
     String dbType;
 
     public static H2TestDatabaseFactory h2Oracle() {
@@ -30,9 +31,9 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
         return h2DataSourceProvider;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+//    public void setVersion(String version) {
+//        this.version = version;
+//    }
 
 
     @Override
@@ -40,24 +41,41 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
         return dbType;
     }
 
-    @Override
-    public String getVersion() {
-        return version;
-    }
+//    @Override
+//    public String getVersion() {
+//        return version;
+//    }
 
     @Override
     public String getName() {
-        return String.format("H2 %s data: [%s]", dbType, version == null ? "empty" : version);
+        return String.format("H2 %s", dbType);
     }
 
     class H2TestDatabase implements TestDatabase {
 
         JdbcDataSource ds;
+        String version;
 
         @Override
         public DataSource getDataSource() {
             return ds;
         }
+
+        @Override
+        public Properties getProperties() {
+            Properties p = new Properties();
+            p.setProperty("spring.datasource.driver-class-name", "org.h2.Driver");
+            p.setProperty("spring.datasource.url", ds.getURL());
+            p.setProperty("spring.datasource.username", ds.getUser());
+            p.setProperty("spring.datasource.password", ds.getPassword());
+            return p;
+        }
+
+        @Override
+        public String getName() {
+            return String.format("H2 %s data: [%s]", dbType, version == null ? "empty" : version);
+        }
+
 
         @Override
         public void close() throws Exception {
@@ -76,8 +94,11 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
 
         JdbcDataSource ds = new JdbcDataSource();
         testDatabase.ds = ds;
+        testDatabase.version = version;
 
-        String jdbcUrl = "jdbc:h2:mem:" + UUID.randomUUID().toString().substring(0,6) + ";MODE=" + dbType;
+
+
+        String jdbcUrl = "jdbc:h2:file:./target/testdb/" + UUID.randomUUID().toString().substring(0,6) + ";MODE=" + dbType;
 
         ds.setURL(jdbcUrl);
         ds.setUser("sa");
@@ -95,4 +116,5 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
 
         return testDatabase;
     }
+
 }
