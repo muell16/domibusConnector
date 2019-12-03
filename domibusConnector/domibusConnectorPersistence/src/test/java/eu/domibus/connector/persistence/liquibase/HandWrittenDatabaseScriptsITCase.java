@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.liquibase;
 
 import eu.domibus.connector.persistence.testutil.*;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
@@ -29,8 +30,13 @@ public class HandWrittenDatabaseScriptsITCase {
             .collect(Collectors.toList());
 
     public static List<TestDatabaseFactory> TEST_DATABASE_FACTORIES_LIST = Stream
-            .of(H2TestDatabaseFactory.h2Oracle(), H2TestDatabaseFactory.h2Mysql(), new MysqlTestDatabaseFactory(), new MysqlContainerTestDatabaseFactory())
-            .collect(Collectors.toList());
+            .of(
+                    H2TestDatabaseFactory.h2Oracle(),
+                    H2TestDatabaseFactory.h2Mysql(),
+                    new MysqlTestDatabaseFactory(),
+                    new MysqlContainerTestDatabaseFactory()
+                    //new PostgresContainerTestDatabaseFactory() //not supported yet!
+            ).collect(Collectors.toList());
 
 
     public static final List<UpgradePath> UPGRADE_PATHS = Stream
@@ -71,7 +77,7 @@ public class HandWrittenDatabaseScriptsITCase {
         Resource migrateScriptResource = new ClassPathResource(migrateScriptLocation);
 
         Assertions.assertThat(migrateScriptResource.exists()).as("The migrate database script mus be available under %s", migrateScriptLocation).isTrue();
-        dataSourceFactory.isAvailable(fromVersion);
+        Assumptions.assumeTrue(dataSourceFactory.isAvailable(fromVersion), "TestDatabase " + dataSourceFactory.getName() +  " must be available in version " + fromVersion);
         try (TestDatabase newDatabase = dataSourceFactory.createNewDatabase(fromVersion)) {
             DataSource dataSource = newDatabase.getDataSource();
             Connection connection = dataSource.getConnection();
@@ -104,7 +110,8 @@ public class HandWrittenDatabaseScriptsITCase {
         Resource initialScriptResource = new ClassPathResource(initialScriptLocation);
 
         Assertions.assertThat(initialScriptResource.exists()).as("The initial database script mus be available under %s", initialScriptLocation).isTrue();
-        dataSourceFactory.isAvailable(null);
+
+        Assumptions.assumeTrue(dataSourceFactory.isAvailable(null), "TestDatabase " + dataSourceFactory.getName() +  " must be available empty!");
         try (TestDatabase db = dataSourceFactory.createNewDatabase(null); ) {
             DataSource dataSource = db.getDataSource();
             Connection connection = dataSource.getConnection();
@@ -114,10 +121,6 @@ public class HandWrittenDatabaseScriptsITCase {
         }
 
     }
-
-
-
-
 
 
 }
