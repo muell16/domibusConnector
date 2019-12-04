@@ -8,8 +8,11 @@
     <!-- 
         Changelog to fresh install 4.0 DataModel
     -->
-    <include file="/db/changelog/install/initial-changelog-domibus.xml" />       
-    <include file="/db/changelog/install/initial-changelog-webadmin.xml" />
-    <include file="/db/changelog/install/initial-changelog-data.sql" />
+<!--    <include file="/db/changelog/v4_0/upgrade-3to4.xml" />-->
+<!--    <include file="/db/changelog/v4_0/upgrade_qrtz_tables.xml" />-->
+
+    <include file="/db/changelog/v4_0/initial-changelog-domibus.xml" />
+    <include file="/db/changelog/v4_0/initial-changelog-webadmin.xml" />
+    <include file="/db/changelog/v4_0/initial-changelog-data.sql" />
    
-</databaseChangeLog> 
+</databaseChangeLog>
