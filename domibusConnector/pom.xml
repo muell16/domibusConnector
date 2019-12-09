@@ -36,7 +36,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <tomcat.version>8.5.32</tomcat.version>
-        <quartz.version>2.2.1</quartz.version>
 
 
         <javax.ws.rs>1.1.1</javax.ws.rs>
@@ -66,8 +65,8 @@
         <https.proxy.port></https.proxy.port>
 
         <org.apache.cxf.version>3.2.11</org.apache.cxf.version>
-        <spring.cloud.version>2.0.4.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.0.9.RELEASE</spring.boot.version>
+        <spring.cloud.version>2.1.5.RELEASE</spring.cloud.version>
+        <spring.boot.version>2.2.2.RELEASE</spring.boot.version>
         <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
 
         <vaadin.version>14.0.12</vaadin.version>
@@ -413,11 +412,11 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${quartz.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.quartz-scheduler</groupId>-->
+<!--                <artifactId>quartz</artifactId>-->
+<!--                <version>2.3.2</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>javax.ws.rs</groupId>
