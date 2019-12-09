@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -26,6 +27,7 @@ import javax.jms.ConnectionFactory;
 @Configuration
 @EnableJms
 @EnableScheduling
+@EnableConfigurationProperties(ConnectorControllerProperties.class)
 @PropertySource("classpath:/eu/domibus/connector/controller/spring/default-connector.properties")
 public class ControllerContext {
 
