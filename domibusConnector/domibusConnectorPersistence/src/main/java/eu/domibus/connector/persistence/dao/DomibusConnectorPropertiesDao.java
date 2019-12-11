@@ -17,5 +17,5 @@ import java.util.Optional;
 public interface DomibusConnectorPropertiesDao extends CrudRepository<PDomibusConnectorProperties, String> {
 
     Optional<PDomibusConnectorProperties> findByPropertyName(String propertyName);
-    
+
 }
