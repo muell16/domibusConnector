@@ -40,7 +40,7 @@ public class DomibusConnectorPropertiesPersistenceServiceImpl implements Domibus
 	public void saveProperties(Properties properties) {
 		Set<String> stringPropertyNames = properties.stringPropertyNames();
 		for(String propertyName:stringPropertyNames) {
-			Optional<PDomibusConnectorProperties> property = propertiesDao.findById(propertyName);
+			Optional<PDomibusConnectorProperties> property = propertiesDao.findByPropertyName(propertyName);
 			PDomibusConnectorProperties prop = null;
 			if(property.isPresent()){
 				if(!property.get().getPropertyValue().equals(properties.getProperty(propertyName))) {

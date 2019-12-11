@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  *
@@ -15,4 +16,6 @@ import javax.annotation.Nullable;
 @Repository
 public interface DomibusConnectorPropertiesDao extends CrudRepository<PDomibusConnectorProperties, String> {
 
+    Optional<PDomibusConnectorProperties> findByPropertyName(String propertyName);
+    
 }
