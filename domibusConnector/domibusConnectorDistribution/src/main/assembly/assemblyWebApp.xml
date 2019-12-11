@@ -6,18 +6,21 @@
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
+
+
+
     <fileSets>
 
 
         <fileSet>
-            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
-            </directory>
-            <outputDirectory>/documentation/database-scripts
-            </outputDirectory>
+            <directory>${project.basedir}/../domibusConnectorPersistence/src/main/resources/dbscripts</directory>
+            <outputDirectory>documentation/database-scripts</outputDirectory>
             <includes>
-                <include>*/*.*</include>
+                <include>*/**</include>
             </includes>
         </fileSet>
+
+
 
         <fileSet>
             <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
@@ -66,4 +69,6 @@
         </file>
 
     </files>
+
+
 </assembly>
