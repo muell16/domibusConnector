@@ -34,6 +34,7 @@ public class HandWrittenDatabaseScriptsITCase {
                     H2TestDatabaseFactory.h2Oracle(),
                     H2TestDatabaseFactory.h2Mysql(),
                     new MysqlTestDatabaseFactory(),
+                    new OracleTestDatabaseFactory(),
                     new MysqlContainerTestDatabaseFactory()
                     //new PostgresContainerTestDatabaseFactory() //not supported yet!
             ).collect(Collectors.toList());
