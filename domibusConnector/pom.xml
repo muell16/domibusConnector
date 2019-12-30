@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.2.0-alpha2</version>
+    <version>4.2.0-alpha3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorEvidencesToolkit</module>
@@ -100,6 +100,14 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>ecodex-dependencies</artifactId>
+                <version>0.0.8-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
 
             <!-- E-CODEX LIBRARIES -->
@@ -227,7 +235,33 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${org.junit.jupiter.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
+
+            <!-- overwrites deps from spring-boot-starter-test -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${org.junit.jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${org.junit.jupiter.version}</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.junit.jupiter</groupId>-->
+<!--                <artifactId>junit-jupiter-engine</artifactId>-->
+<!--                <version>${org.junit.jupiter.version}</version>-->
+<!--            </dependency>-->
+
+            <dependency>
+                <groupId>org.apiguardian</groupId>
+                <artifactId>apiguardian-api</artifactId>
+                <version>1.1.0</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.opentest4j</groupId>

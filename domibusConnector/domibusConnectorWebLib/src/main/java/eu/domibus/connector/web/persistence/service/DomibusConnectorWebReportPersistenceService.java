@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.web;
+package eu.domibus.connector.web.persistence.service;
 
 import java.util.Date;
 import java.util.List;

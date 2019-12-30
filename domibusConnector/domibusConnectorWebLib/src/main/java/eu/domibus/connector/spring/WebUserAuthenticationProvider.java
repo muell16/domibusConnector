@@ -2,6 +2,7 @@ package eu.domibus.connector.spring;
 
 import java.util.ArrayList;
 
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebUserPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.connector.persistence.service.web.DomibusConnectorWebUserPersistenceService;
 import eu.domibus.connector.web.dto.WebUser;
 
 

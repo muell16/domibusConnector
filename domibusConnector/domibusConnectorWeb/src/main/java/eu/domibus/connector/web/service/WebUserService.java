@@ -1,7 +1,6 @@
 package eu.domibus.connector.web.service;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.domibus.connector.persistence.service.web.DomibusConnectorWebUserPersistenceService;
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebUserPersistenceService;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.exception.InitialPasswordException;
 import eu.domibus.connector.web.exception.UserLoginException;

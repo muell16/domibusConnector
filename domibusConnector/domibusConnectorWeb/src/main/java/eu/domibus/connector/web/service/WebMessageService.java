@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -14,7 +15,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.domibus.connector.persistence.service.web.DomibusConnectorWebMessagePersistenceService;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 

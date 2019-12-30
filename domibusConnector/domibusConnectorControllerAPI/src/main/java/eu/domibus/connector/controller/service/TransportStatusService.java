@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This service handles the technical transport state of a message
+ *  between the connector and a link partner (gw, client)
  *
  */
 public interface TransportStatusService {

@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.web.impl;
+package eu.domibus.connector.web.persistence.service.impl;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -6,9 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -17,12 +19,12 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.service.impl.DomibusConnectorMessagePersistenceServiceImpl;
-import eu.domibus.connector.persistence.service.web.DomibusConnectorWebMessagePersistenceService;
+
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
 
-@org.springframework.stereotype.Service("webMessagePersistenceService")
+@Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceServiceImpl implements DomibusConnectorWebMessagePersistenceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessagePersistenceServiceImpl.class);

@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.dao;
+package eu.domibus.connector.web.persistence.dao;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

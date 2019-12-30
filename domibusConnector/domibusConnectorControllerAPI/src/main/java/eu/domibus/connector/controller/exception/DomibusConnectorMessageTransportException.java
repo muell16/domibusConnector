@@ -7,6 +7,7 @@ public class DomibusConnectorMessageTransportException extends RuntimeException 
 
     private DomibusConnectorMessage connectorMessage;
     private DomibusConnectorRejectionReason reason;
+    private boolean retryable = false;
 
     public DomibusConnectorMessageTransportException(DomibusConnectorMessage message, DomibusConnectorRejectionReason reason) {
         this.connectorMessage = message;
@@ -31,5 +32,21 @@ public class DomibusConnectorMessageTransportException extends RuntimeException 
 
     public DomibusConnectorRejectionReason getReason() {
         return reason;
+    }
+
+    public void setConnectorMessage(DomibusConnectorMessage connectorMessage) {
+        this.connectorMessage = connectorMessage;
+    }
+
+    public void setReason(DomibusConnectorRejectionReason reason) {
+        this.reason = reason;
+    }
+
+    public boolean isRetryable() {
+        return retryable;
+    }
+
+    public void setRetryable(boolean retryable) {
+        this.retryable = retryable;
     }
 }
