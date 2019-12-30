@@ -1,9 +1,5 @@
 package eu.domibus.connector.spring;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import eu.domibus.connector.spring.WebUserAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +11,9 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configures Spring Security

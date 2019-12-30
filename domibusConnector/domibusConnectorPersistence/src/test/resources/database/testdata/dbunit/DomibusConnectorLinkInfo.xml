@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+
+    <DC_LINK_CONFIGURATION
+        id="1"
+        link_impl="testimpl"
+    />
+
+    <DC_LINK_CONFIG_PROPERTY
+            DC_LINK_CONFIGURATION_ID="1"
+            PROPERTY_NAME="test"
+            PROPERTY_VALUE="value"
+    />
+
+    <DC_LINK_CONFIGURATION
+            id="1000"
+            link_impl="testimpl"
+    />
+
+    <DC_LINK_CONFIG_PROPERTY
+            DC_LINK_CONFIGURATION_ID="1000"
+            PROPERTY_NAME="p1"
+            PROPERTY_VALUE="value"
+    />
+
+    <DC_LINK_CONFIG_PROPERTY
+            DC_LINK_CONFIGURATION_ID="1000"
+            PROPERTY_NAME="p2"
+            PROPERTY_VALUE="value"
+    />
+
+    <DC_LINK_INFO
+            id="1000"
+            name="link1"
+            enabled="false"
+            description="testdescription"
+            LINK_CONFIG_ID="1"
+        />
+
+    <DC_LINK_INFO
+            id="1001"
+            name="test"
+            enabled="true"
+            description="testdescription"
+            LINK_CONFIG_ID="1"
+    />
+
+    <DC_LINK_INFO
+            id="1"
+            name="test2"
+            enabled="false"
+            description="testdescription"
+            LINK_CONFIG_ID="1000"
+    />
+
+    
+</dataset>

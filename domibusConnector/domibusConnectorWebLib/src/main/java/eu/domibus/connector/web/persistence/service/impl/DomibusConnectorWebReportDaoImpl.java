@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.dao.impl;
+package eu.domibus.connector.web.persistence.service.impl;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import eu.domibus.connector.web.persistence.dao.DomibusConnectorWebReportDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +23,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorWebReportDao;
 import eu.domibus.connector.web.dto.WebReportEntry;
 
 @Repository

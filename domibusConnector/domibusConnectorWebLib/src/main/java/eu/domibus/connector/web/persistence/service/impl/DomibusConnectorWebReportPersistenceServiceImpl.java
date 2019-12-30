@@ -1,12 +1,12 @@
-package eu.domibus.connector.persistence.service.web.impl;
+package eu.domibus.connector.web.persistence.service.impl;
 
 import java.util.Date;
 import java.util.List;
 
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebReportPersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorWebReportDao;
-import eu.domibus.connector.persistence.service.web.DomibusConnectorWebReportPersistenceService;
+import eu.domibus.connector.web.persistence.dao.DomibusConnectorWebReportDao;
 import eu.domibus.connector.web.dto.WebReportEntry;
 
 @org.springframework.stereotype.Service("webReportPersistenceService")

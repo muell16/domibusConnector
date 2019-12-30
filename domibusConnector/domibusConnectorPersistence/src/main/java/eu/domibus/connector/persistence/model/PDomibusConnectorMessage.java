@@ -42,8 +42,11 @@ public class PDomibusConnectorMessage implements Serializable {
     @Column(name = "BACKEND_MESSAGE_ID", unique = true, length = 255)
     private String backendMessageId;
 
-    @Column(name = "BACKEND_NAME", unique = true, length = 255)
+    @Column(name = "BACKEND_NAME", length = 255)
     private String backendName;
+
+    @Column(name = "GATEWAY_NAME", length = 255)
+    private String gatewayName;
 
     @Column(name = "CONNECTOR_MESSAGE_ID", unique = true, nullable = false, length = 255)
     private String connectorMessageId;
@@ -249,6 +252,14 @@ public class PDomibusConnectorMessage implements Serializable {
 
     public void setDirectionTarget(MessageTargetSource directionTarget) {
         this.directionTarget = directionTarget;
+    }
+
+    public String getGatewayName() {
+        return gatewayName;
+    }
+
+    public void setGatewayName(String gatewayName) {
+        this.gatewayName = gatewayName;
     }
 
     @Override

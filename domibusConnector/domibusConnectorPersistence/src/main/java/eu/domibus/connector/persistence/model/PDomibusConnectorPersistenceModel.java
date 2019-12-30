@@ -10,4 +10,6 @@ package eu.domibus.connector.persistence.model;
  */
 public interface PDomibusConnectorPersistenceModel {
 
+    public static final String SEQ_STORE_TABLE_NAME = "DOMIBUS_CONNECTOR_SEQ_STORE";
+
 }

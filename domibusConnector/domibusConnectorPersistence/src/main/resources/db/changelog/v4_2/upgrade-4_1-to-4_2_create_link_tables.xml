@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <property name="id.type" value="BIGINT" dbms="postgresql" />
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql" />
+    <property name="id.type" value="NUMBER(10)" dbms="oracle" />
+
+    <changeSet id="add_gateway_name_to_message_table" author="SKS">
+        <comment>add gateway name to support multiple gateways/gateway tenants</comment>
+        <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE">
+            <column name="GATEWAY_NAME" type="java.sql.Types.VARCHAR(255)">
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="create_domain_table" author="SKS">
+        <comment>Create DomainTable to support different settings for different message processes</comment>
+        <createTable tableName="DC_DOMAIN">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="NAME" type="java.sql.Types.VARCHAR(255)" >
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="DESCRIPTION" type="java.sql.Types.CLOB" />
+        </createTable>
+
+        <addUniqueConstraint tableName="DC_DOMAIN" columnNames="NAME" constraintName="UNQ_DC_DOMAIN_NAME" />
+        <addPrimaryKey tableName="DC_DOMAIN" columnNames="ID" constraintName="PK_DC_DOMAIN_ID" />
+    </changeSet>
+
+
+    <changeSet id="create_link_config_table" author="SKS">
+        <comment>Create Link Configuration Table, holds informations for the link impl</comment>
+        <createTable tableName="DC_LINK_CONFIGURATION">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="CONFIG_NAME" type="java.sql.Types.VARCHAR(255)" />
+            <column name="LINK_IMPL" type="java.sql.Types.VARCHAR(255)" />
+        </createTable>
+        <addPrimaryKey tableName="DC_LINK_CONFIGURATION" columnNames="ID" constraintName="PK_DC_LINK_CONFIGURATION" />
+    </changeSet>
+
+    <changeSet id="create_link_property_table" author="SKS">
+        <comment>Create Property Table for connector links, so each implementation can store link informations within this properties</comment>
+        <createTable tableName="DC_LINK_CONFIG_PROPERTY">
+            <column name="DC_LINK_CONFIGURATION_ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="PROPERTY_NAME" type="java.sql.Types.VARCHAR(255)" >
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="PROPERTY_VALUE" type="java.sql.Types.CLOB" />
+        </createTable>
+
+        <addPrimaryKey tableName="DC_LINK_CONFIG_PROPERTY" columnNames="DC_LINK_CONFIGURATION_ID,PROPERTY_NAME" constraintName="PK_DC_LINK_INFO_PROPERTY" />
+
+        <addForeignKeyConstraint baseTableName="DC_LINK_CONFIG_PROPERTY"
+                                 baseColumnNames="DC_LINK_CONFIGURATION_ID"
+                                 constraintName="FK_linkproperty_linkconfig"
+                                 referencedTableName="DC_LINK_CONFIGURATION"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+
+    <changeSet id="create_link_table" author="SKS">
+        <comment>Create LinkTable to support different link implementations on gateway and backend side</comment>
+        <createTable tableName="DC_LINK_INFO">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="NAME" type="java.sql.Types.VARCHAR(255)" >
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="DESCRIPTION" type="java.sql.Types.CLOB" />
+            <column name="ENABLED" type="java.sql.Types.BOOLEAN" />
+            <column name="LINK_CONFIG_ID" type="${id.type}" />
+            <column name="LINK_TYPE" type="java.sql.Types.VARCHAR(20)" />
+        </createTable>
+
+        <addUniqueConstraint tableName="DC_LINK_INFO" columnNames="NAME" constraintName="UNQ_LINK_INFO_NAME" />
+        <addPrimaryKey tableName="DC_LINK_INFO" columnNames="ID" constraintName="PK_DC_LINK_INFO" />
+        <addForeignKeyConstraint baseTableName="DC_LINK_INFO"
+                                 baseColumnNames="LINK_CONFIG_ID"
+                                 constraintName="FK_linkinfo_linkconfig"
+                                 referencedTableName="DC_LINK_CONFIGURATION"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+
+
+
+
+</databaseChangeLog>

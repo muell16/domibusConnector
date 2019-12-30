@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.dao;
+package eu.domibus.connector.web.persistence.dao;
 
 import java.util.Date;
 import java.util.List;

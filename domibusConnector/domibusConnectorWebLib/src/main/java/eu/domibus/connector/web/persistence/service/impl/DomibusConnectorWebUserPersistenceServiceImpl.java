@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.web.impl;
+package eu.domibus.connector.web.persistence.service.impl;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
@@ -13,14 +13,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import eu.domibus.connector.web.persistence.dao.DomibusConnectorUserPasswordDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorUserDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorUserPasswordDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorUser;
 import eu.domibus.connector.persistence.model.PDomibusConnectorUserPassword;
-import eu.domibus.connector.persistence.service.web.DomibusConnectorWebUserPersistenceService;
+import eu.domibus.connector.web.persistence.service.DomibusConnectorWebUserPersistenceService;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.exception.InitialPasswordException;
