@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorLinkInfo;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,8 +27,8 @@ public class DomibusConnectorLinkCreatorConfigurationService {
         linkInfoPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
     }
 
-    private void activateLink(DomibusConnectorLinkInfo linkInfo) {
-        linkManager.addLink(linkInfo);
+    private void activateLink(DomibusConnectorLinkPartner linkInfo) {
+        linkManager.activateLinkPartner(linkInfo);
     }
 
 

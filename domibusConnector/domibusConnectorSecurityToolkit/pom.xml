@@ -14,13 +14,7 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorControllerAPI</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
+
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
@@ -156,6 +150,7 @@
             <artifactId>domibusConnectorAPI</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -197,6 +192,7 @@
             <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+            <classifier>tests</classifier>
             <type>test-jar</type>
         </dependency>
         <dependency>

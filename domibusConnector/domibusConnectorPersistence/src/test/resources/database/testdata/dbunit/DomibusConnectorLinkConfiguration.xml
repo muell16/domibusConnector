@@ -5,6 +5,7 @@
     <DC_LINK_CONFIGURATION
         id="1"
         link_impl="testimpl"
+        config_name="config2"
 
     />
 
@@ -17,6 +18,7 @@
     <DC_LINK_CONFIGURATION
             id="1000"
             link_impl="testimpl"
+            config_name="config1"
     />
 
     <DC_LINK_CONFIG_PROPERTY

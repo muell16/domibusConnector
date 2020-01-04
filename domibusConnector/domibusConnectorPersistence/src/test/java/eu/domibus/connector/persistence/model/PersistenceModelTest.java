@@ -23,7 +23,7 @@ import java.time.Duration;
 public class PersistenceModelTest {
 
     
-    //DBdiff?? https://github.com/vecnatechnologies/dbDiff ??
+    //Maybe check created DB with diff:  https://github.com/vecnatechnologies/dbDiff
     
     
     @Configuration

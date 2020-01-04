@@ -16,9 +16,9 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="create_domain_table" author="SKS">
-        <comment>Create DomainTable to support different settings for different message processes</comment>
-        <createTable tableName="DC_DOMAIN">
+    <changeSet id="create_message_lane_table" author="SKS">
+        <comment>Create MessageLaneTable to support different settings for different messages</comment>
+        <createTable tableName="DC_MESSAGE_LANE">
             <column name="ID" type="${id.type}">
                 <constraints nullable="false"></constraints>
             </column>
@@ -28,8 +28,29 @@
             <column name="DESCRIPTION" type="java.sql.Types.CLOB" />
         </createTable>
 
-        <addUniqueConstraint tableName="DC_DOMAIN" columnNames="NAME" constraintName="UNQ_DC_DOMAIN_NAME" />
-        <addPrimaryKey tableName="DC_DOMAIN" columnNames="ID" constraintName="PK_DC_DOMAIN_ID" />
+        <addUniqueConstraint tableName="DC_MESSAGE_LANE" columnNames="NAME" constraintName="UNQ_DC_MESSAGE_LANE" />
+        <addPrimaryKey tableName="DC_MESSAGE_LANE" columnNames="ID" constraintName="PK_DC_MESSAGE_LANE_ID" />
+    </changeSet>
+    
+    <changeSet id="create_message_lane_properties_table" author="SKS">
+        <comment>Properties for message lane</comment>
+        <createTable tableName="DC_MESSAGE_LANE_PROPERTY">
+            <column name="DC_MESSAGE_LANE_ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="PROPERTY_NAME" type="java.sql.Types.VARCHAR(255)" >
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="PROPERTY_VALUE" type="java.sql.Types.CLOB" />
+        </createTable>
+
+        <addPrimaryKey tableName="DC_MESSAGE_LANE_PROPERTY" columnNames="DC_MESSAGE_LANE_ID,PROPERTY_NAME" constraintName="PK_DC_MESSAGE_LANE_PROPERTY" />
+
+        <addForeignKeyConstraint baseTableName="DC_MESSAGE_LANE_PROPERTY"
+                                 baseColumnNames="DC_MESSAGE_LANE_ID"
+                                 constraintName="FK_msglaneproperty_msglane"
+                                 referencedTableName="DC_MESSAGE_LANE"
+                                 referencedColumnNames="ID" />
     </changeSet>
 
 
@@ -39,10 +60,13 @@
             <column name="ID" type="${id.type}">
                 <constraints nullable="false"></constraints>
             </column>
-            <column name="CONFIG_NAME" type="java.sql.Types.VARCHAR(255)" />
+            <column name="CONFIG_NAME" type="java.sql.Types.VARCHAR(255)" >
+                <constraints nullable="false"></constraints>
+            </column>
             <column name="LINK_IMPL" type="java.sql.Types.VARCHAR(255)" />
         </createTable>
         <addPrimaryKey tableName="DC_LINK_CONFIGURATION" columnNames="ID" constraintName="PK_DC_LINK_CONFIGURATION" />
+        <addUniqueConstraint tableName="DC_LINK_CONFIGURATION" columnNames="CONFIG_NAME" constraintName="UNQ_DC_LINK_CONFIG_NMAE" />
     </changeSet>
 
     <changeSet id="create_link_property_table" author="SKS">
@@ -57,7 +81,7 @@
             <column name="PROPERTY_VALUE" type="java.sql.Types.CLOB" />
         </createTable>
 
-        <addPrimaryKey tableName="DC_LINK_CONFIG_PROPERTY" columnNames="DC_LINK_CONFIGURATION_ID,PROPERTY_NAME" constraintName="PK_DC_LINK_INFO_PROPERTY" />
+        <addPrimaryKey tableName="DC_LINK_CONFIG_PROPERTY" columnNames="DC_LINK_CONFIGURATION_ID,PROPERTY_NAME" constraintName="PK_DC_LINK_CONFIG_PROPERTY" />
 
         <addForeignKeyConstraint baseTableName="DC_LINK_CONFIG_PROPERTY"
                                  baseColumnNames="DC_LINK_CONFIGURATION_ID"
@@ -68,9 +92,9 @@
 
 
 
-    <changeSet id="create_link_table" author="SKS">
+    <changeSet id="create_link_partner_table" author="SKS">
         <comment>Create LinkTable to support different link implementations on gateway and backend side</comment>
-        <createTable tableName="DC_LINK_INFO">
+        <createTable tableName="DC_LINK_PARTNER">
             <column name="ID" type="${id.type}">
                 <constraints nullable="false"></constraints>
             </column>
@@ -83,12 +107,33 @@
             <column name="LINK_TYPE" type="java.sql.Types.VARCHAR(20)" />
         </createTable>
 
-        <addUniqueConstraint tableName="DC_LINK_INFO" columnNames="NAME" constraintName="UNQ_LINK_INFO_NAME" />
-        <addPrimaryKey tableName="DC_LINK_INFO" columnNames="ID" constraintName="PK_DC_LINK_INFO" />
-        <addForeignKeyConstraint baseTableName="DC_LINK_INFO"
+        <addUniqueConstraint tableName="DC_LINK_PARTNER" columnNames="NAME" constraintName="UNQ_LINK_INFO_NAME" />
+        <addPrimaryKey tableName="DC_LINK_PARTNER" columnNames="ID" constraintName="PK_DC_LINK_PARTNER" />
+        <addForeignKeyConstraint baseTableName="DC_LINK_PARTNER"
                                  baseColumnNames="LINK_CONFIG_ID"
                                  constraintName="FK_linkinfo_linkconfig"
                                  referencedTableName="DC_LINK_CONFIGURATION"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+    <changeSet id="create_link_partner_property_table" author="SKS">
+        <comment>Create Property Table for link partners, so each link partner can have his own property set</comment>
+        <createTable tableName="DC_LINK_PARTNER_PROPERTY">
+            <column name="DC_LINK_PARTNER_ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="PROPERTY_NAME" type="java.sql.Types.VARCHAR(255)" >
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="PROPERTY_VALUE" type="java.sql.Types.CLOB" />
+        </createTable>
+
+        <addPrimaryKey tableName="DC_LINK_PARTNER_PROPERTY" columnNames="DC_LINK_PARTNER_ID,PROPERTY_NAME" constraintName="PK_DC_LINK_PARTNER_PROPERTY" />
+
+        <addForeignKeyConstraint baseTableName="DC_LINK_PARTNER_PROPERTY"
+                                 baseColumnNames="DC_LINK_PARTNER_ID"
+                                 constraintName="FK_linkproperty_linkpartner"
+                                 referencedTableName="DC_LINK_PARTNER"
                                  referencedColumnNames="ID" />
     </changeSet>
 

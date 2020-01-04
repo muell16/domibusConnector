@@ -7,14 +7,13 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import javax.jms.MapMessage;
 
-@Profile(ReceiveFromJmsQueueConfiguration.GW_JMS_PLUGIN_PROFILE)
+@Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 @Service
-public class ReceiveFromJmsQueueService implements SubmitToLink {
+public class SubmitToGwJmsPlugin implements SubmitToLink {
 
     public static final String MESSAGE_TYPE_PROPERTY_NAME = "messageType";
 
@@ -24,7 +23,7 @@ public class ReceiveFromJmsQueueService implements SubmitToLink {
     private JmsTemplate jmsTemplate;
 
     @Autowired
-    private ReceiveFromJmsQueueConfigurationProperties configurationProperties;
+    private GwJmsPluginConfigurationProperties configurationProperties;
 
 
     @Override
@@ -62,5 +61,9 @@ public class ReceiveFromJmsQueueService implements SubmitToLink {
             return msg;
         });
     }
+
+
+
+
 }
 

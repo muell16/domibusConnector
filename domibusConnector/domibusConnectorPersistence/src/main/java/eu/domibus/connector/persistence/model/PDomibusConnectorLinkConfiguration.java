@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,9 @@ public class PDomibusConnectorLinkConfiguration {
 
     @Column(name = "LINK_IMPL")
     private String linkImpl;
+
+    @Column(name = "CONFIG_NAME")
+    private String configName;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_CONFIG_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_CONFIGURATION_ID", referencedColumnName = "ID"))
@@ -47,5 +52,13 @@ public class PDomibusConnectorLinkConfiguration {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public String getConfigName() {
+        return configName;
+    }
+
+    public void setConfigName(String configName) {
+        this.configName = configName;
     }
 }

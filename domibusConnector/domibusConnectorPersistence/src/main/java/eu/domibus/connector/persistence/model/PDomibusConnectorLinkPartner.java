@@ -10,13 +10,13 @@ import java.util.Map;
 
 import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME;
 
-@Table(name = "DC_LINK_INFO")
+@Table(name = "DC_LINK_PARTNER")
 @Entity
-public class PDomibusConnectorLinkInfo {
+public class PDomibusConnectorLinkPartner {
 
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqStoreLinkInfo", table = SEQ_STORE_TABLE_NAME, pkColumnName = "SEQ_NAME", pkColumnValue = "DC_LINK_INFO.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
+    @TableGenerator(name = "seqStoreLinkInfo", table = SEQ_STORE_TABLE_NAME, pkColumnName = "SEQ_NAME", pkColumnValue = "DC_LINK_PARTNER.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreLinkInfo")
     private Long id;
 
@@ -31,6 +31,12 @@ public class PDomibusConnectorLinkInfo {
 
     @Column(name = "LINK_TYPE")
     private LinkType linkType;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "DC_LINK_PARTNER_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_PARTNER_ID", referencedColumnName = "ID"))
+    @MapKeyColumn (name="PROPERTY_NAME")
+    @Column(name="PROPERTY_VALUE")
+    private Map<String, String> properties = new HashMap<String, String>();
 
     @ManyToOne
     @JoinColumn(name = "LINK_CONFIG_ID", referencedColumnName = "ID")
@@ -82,5 +88,13 @@ public class PDomibusConnectorLinkInfo {
 
     public void setLinkConfiguration(PDomibusConnectorLinkConfiguration linkConfiguration) {
         this.linkConfiguration = linkConfiguration;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

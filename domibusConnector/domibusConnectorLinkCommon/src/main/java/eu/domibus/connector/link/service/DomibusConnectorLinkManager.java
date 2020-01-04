@@ -2,20 +2,19 @@ package eu.domibus.connector.link.service;
 
 import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkInfo;
-import eu.domibus.connector.link.api.LinkPluginFactory;
-import eu.domibus.connector.link.impl.gwjmsplugin.ReceiveFromJmsQueueConfiguration;
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkInfoDao;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.link.api.ActiveLink;
+import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.LinkPlugin;
+import eu.domibus.connector.link.api.exception.LinkPluginException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,58 +27,109 @@ public class DomibusConnectorLinkManager {
     private final static Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkManager.class);
 
     @Autowired(required = false)
-    List<LinkPluginFactory> linkPluginFactories = new ArrayList<>();
+    List<LinkPlugin> linkPluginFactories = new ArrayList<>();
 
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
-//    private List<DomibusConnectorLinkInfo> domibusConnectorLinkInfoList;
-    private Map<String, ActiveLink> activeLinkMap = new ConcurrentHashMap<>();
 
 
+    private Map<DomibusConnectorLinkPartner.LinkPartnerName, ActiveLinkPartner> activeLinkPartners = new ConcurrentHashMap<>();
+    private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLink> activeLinkConfigurations = new ConcurrentHashMap<>();
 
-    SubmitToLink getLink(String linkName) {
-        ActiveLink activeLink = activeLinkMap.get(linkName);
-        return activeLink.getSubmitToLink();
+
+    SubmitToLink getLinkPartner(String linkName) {
+        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
+        if(activeLinkPartner == null) {
+            String error = String.format("No linkPartner with name %s available", linkName);
+            throw new LinkPluginException(error);
+        }
+//        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
+        SubmitToLink submitToLinkBean = activeLinkPartner.getSubmitToLinkBean();
+        return submitToLinkBean;
     }
 
+    public List<LinkPlugin> getAvailableLinkPlugins() {
+        return this.linkPluginFactories;
+    }
 
-    public void addLink(DomibusConnectorLinkInfo linkInfo) {
+    public synchronized void activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
         DomibusConnectorLinkConfiguration linkConfiguration = linkInfo.getLinkConfiguration();
-        ActiveLink activeLink = activeLinkMap.get(linkInfo.getLinkName());
-        if (activeLink != null) {
-            String error = String.format("Link [{}] already active! Destroy old link first!", linkInfo.getLinkName());
-            throw new RuntimeException(error);
-        } else {
-            activeLink = new ActiveLink();
+        DomibusConnectorLinkConfiguration.LinkConfigName configName = linkConfiguration.getConfigName();
+        final DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = linkInfo.getLinkPartnerName();
+
+        if (linkPartnerName == null) {
+            throw new IllegalArgumentException("LinkPartnerName of LinkPartner is not allowed to be null!");
+        }
+        if (configName == null) {
+            throw new IllegalArgumentException("ConfigName of LinkConfiguration is not allowed to be null!");
         }
 
+        ActiveLink activeLink = activeLinkConfigurations.get(configName);
+        if (activeLink == null) {
+            activeLink = startLinkConfiguration(linkInfo.getLinkConfiguration());
+        }
+        if (activeLink == null) {
+            LOGGER.warn("No link configuration for link partner available [{}]!", linkInfo);
+            return;
+        }
+        try {
+            ActiveLinkPartner activeLinkPartner = activeLink.activateLinkPartner(linkInfo);
+            activeLinkPartners.put(linkPartnerName, activeLinkPartner);
+            LOGGER.info("Activated Link partner [{}] ", activeLinkPartner);
+        } catch (LinkPluginException e) {
+            LOGGER.warn("Link partner could not be activated", e);
+        }
+
+    }
+
+    private synchronized ActiveLink startLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
         String linkImpl = linkConfiguration.getLinkImpl();
         if (StringUtils.isEmpty(linkImpl)) {
-            LOGGER.warn("link impl of [{}] is empty! No link will be created!", linkInfo);
-            return;
+            LOGGER.warn("link impl of [{}] is empty! No link configuration can be created!", linkConfiguration);
+            return null;
         }
-        Optional<LinkPluginFactory> first = linkPluginFactories.stream().filter(l -> l.canHandle(linkImpl)).findFirst();
+        Optional<LinkPlugin> first = linkPluginFactories.stream().filter(l -> l.canHandle(linkImpl)).findFirst();
         if (!first.isPresent()) {
-            LOGGER.warn("No link factory for linkImpl [{}] found! No link will be created!", linkImpl);
-            return;
+            LOGGER.warn("No link factory for linkImpl [{}] found! No link configuration will be created!", linkImpl);
+            return null;
         }
-        LinkPluginFactory linkPluginFactory = first.get();
+        LinkPlugin linkPlugin = first.get();
 
-        activeLink = linkPluginFactory.createLink(linkInfo);
+        ActiveLink link = linkPlugin.startConfiguration(linkConfiguration);
+
+        activeLinkConfigurations.put(linkConfiguration.getConfigName(), link);
+        return link;
+    }
+
+    public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
+        if (activeLinkPartner == null) {
+            throw new IllegalArgumentException(String.format("No linkPartner with name %s found!", linkPartnerName.toString()));
+        }
+//        if (activeLinkPartner() == null) {
+//            throw new RuntimeException(String.format("ActiveLinkConfiguration %s has no LinkPartner Manager!", activeLinkPartner));
+//        }
+//        activeLinkPartner.getLinkManager().shutdownLinkPartner(linkPartnerName);
 
 
-        LOGGER.info("Enabled link [{}]", linkInfo.getLinkName());
-        this.activeLinkMap.put(linkInfo.getLinkName(), activeLink);
+        activeLinkPartner.shutdown();
+        activeLinkPartners.remove(linkPartnerName);
 
     }
 
-    private void destroyLink(ActiveLink activeLink) {
-        activeLinkMap.remove(activeLink.getLinkName(), activeLink);
-        if (activeLink.getCloseCallback() == null) {
-            LOGGER.error("Cannot close link [{}]! Because CloseCallback is null!", activeLink);
-        }
-        activeLink.getCloseCallback().close();
+    //TODO: create destroy or/and reset link Configuration routine
+
+    @PreDestroy
+    public void preDestroy() {
+        this.activeLinkConfigurations.forEach((key, value) -> {
+            try {
+                LOGGER.info("Invoking shutdown on LinkConfig [{}]", value);
+                value.shutdownLinkConfig();
+            } catch (Exception e) {
+                LOGGER.error("Exception occured during shutdown LinkConfig", e);
+            }
+        });
     }
 
 }
