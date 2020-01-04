@@ -21,6 +21,8 @@ class DomibusConnectorLinkConfigurationDaoTest {
     void testCreateNewLink() {
         PDomibusConnectorLinkConfiguration linkConfig = new PDomibusConnectorLinkConfiguration();
 
+        linkConfig.setConfigName("Config3");
+
         HashMap<String, String> props = new HashMap<>();
         props.put("test","test");
 

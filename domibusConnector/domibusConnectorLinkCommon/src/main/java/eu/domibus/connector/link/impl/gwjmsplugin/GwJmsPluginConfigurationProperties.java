@@ -5,9 +5,9 @@ import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 
-@Profile(ReceiveFromJmsQueueConfiguration.GW_JMS_PLUGIN_PROFILE)
-@ConfigurationProperties(prefix = ReceiveFromJmsQueueConfiguration.GW_JMS_PLUGIN_PROFILE)
-public class ReceiveFromJmsQueueConfigurationProperties {
+@Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
+@ConfigurationProperties(prefix = GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
+public class GwJmsPluginConfigurationProperties {
 
     @ConfigurationLabel("Put Attachments into Queue")
     @ConfigurationDescription("Should the attachments be put into the jms message as bytes. The setting here must be the same as on gateway side!")

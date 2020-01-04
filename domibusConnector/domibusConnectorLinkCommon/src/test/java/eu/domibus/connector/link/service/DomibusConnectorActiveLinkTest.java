@@ -3,11 +3,11 @@ package eu.domibus.connector.link.service;
 import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkInfo;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.link.LinkTestContext;
-import eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginFactory;
+import eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPlugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
@@ -29,9 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Configuration
 @EnableJms
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DomibusConnectorLinkManagerTest {
+class DomibusConnectorActiveLinkTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkManagerTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorActiveLinkTest.class);
 
     @Autowired
     private DomibusConnectorLinkManager linkManager;
@@ -48,7 +48,7 @@ class DomibusConnectorLinkManagerTest {
     @Test
     @Order(1)
     void testLinkSetup() {
-        SubmitToLink firstLINK = linkManager.getLink("firstLINK");
+        SubmitToLink firstLINK = linkManager.getLinkPartner("firstLINK");
         assertThat(firstLINK).isNotNull();
     }
 
@@ -56,14 +56,14 @@ class DomibusConnectorLinkManagerTest {
     @Order(10)
     void addLink() {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
-            DomibusConnectorLinkInfo linkInfo = new DomibusConnectorLinkInfo();
+            DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
             String linkName = "JMS-GW-PLUGIN";
 
 
-            linkInfo.setLinkName(linkName);
-            linkInfo.setDescription("A description for this link...");
-            linkInfo.setEnabled(true);
-            linkInfo.setLinkType(LinkType.GATEWAY);
+            linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
+            linkPartner.setDescription("A description for this link...");
+            linkPartner.setEnabled(true);
+            linkPartner.setLinkType(LinkType.GATEWAY);
             Properties props = new Properties();
             props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
             props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
@@ -78,13 +78,14 @@ class DomibusConnectorLinkManagerTest {
 
 
             DomibusConnectorLinkConfiguration linkConfig = new DomibusConnectorLinkConfiguration();
-            linkConfig.setLinkImpl(GwJmsPluginFactory.LINK_IMPL_NAME);
+            linkConfig.setLinkImpl(GwJmsPlugin.LINK_IMPL_NAME);
             linkConfig.setProperties(props);
-            linkInfo.setLinkConfiguration(linkConfig);
+            linkConfig.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName("config1"));
+            linkPartner.setLinkConfiguration(linkConfig);
 
-            linkManager.addLink(linkInfo);
+            linkManager.activateLinkPartner(linkPartner);
 
-            SubmitToLink link = linkManager.getLink(linkName);
+            SubmitToLink link = linkManager.getLinkPartner(linkName);
 
             DomibusConnectorMessage sentMessage = DomainEntityCreator.createMessage();
             assertThat(link).isNotNull();
@@ -107,7 +108,7 @@ class DomibusConnectorLinkManagerTest {
     @Order(20)
     void getLink() {
         String linkName = "JMS-GW-PLUGIN";
-        SubmitToLink link = linkManager.getLink(linkName);
+        SubmitToLink link = linkManager.getLinkPartner(linkName);
 
         assertThat(link).isNotNull();
     }

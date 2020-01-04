@@ -1,8 +1,7 @@
 package eu.domibus.connector.persistence.dao;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,45 +12,41 @@ import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSE
 import static org.assertj.core.api.Assertions.assertThat;
 
 @CommonPersistenceTest
-@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkInfo.xml", strategy = CLEAN_INSERT)
-class DomibusConnectorLinkInfoDaoTest {
+@DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkPartner.xml", strategy = CLEAN_INSERT)
+class DomibusConnectorLinkPartnerDaoTest {
 
     @Autowired
-    DomibusConnectorLinkInfoDao dao;
+    DomibusConnectorLinkPartnerDao dao;
 
     @Test
     void testCreateNewLink() {
-        PDomibusConnectorLinkInfo linkInfo = new PDomibusConnectorLinkInfo();
+        PDomibusConnectorLinkPartner linkInfo = new PDomibusConnectorLinkPartner();
         linkInfo.setDescription("test description");
         linkInfo.setLinkName("name");
 //
-//        HashMap<String, String> props = new HashMap<>();
-//        props.put("test","test");
-//        linkInfo.setProperties(props);
+        HashMap<String, String> props = new HashMap<>();
+        props.put("test","test");
+        linkInfo.setProperties(props);
 
         dao.save(linkInfo);
 
         //TODO: check db
     }
 
-//    @Test
-//    public void findById() {
-//        Optional<PDomibusConnectorLinkConfiguration> linkConfig = dao.findById(2);
-//    }
 
 
     @Test
     void findOneBackendByLinkNameAndEnabledIsTrue() {
-        Optional<PDomibusConnectorLinkInfo> test = dao.findOneBackendByLinkNameAndEnabledIsTrue("test");
+        Optional<PDomibusConnectorLinkPartner> test = dao.findOneBackendByLinkNameAndEnabledIsTrue("test");
         assertThat(test).isNotEmpty();
     }
 
     @Test
     void findOneByLinkName() {
-        Optional<PDomibusConnectorLinkInfo> test2 = dao.findOneByLinkName("test2");
+        Optional<PDomibusConnectorLinkPartner> test2 = dao.findOneByLinkName("test2");
         assertThat(test2).isNotEmpty();
 
-        //TODO: check link configuration...
+        assertThat(test2.get().getProperties()).as("must have property entry with [test=test]").hasEntrySatisfying("test", (k) -> k.equals("test"));
 
     }
 

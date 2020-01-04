@@ -1,11 +1,10 @@
 package eu.domibus.connector.link;
 
 import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkInfo;
-import eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginFactory;
-import eu.domibus.connector.persistence.dao.DomibusConnectorLinkInfoDao;
+import eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPlugin;
+import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
-import eu.domibus.connector.persistence.model.PDomibusConnectorLinkInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,7 +12,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,26 +20,27 @@ public class LinkTestContext {
 
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorLinkInfoDao domibusConnectorLinkInfoDao() {
-        DomibusConnectorLinkInfoDao dao = Mockito.mock(DomibusConnectorLinkInfoDao.class);
+    public DomibusConnectorLinkPartnerDao domibusConnectorLinkInfoDao() {
+        DomibusConnectorLinkPartnerDao dao = Mockito.mock(DomibusConnectorLinkPartnerDao.class);
         Mockito.when(dao.findAllByEnabledIsTrue())
                 .thenReturn(Stream.of(getLinkInfo()).collect(Collectors.toList()));
         return dao;
     }
 
-    private PDomibusConnectorLinkInfo getLinkInfo() {
+    private PDomibusConnectorLinkPartner getLinkInfo() {
 
-        PDomibusConnectorLinkInfo linkInfo = new PDomibusConnectorLinkInfo();
+        PDomibusConnectorLinkPartner linkPartner = new PDomibusConnectorLinkPartner();
         String linkName = "firstLINK";
 
 
-        linkInfo.setLinkName(linkName);
-        linkInfo.setDescription("A description for this link...");
-        linkInfo.setEnabled(true);
-        linkInfo.setLinkType(LinkType.GATEWAY);
+        linkPartner.setLinkName(linkName);
+        linkPartner.setDescription("A description for this link...");
+        linkPartner.setEnabled(true);
+        linkPartner.setLinkType(LinkType.GATEWAY);
 
         PDomibusConnectorLinkConfiguration linkConfig = new PDomibusConnectorLinkConfiguration();
-        linkConfig.setLinkImpl(GwJmsPluginFactory.LINK_IMPL_NAME);
+        linkConfig.setLinkImpl(GwJmsPlugin.LINK_IMPL_NAME);
+        linkConfig.setConfigName("config2");
 
         HashMap<String, String> props = new HashMap();
         props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
@@ -56,8 +55,8 @@ public class LinkTestContext {
         props.put("link.gwjmsplugin.error-notify-conusmer-queue", "errornotifyconsumer");
 
         linkConfig.setProperties(props);
-        linkInfo.setLinkConfiguration(linkConfig);
+        linkPartner.setLinkConfiguration(linkConfig);
 
-        return linkInfo;
+        return linkPartner;
     }
 }
