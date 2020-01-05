@@ -13,7 +13,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import eu.domibus.connector.web.persistence.dao.DomibusConnectorUserPasswordDao;
+import eu.domibus.connector.persistence.dao.DomibusConnectorUserPasswordDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -91,7 +91,7 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 			}
 			
 			if(currentPassword.isInitialPassword()) {
-				throw new InitialPasswordException();
+				throw new InitialPasswordException("Initial password must be changed!");
 			}
 			
 			if(user.getGraceLoginsUsed() > 0) {

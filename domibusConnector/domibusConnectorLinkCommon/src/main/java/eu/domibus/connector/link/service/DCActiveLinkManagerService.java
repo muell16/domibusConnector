@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PreDestroy;
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,9 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class manages the lifecycle of the connector links
  */
 @Service
-public class DomibusConnectorLinkManager {
+public class DCActiveLinkManagerService {
 
-    private final static Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkManager.class);
+    private final static Logger LOGGER = LogManager.getLogger(DCActiveLinkManagerService.class);
 
     @Autowired(required = false)
     List<LinkPlugin> linkPluginFactories = new ArrayList<>();
@@ -33,12 +34,11 @@ public class DomibusConnectorLinkManager {
     ConfigurableApplicationContext applicationContext;
 
 
-
     private Map<DomibusConnectorLinkPartner.LinkPartnerName, ActiveLinkPartner> activeLinkPartners = new ConcurrentHashMap<>();
     private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLink> activeLinkConfigurations = new ConcurrentHashMap<>();
 
 
-    SubmitToLink getLinkPartner(String linkName) {
+    SubmitToLink getSubmitToLinkPartner(String linkName) {
         ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
         if(activeLinkPartner == null) {
             String error = String.format("No linkPartner with name %s available", linkName);
@@ -53,7 +53,11 @@ public class DomibusConnectorLinkManager {
         return this.linkPluginFactories;
     }
 
-    public synchronized void activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
+    public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        return Optional.ofNullable(activeLinkPartners.get(linkPartnerName));
+    }
+
+    public synchronized Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
         DomibusConnectorLinkConfiguration linkConfiguration = linkInfo.getLinkConfiguration();
         DomibusConnectorLinkConfiguration.LinkConfigName configName = linkConfiguration.getConfigName();
         final DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = linkInfo.getLinkPartnerName();
@@ -71,16 +75,17 @@ public class DomibusConnectorLinkManager {
         }
         if (activeLink == null) {
             LOGGER.warn("No link configuration for link partner available [{}]!", linkInfo);
-            return;
+            return Optional.empty();
         }
         try {
             ActiveLinkPartner activeLinkPartner = activeLink.activateLinkPartner(linkInfo);
             activeLinkPartners.put(linkPartnerName, activeLinkPartner);
             LOGGER.info("Activated Link partner [{}] ", activeLinkPartner);
+            return Optional.of(activeLinkPartner);
         } catch (LinkPluginException e) {
             LOGGER.warn("Link partner could not be activated", e);
         }
-
+        return Optional.empty();
     }
 
     private synchronized ActiveLink startLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
@@ -118,7 +123,6 @@ public class DomibusConnectorLinkManager {
 
     }
 
-    //TODO: create destroy or/and reset link Configuration routine
 
     @PreDestroy
     public void preDestroy() {

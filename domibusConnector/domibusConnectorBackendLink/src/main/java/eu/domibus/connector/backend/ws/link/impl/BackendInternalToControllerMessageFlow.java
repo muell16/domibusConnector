@@ -19,13 +19,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 
 /**
  * this service handles the message transport from controller to the backend
  *
  */
+@Profile(WS_BACKEND_LINK_PROFILE)
 @Service
 public class BackendInternalToControllerMessageFlow implements DomibusConnectorBackendInternalDeliverToController {
 

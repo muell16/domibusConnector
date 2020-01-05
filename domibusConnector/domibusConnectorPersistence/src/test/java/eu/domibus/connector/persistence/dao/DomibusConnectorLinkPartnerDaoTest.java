@@ -1,11 +1,14 @@
 package eu.domibus.connector.persistence.dao;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
@@ -34,6 +37,16 @@ class DomibusConnectorLinkPartnerDaoTest {
     }
 
 
+    @Test
+    void findByExample() {
+        PDomibusConnectorLinkPartner linkPartner = new PDomibusConnectorLinkPartner();
+        linkPartner.setLinkType(LinkType.GATEWAY);
+        Example<PDomibusConnectorLinkPartner> example = Example.of(linkPartner);
+
+        List<PDomibusConnectorLinkPartner> all = dao.findAll(example);
+
+        assertThat(all).hasSize(1);
+    }
 
     @Test
     void findOneBackendByLinkNameAndEnabledIsTrue() {

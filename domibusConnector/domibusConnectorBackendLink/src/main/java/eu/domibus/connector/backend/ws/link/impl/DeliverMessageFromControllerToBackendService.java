@@ -13,13 +13,17 @@ import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersisten
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 
+
+@Profile(WS_BACKEND_LINK_PROFILE)
 @Service
 public class DeliverMessageFromControllerToBackendService implements DomibusConnectorBackendDeliveryService {
 

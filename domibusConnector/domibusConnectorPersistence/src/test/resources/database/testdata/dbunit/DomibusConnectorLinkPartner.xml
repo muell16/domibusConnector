@@ -38,6 +38,7 @@
             enabled="false"
             description="testdescription"
             LINK_CONFIG_ID="1"
+            LINK_TYPE="GATEWAY"
         />
 
     <DC_LINK_PARTNER
@@ -46,6 +47,7 @@
             enabled="true"
             description="testdescription"
             LINK_CONFIG_ID="1"
+            LINK_TYPE="BACKEND"
     />
 
     <DC_LINK_PARTNER
@@ -54,6 +56,7 @@
             enabled="false"
             description="testdescription"
             LINK_CONFIG_ID="1000"
+            LINK_TYPE="BACKEND"
     />
 
     <DC_LINK_PARTNER_PROPERTY

@@ -98,9 +98,7 @@ public class DomibusConnectorLinkPartner {
 
         @Override
         public String toString() {
-            return new ToStringCreator(this)
-                    .append("linkName", linkName)
-                    .toString();
+            return this.linkName;
         }
     }
 }

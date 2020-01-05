@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,11 +35,13 @@ import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebServ
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 
 import static eu.domibus.connector.backend.ws.link.impl.DomibusConnectorWsBackendImpl.BEAN_NAME;
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 
 /**
  * Handles transmitting messages (push/pull) from and to backendClients over webservice
  * pushing messages to backendClients are handled in different service: {@link PushMessageViaWsToBackendClientImpl}
  */
+@Profile(WS_BACKEND_LINK_PROFILE)
 @Service(BEAN_NAME)
 @Qualifier(BEAN_NAME)
 public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWebService {

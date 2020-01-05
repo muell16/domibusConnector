@@ -17,14 +17,14 @@ import javax.annotation.PostConstruct;
 public class DomibusConnectorLinkCreatorConfigurationService {
 
     @Autowired
-    LinkInfoPersistenceService linkInfoPersistenceService;
+    DCLinkPersistenceService DCLinkPersistenceService;
 
     @Autowired
-    DomibusConnectorLinkManager linkManager;
+    DCActiveLinkManagerService linkManager;
 
     @PostConstruct
     public void init() {
-        linkInfoPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
+        DCLinkPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
     }
 
     private void activateLink(DomibusConnectorLinkPartner linkInfo) {

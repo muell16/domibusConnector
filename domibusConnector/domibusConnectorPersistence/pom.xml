@@ -97,7 +97,6 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -153,6 +152,10 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.ecodex.connector.utils</groupId>
+            <artifactId>spring-boot-property-converter</artifactId>
         </dependency>
     </dependencies>
     

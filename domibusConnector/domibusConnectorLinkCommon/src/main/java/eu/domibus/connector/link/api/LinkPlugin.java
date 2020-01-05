@@ -29,7 +29,7 @@ public interface LinkPlugin {
      */
     List<PluginFeature> getFeatures();
 
-    
+
 
     /**
      *
