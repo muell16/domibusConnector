@@ -101,6 +101,10 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
+        </dependency>
 
         <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar is not in public maven repo -->
         <!-- <dependency>

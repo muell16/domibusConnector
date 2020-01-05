@@ -67,9 +67,7 @@ public class DomibusConnectorLinkConfiguration {
 
         @Override
         public String toString() {
-            return new ToStringCreator(this)
-                    .append("linkConfigName", configName)
-                    .toString();
+            return this.configName;
         }
     }
 }

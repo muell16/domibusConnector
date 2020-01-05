@@ -12,17 +12,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.BACKEND_POLICY_LOADER;
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 
 /**
  * Creates a web service client for pushing messages to backend client
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@Profile(WS_BACKEND_LINK_PROFILE)
 @Component
 public class BackendClientWebServiceClientFactory {
 

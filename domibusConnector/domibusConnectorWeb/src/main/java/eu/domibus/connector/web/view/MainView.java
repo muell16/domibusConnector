@@ -49,9 +49,14 @@ implements BeforeEnterObserver
 	WebUser authenticatedUser;
 	UserInfo userInfo;
 	
-    public MainView(@Autowired DomibusConnectorAdminHeader header, @Autowired UserInfo userInfo, @Autowired Messages messages, @Autowired PModes pmodes, 
-    		@Autowired Configuration configuration, @Autowired Users users,
-    		@Autowired Info info, @Autowired ConnectorTests connectorTests) {
+    public MainView(@Autowired DomibusConnectorAdminHeader header,
+					@Autowired UserInfo userInfo,
+					@Autowired Messages messages,
+					@Autowired PModes pmodes,
+    				@Autowired Configuration configuration,
+					@Autowired Users users,
+    				@Autowired Info info,
+					@Autowired ConnectorTests connectorTests) {
     	
     	this.userInfo = userInfo;
         

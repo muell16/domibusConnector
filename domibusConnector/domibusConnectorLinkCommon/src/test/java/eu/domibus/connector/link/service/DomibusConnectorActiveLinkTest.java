@@ -34,7 +34,7 @@ class DomibusConnectorActiveLinkTest {
     private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorActiveLinkTest.class);
 
     @Autowired
-    private DomibusConnectorLinkManager linkManager;
+    private DCActiveLinkManagerService linkManager;
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -48,7 +48,7 @@ class DomibusConnectorActiveLinkTest {
     @Test
     @Order(1)
     void testLinkSetup() {
-        SubmitToLink firstLINK = linkManager.getLinkPartner("firstLINK");
+        SubmitToLink firstLINK = linkManager.getSubmitToLinkPartner("firstLINK");
         assertThat(firstLINK).isNotNull();
     }
 
@@ -85,7 +85,7 @@ class DomibusConnectorActiveLinkTest {
 
             linkManager.activateLinkPartner(linkPartner);
 
-            SubmitToLink link = linkManager.getLinkPartner(linkName);
+            SubmitToLink link = linkManager.getSubmitToLinkPartner(linkName);
 
             DomibusConnectorMessage sentMessage = DomainEntityCreator.createMessage();
             assertThat(link).isNotNull();
@@ -108,7 +108,7 @@ class DomibusConnectorActiveLinkTest {
     @Order(20)
     void getLink() {
         String linkName = "JMS-GW-PLUGIN";
-        SubmitToLink link = linkManager.getLinkPartner(linkName);
+        SubmitToLink link = linkManager.getSubmitToLinkPartner(linkName);
 
         assertThat(link).isNotNull();
     }

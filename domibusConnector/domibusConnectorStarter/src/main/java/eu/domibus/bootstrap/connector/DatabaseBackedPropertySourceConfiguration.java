@@ -24,7 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 @Configuration
-@ConditionalOnProperty(name="bootstrap.database.property-loading.enabled") //funktioniert das hier? TODO!!
+@ConditionalOnProperty(name="bootstrap.database.property-loading.enabled")
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class DatabaseBackedPropertySourceConfiguration implements PropertySourceLocator {
 
