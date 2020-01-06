@@ -2,7 +2,10 @@ package eu.domibus.connector.web.viewAreas.configuration.link;
 
 
 import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -30,6 +33,8 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     private Grid<DomibusConnectorLinkPartner> linkGrid = new Grid<>();
 
+    private Button addLinkButton = new Button("Add Link");
+
     public LinkConfiguration() {
     }
 
@@ -37,6 +42,9 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     @PostConstruct
     private void initUI() {
+
+        add(addLinkButton);
+        addLinkButton.addClickListener(this::addLinkButtonClicked);
 
         linkGrid.addColumn(DomibusConnectorLinkPartner::getLinkPartnerName).setHeader("Link Partner Name");
         linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("enabled");
@@ -51,6 +59,14 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
         add(linkGrid);
 
+    }
+
+    private void addLinkButtonClicked(ClickEvent<Button> buttonClickEvent) {
+        Dialog d = new Dialog();
+        d.add(new CreateLinkPanel());
+        d.setCloseOnEsc(true);
+
+        d.open();
     }
 
     protected void onAttach(AttachEvent attachEvent) {
