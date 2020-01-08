@@ -139,7 +139,7 @@
 
 
     <changeSet author="SKS" id="create_admin_user_if_not_exists">
-        <preConditions onFail="CONTINUE">
+        <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT count(1) FROM DOMIBUS_CONNECTOR_USER WHERE USERNAME='admin';
             </sqlCheck>
