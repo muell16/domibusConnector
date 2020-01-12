@@ -107,4 +107,14 @@ public class GwJmsPlugin implements LinkPlugin, ActiveLink {
     public DomibusConnectorLinkConfiguration getConfiguration() {
         return this.linkConfiguration;
     }
+
+    @Override
+    public String getPluginName() {
+        return LINK_IMPL_NAME;
+    }
+
+    @Override
+    public String getPluginDescription() {
+        return "A plugin to establish connection to domibus gateway jms plugin";
+    }
 }
