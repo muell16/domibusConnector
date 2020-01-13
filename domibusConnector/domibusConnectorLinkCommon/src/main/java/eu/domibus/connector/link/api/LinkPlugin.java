@@ -9,6 +9,14 @@ import java.util.List;
  */
 public interface LinkPlugin {
 
+    default String getPluginName() {
+        return this.toString();
+    }
+
+    default String getPluginDescription() {
+        return this.toString();
+    }
+
     /**
      *
      * @param implementation - the implementation name

@@ -17,6 +17,7 @@ import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.DCLinkPersistenceService;
 import eu.domibus.connector.web.viewAreas.configuration.ConfigurationTab;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,6 +31,9 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     @Autowired
     DCLinkPersistenceService dcLinkPersistenceService;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     private Grid<DomibusConnectorLinkPartner> linkGrid = new Grid<>();
 
@@ -63,7 +67,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     private void addLinkButtonClicked(ClickEvent<Button> buttonClickEvent) {
         Dialog d = new Dialog();
-        d.add(new CreateLinkPanel());
+        d.add(applicationContext.getBean(CreateLinkPanel.class));
         d.setCloseOnEsc(true);
 
         d.open();
