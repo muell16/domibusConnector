@@ -12,7 +12,7 @@ import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.viewAreas.configuration.backend.BackendConfigurationLabels;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope

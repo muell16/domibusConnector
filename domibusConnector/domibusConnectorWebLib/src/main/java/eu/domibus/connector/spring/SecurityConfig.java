@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -70,11 +71,18 @@ public class SecurityConfig {
     }
 
     @Configuration
+    @Order(500)
     public static class DefaultWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             //disable csrf so vaadin works!
             http.csrf().disable();
+            //allow access to frontend...
+           http.antMatcher("/frontend/**").authorizeRequests(req -> req.anyRequest().permitAll());
+//            http.authorizeRequests().antMatchers("/frontend/**").permitAll();
+            //allow access to all vaadin stuff...TODO: allow only vaadin login page
+//            http.authorizeRequests().antMatchers("/**").permitAll();
+
         }
     }
 

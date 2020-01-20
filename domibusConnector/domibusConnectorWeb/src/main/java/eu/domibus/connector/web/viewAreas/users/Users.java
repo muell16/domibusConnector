@@ -20,7 +20,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.dto.WebUser;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component

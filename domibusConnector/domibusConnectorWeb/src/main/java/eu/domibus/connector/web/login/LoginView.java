@@ -24,7 +24,7 @@ import eu.domibus.connector.web.service.WebUserService;
 import eu.domibus.connector.web.view.DomibusConnectorAdminHeader;
 import eu.domibus.connector.web.view.MainView;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 @Route("login/")
 @PageTitle("domibusConnector - Login")
 public class LoginView extends VerticalLayout{

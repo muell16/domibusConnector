@@ -41,7 +41,7 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
  * security.oj.url
  * 
  */
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 @Component
 @UIScope
 public class SecurityConfiguration extends VerticalLayout{

@@ -45,7 +45,7 @@ import eu.domibus.connector.web.dto.WebReport;
 import eu.domibus.connector.web.dto.WebReportEntry;
 import eu.domibus.connector.web.service.WebReportsService;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
