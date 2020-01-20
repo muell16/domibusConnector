@@ -43,7 +43,7 @@ import eu.domibus.connector.web.viewAreas.configuration.security.SecurityConfigu
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component

@@ -64,12 +64,13 @@
         <snapshots-repo.url></snapshots-repo.url>
         <https.proxy.port></https.proxy.port>
 
-        <org.apache.cxf.version>3.2.11</org.apache.cxf.version>
+<!--        <org.apache.cxf.version>3.2.11</org.apache.cxf.version>-->
+        <org.apache.cxf.version>3.3.4</org.apache.cxf.version>
         <spring.cloud.version>2.1.5.RELEASE</spring.cloud.version>
-        <spring.boot.version>2.2.2.RELEASE</spring.boot.version>
+        <spring.boot.version>2.2.3.RELEASE</spring.boot.version>
         <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
 
-        <vaadin.version>14.0.12</vaadin.version>
+        <vaadin.version>14.1.4</vaadin.version>
     </properties>
 
     <scm>
@@ -104,7 +105,7 @@
             <dependency>
                 <groupId>eu.ecodex.connector.utils</groupId>
                 <artifactId>ecodex-dependencies</artifactId>
-                <version>0.0.8-SNAPSHOT</version>
+                <version>0.0.9-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

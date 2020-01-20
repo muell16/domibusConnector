@@ -35,7 +35,7 @@ import eu.domibus.connector.web.viewAreas.pmodes.PModes;
 import eu.domibus.connector.web.viewAreas.testing.ConnectorTests;
 import eu.domibus.connector.web.viewAreas.users.Users;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 @Route(MainView.MAIN_VIEW_ROUTE)
 @PageTitle("domibusConnector - Administrator")
 public class MainView extends VerticalLayout 
@@ -117,7 +117,7 @@ implements BeforeEnterObserver
     public void beforeEnter(BeforeEnterEvent event) {
     	boolean authenticated = false;
     	SecurityContext context = SecurityContextHolder.getContext();
-    	if(context.getAuthentication().getPrincipal()!=null) {
+    	if(context != null && context.getAuthentication() != null && context.getAuthentication().getPrincipal() != null) {
     		if(context.getAuthentication().getPrincipal() instanceof WebUser) {
     			WebUser authUser = (WebUser) context.getAuthentication().getPrincipal();
     			this.authenticatedUser = authUser;

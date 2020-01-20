@@ -50,7 +50,7 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 	connector.evidences.privateKey.password
  * 
  */
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
