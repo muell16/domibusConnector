@@ -53,6 +53,13 @@ public class DCActiveLinkManagerService {
         return this.linkPluginFactories;
     }
 
+    public Optional<LinkPlugin> getLinkPluginByName(String name) {
+        return this.linkPluginFactories
+                .stream()
+                .filter(lp -> lp.getPluginName().equals(name))
+                .findFirst();
+    }
+
     public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         return Optional.ofNullable(activeLinkPartners.get(linkPartnerName));
     }

@@ -5,6 +5,9 @@ import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 
+import javax.validation.constraints.NotBlank;
+import java.nio.file.Path;
+
 @Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 @ConfigurationProperties(prefix = GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 public class GwJmsPluginConfigurationProperties {
@@ -15,7 +18,7 @@ public class GwJmsPluginConfigurationProperties {
 
     @ConfigurationLabel("Attachment Storage Location")
     @ConfigurationDescription("If the messages are not put into the jms message. They have to be stored on disk. This value must be the same as on gateway side (property domibus.attachment.storage.location).")
-    private String attachmentStorageLocation;
+    private Path attachmentStorageLocation;
 
     @ConfigurationLabel("P1InBody")
     @ConfigurationDescription("Must be the same os on gateway side!")
@@ -23,30 +26,37 @@ public class GwJmsPluginConfigurationProperties {
 
     @ConfigurationLabel("Gateway Plugin Username")
     @ConfigurationDescription("Required by the gateway in Multitenancy mode")
+    @NotBlank
     private String username;
 
     @ConfigurationLabel("Gateway Plugin Password")
     @ConfigurationDescription("Required by the gateway in Multitenancy mode")
+    @NotBlank
     private String password;
 
     @ConfigurationLabel("inQueue")
     @ConfigurationDescription("Same as domibus.backend.jmsInQueue in gw config")
+    @NotBlank
     private String inQueue;
 
     @ConfigurationLabel("replyQueue")
     @ConfigurationDescription("Same as domibus.backend.jms.replyQueue in gw config")
+    @NotBlank
     private String replyQueue;
 
     @ConfigurationLabel("outQueue")
     @ConfigurationDescription("Same as domibus.backend.jms.outQueue in gw config")
+    @NotBlank
     private String outQueue;
 
     @ConfigurationLabel("errorNotifyProducer")
     @ConfigurationDescription("Same as domibus.backend.jms.errorNotifyProducer in gw config")
+    @NotBlank
     private String errorNotifyProducerQueue;
 
     @ConfigurationLabel("errorNotifyConsumer")
     @ConfigurationDescription("Same as domibus.backend.jms.errorNotifyConsumer in gw config")
+    @NotBlank
     private String errorNotifyConsumerQueue;
 
 
@@ -58,11 +68,11 @@ public class GwJmsPluginConfigurationProperties {
         this.putAttachmentInQueue = putAttachmentInQueue;
     }
 
-    public String getAttachmentStorageLocation() {
+    public Path getAttachmentStorageLocation() {
         return attachmentStorageLocation;
     }
 
-    public void setAttachmentStorageLocation(String attachmentStorageLocation) {
+    public void setAttachmentStorageLocation(Path attachmentStorageLocation) {
         this.attachmentStorageLocation = attachmentStorageLocation;
     }
 
