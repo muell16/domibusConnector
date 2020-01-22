@@ -3,6 +3,7 @@ package eu.domibus.connector.link.service;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
@@ -25,8 +26,23 @@ public class DCLinkPersistenceService {
     @Autowired
     DomibusConnectorLinkPartnerDao linkPartnerDao;
 
+    @Autowired
+    DomibusConnectorLinkConfigurationDao linkConfigurationDao;
+
     public List<DomibusConnectorLinkPartner> getAllEnabledLinks() {
-        return linkPartnerDao.findAllByEnabledIsTrue().stream().map(this::mapToLinkPartner).collect(Collectors.toList());
+        return linkPartnerDao
+                .findAllByEnabledIsTrue()
+                .stream()
+                .map(this::mapToLinkPartner)
+                .collect(Collectors.toList());
+    }
+
+    public List<DomibusConnectorLinkConfiguration> getAllLinkConfigurations() {
+        return linkConfigurationDao.
+                findAll()
+                .stream()
+                .map(this::mapToLinkConfiguration)
+                .collect(Collectors.toList());
     }
 
     private DomibusConnectorLinkPartner mapToLinkPartner(PDomibusConnectorLinkPartner dbLinkInfo) {
