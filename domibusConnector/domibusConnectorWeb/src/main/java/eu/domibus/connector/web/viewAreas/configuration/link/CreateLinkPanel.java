@@ -1,35 +1,26 @@
 package eu.domibus.connector.web.viewAreas.configuration.link;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.ItemLabelGenerator;
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.Route;
-import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
-import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
-import eu.ecodex.utils.configuration.ui.vaadin.tools.ConfigurationFormFactory;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
+import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
+import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
+import eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -53,7 +44,12 @@ public class CreateLinkPanel extends VerticalLayout {
     ConfigurationPropertyCollector configurationPropertyCollector;
 
     @Autowired
-    ConfigurationFormFactory configurationFormFactory;
+    ApplicationContext applicationContext;
+//    ListConfigurationPropertiesComponent listConfigurationPropertiesComponentLinkImpl;
+
+
+//    @Autowired
+//    ConfigurationFormFactory configurationFormFactory;
 
     List<Component> steps = new ArrayList<>();
 
@@ -74,21 +70,36 @@ public class CreateLinkPanel extends VerticalLayout {
 
         add(header);
         add(progressBar);
-        add(content);
-        add(new HorizontalLayout(backButton, forwardButton));
+        addAndExpand(content);
+        addAndExpand(new HorizontalLayout(backButton, forwardButton));
+        forwardButton.addClickListener(this::forwardButtonClicked);
 
+        //set first step...
+        this.content.setSizeFull();
         this.content.add(this.steps.get(0));
 
 
 
     }
 
+    private void forwardButtonClicked(ClickEvent<Button> buttonClickEvent) {
+
+    }
+
     private void initSteps() {
+
         this.steps.add(new ChooseImplStep());
     }
 
-    public class ChooseImplStep extends VerticalLayout {
+    public interface WizardStep {
+        boolean forward();
+    }
+
+
+    public class ChooseImplStep extends VerticalLayout implements WizardStep {
+
         private ComboBox<LinkPlugin> implChooser = new ComboBox<>();
+        private ListConfigurationPropertiesComponent configPropsList;
 
         public ChooseImplStep() {
             initUI();
@@ -96,15 +107,23 @@ public class CreateLinkPanel extends VerticalLayout {
 
         private void initUI() {
 
+            this.configPropsList = applicationContext.getBean(ListConfigurationPropertiesComponent.class);
+            configPropsList.setSizeFull();
+
             implChooser.setItems(linkManagerService.getAvailableLinkPlugins());
             implChooser.setItemLabelGenerator((ItemLabelGenerator<LinkPlugin>) LinkPlugin::getPluginName);
-            add(implChooser);
-            implChooser.addValueChangeListener(this::valueChanged);
+            implChooser.addValueChangeListener(this::choosenLinkImplChanged);
+
+            this.addAndExpand(implChooser, configPropsList);
+
+
+//            listConfigurationPropertiesComponentLinkImpl.setSizeFull();
+//            listConfigurationPropertiesComponentLinkImpl.setVisible(true);
+//            ChooseImplStep.this.setSizeFull();
 
         }
 
-
-        private void valueChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
+        private void choosenLinkImplChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
             LinkPlugin value = valueChangeEvent.getValue();
             List<Class> configurationClasses = value.getPluginConfigurationProperties();
 
@@ -112,16 +131,22 @@ public class CreateLinkPanel extends VerticalLayout {
                     .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
                     .flatMap(Function.identity()).collect(Collectors.toList());
 
-//            domibusConnectorLinkConfiguration.getProperties();
+            configPropsList.setConfigurationProperties(configurationProperties);
+
 //
 //            Binder<Properties> binder = new Binder();
 //            binder.setBean(domibusConnectorLinkConfiguration.getProperties());
 //
 //
-
         }
 
 
+        @Override
+        public boolean forward() {
+            configPropsList.validate();
+
+            return false;
+        }
     }
 
 
