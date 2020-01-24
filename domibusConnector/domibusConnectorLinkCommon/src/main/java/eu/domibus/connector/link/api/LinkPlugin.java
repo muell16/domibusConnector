@@ -38,7 +38,6 @@ public interface LinkPlugin {
     List<PluginFeature> getFeatures();
 
 
-
     /**
      *
      * @return a list of with @ConfigurationProperties annotated classes
@@ -46,6 +45,8 @@ public interface LinkPlugin {
      *
      */
     List<Class> getPluginConfigurationProperties();
+
+    List<Class> getPartnerConfigurationProperties();
 
 
 }

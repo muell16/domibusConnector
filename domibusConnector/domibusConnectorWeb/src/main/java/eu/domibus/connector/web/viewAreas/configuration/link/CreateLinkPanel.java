@@ -2,6 +2,7 @@ package eu.domibus.connector.web.viewAreas.configuration.link;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
@@ -10,14 +11,19 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.Setter;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.DCLinkPersistenceService;
+import eu.domibus.connector.web.component.WizardComponent;
+import eu.domibus.connector.web.component.WizardStep;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent;
@@ -26,9 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,11 +43,6 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 @Route("createlink")
 public class CreateLinkPanel extends VerticalLayout {
 
-    private ProgressBar progressBar = new ProgressBar(10, 100, 10);
-    private Button nextButton = new Button("Next");
-    private Button backButton = new Button("Back");
-    private Text header = new Text ("Create Link");
-    private Div content = new Div();
 
     @Autowired
     DCActiveLinkManagerService linkManagerService;
@@ -56,82 +55,90 @@ public class CreateLinkPanel extends VerticalLayout {
 
     @Autowired
     ApplicationContext applicationContext;
+
+    private WizardComponent wizard;
+
+    private DomibusConnectorLinkConfiguration linkConfiguration;
+    private DomibusConnectorLinkPartner linkPartner;
+
+
 //    ListConfigurationPropertiesComponent listConfigurationPropertiesComponentLinkImpl;
 
 
-//    @Autowired
-//    ConfigurationFormFactory configurationFormFactory;
-
-    List<WizardStep> steps = new ArrayList<>();
-
-    DomibusConnectorLinkConfiguration linkConfiguration;
-    private WizardStep activeStep;
 
 
     @PostConstruct
     private void init() {
         linkConfiguration = new DomibusConnectorLinkConfiguration();
+        linkPartner = new DomibusConnectorLinkPartner();
+        linkPartner.setLinkType(getLinkType());
+        linkPartner.setEnabled(true);
 
         initUI();
-        initSteps();
+
+    }
+
+    private LinkType getLinkType() {
+        return LinkType.GATEWAY;
     }
 
     private void initUI() {
-
-        initSteps();
-
-        add(header);
-        add(progressBar);
-        addAndExpand(new HorizontalLayout(backButton, nextButton));
-        addAndExpand(content);
-        nextButton.addClickListener(this::forwardButtonClicked);
-
-        //set first step...
-        this.content.setSizeFull();
-
-
-        this.setActiveStep(this.steps.get(0));
-
-        this.progressBar.setMin(0);
-        this.progressBar.setMax((this.steps.size()));
-        this.progressBar.setValue(1);
-
+        wizard = WizardComponent.getBuilder()
+                .addStep(new ChooseImplStep())
+                .addStep(new CreateLinkPartnerStep())
+                .build();
+        add(wizard);
     }
 
-    private void setActiveStep(WizardStep wizardStep) {
-        this.content.removeAll();
-        this.content.add(wizardStep.getComponent());
-        this.activeStep = wizardStep;
-    }
-
-    private void forwardButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        boolean forward = this.activeStep.forward();
-        if (forward) {
-            steps.indexOf(activeStep);
-            
-        }
-    }
-
-    private void initSteps() {
-
-        this.steps.add(new ChooseImplStep());
-    }
-
-    public interface WizardStep {
-        Component getComponent();
-        boolean forward();
-    }
 
     public class CreateLinkPartnerStep extends VerticalLayout implements WizardStep {
 
-        @Override
-        public Component getComponent() {
-            return null;
+
+        private final ListConfigurationPropertiesComponent configPropsList;
+        private TextField linkPartnerName = new TextField();
+        private TextField description = new TextField();
+        private Checkbox enabled = new Checkbox();
+
+        public CreateLinkPartnerStep() {
+            linkPartnerName.setLabel("Link Partner Name");
+            add(linkPartnerName);
+            description.setLabel("Description");
+            add(description);
+            enabled.setLabel("Enabled");
+            add(enabled);
+
+            configPropsList = applicationContext.getBean(ListConfigurationPropertiesComponent.class);
+//            linkConfiguration.getLinkImpl()
+
+            Optional<LinkPlugin> linkPluginByName = linkManagerService.getLinkPluginByName(linkConfiguration.getLinkImpl());
+            if (linkPluginByName.isPresent()) {
+                List<Class> partnerConfigurationPropertyClasses = linkPluginByName.get().getPartnerConfigurationProperties();
+                Collection<ConfigurationProperty> configProperties = partnerConfigurationPropertyClasses.stream()
+                        .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())
+                        .flatMap(Function.identity())
+                        .collect(Collectors.toList());
+                configPropsList.setConfigurationProperties(configProperties);
+            }
+
+            add(configPropsList);
         }
 
         @Override
-        public boolean forward() {
+        public Component getComponent() {
+            return this;
+        }
+
+        @Override
+        public boolean onForward() {
+
+
             return false;
+
+        }
+
+        @Override
+        public String getStepTitle() {
+            return "Create Link Partner Configuration";
         }
 
     }
@@ -236,15 +243,22 @@ public class CreateLinkPanel extends VerticalLayout {
         }
 
         @Override
-        public boolean forward() {
+        public boolean onForward() {
             List<ValidationResult> validate = configPropsList.validate();
             Properties bean = configPropsList.getBinder().getBean();
 
-            if(validate.isEmpty()) {
+            BinderValidationStatus<DomibusConnectorLinkConfiguration> validate1 = linkConfigurationBinder.validate();
+
+            if(validate.isEmpty() && validate1.isOk()) {
                 linkConfiguration.setProperties(bean);
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public String getStepTitle() {
+            return "Configure Link Implementation";
         }
     }
 
