@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -65,6 +66,11 @@ public class GwJmsPlugin implements LinkPlugin, ActiveLink {
     public List<Class> getPluginConfigurationProperties() {
         return Stream.of(GwJmsPluginConfigurationProperties.class)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Class> getPartnerConfigurationProperties() {
+        return new ArrayList<>(); //partner itself is not configureable...
     }
 
 
