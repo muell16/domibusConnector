@@ -2,6 +2,7 @@ package eu.domibus.connector.link;
 
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPlugin;
+import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
@@ -24,6 +25,15 @@ public class LinkTestContext {
         DomibusConnectorLinkPartnerDao dao = Mockito.mock(DomibusConnectorLinkPartnerDao.class);
         Mockito.when(dao.findAllByEnabledIsTrue())
                 .thenReturn(Stream.of(getLinkInfo()).collect(Collectors.toList()));
+        return dao;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomibusConnectorLinkConfigurationDao domibusConnectorLinkConfigurationDao() {
+        DomibusConnectorLinkConfigurationDao dao = Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
+//        Mockito.when(dao.findAllByEnabledIsTrue())
+//                .thenReturn(Stream.of(getLinkInfo()).collect(Collectors.toList()));
         return dao;
     }
 
