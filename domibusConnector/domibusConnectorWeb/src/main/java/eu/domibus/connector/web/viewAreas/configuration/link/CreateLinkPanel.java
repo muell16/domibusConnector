@@ -10,10 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
-import com.vaadin.flow.data.binder.Setter;
-import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.domain.enums.LinkType;
@@ -27,9 +24,12 @@ import eu.domibus.connector.web.component.WizardStep;
 import eu.ecodex.utils.configuration.domain.ConfigurationProperty;
 import eu.ecodex.utils.configuration.service.ConfigurationPropertyCollector;
 import eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -43,6 +43,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 @Route("createlink")
 public class CreateLinkPanel extends VerticalLayout {
 
+    private static final Logger LOGGER = LogManager.getLogger(CreateLinkPanel.class);
 
     @Autowired
     DCActiveLinkManagerService linkManagerService;
@@ -86,8 +87,13 @@ public class CreateLinkPanel extends VerticalLayout {
         wizard = WizardComponent.getBuilder()
                 .addStep(new ChooseImplStep())
                 .addStep(new CreateLinkPartnerStep())
+                .addFinishedListener(this::wizardFinished)
                 .build();
         add(wizard);
+    }
+
+    private void wizardFinished(WizardComponent wizardComponent, WizardStep wizardStep) {
+        dcLinkPersistenceService.addLinkPartner(linkPartner);
     }
 
 
@@ -98,13 +104,33 @@ public class CreateLinkPanel extends VerticalLayout {
         private TextField linkPartnerName = new TextField();
         private TextField description = new TextField();
         private Checkbox enabled = new Checkbox();
+        private Binder<DomibusConnectorLinkPartner> linkPartnerBinder = new Binder<>();
 
         public CreateLinkPartnerStep() {
             linkPartnerName.setLabel("Link Partner Name");
+            linkPartnerBinder.forField(linkPartnerName)
+                    .withNullRepresentation("")
+                    .withValidator(new Validator<String>() {
+                        @Override
+                        public ValidationResult apply(String value, ValueContext context) {
+                            if (StringUtils.isEmpty(value)) {
+                                return ValidationResult.error("Must not empty!");
+                            }
+                            return ValidationResult.ok();
+                        }
+                    })
+                    .bind(
+                            (ValueProvider<DomibusConnectorLinkPartner, String>) linkPartner -> linkPartner.getLinkPartnerName() == null ? null : linkPartner.getLinkPartnerName().getLinkName(),
+                            (Setter<DomibusConnectorLinkPartner, String>) (linkPartner, s) -> linkPartner.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(s)));
             add(linkPartnerName);
             description.setLabel("Description");
+            linkPartnerBinder.forField(description)
+                    .withNullRepresentation("")
+                    .bind(DomibusConnectorLinkPartner::getDescription, DomibusConnectorLinkPartner::setDescription);
             add(description);
             enabled.setLabel("Enabled");
+            linkPartnerBinder.forField(enabled)
+                    .bind(DomibusConnectorLinkPartner::isEnabled, DomibusConnectorLinkPartner::setEnabled);
             add(enabled);
 
             configPropsList = applicationContext.getBean(ListConfigurationPropertiesComponent.class);
@@ -119,7 +145,7 @@ public class CreateLinkPanel extends VerticalLayout {
                         .collect(Collectors.toList());
                 configPropsList.setConfigurationProperties(configProperties);
             }
-
+            linkPartnerBinder.setBean(linkPartner);
             add(configPropsList);
         }
 
@@ -130,8 +156,14 @@ public class CreateLinkPanel extends VerticalLayout {
 
         @Override
         public boolean onForward() {
-
-
+            BinderValidationStatus<DomibusConnectorLinkPartner> validate = this.linkPartnerBinder.validate();
+            BinderValidationStatus<Properties> configPropsList = this.configPropsList.getBinder().validate();
+            if (validate.isOk() && configPropsList.isOk()) {
+                linkPartner = linkPartnerBinder.getBean();
+                Properties bean = configPropsList.getBinder().getBean();
+                linkPartner.setProperties(bean);
+                return true;
+            }
             return false;
 
         }
@@ -152,6 +184,8 @@ public class CreateLinkPanel extends VerticalLayout {
         private TextField linkConfigName = new TextField();
         private Binder<DomibusConnectorLinkConfiguration> linkConfigurationBinder = new Binder<>();
 
+        private DomibusConnectorLinkConfiguration newLinkConfiguration = new DomibusConnectorLinkConfiguration();
+
         public ChooseImplStep() {
             initUI();
         }
@@ -163,35 +197,57 @@ public class CreateLinkPanel extends VerticalLayout {
             add(linkConfigurationChooser);
 
             linkConfigurationChooser.addValueChangeListener(this::linkConfigChanged);
-            linkConfigurationChooser.setItemLabelGenerator((ItemLabelGenerator<DomibusConnectorLinkConfiguration>) item -> item.getConfigName() + " with impl " + item.getLinkImpl());
+            linkConfigurationChooser.setItemLabelGenerator(item -> {
+                if (item != null) {
+                    return item.getConfigName() + " with impl " + item.getLinkImpl();
+                }
+                return "No Configuration set";
+            });
 
             List<DomibusConnectorLinkConfiguration> allLinkConfigurations = dcLinkPersistenceService.getAllLinkConfigurations();
+//            allLinkConfigurations.add(newLinkConfiguration);
             linkConfigurationChooser.setItems(allLinkConfigurations);
             linkConfigurationChooser.setPlaceholder("New Config");
+            linkConfigurationChooser.setClearButtonVisible(true);
+            linkConfigurationChooser.setLabel("Link Configuration");
 
 
             this.configPropsList = applicationContext.getBean(ListConfigurationPropertiesComponent.class);
 //            configPropsList.setSizeFull();
 
             implChooser.setItems(linkManagerService.getAvailableLinkPlugins());
+
+            implChooser.setLabel("Link Implementation");
             implChooser.setItemLabelGenerator((ItemLabelGenerator<LinkPlugin>) LinkPlugin::getPluginName);
             implChooser.addValueChangeListener(this::choosenLinkImplChanged);
+
             linkConfigurationBinder
                     .forField(implChooser)
                     .bind(
-                            (ValueProvider<DomibusConnectorLinkConfiguration, LinkPlugin>) linkConfiguration -> linkManagerService.getLinkPluginByName(linkConfiguration.getLinkImpl()).get(),
-                            (Setter<DomibusConnectorLinkConfiguration, LinkPlugin>) (linkConfiguration, linkPlugin) -> linkConfiguration.setLinkImpl(linkPlugin.getPluginName())
+                            (ValueProvider<DomibusConnectorLinkConfiguration, LinkPlugin>) linkConfiguration -> {
+                                Optional<LinkPlugin> linkPlugin = linkManagerService.getLinkPluginByName(linkConfiguration.getLinkImpl());
+                                if (linkPlugin.isPresent()) {
+                                    return linkPlugin.get();
+                                } else {
+                                    LOGGER.warn("No Implemntation found for [{}]", linkConfiguration.getLinkImpl());
+                                    return null;
+                                }
+                            },
+                            (Setter<DomibusConnectorLinkConfiguration, LinkPlugin>) (linkConfiguration, linkPlugin) -> linkConfiguration.setLinkImpl(linkPlugin == null ? null : linkPlugin.getPluginName())
                     );
 
 
 
             add(implChooser);
             add(linkConfigName);
+            linkConfigName.setLabel("Link Configuration Name");
             linkConfigurationBinder
                     .forField(linkConfigName)
                     .asRequired()
                     .withNullRepresentation("")
-                    .bind(c -> c.getConfigName().getConfigName(), (c, v) -> c.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(v)));
+                    .bind(
+                            c -> c.getConfigName() == null ? null : c.getConfigName().getConfigName(),
+                            (c, v) -> c.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(v)));
 
 
             add(configPropsList);
@@ -207,11 +263,11 @@ public class CreateLinkPanel extends VerticalLayout {
             DomibusConnectorLinkConfiguration value = changeEvent.getValue();
 
             if (value == null) {
-                implChooser.setVisible(true);
-                configPropsList.setVisible(true);
-                linkConfiguration = new DomibusConnectorLinkConfiguration();
+                implChooser.setReadOnly(false);
+                configPropsList.setVisible(false);
+                linkConfiguration = newLinkConfiguration;
             } else {
-                implChooser.setVisible(false);
+                implChooser.setReadOnly(true);
                 configPropsList.setVisible(false);
                 linkConfiguration = value;
             }
@@ -222,7 +278,10 @@ public class CreateLinkPanel extends VerticalLayout {
 
         private void choosenLinkImplChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
             LinkPlugin value = valueChangeEvent.getValue();
-            List<Class> configurationClasses = value.getPluginConfigurationProperties();
+            List<Class> configurationClasses = new ArrayList<>();
+            if (value != null) {
+                configurationClasses = value.getPluginConfigurationProperties();
+            }
 
             List<ConfigurationProperty> configurationProperties = configurationClasses.stream()
                     .map(clz -> configurationPropertyCollector.getConfigurationPropertyFromClazz(clz).stream())

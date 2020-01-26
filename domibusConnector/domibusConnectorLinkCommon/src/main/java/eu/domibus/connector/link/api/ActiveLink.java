@@ -3,6 +3,8 @@ package eu.domibus.connector.link.api;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
+import java.util.Optional;
+
 /**
  * Must be implemented by an link plugin
  */
