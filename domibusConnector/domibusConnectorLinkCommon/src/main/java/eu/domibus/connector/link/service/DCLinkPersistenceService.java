@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Properties;
+import javax.swing.text.html.Option;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +56,9 @@ public class DCLinkPersistenceService {
     }
 
     private DomibusConnectorLinkConfiguration mapToLinkConfiguration(PDomibusConnectorLinkConfiguration dbLinkConfig) {
+        if (dbLinkConfig == null) {
+            return null;
+        }
         DomibusConnectorLinkConfiguration configuration = new DomibusConnectorLinkConfiguration();
 
         Properties p = new Properties();
@@ -76,5 +79,67 @@ public class DCLinkPersistenceService {
                 .map(this::mapToLinkPartner)
                 .collect(Collectors.toList());
     }
+
+    public void addLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+        PDomibusConnectorLinkPartner dbLinkPartner = mapToDbLinkPartner(linkPartner);
+        linkPartnerDao.save(dbLinkPartner);
+        LOGGER.debug("Saving [{}] to database", dbLinkPartner);
+
+        //check for only one gw link config...
+        PDomibusConnectorLinkPartner gatewayExample = new PDomibusConnectorLinkPartner();
+        gatewayExample.setLinkType(LinkType.GATEWAY);
+        gatewayExample.setEnabled(true);
+
+        List<PDomibusConnectorLinkPartner> all = linkPartnerDao.findAll(Example.of(gatewayExample));
+        if (all.size() > 1) {
+            throw new RuntimeException("Only one gateway configuration at once is allowed");
+        }
+
+
+
+
+        LOGGER.debug("Successfully saved [{}] to database", dbLinkPartner);
+
+    }
+
+    private PDomibusConnectorLinkPartner mapToDbLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+        if (linkPartner == null) {
+            return null;
+        }
+        String linkName = linkPartner.getLinkPartnerName() == null ? null : linkPartner.getLinkPartnerName().getLinkName();
+
+        Optional<PDomibusConnectorLinkPartner> oneByLinkName = linkPartnerDao.findOneByLinkName(linkName);
+        PDomibusConnectorLinkPartner dbLinkPartner = oneByLinkName.orElse(new PDomibusConnectorLinkPartner());
+
+        dbLinkPartner.setLinkType(linkPartner.getLinkType());
+        dbLinkPartner.setDescription(linkPartner.getDescription());
+        dbLinkPartner.setLinkName(linkName);
+        dbLinkPartner.setEnabled(linkPartner.isEnabled());
+        dbLinkPartner.setLinkConfiguration(this.mapToDbLinkConfiguration(linkPartner.getLinkConfiguration()));
+        dbLinkPartner.setProperties(this.mapProperties(linkPartner.getProperties()));
+
+        return dbLinkPartner;
+    }
+
+    private PDomibusConnectorLinkConfiguration mapToDbLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        if (linkConfiguration == null) {
+            return null;
+        }
+        String configName = linkConfiguration.getConfigName() == null ? null : linkConfiguration.getConfigName().getConfigName();
+
+        Optional<PDomibusConnectorLinkConfiguration> oneByConfigName = linkConfigurationDao.getOneByConfigName(configName);
+
+        PDomibusConnectorLinkConfiguration dbLinkConfig = oneByConfigName.orElse(new PDomibusConnectorLinkConfiguration());
+        dbLinkConfig.setConfigName(configName);
+        dbLinkConfig.setLinkImpl(linkConfiguration.getLinkImpl());
+        dbLinkConfig.setProperties(mapProperties(linkConfiguration.getProperties()));
+        return dbLinkConfig;
+    }
+
+    private Map<String, String> mapProperties(Properties properties) {
+        Map<String, String> map = properties.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
+        return map;
+    }
+
 
 }

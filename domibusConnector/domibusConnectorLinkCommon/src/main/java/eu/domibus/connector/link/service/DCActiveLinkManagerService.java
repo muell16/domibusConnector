@@ -130,7 +130,6 @@ public class DCActiveLinkManagerService {
 
     }
 
-
     @PreDestroy
     public void preDestroy() {
         this.activeLinkConfigurations.forEach((key, value) -> {
