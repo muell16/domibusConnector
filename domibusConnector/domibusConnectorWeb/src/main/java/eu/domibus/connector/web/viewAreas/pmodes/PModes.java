@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.vaadin.flow.router.Route;
+import eu.domibus.connector.web.view.MainLayout;
+import eu.domibus.connector.web.viewAreas.messages.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;
@@ -21,7 +24,10 @@ import com.vaadin.flow.spring.annotation.UIScope;
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
+@Route(value = PModes.ROUTE, layout = MainLayout.class)
 public class PModes extends VerticalLayout {
+
+	public static final String ROUTE = "pmodes";
 
 	Div areaImport = null;
 	Div areaDataTables = null;

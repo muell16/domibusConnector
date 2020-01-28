@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.*;
@@ -80,8 +81,17 @@ public class DCLinkPersistenceService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+        if (linkPartner.getLinkConfiguration() == null) {
+            throw new IllegalArgumentException("Cannot add a LinkPartner without an LinkConfiguration!");
+        }
         PDomibusConnectorLinkPartner dbLinkPartner = mapToDbLinkPartner(linkPartner);
+
+        PDomibusConnectorLinkConfiguration dbLinkConfiguration = mapToDbLinkConfiguration(linkPartner.getLinkConfiguration());
+        dbLinkConfiguration = linkConfigurationDao.save(dbLinkConfiguration);
+        dbLinkPartner.setLinkConfiguration(dbLinkConfiguration);
+
         linkPartnerDao.save(dbLinkPartner);
         LOGGER.debug("Saving [{}] to database", dbLinkPartner);
 
@@ -92,11 +102,8 @@ public class DCLinkPersistenceService {
 
         List<PDomibusConnectorLinkPartner> all = linkPartnerDao.findAll(Example.of(gatewayExample));
         if (all.size() > 1) {
-            throw new RuntimeException("Only one gateway configuration at once is allowed");
+            throw new RuntimeException("Only one active gateway configuration at once is allowed");
         }
-
-
-
 
         LOGGER.debug("Successfully saved [{}] to database", dbLinkPartner);
 

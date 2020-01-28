@@ -171,5 +171,12 @@ public class WizardComponent extends VerticalLayout {
         return steps.indexOf(activeStep);
     }
 
+    public void addCancelListener(WizardCanceldListener canceldListener) {
+        this.cancelListener.add(canceldListener);
+    }
+
+    public void addFinishListener(WizardFinishedListener finishedListener) {
+        this.finishListener.add(finishedListener);
+    }
 
 }

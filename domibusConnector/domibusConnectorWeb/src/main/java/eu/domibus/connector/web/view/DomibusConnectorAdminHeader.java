@@ -10,8 +10,8 @@ import eu.domibus.connector.web.component.LumoLabel;
 
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
-@UIScope
-@org.springframework.stereotype.Component
+//@UIScope
+//@org.springframework.stereotype.Component
 public class DomibusConnectorAdminHeader extends HorizontalLayout {
 
 	public DomibusConnectorAdminHeader() {

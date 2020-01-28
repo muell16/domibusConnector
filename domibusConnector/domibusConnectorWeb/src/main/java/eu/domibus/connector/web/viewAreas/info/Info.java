@@ -1,5 +1,7 @@
 package eu.domibus.connector.web.viewAreas.info;
 
+import com.vaadin.flow.router.Route;
+import eu.domibus.connector.web.view.MainLayout;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +24,10 @@ import eu.domibus.connector.web.component.LumoLabel;
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
+@Route(value = Info.ROUTE, layout = MainLayout.class)
 public class Info extends VerticalLayout implements InitializingBean {
+
+	public static final String ROUTE = "info";
 
 	@Value("${build.version:not available}")
 	public String applicationVersion;

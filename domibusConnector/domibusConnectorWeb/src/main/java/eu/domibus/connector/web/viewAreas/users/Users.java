@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.vaadin.flow.router.Route;
+import eu.domibus.connector.web.view.MainLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;
@@ -24,8 +26,11 @@ import eu.domibus.connector.web.dto.WebUser;
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
+@Route(value = Users.ROUTE, layout = MainLayout.class)
 public class Users extends VerticalLayout {
-	
+
+	public static final String ROUTE = "users";
+
 	Div areaUserList = null;
 	Div areaUserDetails = null;
 	Div areaNewUser = null;
