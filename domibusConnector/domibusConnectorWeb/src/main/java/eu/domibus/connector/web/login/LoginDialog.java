@@ -12,7 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import eu.domibus.connector.web.exception.InitialPasswordException;
 import eu.domibus.connector.web.exception.UserLoginException;
 import eu.domibus.connector.web.service.WebUserService;
-import eu.domibus.connector.web.view.MainView;
+import eu.domibus.connector.web.view.DashboardView;
 
 public class LoginDialog extends Dialog {
 	
@@ -85,7 +85,7 @@ public class LoginDialog extends Dialog {
 				close();
 				changePasswordDialog.open();
 			}
-			this.getUI().ifPresent(ui -> ui.navigate(MainView.class));
+			this.getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
 			close();
 		});
 		loginButtonContent.add(loginButton);

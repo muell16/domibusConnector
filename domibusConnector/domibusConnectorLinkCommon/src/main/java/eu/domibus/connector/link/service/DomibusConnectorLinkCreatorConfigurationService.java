@@ -1,6 +1,8 @@
 package eu.domibus.connector.link.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +18,8 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class DomibusConnectorLinkCreatorConfigurationService {
 
+    private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkCreatorConfigurationService.class);
+
     @Autowired
     DCLinkPersistenceService DCLinkPersistenceService;
 
@@ -28,7 +32,11 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     }
 
     private void activateLink(DomibusConnectorLinkPartner linkInfo) {
-        linkManager.activateLinkPartner(linkInfo);
+        try {
+            linkManager.activateLinkPartner(linkInfo);
+        } catch (Exception e) {
+            LOGGER.error("Exception while activating Link [{}]", linkInfo);
+        }
     }
 
 

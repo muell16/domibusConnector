@@ -51,7 +51,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
         addLinkButton.addClickListener(this::addLinkButtonClicked);
 
         linkGrid.addColumn(DomibusConnectorLinkPartner::getLinkPartnerName).setHeader("Link Partner Name");
-        linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("enabled");
+        linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("run on startup");
         linkGrid.addColumn((ValueProvider) o -> {
             DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
             return d.getLinkConfiguration().getConfigName();
@@ -66,11 +66,17 @@ public abstract class LinkConfiguration extends VerticalLayout {
     }
 
     private void addLinkButtonClicked(ClickEvent<Button> buttonClickEvent) {
-        Dialog d = new Dialog();
-        d.add(applicationContext.getBean(CreateLinkPanel.class));
-        d.setCloseOnEsc(true);
-
-        d.open();
+        final Dialog dialog = new Dialog();
+        CreateLinkPanel createLinkWizard = applicationContext.getBean(CreateLinkPanel.class);
+        createLinkWizard.setParentDialog(dialog);
+        createLinkWizard.getWizard().addCancelListener((a,c) -> dialog.close());
+        createLinkWizard.getWizard().addFinishListener((a,c) -> {
+            dialog.close();
+            refreshList();
+        });
+        dialog.add(createLinkWizard);
+        dialog.setCloseOnEsc(true);
+        dialog.open();
     }
 
     protected void onAttach(AttachEvent attachEvent) {

@@ -1,14 +1,12 @@
 package eu.domibus.connector.web.viewAreas.configuration.link;
 
 import com.vaadin.flow.component.*;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.combobox.GeneratedVaadinComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
@@ -32,6 +30,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -58,9 +57,12 @@ public class CreateLinkPanel extends VerticalLayout {
     ApplicationContext applicationContext;
 
     private WizardComponent wizard;
+    private Dialog parentDialog;
 
     private DomibusConnectorLinkConfiguration linkConfiguration;
     private DomibusConnectorLinkPartner linkPartner;
+
+
 
 
 //    ListConfigurationPropertiesComponent listConfigurationPropertiesComponentLinkImpl;
@@ -92,8 +94,26 @@ public class CreateLinkPanel extends VerticalLayout {
         add(wizard);
     }
 
+    public void setParentDialog(Dialog parentDialog) {
+        this.parentDialog = parentDialog;
+    }
+
     private void wizardFinished(WizardComponent wizardComponent, WizardStep wizardStep) {
-        dcLinkPersistenceService.addLinkPartner(linkPartner);
+        linkPartner.setLinkConfiguration(linkConfiguration);
+        try {
+            dcLinkPersistenceService.addLinkPartner(linkPartner);
+        } catch (RuntimeException e) {
+            LOGGER.error("Exception occured while creating a new Link Configuration", e);
+            Notification.show("No Link Configuration was created due: " + e.getMessage(), (int) Duration.ofSeconds(5).toMillis(), Notification.Position.TOP_CENTER);
+        }
+        Notification.show("New LinkPartner configuration successfully created", (int) Duration.ofSeconds(5).toMillis(), Notification.Position.TOP_CENTER);
+        if (parentDialog != null) {
+            parentDialog.close();
+        }
+    }
+
+    public WizardComponent getWizard() {
+        return this.wizard;
     }
 
 
@@ -181,10 +201,11 @@ public class CreateLinkPanel extends VerticalLayout {
         private ComboBox<LinkPlugin> implChooser = new ComboBox<>();
         private ListConfigurationPropertiesComponent configPropsList;
         private ComboBox<DomibusConnectorLinkConfiguration> linkConfigurationChooser = new ComboBox<>();
-        private TextField linkConfigName = new TextField();
+//        private TextField linkConfigName = new TextField();
         private Binder<DomibusConnectorLinkConfiguration> linkConfigurationBinder = new Binder<>();
 
         private DomibusConnectorLinkConfiguration newLinkConfiguration = new DomibusConnectorLinkConfiguration();
+        private boolean newConfig = false;
 
         public ChooseImplStep() {
             initUI();
@@ -205,11 +226,12 @@ public class CreateLinkPanel extends VerticalLayout {
             });
 
             List<DomibusConnectorLinkConfiguration> allLinkConfigurations = dcLinkPersistenceService.getAllLinkConfigurations();
-//            allLinkConfigurations.add(newLinkConfiguration);
             linkConfigurationChooser.setItems(allLinkConfigurations);
             linkConfigurationChooser.setPlaceholder("New Config");
             linkConfigurationChooser.setClearButtonVisible(true);
-            linkConfigurationChooser.setLabel("Link Configuration");
+            linkConfigurationChooser.setLabel("Link Configuration Name");
+            linkConfigurationChooser.setAllowCustomValue(true);
+            linkConfigurationChooser.addCustomValueSetListener(this::customValueAdded);
 
 
             this.configPropsList = applicationContext.getBean(ListConfigurationPropertiesComponent.class);
@@ -239,15 +261,15 @@ public class CreateLinkPanel extends VerticalLayout {
 
 
             add(implChooser);
-            add(linkConfigName);
-            linkConfigName.setLabel("Link Configuration Name");
-            linkConfigurationBinder
-                    .forField(linkConfigName)
-                    .asRequired()
-                    .withNullRepresentation("")
-                    .bind(
-                            c -> c.getConfigName() == null ? null : c.getConfigName().getConfigName(),
-                            (c, v) -> c.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(v)));
+//            add(linkConfigName);
+//            linkConfigName.setLabel("Link Configuration Name");
+//            linkConfigurationBinder
+//                    .forField(linkConfigName)
+//                    .asRequired()
+//                    .withNullRepresentation("")
+//                    .bind(
+//                            c -> c.getConfigName() == null ? null : c.getConfigName().getConfigName(),
+//                            (c, v) -> c.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(v)));
 
 
             add(configPropsList);
@@ -259,21 +281,36 @@ public class CreateLinkPanel extends VerticalLayout {
 
         }
 
+        private void customValueAdded(GeneratedVaadinComboBox.CustomValueSetEvent<ComboBox<DomibusConnectorLinkConfiguration>> comboBoxCustomValueSetEvent) {
+            String newConfigName = comboBoxCustomValueSetEvent.getDetail();
+
+            newLinkConfiguration.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(newConfigName));
+            newLinkConfiguration.setLinkImpl("");
+            newLinkConfiguration.setProperties(new Properties());
+
+            List<DomibusConnectorLinkConfiguration> allLinkConfigurations = dcLinkPersistenceService.getAllLinkConfigurations();
+            allLinkConfigurations.add(newLinkConfiguration);
+            linkConfigurationChooser.setItems(allLinkConfigurations);
+
+            newConfig = true;
+            linkConfigurationChooser.setValue(newLinkConfiguration);
+
+        }
+
         private void linkConfigChanged(AbstractField.ComponentValueChangeEvent<ComboBox<DomibusConnectorLinkConfiguration>, DomibusConnectorLinkConfiguration> changeEvent) {
             DomibusConnectorLinkConfiguration value = changeEvent.getValue();
 
-            if (value == null) {
+            if (newConfig) {
                 implChooser.setReadOnly(false);
-                configPropsList.setVisible(false);
+                configPropsList.setReadOnly(false);
                 linkConfiguration = newLinkConfiguration;
             } else {
                 implChooser.setReadOnly(true);
-                configPropsList.setVisible(false);
+                configPropsList.setReadOnly(false);
                 linkConfiguration = value;
             }
             linkConfigurationBinder.setBean(linkConfiguration);
-
-
+            newConfig = false;
         }
 
         private void choosenLinkImplChanged(HasValue.ValueChangeEvent<LinkPlugin> valueChangeEvent) {
@@ -306,12 +343,13 @@ public class CreateLinkPanel extends VerticalLayout {
             List<ValidationResult> validate = configPropsList.validate();
             Properties bean = configPropsList.getBinder().getBean();
 
-            BinderValidationStatus<DomibusConnectorLinkConfiguration> validate1 = linkConfigurationBinder.validate();
+            BinderValidationStatus<DomibusConnectorLinkConfiguration> linkConfigurationValidation = linkConfigurationBinder.validate();
 
-            if(validate.isEmpty() && validate1.isOk()) {
+            if(validate.isEmpty() && linkConfigurationValidation.isOk()) {
                 linkConfiguration.setProperties(bean);
                 return true;
             }
+            LOGGER.debug("onForward# Validation failed, returning false");
             return false;
         }
 
