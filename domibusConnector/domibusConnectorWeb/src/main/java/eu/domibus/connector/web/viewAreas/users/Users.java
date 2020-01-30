@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.vaadin.flow.router.Route;
+import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.MainLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +28,7 @@ import eu.domibus.connector.web.dto.WebUser;
 @UIScope
 @org.springframework.stereotype.Component
 @Route(value = Users.ROUTE, layout = MainLayout.class)
+@RoleRequired(role = "ADMIN")
 public class Users extends VerticalLayout {
 
 	public static final String ROUTE = "users";

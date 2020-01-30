@@ -3,10 +3,13 @@ package eu.domibus.connector.web.viewAreas.configuration.link;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.ValueProvider;
@@ -18,7 +21,6 @@ import eu.domibus.connector.link.service.DCLinkPersistenceService;
 import eu.domibus.connector.web.viewAreas.configuration.ConfigurationTab;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -46,9 +48,19 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
     @PostConstruct
     private void initUI() {
+        this.setSizeFull();
 
-        add(addLinkButton);
+        addAndExpand(addLinkButton);
         addLinkButton.addClickListener(this::addLinkButtonClicked);
+
+        linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
+            @Override
+            public Component apply(DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
+                Button b = new Button(new Icon(VaadinIcon.EDIT));
+                b.addClickListener(event -> editClicked(event, domibusConnectorLinkPartner));
+                return b;
+            }
+        });
 
         linkGrid.addColumn(DomibusConnectorLinkPartner::getLinkPartnerName).setHeader("Link Partner Name");
         linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("run on startup");
@@ -61,8 +73,13 @@ public abstract class LinkConfiguration extends VerticalLayout {
             return linkManager.getActiveLinkPartner(d.getLinkPartnerName()).isPresent() ? "running" : "stopped";
         }).setHeader("Current Link State");
 
-        add(linkGrid);
+        addAndExpand(linkGrid);
+        linkGrid.setSizeFull();
 
+    }
+
+    private void editClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner domibusConnectorLinkPartner) {
+        //TODO: show edit for LinkPartner
     }
 
     private void addLinkButtonClicked(ClickEvent<Button> buttonClickEvent) {

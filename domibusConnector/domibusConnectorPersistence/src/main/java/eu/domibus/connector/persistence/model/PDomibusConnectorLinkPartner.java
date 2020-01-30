@@ -1,5 +1,6 @@
 package eu.domibus.connector.persistence.model;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.persistence.model.PDomibusConnectorDomain;
 
@@ -26,8 +27,8 @@ public class PDomibusConnectorLinkPartner {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name="ENABLED")
-    private boolean enabled;
+    @Column(name="ENABLED", nullable = false)
+    private Boolean enabled = Boolean.FALSE;
 
     @Column(name = "LINK_TYPE")
     private LinkType linkType;
@@ -66,11 +67,12 @@ public class PDomibusConnectorLinkPartner {
         this.description = description;
     }
 
-    public boolean isEnabled() {
+    public Boolean isEnabled() {
         return enabled;
     }
+    public Boolean getEnabled() { return enabled;}
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 

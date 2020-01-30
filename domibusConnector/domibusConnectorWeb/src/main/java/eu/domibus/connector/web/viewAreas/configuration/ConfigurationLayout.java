@@ -1,25 +1,18 @@
 package eu.domibus.connector.web.viewAreas.configuration;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.vaadin.flow.component.HasElement;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.router.*;
 import eu.domibus.connector.web.configuration.SecurityUtils;
 import eu.domibus.connector.web.enums.UserRole;
+import eu.domibus.connector.web.utils.TabViewRouterHelper;
 import eu.domibus.connector.web.view.MainLayout;
 import eu.domibus.connector.web.viewAreas.configuration.link.GatewayLinkConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -28,127 +21,78 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
-import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.viewAreas.configuration.environment.EnvironmentConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.security.SecurityConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 
-//@HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
+
 @UIScope
 @org.springframework.stereotype.Component
-@Route(value = Configuration.ROUTE, layout = MainLayout.class)
-public class Configuration extends VerticalLayout implements AfterNavigationObserver, RouterLayout {
+@RoutePrefix(ConfigurationLayout.ROUTE)
+@ParentLayout(MainLayout.class)
+public class ConfigurationLayout extends VerticalLayout implements BeforeEnterObserver, RouterLayout {
 
 	public static final String ROUTE = "configuration";
 
-	protected final static Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
-	private final Div pages;
-	private final SecurityContextHolderAwareRequestWrapper securityWrapper;
+	protected final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationLayout.class);
+	private final Div pageContent;
 
 	DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
 	ConfigurationUtil util;
-	
-//	Div areaBackendConfig = null;
-	Div areaGatewayConfig = null;
-	Div areaEvidencesConfig = null;
-	Div areaSecurityConfig = null;
-	Div areaEnvironmentConfig = null;
-	Div areaConfigControl = null;
-	
-//	Tab backendConfigTab = new Tab("Backend Configuration");
-	Tab gatewayConfigTab = new Tab("Gateway Configuration");
-	Tab evidencesConfigTab = new Tab("Evidences Configuration");
-	Tab securityConfigTab = new Tab("Security Toolkit Configuration");
-	Tab environmentConfigTab = new Tab("Environment Configuration");
-	
-	Tabs configMenu = new Tabs();
-	
-	WebUser authenticatedUser;
-	
+
 	Button saveConfiguration;
 	Button resetConfiguration;
 	Button reloadConfiguration;
 
+	private TabViewRouterHelper tabViewRouterManager = new TabViewRouterHelper();
 
 	
-	public Configuration(
-			@Autowired SecurityContextHolderAwareRequestWrapper securityWrapper,
-			@Autowired SecurityConfiguration secConfig,
-						 	 @Autowired EnvironmentConfiguration envConfig,
-							 @Autowired EvidenceBuilderConfiguration evidencesConfig,
+	public ConfigurationLayout(
 							 @Autowired DomibusConnectorPropertiesPersistenceService propertiesPersistenceService,
-							 @Autowired ConfigurationUtil util,
-							 @Autowired GatewayLinkConfiguration gwConfig
+							 @Autowired ConfigurationUtil util
 	)
 	{
-		this.securityWrapper = securityWrapper;
+
 		this.propertiesPersistenceService = propertiesPersistenceService;
 		this.util = util;
 
-//		areaBackendConfig = new Div();
-//		areaBackendConfig.add(backendConfig);
-//		areaBackendConfig.setVisible(false);
-//
-		areaGatewayConfig = new Div();
-		areaGatewayConfig.add(gwConfig);
-		areaGatewayConfig.setVisible(false);
-		
-		areaEvidencesConfig = new Div();
-		areaEvidencesConfig.add(evidencesConfig);
-		areaEvidencesConfig.setVisible(false);
-		
-		areaSecurityConfig = new Div();
-		areaSecurityConfig.add(secConfig);
-		areaSecurityConfig.setVisible(false);
-		
-		areaEnvironmentConfig = new Div();
-		areaEnvironmentConfig.add(envConfig);
-		areaEnvironmentConfig.setVisible(true);
-		
-		Map<Tab, Component> tabsToPages = new HashMap<>();
-		tabsToPages.put(environmentConfigTab, areaEnvironmentConfig);
-		tabsToPages.put(securityConfigTab, areaSecurityConfig);
-		tabsToPages.put(gatewayConfigTab, areaGatewayConfig);
-//		tabsToPages.put(backendConfigTab, areaBackendConfig);
-		tabsToPages.put(evidencesConfigTab, areaEvidencesConfig);
-		
-		configMenu.add(environmentConfigTab, securityConfigTab, evidencesConfigTab, gatewayConfigTab);
-		
-		
-		pages = new Div(); //new Div(areaEnvironmentConfig, areaSecurityConfig, areaEvidencesConfig, areaGatewayConfig);
-		
-//		Set<Component> pagesShown = Stream.of(areaEnvironmentConfig)
-//		        .collect(Collectors.toSet());
-//
-//
-//		configMenu.addSelectedChangeListener(event -> {
-//		    pagesShown.forEach(page -> page.setVisible(false));
-//		    pagesShown.clear();
-//		    Component selectedPage = tabsToPages.get(configMenu.getSelectedTab());
-//		    selectedPage.setVisible(true);
-//		    pagesShown.add(selectedPage);
-//		});
+//		createTab("Backend Configuration", );
+
+		tabViewRouterManager.createTab()
+				.withLabel("Gateway Configuration")
+				.addForComponent(GatewayLinkConfiguration.class);
+
+		tabViewRouterManager.createTab()
+				.withLabel("Evidences Configuration")
+				.addForComponent(EvidenceBuilderConfiguration.class);
+
+		tabViewRouterManager.createTab()
+				.withLabel("Security Toolkit Configuration")
+				.addForComponent(SecurityConfiguration.class);
+
+		tabViewRouterManager.createTab()
+				.withLabel("Environment Configuration")
+				.addForComponent(EnvironmentConfiguration.class);
+
+		pageContent = new Div();
+		pageContent.setSizeFull();
 
 		add(createConfigurationButtonBar());
-		add(configMenu,pages);
+		add(tabViewRouterManager.getTabs(), pageContent);
 		
-		this.expand(pages);
+		this.expand(pageContent);
 		this.setHeight("80vh");
 	}
 
+
+
 	public void showRouterLayoutContent(HasElement content) {
 		if (content != null) {
-			pages.getElement()
+			pageContent.getElement()
 					.appendChild(Objects.requireNonNull(content.getElement()));
 		}
 	}
@@ -281,24 +225,20 @@ public class Configuration extends VerticalLayout implements AfterNavigationObse
 		return confirmDialog;
 	}
 
-//	public WebUser getAuthenticatedUser() {
-//		return authenticatedUser;
-//	}
-
-//	public void setAuthenticatedUser(WebUser authenticatedUser) {
-//		this.authenticatedUser = authenticatedUser;
-//	}
 
 	@Override
-	public void afterNavigation(AfterNavigationEvent event) {
-		boolean enabled = securityWrapper.isUserInRole(UserRole.ADMIN.toString());
-//		authenticatedUser = (WebUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		util.updateOnRole(authenticatedUser.getRole());
-//		boolean enabled = authenticatedUser.getRole().equals(eu.domibus.connector.web.enums.UserRole.ADMIN);
+	public void beforeEnter(BeforeEnterEvent event) {
+		tabViewRouterManager.beforeEnter(event);
+
+		boolean enabled = SecurityUtils.isUserInRole(UserRole.ADMIN.toString());
+
 		saveConfiguration.setEnabled(enabled);
 		reloadConfiguration.setEnabled(enabled);
 		resetConfiguration.setEnabled(enabled);
 
+
 	}
+
+
 
 }

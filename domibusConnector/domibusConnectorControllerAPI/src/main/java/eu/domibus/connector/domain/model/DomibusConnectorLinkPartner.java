@@ -20,6 +20,8 @@ public class DomibusConnectorLinkPartner {
 
     private DomibusConnectorLinkConfiguration linkConfiguration;
 
+    private String configurationSource;
+
     public LinkPartnerName getLinkPartnerName() {
         return linkPartnerName;
     }
@@ -54,6 +56,14 @@ public class DomibusConnectorLinkPartner {
 
     public DomibusConnectorLinkConfiguration getLinkConfiguration() {
         return linkConfiguration;
+    }
+
+    public String getConfigurationSource() {
+        return configurationSource;
+    }
+
+    public void setConfigurationSource(String configurationSource) {
+        this.configurationSource = configurationSource;
     }
 
     public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {

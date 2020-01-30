@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.service;
 
 
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import org.springframework.core.style.ToStringCreator;
 
@@ -26,9 +27,12 @@ public interface TransportStatusService {
      */
     public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState);
 
+    public void updateTransportStatus(DomibusConnectorTransportState transportState);
+
     public static class DomibusConnectorTransportState {
-        private String transportId;
-        private String remoteTransportId; //in case of GW ebms id, in case of backend national id/backend id
+        private String connectorTransportId; //may be the same as the connectorMessageId but must not...
+        private String transportImplId; // the id of the transport attempt itself, can be null, eg. a jms id
+        private String remoteTransportId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
         private TransportState status;
         private List<DomibusConnectorMessageError> messageErrorList = new ArrayList<>();
 
@@ -40,12 +44,12 @@ public interface TransportStatusService {
             this.status = status;
         }
 
-        public String getTransportId() {
-            return transportId;
+        public String getConnectorTransportId() {
+            return connectorTransportId;
         }
 
-        public void setTransportId(String transportId) {
-            this.transportId = transportId;
+        public void setConnectorTransportId(String connectorTransportId) {
+            this.connectorTransportId = connectorTransportId;
         }
 
         public String getRemoteTransportId() {
@@ -60,14 +64,23 @@ public interface TransportStatusService {
             return messageErrorList;
         }
 
+        public String getTransportImplId() {
+            return transportImplId;
+        }
+
+        public void setTransportImplId(String transportImplId) {
+            this.transportImplId = transportImplId;
+        }
+
         public void setMessageErrorList(List<DomibusConnectorMessageError> messageErrorList) {
             this.messageErrorList = messageErrorList;
         }
 
+
         @Override
         public String toString() {
             return new ToStringCreator(this)
-                    .append("msgId", this.transportId)
+                    .append("msgId", this.connectorTransportId)
                     .append("remote id", this.remoteTransportId)
                     .append("status", this.status)
                     .toString();

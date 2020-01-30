@@ -3,21 +3,19 @@ package eu.domibus.connector.web.viewAreas.configuration.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaadin.flow.component.html.Div;
-import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationLabel;
+import com.vaadin.flow.router.Route;
+import eu.domibus.connector.web.utils.RoleRequired;
+import eu.domibus.connector.web.viewAreas.configuration.ConfigurationLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
-import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
 /**
@@ -44,6 +42,8 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 //@HtmlImport("styles/shared-styles.html")
 @Component
 @UIScope
+@Route(value = "securitylib", layout = ConfigurationLayout.class)
+@RoleRequired(role = "ADMIN")
 public class SecurityConfiguration extends VerticalLayout{
 	
 	/**

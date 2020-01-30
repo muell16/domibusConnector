@@ -1,10 +1,12 @@
 package eu.domibus.connector.web.login;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -19,5 +21,8 @@ public class LogoutView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         SecurityContextHolder.clearContext();
         event.rerouteTo(LoginView.ROUTE);
+
+        VaadinSession.getCurrent().getSession().invalidate();
+        UI.getCurrent().getSession().close();
     }
 }

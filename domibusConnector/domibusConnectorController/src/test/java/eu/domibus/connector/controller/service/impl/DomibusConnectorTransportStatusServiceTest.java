@@ -3,7 +3,6 @@ package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.helper.DomainModelHelperTest;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -50,7 +49,7 @@ public class DomibusConnectorTransportStatusServiceTest {
         TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
         transportState.setRemoteTransportId("REMOTE1");
         transportState.setStatus(TransportStatusService.TransportState.ACCEPTED);
-        transportState.setTransportId("MSG1");
+        transportState.setConnectorTransportId("MSG1");
 
         transportStatusService.updateTransportToGatewayStatus(transportState);
 

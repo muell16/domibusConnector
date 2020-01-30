@@ -1,26 +1,18 @@
 package eu.domibus.connector.web.viewAreas.configuration.evidences;
 
-import java.security.KeyStore;
-import java.util.List;
-import java.util.Map;
-
+import com.vaadin.flow.router.Route;
+import eu.domibus.connector.web.utils.RoleRequired;
+import eu.domibus.connector.web.viewAreas.configuration.ConfigurationLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.Grid.Column;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.component.LumoCheckbox;
-import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebKeystoreService;
-import eu.domibus.connector.web.service.WebKeystoreService.CertificateInfo;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 
@@ -54,7 +46,11 @@ import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
+@Route(value = EvidenceBuilderConfiguration.ROUTE, layout = ConfigurationLayout.class)
+@RoleRequired(role = "ADMIN")
 public class EvidenceBuilderConfiguration  extends VerticalLayout {
+
+	public static final String ROUTE = "evidencebuilder";
 
 	/**
 	 * 

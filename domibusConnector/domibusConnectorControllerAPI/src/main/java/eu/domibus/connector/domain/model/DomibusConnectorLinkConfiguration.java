@@ -13,8 +13,18 @@ public class DomibusConnectorLinkConfiguration {
 
     private Properties properties = new Properties();
 
+    private String configurationSource;
+
     public LinkConfigName getConfigName() {
         return configName;
+    }
+
+    public String getConfigurationSource() {
+        return configurationSource;
+    }
+
+    public void setConfigurationSource(String configurationSource) {
+        this.configurationSource = configurationSource;
     }
 
     public void setConfigName(LinkConfigName configName) {

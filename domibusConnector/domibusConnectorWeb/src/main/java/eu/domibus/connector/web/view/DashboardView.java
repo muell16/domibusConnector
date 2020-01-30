@@ -8,7 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-//@HtmlImport("styles/shared-styles.html")
+
 @UIScope
 @Route(value = DashboardView.ROUTE, layout = MainLayout.class)
 @PageTitle("domibusConnector - Administrator")
