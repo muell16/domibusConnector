@@ -34,30 +34,30 @@ public class GwJmsPluginConfigurationProperties {
     @NotBlank
     private String password;
 
-    @ConfigurationLabel("inQueue")
-    @ConfigurationDescription("Same as domibus.backend.jmsInQueue in gw config")
+    @ConfigurationLabel("toDomibus")
+    @ConfigurationDescription("Same as domibus.backend.jmsInQueue in gw config. Submit a message from connector to Domibus.")
     @NotBlank
-    private String inQueue;
+    private String toDomibusGateway;
 
-    @ConfigurationLabel("replyQueue")
-    @ConfigurationDescription("Same as domibus.backend.jms.replyQueue in gw config")
+    @ConfigurationLabel("toConnector")
+    @ConfigurationDescription("Same as domibus.backend.jms.replyQueue,domibus.backend.jms.outQueue,domibus.backend.jms.errorNotifyProducer,domibus.backend.jms.errorNotifyConsumer in gw config. All messages and notifications going to the connector.")
     @NotBlank
-    private String replyQueue;
+    private String toConnector;
 
-    @ConfigurationLabel("outQueue")
-    @ConfigurationDescription("Same as domibus.backend.jms.outQueue in gw config")
-    @NotBlank
-    private String outQueue;
-
-    @ConfigurationLabel("errorNotifyProducer")
-    @ConfigurationDescription("Same as domibus.backend.jms.errorNotifyProducer in gw config")
-    @NotBlank
-    private String errorNotifyProducerQueue;
-
-    @ConfigurationLabel("errorNotifyConsumer")
-    @ConfigurationDescription("Same as domibus.backend.jms.errorNotifyConsumer in gw config")
-    @NotBlank
-    private String errorNotifyConsumerQueue;
+//    @ConfigurationLabel("outQueue")
+//    @ConfigurationDescription("Same as domibus.backend.jms.outQueue in gw config")
+//    @NotBlank
+//    private String outQueue;
+//
+//    @ConfigurationLabel("errorNotifyProducer")
+//    @ConfigurationDescription("Same as domibus.backend.jms.errorNotifyProducer in gw config")
+//    @NotBlank
+//    private String errorNotifyProducerQueue;
+//
+//    @ConfigurationLabel("errorNotifyConsumer")
+//    @ConfigurationDescription("Same as domibus.backend.jms.errorNotifyConsumer in gw config")
+//    @NotBlank
+//    private String errorNotifyConsumerQueue;
 
 
     public boolean isPutAttachmentInQueue() {
@@ -100,43 +100,43 @@ public class GwJmsPluginConfigurationProperties {
         this.password = password;
     }
 
-    public String getInQueue() {
-        return inQueue;
+    public String getToDomibusGateway() {
+        return toDomibusGateway;
     }
 
-    public void setInQueue(String inQueue) {
-        this.inQueue = inQueue;
+    public void setToDomibusGateway(String toDomibusGateway) {
+        this.toDomibusGateway = toDomibusGateway;
     }
 
-    public String getReplyQueue() {
-        return replyQueue;
+    public String getToConnector() {
+        return toConnector;
     }
 
-    public void setReplyQueue(String replyQueue) {
-        this.replyQueue = replyQueue;
+    public void setToConnector(String toConnector) {
+        this.toConnector = toConnector;
     }
 
-    public String getOutQueue() {
-        return outQueue;
-    }
-
-    public void setOutQueue(String outQueue) {
-        this.outQueue = outQueue;
-    }
-
-    public String getErrorNotifyProducerQueue() {
-        return errorNotifyProducerQueue;
-    }
-
-    public void setErrorNotifyProducerQueue(String errorNotifyProducerQueue) {
-        this.errorNotifyProducerQueue = errorNotifyProducerQueue;
-    }
-
-    public String getErrorNotifyConsumerQueue() {
-        return errorNotifyConsumerQueue;
-    }
-
-    public void setErrorNotifyConsumerQueue(String errorNotifyConsumerQueue) {
-        this.errorNotifyConsumerQueue = errorNotifyConsumerQueue;
-    }
+//    public String getOutQueue() {
+//        return outQueue;
+//    }
+//
+//    public void setOutQueue(String outQueue) {
+//        this.outQueue = outQueue;
+//    }
+//
+//    public String getErrorNotifyProducerQueue() {
+//        return errorNotifyProducerQueue;
+//    }
+//
+//    public void setErrorNotifyProducerQueue(String errorNotifyProducerQueue) {
+//        this.errorNotifyProducerQueue = errorNotifyProducerQueue;
+//    }
+//
+//    public String getErrorNotifyConsumerQueue() {
+//        return errorNotifyConsumerQueue;
+//    }
+//
+//    public void setErrorNotifyConsumerQueue(String errorNotifyConsumerQueue) {
+//        this.errorNotifyConsumerQueue = errorNotifyConsumerQueue;
+//    }
 }

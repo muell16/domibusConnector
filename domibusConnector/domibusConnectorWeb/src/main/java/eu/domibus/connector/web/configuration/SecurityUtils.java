@@ -3,8 +3,17 @@ package eu.domibus.connector.web.configuration;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.server.ServletHelper.RequestType;
 import com.vaadin.flow.shared.ApplicationConstants;
+import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.domibus.connector.web.dto.WebUser;
+
+import eu.domibus.connector.web.utils.RoleRequired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +25,8 @@ import java.util.stream.Stream;
  *
  */
 public final class SecurityUtils {
+
+    private static final Logger LOGGER = LogManager.getLogger(SecurityUtils.class);
 
     private SecurityUtils() {
         // Util methods only
@@ -40,32 +51,57 @@ public final class SecurityUtils {
      * Tests if some user is authenticated. As Spring Security always will create an {@link AnonymousAuthenticationToken}
      * we have to ignore those tokens explicitly.
      */
-    static boolean isUserLoggedIn() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public static boolean isUserLoggedIn() {
+        Authentication authentication = getAuthentication();
         return authentication != null
                 && !(authentication instanceof AnonymousAuthenticationToken)
                 && authentication.isAuthenticated();
     }
 
-    static boolean isUserAllowedToView(Component viewClass) {
-        //TODO: scan for annotations and compare capabilities...
+    public static boolean isUserAllowedToView(Class<?> viewClass) {
+
+        RoleRequired annotation = AnnotationUtils.findAnnotation(viewClass, RoleRequired.class);
+        if (annotation != null) {
+            String role = annotation.role();
+            LOGGER.debug("#isUserAllowedToView: checking if user is in requiredRole [{}] of view [{}]", role, viewClass);
+            return isUserInRole(role);
+        }
+        LOGGER.debug("#isUserAllowedToView: View [{}] has no required role, returning true", viewClass);
         return true;
     }
 
-//    /**
-//     * Checks if access is granted for the current user for the given secured view,
-//     * defined by the view class.
-//     *
-//     * @param securedClass View class
-//     * @param annotation
-//     * @return true if access is granted, false otherwise.
-//     */
-//    public static boolean isAccessGranted(Class<?> securedClass, SecuredByRole annotation) {
-//        // lookup needed role in user roles
-//        final List<String> allowedRoles = Arrays.asList(annotation.value());
-//        final Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
-//        return userAuthentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-//                .anyMatch(allowedRoles::contains);
-//    }
+    public static String getUsername() {
+        Authentication authentication = getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal == null) {
+            return "";
+        }
+        if (principal instanceof WebUser) {
+            return ((WebUser) principal).getUsername();
+        } else {
+            return principal.toString();
+        }
+    }
+
+    public static boolean isUserInRole(String role) {
+        boolean userHasRole = false;
+        if (isUserLoggedIn()) {
+            Authentication authentication = getAuthentication();
+
+            userHasRole = authentication.getAuthorities()
+                    .stream()
+                    .anyMatch(grantedAuthority -> ("ROLE_" + role).equals(((GrantedAuthority) grantedAuthority).getAuthority()));
+
+            LOGGER.trace("User [{}] has roles [{}]", authentication.getPrincipal(), authentication.getAuthorities());
+        }
+
+        LOGGER.debug("Check if user is logged in and has role [{}] returned [{}]", role, userHasRole);
+        return userHasRole;
+    }
+
+    private static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
 
 }

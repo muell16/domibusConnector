@@ -52,10 +52,13 @@ public class WebUserAuthenticationProvider implements AuthenticationProvider {
 		
 				
 		UsernamePasswordAuthenticationToken pwAuth = (UsernamePasswordAuthenticationToken) authentication;
-		
 
-		String username = pwAuth.getPrincipal().toString();
-		String password = pwAuth.getCredentials().toString();
+		if (pwAuth.getCredentials() == null) {
+			throw new IllegalArgumentException("password cannot be null!");
+		}
+
+		String username = "" + pwAuth.getPrincipal();
+		String password = "" + pwAuth.getCredentials();
 		
 		LOG.trace("authenticate: username is [{}], password is [{}]", username, password);
 		WebUser user = null;
@@ -70,7 +73,7 @@ public class WebUserAuthenticationProvider implements AuthenticationProvider {
 
 		List<SimpleGrantedAuthority> grantedAuthorities = Stream.of(user.getRole())
 				.map(Object::toString)
-				.map(role -> new SimpleGrantedAuthority(role))
+				.map(role -> new SimpleGrantedAuthority("ROLE_" + role))
 				.collect(Collectors.toList());
 
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

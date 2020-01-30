@@ -74,6 +74,7 @@ public class DCLinkPersistenceService {
     public List<DomibusConnectorLinkPartner> getAllLinksOfType(LinkType linkType) {
         PDomibusConnectorLinkPartner linkPartner = new PDomibusConnectorLinkPartner();
         linkPartner.setLinkType(linkType);
+        linkPartner.setEnabled(null);
         Example<PDomibusConnectorLinkPartner> example = Example.of(linkPartner);
         return linkPartnerDao.findAll(example)
                 .stream()

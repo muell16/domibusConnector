@@ -24,7 +24,7 @@ public class HandleFromGwToConnectorSentResponse implements DomibusConnectorAsyn
 
         TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
 
-        transportState.setTransportId(response.getResponseForMessageId());
+        transportState.setConnectorTransportId(response.getResponseForMessageId());
         transportState.setRemoteTransportId(response.getAssignedMessageId());
 
         if (response.isResult()) {

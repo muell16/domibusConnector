@@ -2,7 +2,6 @@ package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isEvidenceMessage;
@@ -44,11 +42,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     @Override
     @Transactional
     public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState) {
-        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
+        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getConnectorTransportId());
         if (message == null) {
             //cannot update a transport for a null message maybe it's a evidence message, but they don't have
             // a relation to connector message id yet...so cannot set transport state for them!
-            LOGGER.debug("#updateTransportToGatewayStatus:: No message with transport id [{}] was found within database, maybe it's an evidence message", transportState.getTransportId());
+            LOGGER.debug("#updateTransportToGatewayStatus:: No message with transport id [{}] was found within database, maybe it's an evidence message", transportState.getConnectorTransportId());
             return;
         }
 
@@ -61,7 +59,7 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         } else if (transportState.getStatus() == TransportState.FAILED) {
             //TODO: reject message async... -> inform backend async of rejection!
             transportState.getMessageErrorList().stream().forEach( error ->
-                    errorPersistenceService.persistMessageError(transportState.getTransportId(), error)
+                    errorPersistenceService.persistMessageError(transportState.getConnectorTransportId(), error)
             );
         }
 

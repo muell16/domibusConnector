@@ -2,6 +2,7 @@ package eu.domibus.connector.web.configuration;
 
 import eu.domibus.connector.spring.WebUserAuthenticationProvider;
 import eu.domibus.connector.web.login.LoginView;
+import liquibase.pro.packaged.A;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +38,6 @@ public class SecurityConfig {
     WebUserAuthenticationProvider authProvider;
 
 
-//    static {
-//        // Use a custom SecurityContextHolderStrategy
-//        SecurityContextHolder.setStrategyName(VaadinSessionSecurityContextHolderStrategy.class.getName());
-//    }
 
     /**
      * creates a Authentication Provider
@@ -136,7 +133,6 @@ public class SecurityConfig {
 
                     // (production mode) static resources
                     "/frontend-es5/**", "/frontend-es6/**",
-
                     // (development mode) static resources
                     "/frontend/**",
 
@@ -145,27 +141,27 @@ public class SecurityConfig {
 
                     // (development mode) H2 debugging console
                     "/h2-console/**"
+
                     );
         }
     }
+
+
 
 
 //    @Configuration
 //    @Order(499)
 //    @Profile("dev")
     public static class VaadinDevelopmentWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Autowired
+        ConnectorUiConfigurationProperties connectorUiConfigurationProperties;
+
         @Override
         public void configure(WebSecurity web) {
             web.ignoring().antMatchers(
 
-                    // (development mode) static resources
-                    "/frontend/**",
 
-                    // (development mode) webjars
-                    "/webjars/**",
-
-                    // (development mode) H2 debugging console
-                    "/h2-console/**"
             );
         }
     }

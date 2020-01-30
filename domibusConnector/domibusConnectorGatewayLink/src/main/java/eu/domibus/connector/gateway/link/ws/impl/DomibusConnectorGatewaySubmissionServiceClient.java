@@ -43,7 +43,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setTransportId(message.getConnectorMessageId());
+        state.setConnectorTransportId(message.getConnectorMessageId());
 
 
 		LOGGER.debug("#submitToGateway: calling webservice to send request");
