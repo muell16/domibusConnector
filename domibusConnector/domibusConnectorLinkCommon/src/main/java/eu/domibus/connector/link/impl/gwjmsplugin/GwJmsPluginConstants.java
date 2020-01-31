@@ -52,9 +52,9 @@ public class GwJmsPluginConstants {
     private static final String PAYLOAD_MIME_CONTENT_ID_SUFFIX = "_mimeContentId";
     public static final String PAYLOAD_MIME_CONTENT_ID_FORMAT = PAYLOAD_NAME_FORMAT + PAYLOAD_MIME_CONTENT_ID_SUFFIX;
     private static final String PAYLOAD_MIME_DESCRIPTION_SUFFIX = "_description";
-    public static final String PAYLOAD_DESCRIPTION_ID_FORMAT = PAYLOAD_NAME_FORMAT + PAYLOAD_MIME_CONTENT_ID_SUFFIX;
+    public static final String PAYLOAD_DESCRIPTION_ID_FORMAT = PAYLOAD_NAME_FORMAT + PAYLOAD_MIME_DESCRIPTION_SUFFIX;
 
-    public static final String PAYLOAD_FILENAME = "FileName";
+//    public static final String PAYLOAD_FILENAME = "FileName";
 
     public static final Set<String> EVIDENCE_TYPE_NAMES = (Arrays.stream(DomibusConnectorConfirmationType.values()).map(t -> t.value()).collect(Collectors.toSet()));
 

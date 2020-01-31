@@ -39,6 +39,10 @@ public final class DomibusConnectorMessageContentBuilder {
         return content;
     }
 
+    public boolean canBuild() {
+        return xmlContent != null && document != null;
+    }
+
     public DomibusConnectorMessageContentBuilder copyPropertiesForm(DomibusConnectorMessageContent content) {
         this.document = CopyHelper.copyDocument(content.getDocument());
         this.xmlContent = Arrays.copyOf(content.getXmlContent(), content.getXmlContent().length);

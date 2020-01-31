@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ import java.util.stream.Stream;
 
 import static eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginConstants.*;
 
-@Component
+
 public class ReveiveFromGwJmsPlugin implements MessageListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ReveiveFromGwJmsPlugin.class);
@@ -172,8 +173,12 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         DomibusConnectorMessageContentBuilder contentBuilder = DomibusConnectorMessageContentBuilder.createBuilder();
 
         int payloadNumber = message.getIntProperty(TOTAL_NUMBER_OF_PAYLOADS);
-        for (int i = 0; i <payloadNumber; i++) {
+        for (int i = 1; i <= payloadNumber; i++) {
             handleRcvPayload(message, messageBuilder, contentBuilder, i);
+        }
+        if (contentBuilder.canBuild()) {
+            LOGGER.debug("Message has content - it is a business message!");
+            messageBuilder.setMessageContent(contentBuilder.build());
         }
 
 
@@ -190,11 +195,11 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
 
 
     private void handleRcvPayload(MapMessage message, DomibusConnectorMessageBuilder messageBuilder, DomibusConnectorMessageContentBuilder contentBuilder, int counter) throws JMSException {
-        final String payContID = String.valueOf(MessageFormat.format(PAYLOAD_MIME_CONTENT_ID_FORMAT, counter));
+        final String payContID = message.getStringProperty(String.valueOf(MessageFormat.format(PAYLOAD_MIME_CONTENT_ID_FORMAT, counter)));
 
-        final String payMimeTypeProp = String.valueOf(MessageFormat.format(PAYLOAD_MIME_TYPE_FORMAT, counter));
-        final String payFileNameProp = String.valueOf(MessageFormat.format(PAYLOAD_FILE_NAME_FORMAT, counter));
-        final String payDescription = String.valueOf(MessageFormat.format(PAYLOAD_DESCRIPTION_ID_FORMAT, counter));
+        final String payMimeTypeProp = message.getStringProperty(String.valueOf(MessageFormat.format(PAYLOAD_MIME_TYPE_FORMAT, counter)));
+        final String payFileNameProp = message.getStringProperty(String.valueOf(MessageFormat.format(PAYLOAD_FILE_NAME_FORMAT, counter)));
+        final String payDescription = message.getStringProperty(String.valueOf(MessageFormat.format(PAYLOAD_DESCRIPTION_ID_FORMAT, counter)));
 
         LOGGER.debug("Handling payload [{}]\n" +
                 "\tpayload_{}_description={}\n" +
@@ -209,11 +214,13 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
             docBuilder
                     .setName(payDescription)
                     .setContent(createDataReferencce(message, counter));
+            contentBuilder.setDocument(docBuilder.build());
         }
 
         if (MESSAGE_CONTENT_DESCRIPTION_NAME.equals(payDescription)) {
             LOGGER.debug("Adding payload [{}] as business XML", counter);
-            contentBuilder.setXmlContent(getBytes(message, counter));
+            byte[] content = getBytes(message, counter);
+            contentBuilder.setXmlContent(content);
         }
 
 
@@ -242,16 +249,16 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
 
     private byte[] getBytes(MapMessage msg, int counter) throws JMSException {
         if (configurationProperties.isPutAttachmentInQueue()) {
-            final String payFileNameProp = String.valueOf(MessageFormat.format(PAYLOAD_FILE_NAME_FORMAT, counter));
+            final String propPayload = String.valueOf(MessageFormat.format(PAYLOAD_NAME_FORMAT, counter));
+            return msg.getBytes(propPayload);
+        } else {
+            final String payFileNameProp = msg.getStringProperty(String.valueOf(MessageFormat.format(PAYLOAD_FILE_NAME_FORMAT, counter)));
             Path resolve = configurationProperties.getAttachmentStorageLocation().resolve(payFileNameProp);
             try (FileInputStream fis = new FileInputStream(resolve.toFile())){
                 return StreamUtils.copyToByteArray(fis);
             } catch (IOException ioe) {
                 throw new RuntimeException("Error while reading payload file!", ioe);
             }
-        } else {
-            final String propPayload = String.valueOf(MessageFormat.format(PAYLOAD_NAME_FORMAT, counter));
-            return msg.getBytes(propPayload);
         }
     }
 
@@ -272,7 +279,6 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
             Path resolve = configurationProperties.getAttachmentStorageLocation().resolve(msg.getStringProperty(payFileNameProp));
             domibusConnectorBigDataReference =
                     new GatewayBackedDomibusConnectorBigDataReference(resolve, description, mimeType);
-
         }
         return domibusConnectorBigDataReference;
     }
