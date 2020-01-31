@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.controller.service.TransportStatusService.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import eu.ecodex.utils.spring.converter.ConverterAutoConfiguration;
 import eu.ecodex.utils.spring.converter.DurationConverter;
 import eu.ecodex.utils.spring.converter.PathConverter;
@@ -54,7 +55,7 @@ import static org.mockito.ArgumentMatchers.refEq;
         properties = {
 
 })
-@ActiveProfiles(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
+@ActiveProfiles({GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE, "test"})
 class ReveiveFromGwJmsPluginTest {
 
     public static final String ATTACHMENT_LOCATION = "./target/testattachments";
@@ -89,6 +90,7 @@ class ReveiveFromGwJmsPluginTest {
 
     @Test
     void onMessageReceive() throws JMSException, IOException {
+        config.setPutAttachmentInQueue(false);
         Message msg = new TestJmsMessage();
         msg.setJMSCorrelationID("jms1");
         msg.setStringProperty("messageType", "incomingMessage");
@@ -111,15 +113,15 @@ class ReveiveFromGwJmsPluginTest {
         msg.setIntProperty("totalNumberOfPayloads", 2);
 
         msg.setStringProperty("payload_1_description", "messageContent");
-        msg.setStringProperty("payload_1_MimeContentId", "12312-das123");
-        msg.setStringProperty("payload_1_MimeType", "text/xml");
-        msg.setStringProperty("payload_1_FileName", "msg1/file1");
+        msg.setStringProperty("payload_1_mimeContentId", "12312-das123");
+        msg.setStringProperty("payload_1_mimeType", "text/xml");
+        msg.setStringProperty("payload_1_fileName", "msg1/file1");
 
 
         msg.setStringProperty("payload_2_description", GwJmsPluginConstants.ASIC_S_DESCRIPTION_NAME);
-        msg.setStringProperty("payload_2_MimeContentId", "12312-abc");
-        msg.setStringProperty("payload_2_MimeType", ASIC_S_MIMETYPE);
-        msg.setStringProperty("payload_2_FileName", "msg1/file2");
+        msg.setStringProperty("payload_2_mimeContentId", "12312-abc");
+        msg.setStringProperty("payload_2_mimeType", ASIC_S_MIMETYPE);
+        msg.setStringProperty("payload_2_fileName", "msg1/file2");
 
         Path msg1 = config.getAttachmentStorageLocation().resolve("msg1");
         Files.createDirectories(msg1);
@@ -139,6 +141,57 @@ class ReveiveFromGwJmsPluginTest {
         Mockito.verify(submitToConnector, Mockito.times(1))
                 .submitToConnector(Mockito.any(DomibusConnectorMessage.class));
     }
+
+    @Test
+    void onMessageReceive_evidenceMessage() throws JMSException, IOException {
+        config.setPutAttachmentInQueue(false);
+        Message msg = new TestJmsMessage();
+        msg.setJMSCorrelationID("jms1");
+        msg.setStringProperty("messageType", "incomingMessage");
+        msg.setStringProperty("messageId", "EBMS765");
+        msg.setStringProperty("action", "action1");
+        msg.setStringProperty("conversationId", "conversation1");
+        msg.setStringProperty("fromPartyId", "part1");
+        msg.setStringProperty("fromPartyIdType", "urn:oasis:names:tc:ebcore:partyid-type:unregistered");
+        msg.setStringProperty("fromRole", "GW");
+        msg.setStringProperty("toPartyId", "part1");
+        msg.setStringProperty("toPartyIdType", "urn:oasis:names:tc:ebcore:partyid-type:unregistered");
+        msg.setStringProperty("toRole", "GW");
+        msg.setStringProperty("originalSender", "sender");
+        msg.setStringProperty("finalRecipient", "finalRecipient");
+        msg.setStringProperty("service", "service1");
+        msg.setStringProperty("serviceType", "urn:e-codex:services:");
+        msg.setStringProperty("protocol", "AS4");
+        msg.setStringProperty("refToMessageId", "id2341");
+        msg.setStringProperty("agreementRef", "abc");
+        msg.setIntProperty("totalNumberOfPayloads", 1);
+
+        msg.setStringProperty("payload_1_description", DomibusConnectorConfirmationType.DELIVERY.value());
+        msg.setStringProperty("payload_1_mimeContentId", "12312-das123");
+        msg.setStringProperty("payload_1_mimeType", "text/xml");
+        msg.setStringProperty("payload_1_fileName", "msg1/file1");
+
+
+        Path msg1 = config.getAttachmentStorageLocation().resolve("msg1");
+        Files.createDirectories(msg1);
+
+        Path file1 = msg1.resolve("file1");
+        try (FileOutputStream fos = new FileOutputStream(file1.toFile()); InputStream is = new ClassPathResource("/examples/Form_A.xml").getInputStream()) {
+            StreamUtils.copy(is, fos);
+        }
+
+//        Path file2 = msg1.resolve("file2");
+//        try (FileOutputStream fos = new FileOutputStream(file2.toFile()); InputStream is = new ClassPathResource("/examples/asic-s.asics").getInputStream()) {
+//            StreamUtils.copy(is, fos);
+//        }
+
+        reveiveFromGwJmsPlugin.onMessage(msg);
+
+        Mockito.verify(submitToConnector, Mockito.times(1))
+                .submitToConnector(Mockito.any(DomibusConnectorMessage.class));
+    }
+
+
 
 
     @Test

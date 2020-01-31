@@ -88,4 +88,9 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         //TODO: trigger content deletion, failure handling, ...
     }
 
+    @Override
+    public void updateTransportStatus(DomibusConnectorTransportState transportState) {
+        //TODO: update transport state!
+    }
+
 }

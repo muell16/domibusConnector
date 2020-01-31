@@ -24,14 +24,16 @@ public class GwJmsPluginConfiguration {
     @Autowired
     GwJmsPluginConfigurationProperties configurationProperties;
 
-    @Autowired
-    ReveiveFromGwJmsPlugin reveiveFromGatewayJmsPlugin;
+    @Bean
+    ReveiveFromGwJmsPlugin reveiveFromGatewayJmsPlugin() {
+        return new ReveiveFromGwJmsPlugin();
+    }
 
     @Bean
     DefaultMessageListenerContainer receiveFromGwJmsPluginMessageListener() {
         SimpleJmsListenerEndpoint endpoint =
                 new SimpleJmsListenerEndpoint();
-        endpoint.setMessageListener(reveiveFromGatewayJmsPlugin);
+        endpoint.setMessageListener(reveiveFromGatewayJmsPlugin());
         endpoint.setDestination(configurationProperties.getToDomibusGateway());
 
         return jmsListenerContainerFactory
