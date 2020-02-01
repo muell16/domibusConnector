@@ -82,7 +82,13 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerLIB</artifactId>
+            <version>4.2.0-alpha3-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--        <dependency>-->
 <!--            <groupId>org.junit.jupiter</groupId>-->
 <!--            <artifactId>junit-jupiter-engine</artifactId>-->
 <!--            <scope>test</scope>-->

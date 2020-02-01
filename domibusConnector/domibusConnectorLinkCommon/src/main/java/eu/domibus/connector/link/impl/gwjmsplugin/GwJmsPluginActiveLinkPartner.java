@@ -13,17 +13,13 @@ import org.springframework.stereotype.Service;
 @Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 public class GwJmsPluginActiveLinkPartner implements ActiveLinkPartner {
 
-    @Autowired
-    ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    GwJmsPlugin activeLink;
-
+    private SubmitToGwJmsPlugin submitToGwJmsPlugin;
     @Autowired
-    SubmitToGwJmsPlugin submitToGwJmsPlugin;
+    private GwJmsPluginActiveLink activeLink;
 
     private DomibusConnectorLinkPartner linkPartner;
-
 
     @Override
     public ActiveLink getActiveLink() {

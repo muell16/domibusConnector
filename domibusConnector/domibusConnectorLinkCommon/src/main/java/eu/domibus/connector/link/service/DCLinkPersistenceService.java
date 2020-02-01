@@ -103,7 +103,9 @@ public class DCLinkPersistenceService {
 
         List<PDomibusConnectorLinkPartner> all = linkPartnerDao.findAll(Example.of(gatewayExample));
         if (all.size() > 1) {
-            throw new RuntimeException("Only one active gateway configuration at once is allowed");
+            LOGGER.warn("Only one active gateway configuration at once is allowed - new link will be inactive!");
+            dbLinkPartner.setEnabled(false);
+            linkPartnerDao.save(dbLinkPartner);
         }
 
         LOGGER.debug("Successfully saved [{}] to database", dbLinkPartner);
