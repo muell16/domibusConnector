@@ -3,10 +3,13 @@ package eu.domibus.connector.lib.spring.configuration;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckResourceIsReadable;
 import eu.domibus.connector.lib.spring.configuration.validation.CheckStoreIsLoadable;
+import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
 import java.io.InputStream;
+
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nullable;
@@ -27,6 +30,7 @@ public class StoreConfigurationProperties {
     /**
      * Path to the Key/Truststore
      */
+    @ConfigurationLabel("Path to key or truststore")
     @CheckResourceIsReadable
     private Resource path;
 
@@ -34,10 +38,15 @@ public class StoreConfigurationProperties {
      * Password to open the Store
      */
     @NotNull
+    @ConfigurationLabel("Password of the key or truststore")
     private String password;
 
+    @ConfigurationLabel("JavaKeystoreType - default JKS")
+    private String type = "JKS";
+
     @SuppressFBWarnings("NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
-    public StoreConfigurationProperties() {}
+    public StoreConfigurationProperties() {
+    }
 
     public StoreConfigurationProperties(Resource path, String password) {
         this.path = path;
@@ -60,9 +69,28 @@ public class StoreConfigurationProperties {
         this.password = password;
     }
 
-     @Nullable
-     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
-     public String getPathUrlAsString() {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isWriteable() {
+        if (this.getPath().isFile()) {
+            try {
+                return this.getPath().getFile().canWrite();
+            } catch (IOException e) {
+                LOGGER.error("#isWriteable: cannot open path", this.getPath());
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
+    public String getPathUrlAsString() {
         try {
             if (path == null) {
                 LOGGER.debug("#getPathUrlAsString: resolved to null");
@@ -128,7 +156,7 @@ public class StoreConfigurationProperties {
         }
         char[] pwdArray = password.toCharArray();
         try (InputStream inputStream = getPath().getInputStream()) {
-            KeyStore keyStore = KeyStore.getInstance("JKS");
+            KeyStore keyStore = KeyStore.getInstance(this.type);
             keyStore.load(inputStream, pwdArray);
             return keyStore;
         } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException e) {
@@ -158,7 +186,7 @@ public class StoreConfigurationProperties {
     }
 
 
-    public static class ValidationException extends  RuntimeException {
+    public static class ValidationException extends RuntimeException {
         public ValidationException() {
         }
 

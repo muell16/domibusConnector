@@ -105,6 +105,7 @@
             <column name="ENABLED" type="java.sql.Types.BOOLEAN" />
             <column name="LINK_CONFIG_ID" type="${id.type}" />
             <column name="LINK_TYPE" type="java.sql.Types.VARCHAR(20)" />
+            <column name="LINK_MODE" type="java.sql.Types.VARCHAR(20)" />
         </createTable>
 
         <addUniqueConstraint tableName="DC_LINK_PARTNER" columnNames="NAME" constraintName="UNQ_LINK_INFO_NAME" />

@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.persistence.model.PDomibusConnectorDomain;
 
@@ -32,6 +33,9 @@ public class PDomibusConnectorLinkPartner {
 
     @Column(name = "LINK_TYPE")
     private LinkType linkType;
+
+    @Column(name = "LINK_MODE")
+    private LinkMode linkMode;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "DC_LINK_PARTNER_PROPERTY", joinColumns=@JoinColumn(name="DC_LINK_PARTNER_ID", referencedColumnName = "ID"))
@@ -98,5 +102,13 @@ public class PDomibusConnectorLinkPartner {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public LinkMode getLinkMode() {
+        return linkMode;
+    }
+
+    public void setLinkMode(LinkMode linkMode) {
+        this.linkMode = linkMode;
     }
 }

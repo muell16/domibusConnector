@@ -25,12 +25,15 @@ public class LinkPluginUtils {
             builder.parent(applicationContext);
             builder.sources(sources.toArray(new Class[]{}));
             Properties p = linkConfiguration.getProperties();
-            p.putAll(linkPartner.getProperties()); //put linkPartner properties into linkConfig properties
+            if (linkPartner != null) {
+                p.putAll(linkPartner.getProperties()); //put linkPartner properties into linkConfig properties
+            }
             builder.properties(p);
             builder.profiles(profiles.toArray(new String[]{}));
             builder.bannerMode(Banner.Mode.OFF);
             builder.web(WebApplicationType.NONE);
             ConfigurableApplicationContext linkModuleApplicationContext = builder.run();
+            linkModuleApplicationContext.getBeanFactory().registerSingleton("linkConfiguration", linkConfiguration);
             return linkModuleApplicationContext;
         } catch (Exception e) {
             LOGGER.error("Exception ", e);

@@ -13,7 +13,7 @@ public interface ActiveLink {
     /**
      * concrete bean to submit a message to
      * the specific link partner
-     * @return
+     * @return the active link partner or null if none found!
      */
     ActiveLinkPartner getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 

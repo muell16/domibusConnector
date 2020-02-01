@@ -2,11 +2,11 @@ package eu.domibus.connector.domain.enums;
 
 import java.util.stream.Stream;
 
-public enum LinkType {
+public enum LinkMode {
+    PUSH("push"),
+    PULL("pull");
 
-    GATEWAY("GATEWAY"), BACKEND("BACKEND");
-
-    private LinkType(String dbName) {
+    private LinkMode(String dbName) {
         this.dbName = dbName;
     }
 
@@ -21,5 +21,4 @@ public enum LinkType {
                 .filter(l -> l.dbName.equalsIgnoreCase(dbName))
                 .findFirst().get();
     }
-
 }

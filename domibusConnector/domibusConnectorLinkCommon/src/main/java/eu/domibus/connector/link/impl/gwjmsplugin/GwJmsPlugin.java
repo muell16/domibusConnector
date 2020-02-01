@@ -10,14 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class GwJmsPlugin implements LinkPlugin, ActiveLink {
+public class GwJmsPlugin implements LinkPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(GwJmsPlugin.class);
 
@@ -26,9 +24,11 @@ public class GwJmsPlugin implements LinkPlugin, ActiveLink {
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
-    private ActiveLinkPartner activeLinkPartner;
-    private DomibusConnectorLinkConfiguration linkConfiguration;
-    private DomibusConnectorLinkPartner linkPartner;
+    private Map<DomibusConnectorLinkConfiguration, ActiveLink> linkConfigToActiveLink = new HashMap<>();
+
+//    private ActiveLinkPartner activeLinkPartner;
+//    private DomibusConnectorLinkConfiguration linkConfiguration;
+//    private DomibusConnectorLinkPartner linkPartner;
 
     /**
      *   Tell the world if we are responsible for the implementation of
@@ -53,9 +53,13 @@ public class GwJmsPlugin implements LinkPlugin, ActiveLink {
 
     @Override
     public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkInfo) {
-//        return LinkPluginUtils.createSpringChildContextBasedLinkPlugin(linkInfo, applicationContext, getSources(), getProfiles());
-        this.linkConfiguration = linkInfo;
-        return this;
+        GwJmsPluginActiveLink activeLink = new GwJmsPluginActiveLink(
+                this,
+                applicationContext,
+                linkInfo
+        );
+        linkConfigToActiveLink.put(linkInfo, activeLink);
+        return activeLink;
     }
 
     @Override
@@ -72,47 +76,6 @@ public class GwJmsPlugin implements LinkPlugin, ActiveLink {
     @Override
     public List<Class> getPartnerConfigurationProperties() {
         return new ArrayList<>(); //partner itself is not configureable...
-    }
-
-
-    @Override
-    public ActiveLinkPartner getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        if (this.activeLinkPartner == null) {
-            String error = String.format("No Link partner with name %s found", linkPartnerName);
-            throw new LinkPluginException(error);
-        }
-        return this.activeLinkPartner;
-    }
-
-    @Override
-    public synchronized ActiveLinkPartner activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
-        this.linkPartner = linkPartner;
-        ConfigurableApplicationContext springChildContext = LinkPluginUtils.createSpringChildContext(linkPartner.getLinkConfiguration(), linkPartner, applicationContext, getSources(), getProfiles());
-        GwJmsPluginActiveLinkPartner activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
-        activeLinkPartner.setLinkPartner(linkPartner);
-        this.activeLinkPartner = activeLinkPartner;
-        LOGGER.info("Activated LinkPartner [{}]", linkPartner);
-        return activeLinkPartner;
-    }
-
-    @Override
-    public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
-        this.activeLinkPartner.shutdown();
-    }
-
-    @Override
-    public void shutdownLinkConfig() {
-        this.activeLinkPartner.shutdown();
-    }
-
-    @Override
-    public LinkPlugin getPluginManager() {
-        return this;
-    }
-
-    @Override
-    public DomibusConnectorLinkConfiguration getConfiguration() {
-        return this.linkConfiguration;
     }
 
     @Override

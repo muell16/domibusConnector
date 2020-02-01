@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.model;
 
+import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import org.springframework.core.style.ToStringCreator;
 
@@ -13,6 +14,8 @@ public class DomibusConnectorLinkPartner {
     private String description;
 
     private boolean enabled;
+
+    private LinkMode linkMode;
 
     private LinkType linkType;
 
