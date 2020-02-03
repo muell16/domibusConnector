@@ -7,10 +7,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+
 @Component
 @Profile(DCWsPluginConfiguration.DC_WS_GATEWAY_PLUGIN_PROFILE_NAME)
 @ConfigurationProperties(prefix = DCWsPluginConfiguration.DC_WS_GATEWAY_PLUGIN_PROFILE_NAME)
 @Validated
+@Valid
 public class DCWsGatewayLinkConfigurationProperties extends DCWsPluginConfigurationProperties {
 
     @ConfigurationLabel("Where should the cxf endpoint for the gateawy plugin be exposed")
@@ -31,4 +34,8 @@ public class DCWsGatewayLinkConfigurationProperties extends DCWsPluginConfigurat
     }
 
 
+    @Override
+    protected String getPrefix() {
+        return DCWsPluginConfiguration.DC_WS_GATEWAY_PLUGIN_PROFILE_NAME;
+    }
 }

@@ -12,6 +12,8 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 import java.util.Collection;
@@ -28,12 +31,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, })
 public class LinkTestContext {
+
+    private static final Logger LOGGER = LogManager.getLogger(LinkTestContext.class);
 
     @Bean
     @ConditionalOnMissingBean
@@ -62,12 +68,15 @@ public class LinkTestContext {
 //    }
 
     @Bean
-    @ConditionalOnMissingBean
+//    @ConditionalOnMissingBean
+    @Primary
     public SubmitToConnector submitToConnector() {
-        return new SubmitToConnector() {
-            @Override
-            public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
-                toConnectorSubmittedMessages().add(message);
+        return (message, linkPartner) -> {
+            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages());
+            try {
+                toConnectorSubmittedMessages().put(message);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         };
     }
@@ -77,7 +86,7 @@ public class LinkTestContext {
     @Bean
     @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
     public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages() {
-        return new ArrayBlockingQueue<DomibusConnectorMessage>(90);
+        return new LinkedBlockingDeque<>(90);
     }
 
 
