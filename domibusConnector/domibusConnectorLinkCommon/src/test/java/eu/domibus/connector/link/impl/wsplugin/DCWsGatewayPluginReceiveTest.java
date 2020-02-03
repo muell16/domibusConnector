@@ -32,9 +32,11 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 
 import static eu.domibus.connector.link.LinkTestContext.SUBMIT_TO_CONNECTOR_QUEUE;
+import static eu.domibus.connector.link.LinkTestContext.TO_CONNECTOR_SUBMITTED_MESSAGES;
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,9 +65,9 @@ public class DCWsGatewayPluginReceiveTest {
 
     private static final Logger LOGGER = LogManager.getLogger(DCWsGatewayPluginReceiveTest.class);
 
-    @Autowired
-    @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+//    @Autowired
+//    @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+//    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
 
     @MockBean
     SubmitToConnector submitToConnector;
@@ -86,7 +88,7 @@ public class DCWsGatewayPluginReceiveTest {
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        toConnectorSubmittedMessages.clear();
+        TO_CONNECTOR_SUBMITTED_MESSAGES.clear();
         LOGGER.info("Server port is [{}]", serverPort);
     }
 
@@ -120,7 +122,9 @@ public class DCWsGatewayPluginReceiveTest {
             assertThat(domibsConnectorAcknowledgementType.isResult()).isTrue();
 
 
-            DomibusConnectorMessage msg = toConnectorSubmittedMessages.take();
+//            assertThat((toConnectorSubmittedMessages)).hasSize(1);
+
+            DomibusConnectorMessage msg = TO_CONNECTOR_SUBMITTED_MESSAGES.poll(10, TimeUnit.SECONDS);
             assertThat(msg).isNotNull();
 
 

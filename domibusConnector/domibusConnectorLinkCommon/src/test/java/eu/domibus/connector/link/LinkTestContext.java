@@ -15,6 +15,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -68,25 +69,38 @@ public class LinkTestContext {
 //    }
 
     @Bean
-    @ConditionalOnMissingBean
+    @Primary
     public SubmitToConnector submitToConnector() {
-        return (message, linkPartner) -> {
-            BlockingQueue<DomibusConnectorMessage> q = toConnectorSubmittedMessages();
-            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, q);
-            try {
-                q.put(message);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        };
+        return new SubmitToConnectorQueuImpl();
     }
+
 
     public static final String SUBMIT_TO_CONNECTOR_QUEUE = "submitToConnector";
 
-    @Bean
-    @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
-    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages() {
-        return new LinkedBlockingDeque<>(90);
+//    @Bean
+//    @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+//    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages() {
+//        return new LinkedBlockingDeque<>(90);
+//    }
+
+    public static final BlockingQueue<DomibusConnectorMessage> TO_CONNECTOR_SUBMITTED_MESSAGES = new LinkedBlockingDeque<>(90);
+
+    public static class SubmitToConnectorQueuImpl implements SubmitToConnector {
+
+//        @Autowired
+//        @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+//        public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages;
+
+        @Override
+        public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
+
+            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, TO_CONNECTOR_SUBMITTED_MESSAGES);
+            try {
+                TO_CONNECTOR_SUBMITTED_MESSAGES.put(message);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 
