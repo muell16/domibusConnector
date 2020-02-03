@@ -103,7 +103,7 @@ public class DCWsGatewayPluginReceiveTest {
 
     @Test
     public void testReceiveMessage() throws InterruptedException {
-        Assertions.assertTimeout(Duration.ofSeconds(30), () -> {
+        Assertions.assertTimeout(Duration.ofSeconds(15), () -> {
 
             Optional<DomibusConnectorLinkPartner> linkPartner = linkPersistenceService.getLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName("cn=gw"));
             linkManagerService.activateLinkPartner(linkPartner.get());
