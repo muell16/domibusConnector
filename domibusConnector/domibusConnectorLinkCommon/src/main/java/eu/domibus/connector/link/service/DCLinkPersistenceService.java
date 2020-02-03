@@ -9,6 +9,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -121,6 +122,8 @@ public class DCLinkPersistenceService {
         Optional<PDomibusConnectorLinkPartner> oneByLinkName = linkPartnerDao.findOneByLinkName(linkName);
         PDomibusConnectorLinkPartner dbLinkPartner = oneByLinkName.orElse(new PDomibusConnectorLinkPartner());
 
+        BeanUtils.copyProperties(linkPartner, dbLinkPartner);
+
         dbLinkPartner.setLinkType(linkPartner.getLinkType());
         dbLinkPartner.setDescription(linkPartner.getDescription());
         dbLinkPartner.setLinkName(linkName);
@@ -151,5 +154,10 @@ public class DCLinkPersistenceService {
         return map;
     }
 
+
+    public Optional<DomibusConnectorLinkConfiguration> getLinkConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName configName) {
+        Optional<PDomibusConnectorLinkConfiguration> oneByConfigName = linkConfigurationDao.getOneByConfigName(configName.getConfigName());
+        return Optional.ofNullable(this.mapToLinkConfiguration(oneByConfigName.orElse(null)));
+    }
 
 }

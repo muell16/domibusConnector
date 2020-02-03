@@ -6,34 +6,29 @@ import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
-import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
-import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
 
-import javax.activation.DataHandler;
-import javax.jms.*;
-
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static eu.domibus.connector.domain.enums.TransportState.ACCEPTED;
+import static eu.domibus.connector.domain.enums.TransportState.FAILED;
 import static eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginConstants.*;
 
 
@@ -49,6 +44,9 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
 
     @Autowired
     SubmitToConnector submitToConnector;
+
+    @Autowired
+    DomibusConnectorLinkPartner linkPartner;
 
     @Override
     public void onMessage(Message message) {
@@ -109,16 +107,16 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         String errorDetail = message.getStringProperty(ERROR_DETAIL_PROPERTY_NAME);
 
         TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
-        transportState.setConnectorTransportId(jmsCorrelationID);
+        transportState.setConnectorTransportId(new TransportStatusService.TransportId(jmsCorrelationID));
         transportState.setRemoteTransportId(messageId);
 
         if (errorDetail != null) {
             DomibusConnectorMessageError messageError = new DomibusConnectorMessageError("Error from Gateway", errorDetail, this.getClass().getName());
             transportState.setMessageErrorList(Stream.of(messageError).collect(Collectors.toList()));
-            transportState.setStatus(TransportStatusService.TransportState.FAILED);
+            transportState.setStatus(FAILED);
         }
         if (messageId != null) {
-            transportState.setStatus(TransportStatusService.TransportState.ACCEPTED);
+            transportState.setStatus(ACCEPTED);
         }
 
         transportStatusService.updateTransportStatus(transportState);
@@ -185,7 +183,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         DomibusConnectorMessage build = messageBuilder.build();
 
         try {
-            submitToConnector.submitToConnector(build);
+            submitToConnector.submitToConnector(build, linkPartner);
         } catch (DomibusConnectorSubmitToLinkException exception) {
             LOGGER.error("The message could not be processed by the connector!");
         }

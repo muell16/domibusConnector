@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 /**
@@ -9,6 +10,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
  */
 public interface SubmitToLink {
 
-    public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException;
+    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException;
 
 }

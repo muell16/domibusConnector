@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -23,94 +24,92 @@ import java.util.stream.Stream;
 //@Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 public class GwJmsPluginActiveLink implements ActiveLink {
 
-    private static final Logger LOGGER = LogManager.getLogger(GwJmsPlugin.class);
+    private static final Logger LOGGER = LogManager.getLogger(GwJmsPluginActiveLink.class);
 
-    public static final String LINK_IMPL_NAME = "gwjmsplugin";
+
     private final DomibusConnectorLinkConfiguration linkConfiguration;
     private final GwJmsPlugin pluginManager;
+    private final ConfigurableApplicationContext applicationContext;
 
+    private GwJmsPluginActiveLinkPartner activeLinkPartner;
+    private ConfigurableApplicationContext linkPartnerSpringContext;
 
-    ConfigurableApplicationContext applicationContext;
-
-    private Map<DomibusConnectorLinkPartner, ActiveLinkPartner> linkPartnerToActiveLinkPartner = new HashMap<>();
 
     public GwJmsPluginActiveLink(
-            GwJmsPlugin gwJmsPlugin,
-            ConfigurableApplicationContext applicationContext,
-            DomibusConnectorLinkConfiguration linkConfiguration) {
-        this.pluginManager = gwJmsPlugin;
-        this.applicationContext = applicationContext;
+            DomibusConnectorLinkConfiguration linkConfiguration,
+            GwJmsPlugin pluginManager,
+            ConfigurableApplicationContext applicationContext
+    ) {
         this.linkConfiguration = linkConfiguration;
+        this.pluginManager = pluginManager;
+        this.applicationContext = applicationContext;
     }
 
-//    private ActiveLinkPartner activeLinkPartner;
-//    private DomibusConnectorLinkConfiguration linkConfiguration;
-//    private DomibusConnectorLinkPartner linkPartner;
-
-    public List<Class> getSources() {
-        return Stream
-                .of(GwJmsPluginConfiguration.class)
-                .collect(Collectors.toList());
+    public Class[] getSources() {
+        return new Class[]{GwJmsPluginConfiguration.class};
     }
 
-    public List<String> getProfiles() {
-        return Stream
-                .of(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
-                .collect(Collectors.toList());
+    public String[] getProfiles() {
+        return new String[]{GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE};
     }
-
-
 
 
     @Override
     public ActiveLinkPartner getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        Optional<DomibusConnectorLinkPartner> linkPartner = getLinkPartnerByName(linkPartnerName);
-        if (linkPartner.isPresent()) {
-            return linkPartnerToActiveLinkPartner.get(linkPartner);
+        if (activeLinkPartner != null && activeLinkPartner.getLinkPartnerName().equals(linkPartnerName)) {
+            return activeLinkPartner;
         }
-        LOGGER.error("No Link partner with name [{}] found", linkPartnerName);
+//        LOGGER.error("No Link partner with name [{}] found", linkPartnerName);
         return null;
     }
 
-    private Optional<DomibusConnectorLinkPartner> getLinkPartnerByName(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        return linkPartnerToActiveLinkPartner.keySet().stream().filter(lp -> lp.getLinkPartnerName().getLinkName().equals(linkPartnerName)).findAny();
-    }
 
     @Override
     public synchronized ActiveLinkPartner activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
-        try (MDC.MDCCloseable mdc1 = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_CONFIG_NAME, linkConfiguration.getConfigName().getConfigName());
-                MDC.MDCCloseable mdc2 = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkPartnerName().getLinkName())) {
-            ActiveLinkPartner activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
-            if (activePartner != null) {
-                throw new LinkPluginException("Link is already active! Use shutdown first!");
-            }
-
-            ConfigurableApplicationContext springChildContext = LinkPluginUtils.createSpringChildContext(linkPartner.getLinkConfiguration(), linkPartner, applicationContext, getSources(), getProfiles());
-            GwJmsPluginActiveLinkPartner activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
-            activeLinkPartner.setLinkPartner(linkPartner);
-//        this.activeLinkPartner = activeLinkPartner;
-            LOGGER.info("Activated LinkPartner [{}] to [{}]", linkPartner, activeLinkPartner);
-            this.linkPartnerToActiveLinkPartner.put(linkPartner, activePartner);
-            return activeLinkPartner;
+        if (this.activeLinkPartner != null) {
+            throw new LinkPluginException("A link partner is already active for this configuration! This link config only supports ONE active link partner at once!");
         }
+        ActiveLinkPartner activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
+        if (activePartner != null) {
+            throw new LinkPluginException("Link is already active! Use shutdown first!");
+        }
+
+
+        ConfigurableApplicationContext springChildContext = LinkPluginUtils
+                .getChildContextBuilder(applicationContext)
+                .withDomibusConnectorLinkConfiguration(linkConfiguration)
+                .withDomibusConnectorLinkPartner(linkPartner)
+                .addSingelton("gwJmsActiveLink", this)
+                .withProfiles(getProfiles())
+                .withSources(getSources())
+                .run();
+        this.linkPartnerSpringContext = springChildContext;
+
+        GwJmsPluginActiveLinkPartner activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
+
+        LOGGER.info("Activated LinkPartner [{}] to [{}]", linkPartner, activeLinkPartner);
+        this.activeLinkPartner = activeLinkPartner;
+        return activeLinkPartner;
+
 
     }
 
     @Override
     public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
-        ActiveLinkPartner activeLinkPartner = getActiveLinkPartner(linkPartner);
-        Optional<DomibusConnectorLinkPartner> linkPartnerByName = getLinkPartnerByName(linkPartner);
-        if (activeLinkPartner != null) {
-            activeLinkPartner.shutdown();
+        if (this.activeLinkPartner.getLinkPartnerName().equals(linkPartner)) {
+            linkPartnerSpringContext.close();
         }
-        if (linkPartnerByName.isPresent()) {
-            linkPartnerToActiveLinkPartner.remove(linkPartner);
-        }
+        this.activeLinkPartner = null;
+        this.linkPartnerSpringContext = null;
     }
 
     @Override
-    public void shutdownLinkConfig() {
-        this.linkPartnerToActiveLinkPartner.keySet().stream().forEach(lp -> this.shutdownLinkPartner(lp.getLinkPartnerName()));
+    public void shutdown() {
+        if (this.activeLinkPartner != null) {
+            this.shutdownLinkPartner(this.activeLinkPartner.getLinkPartnerName());
+        } else {
+            LOGGER.warn("Cannot shutdown link, because link is not active!");
+        }
     }
 
     @Override

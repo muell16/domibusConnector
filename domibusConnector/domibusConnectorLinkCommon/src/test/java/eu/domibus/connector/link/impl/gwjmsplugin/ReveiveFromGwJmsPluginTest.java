@@ -2,60 +2,42 @@ package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStatusService;
-import eu.domibus.connector.controller.service.TransportStatusService.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
-import eu.ecodex.utils.spring.converter.ConverterAutoConfiguration;
-import eu.ecodex.utils.spring.converter.DurationConverter;
-import eu.ecodex.utils.spring.converter.PathConverter;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.hamcrest.HamcrestArgumentMatcher;
-import org.skyscreamer.jsonassert.ValueMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
 
+import static eu.domibus.connector.domain.enums.TransportState.ACCEPTED;
+import static eu.domibus.connector.domain.enums.TransportState.FAILED;
 import static eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginConstants.ASIC_S_MIMETYPE;
-import static org.hamcrest.Matchers.any;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
+import static eu.domibus.connector.link.impl.wsplugin.DCWsGatewayPluginTestContext.getWsGatewayLinkConfig;
 import static org.mockito.ArgumentMatchers.refEq;
 
-@SpringBootTest(classes = {ReveiveFromGwJmsPlugin.class, GwJmsPluginConfigurationProperties.class},
-        properties = {
+@SpringBootTest(classes = {ReveiveFromGwJmsPlugin.class, GwJmsPluginConfigurationProperties.class}
 
-})
-@ActiveProfiles({GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE, "test"})
+)
+@ActiveProfiles({GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE, "test", "jms-test"})
 class ReveiveFromGwJmsPluginTest {
 
     public static final String ATTACHMENT_LOCATION = "./target/testattachments";
@@ -66,6 +48,12 @@ class ReveiveFromGwJmsPluginTest {
 
     @MockBean
     TransportStatusService transportStatusService;
+
+    @MockBean
+    DomibusConnectorLinkPartner linkPartner;
+
+    @MockBean
+    DomibusConnectorLinkConfiguration linkConfiguration;
 
     @Autowired
     ReveiveFromGwJmsPlugin reveiveFromGwJmsPlugin;
@@ -139,7 +127,7 @@ class ReveiveFromGwJmsPluginTest {
         reveiveFromGwJmsPlugin.onMessage(msg);
 
         Mockito.verify(submitToConnector, Mockito.times(1))
-                .submitToConnector(Mockito.any(DomibusConnectorMessage.class));
+                .submitToConnector(Mockito.any(DomibusConnectorMessage.class), Mockito.any(DomibusConnectorLinkPartner.class));
     }
 
     @Test
@@ -188,7 +176,7 @@ class ReveiveFromGwJmsPluginTest {
         reveiveFromGwJmsPlugin.onMessage(msg);
 
         Mockito.verify(submitToConnector, Mockito.times(1))
-                .submitToConnector(Mockito.any(DomibusConnectorMessage.class));
+                .submitToConnector(Mockito.any(DomibusConnectorMessage.class), Mockito.any(DomibusConnectorLinkPartner.class));
     }
 
 
@@ -206,8 +194,8 @@ class ReveiveFromGwJmsPluginTest {
         reveiveFromGwJmsPlugin.onMessage(msg);
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setStatus(TransportState.FAILED);
-        state.setConnectorTransportId("jms1");
+        state.setStatus(FAILED);
+        state.setConnectorTransportId(new TransportStatusService.TransportId("jms1"));
         state.setRemoteTransportId(null);
         state.setTransportImplId(null);
 
@@ -230,8 +218,8 @@ class ReveiveFromGwJmsPluginTest {
         reveiveFromGwJmsPlugin.onMessage(msg);
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setStatus(TransportState.ACCEPTED);
-        state.setConnectorTransportId("jms1");
+        state.setStatus(ACCEPTED);
+        state.setConnectorTransportId(new TransportStatusService.TransportId("jms1"));
         state.setRemoteTransportId("ebms1234");
         state.setTransportImplId(null);
 

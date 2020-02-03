@@ -4,12 +4,14 @@ import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import java.nio.file.Path;
 
 @Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 @ConfigurationProperties(prefix = GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
+@Validated
 public class GwJmsPluginConfigurationProperties {
 
     @ConfigurationLabel("Put Attachments into Queue")

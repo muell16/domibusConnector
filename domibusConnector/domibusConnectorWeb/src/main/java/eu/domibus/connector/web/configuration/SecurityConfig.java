@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .and()
                         .authorizeRequests()
                         .anyRequest()
-                        .hasAnyAuthority("ACTUATOR", "ADMIN");
+                        .hasAnyRole("ACTUATOR", "ADMIN");
             }
         }
     }

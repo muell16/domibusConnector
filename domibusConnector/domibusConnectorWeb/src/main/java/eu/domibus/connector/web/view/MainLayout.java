@@ -53,7 +53,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
             @Autowired Messages messagesView
     ) {
 
-        setPrimarySection(Section.DRAWER);
+        setPrimarySection(Section.NAVBAR);
 
         addToNavbar(new DrawerToggle(), new DomibusConnectorAdminHeader());
 
@@ -101,7 +101,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                 .addForComponent(LogoutView.class);
 
         menuTabs = tabViewRouterHelper.getTabs();
-        menuTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
+        menuTabs.setOrientation(Tabs.Orientation.VERTICAL);
 
         addToDrawer(menuTabs);
 

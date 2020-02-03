@@ -9,6 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
+
+    </build>
+
     <artifactId>domibusConnectorLinkCommon</artifactId>
     <dependencies>
         <dependency>
@@ -18,6 +30,10 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -87,6 +103,10 @@
             <artifactId>domibusConnectorControllerLIB</artifactId>
             <version>4.2.0-alpha3-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
         </dependency>
         <!--        <dependency>-->
 <!--            <groupId>org.junit.jupiter</groupId>-->

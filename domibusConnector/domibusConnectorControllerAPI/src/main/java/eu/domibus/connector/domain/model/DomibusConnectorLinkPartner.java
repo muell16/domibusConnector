@@ -69,6 +69,14 @@ public class DomibusConnectorLinkPartner {
         this.configurationSource = configurationSource;
     }
 
+    public LinkMode getLinkMode() {
+        return linkMode;
+    }
+
+    public void setLinkMode(LinkMode linkMode) {
+        this.linkMode = linkMode;
+    }
+
     public void setLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
         this.linkConfiguration = linkConfiguration;
     }

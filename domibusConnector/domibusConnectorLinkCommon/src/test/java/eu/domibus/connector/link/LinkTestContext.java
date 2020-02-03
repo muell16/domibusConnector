@@ -1,18 +1,34 @@
 package eu.domibus.connector.link;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.controller.service.SubmitToConnector;
+import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.LinkType;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPlugin;
+import eu.domibus.connector.link.impl.wsplugin.DCWsBackendPlugin;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkPartner;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Profile;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,23 +37,51 @@ public class LinkTestContext {
 
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorLinkPartnerDao domibusConnectorLinkInfoDao() {
+    @Profile("jms-test")
+    public DomibusConnectorLinkPartnerDao domibusConnectorJmsLinkInfoDao() {
         DomibusConnectorLinkPartnerDao dao = Mockito.mock(DomibusConnectorLinkPartnerDao.class);
         Mockito.when(dao.findAllByEnabledIsTrue())
-                .thenReturn(Stream.of(getLinkInfo()).collect(Collectors.toList()));
+                .thenReturn(Stream.of(getJmsLinkInfo()).collect(Collectors.toList()));
         return dao;
     }
+
 
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorLinkConfigurationDao domibusConnectorLinkConfigurationDao() {
-        DomibusConnectorLinkConfigurationDao dao = Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
-//        Mockito.when(dao.findAllByEnabledIsTrue())
-//                .thenReturn(Stream.of(getLinkInfo()).collect(Collectors.toList()));
-        return dao;
+    public TransportStatusService transportStatusService() {
+        TransportStatusService mock = Mockito.mock(TransportStatusService.class);
+
+        return mock;
     }
 
-    private PDomibusConnectorLinkPartner getLinkInfo() {
+//    @Bean
+//    @ConditionalOnMissingBean(value = DomibusConnectorLinkConfigurationDao.class, search = SearchStrategy.ALL)
+//    public DomibusConnectorLinkConfigurationDao domibusConnectorLinkConfigurationDao() {
+//        DomibusConnectorLinkConfigurationDao dao = Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
+//        return dao;
+//    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SubmitToConnector submitToConnector() {
+        return new SubmitToConnector() {
+            @Override
+            public void submitToConnector(DomibusConnectorMessage message, DomibusConnectorLinkPartner linkPartner) throws DomibusConnectorSubmitToLinkException {
+                toConnectorSubmittedMessages().add(message);
+            }
+        };
+    }
+
+    public static final String SUBMIT_TO_CONNECTOR_QUEUE = "submitToConnector";
+
+    @Bean
+    @Qualifier(SUBMIT_TO_CONNECTOR_QUEUE)
+    public BlockingQueue<DomibusConnectorMessage> toConnectorSubmittedMessages() {
+        return new ArrayBlockingQueue<DomibusConnectorMessage>(90);
+    }
+
+
+    private PDomibusConnectorLinkPartner getJmsLinkInfo() {
 
         PDomibusConnectorLinkPartner linkPartner = new PDomibusConnectorLinkPartner();
         String linkName = "firstLINK";
@@ -55,6 +99,8 @@ public class LinkTestContext {
         HashMap<String, String> props = new HashMap();
         props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
         props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
+        props.put("link.gwjmsplugin.toDomibusGateway", "q1");
+        props.put("link.gwjmsplugin.toConnector", "q2");
 
         props.put("link.gwjmsplugin.username", "username");
         props.put("link.gwjmsplugin.password", "password");
