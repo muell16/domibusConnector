@@ -5,8 +5,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
+
+import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 
 /**
  * Spring configuration class which reads
@@ -16,6 +19,7 @@ import javax.annotation.PostConstruct;
  * to create the configured links
  */
 @Configuration
+@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class DomibusConnectorLinkCreatorConfigurationService {
 
     private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkCreatorConfigurationService.class);
@@ -26,9 +30,18 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     @Autowired
     DCActiveLinkManagerService linkManager;
 
+
+    @Autowired
+    DCLinkPluginConfigurationProperties config;
+
     @PostConstruct
     public void init() {
-        DCLinkPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
+        if (config.isAutostart()) {
+            DCLinkPersistenceService.getAllEnabledLinks().stream().forEach(this::activateLink);
+        } else {
+            LOGGER.info("Link Autostart is disabled - no links are going to be started during connector start");
+        }
+
     }
 
     private void activateLink(DomibusConnectorLinkPartner linkInfo) {

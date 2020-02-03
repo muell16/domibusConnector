@@ -6,8 +6,10 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
+
 @Service
-@Profile("linkplugins")
+@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class DCPluginBasedBackendDeliveryService implements DomibusConnectorBackendDeliveryService {
 
     @Override

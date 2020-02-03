@@ -49,6 +49,12 @@
             <artifactId>h2</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.17.1</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
 

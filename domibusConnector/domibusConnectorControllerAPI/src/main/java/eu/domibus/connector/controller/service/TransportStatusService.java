@@ -1,12 +1,16 @@
 package eu.domibus.connector.controller.service;
 
 
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This service handles the technical transport state of a message
@@ -29,12 +33,59 @@ public interface TransportStatusService {
 
     public void updateTransportStatus(DomibusConnectorTransportState transportState);
 
+    /**
+     * Creates a new transport for the message
+     * @param message
+     * @return
+     */
+    public TransportId createTransportFor(DomibusConnectorMessage message);
+
+    /**
+     * gets the last not finished (PENDING state) transport for this
+     * message
+     * @param message
+     */
+    public TransportId createOrGetTransportFor(DomibusConnectorMessage message);
+
+    public static class TransportId {
+        private String transportId;
+
+        public TransportId(String transportId) {
+            if (StringUtils.isEmpty(transportId)) {
+                throw new IllegalArgumentException("TransportId is not allowed to be null or empty!");
+            }
+            this.transportId = transportId;
+        }
+
+        public String getTransportId() {
+            return transportId;
+        }
+
+        public void setTransportId(String transportId) {
+            this.transportId = transportId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TransportId that = (TransportId) o;
+            return Objects.equals(transportId, that.transportId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(transportId);
+        }
+    }
+
     public static class DomibusConnectorTransportState {
-        private String connectorTransportId; //may be the same as the connectorMessageId but must not...
+        private TransportId connectorTransportId; //may be the same as the connectorMessageId but must not...
         private String transportImplId; // the id of the transport attempt itself, can be null, eg. a jms id
         private String remoteTransportId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
         private TransportState status;
         private List<DomibusConnectorMessageError> messageErrorList = new ArrayList<>();
+        private String text;
 
         public TransportState getStatus() {
             return status;
@@ -44,11 +95,11 @@ public interface TransportStatusService {
             this.status = status;
         }
 
-        public String getConnectorTransportId() {
+        public TransportId getConnectorTransportId() {
             return connectorTransportId;
         }
 
-        public void setConnectorTransportId(String connectorTransportId) {
+        public void setConnectorTransportId(TransportId connectorTransportId) {
             this.connectorTransportId = connectorTransportId;
         }
 
@@ -85,12 +136,15 @@ public interface TransportStatusService {
                     .append("status", this.status)
                     .toString();
         }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
     }
 
-    //ACCEPTED, PENDING, FAILED
-
-    public static enum TransportState {
-        ACCEPTED, PENDING, FAILED;
-    }
 
 }

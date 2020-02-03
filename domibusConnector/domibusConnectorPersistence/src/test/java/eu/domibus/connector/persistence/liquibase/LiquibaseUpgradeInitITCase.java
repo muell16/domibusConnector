@@ -40,6 +40,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 
@@ -92,22 +93,24 @@ public class LiquibaseUpgradeInitITCase {
         Assumptions.assumeTrue(props.get("testdb.name") != null, "Test database must be available!");
         LOGGER.info("Running test with Properties: [{}]", props);
 
-        SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(LiquibaseUpgradeInitITCase.LiquibaseUpgradeTestConfiguration.class)
-                .profiles("test")
-                .properties(props);
+        Assertions.assertTimeout(Duration.ofSeconds(90), () -> {
+            SpringApplicationBuilder springAppBuilder = new SpringApplicationBuilder(LiquibaseUpgradeInitITCase.LiquibaseUpgradeTestConfiguration.class)
+                    .profiles("test")
+                    .properties(props);
 
-        ConfigurableApplicationContext ctx = springAppBuilder.run();
-        try {
-            DataSource ds = ctx.getBean(DataSource.class);
-            //TODO: test / verify DB
-            Connection connection = ds.getConnection();
-            Assertions.assertNotNull(connection);
-            connection.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            ctx.close();
-        }
+            ConfigurableApplicationContext ctx = springAppBuilder.run();
+            try {
+                DataSource ds = ctx.getBean(DataSource.class);
+                //TODO: test / verify DB
+                Connection connection = ds.getConnection();
+                Assertions.assertNotNull(connection);
+                connection.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                ctx.close();
+            }
+        });
     }
 
 }

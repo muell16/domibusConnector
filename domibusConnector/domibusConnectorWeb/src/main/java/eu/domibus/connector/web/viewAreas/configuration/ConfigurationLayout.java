@@ -8,6 +8,7 @@ import eu.domibus.connector.web.configuration.SecurityUtils;
 import eu.domibus.connector.web.enums.UserRole;
 import eu.domibus.connector.web.utils.TabViewRouterHelper;
 import eu.domibus.connector.web.view.MainLayout;
+import eu.domibus.connector.web.viewAreas.configuration.link.BackendLinkConfiguration;
 import eu.domibus.connector.web.viewAreas.configuration.link.GatewayLinkConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,10 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
 		tabViewRouterManager.createTab()
 				.withLabel("Gateway Configuration")
 				.addForComponent(GatewayLinkConfiguration.class);
+
+		tabViewRouterManager.createTab()
+				.withLabel("Backend Configuration")
+				.addForComponent(BackendLinkConfiguration.class);
 
 		tabViewRouterManager.createTab()
 				.withLabel("Evidences Configuration")

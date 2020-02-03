@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
+import liquibase.pro.packaged.A;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +45,16 @@ public class SubmitToGwJmsPlugin implements SubmitToLink {
     @Autowired
     private TransportStatusService transportStatusService;
 
+    @Autowired
+    private GwJmsPluginActiveLinkPartner linkPartner;
+
 
     @Override
-    public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException {
+    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+        if (linkPartner.getLinkPartnerName() != linkPartnerName) {
+            throw new RuntimeException("No LinkPartner with name " + linkPartnerName);
+        }
+
         final DomibusConnectorMessageDetails msgDetails = message.getMessageDetails();
 
         try {

@@ -22,10 +22,11 @@ import javax.jms.MapMessage;
 import java.time.Duration;
 import java.util.Properties;
 
+import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = LinkTestContext.class)
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "jms-test", LINK_PLUGIN_PROFILE_NAME})
 @Configuration
 @EnableJms
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -55,7 +56,7 @@ class DomibusConnectorActiveLinkTest {
     @Test
     @Order(10)
     void addLink() {
-        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+        Assertions.assertTimeout(Duration.ofSeconds(10), () -> {
             DomibusConnectorLinkPartner linkPartner = new DomibusConnectorLinkPartner();
             String linkName = "JMS-GW-PLUGIN";
 
@@ -66,8 +67,10 @@ class DomibusConnectorActiveLinkTest {
             linkPartner.setLinkType(LinkType.GATEWAY);
             Properties props = new Properties();
             props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
-            props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
+//            props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
 
+            props.put("link.gwjmsplugin.to-connector", "toconnector");
+            props.put("link.gwjmsplugin.to-domibus-gateway", "contogw");
             props.put("link.gwjmsplugin.username", "username");
             props.put("link.gwjmsplugin.password", "password");
             props.put("link.gwjmsplugin.in-queue", "contogw");
@@ -89,9 +92,10 @@ class DomibusConnectorActiveLinkTest {
 
             DomibusConnectorMessage sentMessage = DomainEntityCreator.createMessage();
             assertThat(link).isNotNull();
-            link.submitToLink(sentMessage);
+            link.submitToLink(sentMessage, linkPartner.getLinkPartnerName());
 
 
+            jmsTemplate.setReceiveTimeout(5);
             MapMessage contogw = (MapMessage) jmsTemplate.receive("contogw");
 
             LOGGER.debug("rcv message is: [{}]", contogw);

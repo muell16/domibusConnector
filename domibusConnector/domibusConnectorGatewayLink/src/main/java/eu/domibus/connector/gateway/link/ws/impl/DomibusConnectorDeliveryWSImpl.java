@@ -15,7 +15,7 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 
-@Service(DomibusConnectorDeliveryWSImpl.BEAN_NAME)
+
 public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDeliveryWebService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDeliveryWSImpl.class);

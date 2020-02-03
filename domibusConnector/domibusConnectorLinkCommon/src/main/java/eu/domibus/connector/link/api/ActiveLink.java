@@ -42,9 +42,17 @@ public interface ActiveLink {
      *  - by shutdown of all active link partners on this link configuration
      *  - closing all allocated resources, contexts, ...
      */
-    void shutdownLinkConfig();
+//    default void shutdown() {
+//        getPluginManager().shutdownConfiguration(getConfigurationName());
+//    }
+    void shutdown();
+
 
     LinkPlugin getPluginManager();
+
+    default DomibusConnectorLinkConfiguration.LinkConfigName getConfigurationName() {
+        return this.getConfiguration().getConfigName();
+    }
 
     DomibusConnectorLinkConfiguration getConfiguration();
 

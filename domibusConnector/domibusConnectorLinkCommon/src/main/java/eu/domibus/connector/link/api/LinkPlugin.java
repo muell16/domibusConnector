@@ -31,6 +31,9 @@ public interface LinkPlugin {
      */
     ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration);
 
+
+    void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName);
+
     /**
      *
      * @return a list of the supported Features of this plugin

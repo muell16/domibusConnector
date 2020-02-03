@@ -30,11 +30,16 @@ public class GwJmsPluginConfiguration {
     }
 
     @Bean
+    GwJmsPluginActiveLinkPartner gwJmsPluginActiveLinkPartner() {
+        return new GwJmsPluginActiveLinkPartner();
+    }
+
+    @Bean
     DefaultMessageListenerContainer receiveFromGwJmsPluginMessageListener() {
         SimpleJmsListenerEndpoint endpoint =
                 new SimpleJmsListenerEndpoint();
         endpoint.setMessageListener(reveiveFromGatewayJmsPlugin());
-        endpoint.setDestination(configurationProperties.getToDomibusGateway());
+        endpoint.setDestination(configurationProperties.getToConnector());
 
         return jmsListenerContainerFactory
                 .createListenerContainer(endpoint);

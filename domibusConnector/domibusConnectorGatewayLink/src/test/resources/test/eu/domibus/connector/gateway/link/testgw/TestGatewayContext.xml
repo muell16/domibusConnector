@@ -31,7 +31,7 @@ http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/
     <jaxws:client
             id="connectorDeliveryClient"
             serviceClass="eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService"
-            address="${connector.delivery.endpoint.publishAddress}"
+            address="${connector.delivery.endpoint.backendPublishAddress}"
             serviceName="s:DomibusConnectorGatewayDeliveryWebService"
             wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl"
             xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice">
@@ -138,9 +138,9 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
 
     <!--<jaxws:client id="backendClient"-->
     <!--serviceClass="eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService"-->
-    <!--publishAddress="${connector.backend.ws.publishAddress}"-->
+    <!--backendPublishAddress="${connector.backend.ws.backendPublishAddress}"-->
     <!--serviceName="s:DomibusConnectorBackendWSService"-->
-    <!--wsdlLocation="${connector.backend.ws.publishAddress}?wsdl"-->
+    <!--wsdlLocation="${connector.backend.ws.backendPublishAddress}?wsdl"-->
 
     <!--xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"-->
     <!--xmlns:s="http://connector.domibus.eu/ws/backend/webservice"-->
@@ -172,14 +172,14 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
     <!--bus="#gwBus"-->
     <!--id="gwSubmissionClient" -->
     <!--serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"-->
-    <!--publishAddress="${gateway.submission.endpoint.publishAddress}" -->
+    <!--backendPublishAddress="${gateway.submission.endpoint.backendPublishAddress}" -->
     <!--/>-->
     <!---->
     <!--<jaxws:endpoint-->
     <!--bus="#gwBus"-->
     <!--id="domibusConnectorDeliveryServiceEndpoint"-->
     <!--implementor="#domibusConnectorDeliveryServiceImpl"-->
-    <!--publishAddress="/domibusConnectorDeliveryWebservice">-->
+    <!--backendPublishAddress="/domibusConnectorDeliveryWebservice">-->
     <!--</jaxws:endpoint>-->
     <!---->
     <!--<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">-->

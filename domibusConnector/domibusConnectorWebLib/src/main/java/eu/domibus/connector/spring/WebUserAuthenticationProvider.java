@@ -54,7 +54,9 @@ public class WebUserAuthenticationProvider implements AuthenticationProvider {
 		UsernamePasswordAuthenticationToken pwAuth = (UsernamePasswordAuthenticationToken) authentication;
 
 		if (pwAuth.getCredentials() == null) {
-			throw new IllegalArgumentException("password cannot be null!");
+//			throw new IllegalArgumentException("password cannot be null!");
+			LOG.info("Authentication has no credentials!");
+			return authentication;
 		}
 
 		String username = "" + pwAuth.getPrincipal();

@@ -33,7 +33,7 @@ public class KeyConfigurationProperties {
      * The password of the Certificate/Key
      */
     @NotNull
-    @ConfigurationLabel("Password of certificate")
+    @ConfigurationLabel("Password of key")
     String password = "";
 
     public String getAlias() {

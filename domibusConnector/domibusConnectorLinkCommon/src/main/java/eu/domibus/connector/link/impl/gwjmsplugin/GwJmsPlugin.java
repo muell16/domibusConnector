@@ -1,11 +1,12 @@
 package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.*;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
@@ -24,42 +25,49 @@ public class GwJmsPlugin implements LinkPlugin {
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
-    private Map<DomibusConnectorLinkConfiguration, ActiveLink> linkConfigToActiveLink = new HashMap<>();
+    private Map<DomibusConnectorLinkConfiguration.LinkConfigName, GwJmsPluginActiveLink> linkConfigNameToActiveLink = new HashMap<>();
+    private Map<DomibusConnectorLinkConfiguration.LinkConfigName, DomibusConnectorLinkConfiguration> linkConfigNameToLinkConfig = new HashMap<>();
 
-//    private ActiveLinkPartner activeLinkPartner;
-//    private DomibusConnectorLinkConfiguration linkConfiguration;
-//    private DomibusConnectorLinkPartner linkPartner;
 
     /**
-     *   Tell the world if we are responsible for the implementation of
-     *   @param implementation
-    **/
+     * Tell the world if we are responsible for the implementation of
+     *
+     * @param implementation
+     **/
     @Override
     public boolean canHandle(String implementation) {
         return LINK_IMPL_NAME.equals(implementation);
     }
 
-    public List<Class> getSources() {
-        return Stream
-                .of(GwJmsPluginConfiguration.class)
-                .collect(Collectors.toList());
-    }
 
-    public List<String> getProfiles() {
-        return Stream
-                .of(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
-                .collect(Collectors.toList());
+    @Override
+    public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        DomibusConnectorLinkConfiguration.LinkConfigName linkConfigName = linkConfiguration.getConfigName();
+
+
+        GwJmsPluginActiveLink activeLink = linkConfigNameToActiveLink.get(linkConfigName);
+        if (activeLink != null) {
+            throw new LinkPluginException("LinkConfig is already active! Use shutdown first!");
+        }
+        activeLink = new GwJmsPluginActiveLink(linkConfiguration, this, applicationContext);
+
+        LOGGER.info("Activated LinkConfig [{}] to [{}]", linkConfiguration, activeLink);
+        linkConfigNameToActiveLink.put(linkConfigName, activeLink);
+        linkConfigNameToLinkConfig.put(linkConfigName, linkConfiguration);
+        return activeLink;
+
+
     }
 
     @Override
-    public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkInfo) {
-        GwJmsPluginActiveLink activeLink = new GwJmsPluginActiveLink(
-                this,
-                applicationContext,
-                linkInfo
-        );
-        linkConfigToActiveLink.put(linkInfo, activeLink);
-        return activeLink;
+    public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
+        GwJmsPluginActiveLink gwJmsPluginActiveLink = linkConfigNameToActiveLink.get(linkConfigurationName);
+        if (gwJmsPluginActiveLink == null) {
+            throw new LinkPluginException("No active link found with name " + linkConfigurationName);
+        }
+        gwJmsPluginActiveLink.shutdown();
+        linkConfigNameToActiveLink.remove(linkConfigurationName);
+        linkConfigNameToLinkConfig.remove(linkConfigurationName);
     }
 
     @Override

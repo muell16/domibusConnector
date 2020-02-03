@@ -80,4 +80,17 @@ public class DomibusConnectorLinkConfiguration {
             return this.configName;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DomibusConnectorLinkConfiguration that = (DomibusConnectorLinkConfiguration) o;
+        return configName.equals(that.configName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(configName);
+    }
 }
