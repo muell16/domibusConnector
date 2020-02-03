@@ -77,6 +77,12 @@ public abstract class DCWsPluginConfigurationProperties {
      * @return the wss Properties
      */
     public Properties mapCertAndStoreConfigPropertiesToMerlinProperties() {
+        if (this.getSoap() == null) {
+            throw new IllegalArgumentException(getPrefix() + ".soap.* properties are missing!");
+        }
+        if (this.getSoap().getKeyStore() == null) {
+            throw new IllegalArgumentException(getPrefix() + ".soap.key-store.* properties are missing!");
+        }
 
         Properties p = new Properties();
         p.setProperty("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
@@ -108,10 +114,7 @@ public abstract class DCWsPluginConfigurationProperties {
         return p;
     }
 
-    private String getPrefix() {
-        return DCWsPluginConfiguration.DC_WS_PLUGIN_PROFILE_NAME;
-    }
-
+    protected abstract String getPrefix();
 
 
     public static class CertAndStoreConfigurationProperties extends KeyAndKeyStoreAndTrustStoreConfigurationProperties {

@@ -38,9 +38,11 @@ public class DCWsActiveLinkPartner implements ActiveLinkPartner {
 
         Binder binder = new Binder(propertySource);
         BindResult<DCWsLinkPartnerConfigurationProperties> name = binder.bind("name", bindable);
-        DCWsLinkPartnerConfigurationProperties dcWsLinkPartnerConfigurationProperties = name.get();
+//        DCWsLinkPartnerConfigurationProperties dcWsLinkPartnerConfigurationProperties = name.get();
 
-        this.configurationProperties = dcWsLinkPartnerConfigurationProperties;
+        //TODO: map partner properties!
+
+        this.configurationProperties = new DCWsLinkPartnerConfigurationProperties();
     }
 
 

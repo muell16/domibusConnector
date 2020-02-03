@@ -59,12 +59,12 @@ public class DCWsGatewayPluginTestContext {
         return dao;
     }
 
-    @Bean
-    @Profile(DCWsPluginConfiguration.DC_WS_GATEWAY_PLUGIN_PROFILE_NAME)
-    @LinkPluginQualifier
-    public LinkPlugin linkPlugin() {
-        return new DCWsGatewayPlugin();
-    }
+//    @Bean
+//    @Profile(DCWsPluginConfiguration.DC_WS_GATEWAY_PLUGIN_PROFILE_NAME)
+//    @LinkPluginQualifier
+//    public LinkPlugin linkPlugin() {
+//        return new DCWsGatewayPlugin();
+//    }
 
     @Bean
     @Profile("ws-test")
@@ -75,18 +75,29 @@ public class DCWsGatewayPluginTestContext {
 
     public static PDomibusConnectorLinkConfiguration getWsGatewayLinkConfig() {
         PDomibusConnectorLinkConfiguration linkConfig = new PDomibusConnectorLinkConfiguration();
-        linkConfig.setLinkImpl(DCWsBackendPlugin.IMPL_NAME);
+        linkConfig.setLinkImpl(DCWsGatewayPlugin.IMPL_NAME);
         linkConfig.setConfigName("wsgateway");
 
         HashMap<String, String> props = new HashMap<>();
 
-        props.put("link.wsgatewayplugin.soap.key-store.path", "./target/test-classes/keystores/alice.jks");
+        props.put("link.wsgatewayplugin.soap.key-store.path", "classpath:/keystores/connector-gwlink-keystore.jks");
         props.put("link.wsgatewayplugin.soap.key-store.password", "12345");
-        props.put("link.wsgatewayplugin.soap.private-key.alias", "alice");
+        props.put("link.wsgatewayplugin.soap.private-key.alias", "connector");
         props.put("link.wsgatewayplugin.soap.private-key.password", "12345");
 
-        props.put("link.wsgatewayplugin.soap.trust-store.path", "./target/test-classes/keystores/alice.jks");
+        props.put("link.wsgatewayplugin.soap.trust-store.path", "classpath:/keystores/connector-gwlink-truststore.jks");
         props.put("link.wsgatewayplugin.soap.trust-store.password", "12345");
+
+        linkConfig.setProperties(props);
+
+        //                "connector.link.autostart=false",
+//                "link.wsgatewayplugin.soap.key-store.path=classpath:/keystores/connector-gwlink-keystore.jks",
+//                "link.wsgatewayplugin.soap.key-store.password=12345",
+//                "link.wsgatewayplugin.soap.private-key.alias=connector",
+//                "link.wsgatewayplugin.soap.private-key.password=12345",
+//                "link.wsgatewayplugin.soap.trust-store.password=12345",
+//                "link.wsgatewayplugin.soap.trust-store.path=classpath:/keystores/connector-gwlink-truststore.jks",
+
         return linkConfig;
     }
 
@@ -95,10 +106,17 @@ public class DCWsGatewayPluginTestContext {
         PDomibusConnectorLinkPartner linkPartner1 = new PDomibusConnectorLinkPartner();
         String linkName1 = "cn=gw";
 
+        linkPartner1.setLinkName(linkName1);
         linkPartner1.setLinkType(LinkType.GATEWAY);
         linkPartner1.setLinkMode(LinkMode.PUSH);
         linkPartner1.setLinkConfiguration(getWsGatewayLinkConfig());
         linkPartner1.setEnabled(true);
+
+        HashMap<String, String> props = new HashMap<>();
+        props.put("name.push-address", "push");
+//        props.put("link.wsgate")
+
+        linkPartner1.setProperties(props);
 
         return linkPartner1;
 

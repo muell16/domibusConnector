@@ -160,4 +160,8 @@ public class DCLinkPersistenceService {
         return Optional.ofNullable(this.mapToLinkConfiguration(oneByConfigName.orElse(null)));
     }
 
+    public Optional<DomibusConnectorLinkPartner> getLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        Optional<PDomibusConnectorLinkPartner> linkPartner = linkPartnerDao.findOneByLinkName(linkPartnerName.getLinkName());
+        return Optional.ofNullable(this.mapToLinkPartner(linkPartner.orElse(null)));
+    }
 }

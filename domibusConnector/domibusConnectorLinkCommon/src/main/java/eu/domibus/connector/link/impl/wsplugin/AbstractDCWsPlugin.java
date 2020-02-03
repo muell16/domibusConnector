@@ -5,6 +5,7 @@ import eu.domibus.connector.link.api.ActiveLink;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.LinkPluginUtils;
 import eu.domibus.connector.link.api.PluginFeature;
+import eu.domibus.connector.link.service.LinkPluginQualifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +22,25 @@ public abstract class AbstractDCWsPlugin implements LinkPlugin {
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
+
     @Override
     public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
         ConfigurableApplicationContext springChildContext = LinkPluginUtils.getChildContextBuilder(
-                getApplicationContext()
+                applicationContext
         ).withProfiles(getProfiles())
+                .withProperties(linkConfiguration.getProperties())
+                .addSingelton(LinkPluginQualifier.LINK_QUALIFIER_NAME, this)
                 .withSources(getSources())
                 .run();
 
         DCWsActiveLink activeLink = springChildContext.getBean(DCWsActiveLink.class);
         LOGGER.info("Activated Link Configuration [{}] with activeLink [{}]", linkConfiguration, activeLink);
         return activeLink;
+    }
+
+    @Override
+    public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
+
     }
 
     protected Class[] getSources() {

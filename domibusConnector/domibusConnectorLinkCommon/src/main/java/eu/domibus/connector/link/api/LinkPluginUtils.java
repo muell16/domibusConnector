@@ -21,6 +21,8 @@ public class LinkPluginUtils {
     public static class ChildContextBuilder {
         Map<String, Object> addedSingeltons = new HashMap<>();
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
+        Properties props = new Properties();
+        private List<String> profiles = new ArrayList<>();
 
         private ChildContextBuilder(ConfigurableApplicationContext parent) {
             builder.parent(parent);
@@ -54,18 +56,19 @@ public class LinkPluginUtils {
         }
 
         public ChildContextBuilder withProfiles(String... profiles) {
-            builder.profiles(profiles);
+            this.profiles.addAll(Arrays.asList(profiles));
             return this;
         }
 
 
-        public ChildContextBuilder withProperties(String... properties) {
-            builder.properties(properties);
-            return this;
-        }
+//        public ChildContextBuilder withProperties(String... properties) {
+//            builder.properties(properties);
+//            return this;
+//        }
 
         public ChildContextBuilder withProperties(Properties properties) {
-            builder.properties(properties);
+//            builder.properties(properties);
+            props.putAll(properties);
             return this;
         }
 
@@ -76,6 +79,12 @@ public class LinkPluginUtils {
                 LOGGER.trace("Adding singelton with name [{}] as bean [{}]", entry.getKey(), entry.getValue());
                 applicationContext.getBeanFactory().registerSingleton(entry.getKey(), entry.getValue());
             }));
+            builder.properties(props);
+            builder.profiles(profiles.toArray(new String[]{}));
+            LOGGER.trace("Running child context with " +
+                    "\nproperties [{}]" +
+                    "\nprofiles [{}]", props, profiles
+            );
 
             return builder.run(args);
         }

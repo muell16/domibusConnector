@@ -33,4 +33,8 @@ public class DCWsBackendLinkConfigurationProperties extends  DCWsPluginConfigura
         this.backendPublishAddress = backendPublishAddress;
     }
 
+    @Override
+    protected String getPrefix() {
+        return DCWsPluginConfiguration.DC_WS_BACKEND_PLUGIN_PROFILE_NAME;
+    }
 }
