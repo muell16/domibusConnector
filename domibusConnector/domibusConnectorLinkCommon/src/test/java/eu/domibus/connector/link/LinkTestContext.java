@@ -68,13 +68,13 @@ public class LinkTestContext {
 //    }
 
     @Bean
-//    @ConditionalOnMissingBean
-    @Primary
+    @ConditionalOnMissingBean
     public SubmitToConnector submitToConnector() {
         return (message, linkPartner) -> {
-            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, toConnectorSubmittedMessages());
+            BlockingQueue<DomibusConnectorMessage> q = toConnectorSubmittedMessages();
+            LOGGER.info("Adding message [{}] to submitToConnector [{}] Queue", message, q);
             try {
-                toConnectorSubmittedMessages().put(message);
+                q.put(message);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
