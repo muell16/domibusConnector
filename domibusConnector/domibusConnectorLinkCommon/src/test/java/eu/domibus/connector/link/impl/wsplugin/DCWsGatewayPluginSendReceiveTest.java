@@ -140,7 +140,7 @@ public class DCWsGatewayPluginSendReceiveTest {
         linkPartner.setLinkType(LinkType.GATEWAY);
         Properties p = new Properties();
         p.put("push-address", gwSubmitAddress);
-        p.put("encrypt-alias", "gw");
+        p.put("encryption-alias", "gw");
         linkPartner.setProperties(p);
 
         Mockito.when(dcActiveLinkManagerService.getActiveLinkPartner(eq(new DomibusConnectorLinkPartner.LinkPartnerName("cn=gw"))))
