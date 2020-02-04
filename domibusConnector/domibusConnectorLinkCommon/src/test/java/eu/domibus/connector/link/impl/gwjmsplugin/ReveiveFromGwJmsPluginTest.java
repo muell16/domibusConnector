@@ -31,7 +31,7 @@ import java.nio.file.Paths;
 import static eu.domibus.connector.domain.enums.TransportState.ACCEPTED;
 import static eu.domibus.connector.domain.enums.TransportState.FAILED;
 import static eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginConstants.ASIC_S_MIMETYPE;
-import static eu.domibus.connector.link.impl.wsplugin.DCWsGatewayPluginTestContext.getWsGatewayLinkConfig;
+import static test.eu.domibus.connector.link.impl.wsplugin.DCWsGatewayPluginTestContext.getWsGatewayLinkConfig;
 import static org.mockito.ArgumentMatchers.refEq;
 
 @SpringBootTest(classes = {ReveiveFromGwJmsPlugin.class, GwJmsPluginConfigurationProperties.class}

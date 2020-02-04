@@ -4,6 +4,8 @@ import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.ActiveLink;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -11,6 +13,8 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import org.springframework.core.env.PropertiesPropertySource;
 
 public class DCWsActiveLinkPartner implements ActiveLinkPartner {
+
+    private static final Logger LOGGER = LogManager.getLogger(DCWsActiveLinkPartner.class);
 
     private final DomibusConnectorLinkPartner linkPartner;
     private final DCWsSubmitTo submitTo;
@@ -37,12 +41,10 @@ public class DCWsActiveLinkPartner implements ActiveLinkPartner {
         Bindable<DCWsLinkPartnerConfigurationProperties> bindable = Bindable.of(DCWsLinkPartnerConfigurationProperties.class);
 
         Binder binder = new Binder(propertySource);
-        BindResult<DCWsLinkPartnerConfigurationProperties> name = binder.bind("name", bindable);
-//        DCWsLinkPartnerConfigurationProperties dcWsLinkPartnerConfigurationProperties = name.get();
+        BindResult<DCWsLinkPartnerConfigurationProperties> name = binder.bind("", bindable);
+        DCWsLinkPartnerConfigurationProperties dcWsLinkPartnerConfigurationProperties = name.get();
 
-        //TODO: map partner properties!
-
-        this.configurationProperties = new DCWsLinkPartnerConfigurationProperties();
+        this.configurationProperties = dcWsLinkPartnerConfigurationProperties;
     }
 
 
