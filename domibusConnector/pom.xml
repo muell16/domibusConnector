@@ -11,8 +11,8 @@
         <module>domibusConnectorSecurityToolkit</module>
         <module>domibusConnectorController</module>
         <module>domibusConnectorPersistence</module>
-        <module>domibusConnectorGatewayLink</module>
-        <module>domibusConnectorBackendLink</module>
+<!--        <module>domibusConnectorGatewayLink</module>-->
+<!--        <module>domibusConnectorBackendLink</module>-->
         <module>domibusConnectorControllerAPI</module>
         <!--<module>domibusConnectorTest</module>-->
         <module>domibusConnectorAPI</module>
