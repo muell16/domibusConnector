@@ -38,7 +38,7 @@ http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/
 
         <jaxws:properties>
             <entry key="security.signature.properties" value-ref="encryptProperties"/>
-            <!--<entry key="security.signature.user" value="gw" />-->
+            <entry key="security.signature.user" value="gw" />
             <entry key="security.encryption.properties" value-ref="encryptProperties"/>
             <entry key="security.encryption.username" value="connector"/>
             <entry key="mtom-enabled" value="true"/>
@@ -77,9 +77,9 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
     >
         <jaxws:properties>
             <entry key="security.signature.properties" value-ref="encryptProperties"/>
-            <!--<entry key="security.signature.user" value="gw" />-->
+            <entry key="security.signature.user" value="gw" />
             <entry key="security.encryption.properties" value-ref="encryptProperties"/>
-            <entry key="security.encryption.username" value="useReqSigCert"/>
+            <entry key="security.encryption.username" value="connector"/>
             <entry key="mtom-enabled" value="true"/>
             <entry key="security.store.bytes.in.attachment" value="true"/>
             <entry key="security.enable.streaming" value="true"/>
@@ -104,16 +104,13 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
                 <prop key="org.apache.wss4j.crypto.provider">org.apache.wss4j.common.crypto.Merlin</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.type">jks</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.password">12345</prop>
-                <prop key="org.apache.wss4j.crypto.merlin.keystore.file">
-                    keystores/gw-gwlink-keystore.jks
-                </prop>
+                <prop key="org.apache.wss4j.crypto.merlin.keystore.file">keystores/gw-gwlink-keystore.jks</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.alias">gw</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.private.password">12345</prop>
+
                 <prop key="org.apache.wss4j.crypto.merlin.truststore.type">jks</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.truststore.password">12345</prop>
-                <prop key="org.apache.wss4j.crypto.merlin.truststore.file">
-                    keystores/gw-gwlink-truststore.jks
-                </prop>
+                <prop key="org.apache.wss4j.crypto.merlin.truststore.file">keystores/gw-gwlink-truststore.jks</prop>
             </props>
         </property>
     </bean>

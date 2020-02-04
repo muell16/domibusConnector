@@ -60,6 +60,11 @@ public class TestGW {
         return (DomibusConnectorGatewayDeliveryWebService) ctx.getBean("connectorDeliveryClient");
     }
 
+    public static String getSubmitAddress(ConfigurableApplicationContext ctx) {
+        String port = ctx.getEnvironment().getRequiredProperty("local.server.port");
+        return "http://localhost:" + port + "/services/submission";
+    }
+
     @Bean(TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME)
     public LinkedBlockingQueue<DomibusConnectorMessageType> deliveredMessagesList() {
 

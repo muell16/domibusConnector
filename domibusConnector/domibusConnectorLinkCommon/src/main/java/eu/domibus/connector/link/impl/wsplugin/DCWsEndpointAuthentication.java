@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorBackendDelivery
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.ActiveLink;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class DCWsEndpointAuthentication {
     public static final Logger LOGGER = LogManager.getLogger(DCWsEndpointAuthentication.class);
 
     @Autowired
-    DCWsActiveLink activeLink;
+    DCActiveLinkManagerService activeLink;
 
 
     public ActiveLinkPartner checkBackendClient(WebServiceContext webServiceContext) throws DomibusConnectorBackendDeliveryException {
@@ -38,7 +39,7 @@ public class DCWsEndpointAuthentication {
         ActiveLinkPartner backendClientInfoByName = null;
 
         backendName = backendName.toLowerCase();
-        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName));
+        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)).orElse(null);
 
 //        backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
 
@@ -51,7 +52,7 @@ public class DCWsEndpointAuthentication {
             //replace leading "cn=" with "" so common name cn=alice becomes alice
 
             LOGGER.warn("#checkBackendClient: {}, Looking for 4.0.x compatible connector backend naming [{}]", error, backendName);
-            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName));
+            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)).orElse(null);
         }
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No link partner with name [%s] configured on connector!\n" +

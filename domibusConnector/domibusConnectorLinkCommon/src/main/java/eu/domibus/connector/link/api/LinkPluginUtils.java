@@ -61,11 +61,6 @@ public class LinkPluginUtils {
         }
 
 
-//        public ChildContextBuilder withProperties(String... properties) {
-//            builder.properties(properties);
-//            return this;
-//        }
-
         public ChildContextBuilder withProperties(Properties properties) {
 //            builder.properties(properties);
             props.putAll(properties);
@@ -94,33 +89,5 @@ public class LinkPluginUtils {
     public static ChildContextBuilder getChildContextBuilder(ConfigurableApplicationContext ctx) {
         return new ChildContextBuilder(ctx);
     }
-
-
-//    public static ConfigurableApplicationContext createSpringChildContext(DomibusConnectorLinkConfiguration linkConfiguration, DomibusConnectorLinkPartner linkPartner, ConfigurableApplicationContext applicationContext, List<Class> sources, List<String> profiles) {
-//        try {
-//            SpringApplicationBuilder builder = new SpringApplicationBuilder();
-//            builder.parent(applicationContext);
-//            builder.sources(sources.toArray(new Class[]{}));
-//            builder.lazyInitialization(true);
-//            Properties p = linkConfiguration.getProperties();
-//            if (linkPartner != null) {
-//                p.putAll(linkPartner.getProperties()); //put linkPartner properties into linkConfig properties
-//            }
-//            LOGGER.trace("Passing properties to link activation [{}]", p);
-//            builder.properties(p);
-//            builder.profiles(profiles.toArray(new String[]{}));
-//            builder.bannerMode(Banner.Mode.OFF);
-//            builder.web(WebApplicationType.NONE);
-//
-//
-//
-//            ConfigurableApplicationContext linkModuleApplicationContext = builder.run();
-//            linkModuleApplicationContext.getBeanFactory().registerSingleton("linkConfiguration", linkConfiguration);
-//            return linkModuleApplicationContext;
-//        } catch (Exception e) {
-//            LOGGER.error("Exception ", e);
-//            throw new LinkPluginException(e);
-//        }
-//    }
 
 }

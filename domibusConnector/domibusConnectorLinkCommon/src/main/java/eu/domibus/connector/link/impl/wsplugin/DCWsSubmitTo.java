@@ -15,6 +15,8 @@ import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -22,9 +24,12 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
+
 @Component
 @Profile(DCWsPluginConfiguration.DC_WS_PLUGIN_PROFILE_NAME)
 public class DCWsSubmitTo implements SubmitToLink {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
     DCActiveLinkManagerService activeLinkManagerService;
@@ -37,7 +42,7 @@ public class DCWsSubmitTo implements SubmitToLink {
 
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        TransportStatusService.TransportId transportId = transportStatusService.createOrGetTransportFor(message);
+        TransportStatusService.TransportId transportId = transportStatusService.createOrGetTransportFor(message, linkPartnerName);
         Optional<ActiveLinkPartner> optionalActiveLinkPartner = activeLinkManagerService.getActiveLinkPartner(linkPartnerName);
         if (!optionalActiveLinkPartner.isPresent()) {
             throw new RuntimeException("No Link Partner found!");
@@ -57,6 +62,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     }
 
     private void handlePullLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner activeLinkPartner) {
+        LOGGER.trace("handlePullLink");
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
         state.setConnectorTransportId(transportId);
         state.setStatus(TransportState.PENDING);
@@ -65,6 +71,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     }
 
     private void handlePushGatewayLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner linkPartner) {
+        LOGGER.trace("#handlePushGatewayLink");
         DomibusConnectorGatewaySubmissionWebService gateway = webServiceClientFactory.createGateway(linkPartner);
         DomibusConnectorMessageType domibusConnectorMessageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType ack = gateway.submitMessage(domibusConnectorMessageType);
@@ -74,6 +81,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     }
 
     private void handlePushBackendLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner linkPartner) {
+        LOGGER.trace("#handlePushBackendLink");
         DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(linkPartner);
         @NotNull DomibusConnectorMessageType domibusConnectorMessageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType ack = backendWsClient.deliverMessage(domibusConnectorMessageType);

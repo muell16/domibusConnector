@@ -134,7 +134,7 @@ public class DCWsPluginConfiguration {
     @Qualifier(POLICY_LOADER_NAME)
     public WsPolicyLoader wsPolicyLoader() {
         WsPolicyLoader wsPolicyLoader = new WsPolicyLoader(configurationProperties.getWsPolicy());
-        LOGGER.info("Registered wsPolicyLoader [{}]");
+        LOGGER.info("Registered wsPolicyLoader [{}]", wsPolicyLoader);
         return wsPolicyLoader;
     }
 
