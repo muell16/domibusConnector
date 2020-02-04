@@ -38,14 +38,14 @@ public interface TransportStatusService {
      * @param message
      * @return
      */
-    public TransportId createTransportFor(DomibusConnectorMessage message);
+    public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     /**
      * gets the last not finished (PENDING state) transport for this
      * message
      * @param message
      */
-    public TransportId createOrGetTransportFor(DomibusConnectorMessage message);
+    public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     public static class TransportId {
         private String transportId;

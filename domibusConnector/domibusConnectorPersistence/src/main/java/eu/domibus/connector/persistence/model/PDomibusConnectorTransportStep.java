@@ -1,10 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
 
-import org.springframework.context.annotation.Lazy;
-
 import javax.persistence.*;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,18 +15,23 @@ public class PDomibusConnectorTransportStep {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqTransportStep")
     private Long id;
 
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE_ID")
     private PDomibusConnectorMessage message;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "LINK_PARTNER_ID")
-    private PDomibusConnectorLinkPartner linkPartner;
+    @Column(name = "LINK_PARTNER_NAME")
+    private String linkPartnerName;
 
     @Column(name = "ATTEMPT")
     private int attempt = 1;
 
+    @Column(name = "TRANSPORT_ID")
+    private String transportId;
+
+    /**
+     * The message id of the system used to transport the message
+     * eg. jms-message-id, webRequestNumber,...
+     */
     @Column(name = "TRANSPORT_SYSTEM_MESSAGE_ID")
     private String transportSystemMessageId;
 
@@ -45,6 +47,14 @@ public class PDomibusConnectorTransportStep {
     @PrePersist
     public void prePersist() {
         created = LocalDateTime.now();
+    }
+
+    public String getTransportId() {
+        return transportId;
+    }
+
+    public void setTransportId(String transportId) {
+        this.transportId = transportId;
     }
 
     public Long getId() {
@@ -63,12 +73,12 @@ public class PDomibusConnectorTransportStep {
         this.message = message;
     }
 
-    public PDomibusConnectorLinkPartner getLinkPartner() {
-        return linkPartner;
+    public String getLinkPartnerName() {
+        return linkPartnerName;
     }
 
-    public void setLinkPartner(PDomibusConnectorLinkPartner linkPartner) {
-        this.linkPartner = linkPartner;
+    public void setLinkPartnerName(String linkPartnerName) {
+        this.linkPartnerName = linkPartnerName;
     }
 
     public int getAttempt() {
