@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
 
@@ -49,6 +50,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
     DomibusConnectorLinkPartner linkPartner;
 
     @Override
+    @Transactional
     public void onMessage(Message message) {
         LOGGER.debug("JMS Message from Gateway received: [{}]", message);
 
