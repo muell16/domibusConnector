@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.1.7</version>
+    <version>4.1.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>domibusConnectorEvidencesToolkit</module>
@@ -187,7 +187,7 @@
             <dependency>
                 <groupId>eu.ecodex.evidences</groupId>
                 <artifactId>EvidenceBuilder</artifactId>
-                <version>1.0.5.10</version>
+                <version>1.0.6-RELEASE</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>jaxb-impl</artifactId>
@@ -207,7 +207,7 @@
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>ecodex-container</artifactId>
-                <version>1.11</version>
+                <version>1.12.2</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>jaxb-impl</artifactId>
@@ -234,7 +234,7 @@
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-utils-apache-commons</artifactId>
-                <version>5.1_ALT</version>
+                <version>5.4</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>

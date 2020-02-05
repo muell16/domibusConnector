@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.1.7</version>
+        <version>4.1.8-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorEvidencesToolkit</artifactId>
     <name>${project.artifactId}</name>
@@ -97,8 +97,6 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.57</version>
-            <type>jar</type>
         </dependency>
 
         <dependency>
