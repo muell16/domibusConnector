@@ -14,6 +14,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.IncorrectResultSetColumnCountException;
 import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorUserDao;
@@ -61,7 +63,13 @@ public class DomibusConnectorWebUserPersistenceServiceImpl implements DomibusCon
 			if(user.isLocked())
 				throw new UserLoginException("The user is locked! Please contact your administrator!");
 			
-			PDomibusConnectorUserPassword currentPassword = this.passwordDao.findCurrentByUser(user);
+			PDomibusConnectorUserPassword currentPassword = null;
+			try {
+				currentPassword = this.passwordDao.findCurrentByUser(user);
+				
+			}catch(IncorrectResultSizeDataAccessException e) {
+				throw new UserLoginException("The user has more than one current passwords! Please contact your administrator!");
+			}
 			if(currentPassword==null) {
 				throw new UserLoginException("The user has no current password! Please contact your administrator!");
 			}
