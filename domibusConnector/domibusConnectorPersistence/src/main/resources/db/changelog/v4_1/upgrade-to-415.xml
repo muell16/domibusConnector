@@ -2,7 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 
     <property name="text.type" value="TEXT" dbms="h2,postgresql" />
@@ -12,14 +12,66 @@
     <property name="varchar255.type" value="VARCHAR(255)" />
     <property name="varchar255.type" value="VARCHAR2(255 CHAR)" dbms="oracle" />
     
-    <changeSet id="addPropertyIdTechnicalKey" author="domibusConnector">
+<!--    <changeSet id="addPropertyIdTechnicalKey" author="domibusConnector">-->
+<!--        <addColumn tableName="DOMIBUS_CONNECTOR_PROPERTY">-->
+<!--            <column name="ID" type="BIGINT">-->
+<!--                <constraints nullable="true" />-->
+<!--            </column>-->
+<!--        </addColumn>-->
+<!--    </changeSet>-->
+
+    <changeSet id="init_propertyIdTechnicalKeySeq" author="domibusConnector" dbms="h2,postgresql,oracle">
+        <preConditions  onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="DOMIBUS_CONNECTOR_PROPERTY" columnName="ID" />
+            </not>
+        </preConditions>
+
+        <createSequence sequenceName="seq_prop_id" startValue="1" incrementBy="1" />
+
         <addColumn tableName="DOMIBUS_CONNECTOR_PROPERTY">
-            <column name="ID" type="BIGINT">
+            <column name="ID" type="BIGINT" defaultValueSequenceNext="seq_prop_id">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet id="init_propertyIdTechnicalKey" author="domibusConnector" dbms="h2,postgresql,oracle">
+        <preConditions  onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="DOMIBUS_CONNECTOR_PROPERTY" columnName="ID" />
+            </not>
+        </preConditions>
+
+        <addColumn tableName="DOMIBUS_CONNECTOR_PROPERTY">
+            <column name="ID" type="BIGINT" autoIncrement="true" >
                 <constraints nullable="false" />
             </column>
         </addColumn>
+
+        <!-- TODO: fill up seq table -->
     </changeSet>
-    
+
+    <changeSet id="init_seqTableForPropertyIdTechnicalKey" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM DOMIBUS_CONNECTOR_SEQ_STORE WHERE SEQ_NAME = 'DOMIBUS_CONNECTOR_PROPERTY.ID';
+                </sqlCheck>
+                <not>
+                    <sqlCheck expectedResult="0">
+                        SELECT COUNT(*) FROM DOMIBUS_CONNECTOR_PROPERTY;
+                    </sqlCheck>
+                </not>
+            </and>
+        </preConditions>
+        <sql>
+            INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) VALUES ('DOMIBUS_CONNECTOR_PROPERTY.ID', SELECT (MAX(ID) + 1) FROM DOMIBUS_CONNECTOR_PROPERTY);
+        </sql>
+    </changeSet>
+
+
 
     <!-- UNIQUE does not work on mysql, because key size is too big (2048bytes of column PROPERTY_NAME is too big) -->
     <changeSet id="createNewConstraints" author="domibusConnector" dbms="h2,postgresql,oracle" >

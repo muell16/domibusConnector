@@ -30,27 +30,27 @@ import javax.servlet.ServletException;
 @PropertySource({"classpath:/build-info.properties", "classpath:/default.properties", "classpath:/default-bootstrap.properties"})
 public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
 
-	public static final String SPRING_CLOUD_BOOTSTRAP_NAME = "spring.cloud.bootstrap.name";
-  public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
-  public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
-  public static final String SPRING_CONFIG_NAME = "spring.config.name";
+    public static final String SPRING_CLOUD_BOOTSTRAP_NAME = "spring.cloud.bootstrap.name";
+    public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
+    public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
+    public static final String SPRING_CONFIG_NAME = "spring.config.name";
 
-	public static final String CONNECTOR_CONFIG_FILE = "connector.config.file";
+    public static final String CONNECTOR_CONFIG_FILE = "connector.config.file";
 
-	public static final String CONNECTOR_CONFIG_LOCATION = "connector.config.location";
+    public static final String CONNECTOR_CONFIG_LOCATION = "connector.config.location";
 
-	private ServletContext servletContext;
+    private ServletContext servletContext;
 
     public static void main(String[] args) {
         runSpringApplication(args);
     }
 
     public static ConfigurableApplicationContext runSpringApplication(String[] args) {
-    	SpringApplicationBuilder builder = new SpringApplicationBuilder();
+        SpringApplicationBuilder builder = new SpringApplicationBuilder();
         builder = configureApplicationContext(builder);
-    	SpringApplication springApplication = builder.build();
+        SpringApplication springApplication = builder.build();
         ConfigurableApplicationContext appContext = springApplication.run(args);
         return appContext;
     }
@@ -87,7 +87,6 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
 
-
 //    public static Properties configureApplicationProperties() {
 //
 //        return springProperties;
@@ -99,7 +98,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         Properties springProperties = new Properties();
         if (connectorConfigFile != null) {
 
-            int lastIndex = connectorConfigFile.contains(File.separator)?connectorConfigFile.lastIndexOf(File.separatorChar):connectorConfigFile.lastIndexOf("/");
+            int lastIndex = connectorConfigFile.contains(File.separator) ? connectorConfigFile.lastIndexOf(File.separatorChar) : connectorConfigFile.lastIndexOf("/");
             lastIndex++;
             String connectorConfigLocation = connectorConfigFile.substring(0, lastIndex);
             String configName = connectorConfigFile.substring(lastIndex);
@@ -114,13 +113,12 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             springProperties.setProperty(SPRING_CONFIG_LOCATION, connectorConfigLocation);
             springProperties.setProperty(SPRING_CONFIG_NAME, configName);
 
-        }else {
+        } else {
             LOGGER.warn("SystemProperty \"{}\" not given or not resolveable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE);
         }
         application.properties(springProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...
         return application.sources(DomibusConnectorStarter.class);
     }
-
 
 
     @Override
@@ -137,7 +135,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
                 servletContext.setInitParameter("logging.config", loggingConfig);
             }
         }
-	    super.onStartup(servletContext);
+        super.onStartup(servletContext);
     }
 
     private void setFromServletContextIfNotNull(String name, String setPropertyName) {
