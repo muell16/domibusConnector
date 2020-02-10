@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für MessagePartyInfoType complex type.
+ * <p>Java class for MessagePartyInfoType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessagePartyInfoType"&gt;
@@ -40,7 +40,7 @@ public class MessagePartyInfoType {
     protected PartyType to;
 
     /**
-     * Ruft den Wert der from-Eigenschaft ab.
+     * Gets the value of the from property.
      * 
      * @return
      *     possible object is
@@ -52,7 +52,7 @@ public class MessagePartyInfoType {
     }
 
     /**
-     * Legt den Wert der from-Eigenschaft fest.
+     * Sets the value of the from property.
      * 
      * @param value
      *     allowed object is
@@ -64,7 +64,7 @@ public class MessagePartyInfoType {
     }
 
     /**
-     * Ruft den Wert der to-Eigenschaft ab.
+     * Gets the value of the to property.
      * 
      * @return
      *     possible object is
@@ -76,7 +76,7 @@ public class MessagePartyInfoType {
     }
 
     /**
-     * Legt den Wert der to-Eigenschaft fest.
+     * Sets the value of the to property.
      * 
      * @param value
      *     allowed object is

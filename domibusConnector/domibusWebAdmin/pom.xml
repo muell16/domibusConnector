@@ -4,13 +4,13 @@
 
     <groupId>eu.domibus.webadmin</groupId>
     <artifactId>domibusWebAdmin</artifactId>
-    <version>3.5.2-SNAPSHOT</version>
+    <version>3.5.2</version>
     <packaging>war</packaging>
 
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>3.5.2-SNAPSHOT</version>
+        <version>3.5.2</version>
     </parent>
 
     <name>domibusWebAdmin</name>

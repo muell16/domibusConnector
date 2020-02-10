@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für MessageCollaborationInfoType complex type.
+ * <p>Java class for MessageCollaborationInfoType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessageCollaborationInfoType"&gt;
@@ -50,7 +50,7 @@ public class MessageCollaborationInfoType {
     protected AgreementRefType agreementRef;
 
     /**
-     * Ruft den Wert der conversationId-Eigenschaft ab.
+     * Gets the value of the conversationId property.
      * 
      * @return
      *     possible object is
@@ -62,7 +62,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Legt den Wert der conversationId-Eigenschaft fest.
+     * Sets the value of the conversationId property.
      * 
      * @param value
      *     allowed object is
@@ -74,7 +74,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Ruft den Wert der action-Eigenschaft ab.
+     * Gets the value of the action property.
      * 
      * @return
      *     possible object is
@@ -86,7 +86,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Legt den Wert der action-Eigenschaft fest.
+     * Sets the value of the action property.
      * 
      * @param value
      *     allowed object is
@@ -98,7 +98,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Ruft den Wert der serviceId-Eigenschaft ab.
+     * Gets the value of the serviceId property.
      * 
      * @return
      *     possible object is
@@ -110,7 +110,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Legt den Wert der serviceId-Eigenschaft fest.
+     * Sets the value of the serviceId property.
      * 
      * @param value
      *     allowed object is
@@ -122,7 +122,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Ruft den Wert der serviceType-Eigenschaft ab.
+     * Gets the value of the serviceType property.
      * 
      * @return
      *     possible object is
@@ -134,7 +134,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Legt den Wert der serviceType-Eigenschaft fest.
+     * Sets the value of the serviceType property.
      * 
      * @param value
      *     allowed object is
@@ -146,7 +146,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Ruft den Wert der agreementRef-Eigenschaft ab.
+     * Gets the value of the agreementRef property.
      * 
      * @return
      *     possible object is
@@ -158,7 +158,7 @@ public class MessageCollaborationInfoType {
     }
 
     /**
-     * Legt den Wert der agreementRef-Eigenschaft fest.
+     * Sets the value of the agreementRef property.
      * 
      * @param value
      *     allowed object is

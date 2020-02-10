@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für MessageType complex type.
+ * <p>Java class for MessageType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessageType"&gt;
@@ -45,7 +45,7 @@ public class MessageType {
     protected List<MessageAttachmentType> messageAttachments;
 
     /**
-     * Ruft den Wert der messageDetails-Eigenschaft ab.
+     * Gets the value of the messageDetails property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class MessageType {
     }
 
     /**
-     * Legt den Wert der messageDetails-Eigenschaft fest.
+     * Sets the value of the messageDetails property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class MessageType {
     }
 
     /**
-     * Ruft den Wert der messageContent-Eigenschaft ab.
+     * Gets the value of the messageContent property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class MessageType {
     }
 
     /**
-     * Legt den Wert der messageContent-Eigenschaft fest.
+     * Sets the value of the messageContent property.
      * 
      * @param value
      *     allowed object is

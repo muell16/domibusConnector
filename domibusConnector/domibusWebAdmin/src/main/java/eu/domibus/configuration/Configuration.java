@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType&gt;
@@ -515,7 +515,7 @@ public class Configuration {
     protected String party;
 
     /**
-     * Ruft den Wert der mpcs-Eigenschaft ab.
+     * Gets the value of the mpcs property.
      * 
      * @return
      *     possible object is
@@ -527,7 +527,7 @@ public class Configuration {
     }
 
     /**
-     * Legt den Wert der mpcs-Eigenschaft fest.
+     * Sets the value of the mpcs property.
      * 
      * @param value
      *     allowed object is
@@ -539,7 +539,7 @@ public class Configuration {
     }
 
     /**
-     * Ruft den Wert der businessProcesses-Eigenschaft ab.
+     * Gets the value of the businessProcesses property.
      * 
      * @return
      *     possible object is
@@ -551,7 +551,7 @@ public class Configuration {
     }
 
     /**
-     * Legt den Wert der businessProcesses-Eigenschaft fest.
+     * Sets the value of the businessProcesses property.
      * 
      * @param value
      *     allowed object is
@@ -563,7 +563,7 @@ public class Configuration {
     }
 
     /**
-     * Ruft den Wert der party-Eigenschaft ab.
+     * Gets the value of the party property.
      * 
      * @return
      *     possible object is
@@ -575,7 +575,7 @@ public class Configuration {
     }
 
     /**
-     * Legt den Wert der party-Eigenschaft fest.
+     * Sets the value of the party property.
      * 
      * @param value
      *     allowed object is
@@ -588,9 +588,9 @@ public class Configuration {
 
 
     /**
-     * <p>Java-Klasse für anonymous complex type.
+     * <p>Java class for anonymous complex type.
      * 
-     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+     * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType&gt;
@@ -1085,7 +1085,7 @@ public class Configuration {
         protected List<Configuration.BusinessProcesses.Process> process;
 
         /**
-         * Ruft den Wert der roles-Eigenschaft ab.
+         * Gets the value of the roles property.
          * 
          * @return
          *     possible object is
@@ -1097,7 +1097,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der roles-Eigenschaft fest.
+         * Sets the value of the roles property.
          * 
          * @param value
          *     allowed object is
@@ -1109,7 +1109,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der parties-Eigenschaft ab.
+         * Gets the value of the parties property.
          * 
          * @return
          *     possible object is
@@ -1121,7 +1121,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der parties-Eigenschaft fest.
+         * Sets the value of the parties property.
          * 
          * @param value
          *     allowed object is
@@ -1133,7 +1133,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der meps-Eigenschaft ab.
+         * Gets the value of the meps property.
          * 
          * @return
          *     possible object is
@@ -1145,7 +1145,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der meps-Eigenschaft fest.
+         * Sets the value of the meps property.
          * 
          * @param value
          *     allowed object is
@@ -1157,7 +1157,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der properties-Eigenschaft ab.
+         * Gets the value of the properties property.
          * 
          * @return
          *     possible object is
@@ -1169,7 +1169,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der properties-Eigenschaft fest.
+         * Sets the value of the properties property.
          * 
          * @param value
          *     allowed object is
@@ -1181,7 +1181,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der payloadProfiles-Eigenschaft ab.
+         * Gets the value of the payloadProfiles property.
          * 
          * @return
          *     possible object is
@@ -1193,7 +1193,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der payloadProfiles-Eigenschaft fest.
+         * Sets the value of the payloadProfiles property.
          * 
          * @param value
          *     allowed object is
@@ -1205,7 +1205,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der securities-Eigenschaft ab.
+         * Gets the value of the securities property.
          * 
          * @return
          *     possible object is
@@ -1217,7 +1217,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der securities-Eigenschaft fest.
+         * Sets the value of the securities property.
          * 
          * @param value
          *     allowed object is
@@ -1229,7 +1229,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der errorHandlings-Eigenschaft ab.
+         * Gets the value of the errorHandlings property.
          * 
          * @return
          *     possible object is
@@ -1241,7 +1241,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der errorHandlings-Eigenschaft fest.
+         * Sets the value of the errorHandlings property.
          * 
          * @param value
          *     allowed object is
@@ -1253,7 +1253,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der agreements-Eigenschaft ab.
+         * Gets the value of the agreements property.
          * 
          * @return
          *     possible object is
@@ -1265,7 +1265,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der agreements-Eigenschaft fest.
+         * Sets the value of the agreements property.
          * 
          * @param value
          *     allowed object is
@@ -1277,7 +1277,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der services-Eigenschaft ab.
+         * Gets the value of the services property.
          * 
          * @return
          *     possible object is
@@ -1289,7 +1289,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der services-Eigenschaft fest.
+         * Sets the value of the services property.
          * 
          * @param value
          *     allowed object is
@@ -1301,7 +1301,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der actions-Eigenschaft ab.
+         * Gets the value of the actions property.
          * 
          * @return
          *     possible object is
@@ -1313,7 +1313,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der actions-Eigenschaft fest.
+         * Sets the value of the actions property.
          * 
          * @param value
          *     allowed object is
@@ -1325,7 +1325,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der as4-Eigenschaft ab.
+         * Gets the value of the as4 property.
          * 
          * @return
          *     possible object is
@@ -1337,7 +1337,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der as4-Eigenschaft fest.
+         * Sets the value of the as4 property.
          * 
          * @param value
          *     allowed object is
@@ -1349,7 +1349,7 @@ public class Configuration {
         }
 
         /**
-         * Ruft den Wert der legConfigurations-Eigenschaft ab.
+         * Gets the value of the legConfigurations property.
          * 
          * @return
          *     possible object is
@@ -1361,7 +1361,7 @@ public class Configuration {
         }
 
         /**
-         * Legt den Wert der legConfigurations-Eigenschaft fest.
+         * Sets the value of the legConfigurations property.
          * 
          * @param value
          *     allowed object is
@@ -1403,9 +1403,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -1470,9 +1470,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -1497,7 +1497,7 @@ public class Configuration {
                 protected String value;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -1509,7 +1509,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1521,7 +1521,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der value-Eigenschaft ab.
+                 * Gets the value of the value property.
                  * 
                  * @return
                  *     possible object is
@@ -1533,7 +1533,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der value-Eigenschaft fest.
+                 * Sets the value of the value property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1550,9 +1550,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -1618,9 +1618,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -1648,7 +1648,7 @@ public class Configuration {
                 protected String type;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -1660,7 +1660,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1672,7 +1672,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der value-Eigenschaft ab.
+                 * Gets the value of the value property.
                  * 
                  * @return
                  *     possible object is
@@ -1684,7 +1684,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der value-Eigenschaft fest.
+                 * Sets the value of the value property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1696,7 +1696,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der type-Eigenschaft ab.
+                 * Gets the value of the type property.
                  * 
                  * @return
                  *     possible object is
@@ -1708,7 +1708,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der type-Eigenschaft fest.
+                 * Sets the value of the type property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1725,9 +1725,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -1836,9 +1836,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -1866,7 +1866,7 @@ public class Configuration {
                 protected String duplicateDetection;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -1878,7 +1878,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1890,7 +1890,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der retry-Eigenschaft ab.
+                 * Gets the value of the retry property.
                  * 
                  * @return
                  *     possible object is
@@ -1902,7 +1902,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der retry-Eigenschaft fest.
+                 * Sets the value of the retry property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1914,7 +1914,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der duplicateDetection-Eigenschaft ab.
+                 * Gets the value of the duplicateDetection property.
                  * 
                  * @return
                  *     possible object is
@@ -1926,7 +1926,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der duplicateDetection-Eigenschaft fest.
+                 * Sets the value of the duplicateDetection property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1941,9 +1941,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -1971,7 +1971,7 @@ public class Configuration {
                 protected String nonRepudiation;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -1983,7 +1983,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -1995,7 +1995,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der replyPattern-Eigenschaft ab.
+                 * Gets the value of the replyPattern property.
                  * 
                  * @return
                  *     possible object is
@@ -2007,7 +2007,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der replyPattern-Eigenschaft fest.
+                 * Sets the value of the replyPattern property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2019,7 +2019,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der nonRepudiation-Eigenschaft ab.
+                 * Gets the value of the nonRepudiation property.
                  * 
                  * @return
                  *     possible object is
@@ -2031,7 +2031,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der nonRepudiation-Eigenschaft fest.
+                 * Sets the value of the nonRepudiation property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2048,9 +2048,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -2118,9 +2118,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -2154,7 +2154,7 @@ public class Configuration {
                 protected boolean deliveryFailureNotifyProducer;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -2166,7 +2166,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2178,7 +2178,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der errorAsResponse-Eigenschaft ab.
+                 * Gets the value of the errorAsResponse property.
                  * 
                  */
                 public boolean isErrorAsResponse() {
@@ -2186,7 +2186,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der errorAsResponse-Eigenschaft fest.
+                 * Sets the value of the errorAsResponse property.
                  * 
                  */
                 public void setErrorAsResponse(boolean value) {
@@ -2194,7 +2194,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der businessErrorNotifyProducer-Eigenschaft ab.
+                 * Gets the value of the businessErrorNotifyProducer property.
                  * 
                  */
                 public boolean isBusinessErrorNotifyProducer() {
@@ -2202,7 +2202,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der businessErrorNotifyProducer-Eigenschaft fest.
+                 * Sets the value of the businessErrorNotifyProducer property.
                  * 
                  */
                 public void setBusinessErrorNotifyProducer(boolean value) {
@@ -2210,7 +2210,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der businessErrorNotifyConsumer-Eigenschaft ab.
+                 * Gets the value of the businessErrorNotifyConsumer property.
                  * 
                  */
                 public boolean isBusinessErrorNotifyConsumer() {
@@ -2218,7 +2218,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der businessErrorNotifyConsumer-Eigenschaft fest.
+                 * Sets the value of the businessErrorNotifyConsumer property.
                  * 
                  */
                 public void setBusinessErrorNotifyConsumer(boolean value) {
@@ -2226,7 +2226,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der deliveryFailureNotifyProducer-Eigenschaft ab.
+                 * Gets the value of the deliveryFailureNotifyProducer property.
                  * 
                  */
                 public boolean isDeliveryFailureNotifyProducer() {
@@ -2234,7 +2234,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der deliveryFailureNotifyProducer-Eigenschaft fest.
+                 * Sets the value of the deliveryFailureNotifyProducer property.
                  * 
                  */
                 public void setDeliveryFailureNotifyProducer(boolean value) {
@@ -2247,9 +2247,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -2323,9 +2323,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -2377,7 +2377,7 @@ public class Configuration {
                 protected String compressPayloads;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -2389,7 +2389,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2401,7 +2401,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der service-Eigenschaft ab.
+                 * Gets the value of the service property.
                  * 
                  * @return
                  *     possible object is
@@ -2413,7 +2413,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der service-Eigenschaft fest.
+                 * Sets the value of the service property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2425,7 +2425,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der action-Eigenschaft ab.
+                 * Gets the value of the action property.
                  * 
                  * @return
                  *     possible object is
@@ -2437,7 +2437,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der action-Eigenschaft fest.
+                 * Sets the value of the action property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2449,7 +2449,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der security-Eigenschaft ab.
+                 * Gets the value of the security property.
                  * 
                  * @return
                  *     possible object is
@@ -2461,7 +2461,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der security-Eigenschaft fest.
+                 * Sets the value of the security property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2473,7 +2473,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der defaultMpc-Eigenschaft ab.
+                 * Gets the value of the defaultMpc property.
                  * 
                  * @return
                  *     possible object is
@@ -2485,7 +2485,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der defaultMpc-Eigenschaft fest.
+                 * Sets the value of the defaultMpc property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2497,7 +2497,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der receptionAwareness-Eigenschaft ab.
+                 * Gets the value of the receptionAwareness property.
                  * 
                  * @return
                  *     possible object is
@@ -2509,7 +2509,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der receptionAwareness-Eigenschaft fest.
+                 * Sets the value of the receptionAwareness property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2521,7 +2521,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der reliability-Eigenschaft ab.
+                 * Gets the value of the reliability property.
                  * 
                  * @return
                  *     possible object is
@@ -2533,7 +2533,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der reliability-Eigenschaft fest.
+                 * Sets the value of the reliability property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2545,7 +2545,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der propertySet-Eigenschaft ab.
+                 * Gets the value of the propertySet property.
                  * 
                  * @return
                  *     possible object is
@@ -2557,7 +2557,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der propertySet-Eigenschaft fest.
+                 * Sets the value of the propertySet property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2569,7 +2569,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der payloadProfile-Eigenschaft ab.
+                 * Gets the value of the payloadProfile property.
                  * 
                  * @return
                  *     possible object is
@@ -2581,7 +2581,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der payloadProfile-Eigenschaft fest.
+                 * Sets the value of the payloadProfile property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2593,7 +2593,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der errorHandling-Eigenschaft ab.
+                 * Gets the value of the errorHandling property.
                  * 
                  * @return
                  *     possible object is
@@ -2605,7 +2605,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der errorHandling-Eigenschaft fest.
+                 * Sets the value of the errorHandling property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2617,7 +2617,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der compressPayloads-Eigenschaft ab.
+                 * Gets the value of the compressPayloads property.
                  * 
                  * @return
                  *     possible object is
@@ -2629,7 +2629,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der compressPayloads-Eigenschaft fest.
+                 * Sets the value of the compressPayloads property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2646,9 +2646,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -2756,9 +2756,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -2784,7 +2784,7 @@ public class Configuration {
                 protected String value;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -2796,7 +2796,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2808,7 +2808,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der value-Eigenschaft ab.
+                 * Gets the value of the value property.
                  * 
                  * @return
                  *     possible object is
@@ -2820,7 +2820,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der value-Eigenschaft fest.
+                 * Sets the value of the value property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2835,9 +2835,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -2866,7 +2866,7 @@ public class Configuration {
                 protected BigInteger legs;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -2878,7 +2878,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2890,7 +2890,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der value-Eigenschaft ab.
+                 * Gets the value of the value property.
                  * 
                  * @return
                  *     possible object is
@@ -2902,7 +2902,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der value-Eigenschaft fest.
+                 * Sets the value of the value property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2914,7 +2914,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der legs-Eigenschaft ab.
+                 * Gets the value of the legs property.
                  * 
                  * @return
                  *     possible object is
@@ -2930,7 +2930,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der legs-Eigenschaft fest.
+                 * Sets the value of the legs property.
                  * 
                  * @param value
                  *     allowed object is
@@ -2947,9 +2947,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -3022,7 +3022,7 @@ public class Configuration {
             protected List<Configuration.BusinessProcesses.Parties.Party> party;
 
             /**
-             * Ruft den Wert der partyIdTypes-Eigenschaft ab.
+             * Gets the value of the partyIdTypes property.
              * 
              * @return
              *     possible object is
@@ -3034,7 +3034,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der partyIdTypes-Eigenschaft fest.
+             * Sets the value of the partyIdTypes property.
              * 
              * @param value
              *     allowed object is
@@ -3076,9 +3076,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -3158,7 +3158,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -3170,7 +3170,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3182,7 +3182,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der userName-Eigenschaft ab.
+                 * Gets the value of the userName property.
                  * 
                  * @return
                  *     possible object is
@@ -3194,7 +3194,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der userName-Eigenschaft fest.
+                 * Sets the value of the userName property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3206,7 +3206,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der password-Eigenschaft ab.
+                 * Gets the value of the password property.
                  * 
                  * @return
                  *     possible object is
@@ -3218,7 +3218,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der password-Eigenschaft fest.
+                 * Sets the value of the password property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3230,7 +3230,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der endpoint-Eigenschaft ab.
+                 * Gets the value of the endpoint property.
                  * 
                  * @return
                  *     possible object is
@@ -3242,7 +3242,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der endpoint-Eigenschaft fest.
+                 * Sets the value of the endpoint property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3254,7 +3254,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der allowChunking-Eigenschaft ab.
+                 * Gets the value of the allowChunking property.
                  * 
                  * @return
                  *     possible object is
@@ -3266,7 +3266,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der allowChunking-Eigenschaft fest.
+                 * Sets the value of the allowChunking property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3279,9 +3279,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -3306,7 +3306,7 @@ public class Configuration {
                     protected String partyIdType;
 
                     /**
-                     * Ruft den Wert der partyId-Eigenschaft ab.
+                     * Gets the value of the partyId property.
                      * 
                      * @return
                      *     possible object is
@@ -3318,7 +3318,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der partyId-Eigenschaft fest.
+                     * Sets the value of the partyId property.
                      * 
                      * @param value
                      *     allowed object is
@@ -3330,7 +3330,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Ruft den Wert der partyIdType-Eigenschaft ab.
+                     * Gets the value of the partyIdType property.
                      * 
                      * @return
                      *     possible object is
@@ -3342,7 +3342,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der partyIdType-Eigenschaft fest.
+                     * Sets the value of the partyIdType property.
                      * 
                      * @param value
                      *     allowed object is
@@ -3359,9 +3359,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -3426,9 +3426,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -3454,7 +3454,7 @@ public class Configuration {
                     protected String value;
 
                     /**
-                     * Ruft den Wert der name-Eigenschaft ab.
+                     * Gets the value of the name property.
                      * 
                      * @return
                      *     possible object is
@@ -3466,7 +3466,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der name-Eigenschaft fest.
+                     * Sets the value of the name property.
                      * 
                      * @param value
                      *     allowed object is
@@ -3478,7 +3478,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Ruft den Wert der value-Eigenschaft ab.
+                     * Gets the value of the value property.
                      * 
                      * @return
                      *     possible object is
@@ -3490,7 +3490,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der value-Eigenschaft fest.
+                     * Sets the value of the value property.
                      * 
                      * @param value
                      *     allowed object is
@@ -3509,9 +3509,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -3632,9 +3632,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -3675,7 +3675,7 @@ public class Configuration {
                 protected boolean required;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -3687,7 +3687,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3699,7 +3699,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der cid-Eigenschaft ab.
+                 * Gets the value of the cid property.
                  * 
                  * @return
                  *     possible object is
@@ -3711,7 +3711,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der cid-Eigenschaft fest.
+                 * Sets the value of the cid property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3723,7 +3723,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der mimeType-Eigenschaft ab.
+                 * Gets the value of the mimeType property.
                  * 
                  * @return
                  *     possible object is
@@ -3735,7 +3735,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der mimeType-Eigenschaft fest.
+                 * Sets the value of the mimeType property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3747,7 +3747,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der inBody-Eigenschaft ab.
+                 * Gets the value of the inBody property.
                  * 
                  * @return
                  *     possible object is
@@ -3759,7 +3759,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der inBody-Eigenschaft fest.
+                 * Sets the value of the inBody property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3771,7 +3771,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der schemaFile-Eigenschaft ab.
+                 * Gets the value of the schemaFile property.
                  * 
                  * @return
                  *     possible object is
@@ -3783,7 +3783,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der schemaFile-Eigenschaft fest.
+                 * Sets the value of the schemaFile property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3795,7 +3795,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der maxSize-Eigenschaft ab.
+                 * Gets the value of the maxSize property.
                  * 
                  * @return
                  *     possible object is
@@ -3807,7 +3807,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der maxSize-Eigenschaft fest.
+                 * Sets the value of the maxSize property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3819,7 +3819,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der required-Eigenschaft ab.
+                 * Gets the value of the required property.
                  * 
                  */
                 public boolean isRequired() {
@@ -3827,7 +3827,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der required-Eigenschaft fest.
+                 * Sets the value of the required property.
                  * 
                  */
                 public void setRequired(boolean value) {
@@ -3838,9 +3838,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -3909,7 +3909,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -3921,7 +3921,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3933,7 +3933,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der maxSize-Eigenschaft ab.
+                 * Gets the value of the maxSize property.
                  * 
                  * @return
                  *     possible object is
@@ -3945,7 +3945,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der maxSize-Eigenschaft fest.
+                 * Sets the value of the maxSize property.
                  * 
                  * @param value
                  *     allowed object is
@@ -3958,9 +3958,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -3982,7 +3982,7 @@ public class Configuration {
                     protected String name;
 
                     /**
-                     * Ruft den Wert der name-Eigenschaft ab.
+                     * Gets the value of the name property.
                      * 
                      * @return
                      *     possible object is
@@ -3994,7 +3994,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der name-Eigenschaft fest.
+                     * Sets the value of the name property.
                      * 
                      * @param value
                      *     allowed object is
@@ -4013,9 +4013,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -4119,7 +4119,7 @@ public class Configuration {
             protected String initiatorRole;
 
             /**
-             * Ruft den Wert der initiatorParties-Eigenschaft ab.
+             * Gets the value of the initiatorParties property.
              * 
              * @return
              *     possible object is
@@ -4131,7 +4131,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der initiatorParties-Eigenschaft fest.
+             * Sets the value of the initiatorParties property.
              * 
              * @param value
              *     allowed object is
@@ -4143,7 +4143,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der responderParties-Eigenschaft ab.
+             * Gets the value of the responderParties property.
              * 
              * @return
              *     possible object is
@@ -4155,7 +4155,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der responderParties-Eigenschaft fest.
+             * Sets the value of the responderParties property.
              * 
              * @param value
              *     allowed object is
@@ -4167,7 +4167,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der legs-Eigenschaft ab.
+             * Gets the value of the legs property.
              * 
              * @return
              *     possible object is
@@ -4179,7 +4179,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der legs-Eigenschaft fest.
+             * Sets the value of the legs property.
              * 
              * @param value
              *     allowed object is
@@ -4191,7 +4191,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der name-Eigenschaft ab.
+             * Gets the value of the name property.
              * 
              * @return
              *     possible object is
@@ -4203,7 +4203,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der name-Eigenschaft fest.
+             * Sets the value of the name property.
              * 
              * @param value
              *     allowed object is
@@ -4215,7 +4215,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der responderRole-Eigenschaft ab.
+             * Gets the value of the responderRole property.
              * 
              * @return
              *     possible object is
@@ -4227,7 +4227,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der responderRole-Eigenschaft fest.
+             * Sets the value of the responderRole property.
              * 
              * @param value
              *     allowed object is
@@ -4239,7 +4239,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der agreement-Eigenschaft ab.
+             * Gets the value of the agreement property.
              * 
              * @return
              *     possible object is
@@ -4251,7 +4251,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der agreement-Eigenschaft fest.
+             * Sets the value of the agreement property.
              * 
              * @param value
              *     allowed object is
@@ -4263,7 +4263,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der binding-Eigenschaft ab.
+             * Gets the value of the binding property.
              * 
              * @return
              *     possible object is
@@ -4275,7 +4275,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der binding-Eigenschaft fest.
+             * Sets the value of the binding property.
              * 
              * @param value
              *     allowed object is
@@ -4287,7 +4287,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der mep-Eigenschaft ab.
+             * Gets the value of the mep property.
              * 
              * @return
              *     possible object is
@@ -4299,7 +4299,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der mep-Eigenschaft fest.
+             * Sets the value of the mep property.
              * 
              * @param value
              *     allowed object is
@@ -4311,7 +4311,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der initiatorRole-Eigenschaft ab.
+             * Gets the value of the initiatorRole property.
              * 
              * @return
              *     possible object is
@@ -4323,7 +4323,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der initiatorRole-Eigenschaft fest.
+             * Sets the value of the initiatorRole property.
              * 
              * @param value
              *     allowed object is
@@ -4336,9 +4336,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -4402,9 +4402,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -4426,7 +4426,7 @@ public class Configuration {
                     protected String name;
 
                     /**
-                     * Ruft den Wert der name-Eigenschaft ab.
+                     * Gets the value of the name property.
                      * 
                      * @return
                      *     possible object is
@@ -4438,7 +4438,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der name-Eigenschaft fest.
+                     * Sets the value of the name property.
                      * 
                      * @param value
                      *     allowed object is
@@ -4455,9 +4455,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -4521,9 +4521,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -4545,7 +4545,7 @@ public class Configuration {
                     protected String name;
 
                     /**
-                     * Ruft den Wert der name-Eigenschaft ab.
+                     * Gets the value of the name property.
                      * 
                      * @return
                      *     possible object is
@@ -4557,7 +4557,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der name-Eigenschaft fest.
+                     * Sets the value of the name property.
                      * 
                      * @param value
                      *     allowed object is
@@ -4574,9 +4574,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -4640,9 +4640,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -4664,7 +4664,7 @@ public class Configuration {
                     protected String name;
 
                     /**
-                     * Ruft den Wert der name-Eigenschaft ab.
+                     * Gets the value of the name property.
                      * 
                      * @return
                      *     possible object is
@@ -4676,7 +4676,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der name-Eigenschaft fest.
+                     * Sets the value of the name property.
                      * 
                      * @param value
                      *     allowed object is
@@ -4695,9 +4695,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -4816,9 +4816,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -4849,7 +4849,7 @@ public class Configuration {
                 protected boolean required;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -4861,7 +4861,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -4873,7 +4873,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der key-Eigenschaft ab.
+                 * Gets the value of the key property.
                  * 
                  * @return
                  *     possible object is
@@ -4885,7 +4885,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der key-Eigenschaft fest.
+                 * Sets the value of the key property.
                  * 
                  * @param value
                  *     allowed object is
@@ -4897,7 +4897,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der datatype-Eigenschaft ab.
+                 * Gets the value of the datatype property.
                  * 
                  * @return
                  *     possible object is
@@ -4909,7 +4909,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der datatype-Eigenschaft fest.
+                 * Sets the value of the datatype property.
                  * 
                  * @param value
                  *     allowed object is
@@ -4921,7 +4921,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der required-Eigenschaft ab.
+                 * Gets the value of the required property.
                  * 
                  */
                 public boolean isRequired() {
@@ -4929,7 +4929,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der required-Eigenschaft fest.
+                 * Sets the value of the required property.
                  * 
                  */
                 public void setRequired(boolean value) {
@@ -4940,9 +4940,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -5008,7 +5008,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -5020,7 +5020,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5033,9 +5033,9 @@ public class Configuration {
 
 
                 /**
-                 * <p>Java-Klasse für anonymous complex type.
+                 * <p>Java class for anonymous complex type.
                  * 
-                 * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+                 * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
                  * &lt;complexType&gt;
@@ -5057,7 +5057,7 @@ public class Configuration {
                     protected String property;
 
                     /**
-                     * Ruft den Wert der property-Eigenschaft ab.
+                     * Gets the value of the property property.
                      * 
                      * @return
                      *     possible object is
@@ -5069,7 +5069,7 @@ public class Configuration {
                     }
 
                     /**
-                     * Legt den Wert der property-Eigenschaft fest.
+                     * Sets the value of the property property.
                      * 
                      * @param value
                      *     allowed object is
@@ -5088,9 +5088,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -5155,9 +5155,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -5182,7 +5182,7 @@ public class Configuration {
                 protected String value;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -5194,7 +5194,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5206,7 +5206,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der value-Eigenschaft ab.
+                 * Gets the value of the value property.
                  * 
                  * @return
                  *     possible object is
@@ -5218,7 +5218,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der value-Eigenschaft fest.
+                 * Sets the value of the value property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5235,9 +5235,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -5303,9 +5303,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -5333,7 +5333,7 @@ public class Configuration {
                 protected String signatureMethod;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -5345,7 +5345,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5357,7 +5357,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der policy-Eigenschaft ab.
+                 * Gets the value of the policy property.
                  * 
                  * @return
                  *     possible object is
@@ -5369,7 +5369,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der policy-Eigenschaft fest.
+                 * Sets the value of the policy property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5381,7 +5381,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der signatureMethod-Eigenschaft ab.
+                 * Gets the value of the signatureMethod property.
                  * 
                  * @return
                  *     possible object is
@@ -5393,7 +5393,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der signatureMethod-Eigenschaft fest.
+                 * Sets the value of the signatureMethod property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5410,9 +5410,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -5478,9 +5478,9 @@ public class Configuration {
 
 
             /**
-             * <p>Java-Klasse für anonymous complex type.
+             * <p>Java class for anonymous complex type.
              * 
-             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+             * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
              * &lt;complexType&gt;
@@ -5508,7 +5508,7 @@ public class Configuration {
                 protected String type;
 
                 /**
-                 * Ruft den Wert der name-Eigenschaft ab.
+                 * Gets the value of the name property.
                  * 
                  * @return
                  *     possible object is
@@ -5520,7 +5520,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der name-Eigenschaft fest.
+                 * Sets the value of the name property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5532,7 +5532,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der value-Eigenschaft ab.
+                 * Gets the value of the value property.
                  * 
                  * @return
                  *     possible object is
@@ -5544,7 +5544,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der value-Eigenschaft fest.
+                 * Sets the value of the value property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5556,7 +5556,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Ruft den Wert der type-Eigenschaft ab.
+                 * Gets the value of the type property.
                  * 
                  * @return
                  *     possible object is
@@ -5568,7 +5568,7 @@ public class Configuration {
                 }
 
                 /**
-                 * Legt den Wert der type-Eigenschaft fest.
+                 * Sets the value of the type property.
                  * 
                  * @param value
                  *     allowed object is
@@ -5587,9 +5587,9 @@ public class Configuration {
 
 
     /**
-     * <p>Java-Klasse für anonymous complex type.
+     * <p>Java class for anonymous complex type.
      * 
-     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+     * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType&gt;
@@ -5658,9 +5658,9 @@ public class Configuration {
 
 
         /**
-         * <p>Java-Klasse für anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -5697,7 +5697,7 @@ public class Configuration {
             protected String qualifiedName;
 
             /**
-             * Ruft den Wert der name-Eigenschaft ab.
+             * Gets the value of the name property.
              * 
              * @return
              *     possible object is
@@ -5709,7 +5709,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der name-Eigenschaft fest.
+             * Sets the value of the name property.
              * 
              * @param value
              *     allowed object is
@@ -5721,7 +5721,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der retentionDownloaded-Eigenschaft ab.
+             * Gets the value of the retentionDownloaded property.
              * 
              * @return
              *     possible object is
@@ -5733,7 +5733,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der retentionDownloaded-Eigenschaft fest.
+             * Sets the value of the retentionDownloaded property.
              * 
              * @param value
              *     allowed object is
@@ -5745,7 +5745,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der retentionUndownloaded-Eigenschaft ab.
+             * Gets the value of the retentionUndownloaded property.
              * 
              * @return
              *     possible object is
@@ -5757,7 +5757,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der retentionUndownloaded-Eigenschaft fest.
+             * Sets the value of the retentionUndownloaded property.
              * 
              * @param value
              *     allowed object is
@@ -5769,7 +5769,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der default-Eigenschaft ab.
+             * Gets the value of the default property.
              * 
              */
             public boolean isDefault() {
@@ -5777,7 +5777,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der default-Eigenschaft fest.
+             * Sets the value of the default property.
              * 
              */
             public void setDefault(boolean value) {
@@ -5785,7 +5785,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der enabled-Eigenschaft ab.
+             * Gets the value of the enabled property.
              * 
              */
             public boolean isEnabled() {
@@ -5793,7 +5793,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der enabled-Eigenschaft fest.
+             * Sets the value of the enabled property.
              * 
              */
             public void setEnabled(boolean value) {
@@ -5801,7 +5801,7 @@ public class Configuration {
             }
 
             /**
-             * Ruft den Wert der qualifiedName-Eigenschaft ab.
+             * Gets the value of the qualifiedName property.
              * 
              * @return
              *     possible object is
@@ -5813,7 +5813,7 @@ public class Configuration {
             }
 
             /**
-             * Legt den Wert der qualifiedName-Eigenschaft fest.
+             * Sets the value of the qualifiedName property.
              * 
              * @param value
              *     allowed object is

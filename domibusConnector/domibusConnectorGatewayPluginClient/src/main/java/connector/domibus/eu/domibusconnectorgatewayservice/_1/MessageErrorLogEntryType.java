@@ -9,9 +9,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java-Klasse für MessageErrorLogEntryType complex type.
+ * <p>Java class for MessageErrorLogEntryType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessageErrorLogEntryType"&gt;
@@ -50,7 +50,7 @@ public class MessageErrorLogEntryType {
     protected XMLGregorianCalendar timestamp;
 
     /**
-     * Ruft den Wert der errorCode-Eigenschaft ab.
+     * Gets the value of the errorCode property.
      * 
      * @return
      *     possible object is
@@ -62,7 +62,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Legt den Wert der errorCode-Eigenschaft fest.
+     * Sets the value of the errorCode property.
      * 
      * @param value
      *     allowed object is
@@ -74,7 +74,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Ruft den Wert der errorDetail-Eigenschaft ab.
+     * Gets the value of the errorDetail property.
      * 
      * @return
      *     possible object is
@@ -86,7 +86,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Legt den Wert der errorDetail-Eigenschaft fest.
+     * Sets the value of the errorDetail property.
      * 
      * @param value
      *     allowed object is
@@ -98,7 +98,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Ruft den Wert der messageInErrorId-Eigenschaft ab.
+     * Gets the value of the messageInErrorId property.
      * 
      * @return
      *     possible object is
@@ -110,7 +110,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Legt den Wert der messageInErrorId-Eigenschaft fest.
+     * Sets the value of the messageInErrorId property.
      * 
      * @param value
      *     allowed object is
@@ -122,7 +122,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Ruft den Wert der notified-Eigenschaft ab.
+     * Gets the value of the notified property.
      * 
      * @return
      *     possible object is
@@ -134,7 +134,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Legt den Wert der notified-Eigenschaft fest.
+     * Sets the value of the notified property.
      * 
      * @param value
      *     allowed object is
@@ -146,7 +146,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Ruft den Wert der timestamp-Eigenschaft ab.
+     * Gets the value of the timestamp property.
      * 
      * @return
      *     possible object is
@@ -158,7 +158,7 @@ public class MessageErrorLogEntryType {
     }
 
     /**
-     * Legt den Wert der timestamp-Eigenschaft fest.
+     * Sets the value of the timestamp property.
      * 
      * @param value
      *     allowed object is

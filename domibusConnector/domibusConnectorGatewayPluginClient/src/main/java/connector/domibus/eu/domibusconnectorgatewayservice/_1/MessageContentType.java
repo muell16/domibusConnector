@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für MessageContentType complex type.
+ * <p>Java class for MessageContentType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessageContentType"&gt;
@@ -45,7 +45,7 @@ public class MessageContentType {
     protected String contentMimeType;
 
     /**
-     * Ruft den Wert der contentData-Eigenschaft ab.
+     * Gets the value of the contentData property.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ public class MessageContentType {
     }
 
     /**
-     * Legt den Wert der contentData-Eigenschaft fest.
+     * Sets the value of the contentData property.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ public class MessageContentType {
     }
 
     /**
-     * Ruft den Wert der contentName-Eigenschaft ab.
+     * Gets the value of the contentName property.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ public class MessageContentType {
     }
 
     /**
-     * Legt den Wert der contentName-Eigenschaft fest.
+     * Sets the value of the contentName property.
      * 
      * @param value
      *     allowed object is
@@ -93,7 +93,7 @@ public class MessageContentType {
     }
 
     /**
-     * Ruft den Wert der contentMimeType-Eigenschaft ab.
+     * Gets the value of the contentMimeType property.
      * 
      * @return
      *     possible object is
@@ -105,7 +105,7 @@ public class MessageContentType {
     }
 
     /**
-     * Legt den Wert der contentMimeType-Eigenschaft fest.
+     * Sets the value of the contentMimeType property.
      * 
      * @param value
      *     allowed object is

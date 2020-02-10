@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für MessageAttachmentType complex type.
+ * <p>Java class for MessageAttachmentType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessageAttachmentType"&gt;
@@ -53,7 +53,7 @@ public class MessageAttachmentType {
     protected String attachmentMimeType;
 
     /**
-     * Ruft den Wert der attachmentName-Eigenschaft ab.
+     * Gets the value of the attachmentName property.
      * 
      * @return
      *     possible object is
@@ -65,7 +65,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Legt den Wert der attachmentName-Eigenschaft fest.
+     * Sets the value of the attachmentName property.
      * 
      * @param value
      *     allowed object is
@@ -77,7 +77,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Ruft den Wert der attachmentData-Eigenschaft ab.
+     * Gets the value of the attachmentData property.
      * 
      * @return
      *     possible object is
@@ -89,7 +89,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Legt den Wert der attachmentData-Eigenschaft fest.
+     * Sets the value of the attachmentData property.
      * 
      * @param value
      *     allowed object is
@@ -101,7 +101,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Ruft den Wert der attachmentIdentifier-Eigenschaft ab.
+     * Gets the value of the attachmentIdentifier property.
      * 
      * @return
      *     possible object is
@@ -113,7 +113,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Legt den Wert der attachmentIdentifier-Eigenschaft fest.
+     * Sets the value of the attachmentIdentifier property.
      * 
      * @param value
      *     allowed object is
@@ -125,7 +125,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Ruft den Wert der attachmentDescription-Eigenschaft ab.
+     * Gets the value of the attachmentDescription property.
      * 
      * @return
      *     possible object is
@@ -137,7 +137,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Legt den Wert der attachmentDescription-Eigenschaft fest.
+     * Sets the value of the attachmentDescription property.
      * 
      * @param value
      *     allowed object is
@@ -149,7 +149,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Ruft den Wert der attachmentMimeType-Eigenschaft ab.
+     * Gets the value of the attachmentMimeType property.
      * 
      * @return
      *     possible object is
@@ -161,7 +161,7 @@ public class MessageAttachmentType {
     }
 
     /**
-     * Legt den Wert der attachmentMimeType-Eigenschaft fest.
+     * Sets the value of the attachmentMimeType property.
      * 
      * @param value
      *     allowed object is

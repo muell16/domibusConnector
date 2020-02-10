@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für MessageDetailsType complex type.
+ * <p>Java class for MessageDetailsType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="MessageDetailsType"&gt;
@@ -50,7 +50,7 @@ public class MessageDetailsType {
     protected MessagePropertiesType messageProperties;
 
     /**
-     * Ruft den Wert der messageId-Eigenschaft ab.
+     * Gets the value of the messageId property.
      * 
      * @return
      *     possible object is
@@ -62,7 +62,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Legt den Wert der messageId-Eigenschaft fest.
+     * Sets the value of the messageId property.
      * 
      * @param value
      *     allowed object is
@@ -74,7 +74,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Ruft den Wert der refToMessageId-Eigenschaft ab.
+     * Gets the value of the refToMessageId property.
      * 
      * @return
      *     possible object is
@@ -86,7 +86,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Legt den Wert der refToMessageId-Eigenschaft fest.
+     * Sets the value of the refToMessageId property.
      * 
      * @param value
      *     allowed object is
@@ -98,7 +98,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Ruft den Wert der partyInfo-Eigenschaft ab.
+     * Gets the value of the partyInfo property.
      * 
      * @return
      *     possible object is
@@ -110,7 +110,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Legt den Wert der partyInfo-Eigenschaft fest.
+     * Sets the value of the partyInfo property.
      * 
      * @param value
      *     allowed object is
@@ -122,7 +122,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Ruft den Wert der collaborationInfo-Eigenschaft ab.
+     * Gets the value of the collaborationInfo property.
      * 
      * @return
      *     possible object is
@@ -134,7 +134,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Legt den Wert der collaborationInfo-Eigenschaft fest.
+     * Sets the value of the collaborationInfo property.
      * 
      * @param value
      *     allowed object is
@@ -146,7 +146,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Ruft den Wert der messageProperties-Eigenschaft ab.
+     * Gets the value of the messageProperties property.
      * 
      * @return
      *     possible object is
@@ -158,7 +158,7 @@ public class MessageDetailsType {
     }
 
     /**
-     * Legt den Wert der messageProperties-Eigenschaft fest.
+     * Sets the value of the messageProperties property.
      * 
      * @param value
      *     allowed object is

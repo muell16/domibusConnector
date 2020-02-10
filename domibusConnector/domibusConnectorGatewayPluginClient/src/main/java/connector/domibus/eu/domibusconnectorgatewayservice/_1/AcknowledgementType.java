@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für AcknowledgementType complex type.
+ * <p>Java class for AcknowledgementType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="AcknowledgementType"&gt;
@@ -39,7 +39,7 @@ public class AcknowledgementType {
     protected String messageId;
 
     /**
-     * Ruft den Wert der success-Eigenschaft ab.
+     * Gets the value of the success property.
      * 
      */
     public boolean isSuccess() {
@@ -47,7 +47,7 @@ public class AcknowledgementType {
     }
 
     /**
-     * Legt den Wert der success-Eigenschaft fest.
+     * Sets the value of the success property.
      * 
      */
     public void setSuccess(boolean value) {
@@ -55,7 +55,7 @@ public class AcknowledgementType {
     }
 
     /**
-     * Ruft den Wert der messageId-Eigenschaft ab.
+     * Gets the value of the messageId property.
      * 
      * @return
      *     possible object is
@@ -67,7 +67,7 @@ public class AcknowledgementType {
     }
 
     /**
-     * Legt den Wert der messageId-Eigenschaft fest.
+     * Sets the value of the messageId property.
      * 
      * @param value
      *     allowed object is

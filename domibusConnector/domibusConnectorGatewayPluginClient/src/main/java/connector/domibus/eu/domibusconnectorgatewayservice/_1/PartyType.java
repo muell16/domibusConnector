@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für PartyType complex type.
+ * <p>Java class for PartyType complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="PartyType"&gt;
@@ -44,7 +44,7 @@ public class PartyType {
     protected String role;
 
     /**
-     * Ruft den Wert der partyId-Eigenschaft ab.
+     * Gets the value of the partyId property.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ public class PartyType {
     }
 
     /**
-     * Legt den Wert der partyId-Eigenschaft fest.
+     * Sets the value of the partyId property.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ public class PartyType {
     }
 
     /**
-     * Ruft den Wert der partyIdType-Eigenschaft ab.
+     * Gets the value of the partyIdType property.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ public class PartyType {
     }
 
     /**
-     * Legt den Wert der partyIdType-Eigenschaft fest.
+     * Sets the value of the partyIdType property.
      * 
      * @param value
      *     allowed object is
@@ -92,7 +92,7 @@ public class PartyType {
     }
 
     /**
-     * Ruft den Wert der role-Eigenschaft ab.
+     * Gets the value of the role property.
      * 
      * @return
      *     possible object is
@@ -104,7 +104,7 @@ public class PartyType {
     }
 
     /**
-     * Legt den Wert der role-Eigenschaft fest.
+     * Sets the value of the role property.
      * 
      * @param value
      *     allowed object is
