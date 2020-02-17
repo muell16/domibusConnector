@@ -1052,18 +1052,18 @@
     
     <reporting>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>at.gv.brz.jqeu</groupId>-->
-<!--                <artifactId>spring-properties-reporting-plugin</artifactId>-->
-<!--                <version>0.9-alpha4-SNAPSHOT</version>-->
-<!--                <configuration>-->
-<!--                    <includedDependencies>-->
-<!--                        <dependency>-->
-<!--                            <groupId>^eu.domibus.connector</groupId>-->
-<!--                        </dependency>-->
-<!--                    </includedDependencies>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>eu.ecodex.connector.utils</groupId>
+                <artifactId>spring-properties-reporting-plugin</artifactId>
+                <version>0.9.1-RELEASE</version>
+                <configuration>
+                    <includedDependencies>
+                        <dependency>
+                            <groupId>^eu.domibus.connector</groupId>
+                        </dependency>
+                    </includedDependencies>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>

@@ -107,4 +107,4 @@ Enable tomcat for startup on boot
 systemctl enabled tomcat
 ----
 
-NOTE: if you plan to also install domibus (AS4 Gateway) make surce that you are using a different tomcat! 
+NOTE: if you plan to also install domibus (AS4 Gateway) make surce that you are using a different tomcat!
