@@ -14,6 +14,15 @@
             <directory>${project.basedir}/../domibusConnectorWebAppModule/target/site</directory>
             <outputDirectory>domibusConnectorSite</outputDirectory>
         </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/architecture</directory>
+            <outputDirectory>architecture/</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+
     </fileSets>
 
 </assembly>

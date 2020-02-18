@@ -16,6 +16,7 @@
             <item name="Overview" href="index.html"/>
             <item name="Changelog" href="changelog.html" />
             <item name="Architecture" href="architecture_overview.html" />
+            <item name="versioning" href="versioning.html" />
             <!-- <item name="Module" href="modules.html"/> -->
             <!-- <item name="Use Cases" href="use_cases.html"/> -->
             <!--<item name="Evidence" href="evidence.html" />-->
@@ -24,6 +25,7 @@
             <item name="Deploy on Tomcat" href="installation/tomcat_deploy.html"/>
             <item name="Certificate Configuration" href="installation/certificates.html"/>
             <item name="Backend configuration" href="installation/backend_configuration.html"/>
+            <item name="Message Routing" href="doc/backend_message_routing.html" />
         </menu>
 <!--        <menu name="Technical/Developer Documentation">-->
 <!--            <item name="Architecture" href="development/architecture_overview.html"/>-->

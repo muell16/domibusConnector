@@ -1053,7 +1053,7 @@
     <reporting>
         <plugins>
             <plugin>
-                <groupId>eu.ecodex.connector.utils</groupId>
+                <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
                 <artifactId>spring-properties-reporting-plugin</artifactId>
                 <version>0.9.1-RELEASE</version>
                 <configuration>
@@ -1103,15 +1103,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <!--<configuration>-->
-                    <!--&lt;!&ndash; fix error javax.interceptor.InterceptorBinding not found &ndash;&gt;-->
-                    <!--<additionalDependencies>-->
-                        <!--<additionalDependency>-->
-                            <!--<groupId>javax.interceptor</groupId>-->
-                            <!--<artifactId>javax.interceptor-api</artifactId>-->
-                        <!--</additionalDependency>-->
-                    <!--</additionalDependencies>-->
-                <!--</configuration>-->
                 <reportSets>
                     <reportSet><!-- by default, id = "default" -->
                         <reports><!-- select non-aggregate reports -->
