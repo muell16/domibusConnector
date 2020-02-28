@@ -11,35 +11,33 @@
 		
 
         <fileSet>
-            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/DbScripts/
-            </directory>
-            <outputDirectory>/documentation/database-scripts
-            </outputDirectory>
+            <directory>${project.basedir}/../domibusConnectorPersistence/src/main/resources/dbscripts</directory>
+            <outputDirectory>documentation/database-scripts</outputDirectory>
             <includes>
-                <include>*/*.*</include>
+                <include>*/**</include>
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
-            <outputDirectory>documentation/</outputDirectory>
-            <includes>
-                <include>domibusConnector_AdministrationGuide.pdf</include>
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
+			<outputDirectory>documentation/</outputDirectory>
+			<includes>
+				<include>domibusConnector_AdministrationGuide.pdf</include>
                 <include>domibusConnector_InstallationGuide.pdf</include>
                 <include>e-Codex_key_trust_stores.pdf</include>
             </includes>
-        </fileSet>
+		</fileSet>
+		
+		<fileSet>
+			<directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>
+			<outputDirectory>documentation/</outputDirectory>
+			<includes>
+				<include>architecture.zip</include>
+			</includes>
+		</fileSet>
 
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>
-            <outputDirectory>documentation/</outputDirectory>
-            <includes>
-                <include>architecture.zip</include>
-            </includes>
-        </fileSet>
-
-    </fileSets>
-    <files>
+	</fileSets>
+	<files>
 
 
         <file>
@@ -67,5 +65,5 @@
             </outputDirectory>
         </file>
 
-    </files>
+	</files>
 </assembly>
