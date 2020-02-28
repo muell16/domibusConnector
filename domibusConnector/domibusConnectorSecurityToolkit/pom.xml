@@ -1,17 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
         <version>4.2.0-alpha3-SNAPSHOT</version>
     </parent>
+
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
+
     <name>${project.artifactId}</name>
     <description>The securityToolkitModule resolves and creates the ASIC-S Container. Its a bridge betweent the
         connector and the securityLib
     </description>
-
 
     <dependencies>
 
@@ -28,10 +30,12 @@
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>ecodex-container</artifactId>
+            <!-- <classifier>sources</classifier> -->
+            <version>1.11</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
                     <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>
@@ -54,8 +58,6 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
-            <!-- <classifier>sources</classifier> -->
-            <version>1.11</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -191,9 +193,9 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-            <classifier>tests</classifier>
             <type>test-jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.ecodex.connector.utils</groupId>
@@ -202,8 +204,8 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <build>
-        <!-- activate resource filtering to provide the tests with correct properties for the environment,
+
+    <build><!-- activate resource filtering to provide the tests with correct properties for the environment,
                BUT only filter specific folder!!! so the other resources are not malformed during filtering!
         -->
         <!-- activate resource filtering to provide the tests with correct properties for the environment
@@ -218,8 +220,6 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
-
-
         <plugins>
 
 

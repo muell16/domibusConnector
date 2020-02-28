@@ -1,12 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
         <version>4.2.0-alpha3-SNAPSHOT</version>
     </parent>
+
     <artifactId>domibusConnectorDistribution</artifactId>
+    <packaging>pom</packaging>
+
     <name>${project.artifactId}</name>
     <description>This maven module contains the assembly scripts to create the different distribution packages
     </description>
@@ -15,38 +19,16 @@
         <run.env>test</run.env>
     </properties>
 
-    <profiles>
+    <dependencies>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorWeb</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
 
-        <profile>
-            <id>site</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!--<plugin>-->
-                        <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<id>create-site-package</id>-->
-                                <!--<phase>package</phase>-->
-                                <!--<goals>-->
-                                    <!--<goal>single</goal>-->
-                                <!--</goals>-->
-                                <!--<configuration>-->
-                                    <!--<appendAssemblyId>true</appendAssemblyId>-->
-                                    <!--<descriptors>-->
-                                        <!--<descriptor>src/main/assembly/assemblySite.xml</descriptor>-->
-                                    <!--</descriptors>-->
-                                <!--</configuration>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                    <!--</plugin>-->
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    </dependencies>
 
     <build>
         <finalName>domibusConnector</finalName>
@@ -104,16 +86,37 @@
             </plugin>
         </plugins>
     </build>
-	
-    <dependencies>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
+    <profiles>
 
-    </dependencies>
-    <packaging>pom</packaging>
+
+        <profile>
+            <id>site</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!--<plugin>-->
+                        <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<id>create-site-package</id>-->
+                                <!--<phase>package</phase>-->
+                                <!--<goals>-->
+                                    <!--<goal>single</goal>-->
+                                <!--</goals>-->
+                                <!--<configuration>-->
+                                    <!--<appendAssemblyId>true</appendAssemblyId>-->
+                                    <!--<descriptors>-->
+                                        <!--<descriptor>src/main/assembly/assemblySite.xml</descriptor>-->
+                                    <!--</descriptors>-->
+                                <!--</configuration>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

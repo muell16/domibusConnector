@@ -1,15 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
         <version>4.2.0-alpha3-SNAPSHOT</version>
     </parent>
+
     <artifactId>domibusConnectorEvidencesToolkit</artifactId>
+
     <name>${project.artifactId}</name>
     <description>The evidence toolkit contains the evidence releated services. It is is responsibly for creating the evidences.</description>
-
 
     <dependencies>
         <dependency>
@@ -17,8 +19,8 @@
             <artifactId>EvidenceBuilder</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
                     <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
                 </exclusion>
                 <exclusion>
                     <artifactId>jaxb-api</artifactId>
@@ -40,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>	  
+            <artifactId>log4j-1.2-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -60,8 +62,8 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
             <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -112,9 +114,8 @@
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
     </dependencies>
-	
-    <build>
-        <!-- activate resource filtering to provide the tests with correct properties for the environment -->
+
+    <build><!-- activate resource filtering to provide the tests with correct properties for the environment -->
 <!-- activate resource filtering to provide the tests with correct properties for the environment 
             BUT only filter resources from specific folder to avoid malforming the other resources
         -->

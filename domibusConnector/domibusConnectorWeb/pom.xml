@@ -1,16 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>eu.domibus.connector</groupId>
 		<artifactId>domibusConnector</artifactId>
 		<version>4.2.0-alpha3-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>domibusConnectorWeb</artifactId>
 	<packaging>war</packaging>
 
-
-    <dependencies>
+	<dependencies>
 
         <dependency>
             <groupId>eu.domibus.connector</groupId>
@@ -21,7 +22,7 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
-<!--            <exclusions>-->
+            <!--            <exclusions>-->
 <!--            	<exclusion>-->
 <!--            		<groupId>xalan</groupId>-->
 <!--            		<artifactId>xalan</artifactId>-->
@@ -87,7 +88,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
+			<optional>true</optional>
 		</dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -129,7 +130,7 @@
 
     </dependencies>
 
-    <build>
+	<build>
         <plugins>
             <plugin>
                 <groupId>com.vaadin</groupId>
@@ -145,7 +146,6 @@
             </plugin>
         </plugins>
     </build>
-
 
 	<profiles>
 		<profile>
@@ -197,5 +197,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
