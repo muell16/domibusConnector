@@ -5,7 +5,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.CannotBeMappedToTransitionException;
 import eu.domibus.connector.domain.transition.*;
-import eu.domibus.connector.domain.transition.testutil.TransitionCreator;
+import eu.domibus.connector.testdata.TransitionCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
@@ -92,6 +92,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
             DomibusConnectorMessageConfirmation messageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
             messageDeliveryConfirmation.setEvidence(null); //set evidence to null to provoke exception
+
 
             DomibusConnectorMessageConfirmationType messageConfirmationTO =
                     DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);

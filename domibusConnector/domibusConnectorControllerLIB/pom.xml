@@ -64,6 +64,13 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorControllerAPI</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorTestData</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

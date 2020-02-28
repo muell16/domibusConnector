@@ -37,7 +37,7 @@
                         <id>generate-wsdl-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <sourceRoot>${basedir}/src/main/java</sourceRoot>
+<!--                            <sourceRoot>${basedir}/src/main/java</sourceRoot>-->
                             <encoding>UTF-8</encoding>
 
                             <wsdlOptions>

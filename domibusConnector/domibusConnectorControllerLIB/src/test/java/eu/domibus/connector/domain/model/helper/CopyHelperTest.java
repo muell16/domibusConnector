@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,13 +21,13 @@ public class CopyHelperTest {
         DomibusConnectorParty partyAT = DomainEntityCreator.createPartyAT();
         DomibusConnectorParty copiedParty = CopyHelper.copyParty(partyAT);
         
-        assertThat(copiedParty).isEqualToComparingFieldByFieldRecursively(partyAT);
+        Assertions.assertThat(copiedParty).isEqualToComparingFieldByFieldRecursively(partyAT);
     }
     
     @Test
     public void testCopyParty_copyNull() {
         DomibusConnectorParty copiedParty = CopyHelper.copyParty(null);
-        assertThat(copiedParty).isNull();
+        Assertions.assertThat(copiedParty).isNull();
     }
     
     @Test
@@ -34,14 +35,14 @@ public class CopyHelperTest {
         DomibusConnectorAction action = DomainEntityCreator.createActionForm_A();
         DomibusConnectorAction copiedAction = CopyHelper.copyAction(action);
         
-        assertThat(copiedAction).isEqualToComparingFieldByFieldRecursively(action);
+        Assertions.assertThat(copiedAction).isEqualToComparingFieldByFieldRecursively(action);
     }
       
     @Test
     public void testCopyAction_copyNull() {       
         DomibusConnectorAction copiedAction = CopyHelper.copyAction(null);
         
-        assertThat(copiedAction).isNull();
+        Assertions.assertThat(copiedAction).isNull();
     }
 
     @Test
@@ -49,13 +50,13 @@ public class CopyHelperTest {
         DomibusConnectorService service = DomainEntityCreator.createServiceEPO();
         DomibusConnectorService copiedService = CopyHelper.copyService(service);
         
-        assertThat(copiedService).isEqualToComparingFieldByFieldRecursively(service);
+        Assertions.assertThat(copiedService).isEqualToComparingFieldByFieldRecursively(service);
     }
     
     @Test
     public void testCopyService_copyNull() {        
         DomibusConnectorService copiedService = CopyHelper.copyService(null);        
-        assertThat(copiedService).isNull();
+        Assertions.assertThat(copiedService).isNull();
     }
     
     @Test
@@ -63,13 +64,13 @@ public class CopyHelperTest {
         DomibusConnectorMessageAttachment attachment = DomainEntityCreator.createMessageAttachment();
         DomibusConnectorMessageAttachment copiedAttachment = CopyHelper.copyAttachment(attachment);
         
-        assertThat(copiedAttachment).isEqualToComparingFieldByFieldRecursively(attachment);        
+        Assertions.assertThat(copiedAttachment).isEqualToComparingFieldByFieldRecursively(attachment);
     }
     
      @Test
     public void testCopyMessageAttachment_copyNull() {        
         DomibusConnectorMessageAttachment copiedAttachment = CopyHelper.copyAttachment(null);        
-        assertThat(copiedAttachment).isNull();
+        Assertions.assertThat(copiedAttachment).isNull();
     }
     
     
