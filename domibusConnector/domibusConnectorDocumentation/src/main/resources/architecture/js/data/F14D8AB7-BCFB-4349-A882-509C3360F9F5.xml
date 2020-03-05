@@ -1,3 +1,0 @@
-tocTab[tocTab.length] = new Array("0.6.2.1.8.3:1", "", "domibusConnectorPersistenceService", "EARoot/EA6/EA2/EA1/EA8/EA3/EA434.htm", "175.png", "76", "0", "", "Logical diagram0","{8A94A161-55A5-4cd2-B207-6B483D4EBEB8}");
-tocTab[tocTab.length] = new Array("0.6.2.1.8.3:2", "", "DomibusConnectorPersistenceService", "EARoot/EA6/EA2/EA1/EA8/EA3/EA437.htm", "8.png", "E615", "0", "", "Interface0","{CD223E51-954C-4241-919D-C72D769E0E79}");
-tocTab[tocTab.length] = new Array("0.6.2.1.8.3:3", "", "DomibusConnectorPersistenceServiceImpl", "EARoot/EA6/EA2/EA1/EA8/EA3/EA438.htm", "5.png", "E616", "0", "", "Class0","{B580FADF-EF03-479a-B70D-EC8B2360E189}");

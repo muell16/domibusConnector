@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
@@ -99,7 +100,11 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         Optional<PDomibusConnectorTransportStep> foundStep = transportStepDao.findbyMsgLinkPartnerAndAttempt(msgId, partnerName, transportStep.getAttempt());
         PDomibusConnectorTransportStep step = foundStep.orElseGet(  () -> {
             PDomibusConnectorTransportStep s = new PDomibusConnectorTransportStep();
-            s.setMessage(messageDao.findOneByConnectorMessageId(msgId));
+            PDomibusConnectorMessage oneByConnectorMessageId = messageDao.findOneByConnectorMessageId(msgId);
+            if (oneByConnectorMessageId == null) {
+                throw new IllegalArgumentException(String.format("No message found for the connector message id [%s] within the database", msgId));
+            }
+            s.setMessage(oneByConnectorMessageId);
             s.setLinkPartnerName(partnerName);
             return s;
         });

@@ -81,5 +81,10 @@ public class DCWsActiveLink implements ActiveLink {
     public DomibusConnectorLinkConfiguration getConfiguration() {
         return linkConfiguration;
     }
+
+    @Override
+    public boolean isUp() {
+        return ctx.isActive();
+    }
 }
 

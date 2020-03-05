@@ -19,6 +19,10 @@ The connectorSuite consists mainly 3 components:
 * Connector itself
 * Domibus Gateway Connector Plugin
 
+For the connector itself the documentation contains a export from enterprise architect:
+link:../architecture/index.html[architecture diagrams]
+
+
 === ConnectorClient / ConnectorClientLib / National System
 
 Connector Client is the bridge between the national system or application and the connector. It is

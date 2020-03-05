@@ -1,0 +1,2 @@
+tocTab[tocTab.length] = new Array("0.6.1:1", "", "domibus", "EARoot/EA6/EA1/EA217.htm", "178.png", "64", "0", "", "Component diagram0","{EE18EEF2-B580-43ee-9158-22D1B9574EEE}");
+tocTab[tocTab.length] = new Array("0.6.1:2", "", "domibus-core", "EARoot/EA6/EA1/EA220.htm", "10.png", "E545", "0", "", "Component0","{183A5405-0390-4257-A61B-91684D64ADEA}");

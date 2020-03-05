@@ -123,5 +123,10 @@ public class GwJmsPluginActiveLink implements ActiveLink {
         return this.linkConfiguration;
     }
 
+    @Override
+    public boolean isUp() {
+        return linkPartnerSpringContext.isActive();
+    }
+
 
 }

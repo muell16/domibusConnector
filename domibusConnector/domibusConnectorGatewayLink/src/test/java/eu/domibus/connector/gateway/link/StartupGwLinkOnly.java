@@ -3,6 +3,7 @@ package eu.domibus.connector.gateway.link;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
 import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.slf4j.Logger;
@@ -105,6 +106,16 @@ public class StartupGwLinkOnly {
             public void updateTransportStatus(DomibusConnectorTransportState transportState) {
                 LOGGER.info("setting transport: [{}]", transportState);
                 transportStatesQueue().add(transportState);
+            }
+
+            @Override
+            public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+                return new TransportId(linkPartnerName + "_" + message);
+            }
+
+            @Override
+            public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+                return new TransportId(linkPartnerName + "_" + message);
             }
         };
     }

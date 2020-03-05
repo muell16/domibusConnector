@@ -5,7 +5,6 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-
     <fileSets>
         <fileSet>
             <includes>
@@ -15,5 +14,4 @@
             <outputDirectory>dbscripts</outputDirectory>
         </fileSet>
     </fileSets>
-
 </assembly>

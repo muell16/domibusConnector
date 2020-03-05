@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.link.LinkPackage;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
 import eu.domibus.connector.link.service.DCLinkPluginConfigurationProperties;
+import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
@@ -37,6 +38,12 @@ public class LinkTestContext {
         TransportStatusService mock = Mockito.mock(TransportStatusService.class);
 
         return mock;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomibusConnectorLinkConfigurationDao linkConfigurationDao() {
+        return Mockito.mock(DomibusConnectorLinkConfigurationDao.class);
     }
 
 //    @Bean

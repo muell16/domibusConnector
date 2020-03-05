@@ -36,6 +36,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
     public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
     public static final String SPRING_CONFIG_NAME = "spring.config.name";
+    public static final String DEFAULT_SPRING_CONFIG_NAME = "connector";
 
     public static final String CONNECTOR_CONFIG_FILE = "connector.config.file";
 
@@ -114,6 +115,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             springProperties.setProperty(SPRING_CONFIG_NAME, configName);
 
         } else {
+            springProperties.setProperty(SPRING_CONFIG_LOCATION, "classpath:/config/,file:./conf/connector/,file:./config/");
+            springProperties.setProperty(SPRING_CONFIG_NAME, DEFAULT_SPRING_CONFIG_NAME);
             LOGGER.warn("SystemProperty \"{}\" not given or not resolvable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE);
         }
         application.properties(springProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...

@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
@@ -14,6 +15,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.junit.Before;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +37,7 @@ class TransportStepPersistenceServiceImplITCase {
     DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Autowired
-    PDomibusConnectorTransportStep transportStep;
+    DomibusConnectorMessageDao msgDao;
 
     @Before
     public void beforeAllTests() {
@@ -44,11 +46,22 @@ class TransportStepPersistenceServiceImplITCase {
 
         messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
+//        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
+//        msg.setConnectorMessageId("msg2");
+//        msgDao.save(msg);
+
     }
 
 
     @Test
     void createNewTransportStep() {
+        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
+        msg.setConnectorMessageId("msg2");
+        msg.setDirectionSource(MessageTargetSource.GATEWAY);
+        msg.setDirectionTarget(MessageTargetSource.BACKEND);
+        msgDao.save(msg);
+
+
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 
         step.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId("msg2"));
@@ -60,10 +73,12 @@ class TransportStepPersistenceServiceImplITCase {
     }
 
     @Test
+    @Disabled("not implemented yet!")
     void getTransportStepByTransportId() {
     }
 
     @Test
+    @Disabled("not implemented yet!")
     void update() {
     }
 }

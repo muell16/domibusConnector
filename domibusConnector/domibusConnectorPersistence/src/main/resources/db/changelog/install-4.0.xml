@@ -1,18 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<databaseChangeLog 
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
-
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <!-- 
         Changelog to fresh install 4.0 DataModel
     -->
-<!--    <include file="/db/changelog/v4_0/upgrade-3to4.xml" />-->
-<!--    <include file="/db/changelog/v4_0/upgrade_qrtz_tables.xml" />-->
-
-    <include file="/db/changelog/v4_0/initial-changelog-domibus.xml" />
-    <include file="/db/changelog/v4_0/initial-changelog-webadmin.xml" />
-    <include file="/db/changelog/v4_0/initial-changelog-data.sql" />
-   
+    <!--    <include file="/db/changelog/v4_0/upgrade-3to4.xml" />-->
+    <!--    <include file="/db/changelog/v4_0/upgrade_qrtz_tables.xml" />-->
+    <include file="/db/changelog/v4_0/initial-changelog-domibus.xml"/>
+    <include file="/db/changelog/v4_0/initial-changelog-webadmin.xml"/>
+    <include file="/db/changelog/v4_0/initial-changelog-data.sql"/>
 </databaseChangeLog>

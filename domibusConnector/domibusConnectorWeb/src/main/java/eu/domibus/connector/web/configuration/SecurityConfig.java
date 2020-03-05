@@ -54,7 +54,6 @@ public class SecurityConfig {
     @Order(1)
     public static class ActuatorWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-        //		@Value("management.endpoints.web.base-path:''")
         private String actuatorBasePath = "actuator";
 
         @Override
@@ -140,7 +139,9 @@ public class SecurityConfig {
                     "/webjars/**",
 
                     // (development mode) H2 debugging console
-                    "/h2-console/**"
+                    "/h2-console/**",
+                    //allow access to webservices
+                    "/services/**"
 
                     );
         }

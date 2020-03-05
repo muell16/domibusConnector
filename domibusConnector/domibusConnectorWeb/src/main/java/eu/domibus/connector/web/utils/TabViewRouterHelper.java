@@ -11,7 +11,10 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.server.VaadinSession;
 import eu.domibus.connector.web.configuration.SecurityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,8 @@ import java.util.Map;
  * can be accessed as enabled
  */
 public class TabViewRouterHelper implements BeforeEnterObserver {
+
+    private static final Logger LOGGER = LogManager.getLogger(TabViewRouterHelper.class);
 
     Tabs tabMenu = new Tabs();
     Map<Tab, Class> tabsToPages = new HashMap<>();
@@ -54,9 +59,9 @@ public class TabViewRouterHelper implements BeforeEnterObserver {
     private void tabSelectionChanged(Tabs.SelectedChangeEvent selectedChangeEvent) {
         if (selectedChangeEvent.isFromClient()) {
             Tab selectedTab = selectedChangeEvent.getSelectedTab();
-            Class component = tabsToPages.get(selectedTab);
-
-            UI.getCurrent().navigate(component);
+            Class componentClazz = tabsToPages.get(selectedTab);
+            LOGGER.debug("Navigate to [{}]", componentClazz);
+            UI.getCurrent().navigate(componentClazz);
 
         }
     }
@@ -126,7 +131,6 @@ public class TabViewRouterHelper implements BeforeEnterObserver {
             if (clz == null) {
                 throw new IllegalArgumentException("component is not allowed to be null!");
             }
-
 
             Span tabText = new Span(tabLabel);
             tabText.getStyle().set("font-size", tabFontSize);

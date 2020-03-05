@@ -41,8 +41,10 @@ public class GatewayLinkWsContext {
     @Autowired
     GatewayLinkWsServiceProperties gatewayLinkWsServiceProperties;
 
-    @Autowired
-    private DomibusConnectorDeliveryWSImpl domibusConnectorDeliveryService;
+    @Bean
+    public DomibusConnectorDeliveryWSImpl domibusConnectorDeliveryService() {
+        return new DomibusConnectorDeliveryWSImpl();
+    }
 
 
     @Bean
@@ -57,11 +59,12 @@ public class GatewayLinkWsContext {
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
         jaxWsProxyFactoryBean.setBus(cxfBus);
+        LOGGER.debug("Setting address of gateway sumission service to [{}]", gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
         jaxWsProxyFactoryBean.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
         jaxWsProxyFactoryBean.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
         jaxWsProxyFactoryBean.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
-        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
+//        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
 //        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
 
         jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
@@ -81,7 +84,7 @@ public class GatewayLinkWsContext {
 
     @Bean
     public EndpointImpl domibusConnectorDeliveryServiceEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(cxfBus, domibusConnectorDeliveryService);
+        EndpointImpl endpoint = new EndpointImpl(cxfBus, domibusConnectorDeliveryService());
         endpoint.setAddress(gatewayLinkWsServiceProperties.getPublishAddress());
         endpoint.setWsdlLocation(DomibusConnectorGatewayDeliveryWSService.WSDL_LOCATION.toString());
         endpoint.setServiceName(DomibusConnectorGatewayDeliveryWSService.SERVICE);

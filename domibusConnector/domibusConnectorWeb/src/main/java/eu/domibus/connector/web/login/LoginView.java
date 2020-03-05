@@ -2,6 +2,7 @@ package eu.domibus.connector.web.login;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,13 +28,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-//@HtmlImport("styles/shared-styles.html")
-
+@SpringComponent
+@UIScope
 @Route(value = LoginView.ROUTE)
 @PageTitle("domibusConnector - Login")
 public class LoginView extends VerticalLayout implements HasUrlParameter<String> {

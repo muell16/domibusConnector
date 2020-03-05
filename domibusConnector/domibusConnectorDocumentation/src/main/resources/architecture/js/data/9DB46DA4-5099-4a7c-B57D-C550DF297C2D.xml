@@ -1,6 +1,0 @@
-tocTab[tocTab.length] = new Array("0.6.2.1.7:1", "", "domibusConnectorGatewayLink", "EARoot/EA6/EA2/EA1/EA7/EA383.htm", "175.png", "78", "0", "", "Logical diagram0","{15A2AD2C-E02B-4554-87BB-366CAD0E30D4}");
-tocTab[tocTab.length] = new Array("0.6.2.1.7:2", "", "ConnectorGatewayPlugin", "EARoot/EA6/EA2/EA1/EA7/EA386.htm", "6.png", "E942", "0", "", "Actor0","{F5992B6C-A9DA-491f-A26B-2B70095CA1B6}");
-tocTab[tocTab.length] = new Array("0.6.2.1.7:3", "", "Deliver Message to Controller", "EARoot/EA6/EA2/EA1/EA7/EA387.htm", "7.png", "E945", "0", "", "UseCase0","{DF2B0C68-37EE-413a-80A7-DA43ED55B24B}");
-tocTab[tocTab.length] = new Array("0.6.2.1.7:4", "", "DomibusConnectorDeliveryServiceWSImpl", "EARoot/EA6/EA2/EA1/EA7/EA388.htm", "5.png", "E779", "0", "", "Class0","{A1A4B9BD-0B0C-402a-8773-59843DB13E97}");
-tocTab[tocTab.length] = new Array("0.6.2.1.7:5", "", "Submit Message to Gateway", "EARoot/EA6/EA2/EA1/EA7/EA390.htm", "7.png", "E944", "0", "", "UseCase0","{C84FFC59-3E76-47da-9B39-6A0F360D556F}");
-tocTab[tocTab.length] = new Array("0.6.2.1.7.1", "1", "eu.domibus.connector.gateway.link", "EARoot/EA6/EA2/EA1/EA7/EA1/EA391.htm", "4.png", "", "", "{6816F6F0-AFC7-47cb-B512-F29E861E8D50}", "Package");

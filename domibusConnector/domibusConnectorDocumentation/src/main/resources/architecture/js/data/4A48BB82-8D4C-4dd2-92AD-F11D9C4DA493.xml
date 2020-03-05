@@ -1,3 +1,0 @@
-tocTab[tocTab.length] = new Array("0.6.4.1:1", "", "«abstract» AbstractBackendConnector", "EARoot/EA6/EA4/EA1/EA495.htm", "5.png", "E554", "0", "", "Class0","{831C84DE-F813-4c4c-826C-A3FD65520CE7}");
-tocTab[tocTab.length] = new Array("0.6.4.1:2", "", "DomibusConnectorDeliveryServiceWSClientImpl", "EARoot/EA6/EA4/EA1/EA496.htm", "5.png", "E551", "0", "", "Class0","{A6143276-32BF-4fa5-B17D-67D39853FC79}");
-tocTab[tocTab.length] = new Array("0.6.4.1:3", "", "DomibusConnectorSubmissionServiceWSImpl", "EARoot/EA6/EA4/EA1/EA497.htm", "5.png", "E549", "0", "", "Class0","{718E8810-2249-4e63-8ACB-C5D7BC4C2E9F}");

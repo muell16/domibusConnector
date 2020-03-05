@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.model;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.persistence.model.PDomibusConnectorDomain;

@@ -3,6 +3,7 @@ package eu.domibus.connector.gateway.link.ws.impl;
 import javax.annotation.Resource;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessageType;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.cxf.common.util.StringUtils;
@@ -43,7 +44,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setConnectorTransportId(message.getConnectorMessageId());
+        state.setConnectorTransportId(new TransportStatusService.TransportId(message.getConnectorMessageId()));
 
 
 		LOGGER.debug("#submitToGateway: calling webservice to send request");
@@ -51,7 +52,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 		try {
 			ack = submissionClient.submitMessage(request);
 		} catch(Exception e) {
-			state.setStatus(TransportStatusService.TransportState.FAILED);
+			state.setStatus(TransportState.FAILED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
             
 			throw new DomibusConnectorGatewaySubmissionException(e);
@@ -64,10 +65,10 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 //            message.getMessageDetails().setEbmsMessageId(ebmsId);
 
             state.setRemoteTransportId(ebmsId);
-            state.setStatus(TransportStatusService.TransportState.ACCEPTED);
+            state.setStatus(TransportState.ACCEPTED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
         } else if (ack != null){
-            state.setStatus(TransportStatusService.TransportState.FAILED);
+            state.setStatus(TransportState.FAILED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
             LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW declined message and sent [{}] back", ack.getResultMessage());
             if (!StringUtils.isEmpty(ack.getResultMessage()))

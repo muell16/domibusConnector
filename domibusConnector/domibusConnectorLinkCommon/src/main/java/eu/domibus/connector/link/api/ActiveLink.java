@@ -56,4 +56,10 @@ public interface ActiveLink {
 
     DomibusConnectorLinkConfiguration getConfiguration();
 
+    /**
+     *
+     * @return the current link state
+     *  eg. for JMS connected to queue
+     */
+    boolean isUp();
 }

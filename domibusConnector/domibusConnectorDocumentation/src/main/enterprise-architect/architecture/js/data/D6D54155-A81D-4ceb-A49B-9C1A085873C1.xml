@@ -1,0 +1,6 @@
+tocTab[tocTab.length] = new Array("0.6.2.1.8:1", "", "domibusConnectorPersistence", "EARoot/EA6/EA2/EA1/EA8/EA396.htm", "175.png", "73", "0", "", "Logical diagram0","{7784F037-E395-4eb9-9F3B-08B455BB36BC}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8:2", "", "Load Message", "EARoot/EA6/EA2/EA1/EA8/EA402.htm", "7.png", "E949", "0", "", "UseCase0","{E4859B02-5B5E-4ed5-84E5-035C7957423D}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8:3", "", "Persist Message", "EARoot/EA6/EA2/EA1/EA8/EA403.htm", "7.png", "E946", "0", "", "UseCase0","{307B0E36-9B41-4b00-A658-C92B3624D145}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.1", "1", "eu.domibus.connector.persistence.dao", "EARoot/EA6/EA2/EA1/EA8/EA1/EA406.htm", "4.png", "", "", "{6349E5BC-27E7-4816-94B5-D9DE7FC45F6F}", "Package");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2", "1", "eu.domibus.connector.persistence.model", "EARoot/EA6/EA2/EA1/EA8/EA2/EA425.htm", "4.png", "", "", "{EF0111D3-FC9D-44c3-8E78-BD7D491B5236}", "Package");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.3", "1", "eu.domibus.connector.persistence.service", "EARoot/EA6/EA2/EA1/EA8/EA3/EA436.htm", "4.png", "", "", "{F14D8AB7-BCFB-4349-A882-509C3360F9F5}", "Package");

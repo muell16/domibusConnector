@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Configuration
 @EnableJms
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled
 class DomibusConnectorActiveLinkTest {
 
     private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorActiveLinkTest.class);

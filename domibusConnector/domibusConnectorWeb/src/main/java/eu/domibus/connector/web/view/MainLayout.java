@@ -17,7 +17,7 @@ import eu.domibus.connector.web.configuration.SecurityUtils;
 import eu.domibus.connector.web.login.LoginView;
 import eu.domibus.connector.web.login.LogoutView;
 import eu.domibus.connector.web.utils.TabViewRouterHelper;
-import eu.domibus.connector.web.viewAreas.configuration.ConfigurationOverviewView;
+import eu.domibus.connector.web.areas.configuration.ConfigurationOverviewView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -30,12 +30,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import eu.domibus.connector.web.viewAreas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.viewAreas.info.Info;
-import eu.domibus.connector.web.viewAreas.messages.Messages;
-import eu.domibus.connector.web.viewAreas.pmodes.PModes;
-import eu.domibus.connector.web.viewAreas.testing.ConnectorTests;
-import eu.domibus.connector.web.viewAreas.users.Users;
+import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.web.areas.info.Info;
+import eu.domibus.connector.web.areas.messages.Messages;
+import eu.domibus.connector.web.areas.pmodes.PModes;
+import eu.domibus.connector.web.areas.testing.ConnectorTests;
+import eu.domibus.connector.web.areas.users.Users;
 
 @UIScope
 @org.springframework.stereotype.Component
