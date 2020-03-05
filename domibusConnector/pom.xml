@@ -95,7 +95,7 @@
             <dependency>
                 <groupId>eu.ecodex.connector.utils</groupId>
                 <artifactId>ecodex-dependencies</artifactId>
-                <version>0.0.11-SNAPSHOT</version>
+                <version>0.0.12-RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -554,6 +554,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
+                    <artifactId>spring-properties-reporting-plugin-parent</artifactId>
+                    <version>0.9.2-RELEASE</version>
+                </plugin>
                 <plugin>
                     <groupId>com.github.ferstl</groupId>
                     <artifactId>depgraph-maven-plugin</artifactId>

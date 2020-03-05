@@ -93,7 +93,7 @@ public class ConnectorMessageFlowITCase {
 
     @Test
     public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
             DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
 
             assertThat(testMessage).isNotNull();
