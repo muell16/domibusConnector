@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
-@ActiveProfiles({"ITCaseTestContext", "storage-db"})
+@ActiveProfiles({"ITCaseTestContext", "storage-db", "test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorMessageFlowITCase {
 
@@ -93,7 +93,7 @@ public class ConnectorMessageFlowITCase {
 
     @Test
     public void testReceiveMessageFromGw() throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
-        Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
             DomibusConnectorMessage testMessage = LoadStoreMessageFromPath.loadMessageFrom(new ClassPathResource("/testmessages/msg2/"));
 
             assertThat(testMessage).isNotNull();
