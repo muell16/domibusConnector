@@ -50,7 +50,17 @@
             <groupId>com.github.database-rider</groupId>
             <artifactId>rider-spring</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.database-rider</groupId>-->
+<!--            <artifactId>rider-junit5</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
@@ -145,7 +155,7 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerLIB</artifactId>
-            <version>4.2.0-beta1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

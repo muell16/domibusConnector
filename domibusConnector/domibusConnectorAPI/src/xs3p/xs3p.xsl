@@ -14,7 +14,7 @@
       Level 7, General Purpose South 
       The University of Queensland
       QLD 4072 Australia 
-      Tel: +61 7 3365 4310
+      Tel: +61 7 3365 4310NON
       Fax: +61 7 3365 4311
       Email: titanium_enquiries@dstc.edu.au
  

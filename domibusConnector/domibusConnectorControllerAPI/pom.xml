@@ -11,13 +11,17 @@
     <description>This module provides the internal connector interfaces for binding a GatewayLink-Module or a BackendLink module to the connectorModule</description>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
