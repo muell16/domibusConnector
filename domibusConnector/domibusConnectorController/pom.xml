@@ -174,11 +174,11 @@
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.dbunit</groupId>-->
-<!--            <artifactId>dbunit</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment
