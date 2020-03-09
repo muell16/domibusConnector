@@ -92,5 +92,14 @@ Fixed Issue JUEUSW-114, related to Key too long Problem
 Bugfix
 Upgraded to latest e-Codex Security Library 1.12.2 (this includes the DSS Update to 5.2) This enables the usage of newer Algorithms
 
-=== 4.1.9
-Bugfix: Fixes on with connector distributed documentation artifacts
+== 4.2.x
+
+=== 4.2.0
+
+* Loopback message sending support
+* Support for distributed timer jobs (needed for cluster setup)
+* UI enhancements / Closing Security issues within UI
+* Integration of spring-actuator (for monitoring)
+* Packaged with web based documentation (as part of the distribution package)
+* Standalone Package (as part of the Distribution package)
+* Docker assembly (available via nexus: https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibusConnectorStandaloneLauncher/<version>/domibusConnectorStandaloneLauncher-<version>-docker-assembly.zip)
