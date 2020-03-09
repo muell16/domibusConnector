@@ -571,7 +571,7 @@
             <plugins>
                 <plugin>
                     <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
-                    <artifactId>spring-properties-reporting-plugin-parent</artifactId>
+                    <artifactId>spring-properties-reporting-plugin</artifactId>
                     <version>0.9.2-RELEASE</version>
                 </plugin>
                 <plugin>
@@ -995,6 +995,36 @@
                         </additionalDependency>
                     </additionalDependencies>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
+                <artifactId>spring-properties-reporting-plugin</artifactId>
+                <configuration>
+                    <linkJavadoc>true</linkJavadoc>
+                    <includedDependencies>
+                        <includedDependency>
+                            <groupId>^org.springframework</groupId>
+                        </includedDependency>
+                        <includedDependency>
+                            <groupId>^eu.domibus</groupId>
+                        </includedDependency>
+                    </includedDependencies>
+
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>spring-properties-report</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
