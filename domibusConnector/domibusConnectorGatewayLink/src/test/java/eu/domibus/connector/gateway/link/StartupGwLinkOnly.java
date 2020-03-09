@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
@@ -30,7 +32,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@SpringBootApplication(scanBasePackages="eu.domibus.connector.gateway.link")
+@SpringBootApplication(scanBasePackages="eu.domibus.connector.gateway.link",
+        exclude = {DataSourceAutoConfiguration.class})
 public class StartupGwLinkOnly {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StartupGwLinkOnly.class);

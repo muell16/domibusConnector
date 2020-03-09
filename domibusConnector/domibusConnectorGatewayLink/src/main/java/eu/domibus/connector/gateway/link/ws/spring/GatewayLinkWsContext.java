@@ -10,6 +10,7 @@ import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatew
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWSService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.apache.cxf.Bus;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
@@ -56,29 +57,30 @@ public class GatewayLinkWsContext {
 
     @Bean
     public DomibusConnectorGatewaySubmissionWebService gwSubmissionClient() {
-        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
-        jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
-        jaxWsProxyFactoryBean.setBus(cxfBus);
+//        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
+        ClientProxyFactoryBean clientProxyFactory = new ClientProxyFactoryBean();
+        clientProxyFactory.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
+        clientProxyFactory.setBus(cxfBus);
         LOGGER.debug("Setting address of gateway sumission service to [{}]", gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
-        jaxWsProxyFactoryBean.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
-        jaxWsProxyFactoryBean.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
-        jaxWsProxyFactoryBean.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
-        jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
+        clientProxyFactory.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
+        clientProxyFactory.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
+        clientProxyFactory.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
+        clientProxyFactory.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
 //        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
 //        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
 
-        jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
+        clientProxyFactory.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
 
-        if (jaxWsProxyFactoryBean.getProperties() == null) {
-            jaxWsProxyFactoryBean.setProperties(new HashMap<>());
+        if (clientProxyFactory.getProperties() == null) {
+            clientProxyFactory.setProperties(new HashMap<>());
         }
-        jaxWsProxyFactoryBean.getProperties().put("mtom-enabled", true);
-        jaxWsProxyFactoryBean.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());
-        jaxWsProxyFactoryBean.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getEncryptAlias());
-        jaxWsProxyFactoryBean.getProperties().put("security.signature.properties", gwWsLinkEncryptProperties());
-        jaxWsProxyFactoryBean.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
+        clientProxyFactory.getProperties().put("mtom-enabled", true);
+        clientProxyFactory.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());
+        clientProxyFactory.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getEncryptAlias());
+        clientProxyFactory.getProperties().put("security.signature.properties", gwWsLinkEncryptProperties());
+        clientProxyFactory.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
 
-        return jaxWsProxyFactoryBean.create(DomibusConnectorGatewaySubmissionWebService.class);
+        return clientProxyFactory.create(DomibusConnectorGatewaySubmissionWebService.class);
     }
 
 

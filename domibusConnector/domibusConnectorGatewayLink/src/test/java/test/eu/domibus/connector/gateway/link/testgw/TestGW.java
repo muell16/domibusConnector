@@ -8,6 +8,7 @@ import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGat
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -25,7 +26,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * IMPLEMENTATION OF THE GW WEB SERIVCE INTERFACE
  * FOR TESTING PURPOSE
  */
-@SpringBootApplication(scanBasePackageClasses = {TestGW.class})
+@SpringBootApplication(scanBasePackageClasses = {TestGW.class},
+        exclude = {DataSourceAutoConfiguration.class})
 @ImportResource("classpath:/test/eu/domibus/connector/gateway/link/testgw/TestGatewayContext.xml")
 @Profile("testgw")
 public class TestGW {
