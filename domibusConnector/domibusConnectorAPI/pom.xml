@@ -90,6 +90,10 @@
                                     <wsdl>src/main/resources/wsdl/DomibusConnectorBackendWebService.wsdl</wsdl>
                                     <wsdlLocation>classpath:wsdl/DomibusConnectorBackendWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliverySubmitAsyncService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorGatewayDeliverySubmitAsyncService.wsdl</wsdlLocation>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                     </execution>
