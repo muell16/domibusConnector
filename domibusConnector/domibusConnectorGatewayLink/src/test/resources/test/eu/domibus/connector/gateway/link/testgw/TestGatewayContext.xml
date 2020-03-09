@@ -1,41 +1,11 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:http="http://cxf.apache.org/transports/http/configuration"
-       xmlns:sec="http://cxf.apache.org/configuration/security"
-       xmlns:p="http://cxf.apache.org/policy"
-       xmlns:cxf="http://cxf.apache.org/core"
-       xmlns:soap="http://cxf.apache.org/bindings/soap"
-       xmlns:wsp="http://www.w3.org/ns/ws-policy"
-       xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
-http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
-http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
-http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd
-http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd"
->
-
-
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:http="http://cxf.apache.org/transports/http/configuration" xmlns:sec="http://cxf.apache.org/configuration/security" xmlns:p="http://cxf.apache.org/policy" xmlns:cxf="http://cxf.apache.org/core" xmlns:soap="http://cxf.apache.org/bindings/soap" xmlns:wsp="http://www.w3.org/ns/ws-policy" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd">
     <cxf:bus>
         <cxf:features>
             <p:policies/>
         </cxf:features>
     </cxf:bus>
-
-
-    <jaxws:client
-            id="connectorDeliveryClient"
-            serviceClass="eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService"
-            address="${connector.delivery.endpoint.publishAddress}"
-            serviceName="s:DomibusConnectorGatewayDeliveryWebService"
-            wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl"
-            xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice">
-
+    <jaxws:client xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice" id="connectorDeliveryClient" serviceClass="eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService" address="${connector.delivery.endpoint.backendPublishAddress}" serviceName="s:DomibusConnectorGatewayDeliveryWebService" wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl">
         <jaxws:properties>
             <entry key="security.signature.properties" value-ref="encryptProperties"/>
             <!--<entry key="security.signature.user" value="gw" />-->
@@ -45,36 +15,21 @@ http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/
             <entry key="security.store.bytes.in.attachment" value="true"/>
             <entry key="security.enable.streaming" value="true"/>
         </jaxws:properties>
-
         <jaxws:binding>
             <soap:soapBinding version="1.2" mtomEnabled="true"/>
         </jaxws:binding>
-
         <jaxws:features>
             <p:policies>
                 <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>
             </p:policies>
         </jaxws:features>
-
     </jaxws:client>
-
-
     <!--
 portName: DomibusConnectorGatewaySubmissionWebService
 serviceName: DomibusConnectorGatewaySubmissionWSService
 http://connector.domibus.eu/ws/gateway/submission/webservice
             -->
-
-    <jaxws:endpoint
-            id="testGwSubmissionServiceEndpoint"
-            implementor="#testGwSubmissionService"
-
-            address="/submission"
-            endpointName="s:DomibusConnectorGatewaySubmissionWebService"
-            serviceName="s:DomibusConnectorGatewaySubmissionWSService"
-            xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice"
-            wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl"
-    >
+    <jaxws:endpoint xmlns:s="http://connector.domibus.eu/ws/gateway/submission/webservice" id="testGwSubmissionServiceEndpoint" implementor="#testGwSubmissionService" address="/submission" endpointName="s:DomibusConnectorGatewaySubmissionWebService" serviceName="s:DomibusConnectorGatewaySubmissionWSService" wsdlLocation="wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl">
         <jaxws:properties>
             <entry key="security.signature.properties" value-ref="encryptProperties"/>
             <!--<entry key="security.signature.user" value="gw" />-->
@@ -84,40 +39,30 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
             <entry key="security.store.bytes.in.attachment" value="true"/>
             <entry key="security.enable.streaming" value="true"/>
         </jaxws:properties>
-
         <jaxws:features>
             <p:policies>
                 <wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>
             </p:policies>
         </jaxws:features>
-
         <jaxws:binding>
             <soap:soapBinding version="1.2" mtomEnabled="true"/>
         </jaxws:binding>
-
     </jaxws:endpoint>
-
-    <bean id="encryptProperties"
-          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <bean id="encryptProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <props>
                 <prop key="org.apache.wss4j.crypto.provider">org.apache.wss4j.common.crypto.Merlin</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.type">jks</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.password">12345</prop>
-                <prop key="org.apache.wss4j.crypto.merlin.keystore.file">
-                    test/eu/domibus/connector/gateway/link/testgw/gw_keystore.jks
-                </prop>
+                <prop key="org.apache.wss4j.crypto.merlin.keystore.file">test/eu/domibus/connector/gateway/link/testgw/gw_keystore.jks</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.alias">gw</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.keystore.private.password">12345</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.truststore.type">jks</prop>
                 <prop key="org.apache.wss4j.crypto.merlin.truststore.password">12345</prop>
-                <prop key="org.apache.wss4j.crypto.merlin.truststore.file">
-                    test/eu/domibus/connector/gateway/link/testgw/gw_truststore.jks
-                </prop>
+                <prop key="org.apache.wss4j.crypto.merlin.truststore.file">test/eu/domibus/connector/gateway/link/testgw/gw_truststore.jks</prop>
             </props>
         </property>
     </bean>
-
     <!--<bean id="signProperties"-->
     <!--class="org.springframework.beans.factory.config.PropertiesFactoryBean">-->
     <!--<property name="properties">-->
@@ -134,56 +79,43 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
     <!--</props>-->
     <!--</property>-->
     <!--</bean>-->
-
-
     <!--<jaxws:client id="backendClient"-->
     <!--serviceClass="eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService"-->
-    <!--publishAddress="${connector.backend.ws.publishAddress}"-->
+    <!--backendPublishAddress="${connector.backend.ws.backendPublishAddress}"-->
     <!--serviceName="s:DomibusConnectorBackendWSService"-->
-    <!--wsdlLocation="${connector.backend.ws.publishAddress}?wsdl"-->
-
+    <!--wsdlLocation="${connector.backend.ws.backendPublishAddress}?wsdl"-->
     <!--xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"-->
     <!--xmlns:s="http://connector.domibus.eu/ws/backend/webservice"-->
     <!--&gt;-->
-
     <!--<jaxws:properties>-->
     <!--&lt;!&ndash;            <entry privateKey="security.username" value="bob" />-->
     <!--<entry privateKey="security.password" value="test" />            &ndash;&gt;-->
-
     <!--<entry key="security.encryption.properties" value-ref="encryptProperties" />-->
     <!--<entry key="security.signature.properties" value-ref="encryptProperties"  />-->
     <!--<entry key="security.encryption.username" value="connector" />-->
     <!--<entry key="security.signature.username" value="${ws.backendclient.name}" />-->
-
     <!--<entry key="security.enable.streaming" value="true" />-->
     <!--&lt;!&ndash;            <entry privateKey="mtom-enabled" value="true"/> &ndash;&gt;-->
-
     <!--</jaxws:properties>-->
     <!--<jaxws:features>-->
     <!--<p:policies>-->
     <!--<wsp:PolicyReference URI="classpath:/wsdl/backend.policy.xml"/>-->
     <!--</p:policies>-->
     <!--</jaxws:features>-->
-
     <!--</jaxws:client>-->
-
-
     <!--<jaxws:client -->
     <!--bus="#gwBus"-->
     <!--id="gwSubmissionClient" -->
     <!--serviceClass="eu.domibus.connector.ws.submission.service.DomibusConnectorSubmissionWS"-->
-    <!--publishAddress="${gateway.submission.endpoint.publishAddress}" -->
+    <!--backendPublishAddress="${gateway.submission.endpoint.backendPublishAddress}" -->
     <!--/>-->
-    <!---->
     <!--<jaxws:endpoint-->
     <!--bus="#gwBus"-->
     <!--id="domibusConnectorDeliveryServiceEndpoint"-->
     <!--implementor="#domibusConnectorDeliveryServiceImpl"-->
-    <!--publishAddress="/domibusConnectorDeliveryWebservice">-->
+    <!--backendPublishAddress="/domibusConnectorDeliveryWebservice">-->
     <!--</jaxws:endpoint>-->
-    <!---->
     <!--<http:conduit name="{http://connector.domibus.eu/ws/delivery/service/}DomibusConnectorDeliveryWS.http-conduit">-->
-    <!---->
     <!--<http:tlsClientParameters>-->
     <!--<sec:keyManagers keyPassword="${gateway.delivery.service.ssl.privateKey.password}">-->
     <!--<sec:store type="JKS" password="${gateway.delivery.service.ssl.keystore.password}"-->
@@ -211,7 +143,5 @@ http://connector.domibus.eu/ws/gateway/submission/webservice
     <!--<sec:Password>password</sec:Password>-->
     <!--</http:authorization> &ndash;&gt;-->
     <!--<http:client AutoRedirect="true" Connection="Keep-Alive"/>-->
-    <!---->
     <!--</http:conduit>-->
-
 </beans>

@@ -14,6 +14,7 @@ import javax.jms.*;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,13 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
+
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@Profile(WS_BACKEND_LINK_PROFILE)
 @Component
 public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientWaitQueue {
 

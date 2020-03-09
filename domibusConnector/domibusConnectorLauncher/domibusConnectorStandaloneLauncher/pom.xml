@@ -1,38 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>domibusConnectorLauncher</artifactId>
-        <groupId>eu.domibus.connector</groupId>
-        <version>4.2.0-alpha2</version>
-    </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnectorLauncher</artifactId>
+        <version>4.2.0-RC1</version>
+    </parent>
+    <groupId>eu.domibus.connector</groupId>
+    <artifactId>domibusConnectorStandaloneLauncher</artifactId>
     <properties>
         <run.env>dev</run.env>
     </properties>
-
-    <groupId>eu.domibus.connector</groupId>
-    <artifactId>domibusConnectorStandaloneLauncher</artifactId>
-
-
     <dependencies>
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.cxf</groupId>-->
-<!--            <artifactId>cxf-rt-ws-security</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>javax.jms</groupId>-->
-<!--            <artifactId>javax.jms-api</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorWeb</artifactId>
-            <classifier>classes</classifier>
             <version>${project.version}</version>
+            <classifier>classes</classifier>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -49,16 +33,19 @@
             <artifactId>h2</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.17.1</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
-
-
     <build>
         <plugins>
             <plugin>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-maven-plugin</artifactId>
             </plugin>
-
             <!-- download h2 database lib -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -66,10 +53,10 @@
                 <executions>
                     <execution>
                         <id>getH2</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <phase>prepare-package</phase>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
@@ -84,10 +71,10 @@
                     </execution>
                     <execution>
                         <id>get-testkeystores</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
-                        <phase>prepare-package</phase>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
@@ -106,10 +93,10 @@
                     </execution>
                     <execution>
                         <id>get-testdata-database-scripts</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
-                        <phase>prepare-package</phase>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
@@ -128,14 +115,9 @@
                     </execution>
                 </executions>
             </plugin>
-
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
-                </configuration>
                 <executions>
                     <execution>
                         <id>standalone-jar</id>
@@ -148,8 +130,10 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
+                </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -160,18 +144,18 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
+                            <!--                            <appendAssemblyId>false</appendAssemblyId>-->
                             <descriptors>
                                 <descriptor>src/main/assembly/assemblyStandalone.xml</descriptor>
+                                <descriptor>src/main/docker/docker-assembly.xml</descriptor>
                             </descriptors>
+                            <attach>true</attach>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>productionMode</id>
@@ -180,22 +164,11 @@
                     <name>vaadin.productionMode</name>
                 </property>
             </activation>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>flow-server-production-mode</artifactId>
-                </dependency>
-            </dependencies>
-
             <build>
                 <plugins>
                     <plugin>
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
-                        <configuration>
-                            <ignoreMavenProxies>false</ignoreMavenProxies>
-                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
@@ -204,12 +177,19 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <ignoreMavenProxies>false</ignoreMavenProxies>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>flow-server-production-mode</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
-
-
         <profile>
             <id>docker</id>
             <build>
@@ -231,18 +211,12 @@
                                             <descriptor>docker-assembly.xml</descriptor>
                                         </assembly>
                                     </build>
-
                                 </image>
-
                             </images>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-
     </profiles>
-
-
-
 </project>

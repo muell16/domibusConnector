@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-	<id>WebConnectorWarOnly</id>
-	<formats>
-		<format>war</format>
-	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>
-	<baseDirectory>${project.basedir}/target</baseDirectory>
-	
-  <!-- <dependencySets>
+    <id>WebConnectorWarOnly</id>
+    <formats>
+        <format>war</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <baseDirectory>${project.basedir}/target</baseDirectory>
+    <!-- <dependencySets>
     <dependencySet>
       <includes>
         <include>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</include>
       </includes>
     </dependencySet>
   </dependencySets> -->
-	<!-- <files>
+    <!-- <files>
 
 		<file>
 			<source>${project.basedir}/../domibusConnectorStarter/target/domibusConnectorStarter-${project.version}.war
@@ -25,17 +24,14 @@
 		</file>
 
 	</files> -->
-	<fileSets>
-
-		<fileSet>
-			<directory>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}
-			</directory>
-			<!-- <outputDirectory>/documentation/properties
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}</directory>
+            <!-- <outputDirectory>/documentation/properties
 			</outputDirectory> -->
-			<includes>
-				<include>*.*</include>
-			</includes>
-		</fileSet>
-	
-	</fileSets>
+            <includes>
+                <include>*.*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 </assembly>

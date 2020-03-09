@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-    <id>Docker Assembly</id>
-
-
-
+    <id>docker-assembly</id>
+    <formats>
+        <format>dir</format>
+        <format>zip</format>
+    </formats>
     <files>
+        <file>
+            <source>${project.basedir}/src/main/docker/Dockerfile</source>
+            <destName>Dockerfile</destName>
+<!--            <outputDirectory>/dockerfile</outputDirectory>-->
+        </file>
         <file>
             <source>${project.basedir}/target/${project.artifactId}-${project.version}-standalone.jar</source>
             <destName>connector.jar</destName>
@@ -23,7 +29,6 @@
             <lineEnding>unix</lineEnding>
         </file>
     </files>
-
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/src/main/config</directory>
@@ -55,7 +60,4 @@
             <outputDirectory>/config/database-scripts</outputDirectory>
         </fileSet>
     </fileSets>
-
-
-
 </assembly>

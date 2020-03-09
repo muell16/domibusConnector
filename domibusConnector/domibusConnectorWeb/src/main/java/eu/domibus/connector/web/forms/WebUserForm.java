@@ -13,7 +13,7 @@ import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.dto.WebUser;
 import eu.domibus.connector.web.enums.UserRole;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 public class WebUserForm extends FormLayout{
 
 	private TextField username = FormsUtil.getFormattedTextFieldReadOnly();

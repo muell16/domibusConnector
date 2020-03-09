@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Properties;
 
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
+
 /**
  * Type safe method to declare spring property values
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @Component
+@Profile(WS_BACKEND_LINK_PROFILE)
 @ConfigurationProperties(prefix = WSBackendLinkConfigurationProperties.PREFIX)
 @Validated
 public class WSBackendLinkConfigurationProperties {

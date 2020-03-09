@@ -8,7 +8,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 
 import eu.domibus.connector.web.exception.UserLoginException;
 import eu.domibus.connector.web.service.WebUserService;
-import eu.domibus.connector.web.view.MainView;
+import eu.domibus.connector.web.view.DashboardView;
 
 public class ChangePasswordDialog extends Dialog {
 
@@ -89,7 +89,7 @@ public class ChangePasswordDialog extends Dialog {
 				errorDialog.open();
 				return;
 			}
-			this.getUI().ifPresent(ui -> ui.navigate(MainView.class));
+			this.getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
 			close();
 		});
 		changePasswordButtonContent.add(changePasswordButton);

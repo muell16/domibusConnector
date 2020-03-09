@@ -14,9 +14,9 @@ import com.vaadin.flow.data.binder.Binder;
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
-import eu.domibus.connector.web.viewAreas.messages.MessageDetails;
+import eu.domibus.connector.web.areas.messages.MessageDetails;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 public class ConnectorMessageForm extends FormLayout {
 
 	private TextField connectorMessageId = FormsUtil.getFormattedTextFieldReadOnly();

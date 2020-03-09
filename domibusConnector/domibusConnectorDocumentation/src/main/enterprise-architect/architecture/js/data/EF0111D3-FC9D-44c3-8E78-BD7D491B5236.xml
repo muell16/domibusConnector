@@ -1,0 +1,9 @@
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:1", "", "domibusConnectorPersistenceModel", "EARoot/EA6/EA2/EA1/EA8/EA2/EA423.htm", "175.png", "74", "0", "", "Logical diagram0","{7C0B9765-9411-4c9d-924E-10E3198C6B00}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:2", "", "DomibusConnectorAction", "EARoot/EA6/EA2/EA1/EA8/EA2/EA426.htm", "5.png", "E588", "0", "", "Class0","{0C1CDCEA-8E6E-4296-8407-DAE2067D7404}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:3", "", "DomibusConnectorEvidence", "EARoot/EA6/EA2/EA1/EA8/EA2/EA427.htm", "5.png", "E589", "0", "", "Class0","{ABDF2EA9-6CA3-4058-8C14-ACCA19C90E74}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:4", "", "DomibusConnectorMessage", "EARoot/EA6/EA2/EA1/EA8/EA2/EA428.htm", "5.png", "E590", "0", "", "Class0","{B3A8761C-2E85-4f0c-ABEE-16D85F98DCF1}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:5", "", "DomibusConnectorMessageError", "EARoot/EA6/EA2/EA1/EA8/EA2/EA429.htm", "5.png", "E591", "0", "", "Class0","{7538A0AF-7328-4119-A4B1-FF114615009A}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:6", "", "DomibusConnectorMessageInfo", "EARoot/EA6/EA2/EA1/EA8/EA2/EA430.htm", "5.png", "E592", "0", "", "Class0","{0517455B-B740-47e6-A675-EF83FD4B773E}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:7", "", "DomibusConnectorParty", "EARoot/EA6/EA2/EA1/EA8/EA2/EA431.htm", "5.png", "E593", "0", "", "Class0","{1945AF24-1BBE-4497-BF90-A1C82F0FAFE3}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:8", "", "DomibusConnectorPartyPK", "EARoot/EA6/EA2/EA1/EA8/EA2/EA432.htm", "5.png", "E594", "0", "", "Class0","{36172431-705F-451a-B94A-D61845A76FB3}");
+tocTab[tocTab.length] = new Array("0.6.2.1.8.2:9", "", "DomibusConnectorService", "EARoot/EA6/EA2/EA1/EA8/EA2/EA433.htm", "5.png", "E595", "0", "", "Class0","{8684AD02-04DB-42b0-ADE2-5FBFB7D29540}");

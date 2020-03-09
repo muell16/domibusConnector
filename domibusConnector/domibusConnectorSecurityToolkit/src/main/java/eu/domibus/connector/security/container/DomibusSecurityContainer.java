@@ -450,7 +450,7 @@ public class DomibusSecurityContainer {
             byte[] byteArray = StreamUtils.copyToByteArray(inputStream);
             LOGGER.debug("#logTraceStream [{}]: read [{}] bytes", name, byteArray.length);
             if (logStreamContent) {
-                LOGGER.debug("#logTraceStream [{}]: content: [{}]", name, new String(byteArray));
+                LOGGER.trace("#logTraceStream [{}]: content: [{}]", name, new String(byteArray));
             }
             return new ByteArrayInputStream(byteArray);
         } catch (IOException ioe) {

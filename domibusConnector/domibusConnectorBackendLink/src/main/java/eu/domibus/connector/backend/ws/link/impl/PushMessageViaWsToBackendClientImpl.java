@@ -16,13 +16,17 @@ import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBacke
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 
 
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@Profile(WS_BACKEND_LINK_PROFILE)
 @Component
 public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackendClient {
 

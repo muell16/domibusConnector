@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Table(name = "DOMIBUS_CONNECTOR_PROPERTY")
 public class PDomibusConnectorProperties implements Serializable {
 
-
     @Id
     @Column(name = "ID")
     @TableGenerator(name = "propSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_PROPERTY.ID", valueColumnName = "SEQ_VALUE", initialValue = 1000, allocationSize = 1)
@@ -34,25 +33,17 @@ public class PDomibusConnectorProperties implements Serializable {
 		return propertyName;
 	}
 
-
-
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
-
-
 
 	public String getPropertyValue() {
 		return propertyValue;
 	}
 
-
-
 	public void setPropertyValue(String propertyValue) {
 		this.propertyValue = propertyValue;
 	}
-
-
 
 	@Override
     public String toString() {

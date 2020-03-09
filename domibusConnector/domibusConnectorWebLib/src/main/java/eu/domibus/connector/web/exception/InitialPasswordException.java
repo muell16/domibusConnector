@@ -1,29 +1,14 @@
 package eu.domibus.connector.web.exception;
 
-public class InitialPasswordException extends Exception {
+import org.springframework.security.core.AuthenticationException;
 
-	public InitialPasswordException() {
-		// TODO Auto-generated constructor stub
+public class InitialPasswordException extends AuthenticationException {
+
+	public InitialPasswordException(String explanation) {
+		super(explanation);
 	}
 
-	public InitialPasswordException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public InitialPasswordException(String msg, Throwable t) {
+		super(msg, t);
 	}
-
-	public InitialPasswordException(Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
-	}
-
-	public InitialPasswordException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
-	}
-
-	public InitialPasswordException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
-		super(arg0, arg1, arg2, arg3);
-		// TODO Auto-generated constructor stub
-	}
-
 }

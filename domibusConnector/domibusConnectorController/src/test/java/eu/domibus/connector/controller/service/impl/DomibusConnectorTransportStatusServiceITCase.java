@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.enums.TransportState;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,8 +21,8 @@ public class DomibusConnectorTransportStatusServiceITCase {
         //transportStatusService.updateTransportToGatewayStatus();
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setStatus(TransportStatusService.TransportState.ACCEPTED);
-        state.setTransportId("CONNID1");
+        state.setStatus(TransportState.ACCEPTED);
+        state.setConnectorTransportId(new TransportStatusService.TransportId("CONNID1"));
         state.setRemoteTransportId("REMOTE1");
 
         transportStatusService.updateTransportToGatewayStatus(state);

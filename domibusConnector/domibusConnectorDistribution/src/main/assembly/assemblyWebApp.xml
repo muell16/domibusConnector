@@ -6,12 +6,7 @@
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-
-
-
     <fileSets>
-
-
         <fileSet>
             <directory>${project.basedir}/../domibusConnectorPersistence/src/main/resources/dbscripts</directory>
             <outputDirectory>documentation/database-scripts</outputDirectory>
@@ -19,56 +14,64 @@
                 <include>*/**</include>
             </includes>
         </fileSet>
-
-
-
         <fileSet>
             <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
-            <outputDirectory>documentation/</outputDirectory>
+            <outputDirectory>documentation/pdfs/</outputDirectory>
             <includes>
                 <include>domibusConnector_AdministrationGuide.pdf</include>
                 <include>domibusConnector_InstallationGuide.pdf</include>
                 <include>e-Codex_key_trust_stores.pdf</include>
             </includes>
         </fileSet>
-
+<!--        <fileSet>-->
+<!--            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>-->
+<!--            <outputDirectory>documentation/</outputDirectory>-->
+<!--            <includes>-->
+<!--                <include>architecture.zip</include>-->
+<!--            </includes>-->
+<!--        </fileSet>-->
         <fileSet>
-            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>
-            <outputDirectory>documentation/</outputDirectory>
             <includes>
-                <include>architecture.zip</include>
+                <include>**/*</include>
             </includes>
+            <directory>${project.basedir}/../target/staging</directory>
+            <outputDirectory>documentation-site/</outputDirectory>
         </fileSet>
-
     </fileSets>
     <files>
-
-
         <file>
-            <source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
-            </source>
+            <source>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</source>
             <outputDirectory>/webapp</outputDirectory>
             <destName>domibusConnector.war</destName>
         </file>
-
-
         <file>
             <source>
                 ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/connector.properties
             </source>
-            <outputDirectory>/documentation/config
-            </outputDirectory>
+            <outputDirectory>/documentation/config</outputDirectory>
         </file>
-
         <file>
             <source>
                 ${project.basedir}/../domibusConnectorDocumentation/src/main/resources/config/properties/log4j2.xml
             </source>
-            <outputDirectory>/documentation/config
-            </outputDirectory>
+            <outputDirectory>/documentation/config</outputDirectory>
         </file>
-
     </files>
-
-
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>standalone</outputDirectory>
+            <includes>
+                <include>${project.groupId}:domibusConnectorStandaloneLauncher:zip:standalonePackage:${project.version}</include>
+            </includes>
+            <unpack>true</unpack>
+            <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <includes>
+                <include>${project.groupId}:domibusConnectorDocumentation:zip:enterprise-architect-export:${project.version}</include>
+            </includes>
+            <unpack>true</unpack>
+            <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
 </assembly>

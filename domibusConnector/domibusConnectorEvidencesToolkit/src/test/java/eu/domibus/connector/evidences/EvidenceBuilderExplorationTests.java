@@ -25,7 +25,7 @@ public class EvidenceBuilderExplorationTests {
 
     @Test
     public void testEvidenceBuilderWithtValidKeyStore() throws ECodexEvidenceBuilderException, DomibusConnectorEvidencesToolkitException {
-        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder("file:./src/test/resources/keystore/evidence_test.jks", "test1234", "test", "test1234");
+        ECodexEvidenceBuilder eCodexEvidenceBuilder = new ECodexEvidenceBuilder("file:./src/test/resources/keystore/evidence_test.jks", "12345", "test", "12345");
 
         byte[] submissionAcceptanceRejection = eCodexEvidenceBuilder.createSubmissionAcceptanceRejection(false, REMErrorEvent.OTHER, buildEDeliveryDetails(), buildMessageDetails());
 

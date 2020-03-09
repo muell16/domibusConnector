@@ -28,8 +28,10 @@ import java.util.concurrent.BlockingQueue;
         "eu.domibus.connector.controller",
         "eu.domibus.connector.persistence", //load persistence
         "eu.domibus.connector.evidences",   //load evidences toolkit
-        "eu.domibus.connector.security"     //load security toolkit
-})
+        "eu.domibus.connector.security"     //load security toolkit,
+},
+    excludeName = {"org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration"}
+)
 @Profile("ITCaseTestContext")
 public class ITCaseTestContext {
 

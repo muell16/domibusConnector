@@ -43,9 +43,9 @@ import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenc
 import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
-import eu.domibus.connector.web.viewAreas.configuration.evidences.EvidenceBuilderConfigurationLabels;
-import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationProperties;
-import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
+import eu.domibus.connector.web.areas.configuration.evidences.EvidenceBuilderConfigurationLabels;
+import eu.domibus.connector.web.areas.configuration.util.ConfigurationProperties;
+import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
 
 @Service("webPModeService")
 public class WebPModeService {

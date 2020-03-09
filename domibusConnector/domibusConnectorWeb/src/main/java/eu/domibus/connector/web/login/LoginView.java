@@ -1,42 +1,84 @@
 package eu.domibus.connector.web.login;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.router.*;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyPressEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 
 import eu.domibus.connector.web.exception.InitialPasswordException;
 import eu.domibus.connector.web.exception.UserLoginException;
 import eu.domibus.connector.web.service.WebUserService;
 import eu.domibus.connector.web.view.DomibusConnectorAdminHeader;
-import eu.domibus.connector.web.view.MainView;
+import eu.domibus.connector.web.view.DashboardView;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-@HtmlImport("styles/shared-styles.html")
-@Route("login/")
+import java.util.List;
+
+@SpringComponent
+@UIScope
+@Route(value = LoginView.ROUTE)
 @PageTitle("domibusConnector - Login")
-public class LoginView extends VerticalLayout{
-	
+public class LoginView extends VerticalLayout implements HasUrlParameter<String> {
+
+	public static final String ROUTE = "login";
+	public static final String PREVIOUS_ROUTE_PARAMETER = "afterLoginGoTo";
+	private final AuthenticationManager authenticationManager;
+	private final WebUserService webUserService;
+
 	private LoginOverlay login = new LoginOverlay();
-	
-	public LoginView(@Autowired WebUserService userService, @Autowired DomibusConnectorAdminHeader header) {
-		
+
+	private String afterLoginGoTo = DashboardView.ROUTE;
+
+	private TextField username = new TextField();
+	PasswordField password = new PasswordField();
+
+	@Override
+	public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
+//		QueryParameters queryParameters = event.getLocation().getQueryParameters();
+//		List<String> strings = queryParameters.getParameters().get(PREVIOUS_ROUTE_PARAMETER);
+//		if (!CollectionUtils.isEmpty(strings)) {
+//			afterLoginGoTo = strings.get(0);
+//		}
+		if (!StringUtils.isEmpty(parameter) && !LoginView.ROUTE.equals(parameter)) {
+			afterLoginGoTo = parameter;
+		}
+//		event.getUI().getPage().
+	}
+
+
+	public LoginView(
+			@Autowired WebUserService userService,
+//			@Autowired DomibusConnectorAdminHeader header,
+			@Autowired AuthenticationManager authenticationManager
+	) {
+		this.authenticationManager = authenticationManager;
+		this.webUserService = userService;
+
 		login.setAction("login"); // 
         getElement().appendChild(login.getElement()); 
-		
-		add(header);
+
+
+		add(new DomibusConnectorAdminHeader());
 		
 		HorizontalLayout login = new HorizontalLayout();
 		VerticalLayout loginArea = new VerticalLayout();
@@ -44,7 +86,7 @@ public class LoginView extends VerticalLayout{
 		Button loginButton = new Button("Login");
 		
 		Div usernameDiv = new Div();
-		TextField username = new TextField();
+
 		username.setLabel("Username");
 		username.setAutofocus(true);
 		username.addKeyPressListener(Key.ENTER, new ComponentEventListener<KeyPressEvent>() {
@@ -61,7 +103,7 @@ public class LoginView extends VerticalLayout{
 		
 		
 		Div passwordDiv = new Div();
-		PasswordField password = new PasswordField();
+
 		password.setLabel("Password");
 		password.addKeyPressListener(Key.ENTER, new ComponentEventListener<KeyPressEvent>() {
 			
@@ -80,38 +122,7 @@ public class LoginView extends VerticalLayout{
 		loginButtonContent.getStyle().set("text-align", "center");
 		loginButtonContent.getStyle().set("padding", "10px");
 		
-		loginButton.addClickListener(e -> {
-			if(username.getValue().isEmpty()) {
-				Dialog errorDialog = new LoginErrorDialog("The field \"Username\" must not be empty!");
-				username.clear();
-				password.clear();
-				errorDialog.open();
-				return;
-			}
-			if(password.getValue().isEmpty()) {
-				Dialog errorDialog = new LoginErrorDialog("The field \"Password\" must not be empty!");
-				password.clear();
-				errorDialog.open();
-				return;
-			}
-			try {
-				userService.login(username.getValue(), password.getValue());
-			} catch (UserLoginException e1) {
-				Dialog errorDialog = new LoginErrorDialog(e1.getMessage());
-				username.clear();
-				password.clear();
-				errorDialog.open();
-				return;
-			} catch (InitialPasswordException e1) {
-				Dialog changePasswordDialog = new ChangePasswordDialog(userService,username.getValue(), password.getValue());
-				username.clear();
-				password.clear();
-//				close();
-				changePasswordDialog.open();
-			}
-			this.getUI().ifPresent(ui -> ui.navigate(MainView.class));
-//			close();
-		});
+		loginButton.addClickListener(this::loginButtonClicked);
 		loginButtonContent.add(loginButton);
 		
 		Button changePasswordButton = new Button("Change Password");
@@ -146,5 +157,44 @@ public class LoginView extends VerticalLayout{
 //		
 //		loginDialog.open();
 	}
-	
+
+	private void loginButtonClicked(ClickEvent<Button> buttonClickEvent) {
+		if(username.getValue().isEmpty()) {
+			Dialog errorDialog = new LoginErrorDialog("The field \"Username\" must not be empty!");
+			username.clear();
+			password.clear();
+			errorDialog.open();
+			return;
+		}
+		if(password.getValue().isEmpty()) {
+			Dialog errorDialog = new LoginErrorDialog("The field \"Password\" must not be empty!");
+			password.clear();
+			errorDialog.open();
+			return;
+		}
+		try {
+			Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username.getValue(), password.getValue()));
+			SecurityContextHolder.getContext().setAuthentication(authenticate);
+//				userService.login(username.getValue(), password.getValue());
+		} catch (UserLoginException e1) {
+			Dialog errorDialog = new LoginErrorDialog(e1.getMessage());
+			username.clear();
+			password.clear();
+			errorDialog.open();
+			return;
+		} catch (InitialPasswordException e1) {
+			Dialog changePasswordDialog = new ChangePasswordDialog(webUserService,username.getValue(), password.getValue());
+			username.clear();
+			password.clear();
+//				close();
+			changePasswordDialog.open();
+		} catch (AuthenticationException authExceptoin) {
+			//show error message...
+		}
+		//TODO: navigate to previous route...
+//			getUI().ifPresent(ui -> ui);
+		this.getUI().ifPresent(ui -> ui.navigate(afterLoginGoTo));
+//			close();
+	}
+
 }

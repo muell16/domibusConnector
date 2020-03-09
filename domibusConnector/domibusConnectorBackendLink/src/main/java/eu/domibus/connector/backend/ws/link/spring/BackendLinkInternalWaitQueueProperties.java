@@ -1,9 +1,13 @@
 package eu.domibus.connector.backend.ws.link.spring;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
+
 @Component("backendLinkInternalWaitQueueProperties")
+@Profile(WS_BACKEND_LINK_PROFILE)
 @ConfigurationProperties(prefix = "connector.backend.internal.wait-queue")
 public class BackendLinkInternalWaitQueueProperties {
 

@@ -22,6 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 public class GatewayLinkJmsITCase {
 
     static String GW_LINK_SERVER_ADDRESS;

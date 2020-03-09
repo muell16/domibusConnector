@@ -1,33 +1,64 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-alpha2</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorAPI</artifactId>
     <name>${project.artifactId}</name>
     <description>Contains the domibusConnectorAPI which declares the web interfaces and provides the transition model. It also provides the WSDL files for the webinterfaces.</description>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-core</artifactId>
-            <scope>test</scope>
             <type>jar</type>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>saxon</artifactId>
+                        <version>8.7</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <transformationSets>
+                        <transformationSet>
+                            <dir>src/main/resources/wsdl/eu.domibus.connector.domain.transition</dir>
+                            <stylesheet>src/xs3p/xs3p.xsl</stylesheet>
+                            <fileMappers>
+                                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                    <targetExtension>.html</targetExtension>
+                                </fileMapper>
+                            </fileMappers>
+                            <outputDir>${project.build.outputDirectory}/site/xsd/</outputDir>
+                        </transformationSet>
+                    </transformationSets>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.cxf</groupId>
@@ -36,10 +67,12 @@
                     <execution>
                         <id>generate-wsdl-sources</id>
                         <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
                         <configuration>
-                            <sourceRoot>${basedir}/src/main/java</sourceRoot>
+                            <!--                            <sourceRoot>${basedir}/src/main/java</sourceRoot>-->
                             <encoding>UTF-8</encoding>
-
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl</wsdl>
@@ -57,11 +90,12 @@
                                     <wsdl>src/main/resources/wsdl/DomibusConnectorBackendWebService.wsdl</wsdl>
                                     <wsdlLocation>classpath:wsdl/DomibusConnectorBackendWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayDeliverySubmitAsyncService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorGatewayDeliverySubmitAsyncService.wsdl</wsdlLocation>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -69,11 +103,6 @@
                 <!--assemble wsdl files-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/assemblyWsdlFiles.xml</descriptor>
-                    </descriptors>
-                </configuration>
                 <executions>
                     <execution>
                         <id>create-wsdl-assemblies</id>
@@ -83,6 +112,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assemblyWsdlFiles.xml</descriptor>
+                    </descriptors>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

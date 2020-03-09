@@ -10,6 +10,7 @@ import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatew
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWSService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.apache.cxf.Bus;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
@@ -41,8 +42,10 @@ public class GatewayLinkWsContext {
     @Autowired
     GatewayLinkWsServiceProperties gatewayLinkWsServiceProperties;
 
-    @Autowired
-    private DomibusConnectorDeliveryWSImpl domibusConnectorDeliveryService;
+    @Bean
+    public DomibusConnectorDeliveryWSImpl domibusConnectorDeliveryService() {
+        return new DomibusConnectorDeliveryWSImpl();
+    }
 
 
     @Bean
@@ -54,34 +57,36 @@ public class GatewayLinkWsContext {
 
     @Bean
     public DomibusConnectorGatewaySubmissionWebService gwSubmissionClient() {
-        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
-        jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
-        jaxWsProxyFactoryBean.setBus(cxfBus);
-        jaxWsProxyFactoryBean.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
-        jaxWsProxyFactoryBean.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
-        jaxWsProxyFactoryBean.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
-        jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
-        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
+//        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
+        ClientProxyFactoryBean clientProxyFactory = new ClientProxyFactoryBean();
+        clientProxyFactory.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
+        clientProxyFactory.setBus(cxfBus);
+        LOGGER.debug("Setting address of gateway sumission service to [{}]", gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
+        clientProxyFactory.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
+        clientProxyFactory.setServiceName(DomibusConnectorGatewaySubmissionWSService.SERVICE);
+        clientProxyFactory.setEndpointName(DomibusConnectorGatewaySubmissionWSService.DomibusConnectorGatewaySubmissionWebService);
+        clientProxyFactory.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
+//        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
 //        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
 
-        jaxWsProxyFactoryBean.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
+        clientProxyFactory.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
 
-        if (jaxWsProxyFactoryBean.getProperties() == null) {
-            jaxWsProxyFactoryBean.setProperties(new HashMap<>());
+        if (clientProxyFactory.getProperties() == null) {
+            clientProxyFactory.setProperties(new HashMap<>());
         }
-        jaxWsProxyFactoryBean.getProperties().put("mtom-enabled", true);
-        jaxWsProxyFactoryBean.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());
-        jaxWsProxyFactoryBean.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getEncryptAlias());
-        jaxWsProxyFactoryBean.getProperties().put("security.signature.properties", gwWsLinkEncryptProperties());
-        jaxWsProxyFactoryBean.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
+        clientProxyFactory.getProperties().put("mtom-enabled", true);
+        clientProxyFactory.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());
+        clientProxyFactory.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getEncryptAlias());
+        clientProxyFactory.getProperties().put("security.signature.properties", gwWsLinkEncryptProperties());
+        clientProxyFactory.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
 
-        return jaxWsProxyFactoryBean.create(DomibusConnectorGatewaySubmissionWebService.class);
+        return clientProxyFactory.create(DomibusConnectorGatewaySubmissionWebService.class);
     }
 
 
     @Bean
     public EndpointImpl domibusConnectorDeliveryServiceEndpoint() {
-        EndpointImpl endpoint = new EndpointImpl(cxfBus, domibusConnectorDeliveryService);
+        EndpointImpl endpoint = new EndpointImpl(cxfBus, domibusConnectorDeliveryService());
         endpoint.setAddress(gatewayLinkWsServiceProperties.getPublishAddress());
         endpoint.setWsdlLocation(DomibusConnectorGatewayDeliveryWSService.WSDL_LOCATION.toString());
         endpoint.setServiceName(DomibusConnectorGatewayDeliveryWSService.SERVICE);
@@ -110,13 +115,13 @@ public class GatewayLinkWsContext {
         StoreConfigurationProperties cxfKeyStore = gatewayLinkWsServiceProperties.getKeyStore();
 
         props.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
-        props.put("org.apache.wss4j.crypto.merlin.keystore.type", cxf.getType());
+        props.put("org.apache.wss4j.crypto.merlin.keystore.type", cxf.getKeyStore().getType());
         props.put("org.apache.wss4j.crypto.merlin.keystore.file", cxfKeyStore.getPathUrlAsString());
         props.put("org.apache.wss4j.crypto.merlin.keystore.password", cxfKeyStore.getPassword());
         props.put("org.apache.wss4j.crypto.merlin.keystore.alias", cxf.getPrivateKey().getAlias());
         props.put("org.apache.wss4j.crypto.merlin.keystore.private.password", cxf.getPrivateKey().getPassword());
 
-        props.put("org.apache.wss4j.crypto.merlin.truststore.type", cxf.getType());
+        props.put("org.apache.wss4j.crypto.merlin.truststore.type", cxf.getTrustStore().getType());
         props.put("org.apache.wss4j.crypto.merlin.truststore.file", cxf.getTrustStore().getPathUrlAsString());
         props.put("org.apache.wss4j.crypto.merlin.truststore.password", cxf.getTrustStore().getPassword());
 

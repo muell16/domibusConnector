@@ -12,6 +12,9 @@ public class MessageTargetSourceJpaConverter implements AttributeConverter<Messa
 
     @Override
     public String convertToDatabaseColumn(MessageTargetSource attribute) {
+        if (attribute == null) {
+            return null;
+        }
         return attribute.getDbName();
     }
 

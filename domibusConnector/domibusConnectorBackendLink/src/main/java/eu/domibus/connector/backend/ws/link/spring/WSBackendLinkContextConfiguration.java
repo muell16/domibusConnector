@@ -16,6 +16,8 @@ import org.springframework.context.annotation.*;
 
 import org.springframework.jms.annotation.EnableJms;
 
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
+
 /**
  * Configure the backend link web services
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -23,10 +25,12 @@ import org.springframework.jms.annotation.EnableJms;
 @Configuration
 @EnableJms
 @PropertySource("classpath:/eu/domibus/connector/backend/config/backend-default-config.properties")
-@Profile("backendlink-ws")
+@Profile(WS_BACKEND_LINK_PROFILE)
 public class WSBackendLinkContextConfiguration {
 
     private static final Logger LOGGER = LogManager.getLogger(WSBackendLinkContextConfiguration.class);
+
+    public static final String WS_BACKEND_LINK_PROFILE = "backendlink-ws";
 
     public static final String BACKEND_POLICY_LOADER = "backendPolicyLoader";
 

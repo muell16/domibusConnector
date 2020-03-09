@@ -50,7 +50,7 @@ public class StoreLoadableValidatorTest {
 
         validate.stream().forEach(c -> System.out.println(c.getMessage()));
 
-        assertThat(validate).hasSize(2);
+        assertThat(validate).hasSize(3);
     }
 
     @Test

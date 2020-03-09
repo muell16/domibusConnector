@@ -1,6 +1,7 @@
 package eu.domibus.connector.security.spring;
 
 import eu.domibus.connector.common.spring.CommonProperties;
+import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-auth.properties"},
         properties={"spring.liquibase.enabled=false" }
 )
-@ActiveProfiles({"ittest", "storage-db"})
+@ActiveProfiles({"ittest", "storage-db", "test"})
 public class SecurityToolKitContextITCase {
 
     @SpringBootApplication(
@@ -45,13 +46,18 @@ public class SecurityToolKitContextITCase {
     public static class TestContextConfiguration {
 
         @Bean
-        public static PropertySourcesPlaceholderConfigurer
+        public DomibusConnectorBigDataPersistenceServicePassthroughImpl domibusConnectorBigDataPersistenceServicePassthroughImpl() {
+            return new DomibusConnectorBigDataPersistenceServicePassthroughImpl();
+        }
+
+        @Bean
+        public PropertySourcesPlaceholderConfigurer
                 propertySourcesPlaceholderConfigurer() {
             return new PropertySourcesPlaceholderConfigurer();
         }
 
         @Bean
-        public static CommonProperties commonProperties() {
+        public CommonProperties commonProperties() {
             return new CommonProperties();
         }
                 

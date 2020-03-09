@@ -1,53 +1,40 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-alpha2</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorDistribution</artifactId>
+    <packaging>pom</packaging>
     <name>${project.artifactId}</name>
-    <description>This maven module contains the assembly scripts to create the different distribution packages
-    </description>
-
+    <description>This maven module contains the assembly scripts to create the different distribution packages</description>
     <properties>
         <run.env>test</run.env>
     </properties>
-
-    <profiles>
-
-
-        <profile>
-            <id>site</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!--<plugin>-->
-                        <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<id>create-site-package</id>-->
-                                <!--<phase>package</phase>-->
-                                <!--<goals>-->
-                                    <!--<goal>single</goal>-->
-                                <!--</goals>-->
-                                <!--<configuration>-->
-                                    <!--<appendAssemblyId>true</appendAssemblyId>-->
-                                    <!--<descriptors>-->
-                                        <!--<descriptor>src/main/assembly/assemblySite.xml</descriptor>-->
-                                    <!--</descriptors>-->
-                                <!--</configuration>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                    <!--</plugin>-->
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorWeb</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorStandaloneLauncher</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>standalonePackage</classifier>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>domibusConnectorDocumentation</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>enterprise-architect-export</classifier>
+        </dependency>
+    </dependencies>
     <build>
         <finalName>domibusConnector</finalName>
         <plugins>
@@ -85,16 +72,14 @@
                 <executions>
                     <execution>
                         <id>add-war-artifact</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>attach-artifact</goal>
                         </goals>
-                        <phase>package</phase>
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>
-                                        ${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war
-                                    </file>
+                                    <file>${project.basedir}/../domibusConnectorWeb/target/domibusConnectorWeb-${project.version}.war</file>
                                     <type>war</type>
                                 </artifact>
                             </artifacts>
@@ -104,16 +89,34 @@
             </plugin>
         </plugins>
     </build>
-	
-    <dependencies>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-    </dependencies>
-    <packaging>pom</packaging>
+    <profiles>
+        <profile>
+            <id>site</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!--<plugin>-->
+                    <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                    <!--<executions>-->
+                    <!--<execution>-->
+                    <!--<id>create-site-package</id>-->
+                    <!--<phase>package</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>single</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--<appendAssemblyId>true</appendAssemblyId>-->
+                    <!--<descriptors>-->
+                    <!--<descriptor>src/main/assembly/assemblySite.xml</descriptor>-->
+                    <!--</descriptors>-->
+                    <!--</configuration>-->
+                    <!--</execution>-->
+                    <!--</executions>-->
+                    <!--</plugin>-->
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

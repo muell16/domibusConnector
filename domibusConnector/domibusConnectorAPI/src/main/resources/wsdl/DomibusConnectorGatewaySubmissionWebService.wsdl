@@ -52,7 +52,7 @@
 	<wsdl:service name="DomibusConnectorGatewaySubmissionWSService">
 		<wsdl:port binding="tns:DomibusConnectorGatewaySubmissionWSBinding"
 			name="DomibusConnectorGatewaySubmissionWebService">
-			<soap12:publishAddress
+			<soap12:backendPublishAddress
 				location="http://connector.domibus.eu/ws/gateway/submission/webservice" />
 		</wsdl:port>
 	</wsdl:service>

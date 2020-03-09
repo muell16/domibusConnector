@@ -4,15 +4,20 @@ import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.component.LumoLabel;
+import eu.domibus.connector.web.configuration.SecurityUtils;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
-@UIScope
-@org.springframework.stereotype.Component
-public class DomibusConnectorAdminHeader extends HorizontalLayout {
+//@UIScope
+//@org.springframework.stereotype.Component
+public class DomibusConnectorAdminHeader extends HorizontalLayout implements BeforeEnterObserver {
+
+	LumoLabel currentUser = new LumoLabel();
 
 	public DomibusConnectorAdminHeader() {
 		Div ecodexLogo = new Div();
@@ -39,14 +44,24 @@ public class DomibusConnectorAdminHeader extends HorizontalLayout {
 //		europaLogo.getStyle().set("margin-right", "3em");
 		
 		
-		add(ecodexLogo, domibusConnector, europaLogo);
+		add(ecodexLogo, domibusConnector, europaLogo, currentUser);
 		setAlignItems(Alignment.CENTER);
 		expand(domibusConnector);
 		setJustifyContentMode(com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode.CENTER);
 		setWidth("95%");
 //		headerLayout.getStyle().set("border-bottom", "1px solid #9E9E9E");
 //		headerLayout.getStyle().set("padding-bottom", "16px");
+
+
 	}
 
 
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		if (SecurityUtils.isUserLoggedIn()) {
+			currentUser.setText("User: " + SecurityUtils.getUsername());
+		} else {
+			currentUser.setText("");
+		}
+	}
 }

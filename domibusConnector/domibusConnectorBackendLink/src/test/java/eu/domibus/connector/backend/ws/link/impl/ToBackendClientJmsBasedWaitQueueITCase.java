@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -45,6 +47,7 @@ import static org.mockito.ArgumentMatchers.any;
 @ContextConfiguration(classes = {ToBackendClientJmsBasedWaitQueueITCase.TestConfig.class, BackendLinkInternalWaitQueueProperties.class})
 @TestPropertySource(properties = { "connector.backend.internal.wait-queue.name=waitqueue",
         "spring.activemq.packages.trusted=eu.domibus.connector.backend.domain.model,eu.domibus.connector.domain.model,java.util,eu.domibus.connector.domain.testutil,eu.domibus.connector.domain.enums"})
+@ActiveProfiles({WS_BACKEND_LINK_PROFILE, "test"})
 public class ToBackendClientJmsBasedWaitQueueITCase {
 
     @EnableJms

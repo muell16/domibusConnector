@@ -1,5 +1,6 @@
 package eu.domibus.connector.lib.spring.configuration;
 
+import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.hibernate.validator.constraints.Length;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,7 @@ public class KeyConfigurationProperties {
     /**
      * The alias of the Certificate/Key
      */
+    @ConfigurationLabel("Alias of certificate or key")
     @NotNull(message = "an alias must be provided!")
     @Length(min = 1, message = "Alias must have at least one character!")
     String alias;
@@ -31,6 +33,7 @@ public class KeyConfigurationProperties {
      * The password of the Certificate/Key
      */
     @NotNull
+    @ConfigurationLabel("Password of key")
     String password = "";
 
     public String getAlias() {

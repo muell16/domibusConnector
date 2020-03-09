@@ -3,6 +3,7 @@ package eu.domibus.connector.lib.spring.configuration.validation;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreConfigurationProperties;
 
 import javax.validation.*;
+import java.util.HashSet;
 import java.util.Set;
 
 public class KeyFromKeyStoreLoadableValidator  implements ConstraintValidator<CheckKeyIsLoadableFromKeyStore, KeyAndKeyStoreConfigurationProperties> {
@@ -20,8 +21,12 @@ public class KeyFromKeyStoreLoadableValidator  implements ConstraintValidator<Ch
         if (value == null) {
             return true;
         }
-        Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> path = validator.validateProperty(value, "privateKey");
-        path.addAll(validator.validateProperty(value, "keyStore"));
+        Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> path = new HashSet<>();
+        Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> path1 = validator.validateProperty(value, "privateKey");
+//        path.addAll(validator.validateProperty(value, "keyStore"));
+        Set<ConstraintViolation<KeyAndKeyStoreConfigurationProperties>> path2 = validator.validateProperty(value, "keyStore");
+        path.addAll(path1);
+        path.addAll(path2);
         if (!path.isEmpty()) {
             return false;
         }

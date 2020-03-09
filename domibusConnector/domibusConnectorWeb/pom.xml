@@ -1,17 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>eu.domibus.connector</groupId>
-		<artifactId>domibusConnector</artifactId>
-		<version>4.2.0-alpha2</version>
-	</parent>
-	<artifactId>domibusConnectorWeb</artifactId>
-	<packaging>war</packaging>
-
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>eu.domibus.connector</groupId>
+        <artifactId>domibusConnector</artifactId>
+        <version>4.2.0-RC1</version>
+    </parent>
+    <artifactId>domibusConnectorWeb</artifactId>
+    <packaging>war</packaging>
     <dependencies>
-
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorWebLib</artifactId>
@@ -21,153 +18,157 @@
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
-<!--            <exclusions>-->
-<!--            	<exclusion>-->
-<!--            		<groupId>xalan</groupId>-->
-<!--            		<artifactId>xalan</artifactId>-->
-<!--            	</exclusion>-->
-<!--            </exclusions>-->
+            <!--            <exclusions>-->
+            <!--            	<exclusion>-->
+            <!--            		<groupId>xalan</groupId>-->
+            <!--            		<artifactId>xalan</artifactId>-->
+            <!--            	</exclusion>-->
+            <!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
-
-
-
-
+        <dependency>
+            <groupId>eu.ecodex.connector.utils</groupId>
+            <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <!--<version>${vaadin.version}</version>-->
             <exclusions>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.vaadin</groupId>
-                    <artifactId>vaadin-lumo-styles</artifactId>
-                </exclusion>
-
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-testbench-bom</artifactId>
-                </exclusion>
-                <exclusion>
-                    <!-- exclude due different dep versions in vaadin itself -->
-                    <groupId>org.webjars.bowergithub.vaadin</groupId>
-                    <artifactId>vaadin-control-state-mixin</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.webjars.bowergithub.vaadin</groupId>
-                    <artifactId>vaadin-themable-mixin</artifactId>
-                </exclusion>
+                <!--                <exclusion>-->
+                <!--                    <groupId>org.webjars.bowergithub.vaadin</groupId>-->
+                <!--                    <artifactId>vaadin-lumo-styles</artifactId>-->
+                <!--                </exclusion>-->
+                <!--                <exclusion>-->
+                <!--                    <groupId>com.vaadin</groupId>-->
+                <!--                    <artifactId>vaadin-testbench-bom</artifactId>-->
+                <!--                </exclusion>-->
+                <!--                <exclusion>-->
+                <!--                    &lt;!&ndash; exclude due different dep versions in vaadin itself &ndash;&gt;-->
+                <!--                    <groupId>org.webjars.bowergithub.vaadin</groupId>-->
+                <!--                    <artifactId>vaadin-control-state-mixin</artifactId>-->
+                <!--                </exclusion>-->
+                <!--                <exclusion>-->
+                <!--                    <groupId>org.webjars.bowergithub.vaadin</groupId>-->
+                <!--                    <artifactId>vaadin-themable-mixin</artifactId>-->
+                <!--                </exclusion>-->
             </exclusions>
         </dependency>
-
+        <!--        <dependency>-->
+        <!--            <groupId>org.webjars.bowergithub.vaadin</groupId>-->
+        <!--            <artifactId>vaadin-control-state-mixin</artifactId>-->
+        <!--            <version>2.1.3</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.webjars.bowergithub.vaadin</groupId>-->
+        <!--            <artifactId>vaadin-lumo-styles</artifactId>-->
+        <!--            <version>1.5.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.webjars.bowergithub.vaadin</groupId>-->
+        <!--            <artifactId>vaadin-themable-mixin</artifactId>-->
+        <!--            <version>1.5.2</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>org.webjars.bowergithub.vaadin</groupId>
-            <artifactId>vaadin-control-state-mixin</artifactId>
-            <version>2.1.3</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.webjars.bowergithub.vaadin</groupId>
-            <artifactId>vaadin-lumo-styles</artifactId>
-            <version>1.5.0</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.webjars.bowergithub.vaadin</groupId>
-            <artifactId>vaadin-themable-mixin</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-
-
-		
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>
-
-
         <!-- will not build on external build server, because com.oracle:ojdbc7:12.1.0.1:jar is not in public maven repo -->
         <!-- activate dependency with profile oracle 'mvn -Poracle install' instead -->
-<!--         <dependency>-->
-<!--			<groupId>com.oracle</groupId>-->
-<!--			<artifactId>ojdbc7</artifactId>-->
-<!--			<version>12.1.0.1</version>-->
-<!--            <scope>provided</scope>-->
-<!--		</dependency>-->
-
-
-        <!-- used to colorize output on windows systems -->
-<!--
+        <!--         <dependency>-->
+        <!--			<groupId>com.oracle</groupId>-->
+        <!--			<artifactId>ojdbc7</artifactId>-->
+        <!--			<version>12.1.0.1</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--		</dependency>-->
+        <!-- used to colorize logging output on windows systems -->
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>1.17.1</version>
             <scope>runtime</scope>
         </dependency>
--->
-
-
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorLinkCommon</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
-
-
-	<profiles>
-		<profile>
-			<id>oracle</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.oracle</groupId>
-					<artifactId>ojdbc7</artifactId>
-					<version>12.1.0.1</version>
-				</dependency>
-			</dependencies>
-		</profile>
-
-		<profile>
-			<id>productionMode</id>
-			<activation>
-				<property>
-					<name>vaadin.productionMode</name>
-				</property>
-			</activation>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-frontend</goal>
+                            <!--                            <goal>build-frontend</goal>-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>oracle</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc7</artifactId>
+                    <version>12.1.0.1</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>productionMode</id>
+            <activation>
+                <property>
+                    <name>vaadin.productionMode</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-frontend</goal>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <ignoreMavenProxies>false</ignoreMavenProxies>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>
                     <artifactId>flow-server-production-mode</artifactId>
                 </dependency>
             </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>vaadin-maven-plugin</artifactId>
-                        <configuration>
-                            <ignoreMavenProxies>false</ignoreMavenProxies>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>copy-production-files</goal>
-                                    <goal>package-for-production</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
-
 </project>

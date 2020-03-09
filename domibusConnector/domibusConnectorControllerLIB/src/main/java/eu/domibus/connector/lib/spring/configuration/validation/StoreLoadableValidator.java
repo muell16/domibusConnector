@@ -31,41 +31,28 @@ public class StoreLoadableValidator implements ConstraintValidator<CheckStoreIsL
             if (value == null) {
                 return true;
             }
-            Set<ConstraintViolation<StoreConfigurationProperties>> path = validator.validateProperty(value, "path");
-            if (!path.isEmpty()) {
+            Set<ConstraintViolation<StoreConfigurationProperties>> pathValidation = validator.validateProperty(value, "path");
+            if (!pathValidation.isEmpty()) {
                 return false;
             }
             try {
                 value.loadKeyStore();
             } catch (StoreConfigurationProperties.CannotLoadKeyStoreException exception) {
-                //TODO: nice message!
-                context.buildConstraintViolationWithTemplate(exception.getCause().getMessage()).addConstraintViolation();
+                //TODO: nice message add property path...
+                LOGGER.warn("error while loading store", exception);
+                Exception ecx = exception;
+                while (ecx.getCause() != null && ecx.getCause() instanceof Exception) {
+                    ecx = (Exception) ecx.getCause();
+                    context.buildConstraintViolationWithTemplate(ecx.getMessage()).addConstraintViolation();
+                }
                 return false;
             }
         } catch (Exception e) {
-            LOGGER.error("exception occured", e);
+            LOGGER.error("exception occured while checking CheckStore is loadable constraint", e);
             //throw new RuntimeException(e);
-//            context.buildConstraintViolationWithTemplate(e.getCause().getMessage()).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate(e.getCause().getMessage()).addConstraintViolation();
             return false;
         }
-
-
-//        private KeyStore loadKeyStore() {
-//            validatePathReadable();
-//            char[] pwdArray = password.toCharArray();
-//            try (InputStream inputStream = getPath().getInputStream()) {
-//                KeyStore keyStore = KeyStore.getInstance("JKS");
-//                keyStore.load(inputStream, pwdArray);
-//                return keyStore;
-//            } catch (KeyStoreException e) {
-//                throw new StoreConfigurationProperties.ValidationException("KeyStoreException occured during open keyStore", e);
-//            } catch (IOException e) {
-//                throw new StoreConfigurationProperties.ValidationException("IOException occured during open", e);
-//            } catch (CertificateException | NoSuchAlgorithmException e) {
-//                throw new StoreConfigurationProperties.ValidationException("Exception occured during open keyStore", e);
-//            }
-//        }
-
 
 
         return true;

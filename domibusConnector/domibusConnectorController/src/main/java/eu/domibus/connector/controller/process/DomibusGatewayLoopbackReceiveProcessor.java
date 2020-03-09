@@ -6,7 +6,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * This processor adds a quick fix to
+ * set the EBMS id by an domibus gw received loopbacked message
+ * to the same EBMSID as the sent message, because
+ * domibus gw is adding a _1 suffix to a loopbacked message,
+ * for the connector and all other applications this message would look like
+ * a new message, refToMessageId is then broken so evidence can not be
+ * assigned to the correct message, ...
+ *
+ * So we are just removing the _1 suffix if we get any here.
+ * This code will be moved to the domibusConnectorPlugin
+ *
+ *
+ */
 @Component
 public class DomibusGatewayLoopbackReceiveProcessor implements DomibusConnectorMessageProcessor {
 

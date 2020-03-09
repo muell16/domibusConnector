@@ -4,13 +4,12 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-alpha2</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorAPIlib</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>Provides helper classes and methods which can be used in connector, connectorClient and connectorGatewayPlugin</description>
-
     <dependencies>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
@@ -37,10 +36,9 @@
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.junit.jupiter</groupId>-->
-<!--            <artifactId>junit-jupiter-engine</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.junit.jupiter</groupId>-->
+        <!--            <artifactId>junit-jupiter-engine</artifactId>-->
+        <!--        </dependency>-->
     </dependencies>
-
 </project>

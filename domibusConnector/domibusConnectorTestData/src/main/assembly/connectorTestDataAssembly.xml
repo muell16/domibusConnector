@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-	<id>testdata-database-scripts</id>
-	<formats>
-		<format>zip</format>
-	</formats>
-	<includeBaseDirectory>false</includeBaseDirectory>
-
-	<fileSets>
+    <id>testdata-database-scripts</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
         <fileSet>
             <includes>
                 <include>*.sql</include>
@@ -15,5 +14,4 @@
             <outputDirectory>database-scripts</outputDirectory>
         </fileSet>
     </fileSets>
-
 </assembly>

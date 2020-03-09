@@ -1,6 +1,7 @@
 package eu.domibus.connector.lib.spring.configuration;
 
 import eu.domibus.connector.lib.spring.configuration.validation.CheckKeyIsLoadableFromKeyStore;
+import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 
@@ -46,8 +47,6 @@ public class KeyAndKeyStoreConfigurationProperties {
     private KeyConfigurationProperties privateKey;
 
 
-    private String type = "JKS";
-
     public StoreConfigurationProperties getKeyStore() {
         return keyStore;
     }
@@ -64,11 +63,4 @@ public class KeyAndKeyStoreConfigurationProperties {
         this.privateKey = privateKey;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

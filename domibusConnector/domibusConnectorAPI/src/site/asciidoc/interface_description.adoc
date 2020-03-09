@@ -1,0 +1,85 @@
+= Interface Description
+
+The domibusConnectorAPI module contains classes and wsdls for communicating with the domibusConnector.
+
+== Interfaces
+
+.Interface Description
+|===
+| Name | Description | Methods
+
+| DomibusConnectorBackendWebService
+| Is provided by the connector and is meant for the clients/connector backends to to retrieve and push messages.
+a| * submitMessage
+   * requestMessages
+
+| DomibusConnectorBackendDeliveryWebService
+| Must be implemented by the connector client. If push is enabled then the connector will push messages
+to this web interface.
+a| * deliverMessage
+
+| DomibusConnectorGatewayDeliveryWebService
+| Is implemented by the connector so the gateway plugin can deliver messages to the connector.
+a| * deliverMessage
+
+| DomibusConnectorGatewaySubmissionWebService
+| It is implemented by the AS4 Gateway (for domibus this is provided by the domibusConnectordomibusPlugin).
+a| * submitMessage
+
+|===
+
+For the message push in direction to the backend the verb deliver is used. For the opposite direction
+submit is used.
+
+== WS-Security
+
+As the communication is soap based multiple policies can be set on the connection to enforce security rules.
+The module contains already 2 polices:
+
+* backend.policy.xml (encrypts and signes messages)
+* no-security.policy.xml (does just nothing - will not work with backend, because no client
+identification is possible with this approach)
+
+Some additional information about the used implementation:
+
+link:http://coheigea.blogspot.com/2017/02/ws-security-with-mtom-support-in-apache.html
+link:https://ws.apache.org/wss4j/attachments.html
+
+== XML Types / Message Type
+
+TODO: add visualization of xsd and add some description....
+Describe Message Type
+
+== Flows
+
+TODO: describe some basic flows...
+
+== Signed Document
+
+If SIGNATURE_BASED is used the connector expects a signed PDF document. The document signature will be checked. It
+is also possible to use detached signatures. So if you are using ASIC-S container within your environment you have
+to put the PDF document and the detached Signature seperatly into the connector.
+
+See the following excerpt of the xsd:
+
+ <xs:complexType name="DomibusConnectorMessageDocumentType">
+        <xs:sequence>
+            <xs:element name="document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"
+                        minOccurs="1" maxOccurs="1"/>
+            <xs:element name="documentName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="detachedSignature" type="tns:DomibusConnectorDetachedSignatureType" minOccurs="0"
+                        maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DomibusConnectorDetachedSignatureType">
+        <xs:sequence>
+            <xs:element name="detachedSignature" type="xs:base64Binary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="detachedSignatureName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="mimeType" type="tns:DomibusConnectorDetachedSignatureMimeType" minOccurs="1"
+                        maxOccurs="1"/>
+        </xs:sequence>
+ </xs:complexType>
+
+So basically the detached signature for the PDF should be put into the detachedSignature. With this approach
+ASIC-S based documents can be put into the connector.
+

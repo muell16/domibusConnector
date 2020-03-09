@@ -1,5 +1,11 @@
 package eu.domibus.connector.web.view;
 
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import eu.domibus.connector.web.dto.WebUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.flow.component.button.Button;
@@ -15,15 +21,16 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.login.LoginView;
 
-@HtmlImport("styles/shared-styles.html")
+//@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @UIScope
 @org.springframework.stereotype.Component
-public class UserInfo extends HorizontalLayout {
-	
+public class UserInfo extends HorizontalLayout implements AfterNavigationObserver {
+
 	LumoLabel username  = new LumoLabel("");
 
 	public UserInfo() {
+
 		HorizontalLayout userDiv = new HorizontalLayout();
 		Icon userIcon = new Icon(VaadinIcon.USER);
 		userIcon.getStyle().set("margin-right", "10px");
@@ -78,8 +85,21 @@ public class UserInfo extends HorizontalLayout {
 //		userBar.getStyle().set("padding-bottom", "16px");
 	}
 
-	public void setUsernameValue(String username) {
-		this.username.setText(username);
+	@Override
+	public void afterNavigation(AfterNavigationEvent event) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		if (context != null) {
+			Object principal = context.getAuthentication().getPrincipal();
+			if (principal instanceof WebUser) {
+				this.username.setText(((WebUser) principal).getUsername());
+			} else {
+				this.username.setText(principal.toString());
+			}
+		}
 	}
+
+//	public void setUsernameValue(String username) {
+//		this.username.setText(username);
+//	}
 
 }

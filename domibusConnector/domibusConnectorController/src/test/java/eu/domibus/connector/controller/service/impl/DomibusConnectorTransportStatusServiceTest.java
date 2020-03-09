@@ -2,8 +2,8 @@ package eu.domibus.connector.controller.service.impl;
 
 
 import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.helper.DomainModelHelperTest;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -49,8 +49,8 @@ public class DomibusConnectorTransportStatusServiceTest {
     public void testSetTransportToGwStatus() {
         TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
         transportState.setRemoteTransportId("REMOTE1");
-        transportState.setStatus(TransportStatusService.TransportState.ACCEPTED);
-        transportState.setTransportId("MSG1");
+        transportState.setStatus(TransportState.ACCEPTED);
+        transportState.setConnectorTransportId(new TransportStatusService.TransportId("MSG1"));
 
         transportStatusService.updateTransportToGatewayStatus(transportState);
 

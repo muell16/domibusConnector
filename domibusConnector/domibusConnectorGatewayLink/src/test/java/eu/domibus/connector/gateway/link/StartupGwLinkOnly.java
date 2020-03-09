@@ -3,6 +3,7 @@ package eu.domibus.connector.gateway.link;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
 import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import org.slf4j.Logger;
@@ -10,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
@@ -29,7 +32,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@SpringBootApplication(scanBasePackages="eu.domibus.connector.gateway.link")
+@SpringBootApplication(scanBasePackages="eu.domibus.connector.gateway.link",
+        exclude = {DataSourceAutoConfiguration.class})
 public class StartupGwLinkOnly {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StartupGwLinkOnly.class);
@@ -99,6 +103,22 @@ public class StartupGwLinkOnly {
             @Override
             public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState) {
                 throw new IllegalStateException("Not implemented!");
+            }
+
+            @Override
+            public void updateTransportStatus(DomibusConnectorTransportState transportState) {
+                LOGGER.info("setting transport: [{}]", transportState);
+                transportStatesQueue().add(transportState);
+            }
+
+            @Override
+            public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+                return new TransportId(linkPartnerName + "_" + message);
+            }
+
+            @Override
+            public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+                return new TransportId(linkPartnerName + "_" + message);
             }
         };
     }

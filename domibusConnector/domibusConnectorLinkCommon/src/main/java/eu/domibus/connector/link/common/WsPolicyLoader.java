@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -52,8 +53,8 @@ public class WsPolicyLoader {
         } catch (XMLStreamException ex) {
             throw new WsPolicyLoaderException("cannot parse policy " + wsPolicy , ex);
         }
-        policyFeature.getPolicyElements().addAll(policyElements);
-
+//        policyFeature.getPolicyElements().addAll(policyElements);
+        policyFeature.setPolicyElements(policyElements);
         return policyFeature;
     }
 
