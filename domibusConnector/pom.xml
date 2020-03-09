@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.2.0-beta1-SNAPSHOT</version>
+    <version>4.2.0-RC1</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -76,13 +76,13 @@
         <https.proxy.enabled>false</https.proxy.enabled>
         <http.proxy.enabled>false</http.proxy.enabled>
         <!-- keep this empty properties! -->
-        <https.proxy.host/>
-        <http.proxy.host/>
-        <http.proxy.port/>
-        <https.proxy.port/>
-        <releases-repo.url/>
-        <snapshots-repo.url/>
-        <https.proxy.port/>
+        <https.proxy.host></https.proxy.host>
+        <http.proxy.host></http.proxy.host>
+        <http.proxy.port></http.proxy.port>
+        <https.proxy.port></https.proxy.port>
+        <releases-repo.url></releases-repo.url>
+        <snapshots-repo.url></snapshots-repo.url>
+        <https.proxy.port></https.proxy.port>
         <!--        <org.apache.cxf.version>3.2.11</org.apache.cxf.version>-->
         <org.apache.cxf.version>3.3.5</org.apache.cxf.version>
         <spring.cloud.version>2.2.1.RELEASE</spring.cloud.version>
@@ -747,7 +747,7 @@
                         <featureBranchPrefix>feature/</featureBranchPrefix>
                         <releaseBranchPrefix>release/</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix/>
+                        <versionTagPrefix></versionTagPrefix>
                     </flowInitContext>
                     <pushFeatures>false</pushFeatures>
                     <pushHotfixes>false</pushHotfixes>
@@ -848,7 +848,7 @@
                 </executions>
                 <configuration>
                     <rules>
-                        <dependencyConvergence/>
+                        <dependencyConvergence></dependencyConvergence>
                         <bannedDependencies>
                             <searchTransitive>true</searchTransitive>
                             <excludes>
@@ -886,7 +886,7 @@
                         <configuration>
                             <tasks>
                                 <copy overwrite="true" todir="target/site/resources/doc-resources">
-                                    <fileset dir="domibusConnectorDocumentation/src/main/resources/"/>
+                                    <fileset dir="domibusConnectorDocumentation/src/main/resources/"></fileset>
                                 </copy>
                             </tasks>
                         </configuration>
@@ -902,26 +902,26 @@
                     <nrOfIndentSpace>4</nrOfIndentSpace>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>au.com.acegi</groupId>-->
-<!--                <artifactId>xml-format-maven-plugin</artifactId>-->
-<!--                <version>3.1.1</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>xml-format</id>-->
-<!--                        <goals>-->
-<!--                            <goal>xml-format</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            &lt;!&ndash; configure your formatting preferences here (see link below) &ndash;&gt;-->
-<!--                            <indentSize>4</indentSize>-->
-<!--                            <excludes>-->
-<!--                                <exclude>src/main/resources/architecture</exclude>-->
-<!--                            </excludes>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>au.com.acegi</groupId>-->
+            <!--                <artifactId>xml-format-maven-plugin</artifactId>-->
+            <!--                <version>3.1.1</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>xml-format</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>xml-format</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            &lt;!&ndash; configure your formatting preferences here (see link below) &ndash;&gt;-->
+            <!--                            <indentSize>4</indentSize>-->
+            <!--                            <excludes>-->
+            <!--                                <exclude>src/main/resources/architecture</exclude>-->
+            <!--                            </excludes>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
     <reporting>
@@ -966,16 +966,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <!-- fix error javax.interceptor.InterceptorBinding not found -->
-                    <additionalDependencies>
-                        <additionalDependency>
-                            <groupId>javax.interceptor</groupId>
-                            <artifactId>javax.interceptor-api</artifactId>
-                            <version>1.2.2</version>
-                        </additionalDependency>
-                    </additionalDependencies>
-                </configuration>
                 <reportSets>
                     <reportSet>
                         <!-- by default, id = "default" -->
@@ -995,6 +985,16 @@
                         <inherited>false</inherited>
                     </reportSet>
                 </reportSets>
+                <configuration>
+                    <!-- fix error javax.interceptor.InterceptorBinding not found -->
+                    <additionalDependencies>
+                        <additionalDependency>
+                            <groupId>javax.interceptor</groupId>
+                            <artifactId>javax.interceptor-api</artifactId>
+                            <version>1.2.2</version>
+                        </additionalDependency>
+                    </additionalDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
@@ -1028,9 +1028,8 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-pdf-plugin</artifactId>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <inherited>false</inherited>
+                        <artifactId>maven-pdf-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>make-pdf</id>
@@ -1040,6 +1039,7 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <inherited>false</inherited>
                     </plugin>
                     <plugin>
                         <groupId>com.buschmais.jqassistant</groupId>

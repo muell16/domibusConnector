@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorController</artifactId>
     <name>${project.artifactId}</name>
@@ -51,7 +51,6 @@
             <artifactId>spring-quartz-scheduled</artifactId>
             <version>0.0.6-RELEASE</version>
         </dependency>
-
         <!-- JMS -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -61,12 +60,10 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-spring</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -112,7 +109,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-el-api</artifactId>
@@ -121,7 +117,6 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper-el</artifactId>
         </dependency>
-
         <!-- test dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -185,8 +180,8 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>junit</groupId>
                     <artifactId>junit</artifactId>
+                    <groupId>junit</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

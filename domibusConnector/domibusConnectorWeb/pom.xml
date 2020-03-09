@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorWeb</artifactId>
     <packaging>war</packaging>
@@ -116,7 +116,7 @@
                     <execution>
                         <goals>
                             <goal>prepare-frontend</goal>
-<!--                            <goal>build-frontend</goal>-->
+                            <!--                            <goal>build-frontend</goal>-->
                         </goals>
                     </execution>
                 </executions>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorLauncher</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorStandaloneLauncher</artifactId>
@@ -144,7 +144,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-<!--                            <appendAssemblyId>false</appendAssemblyId>-->
+                            <!--                            <appendAssemblyId>false</appendAssemblyId>-->
                             <descriptors>
                                 <descriptor>src/main/assembly/assemblyStandalone.xml</descriptor>
                                 <descriptor>src/main/docker/docker-assembly.xml</descriptor>

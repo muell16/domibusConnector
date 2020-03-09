@@ -4,10 +4,10 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
-    <name>${project.artifactId}</name>
     <artifactId>domibusConnectorGatewayLink</artifactId>
+    <name>${project.artifactId}</name>
     <description>The GatewayLinkModule handles the communication with the GW(ConnectorPlugin)</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -125,7 +125,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPIlib</artifactId>
@@ -136,7 +135,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
@@ -155,7 +153,6 @@
         </dependency>
     </dependencies>
     <build>
-        <plugins>
-        </plugins>
+        <plugins></plugins>
     </build>
 </project>

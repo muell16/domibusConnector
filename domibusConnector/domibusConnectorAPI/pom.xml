@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorAPI</artifactId>
     <name>${project.artifactId}</name>
@@ -38,6 +38,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>saxon</artifactId>
+                        <version>8.7</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <transformationSets>
                         <transformationSet>
@@ -52,13 +59,6 @@
                         </transformationSet>
                     </transformationSets>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.sf.saxon</groupId>
-                        <artifactId>saxon</artifactId>
-                        <version>8.7</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.cxf</groupId>

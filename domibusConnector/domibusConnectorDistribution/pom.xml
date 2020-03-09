@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorDistribution</artifactId>
     <packaging>pom</packaging>
@@ -24,15 +24,15 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorStandaloneLauncher</artifactId>
             <version>${project.version}</version>
-            <classifier>standalonePackage</classifier>
             <type>zip</type>
+            <classifier>standalonePackage</classifier>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorDocumentation</artifactId>
             <version>${project.version}</version>
-            <classifier>enterprise-architect-export</classifier>
             <type>zip</type>
+            <classifier>enterprise-architect-export</classifier>
         </dependency>
     </dependencies>
     <build>

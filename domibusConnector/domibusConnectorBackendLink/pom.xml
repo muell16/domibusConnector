@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorBackendLink</artifactId>
     <name>${project.artifactId}</name>
@@ -25,17 +25,17 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorControllerAPI</artifactId>
+            <version>${project.version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-            <classifier>tests</classifier>
             <version>${project.version}</version>
+            <type>test-jar</type>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
@@ -84,12 +84,12 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-core</artifactId>
+                    <groupId>ch.qos.logback</groupId>
                 </exclusion>
                 <exclusion>
-                    <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

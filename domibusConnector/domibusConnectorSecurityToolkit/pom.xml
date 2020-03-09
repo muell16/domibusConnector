@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-beta1-SNAPSHOT</version>
+        <version>4.2.0-RC1</version>
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
@@ -15,16 +15,16 @@
             <artifactId>domibusConnectorControllerLIB</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>${project.groupId}</groupId>-->
-<!--            <artifactId>domibusConnectorPersistence</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>${project.groupId}</groupId>-->
+        <!--            <artifactId>domibusConnectorPersistence</artifactId>-->
+        <!--            <version>${project.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>ecodex-container</artifactId>
             <!-- <classifier>sources</classifier> -->
-<!--            <version>1.11</version>-->
+            <!--            <version>1.11</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>jaxb-impl</artifactId>
@@ -132,13 +132,13 @@
             <artifactId>jaxb-core</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>${project.groupId}</groupId>-->
-<!--            <artifactId>domibusConnectorPersistence</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--            <type>test-jar</type>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>${project.groupId}</groupId>-->
+        <!--            <artifactId>domibusConnectorPersistence</artifactId>-->
+        <!--            <version>${project.version}</version>-->
+        <!--            <type>test-jar</type>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
@@ -192,8 +192,8 @@
         <dependency>
             <groupId>eu.ecodex.connector.utils</groupId>
             <artifactId>logging-tester</artifactId>
-            <scope>test</scope>
             <version>0.0.10-RELEASE</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
