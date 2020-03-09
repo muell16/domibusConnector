@@ -23,7 +23,7 @@ import java.lang.annotation.Annotation;
 import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.GW_LINK_WS_PROFILE;
 
-@Profile(GW_LINK_WS_PROFILE) //does not work with vaadin!
+//@Profile(GW_LINK_WS_PROFILE) //does not work with vaadin!
 @ConfigurationTab(title = "Gateway Configuration")
 @Route(value = GatewayConfiguration.ROUTE, layout = ConfigurationLayout.class, registerAtStartup = false)
 @RoleRequired(role = "ADMIN")
