@@ -24,8 +24,10 @@ import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextCo
 import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.GW_LINK_WS_PROFILE;
 
 //@Profile(GW_LINK_WS_PROFILE) //does not work with vaadin!
+@Component
+@UIScope
+@Route(value = GatewayConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @ConfigurationTab(title = "Gateway Configuration")
-@Route(value = GatewayConfiguration.ROUTE, layout = ConfigurationLayout.class, registerAtStartup = false)
 @RoleRequired(role = "ADMIN")
 public class GatewayConfiguration extends VerticalLayout {
 
