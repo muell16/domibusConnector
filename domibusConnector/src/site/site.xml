@@ -30,21 +30,22 @@
             <!-- <item name="Use Cases" href="use_cases.html"/> -->
             <!--<item name="Evidence" href="evidence.html" />-->
         </menu>
+        <menu name="Upgrade manuals">
+            <item name="Upgrade to 4.2.0" href="upgrade/upgrade-4.2.0.html" />
+        </menu>
         <menu name="Installation/Configuration">
             <item name="Deploy on Tomcat" href="installation/tomcat_deploy.html"/>
+            <item name="Standalone deployment" href="installation/standalone_deployment.html"/>
             <item name="Certificate Configuration" href="installation/certificates.html"/>
             <item name="Backend configuration" href="installation/backend_configuration.html"/>
             <item name="Message Routing" href="doc/backend_message_routing.html"/>
             <item name="Loopback message sending" href="doc/loopback_message_sending.html"/>
         </menu>
-        <!--        <menu name="Technical/Developer Documentation">-->
-        <!--            <item name="Architecture" href="development/architecture_overview.html"/>-->
-        <!--            <item name="Changelog" href="development/changelog.html"/>-->
-        <!--            <item name="Backend Message Routing" href="development/backend_message_routing.html"/>-->
-        <!--        </menu>-->
-        <!--<menu ref="modules" />-->
+
+        <menu ref="modules" />
         <menu ref="reports"/>
+
         <footer/>
-        <!-- empty footer -->
+
     </body>
 </project>

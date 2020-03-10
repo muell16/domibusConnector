@@ -2,6 +2,7 @@ package eu.domibus.connector.security.validation;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.security.container.service.TokenIssuerFactoryProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 @Service
 public class DomibusConnectorTechnicalValidationServiceFactory {
 	
-	@Value("${token.issuer.aes.value:#{null}}")
-    AdvancedSystemType advancedElectronicSystem;
+//	@Value("${token.issuer.aes.value:#{null}}")
+//    AdvancedSystemType advancedElectronicSystem;
+
+	@Autowired
+	TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
 	
 	@Resource(name="domibusConnectorEnvironmentConfiguration")
 	EnvironmentConfiguration environmentConfiguration;
@@ -35,7 +39,7 @@ public class DomibusConnectorTechnicalValidationServiceFactory {
     private DomibusConnectorAESTokenValidationCreator delegate;
 
 	public ECodexTechnicalValidationService technicalValidationService(DomibusConnectorMessage message) {
-		switch(advancedElectronicSystem) {
+		switch(tokenIssuerFactoryProperties.getAdvancedElectronicSystemType()) {
 		case SIGNATURE_BASED: return getSignTechnicalValidationService();
 		case AUTHENTICATION_BASED: return getAuthTechnicalAESValidationService(message);
 		default: throw new IllegalArgumentException("Configuration for 'token.issuer.aes.value' not properly set!");

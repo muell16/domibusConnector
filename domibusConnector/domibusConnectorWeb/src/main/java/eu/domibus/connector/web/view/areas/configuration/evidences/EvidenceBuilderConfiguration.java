@@ -33,8 +33,8 @@ import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
 	gateway.name
 
 	postal.address.street
-	postal.address.locality	
-	postal.address.postal.code
+	postal.address.locality
+	postal.address.zip-code
 	postal.address.country
 
 	connector.evidences.keyStore.path

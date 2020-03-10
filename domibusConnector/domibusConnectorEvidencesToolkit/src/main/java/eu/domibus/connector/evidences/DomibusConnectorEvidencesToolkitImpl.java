@@ -2,6 +2,7 @@ package eu.domibus.connector.evidences;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
 import org.slf4j.Logger;
@@ -33,6 +34,9 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 
     @Autowired
     private HashValueBuilder hashValueBuilder;
+
+    @Autowired
+    PostalAdressConfigurationProperties postalAdressConfigurationProperties;
 	
 	@Value("${gateway.name}")
 	private String gatewayName;
@@ -40,17 +44,17 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
 	@Value("${gateway.endpoint.address}")
 	private String gatewayEndpointAddress;
 	
-	@Value("${postal.address.street}")
-	private String postalAddressStreet;
-	
-	@Value("${postal.address.locality}")
-	private String postalAddressLocality;
-	
-	@Value("${postal.address.postal.code}")
-	private String postalAddressPostalCode;
-	
-	@Value("${postal.address.country}")
-	private String postalAddressCountry;
+//	@Value("${postal.address.street}")
+//	private String postalAddressStreet;
+//
+//	@Value("${postal.address.locality}")
+//	private String postalAddressLocality;
+//
+//	@Value("${postal.address.postal.code}")
+//	private String postalAddressPostalCode;
+//
+//	@Value("${postal.address.country}")
+//	private String postalAddressCountry;
 	
     @Override
     public DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
@@ -386,10 +390,10 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
         detail.setServer(server);
 
         EDeliveryDetail.PostalAdress postalAddress = new EDeliveryDetail.PostalAdress();
-        postalAddress.setStreetAddress(postalAddressStreet);
-        postalAddress.setLocality(postalAddressLocality);
-        postalAddress.setPostalCode(postalAddressPostalCode);
-        postalAddress.setCountry(postalAddressCountry);
+        postalAddress.setStreetAddress(postalAdressConfigurationProperties.getStreet());
+        postalAddress.setLocality(postalAdressConfigurationProperties.getLocality());
+        postalAddress.setPostalCode(postalAdressConfigurationProperties.getZipCode());
+        postalAddress.setCountry(postalAdressConfigurationProperties.getCountry());
         detail.setPostalAdress(postalAddress);
 
         EDeliveryDetails evidenceIssuerDetails = new EDeliveryDetails(detail);

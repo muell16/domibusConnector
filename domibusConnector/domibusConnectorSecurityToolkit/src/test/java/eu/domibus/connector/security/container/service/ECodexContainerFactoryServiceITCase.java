@@ -44,7 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
         SecurityToolkitConfigurationProperties.class,
         ECodexContainerFactoryService.class,
         TokenIssuerFactory.class,
-        CommonProperties.class
+        CommonProperties.class,
+        TokenIssuerFactoryProperties.class
 })
 @EnableConfigurationProperties
 @TestPropertySource({"classpath:test.properties", "classpath:test-sig.properties"})

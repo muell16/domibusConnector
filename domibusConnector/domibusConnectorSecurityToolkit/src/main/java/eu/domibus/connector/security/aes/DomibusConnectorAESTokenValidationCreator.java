@@ -4,6 +4,8 @@ import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeFactory;
 
+import eu.domibus.connector.security.container.service.TokenIssuerFactoryProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +22,11 @@ public class DomibusConnectorAESTokenValidationCreator {
 
     private static final LogDelegate LOG = new LogDelegate(DomibusConnectorAESTokenValidationCreator.class);
     
-    @Value("${identity.provider:null}")
-    String identityProvider;
+//    @Value("${identity.provider:null}")
+//    String identityProvider;
+
+    @Autowired
+    TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
 
     TokenValidation createTokenValidation(DomibusConnectorMessage message) throws Exception {
 
@@ -34,7 +39,7 @@ public class DomibusConnectorAESTokenValidationCreator {
 
         final AuthenticationInformation tokenAuthentication = new AuthenticationInformation();
 
-        tokenAuthentication.setIdentityProvider(identityProvider);
+        tokenAuthentication.setIdentityProvider(tokenIssuerFactoryProperties.getIdentityProvider());
         tokenAuthentication.setUsernameSynonym(message.getMessageDetails().getOriginalSender());
         tokenAuthentication.setTimeOfAuthentication(
                     DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));

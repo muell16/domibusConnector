@@ -73,7 +73,7 @@ public class EvidenceBuilderConfigurationLabels {
 	
 	public static final ConfigurationLabel postalAddressPostalCodeLabels = new ConfigurationLabel(
 			"Postal address - postal code / zip code",
-			"postal.address.postal.code",
+			"postal.address.zip-code",
 			"This value will be put into generated evidences. It is part of the  postal address mentioned in evidences. "
 			);
 	

@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
+import eu.domibus.connector.controller.spring.ConnectorControllerProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
@@ -37,6 +38,9 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
     @Mock
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
+    @Mock
+    private DomibusGatewayLoopbackReceiveProcessor domibusGatewayLoopbackReceiveProcessor;
+
     DomibusConnectorGatewayDeliveryServiceImpl deliveryService;
 
     private List<DomibusConnectorMessage> putOnQueue;
@@ -50,7 +54,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
         deliveryService.setMessagePersistenceService(messagePersistenceService);
         deliveryService.setBigDataOfMessagePersistenceService(bigDataOfMessagePersistenceService);
         deliveryService.setPutMessageOnQueue(putMessageOnQueue);
-        deliveryService.setDomibusGatewayLoopbackReceiveProcessor(new DomibusGatewayLoopbackReceiveProcessor());
+        deliveryService.setDomibusGatewayLoopbackReceiveProcessor(domibusGatewayLoopbackReceiveProcessor);
 
         Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn("id1");
         Mockito.when(messagePersistenceService.persistMessageIntoDatabase(any(DomibusConnectorMessage.class), any(DomibusConnectorMessageDirection.class)))
