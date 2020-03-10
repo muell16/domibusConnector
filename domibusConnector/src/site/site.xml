@@ -18,7 +18,7 @@
         </links>
 
         <breadcrumbs>
-            <item name="Connector" href="./" />
+            <item name="Connector" href="./index.html" />
         </breadcrumbs>
 
         <menu name="domibus WebConnector">
