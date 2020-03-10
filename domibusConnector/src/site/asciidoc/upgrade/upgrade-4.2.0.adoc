@@ -18,6 +18,7 @@ There has been the following changes within the configuration properties:
 * identity.provider => renamed to => token.issuer.identity-provider
 * postal.address.postal.code => renamed to => postal.address.zip-code
 
+Also check the automatically generated properties report: link:../aggregated-spring-properties.html[Connector Properties]
 
 === Database
 

@@ -23,13 +23,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-//@ITCaseTestAnnotation
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
 @ActiveProfiles({"ITCaseTestContext", "storage-db"})
-@Sql(scripts = {"/testdata.sql"}) //, "/testdata-confirmationtimeoutprocessor.sql"}) //adds testdata to database like domibus-blue party + message check timeout
+@Sql(scripts = {"/testdata.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CheckEvidencesTimeoutProcessorITCase {
 
@@ -42,31 +41,13 @@ public class CheckEvidencesTimeoutProcessorITCase {
     @Autowired
     DomibusConnectorMessageDao messageDao;
 
-//    @Autowired
-//    TransactionManager txManager;
-
     @Autowired
     TransactionTemplate txTemplate;
 
-//
-//    @Before
-//    public void beforeTest() {
-//        txTemplate.execute((TransactionCallback) status -> {
-//            DomibusConnectorMessage domibusConnectorMessage = null;
-//            try {
-//
-//                return null;
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        });
-//    }
 
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Test
-//    @Sql(statements = {""})
     public void testCheckEvidenceTimeout() throws IOException, ParseException {
 
 

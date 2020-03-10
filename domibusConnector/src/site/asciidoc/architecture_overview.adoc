@@ -5,7 +5,7 @@ Architectural Overview
 :description: The connector architecture overview
 :library: Asciidoctor
 :stylesheet: asciidoc.css
-:imagesdir: ../images/
+:imagesdir: images/
 
 
 == Overall ECodex Architecture
