@@ -1,5 +1,5 @@
 --  *********************************************************************
---  Create Database Script domibusConnector 4.2.0
+--  Create Database Script domibusConnector 4.2.x
 --  *********************************************************************
 
 

@@ -1,7 +1,3 @@
-
-
-
-
 -- quartz table init
 --
 -- A hint submitted by a user: Oracle DB MUST be created as "shared" and the 
