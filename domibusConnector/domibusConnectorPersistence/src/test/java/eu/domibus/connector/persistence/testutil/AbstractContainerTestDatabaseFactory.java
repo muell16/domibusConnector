@@ -59,7 +59,11 @@ public abstract class AbstractContainerTestDatabaseFactory implements TestDataba
     public TestDatabase createNewDatabase(String version) {
         ContainerTestDatabase testDatabase = new ContainerTestDatabase();
         JdbcDatabaseContainer dbContainer = getDatabaseContainer(version);
-        dbContainer.withDatabaseName("test");
+        try {
+            dbContainer.withDatabaseName("test");
+        } catch (UnsupportedOperationException e) {
+            //ignore it, if not supported...
+        }
         dbContainer.withUsername("test");
         dbContainer.withPassword("test");
         dbContainer.start();
