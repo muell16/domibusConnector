@@ -105,7 +105,7 @@ public abstract class AbstractContainerTestDatabaseFactory implements TestDataba
         return true;
     }
 
-    private boolean isDockerAndDriverAvailable(String version) {
+    protected boolean isDockerAndDriverAvailable(String version) {
         boolean docker = true;
         String command = "docker ps";
         try {

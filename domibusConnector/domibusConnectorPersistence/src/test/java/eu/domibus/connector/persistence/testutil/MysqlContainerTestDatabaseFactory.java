@@ -76,7 +76,8 @@ public class MysqlContainerTestDatabaseFactory extends AbstractContainerTestData
 
     @Override
     public boolean isAvailable(String version) {
-        return availableVersions.contains(version) || version == null;
+
+        return (availableVersions.contains(version) || version == null) && super.isDockerAndDriverAvailable(version);
     }
 
 
