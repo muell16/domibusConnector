@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.2.0-SNAPSHOT</version>
+    <version>4.2.0-RC4</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -999,18 +999,6 @@
             <plugin>
                 <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
                 <artifactId>spring-properties-reporting-plugin</artifactId>
-                <configuration>
-                    <linkJavadoc>true</linkJavadoc>
-                    <includedDependencies>
-                        <includedDependency>
-                            <groupId>^org.springframework</groupId>
-                        </includedDependency>
-                        <includedDependency>
-                            <groupId>^eu.domibus</groupId>
-                        </includedDependency>
-                    </includedDependencies>
-
-                </configuration>
                 <reportSets>
                     <reportSet>
                         <id>default</id>
@@ -1025,6 +1013,17 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+                <configuration>
+                    <linkJavadoc>true</linkJavadoc>
+                    <includedDependencies>
+                        <includedDependency>
+                            <groupId>^org.springframework</groupId>
+                        </includedDependency>
+                        <includedDependency>
+                            <groupId>^eu.domibus</groupId>
+                        </includedDependency>
+                    </includedDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
