@@ -27,7 +27,7 @@ import org.springframework.jms.annotation.JmsListener;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootApplication(
-    scanBasePackages={"eu.domibus.connector.backend", "eu.domibus.connector.persistence"}
+    scanBasePackages={"eu.domibus.connector.backend"}
 )  
 @Configuration
 //@Profile("TestBackendContext")
@@ -83,8 +83,6 @@ public class TestBackendContext {
                 LOGGER.warn("message to dummySubmissionService controller submitted: [{}]", message);
                 submittedMessages.add(message);
             }
-
-
         };
         return submissionService;
     }

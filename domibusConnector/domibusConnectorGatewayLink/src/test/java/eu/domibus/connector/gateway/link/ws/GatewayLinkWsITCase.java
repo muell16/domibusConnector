@@ -52,7 +52,8 @@ public class GatewayLinkWsITCase {
         TEST_GW_APPLICATION_CONTEXT = TestGW.startContext(new String[]{
                 "server.port=" + portTestGW,
                 "connector.delivery.endpoint.publishAddress=" + GW_LINK_SERVER_ADDRESS,
-                //"connector.delivery.endpoint.publish-address=
+                "spring.main.allow-bean-definition-overriding=true",
+                "connector.delivery.endpoint.backendPublishAddress=" + GW_LINK_SERVER_ADDRESS,
         });
         System.out.println(String.format("TEST GW APPLICATION CONTEXT STARTED with address [%s]", TEST_GW_SERVER_ADDRESS));
     }
