@@ -19,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled("Policy cannot be satisfied!")
+//@Disabled("Policy cannot be satisfied!")
 public class GatewayLinkWsITCase {
 
 
