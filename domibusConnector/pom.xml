@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.2.0-RC3</version>
+    <version>4.2.0-RC4</version>
     <packaging>pom</packaging>
     <licenses>
         <license>
@@ -257,12 +257,12 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
-                <version>1.12.4</version>
+                <version>1.13.0</version>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.12.4</version>
+                <version>1.13.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

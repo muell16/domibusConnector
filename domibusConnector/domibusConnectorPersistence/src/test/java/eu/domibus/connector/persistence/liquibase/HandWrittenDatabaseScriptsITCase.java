@@ -26,7 +26,7 @@ public class HandWrittenDatabaseScriptsITCase {
     public static final String MIGRATE_SCRIPTS_CLASSPATH = "/dbscripts/migrate/";
 
     public static List<String> INITIAL_VERSIONS = Stream
-            .of("4.1.0")
+            .of("4.1.0", "4.2.0")
             .collect(Collectors.toList());
 
     public static List<TestDatabaseFactory> TEST_DATABASE_FACTORIES_LIST = Stream
@@ -41,7 +41,7 @@ public class HandWrittenDatabaseScriptsITCase {
 
 
     public static final List<UpgradePath> UPGRADE_PATHS = Stream
-            .of(upgradePath("3.5.x").to("4.0.0"))
+            .of(upgradePath("3.5.x").to("4.0.0"), upgradePath("4.1.x").to("4.2.0"))
             .collect(Collectors.toList());
 
     static UpgradePath upgradePath(String fromVersion) {

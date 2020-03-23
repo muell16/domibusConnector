@@ -105,7 +105,7 @@ public class H2TestDatabaseFactory implements TestDatabaseFactory {
         ds.setUser("sa");
 
         if (version != null) {
-            String initialScript = INITIAL_TEST_SCRIPTS_LOCATION + dbType + "_" + version + ".sql";
+            String initialScript = INITIAL_TEST_SCRIPTS_LOCATION + "h2_" +  dbType + "_" + version + ".sql";
             ClassPathResource classPathResource = new ClassPathResource(initialScript);
             Assertions.assertThat(classPathResource.exists()).as("A initial db script must exist!").isTrue();
             try {

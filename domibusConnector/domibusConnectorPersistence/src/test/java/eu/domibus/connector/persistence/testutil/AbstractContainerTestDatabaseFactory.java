@@ -59,13 +59,20 @@ public abstract class AbstractContainerTestDatabaseFactory implements TestDataba
     public TestDatabase createNewDatabase(String version) {
         ContainerTestDatabase testDatabase = new ContainerTestDatabase();
         JdbcDatabaseContainer dbContainer = getDatabaseContainer(version);
+        try {
+            dbContainer.withDatabaseName("test");
+        } catch (UnsupportedOperationException e) {
+            //ignore it, if not supported...
+        }
+        dbContainer.withUsername("test");
+        dbContainer.withPassword("test");
         dbContainer.start();
 
-        try {
-            dbContainer.createConnection("SELECT 1");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            dbContainer.createConnection();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
         testDatabase.jdbcDatabaseContainer = dbContainer;
         testDatabase.version = version;
@@ -83,6 +90,22 @@ public abstract class AbstractContainerTestDatabaseFactory implements TestDataba
 
     @Override
     public boolean isAvailable(String version) {
+
+        boolean available = isDockerAndDriverAvailable(version);
+        if (!available) {
+            return false;
+        }
+
+        if (version != null) {
+//            throw new RuntimeException("Cannot provide db with data in version " + version);
+            LOGGER.warn("Cannot provide db with data in version " + version);
+//            Assumptions.assumeTrue(false, "Cannot provide db with data in version " + version);
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean isDockerAndDriverAvailable(String version) {
         boolean docker = true;
         String command = "docker ps";
         try {
@@ -109,17 +132,6 @@ public abstract class AbstractContainerTestDatabaseFactory implements TestDataba
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
             LOGGER.warn("SQL Driver [{}] is not available on classpath!", driverClassName);
-            return false;
-        }
-
-//        Assumptions.assumeTrue(docker, "Docker not available!, calling 'docker ps' failed");
-
-
-//        Assumptions.assumeTrue(Optional.ofNullable(System.getProperty("DOCKER_HOST")).isPresent(), "No docker available!");
-        if (version != null) {
-//            throw new RuntimeException("Cannot provide db with data in version " + version);
-            LOGGER.warn("Cannot provide db with data in version " + version);
-//            Assumptions.assumeTrue(false, "Cannot provide db with data in version " + version);
             return false;
         }
         return true;

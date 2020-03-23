@@ -26,8 +26,8 @@ There has also been multiple changes to the database regarding the support for l
 and first work on full support on multi usecase handling. For the database changes migration scripts are
 provided within the documentation folder.
 
-* dbscripts/migrate/oracle_migrate_4.1.0_to_4.2.0.sql
-* dbscripts/migrate/mysql_migrate_4.1.0_to_4.2.0.sql
+* dbscripts/migrate/oracle_migrate_4.1.x_to_4.2.0.sql
+* dbscripts/migrate/mysql_migrate_4.1.x_to_4.2.0.sql
 
 
 NOTE: For everyone who has used spring.liquibase.enabled=true during initial connector setup,
