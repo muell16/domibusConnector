@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnectorLauncher</artifactId>
-        <version>4.2.0-RC4</version>
+        <version>4.2.0-RC5</version>
     </parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnectorStandaloneLauncher</artifactId>
@@ -172,8 +172,8 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>copy-production-files</goal>
-                                    <goal>package-for-production</goal>
+                                    <goal>prepare-frontend</goal>
+                                    <goal>build-frontend</goal>
                                 </goals>
                             </execution>
                         </executions>
