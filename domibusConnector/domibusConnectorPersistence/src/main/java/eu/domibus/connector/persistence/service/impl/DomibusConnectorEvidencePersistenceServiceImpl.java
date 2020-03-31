@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
@@ -149,13 +150,17 @@ public class DomibusConnectorEvidencePersistenceServiceImpl implements DomibusCo
         } else if (referencedMessage == null) {
             String refToMessageId = message.getMessageDetails().getRefToMessageId();
             DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
+            //as an evidence is always an answer to a previous message, the source and target are
+            //switched for the message search
+            MessageTargetSource referencedMessageTarget = direction.getSource();
+            LOGGER.trace("Searching for message with ebmsId or backendId with [{}] and target [{}] in database, to assign evidence message to it", refToMessageId, referencedMessageTarget);
             referencedMessage = messageDao.
-                    findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget())
+                    findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, referencedMessageTarget)
                     .orElse(null);
 
             if (referencedMessage == null) {
                 String error = String.format("No message with ebmsId or backendId with [%s] and target [%s] found in database! " +
-                        "Cannot persist confirmation [%s]", refToMessageId, direction.getTarget(), confirmation);
+                        "Cannot persist confirmation [%s]", refToMessageId, referencedMessageTarget, confirmation);
                 throw new EvidencePersistenceException(error);
             }
         }
