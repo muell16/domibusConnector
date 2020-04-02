@@ -5,7 +5,12 @@ package eu.domibus.connector.controller.service;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
+import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -69,11 +74,13 @@ public class ConnectorMessageFlowITCase {
     BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
-    DomibusConnectorGatewayDeliveryService rcvMessageFromGwService;
+    DomibusConnectorGatewayDeliveryService gatewaySubmissionService;
 
     @Autowired
-    DomibusConnectorBackendSubmissionService sendMessageToBackendService;
+    DomibusConnectorBackendSubmissionService backendSubmissionService;
 
+    @Autowired
+    DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @BeforeEach
     public void setUp() {
@@ -105,13 +112,50 @@ public class ConnectorMessageFlowITCase {
 
             LOGGER.info("message with confirmations: [{}]", testMessage.getMessageConfirmations());
 
-            rcvMessageFromGwService.deliverMessageFromGatewayToController(testMessage);
+            gatewaySubmissionService.deliverMessageFromGatewayToController(testMessage);
 
             DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
             assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
             assertThat(take).isNotNull();
 
             //TODO: check database!
+        });
+    }
+
+
+    @Test
+    @Disabled("in progress")
+    public void sendMessageFromBackend() {
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
+            DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
+            DomibusConnectorMessage msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
+                    .setConnectorMessageId("t1")
+                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
+                            .create()
+                            .withAction("action1")
+                            .withService("service1", "servicetype")
+                            .withBackendMessageId("backend1")
+                            .withConversationId("")
+                            .withFromParty(DomainEntityCreator.createPartyAT())
+                            .withToParty(DomainEntityCreator.createPartyDE())
+                            .withFinalRecipient("final")
+                            .withOriginalSender("original")
+                            .build()
+                    ).build();
+
+//            msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+
+            backendSubmissionService.submitToController(msg);
+
+
+            DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
+            assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
+            assertThat(take).isNotNull();
+
+            //TODO: analyze take
+
+            //TODO: check DB
+
         });
     }
 }
