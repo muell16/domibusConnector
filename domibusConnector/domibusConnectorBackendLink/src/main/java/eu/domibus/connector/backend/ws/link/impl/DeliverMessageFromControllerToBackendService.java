@@ -184,7 +184,7 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
         if (refToMessageId != null) {
             LOGGER.trace("#getBackendClientInfoByRefToMessageIdOrReturnNull: try to find message by refToMessageId [{}]", refToMessageId);
             DomibusConnectorMessage referencedMessage = messagePersistenceService
-                    .findMessageByEbmsIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)
+                    .findMessageByEbmsIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
                     .orElse(null);
             if (referencedMessage == null) {
                 referencedMessage = messagePersistenceService
