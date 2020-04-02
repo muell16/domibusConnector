@@ -8,6 +8,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -53,9 +54,11 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
             @Autowired Messages messagesView
     ) {
 
-        setPrimarySection(Section.NAVBAR);
+        setPrimarySection(Section.DRAWER);
 
-        addToNavbar(new DrawerToggle(), new DomibusConnectorAdminHeader());
+        VerticalLayout topBar = new VerticalLayout();
+        topBar.add(new DomibusConnectorAdminHeader());
+        addToNavbar(topBar);
 
         tabViewRouterHelper.setTabFontSize("bigger");
         tabViewRouterHelper
@@ -101,9 +104,11 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
                 .addForComponent(LogoutView.class);
 
         menuTabs = tabViewRouterHelper.getTabs();
-        menuTabs.setOrientation(Tabs.Orientation.VERTICAL);
+        menuTabs.setOrientation(Tabs.Orientation.HORIZONTAL);
 
-        addToDrawer(menuTabs);
+        topBar.add(menuTabs);
+
+//        addToDrawer(menuTabs);
 
 
     }

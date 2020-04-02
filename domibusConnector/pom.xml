@@ -19,7 +19,6 @@
         <module>domibusConnectorGatewayLink</module>
         <module>domibusConnectorBackendLink</module>
         <module>domibusConnectorControllerAPI</module>
-        <!--<module>domibusConnectorTest</module>-->
         <module>domibusConnectorAPI</module>
         <module>domibusConnectorAPIlib</module>
         <module>domibusConnectorDocumentation</module>

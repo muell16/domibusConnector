@@ -14,11 +14,18 @@ import java.util.Date;
  * represented is needed to be able to send the message to other participants.
  * @author riederb
  * @version 1.0
+ *
+ * This class should only hold/contain AS4 related message details / properties
+ *
  */
 public class DomibusConnectorMessageDetails implements Serializable {
 
 	@Nullable
+	//will become deprecated when the backend messages are tracked by
+	//the transportStateService
 	private String backendMessageId;
+
+	//AS4 properties:
 	@Nullable
 	private String ebmsMessageId;
 	@Nullable
@@ -31,14 +38,18 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	private DomibusConnectorAction action;
 	private DomibusConnectorParty fromParty;
 	private DomibusConnectorParty toParty;
+	//end of AS4 properties
 
 	//the backend client name the message is received from or should be delivered to
+	//should be moved to the transportStateService
 	@Nullable
 	private String connectorBackendClientName;
 
+	//should be moved to the transportStateService
 	@Nullable
 	private Date deliveredToGateway;
 
+	//should be moved to the transportStateService
 	@Nullable
 	private Date deliveredToBackend;
 
@@ -48,6 +59,7 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	@Nullable
 	private Date failed;
 
+	//should be moved to domibusConnnectorMessage
 	private DomibusConnectorMessageDirection direction;
 
 	public DomibusConnectorMessageDetails(){
