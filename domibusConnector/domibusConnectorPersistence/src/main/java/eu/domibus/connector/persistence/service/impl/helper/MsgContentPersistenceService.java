@@ -99,7 +99,7 @@ public class MsgContentPersistenceService {
         findByMessage.stream()
                 .filter(s -> StoreType.MESSAGE_CONFIRMATION_XML.equals(s.getContentType()))
                 .forEach(c -> {
-                    
+
                     messageBuilder.addConfirmation(DomibusConnectorMessageConfirmationBuilder.createBuilder()
                             .setEvidence(c.getContent())
                             .setEvidenceType(DomibusConnectorEvidenceType.valueOf(c.getPayloadIdentifier()))
@@ -291,8 +291,8 @@ public class MsgContentPersistenceService {
         PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONFIRMATION_XML, null);
         pDomibusConnectorMsgCont.setPayloadMimeType(MimeTypeUtils.APPLICATION_XML_VALUE);
         pDomibusConnectorMsgCont.setPayloadIdentifier(confirmation.getEvidenceType().toString());
+        pDomibusConnectorMsgCont.setContent(confirmation.getEvidence());
         return pDomibusConnectorMsgCont;
-
     }
 
 
