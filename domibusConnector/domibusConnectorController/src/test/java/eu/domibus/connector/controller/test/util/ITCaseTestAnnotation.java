@@ -10,6 +10,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")

@@ -91,6 +91,11 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
         return getProviderByName(toCopy.getStorageProviderName()).isPresent();
     }
 
+    @Override
+    public LargeFilePersistenceProvider getDefaultProvider() {
+        return defaultLargeFilePersistenceProvider;
+    }
+
     private LargeFilePersistenceProvider getProviderByLargeFileReference(LargeFileReference bigDataReference) {
         String storageProviderName = bigDataReference.getStorageProviderName();
         LOGGER.debug("Looking up Storage provider for largeFileReference [{}] with name [{}]",

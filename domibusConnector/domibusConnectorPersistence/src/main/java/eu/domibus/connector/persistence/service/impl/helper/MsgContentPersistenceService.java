@@ -3,7 +3,6 @@ package eu.domibus.connector.persistence.service.impl.helper;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
-import eu.domibus.connector.domain.model.helper.CopyHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorDetachedSignature;
@@ -42,6 +41,9 @@ import java.util.Optional;
 @Component
 @Transactional
 public class MsgContentPersistenceService {
+
+    public static final String BUSINESS_XML_DOCUMENT_IDENTIFIER = "BusinessDocument";
+    public static final String BUSINESS_XML_DOCUMENT_NAME = "BusinessDocument.xml";
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MsgContentPersistenceService.class);
 
@@ -83,7 +85,7 @@ public class MsgContentPersistenceService {
         List<PDomibusConnectorMsgCont> findByMessage = this.msgContDao.findByMessage(dbMessage);
 
         //map fromDbToDomain business XML, businessDoc
-        loadMsgContent(messageBuilder, findByMessage);
+        loadMsgDocs(messageBuilder, findByMessage);
 
         //mapFromDbToDomain evidence back
         loadConfirmations(messageBuilder, findByMessage);
@@ -100,7 +102,7 @@ public class MsgContentPersistenceService {
 
                     messageBuilder.addConfirmation(DomibusConnectorMessageConfirmationBuilder.createBuilder()
                             .setEvidence(largeFileReferenceToByte(largeFileReference))
-                            .setEvidenceType(DomibusConnectorEvidenceType.valueOf(c.getContentName()))
+                            .setEvidenceType(DomibusConnectorEvidenceType.valueOf(c.getPayloadIdentifier()))
                             .build()
                     );
 
@@ -122,7 +124,9 @@ public class MsgContentPersistenceService {
                     messageBuilder.addAttachment(
                         DomibusConnectorMessageAttachmentBuilder.createBuilder()
                             .setAttachment(loadLargeFileReference(c))
-                            .setIdentifier(c.getContentName())
+                            .setIdentifier(c.getPayloadIdentifier())
+                            .withDescription(c.getPayloadDescription())
+                            .withName(c.getPayloadName())
                             .build());
                 });
 
@@ -136,7 +140,7 @@ public class MsgContentPersistenceService {
 
     }
 
-    private void loadMsgContent(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
+    private void loadMsgDocs(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
 
         DomibusConnectorMessageContentBuilder messageContentBuilder = DomibusConnectorMessageContentBuilder.createBuilder();
         Optional<PDomibusConnectorMsgCont> foundXmlContent = findByMessage.stream()
@@ -166,7 +170,7 @@ public class MsgContentPersistenceService {
 
         DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
         documentBuilder.setContent(largeFileReference);
-        documentBuilder.setName(pDomibusConnectorMsgCont.getContentName());
+        documentBuilder.setName(pDomibusConnectorMsgCont.getPayloadName());
 
         PDomibusConnectorDetachedSignature dbDetachedSignature = pDomibusConnectorMsgCont.getDetachedSignature();
         if (pDomibusConnectorMsgCont.getDetachedSignature() != null) {
@@ -242,28 +246,22 @@ public class MsgContentPersistenceService {
             throw new IllegalArgumentException("Xml content is not allowed to be null!");
         }
 
-        LargeFileReference xmlBussinessDocument = largeFilePersistenceService.createDomibusConnectorBigDataReference(connectorMessageId, "XMLBussinessDocument", MimeTypeUtils.APPLICATION_XML_VALUE);
-        try ( OutputStream out = xmlBussinessDocument.getOutputStream();) {
-            StreamUtils.copy(xmlDocument, out);
-        } catch (IOException e) {
-            throw new RuntimeException("unable to write BusinessXML to LargeFileProvider", e);
-        }
+        //Business doc is stored as clob in DB
+        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT_XML, null);
+        pDomibusConnectorMsgCont.setPayloadIdentifier(BUSINESS_XML_DOCUMENT_IDENTIFIER);
+        pDomibusConnectorMsgCont.setPayloadName(BUSINESS_XML_DOCUMENT_NAME);
+        pDomibusConnectorMsgCont.setPayloadMimeType(MimeTypeUtils.APPLICATION_XML_VALUE);
 
-        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT_XML, xmlBussinessDocument);
         return pDomibusConnectorMsgCont;
     }
 
     PDomibusConnectorMsgCont mapDocumentToDb(PDomibusConnectorMessage message, DomibusConnectorMessageDocument document) {
-        //change BigDocumentRefernce with the plain implementation to make sure it is serializeable!
-//        DomibusConnectorMessageContent copiedMessageContent = CopyHelper.copyMessageContent(content);
-//        DomibusConnectorMessageDocument document = content.getDocument();
         if (document == null) {
             throw new IllegalArgumentException("document is not allowed to be null!");
         }
-        LargeFileReference plainRef = createBigDataReferenceCopy(message.getConnectorMessageId(), document.getDocument());
-        document.setDocument(plainRef);
-
-        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT_DOCUMENT, plainRef);
+        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT_DOCUMENT, document.getDocument());
+        pDomibusConnectorMsgCont.setPayloadName(document.getDocumentName());
+        pDomibusConnectorMsgCont.setDigest(document.getHashValue());
 
         DetachedSignature detachedSignature = document.getDetachedSignature();
         if (detachedSignature != null) {
@@ -279,46 +277,21 @@ public class MsgContentPersistenceService {
     }
 
     PDomibusConnectorMsgCont mapAttachment(PDomibusConnectorMessage message, DomibusConnectorMessageAttachment attachment) {
-        DomibusConnectorMessageAttachment copiedAttachment = CopyHelper.copyAttachment(attachment);
-        LargeFileReference bigDataReferenceCopy = createBigDataReferenceCopy(message.getConnectorMessageId(), copiedAttachment.getAttachment());
-        copiedAttachment.setAttachment(bigDataReferenceCopy);
-
-        return storeObjectIntoMsgCont(message, StoreType.MESSAGE_ATTACHMENT, bigDataReferenceCopy);
+        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_ATTACHMENT_CONTENT, attachment.getAttachment());
+        pDomibusConnectorMsgCont.setPayloadIdentifier(attachment.getIdentifier());
+        pDomibusConnectorMsgCont.setPayloadName(attachment.getName());
+        pDomibusConnectorMsgCont.setPayloadDescription(attachment.getDescription());
+        pDomibusConnectorMsgCont.setPayloadMimeType(attachment.getMimeType());
+        return pDomibusConnectorMsgCont;
     }
 
     PDomibusConnectorMsgCont mapConfirmation(PDomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
-
-        LargeFileReference xmlEvidence = largeFilePersistenceService
-                .createDomibusConnectorBigDataReference(message.getConnectorMessageId(), confirmation.getEvidenceType().name(), MimeTypeUtils.APPLICATION_XML_VALUE);
-        try ( OutputStream out = xmlEvidence.getOutputStream();) {
-            StreamUtils.copy(confirmation.getEvidence(), out);
-        } catch (IOException e) {
-            throw new RuntimeException("unable to write BusinessXML to LargeFileProvider", e);
-        }
-
-        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONFIRMATION_XML, xmlEvidence);
+        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONFIRMATION_XML, null);
+        pDomibusConnectorMsgCont.setPayloadMimeType(MimeTypeUtils.APPLICATION_XML_VALUE);
+        pDomibusConnectorMsgCont.setPayloadIdentifier(confirmation.getEvidenceType().toString());
         return pDomibusConnectorMsgCont;
 
     }
-
-    LargeFileReference createBigDataReferenceCopy(String connectorMessageId, LargeFileReference toCopy) {
-        if (toCopy == null) {
-            return null;
-        }
-        if (largeFilePersistenceService.isAvailable(toCopy)) {
-            return toCopy;
-        } else {
-            LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceService.createDomibusConnectorBigDataReference(connectorMessageId, toCopy.getName(), toCopy.getContentType());
-            try (OutputStream os = domibusConnectorBigDataReference.getOutputStream();
-                 InputStream is = toCopy.getInputStream()) {
-                StreamUtils.copy(is, os);
-                return domibusConnectorBigDataReference;
-            } catch (IOException e) {
-                throw new RuntimeException("Cannot read from InputStream or write to LargeFileProvider OutputStream!", e);
-            }
-        }
-    }
-
 
 
     /**
@@ -336,9 +309,12 @@ public class MsgContentPersistenceService {
             PDomibusConnectorMsgCont msgCont = new PDomibusConnectorMsgCont();
 
             msgCont.setContentType(type);
-            msgCont.setStorageProviderName(ref.getStorageProviderName());
-            msgCont.setStorageReferenceId(ref.getStorageIdReference());
+            msgCont.setMessage(message);
 
+            if (ref != null) {
+                msgCont.setStorageProviderName(ref.getStorageProviderName());
+                msgCont.setStorageReferenceId(ref.getStorageIdReference());
+            }
             return msgCont;
     }
 

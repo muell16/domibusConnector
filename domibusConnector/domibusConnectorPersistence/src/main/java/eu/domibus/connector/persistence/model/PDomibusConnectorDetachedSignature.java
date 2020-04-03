@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = PDomibusConnectorDetachedSignature.TABLE_NAME)
-//@IdClass(PDomibusConnectorDetachedSignaturePK.class)
 public class PDomibusConnectorDetachedSignature {
 
     public static final String TABLE_NAME = "DC_MSG_CONTENT_DETACHED_SIGNATURE";

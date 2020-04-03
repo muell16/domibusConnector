@@ -19,7 +19,7 @@
         </createTable>
     </changeSet>
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6_primary_key">
-        <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID"/>
+        <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID" constraintName="PK_DETACHED_SIGNATURE"/>
 
         <addForeignKeyConstraint baseTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE"
                                  baseColumnNames="ID"
@@ -33,7 +33,10 @@
             <column name="STORAGE_PROVIDER_NAME" type="java.sql.Types.Varchar(255)"></column>
             <column name="STORAGE_REFERENCE_ID" type="java.sql.Types.Varchar(512)"></column>
             <column name="DIGEST" type="java.sql.Types.Varchar(512)"></column>
-            <column name="CONTENT_NAME" type="java.sql.Types.Varchar(512)"></column>
+            <column name="PAYLOAD_NAME" type="java.sql.Types.Varchar(512)"></column>
+            <column name="PAYLOAD_IDENTIFIER" type="java.sql.Types.Varchar(512)"></column>
+            <column name="PAYLOAD_DESCRIPTION" type="java.sql.Types.CLOB"></column>
+            <column name="PAYLOAD_MIMETYPE" type="java.sql.Types.Varchar(255)"></column>
         </addColumn>
     </changeSet>
 

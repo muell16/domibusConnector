@@ -23,6 +23,8 @@ public class LargeFileReference implements DataSource, Serializable {
 
     private String mimetype = "";
 
+    private Long size = -1l;
+
     public LargeFileReference() {}
 
     public LargeFileReference(@NotNull String storageIdReference) {
@@ -30,6 +32,18 @@ public class LargeFileReference implements DataSource, Serializable {
             throw new IllegalArgumentException("StorageIdReference cannot be null!");
         }
         this.storageIdReference = storageIdReference;
+    }
+
+    public String getMimetype() {
+        return mimetype;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 
     public @Nullable

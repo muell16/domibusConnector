@@ -51,14 +51,23 @@ public class PDomibusConnectorMsgCont implements Serializable {
     @Column(name="CONTENT_TYPE")
     private StoreType contentType;
 
-    @Column(name = "CONTENT_NAME")
-    private String contentName;
+    @Column(name = "PAYLOAD_NAME")
+    private String payloadName;
+
+    @Column(name = "PAYLOAD_IDENTIFIER")
+    private String payloadIdentifier;
+
+    @Column(name = "PAYLOAD_DESCRIPTION")
+    private String payloadDescription;
+
+    @Column(name = "PAYLOAD_MIMETYPE")
+    private String payloadMimeType;
     
     @ManyToOne
     @JoinColumn(name="MESSAGE_ID")
     private PDomibusConnectorMessage message;
 
-    @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "content")
     private PDomibusConnectorDetachedSignature detachedSignature;
 
     public Long getId() {
@@ -69,12 +78,36 @@ public class PDomibusConnectorMsgCont implements Serializable {
         this.id = id;
     }
 
-    public String getContentName() {
-        return contentName;
+    public String getPayloadName() {
+        return payloadName;
     }
 
-    public void setContentName(String contentName) {
-        this.contentName = contentName;
+    public void setPayloadName(String payloadName) {
+        this.payloadName = payloadName;
+    }
+
+    public String getPayloadMimeType() {
+        return payloadMimeType;
+    }
+
+    public void setPayloadMimeType(String payloadMimeType) {
+        this.payloadMimeType = payloadMimeType;
+    }
+
+    public String getPayloadIdentifier() {
+        return payloadIdentifier;
+    }
+
+    public void setPayloadIdentifier(String payloadIdentifier) {
+        this.payloadIdentifier = payloadIdentifier;
+    }
+
+    public String getPayloadDescription() {
+        return payloadDescription;
+    }
+
+    public void setPayloadDescription(String payloadDescription) {
+        this.payloadDescription = payloadDescription;
     }
 
     public byte[] getContent() {
