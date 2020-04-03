@@ -81,6 +81,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         FileBasedLargeFileReference bigDataReference = new FileBasedLargeFileReference();
         bigDataReference.setName(documentName);
         bigDataReference.setMimetype(documentContentType);
+        bigDataReference.setStorageProviderName(this.getProviderName());
 
         String messageFolderName = connectorMessageId;
         Path messageFolder = getStoragePath().resolve(messageFolderName); // //new File(f.getAbsolutePath() + File.separator + folder);
@@ -363,6 +364,11 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         private String initVector;
 
         private String cipherSuite;
+
+        @Override
+        public String getStorageProviderName() {
+            return PROVIDER_NAME;
+        }
 
         @Override
         public InputStream getInputStream() throws IOException {

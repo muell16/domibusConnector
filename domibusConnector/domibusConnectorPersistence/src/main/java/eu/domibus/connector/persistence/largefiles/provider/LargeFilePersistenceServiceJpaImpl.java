@@ -79,6 +79,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             }
 
             JpaBasedLargeFileReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedLargeFileReference();
+            jpaBasedDomibusConnectorBigDataReference.setStorageProviderName(this.getProviderName());
 
             //TODO: use stream from db!
             Blob content = bigData.getContent();
@@ -122,6 +123,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
         JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
+        reference.setStorageProviderName(this.getProviderName());
         reference.setReadable(false);
         reference.setWriteable(true);
 
@@ -247,6 +249,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 
                 List<LargeFileReference> dataRefList = map.get(connectorMessageId);
                 JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
+                reference.setStorageProviderName(this.getProviderName());
                 reference.setReadable(false);
                 reference.setWriteable(false);
                 reference.setStorageIdReference(Long.toString(bigData.getId()));
@@ -328,6 +331,10 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 
         boolean writeable;
 
+        @Override
+        public String getStorageProviderName() {
+            return PROVIDER_NAME;
+        }
 
         @Override
         public InputStream getInputStream() throws IOException {

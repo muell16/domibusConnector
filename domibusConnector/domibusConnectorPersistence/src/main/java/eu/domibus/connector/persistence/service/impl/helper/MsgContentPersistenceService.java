@@ -10,6 +10,7 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,12 +97,11 @@ public class MsgContentPersistenceService {
 
     private void loadConfirmations(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
         findByMessage.stream()
-                .filter(StoreType.MESSAGE_CONFIRMATION::equals)
+                .filter(s -> StoreType.MESSAGE_CONFIRMATION_XML.equals(s.getContentType()))
                 .forEach(c -> {
-                    LargeFileReference largeFileReference = loadLargeFileReference(c);
-
+                    
                     messageBuilder.addConfirmation(DomibusConnectorMessageConfirmationBuilder.createBuilder()
-                            .setEvidence(largeFileReferenceToByte(largeFileReference))
+                            .setEvidence(c.getContent())
                             .setEvidenceType(DomibusConnectorEvidenceType.valueOf(c.getPayloadIdentifier()))
                             .build()
                     );
@@ -110,7 +110,7 @@ public class MsgContentPersistenceService {
 
         //legacy mapping
         findByMessage.stream()
-                .filter(StoreType.MESSAGE_CONFIRMATION::equals)
+                .filter(s -> StoreType.MESSAGE_CONFIRMATION.equals(s.getContentType()))
                 .forEach(c -> {
                     DomibusConnectorMessageConfirmation msgConfirmation = mapFromMsgCont(c, DomibusConnectorMessageConfirmation.class);
                     messageBuilder.addConfirmation(msgConfirmation);
@@ -119,7 +119,7 @@ public class MsgContentPersistenceService {
 
     private void loadAttachments(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
         findByMessage.stream()
-                .filter(StoreType.MESSAGE_ATTACHMENT_CONTENT::equals)
+                .filter(s -> StoreType.MESSAGE_ATTACHMENT_CONTENT.equals(s.getContentType()))
                 .forEach(c -> {
                     messageBuilder.addAttachment(
                         DomibusConnectorMessageAttachmentBuilder.createBuilder()
@@ -132,7 +132,7 @@ public class MsgContentPersistenceService {
 
         //legacy mapping
         findByMessage.stream()
-                .filter(StoreType.MESSAGE_ATTACHMENT::equals)
+                .filter(s -> StoreType.MESSAGE_ATTACHMENT.equals(s.getContentType()))
                 .forEach(c -> {
                     DomibusConnectorMessageAttachment msgAttachment = mapFromMsgCont(c, DomibusConnectorMessageAttachment.class);
                     messageBuilder.addAttachment(msgAttachment);
@@ -144,20 +144,21 @@ public class MsgContentPersistenceService {
 
         DomibusConnectorMessageContentBuilder messageContentBuilder = DomibusConnectorMessageContentBuilder.createBuilder();
         Optional<PDomibusConnectorMsgCont> foundXmlContent = findByMessage.stream()
-                .filter(StoreType.MESSAGE_CONTENT_XML::equals)
+                .filter(s -> StoreType.MESSAGE_BUSINESSS_CONTENT_XML.equals(s.getContentType()))
                 .findFirst();
         Optional<PDomibusConnectorMsgCont> foundDocumentContent = findByMessage.stream()
-                .filter(StoreType.MESSAGE_CONTENT_DOCUMENT::equals)
+                .filter(s -> StoreType.MESSAGE_BUSINESS_CONTENT_DOCUMENT.equals(s.getContentType()))
                 .findFirst();
 
         if (foundXmlContent.isPresent()) {
-            LargeFileReference largeFileReference = loadLargeFileReference(foundXmlContent.get());
-            messageContentBuilder.setXmlContent(largeFileReferenceToByte(largeFileReference));
+            PDomibusConnectorMsgCont xmlContent = foundXmlContent.get();
+
+            messageContentBuilder.setXmlContent(xmlContent.getContent());
 
             if (foundDocumentContent.isPresent()) {
                 loadDocumentContent(messageContentBuilder, foundDocumentContent.get());
             }
-
+            messageBuilder.setMessageContent(messageContentBuilder.build());
         } else {
             //if nothing found call deprecated content loader
             loadMsgContent_legacy(messageBuilder, findByMessage);
@@ -246,11 +247,13 @@ public class MsgContentPersistenceService {
             throw new IllegalArgumentException("Xml content is not allowed to be null!");
         }
 
-        //Business doc is stored as clob in DB
-        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT_XML, null);
+        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_BUSINESSS_CONTENT_XML, null);
         pDomibusConnectorMsgCont.setPayloadIdentifier(BUSINESS_XML_DOCUMENT_IDENTIFIER);
         pDomibusConnectorMsgCont.setPayloadName(BUSINESS_XML_DOCUMENT_NAME);
         pDomibusConnectorMsgCont.setPayloadMimeType(MimeTypeUtils.APPLICATION_XML_VALUE);
+
+        //Business XML doc is stored as clob in DB
+        pDomibusConnectorMsgCont.setContent(xmlDocument);
 
         return pDomibusConnectorMsgCont;
     }
@@ -259,14 +262,13 @@ public class MsgContentPersistenceService {
         if (document == null) {
             throw new IllegalArgumentException("document is not allowed to be null!");
         }
-        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_CONTENT_DOCUMENT, document.getDocument());
+        PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_BUSINESS_CONTENT_DOCUMENT, document.getDocument());
         pDomibusConnectorMsgCont.setPayloadName(document.getDocumentName());
         pDomibusConnectorMsgCont.setDigest(document.getHashValue());
 
         DetachedSignature detachedSignature = document.getDetachedSignature();
         if (detachedSignature != null) {
             PDomibusConnectorDetachedSignature dbDetachedSignature = new PDomibusConnectorDetachedSignature();
-            dbDetachedSignature.setContent(pDomibusConnectorMsgCont);
             dbDetachedSignature.setDetachedSignature(detachedSignature.getDetachedSignature());
             dbDetachedSignature.setDetachedSignatureName(detachedSignature.getDetachedSignatureName());
             dbDetachedSignature.setMimeType(detachedSignature.getMimeType());
@@ -311,11 +313,28 @@ public class MsgContentPersistenceService {
             msgCont.setContentType(type);
             msgCont.setMessage(message);
 
+            if (ref != null && StringUtils.isEmpty(ref.getStorageProviderName())) {
+                LOGGER.warn("No storage provider is set for the large file reference [{}]!\nWill be converted to default Storage provider!", ref);
+                ref = convertToDefaultStorageProvider(message.getConnectorMessageId(), ref);
+            }
+            if (ref != null && StringUtils.isEmpty(ref.getStorageIdReference())) {
+                throw new PersistenceException("No storage id reference is set for the large file reference!");
+            }
             if (ref != null) {
                 msgCont.setStorageProviderName(ref.getStorageProviderName());
                 msgCont.setStorageReferenceId(ref.getStorageIdReference());
             }
             return msgCont;
+    }
+
+    private LargeFileReference convertToDefaultStorageProvider(String connectorMessageId, LargeFileReference ref) {
+        LargeFileReference newRef = this.largeFilePersistenceService.createDomibusConnectorBigDataReference(connectorMessageId, ref.getName(), ref.getContentType());
+        try (InputStream is = ref.getInputStream(); OutputStream os = newRef.getOutputStream()) {
+            StreamUtils.copy(is, os);
+        } catch (IOException e) {
+            throw new RuntimeException("Copying from unsupported LargeFileReference to default LargeFileReference failed due", e);
+        }
+        return newRef;
     }
 
     /**

@@ -13,9 +13,6 @@
             <column name="ID" type="${id.type}" >
                 <constraints nullable="false" />
             </column>
-            <column name="CONTENT" type="${id.type}" >
-                <constraints nullable="false" />
-            </column>
             <column name="SIGNATURE" type="java.sql.Types.CLOB" />
             <column name="SIGNATURE_NAME" type="java.sql.Types.Varchar(255)" />
             <column name="SIGNATURE_TYPE" type="java.sql.Types.Varchar(255)" />
@@ -23,12 +20,6 @@
     </changeSet>
     <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6_primary_key">
         <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID" constraintName="PK_DETACHED_SIGNATURE"/>
-
-        <addForeignKeyConstraint baseTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE"
-                                 baseColumnNames="CONTENT"
-                                 constraintName="FK_detached_sig_msg_cont"
-                                 referencedTableName="DOMIBUS_CONNECTOR_MSG_CONT"
-                                 referencedColumnNames="ID"/>
     </changeSet>
 
     <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_3">
@@ -40,7 +31,16 @@
             <column name="PAYLOAD_IDENTIFIER" type="java.sql.Types.Varchar(512)"></column>
             <column name="PAYLOAD_DESCRIPTION" type="java.sql.Types.CLOB"></column>
             <column name="PAYLOAD_MIMETYPE" type="java.sql.Types.Varchar(255)"></column>
+            <column name="DETACHED_SIGNATURE_ID" type="${id.type}" ></column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="changelog-largefiles_remove_serialize-4.2_4" author="SKS">
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_CONT"
+                                 baseColumnNames="DETACHED_SIGNATURE_ID"
+                                 constraintName="FK_detached_sig_msg_cont"
+                                 referencedTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE"
+                                 referencedColumnNames="ID"/>
     </changeSet>
 
 

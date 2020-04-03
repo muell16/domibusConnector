@@ -23,10 +23,9 @@ public class PDomibusConnectorDetachedSignature {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreDetachedSig")
     private Long id;
 
-    @MapsId
-    @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "CONTENT", referencedColumnName = "ID")
-    PDomibusConnectorMsgCont content;
+//    @OneToOne(optional = false, orphanRemoval = true, fetch = FetchType.EAGER)
+//    @JoinColumn(name = "CONTENT", referencedColumnName = "ID")
+//    PDomibusConnectorMsgCont content;
 
     @Lob
     @Column(name = "SIGNATURE")
@@ -38,13 +37,13 @@ public class PDomibusConnectorDetachedSignature {
     @Column(name = "SIGNATURE_TYPE")
     private DetachedSignatureMimeType mimeType;
 
-    public PDomibusConnectorMsgCont getContent() {
-        return content;
-    }
-
-    public void setContent(PDomibusConnectorMsgCont content) {
-        this.content = content;
-    }
+//    public PDomibusConnectorMsgCont getContent() {
+//        return content;
+//    }
+//
+//    public void setContent(PDomibusConnectorMsgCont content) {
+//        this.content = content;
+//    }
 
     public byte[] getDetachedSignature() {
         return detachedSignature;

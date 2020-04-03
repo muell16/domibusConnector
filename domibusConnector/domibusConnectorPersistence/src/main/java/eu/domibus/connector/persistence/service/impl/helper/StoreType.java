@@ -15,8 +15,8 @@ import java.util.stream.Stream;
  */
 public enum StoreType {
     MESSAGE_CONTENT("domibus_message_content", DomibusConnectorMessageContent.class),
-    MESSAGE_CONTENT_XML("dcm_business_xml", Object.class),
-    MESSAGE_CONTENT_DOCUMENT("dcm_business_document", Object.class),
+    MESSAGE_BUSINESSS_CONTENT_XML("dcm_business_xml", Object.class),
+    MESSAGE_BUSINESS_CONTENT_DOCUMENT("dcm_business_document", Object.class),
     MESSAGE_ATTACHMENT("domibus_message_attachment", DomibusConnectorMessageAttachment.class),
     MESSAGE_ATTACHMENT_CONTENT("dcm_attachment", Object.class),
     MESSAGE_CONFIRMATION_XML("dcm_confirmation_xml", Object.class),

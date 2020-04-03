@@ -34,18 +34,6 @@ public class LargeFileReference implements DataSource, Serializable {
         this.storageIdReference = storageIdReference;
     }
 
-    public String getMimetype() {
-        return mimetype;
-    }
-
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
     public @Nullable
     String getStorageIdReference() {
         return storageIdReference;

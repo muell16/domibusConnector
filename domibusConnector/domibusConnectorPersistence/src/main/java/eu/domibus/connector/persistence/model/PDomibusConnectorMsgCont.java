@@ -67,7 +67,8 @@ public class PDomibusConnectorMsgCont implements Serializable {
     @JoinColumn(name="MESSAGE_ID")
     private PDomibusConnectorMessage message;
 
-    @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "content")
+    @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "DETACHED_SIGNATURE_ID", referencedColumnName = "ID")
     private PDomibusConnectorDetachedSignature detachedSignature;
 
     public Long getId() {
@@ -168,7 +169,6 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     public void setDetachedSignature(PDomibusConnectorDetachedSignature detachedSignature) {
         this.detachedSignature = detachedSignature;
-        detachedSignature.setContent(this);
     }
 
     public void setStorageReferenceId(String storageReferenceId) {
