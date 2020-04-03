@@ -13,6 +13,9 @@
             <column name="ID" type="${id.type}" >
                 <constraints nullable="false" />
             </column>
+            <column name="CONTENT" type="${id.type}" >
+                <constraints nullable="false" />
+            </column>
             <column name="SIGNATURE" type="java.sql.Types.CLOB" />
             <column name="SIGNATURE_NAME" type="java.sql.Types.Varchar(255)" />
             <column name="SIGNATURE_TYPE" type="java.sql.Types.Varchar(255)" />
@@ -22,7 +25,7 @@
         <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID" constraintName="PK_DETACHED_SIGNATURE"/>
 
         <addForeignKeyConstraint baseTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE"
-                                 baseColumnNames="ID"
+                                 baseColumnNames="CONTENT"
                                  constraintName="FK_detached_sig_msg_cont"
                                  referencedTableName="DOMIBUS_CONNECTOR_MSG_CONT"
                                  referencedColumnNames="ID"/>

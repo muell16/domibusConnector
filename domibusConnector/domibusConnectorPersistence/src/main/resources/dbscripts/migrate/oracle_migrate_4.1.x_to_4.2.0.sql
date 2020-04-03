@@ -120,13 +120,14 @@ create table DC_TRANSPORT_STEP_STATUS
 create table DC_MSG_CONTENT_DETACHED_SIGNATURE
 (
     ID NUMBER(10) not null,
+    CONTENT NUMBER(10) not null,
     SIGNATURE CLOB,
     SIGNATURE_NAME varchar2(255),
     SIGNATURE_TYPE varchar2(255),
     constraint PK_DETACHED_SIGNATURE
         primary key (ID),
     constraint FK_detached_sig_msg_cont
-        foreign key (ID) references DOMIBUS_CONNECTOR_MSG_CONT (ID)
+        foreign key (CONTENT) references DOMIBUS_CONNECTOR_MSG_CONT (ID)
 );
 
 alter table DOMIBUS_CONNECTOR_MSG_CONT ADD COLUMN STORAGE_PROVIDER_NAME VARCHAR2(255);

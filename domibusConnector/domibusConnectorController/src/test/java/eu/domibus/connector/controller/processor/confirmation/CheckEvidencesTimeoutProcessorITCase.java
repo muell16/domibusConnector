@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")

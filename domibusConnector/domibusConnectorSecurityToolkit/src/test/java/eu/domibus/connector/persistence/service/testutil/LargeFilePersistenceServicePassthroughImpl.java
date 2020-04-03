@@ -4,6 +4,7 @@ package eu.domibus.connector.persistence.service.testutil;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 
 import java.io.ByteArrayInputStream;
@@ -18,7 +19,12 @@ import java.util.Map;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class LargeFilePersistenceServicePassthroughImpl implements LargeFilePersistenceService {
+public class LargeFilePersistenceServicePassthroughImpl implements LargeFilePersistenceService, LargeFilePersistenceProvider {
+
+	@Override
+	public String getProviderName() {
+		return "passthrough";
+	}
 
 	@Override
 	public LargeFileReference getReadableDataSource(LargeFileReference bigDataReference) {
@@ -59,6 +65,16 @@ public class LargeFilePersistenceServicePassthroughImpl implements LargeFilePers
 	public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
 		//just return empty map
 		return new HashMap<>();
+	}
+
+	@Override
+	public boolean isAvailable(LargeFileReference toCopy) {
+		return true;
+	}
+
+	@Override
+	public LargeFilePersistenceProvider getDefaultProvider() {
+		return this;
 	}
 
 }
