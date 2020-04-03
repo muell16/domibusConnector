@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.backend;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Disabled;

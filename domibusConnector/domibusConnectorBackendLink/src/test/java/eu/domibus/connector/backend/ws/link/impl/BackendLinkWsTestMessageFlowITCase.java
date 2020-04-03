@@ -21,6 +21,7 @@ import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWeb
 import test.eu.domibus.connector.backend.ws.linktest.client.CommonBackendClient;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.*;
 
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;

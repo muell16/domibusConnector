@@ -13,6 +13,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
@@ -90,7 +91,8 @@ public class  DomibusConnectorWsBackendImplTest {
 
         LargeFilePersistenceServiceMemoryImpl bigDataPersistenceService = new LargeFilePersistenceServiceMemoryImpl();
         domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceServiceImpl());
-        ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);
+        ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService)
+                .setBigDataPersistenceServiceImpl(bigDataPersistenceService);
 
 
 

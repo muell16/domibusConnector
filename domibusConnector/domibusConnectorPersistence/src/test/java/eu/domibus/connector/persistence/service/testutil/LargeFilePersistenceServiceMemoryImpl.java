@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class LargeFilePersistenceServiceMemoryImpl implements LargeFilePersistenceProvider {
+public class LargeFilePersistenceServiceMemoryImpl implements LargeFilePersistenceProvider, LargeFilePersistenceService {
 
     public static final String PROVIDER_NAME = "MEMORY";
 
@@ -66,6 +66,16 @@ public class LargeFilePersistenceServiceMemoryImpl implements LargeFilePersisten
     public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
 	    //just return empty map
         return new HashMap<>();
+    }
+
+    @Override
+    public boolean isAvailable(LargeFileReference toCopy) {
+        return true;
+    }
+
+    @Override
+    public LargeFilePersistenceProvider getDefaultProvider() {
+        return this;
     }
 
     public static class MyOutputStream extends ByteArrayOutputStream {
