@@ -3,9 +3,9 @@ package eu.domibus.connector.security;
 import eu.domibus.connector.common.spring.CommonProperties;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
-import eu.domibus.connector.domain.testutil.DomibusConnectorBigDataReferenceGetSetBased;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
-import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServicePassthroughImpl;
+import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,8 +59,8 @@ public class DomibusConnectorSecurityToolkitAuthITCase {
         }
 
         @Bean
-        public static DomibusConnectorBigDataPersistenceService bigDataPersistenceService() {
-            DomibusConnectorBigDataPersistenceServicePassthroughImpl service = new DomibusConnectorBigDataPersistenceServicePassthroughImpl();
+        public static LargeFilePersistenceService bigDataPersistenceService() {
+            LargeFilePersistenceServicePassthroughImpl service = new LargeFilePersistenceServicePassthroughImpl();
             return Mockito.spy(service);
         }
 
@@ -73,7 +73,7 @@ public class DomibusConnectorSecurityToolkitAuthITCase {
 
     //mock
     @Autowired
-    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
+    LargeFilePersistenceService bigDataPersistenceService;
 
     @Resource
     private DomibusSecurityContainer securityContainer;
@@ -111,7 +111,7 @@ public class DomibusConnectorSecurityToolkitAuthITCase {
         securityToolkit.validateContainer(message);
 
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-            DomibusConnectorBigDataReference result = bigDataPersistenceService.getReadableDataSource(attachment.getAttachment());
+            LargeFileReference result = bigDataPersistenceService.getReadableDataSource(attachment.getAttachment());
             if (attachment.getName().equals("Token.xml")) {
                 writeResult(resultName + ".xml", StreamUtils.copyToByteArray(result.getInputStream()));
                 //test xml
@@ -145,9 +145,9 @@ public class DomibusConnectorSecurityToolkitAuthITCase {
 
     }
 
-    private static DomibusConnectorBigDataReference readRessource(final String name) {
+    private static LargeFileReference readRessource(final String name) {
         try {
-            DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
+            LargeFileReferenceGetSetBased dataRef = new LargeFileReferenceGetSetBased();
             File file = new File(getRessourceFolder() + "examples/" + name);
 
             FileInputStream fileInputStream = new FileInputStream(file);

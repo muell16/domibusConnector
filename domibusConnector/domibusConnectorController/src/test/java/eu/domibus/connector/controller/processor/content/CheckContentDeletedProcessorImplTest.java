@@ -1,11 +1,11 @@
 package eu.domibus.connector.controller.processor.content;
 
-import eu.domibus.connector.controller.test.util.DomibusConnectorBigDataReferenceInMemory;
+import eu.domibus.connector.controller.test.util.LargeFileReferenceInMemory;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class CheckContentDeletedProcessorImplTest {
     CheckContentDeletedProcessorImpl checkContentDeletedProcessor;
 
     @Mock
-    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
+    LargeFilePersistenceService bigDataPersistenceService;
     @Mock
     DomibusConnectorMessagePersistenceService messagePersistenceService;
 
@@ -47,18 +47,18 @@ class CheckContentDeletedProcessorImplTest {
         message.setConnectorMessageId("msg1");
         Mockito.when(messagePersistenceService.findMessageByConnectorMessageId(any())).thenReturn(message);
 
-        List<DomibusConnectorBigDataReference> bigDataReferenceList = new ArrayList<>();
+        List<LargeFileReference> bigDataReferenceList = new ArrayList<>();
 
-        DomibusConnectorBigDataReferenceInMemory ref1 = new DomibusConnectorBigDataReferenceInMemory();
+        LargeFileReferenceInMemory ref1 = new LargeFileReferenceInMemory();
         ref1.setStorageIdReference("storageid1");
         bigDataReferenceList.add(ref1);
-        DomibusConnectorBigDataReferenceInMemory ref2 = new DomibusConnectorBigDataReferenceInMemory();
+        LargeFileReferenceInMemory ref2 = new LargeFileReferenceInMemory();
         ref2.setStorageIdReference("storageid2");
         bigDataReferenceList.add(ref2);
 
         DomibusConnectorMessage.DomibusConnectorMessageId msgId = new DomibusConnectorMessage.DomibusConnectorMessageId("msg1");
 
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> map = new HashMap<>();
+        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
         map.put(msgId, bigDataReferenceList);
 
         Mockito.when(bigDataPersistenceService.getAllAvailableReferences()).thenReturn(map);

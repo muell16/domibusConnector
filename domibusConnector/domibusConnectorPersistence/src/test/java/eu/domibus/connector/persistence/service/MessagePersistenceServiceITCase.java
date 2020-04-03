@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.dbunit.database.AmbiguousTableNameException;
@@ -18,7 +18,6 @@ import org.dbunit.dataset.ITable;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -212,8 +211,8 @@ public class MessagePersistenceServiceITCase {
             message.getMessageDetails().setBackendMessageId("fklwefa");
             message.getMessageDetails().setDirection(messageDirection);
 
-            DomibusConnectorBigDataReferenceMemoryBacked attachRef =
-                    new DomibusConnectorBigDataReferenceMemoryBacked("hallo welt".getBytes());
+            LargeFileReferenceMemoryBacked attachRef =
+                    new LargeFileReferenceMemoryBacked("hallo welt".getBytes());
             DomibusConnectorMessageAttachment attach1 =
                     new DomibusConnectorMessageAttachment(attachRef, "idf");
             message.addAttachment(attach1);
@@ -295,8 +294,8 @@ public class MessagePersistenceServiceITCase {
             message.getMessageDetails().setBackendMessageId("fklwefa");
             message.getMessageDetails().setDirection(messageDirection);
 
-            DomibusConnectorBigDataReferenceMemoryBacked attachRef =
-                    new DomibusConnectorBigDataReferenceMemoryBacked("hallo welt".getBytes());
+            LargeFileReferenceMemoryBacked attachRef =
+                    new LargeFileReferenceMemoryBacked("hallo welt".getBytes());
             DomibusConnectorMessageAttachment attach1 =
                     new DomibusConnectorMessageAttachment(attachRef, "idf");
             message.addAttachment(attach1);

@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -54,7 +55,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
-@ActiveProfiles({"ITCaseTestContext", "storage-db", "test"})
+@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorMessageFlowITCase {
 
@@ -123,8 +124,15 @@ public class ConnectorMessageFlowITCase {
     }
 
 
+    /**
+     * Send message from Backend to GW
+     *
+     *   -) Backend must have received SUBMISSION_ACCEPTANCE
+     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE
+     *
+     */
     @Test
-    @Disabled("in progress")
+//    @Disabled("in progress")
     public void sendMessageFromBackend() {
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(20), () -> {
             DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
@@ -135,7 +143,7 @@ public class ConnectorMessageFlowITCase {
                             .withAction("action1")
                             .withService("service1", "servicetype")
                             .withBackendMessageId("backend1")
-                            .withConversationId("")
+                            .withConversationId("conv1")
                             .withFromParty(DomainEntityCreator.createPartyAT())
                             .withToParty(DomainEntityCreator.createPartyDE())
                             .withFinalRecipient("final")
@@ -143,7 +151,7 @@ public class ConnectorMessageFlowITCase {
                             .build()
                     ).build();
 
-//            msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+            msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
             backendSubmissionService.submitToController(msg);
 

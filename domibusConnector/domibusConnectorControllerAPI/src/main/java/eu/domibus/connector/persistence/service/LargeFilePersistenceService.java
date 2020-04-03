@@ -5,10 +5,9 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
-import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
 
 /**
  * This interface describes a service for storing large amount of data
@@ -23,8 +22,7 @@ import eu.domibus.connector.persistence.service.exceptions.LargeFileException;
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-//TODO: rename BigData to LargeFile
-public interface DomibusConnectorBigDataPersistenceService {
+public interface LargeFilePersistenceService {
 
     /**
      * returns a instance of DomibusConnectorBigDataReference,
@@ -32,7 +30,7 @@ public interface DomibusConnectorBigDataPersistenceService {
      * @param bigDataReference the DomibusConnectorBigDataReference
      * @return the DomibusConnectorBigDataReference with initialized inputStream
      */
-    public DomibusConnectorBigDataReference getReadableDataSource(DomibusConnectorBigDataReference bigDataReference);
+    public LargeFileReference getReadableDataSource(LargeFileReference bigDataReference);
     
         
     /**
@@ -44,8 +42,8 @@ public interface DomibusConnectorBigDataPersistenceService {
      * @return the created DomibusConnectorBigDataReference with CLOSED OutputStream
      */
     @Deprecated
-    DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
-    		String documentContentType);
+    LargeFileReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
+                                                              String documentContentType);
 
     /**
      * will create a new instance of DomibusConnectorBigDataReference
@@ -56,7 +54,7 @@ public interface DomibusConnectorBigDataPersistenceService {
      *      but closed INPUT stream
      *
      */
-    DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType);
+    LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType);
 
     
     /**
@@ -64,10 +62,12 @@ public interface DomibusConnectorBigDataPersistenceService {
      * @param bigDataReference the reference
      * @throws LargeFileDeletionException - in case of anything fails to delete the file
      */
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference) throws LargeFileDeletionException;
+    public void deleteDomibusConnectorBigDataReference(LargeFileReference bigDataReference) throws LargeFileDeletionException;
 
     /**
      * Returns a map of ALL currently not deleted bigDataReferences
      */
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences();
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
+
+    boolean isAvailable(LargeFileReference toCopy);
 }

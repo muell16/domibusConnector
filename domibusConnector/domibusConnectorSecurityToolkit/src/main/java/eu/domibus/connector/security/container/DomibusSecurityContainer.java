@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.security.container.service.ECodexContainerFactoryService;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
-import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.ecodex.dss.model.token.LegalTrustLevel;
 import eu.ecodex.dss.model.token.Token;
@@ -16,28 +16,22 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DetachedSignatureBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.ecodex.dss.model.BusinessContent;
 import eu.ecodex.dss.model.ECodexContainer;
-import eu.ecodex.dss.model.SignatureParameters;
 import eu.ecodex.dss.model.checks.CheckProblem;
 import eu.ecodex.dss.model.checks.CheckResult;
-import eu.ecodex.dss.model.token.AdvancedSystemType;
-import eu.ecodex.dss.model.token.TokenIssuer;
 import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.DSSDocument;
 import eu.europa.esig.dss.InMemoryDocument;
@@ -45,7 +39,6 @@ import eu.europa.esig.dss.MimeType;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -81,7 +74,7 @@ public class DomibusSecurityContainer {
     ECodexContainerFactoryService eCodexContainerFactoryService;
             
     @Autowired
-    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
+    LargeFilePersistenceService bigDataPersistenceService;
 
     @Autowired
     TokenIssuerFactory tokenIssuerFactory;
@@ -312,7 +305,7 @@ public class DomibusSecurityContainer {
                             try {
                             	
                                 //LOGGER.trace("recieveContainerContents: Read following byte content [{}]", IOUtils.toString(docAsBytes, "UTF8"));
-                                DomibusConnectorBigDataReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), container.getBusinessDocument().getName(), container.getBusinessDocument().getMimeType().getMimeTypeString());
+                                LargeFileReference bigDataRef = this.bigDataPersistenceService.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), container.getBusinessDocument().getName(), container.getBusinessDocument().getMimeType().getMimeTypeString());
                                 
                                 LOGGER.trace("copying businessDocument input stream to bigDataReference output Stream");
                                 try (InputStream inputStream = container.getBusinessDocument().openStream();
@@ -414,7 +407,7 @@ public class DomibusSecurityContainer {
     }
 
     private InputStream getAsicsContainerInputStream(DomibusConnectorMessageAttachment asicsAttachment) {
-        DomibusConnectorBigDataReference asicContainerDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
+        LargeFileReference asicContainerDataRef = bigDataPersistenceService.getReadableDataSource(asicsAttachment.getAttachment());
         InputStream asicInputStream;
         try {
             asicInputStream = asicContainerDataRef.getInputStream();
@@ -429,7 +422,7 @@ public class DomibusSecurityContainer {
     }
 
     private InputStream getTokenXmlStream(DomibusConnectorMessageAttachment tokenXMLAttachment) {
-        DomibusConnectorBigDataReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(tokenXMLAttachment.getAttachment());
+        LargeFileReference xmlTokenDataRef = bigDataPersistenceService.getReadableDataSource(tokenXMLAttachment.getAttachment());
         InputStream tokenStream;
         try {
             tokenStream = xmlTokenDataRef.getInputStream();
@@ -464,7 +457,7 @@ public class DomibusSecurityContainer {
             throws IOException {
         LOGGER.trace("convertDocumentToMessageAttachment: called with message [{}], document [{}], identifier [{}]", message, document, identifier);
         
-        DomibusConnectorBigDataReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), document.getName(), document.getMimeType().getMimeTypeString());
+        LargeFileReference bigDataRef = bigDataPersistenceService.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), document.getName(), document.getMimeType().getMimeTypeString());
         
         String documentName = document.getName();
         String mimeTypeString = MimeType.BINARY.getMimeTypeString();
@@ -514,9 +507,9 @@ public class DomibusSecurityContainer {
      * @param mimeType mimeType of the dssDocument
      * @return the created InMemoryDocument
      */
-    DSSDocument createInMemoryDocument(DomibusConnectorBigDataReference dataRef, String name, MimeType mimeType) {
+    DSSDocument createInMemoryDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
         try {
-            DomibusConnectorBigDataReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
+            LargeFileReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
             InputStream inputStream = readableDataSource.getInputStream();
             byte[] content = StreamUtils.copyToByteArray(inputStream);
             InMemoryDocument dssDocument = new InMemoryDocument(content, name, MimeType.PDF);

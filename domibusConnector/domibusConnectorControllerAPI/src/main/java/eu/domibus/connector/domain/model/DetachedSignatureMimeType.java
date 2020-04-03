@@ -1,6 +1,8 @@
 package eu.domibus.connector.domain.model;
 
 import java.io.Serializable;
+import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 
 /**
@@ -37,5 +39,22 @@ public enum DetachedSignatureMimeType implements Serializable  {
 	 */
 	public String getCode(){
 		return this.code;
+	}
+
+	/**
+	 *
+	 * @param code the code we are looking for
+	 * @return the found DetachedSignatureMimeType
+	 *
+	 * @throws NoSuchElementException if there is no
+	 *  	DetachedSignatureMimeType with code
+	 *
+	 *
+	 */
+	public static DetachedSignatureMimeType fromCode(String code) {
+		return Stream.of(DetachedSignatureMimeType.values())
+				.filter(detachedSignatureMimeType -> detachedSignatureMimeType.getCode().equals(code))
+				.findFirst()
+				.get();
 	}
 }

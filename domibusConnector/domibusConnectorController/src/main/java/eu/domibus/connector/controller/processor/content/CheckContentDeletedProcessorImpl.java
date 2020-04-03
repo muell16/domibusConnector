@@ -2,10 +2,10 @@ package eu.domibus.connector.controller.processor.content;
 
 import eu.domibus.connector.controller.spring.ContentDeletionTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage.DomibusConnectorMessageId;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.tools.logging.LoggingMarker;
@@ -24,12 +24,12 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessor.class);
 
-    DomibusConnectorBigDataPersistenceService bigDataPersistenceService;
+    LargeFilePersistenceService bigDataPersistenceService;
     DomibusConnectorMessagePersistenceService messagePersistenceService;
     ContentDeletionTimeoutConfigurationProperties contentDeletionTimeoutConfigurationProperties;
 
     @Autowired
-    public void setBigDataPersistenceService(DomibusConnectorBigDataPersistenceService bigDataPersistenceService) {
+    public void setBigDataPersistenceService(LargeFilePersistenceService bigDataPersistenceService) {
         this.bigDataPersistenceService = bigDataPersistenceService;
     }
 
@@ -41,7 +41,7 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
     @Override
     @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
-        Map<DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences = bigDataPersistenceService.getAllAvailableReferences();
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = bigDataPersistenceService.getAllAvailableReferences();
         allAvailableReferences.forEach( (id, refList) -> {
             try {
                 checkDeletion(id, refList);
@@ -51,7 +51,7 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
         });
     }
 
-    void checkDeletion(DomibusConnectorMessageId id, List<DomibusConnectorBigDataReference> references) {
+    void checkDeletion(DomibusConnectorMessageId id, List<LargeFileReference> references) {
         DomibusConnectorMessage msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
         if (msg == null) {
             LOGGER.warn("No message with connector message id [{}] found in database. This content will NOT be deleted. Please check and remove manual!", id.getConnectorMessageId());

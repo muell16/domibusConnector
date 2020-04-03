@@ -1,11 +1,10 @@
 package eu.domibus.connector.security.spring;
 
 import eu.domibus.connector.common.spring.CommonProperties;
-import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServicePassthroughImpl;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServicePassthroughImpl;
 import eu.domibus.connector.security.container.DomibusSecurityContainer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
@@ -31,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(locations={"classpath:test.properties", "classpath:test-auth.properties"},
         properties={"spring.liquibase.enabled=false" }
 )
-@ActiveProfiles({"ittest", "storage-db", "test"})
+@ActiveProfiles({"ittest", STORAGE_DB_PROFILE_NAME, "test"})
 public class SecurityToolKitContextITCase {
 
     @SpringBootApplication(
@@ -46,8 +45,8 @@ public class SecurityToolKitContextITCase {
     public static class TestContextConfiguration {
 
         @Bean
-        public DomibusConnectorBigDataPersistenceServicePassthroughImpl domibusConnectorBigDataPersistenceServicePassthroughImpl() {
-            return new DomibusConnectorBigDataPersistenceServicePassthroughImpl();
+        public LargeFilePersistenceServicePassthroughImpl domibusConnectorBigDataPersistenceServicePassthroughImpl() {
+            return new LargeFilePersistenceServicePassthroughImpl();
         }
 
         @Bean

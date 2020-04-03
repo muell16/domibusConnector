@@ -5,7 +5,6 @@ import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
-import liquibase.pro.packaged.A;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +128,7 @@ public class SubmitToGwJmsPlugin implements SubmitToLink {
         }
     }
 
-    private void addPayload(DomibusConnectorMessage msg, MapMessage jmsMessage, int counter, DomibusConnectorBigDataReference ref, String description, String mimeType) throws JMSException {
+    private void addPayload(DomibusConnectorMessage msg, MapMessage jmsMessage, int counter, LargeFileReference ref, String description, String mimeType) throws JMSException {
         try (InputStream is = ref.getInputStream()){
             addPayload(msg, jmsMessage, counter, is, description, mimeType);
         } catch (IOException ioe) {

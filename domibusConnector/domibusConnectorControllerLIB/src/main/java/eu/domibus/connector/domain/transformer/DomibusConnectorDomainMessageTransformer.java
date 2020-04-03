@@ -3,7 +3,7 @@ package eu.domibus.connector.domain.transformer;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceDataHandlerBacked;
+import eu.domibus.connector.domain.transformer.util.LargeFileHandlerBacked;
 import eu.domibus.connector.domain.transition.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,7 +195,7 @@ public class DomibusConnectorDomainMessageTransformer {
         DomibusConnectorMessageDocumentType documentTO = new DomibusConnectorMessageDocumentType();
 
         if (document != null) {
-            DomibusConnectorBigDataReference docDataRef = document.getDocument();
+            LargeFileReference docDataRef = document.getDocument();
             documentTO.setDocument(convertBigDataReferenceToDataHandler(docDataRef, null));
             documentTO.setDocumentName(document.getDocumentName());
             messageContentTO.setDocument(documentTO);
@@ -243,7 +243,7 @@ public class DomibusConnectorDomainMessageTransformer {
     }
 
     static @NotNull
-    DataHandler convertBigDataReferenceToDataHandler(@NotNull DomibusConnectorBigDataReference bigDataReference, @Nullable String mimeType) {
+    DataHandler convertBigDataReferenceToDataHandler(@NotNull LargeFileReference bigDataReference, @Nullable String mimeType) {
         if (mimeType == null) {
             mimeType = "application/octet-stream";
         }
@@ -484,8 +484,8 @@ public class DomibusConnectorDomainMessageTransformer {
 
 
     static @NotNull
-    DomibusConnectorBigDataReference convertDataHandlerToBigFileReference(DataHandler dataHandler) {
-        DomibusConnectorBigDataReferenceDataHandlerBacked bigDataReference = new DomibusConnectorBigDataReferenceDataHandlerBacked();
+    LargeFileReference convertDataHandlerToBigFileReference(DataHandler dataHandler) {
+        LargeFileHandlerBacked bigDataReference = new LargeFileHandlerBacked();
         bigDataReference.setDataHandler(dataHandler);
         return bigDataReference;
     }

@@ -14,7 +14,7 @@ import eu.domibus.connector.domain.model.DetachedSignature;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 
 /**
  *
@@ -67,8 +67,8 @@ public class DomainEntityCreatorForPersistenceTests {
     }
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
-        DomibusConnectorBigDataReferenceMemoryBacked domibusConnectorBigDataReferenceMemoryBacked = 
-                new DomibusConnectorBigDataReferenceMemoryBacked("attachment".getBytes());
+        LargeFileReferenceMemoryBacked domibusConnectorBigDataReferenceMemoryBacked =
+                new LargeFileReferenceMemoryBacked("attachment".getBytes());
         DomibusConnectorMessageAttachment attachment = 
                 new DomibusConnectorMessageAttachment(domibusConnectorBigDataReferenceMemoryBacked, "identifier");       
         attachment.setName("name");
@@ -114,8 +114,8 @@ public class DomainEntityCreatorForPersistenceTests {
         DetachedSignature detachedSignature = 
                 new DetachedSignature("detachedSignature".getBytes(), "signaturename", DetachedSignatureMimeType.BINARY);
                 
-        DomibusConnectorBigDataReferenceMemoryBacked docRef = 
-                new DomibusConnectorBigDataReferenceMemoryBacked("documentbytes".getBytes());
+        LargeFileReferenceMemoryBacked docRef =
+                new LargeFileReferenceMemoryBacked("documentbytes".getBytes());
         
         DomibusConnectorMessageDocument messageDocument = 
                 new DomibusConnectorMessageDocument(docRef, "Document1.pdf", detachedSignature);

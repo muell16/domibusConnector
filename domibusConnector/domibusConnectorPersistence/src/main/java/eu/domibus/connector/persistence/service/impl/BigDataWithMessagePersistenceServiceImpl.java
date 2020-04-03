@@ -1,12 +1,12 @@
 
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import org.slf4j.Logger;
@@ -36,18 +36,18 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     private final static Logger LOGGER = LoggerFactory.getLogger(BigDataWithMessagePersistenceServiceImpl.class);
     
     @Autowired
-    private DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl;
+    private LargeFilePersistenceService bigDataPersistenceServiceImpl;
 
 
     
     // START GETTER / SETTER //
-    public void setBigDataPersistenceServiceImpl(DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl) {
+    public void setBigDataPersistenceServiceImpl(LargeFilePersistenceService bigDataPersistenceServiceImpl) {
         this.bigDataPersistenceServiceImpl = bigDataPersistenceServiceImpl;
     }
     // ENDE GETTER / SETTER //
     
 
-    private void copyDataRef(DomibusConnectorBigDataReference readFrom, DomibusConnectorBigDataReference writeTo) {
+    private void copyDataRef(LargeFileReference readFrom, LargeFileReference writeTo) {
         try (InputStream is = readFrom.getInputStream(); OutputStream os = writeTo.getOutputStream()) {
             StreamUtils.copy(is, os);
         } catch (IOException e) {
@@ -66,8 +66,8 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
         }
         LOGGER.debug("persistAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-            DomibusConnectorBigDataReference readFrom = attachment.getAttachment();
-            DomibusConnectorBigDataReference writeTo = null;
+            LargeFileReference readFrom = attachment.getAttachment();
+            LargeFileReference writeTo = null;
 
             writeTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), attachment.getName(), attachment.getMimeType());
             copyDataRef(readFrom, writeTo);
@@ -76,8 +76,8 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
 
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (hasMainDocument(messageContent)) {
-            DomibusConnectorBigDataReference docReadFrom = messageContent.getDocument().getDocument();
-            DomibusConnectorBigDataReference docWriteTo = null;
+            LargeFileReference docReadFrom = messageContent.getDocument().getDocument();
+            LargeFileReference docWriteTo = null;
 
             docWriteTo = bigDataPersistenceServiceImpl.createDomibusConnectorBigDataReference(message.getConnectorMessageId(), messageContent.getDocument().getDocumentName(), messageContent.getDocument().getDocument().getContentType());
             copyDataRef(docReadFrom, docWriteTo);
@@ -109,9 +109,9 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
 //                    }
 //                });
 
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> allAvailableReferences = bigDataPersistenceServiceImpl.getAllAvailableReferences();
-        List<DomibusConnectorBigDataReference> domibusConnectorBigDataReferences = allAvailableReferences.getOrDefault(message.getConnectorMessageId(), new ArrayList<>());
-        domibusConnectorBigDataReferences
+        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = bigDataPersistenceServiceImpl.getAllAvailableReferences();
+        List<LargeFileReference> largeFileReferences = allAvailableReferences.getOrDefault(message.getConnectorMessageId(), new ArrayList<>());
+        largeFileReferences
                 .stream()
                 .forEach(ref ->  {
                     try {
@@ -131,8 +131,8 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
     }
 
 
-    private List<DomibusConnectorBigDataReference> collectBigDataRefsOfMessage(DomibusConnectorMessage message) {
-        List<DomibusConnectorBigDataReference> collectedBigDataRefs = collectBigDataRefsOfAttachments(message);
+    private List<LargeFileReference> collectBigDataRefsOfMessage(DomibusConnectorMessage message) {
+        List<LargeFileReference> collectedBigDataRefs = collectBigDataRefsOfAttachments(message);
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (hasMainDocument(messageContent)) {
             collectedBigDataRefs.add(messageContent.getDocument().getDocument());
@@ -140,7 +140,7 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
         return collectedBigDataRefs;
     }
 
-    private List<DomibusConnectorBigDataReference> collectBigDataRefsOfAttachments(DomibusConnectorMessage message) {
+    private List<LargeFileReference> collectBigDataRefsOfAttachments(DomibusConnectorMessage message) {
         return message.getMessageAttachments().stream().map(DomibusConnectorMessageAttachment::getAttachment).collect(Collectors.toList());
     }
 
@@ -153,16 +153,16 @@ public class BigDataWithMessagePersistenceServiceImpl implements DomibusConnecto
         }
         LOGGER.trace("#loadAllBigFilesFromMessage: message [{}]", message);
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
-            DomibusConnectorBigDataReference activeRead = attachment.getAttachment();
+            LargeFileReference activeRead = attachment.getAttachment();
             LOGGER.trace("#loadAllBigFilesFromMessage: loading attachment [{}]", activeRead);
-            DomibusConnectorBigDataReference activatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(activeRead);
+            LargeFileReference activatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(activeRead);
             attachment.setAttachment(activatedRead);
         }
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         if (hasMainDocument(messageContent)) {
-            DomibusConnectorBigDataReference docRefresRead = messageContent.getDocument().getDocument();
+            LargeFileReference docRefresRead = messageContent.getDocument().getDocument();
             LOGGER.trace("#loadAllBigFilesFromMessage: loading content document [{}]", docRefresRead);
-            DomibusConnectorBigDataReference docActivatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(docRefresRead);
+            LargeFileReference docActivatedRead = bigDataPersistenceServiceImpl.getReadableDataSource(docRefresRead);
             messageContent.getDocument().setDocument(docActivatedRead);
         }
         

@@ -94,9 +94,9 @@ public class DomainEntityCreator {
         return attachment;
     }
 
-    public static DomibusConnectorBigDataReference connectorBigDataReferenceFromDataSource(String input) {        
-        DomibusConnectorBigDataReferenceGetSetBased reference = 
-                new DomibusConnectorBigDataReferenceGetSetBased();
+    public static LargeFileReference connectorBigDataReferenceFromDataSource(String input) {
+        LargeFileReferenceGetSetBased reference =
+                new LargeFileReferenceGetSetBased();
         
         reference.setBytes(input.getBytes());
         reference.setReadable(true);

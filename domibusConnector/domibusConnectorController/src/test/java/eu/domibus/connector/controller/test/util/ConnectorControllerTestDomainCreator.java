@@ -62,7 +62,7 @@ public class ConnectorControllerTestDomainCreator {
     
     public static DomibusConnectorMessageAttachment createSimpleMessageAttachment() {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("attachment".getBytes());
-        DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+        LargeFileReferenceInMemory inMemory = new LargeFileReferenceInMemory();
         inMemory.setInputStream(inputStream);
         
         DomibusConnectorMessageAttachment attachment = new DomibusConnectorMessageAttachment(inMemory, "identifier");       
@@ -97,7 +97,7 @@ public class ConnectorControllerTestDomainCreator {
                 
         
         ByteArrayInputStream inputStream = new ByteArrayInputStream("documentbytes".getBytes());
-        DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+        LargeFileReferenceInMemory inMemory = new LargeFileReferenceInMemory();
         inMemory.setInputStream(inputStream);
         inMemory.setReadable(true);
                

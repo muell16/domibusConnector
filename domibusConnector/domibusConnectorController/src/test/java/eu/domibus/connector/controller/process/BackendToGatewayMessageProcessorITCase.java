@@ -5,7 +5,7 @@ import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
-@ActiveProfiles({"ITCaseTestContext", "storage-db"})
+@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BackendToGatewayMessageProcessorITCase {
@@ -227,7 +227,7 @@ public class BackendToGatewayMessageProcessorITCase {
         message.getMessageConfirmations().clear();
 
 
-        DomibusConnectorBigDataReference bigDataReference = LoadStoreMessageFromPath.loadResourceAsBigDataRef(new ClassPathResource("testmessages/testdata/ExamplePdfSigned.pdf"));
+        LargeFileReference bigDataReference = LoadStoreMessageFromPath.loadResourceAsBigDataRef(new ClassPathResource("testmessages/testdata/ExamplePdfSigned.pdf"));
         DomibusConnectorMessageDocument signedDocument = DomibusConnectorMessageDocumentBuilder.createBuilder()
                 .setContent(bigDataReference)
                 .setName("SignedDocument")

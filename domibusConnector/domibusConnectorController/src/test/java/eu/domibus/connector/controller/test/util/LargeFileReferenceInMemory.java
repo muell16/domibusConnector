@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.controller.test.util;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -9,7 +9,7 @@ import java.io.OutputStream;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorBigDataReferenceInMemory extends DomibusConnectorBigDataReference {
+public class LargeFileReferenceInMemory extends LargeFileReference {
 
     InputStream inputStream;
     

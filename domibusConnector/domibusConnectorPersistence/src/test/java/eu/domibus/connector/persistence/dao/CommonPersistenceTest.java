@@ -15,6 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.annotation.*;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
+
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = SetupPersistenceContext.class)
@@ -29,7 +31,7 @@ import java.lang.annotation.*;
         listeners = {RecreateDbByLiquibaseTestExecutionListener.class, //drop and create db by liquibase after each TestClass
                 DBRiderTestExecutionListener.class, //activate @DBRider
         })
-@ActiveProfiles({"test", "db_h2", "storage-db"})
+@ActiveProfiles({"test", "db_h2", STORAGE_DB_PROFILE_NAME})
 @DBUnit(allowEmptyFields = true)
 @Inherited
 @ExtendWith(SpringExtension.class)

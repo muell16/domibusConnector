@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes={ITCaseTestContext.class})
 @TestPropertySource("classpath:application-test.properties")
 @Commit
-@ActiveProfiles({"ITCaseTestContext", "storage-db"})
+@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface ITCaseTestAnnotation {

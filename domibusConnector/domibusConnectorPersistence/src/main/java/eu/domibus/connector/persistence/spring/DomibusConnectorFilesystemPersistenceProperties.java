@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.spring;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
@@ -9,23 +9,24 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Component
 @ConfigurationProperties(prefix = "connector.persistence.filesystem")
 @PropertySource("classpath:eu/domibus/connector/persistence/config/default-filesystem-config.properties")
 //@ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
-@Profile("storage-fs")
+//@Profile("storage-fs")
 @Validated
 public class DomibusConnectorFilesystemPersistenceProperties {
 
 
     /**
      * Property to configure the storage location on filesystem
-     *  under this folder the {@link eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl}
+     *  under this folder the {@link LargeFilePersistenceServiceFilesystemImpl}
      *  is managing the data
      */
     @NotNull
-    private Path storagePath;
+    private Path storagePath = Paths.get("./data/fsstorage");
 
     /**
      * Should the written files be encrypted?

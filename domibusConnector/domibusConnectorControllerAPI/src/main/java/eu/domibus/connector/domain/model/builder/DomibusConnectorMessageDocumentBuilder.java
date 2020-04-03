@@ -2,7 +2,7 @@
 package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DetachedSignature;
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 
 import javax.validation.constraints.NotNull;
@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public final class DomibusConnectorMessageDocumentBuilder {
 
 
-    private DomibusConnectorBigDataReference documentContent;
+    private LargeFileReference documentContent;
     private String documentName;
     
     private DetachedSignature detachedSignature = null;
@@ -32,7 +32,7 @@ public final class DomibusConnectorMessageDocumentBuilder {
         return this;
     }
     
-    public DomibusConnectorMessageDocumentBuilder setContent(@NotNull DomibusConnectorBigDataReference documentContent) {
+    public DomibusConnectorMessageDocumentBuilder setContent(@NotNull LargeFileReference documentContent) {
         this.documentContent = documentContent;
         return this;
     }

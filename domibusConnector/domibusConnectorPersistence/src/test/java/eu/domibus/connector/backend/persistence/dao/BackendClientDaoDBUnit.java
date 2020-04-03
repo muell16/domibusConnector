@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.datasource.url=jdbc:h2:mem:t2", //use different randomly named dbs to seperate tests..
         "spring.active.profiles=connector,db-storage"
 })
-@ActiveProfiles({"test", "db_h2", "storage-db"})
+@ActiveProfiles({"test", "db_h2", STORAGE_DB_PROFILE_NAME})
 @TestExecutionListeners(
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS,
         listeners = {RecreateDbByLiquibaseTestExecutionListener.class, //drop and create db by liquibase after each TestClass

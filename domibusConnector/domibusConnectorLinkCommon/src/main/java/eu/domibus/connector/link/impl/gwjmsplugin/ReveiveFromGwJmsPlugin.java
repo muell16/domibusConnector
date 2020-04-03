@@ -262,7 +262,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         }
     }
 
-    private DomibusConnectorBigDataReference createDataReferencce(MapMessage msg, int counter) throws JMSException {
+    private LargeFileReference createDataReferencce(MapMessage msg, int counter) throws JMSException {
         final String payMimeTypeProp = String.valueOf(MessageFormat.format(PAYLOAD_MIME_TYPE_FORMAT, counter));
         final String payFileNameProp = String.valueOf(MessageFormat.format(PAYLOAD_FILE_NAME_FORMAT, counter));
         final String payDescription = String.valueOf(MessageFormat.format(PAYLOAD_DESCRIPTION_ID_FORMAT, counter));
@@ -270,22 +270,22 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         String mimeType = msg.getStringProperty(payMimeTypeProp);
         String description = msg.getStringProperty(payDescription);
 
-        DomibusConnectorBigDataReference domibusConnectorBigDataReference;
+        LargeFileReference largeFileReference;
         if (configurationProperties.isPutAttachmentInQueue()) {
             final String propPayload = String.valueOf(MessageFormat.format(PAYLOAD_NAME_FORMAT, counter));
             byte[] bytes = msg.getBytes(propPayload);
-            domibusConnectorBigDataReference =  new GatewayByteBackedDomibusConnectorBigDataReference(bytes, description, mimeType);
+            largeFileReference =  new GatewayByteBackedLargeFileReference(bytes, description, mimeType);
         } else {
             Path resolve = configurationProperties.getAttachmentStorageLocation().resolve(msg.getStringProperty(payFileNameProp));
-            domibusConnectorBigDataReference =
-                    new GatewayBackedDomibusConnectorBigDataReference(resolve, description, mimeType);
+            largeFileReference =
+                    new GatewayBackedLargeFileReference(resolve, description, mimeType);
         }
-        return domibusConnectorBigDataReference;
+        return largeFileReference;
     }
 
-    private static class GatewayBackedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
+    private static class GatewayBackedLargeFileReference extends LargeFileReference {
 
-        public GatewayBackedDomibusConnectorBigDataReference(Path fileLocation, String name, String mimeType) {
+        public GatewayBackedLargeFileReference(Path fileLocation, String name, String mimeType) {
             this.setStorageIdReference(fileLocation.toAbsolutePath().toString());
             this.setMimetype(mimeType);
             this.setName(name);
@@ -297,11 +297,11 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         }
     }
 
-    private static class GatewayByteBackedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
+    private static class GatewayByteBackedLargeFileReference extends LargeFileReference {
 
         private final byte[] bytes;
 
-        public GatewayByteBackedDomibusConnectorBigDataReference(byte[] bytes, String name, String mimeType) {
+        public GatewayByteBackedLargeFileReference(byte[] bytes, String name, String mimeType) {
             this.bytes = bytes;
             this.setStorageIdReference(name);
             this.setMimetype(mimeType);

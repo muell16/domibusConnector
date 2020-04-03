@@ -12,20 +12,20 @@ import org.springframework.lang.Nullable;
 /**
  * Represents a reference to a storage system for big files
  *
- * If you extends this class make SURE that all additional fields are serializable
- * or transient!
  */
-public class DomibusConnectorBigDataReference implements DataSource, Serializable {
+public class LargeFileReference implements DataSource, Serializable {
+
+    private String storageProviderName = "";
 
     private String storageIdReference = "";
 
-    private String mimetype = "";
-    
     private String name = "";
 
-    public DomibusConnectorBigDataReference() {}
+    private String mimetype = "";
 
-    public DomibusConnectorBigDataReference(@NotNull String storageIdReference) {
+    public LargeFileReference() {}
+
+    public LargeFileReference(@NotNull String storageIdReference) {
         if (storageIdReference == null) {
             throw new IllegalArgumentException("StorageIdReference cannot be null!");
         }
@@ -80,7 +80,15 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    public String getStorageProviderName() {
+        return storageProviderName;
+    }
+
+    public void setStorageProviderName(String storageProviderName) {
+        this.storageProviderName = storageProviderName;
+    }
+
     @Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
@@ -106,7 +114,7 @@ public class DomibusConnectorBigDataReference implements DataSource, Serializabl
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DomibusConnectorBigDataReference other = (DomibusConnectorBigDataReference) obj;
+        final LargeFileReference other = (LargeFileReference) obj;
         if (!Objects.equals(this.storageIdReference, other.storageIdReference)) {
             return false;
         }

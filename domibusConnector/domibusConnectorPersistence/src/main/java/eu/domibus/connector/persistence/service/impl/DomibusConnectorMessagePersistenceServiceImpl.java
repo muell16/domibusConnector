@@ -416,7 +416,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         messageBuilder.setMessageDetails(details);
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
 
-        this.msgContentService.loadMsgContent(messageBuilder, dbMessage);
+        this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
 
         List<DomibusConnectorMessageConfirmation> confirmations = dbMessage.getEvidences().stream()
                 .map(MessageConfirmationMapper::mapFromDbToDomain)

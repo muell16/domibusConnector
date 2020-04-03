@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.impl;
+package eu.domibus.connector.persistence.largefiles.provider;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +17,6 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,15 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.dao.DomibusConnectorBigDataDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
-
-import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 
 
 /**
@@ -43,11 +39,11 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
  */
 //initialized by DomibusConnectorPersistenceContext.class
 @Transactional
-@Profile(STORAGE_DB_PROFILE_NAME)
-public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements DomibusConnectorBigDataPersistenceService {
+public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceJpaImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceJpaImpl.class);
 
+    public static final String PROVIDER_NAME = "JPA";
     
     @Autowired
     private DomibusConnectorMessageDao messageDao;
@@ -59,10 +55,14 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
     EntityManager entityManager;
 
 
+    @Override
+    public String getProviderName() {
+        return PROVIDER_NAME;
+    }
 
     @Override
     @Transactional(readOnly = false)
-    public DomibusConnectorBigDataReference getReadableDataSource(DomibusConnectorBigDataReference bigDataReference) {
+    public LargeFileReference getReadableDataSource(LargeFileReference bigDataReference) {
         if (bigDataReference.getStorageIdReference() == null) {
             throw new IllegalArgumentException("storageIdReference must be not null!\n The reference must exist in database!");
         }
@@ -78,7 +78,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
             	bigData = bigDataOptional.get();
             }
 
-            JpaBasedDomibusConnectorBigDataReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedDomibusConnectorBigDataReference();
+            JpaBasedLargeFileReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedLargeFileReference();
 
             //TODO: use stream from db!
             Blob content = bigData.getContent();
@@ -117,11 +117,11 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     @Override
     @Transactional
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+    public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
-        JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
+        JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
         reference.setReadable(false);
         reference.setWriteable(true);
 
@@ -161,12 +161,12 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     @Override
     @Transactional(readOnly = false)
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
+    public LargeFileReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
             LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
             PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
-            JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
+            JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
             reference.setReadable(false);
             reference.setWriteable(false);
 
@@ -209,10 +209,10 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
     @Override
     @Transactional(readOnly = false)
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference bigDataReference) {
+    public void deleteDomibusConnectorBigDataReference(LargeFileReference bigDataReference) {
         LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data {}", bigDataReference);
 //        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-        JpaBasedDomibusConnectorBigDataReference ref = (JpaBasedDomibusConnectorBigDataReference) bigDataReference;
+        JpaBasedLargeFileReference ref = (JpaBasedLargeFileReference) bigDataReference;
         long dataId = convertStorageIdReferenceToDbId(ref.getStorageIdReference());
 
         LOGGER.debug("Deleting big data entry with db id: [{}]", dataId);
@@ -228,9 +228,9 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences() {
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
 
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> map = new HashMap<>();
+        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
 
         Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
         all.forEach(bigData -> {
@@ -245,8 +245,8 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
                     map.put(connectorMessageId, new ArrayList<>());
                 }
 
-                List<DomibusConnectorBigDataReference> dataRefList = map.get(connectorMessageId);
-                JpaBasedDomibusConnectorBigDataReference reference = new JpaBasedDomibusConnectorBigDataReference();
+                List<LargeFileReference> dataRefList = map.get(connectorMessageId);
+                JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
                 reference.setReadable(false);
                 reference.setWriteable(false);
                 reference.setStorageIdReference(Long.toString(bigData.getId()));
@@ -301,7 +301,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
         public void close() throws IOException {
             LOGGER.debug("called close on DbBackedOutputStream [{}]", this);
             super.close();
-            DomibusConnectorBigDataPersistenceServiceJpaImpl.this.saveOnClose(this);
+            LargeFilePersistenceServiceJpaImpl.this.saveOnClose(this);
 
         }
 
@@ -313,7 +313,7 @@ public class DomibusConnectorBigDataPersistenceServiceJpaImpl implements Domibus
 
 
 
-    private static class JpaBasedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
+    private static class JpaBasedLargeFileReference extends LargeFileReference {
 
         /**
 		 * 

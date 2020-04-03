@@ -1,15 +1,14 @@
-package eu.domibus.connector.persistence.service.impl;
+package eu.domibus.connector.persistence.largefiles.provider;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StreamUtils;
 
@@ -24,15 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_FS_PROFILE_NAME;
 
 //initialized by DomibusConnectorPersistenceContext.class
-@Profile(STORAGE_FS_PROFILE_NAME)
-public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements DomibusConnectorBigDataPersistenceService {
+public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersistenceProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorBigDataPersistenceServiceFilesystemImpl.class);
+    public static final String PROVIDER_NAME = "FSProvider";
+    private static final Logger LOGGER = LoggerFactory.getLogger(LargeFilePersistenceServiceFilesystemImpl.class);
 
     @Autowired
     DomibusConnectorFilesystemPersistenceProperties filesystemPersistenceProperties;
@@ -44,12 +40,17 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
     }
 
     @Override
-    public DomibusConnectorBigDataReference getReadableDataSource(DomibusConnectorBigDataReference ref) {
-        if (!(ref instanceof FileBasedDomibusConnectorBigDataReference)) {
+    public String getProviderName() {
+        return PROVIDER_NAME;
+    }
+
+    @Override
+    public LargeFileReference getReadableDataSource(LargeFileReference ref) {
+        if (!(ref instanceof FileBasedLargeFileReference)) {
             throw new PersistenceException(String.format("Can only getReadableDataSource for a [%s] BigDataReference but the provided reference was of type [%s]",
-                    FileBasedDomibusConnectorBigDataReference.class, ref.getClass()));
+                    FileBasedLargeFileReference.class, ref.getClass()));
         }
-        FileBasedDomibusConnectorBigDataReference fileBasedReference = (FileBasedDomibusConnectorBigDataReference)ref;
+        FileBasedLargeFileReference fileBasedReference = (FileBasedLargeFileReference)ref;
 
         String storageIdReference = fileBasedReference.getStorageIdReference();
         Path filePath = getStoragePath().resolve(storageIdReference);
@@ -71,13 +72,13 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
 
     @Override
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+    public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         return createDomibusConnectorBigDataReference(null, connectorMessageId, documentName, documentContentType);
     }
 
     @Override
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName, String documentContentType) {
-        FileBasedDomibusConnectorBigDataReference bigDataReference = new FileBasedDomibusConnectorBigDataReference();
+    public LargeFileReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName, String documentContentType) {
+        FileBasedLargeFileReference bigDataReference = new FileBasedLargeFileReference();
         bigDataReference.setName(documentName);
         bigDataReference.setMimetype(documentContentType);
 
@@ -131,7 +132,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         return bigDataReference;
     }
 
-    OutputStream getOutputStream(FileBasedDomibusConnectorBigDataReference dataReference) throws FileNotFoundException {
+    OutputStream getOutputStream(FileBasedLargeFileReference dataReference) throws FileNotFoundException {
         Path storageFile = getStoragePath().resolve(dataReference.getStorageIdReference());
         LOGGER.debug("Storage file path is [{}]", storageFile.toAbsolutePath());
 
@@ -151,7 +152,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
     }
 
     @Override
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference reference) {
+    public void deleteDomibusConnectorBigDataReference(LargeFileReference reference) {
         LOGGER.trace("#deleteDomibusConnectorBigDataReference:: called with reference [{}]", reference);
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
         try {
@@ -168,7 +169,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
     }
 
-    private void deleteFolderIfEmpty(DomibusConnectorBigDataReference reference) {
+    private void deleteFolderIfEmpty(LargeFileReference reference) {
 //        FileBasedDomibusConnectorBigDataReference ref = (FileBasedDomibusConnectorBigDataReference) reference;
         String folderName = getFolderNameFromReferenceName(reference.getStorageIdReference());
         Path messagePath = getStoragePath().resolve(folderName);
@@ -183,7 +184,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences() {
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
         Path storagePath = getStoragePath();
         try {
             return Files.list(storagePath)
@@ -196,7 +197,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
     }
 
-    private List<DomibusConnectorBigDataReference> listReferences(Path messageFolder) {
+    private List<LargeFileReference> listReferences(Path messageFolder) {
         String messageFolderName = messageFolder.getFileName().toString();
         try {
             return Files.list(messageFolder)
@@ -208,9 +209,9 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
     }
 
-    private DomibusConnectorBigDataReference mapMessageFolderAndFileNameToReference(String messageFolderName, String fileName) {
+    private LargeFileReference mapMessageFolderAndFileNameToReference(String messageFolderName, String fileName) {
         String storageIdRef = createReferenceName(messageFolderName, fileName);
-        FileBasedDomibusConnectorBigDataReference ref = new FileBasedDomibusConnectorBigDataReference();
+        FileBasedLargeFileReference ref = new FileBasedLargeFileReference();
         ref.setStorageIdReference(storageIdRef);
         return ref;
     }
@@ -246,7 +247,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     }
 
-    InputStream generateDecryptedInputStream(FileBasedDomibusConnectorBigDataReference bigDataReference, InputStream encryptedInputStream) {
+    InputStream generateDecryptedInputStream(FileBasedLargeFileReference bigDataReference, InputStream encryptedInputStream) {
         IvParameterSpec ivspec = new IvParameterSpec(Base64Utils.decodeFromString(bigDataReference.getInitVector()));
         SecretKey secretKey = loadFromKeyString(bigDataReference.getEncryptionKey());
 
@@ -268,7 +269,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
 
     }
 
-    OutputStream generateEncryptedOutputStream(FileBasedDomibusConnectorBigDataReference bigDataReference, OutputStream outputStream) {
+    OutputStream generateEncryptedOutputStream(FileBasedLargeFileReference bigDataReference, OutputStream outputStream) {
 
         SecureRandom random;
         try {
@@ -315,7 +316,7 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
         }
     }
 
-    String convertSecretKeyToString(SecretKey key) {
+    public String convertSecretKeyToString(SecretKey key) {
         String alg = key.getAlgorithm();
         String base64KeyString = Base64Utils.encodeToString(key.getEncoded());
         return alg + "#@#" + base64KeyString;
@@ -340,14 +341,14 @@ public class DomibusConnectorBigDataPersistenceServiceFilesystemImpl implements 
      * BigDataPersistenceServiceFilesystemImpl implementation of BigDataReference
      *  this class is internal api do not use this class outside the BigDataPersistenceServiceFilesystemImpl
      */
-    static final class FileBasedDomibusConnectorBigDataReference extends DomibusConnectorBigDataReference {
+    public static final class FileBasedLargeFileReference extends LargeFileReference {
 
         /**
          *
          */
         private static final long serialVersionUID = 1;
 
-        transient DomibusConnectorBigDataPersistenceServiceFilesystemImpl fsService;
+        transient LargeFilePersistenceServiceFilesystemImpl fsService;
 
         transient InputStream inputStream;
 

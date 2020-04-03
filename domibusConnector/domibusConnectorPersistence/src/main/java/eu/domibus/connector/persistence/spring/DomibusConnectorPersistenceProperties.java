@@ -1,7 +1,8 @@
 package eu.domibus.connector.persistence.spring;
 
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
-import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceJpaImpl;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -17,22 +18,22 @@ import org.springframework.stereotype.Component;
 public class DomibusConnectorPersistenceProperties {
 
     /**
-     * Which big DataImpl should be used
+     * Which big LargeFileImpl should be used by default
      *  part of the connector are
      *  <ul>
-     *      <li>FileBased ({@link eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl}</li>
-     *      <li>DatabaseBased ({@link eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl}</li>
+     *      <li>FileBased ({@link LargeFilePersistenceServiceFilesystemImpl#getProviderName()}</li>
+     *      <li>DatabaseBased ({@link LargeFilePersistenceServiceJpaImpl#getProviderName()}</li>
      *  </ul>
      *
      *
      */
-    private Class<? extends DomibusConnectorBigDataPersistenceService> bigDataImplClass = DomibusConnectorBigDataPersistenceServiceFilesystemImpl.class;
+    public Class<? extends LargeFilePersistenceProvider> defaultLargeFileProviderClass = LargeFilePersistenceServiceFilesystemImpl.class;
 
-    public Class<? extends DomibusConnectorBigDataPersistenceService> getBigDataImplClass() {
-        return bigDataImplClass;
+    public Class<? extends LargeFilePersistenceProvider> getDefaultLargeFileProviderClass() {
+        return defaultLargeFileProviderClass;
     }
 
-    public void setBigDataImplClass(Class<DomibusConnectorBigDataPersistenceService> bigDataImplClass) {
-        this.bigDataImplClass = bigDataImplClass;
+    public void setDefaultLargeFileProviderClass(Class<? extends LargeFilePersistenceProvider> defaultLargeFileProviderClass) {
+        this.defaultLargeFileProviderClass = defaultLargeFileProviderClass;
     }
 }

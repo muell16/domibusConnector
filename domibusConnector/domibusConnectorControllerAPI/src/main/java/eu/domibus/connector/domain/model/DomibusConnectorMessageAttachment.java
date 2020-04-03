@@ -17,7 +17,7 @@ import org.springframework.core.style.ToStringCreator;
 public class DomibusConnectorMessageAttachment implements Serializable {
 
 	private final String identifier;
-	private DomibusConnectorBigDataReference attachment;
+	private LargeFileReference attachment;
 	private String name;
 	private String mimeType;
 	private String description;
@@ -29,7 +29,7 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 	 * @param identifier    Identifies the attachment for transformation and
 	 * transportation
 	 */
-	public DomibusConnectorMessageAttachment(final DomibusConnectorBigDataReference attachment, final String identifier){
+	public DomibusConnectorMessageAttachment(final LargeFileReference attachment, final String identifier){
 	   this.attachment = attachment;
 	   this.identifier = identifier;
 	}
@@ -38,11 +38,11 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 		return this.identifier;
 	}
 
-	public DomibusConnectorBigDataReference getAttachment(){
+	public LargeFileReference getAttachment(){
 		return this.attachment;
 	}
     
-    public void setAttachment(DomibusConnectorBigDataReference attachment) {
+    public void setAttachment(LargeFileReference attachment) {
        this.attachment = attachment;
     }
 

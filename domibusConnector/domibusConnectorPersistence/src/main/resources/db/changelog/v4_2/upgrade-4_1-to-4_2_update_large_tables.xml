@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <property name="id.type" value="BIGINT" dbms="postgresql"/>
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql"/>
+    <property name="id.type" value="NUMBER(10)" dbms="oracle"/>
+
+
+
+    <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_2">
+        <comment>This changesets creates a table which is used for detached signatures, from
+        message documents, attachments, ...</comment>
+        <createTable tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE">
+            <column name="ID" type="${id.type}" >
+                <constraints nullable="false" />
+            </column>
+            <column name="SIGNATURE" type="java.sql.Types.CLOB" />
+            <column name="SIGNATURE_NAME" type="java.sql.Types.Varchar(255)" />
+            <column name="SIGNATURE_TYPE" type="java.sql.Types.Varchar(255)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6_primary_key">
+        <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE"
+                                 baseColumnNames="ID"
+                                 constraintName="FK_detached_sig_msg_cont"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MSG_CONT"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_3">
+        <addColumn tableName="DOMIBUS_CONNECTOR_MSG_CONT">
+            <column name="STORAGE_PROVIDER_NAME" type="java.sql.Types.Varchar(255)"></column>
+            <column name="STORAGE_REFERENCE_ID" type="java.sql.Types.Varchar(512)"></column>
+            <column name="DIGEST" type="java.sql.Types.Varchar(512)"></column>
+            <column name="CONTENT_NAME" type="java.sql.Types.Varchar(512)"></column>
+        </addColumn>
+    </changeSet>
+
+
+</databaseChangeLog>
+
+
+

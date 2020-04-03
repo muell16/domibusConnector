@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.domain.transformer.util;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,14 +11,14 @@ import javax.activation.DataHandler;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorBigDataReferenceDataHandlerBacked extends DomibusConnectorBigDataReference {
+public class LargeFileHandlerBacked extends LargeFileReference {
 
     
     private transient DataHandler dataHandler;
     
-    public DomibusConnectorBigDataReferenceDataHandlerBacked() {}
+    public LargeFileHandlerBacked() {}
     
-    public DomibusConnectorBigDataReferenceDataHandlerBacked(DataHandler dh) {
+    public LargeFileHandlerBacked(DataHandler dh) {
         this.dataHandler = dh;
     }
     

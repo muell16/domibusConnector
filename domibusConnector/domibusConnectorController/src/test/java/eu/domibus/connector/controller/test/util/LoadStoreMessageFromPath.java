@@ -173,7 +173,7 @@ public class LoadStoreMessageFromPath {
         }
     }
 
-    private void writeBigDataReferenceToResource(Resource res, DomibusConnectorBigDataReference bigDataReference) {
+    private void writeBigDataReferenceToResource(Resource res, LargeFileReference bigDataReference) {
         try {
             File attachmentOutputFile = res.getFile();
             InputStream inputStream = null;
@@ -220,7 +220,7 @@ public class LoadStoreMessageFromPath {
             if (docFileName != null) {
                 DomibusConnectorMessageDocumentBuilder documentBuilder = DomibusConnectorMessageDocumentBuilder.createBuilder();
                 Resource r = basicFolder.createRelative(docFileName);
-                DomibusConnectorBigDataReference bigDataReferenceDocument = loadResourceAsBigDataRef(r);
+                LargeFileReference bigDataReferenceDocument = loadResourceAsBigDataRef(r);
                 documentBuilder.setContent(bigDataReferenceDocument);
                 String docName = messageProperties.getProperty("message.content.document.name");
                 documentBuilder.setName(docName);
@@ -335,11 +335,11 @@ public class LoadStoreMessageFromPath {
 
 
 
-    public static DomibusConnectorBigDataReference loadResourceAsBigDataRef(Resource resource) {
+    public static LargeFileReference loadResourceAsBigDataRef(Resource resource) {
         try {
             InputStream inputStream = resource.getInputStream();
 
-            DomibusConnectorBigDataReferenceInMemory inMemory = new DomibusConnectorBigDataReferenceInMemory();
+            LargeFileReferenceInMemory inMemory = new LargeFileReferenceInMemory();
             inMemory.setInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)));
             inMemory.setReadable(true);
             inMemory.setStorageIdReference(UUID.randomUUID().toString());

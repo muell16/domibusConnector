@@ -15,7 +15,7 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessageDocument implements Serializable  {
 
-	private DomibusConnectorBigDataReference document;
+	private LargeFileReference document;
 	private final String documentName;
 	private final DetachedSignature detachedSignature;
 	private String hashValue;
@@ -30,17 +30,17 @@ public class DomibusConnectorMessageDocument implements Serializable  {
 	 * @param detachedSignature    may be null. If the document is signed with a
 	 * detached signature, the signature parameters are given here.
 	 */
-	public DomibusConnectorMessageDocument(final DomibusConnectorBigDataReference document, final String documentName, final DetachedSignature detachedSignature){
+	public DomibusConnectorMessageDocument(final LargeFileReference document, final String documentName, final DetachedSignature detachedSignature){
 	   this.document = document;
 	   this.documentName = documentName;
 	   this.detachedSignature = detachedSignature;
 	}
 
-	public DomibusConnectorBigDataReference getDocument(){
+	public LargeFileReference getDocument(){
 		return this.document;
 	}
 
-    public void setDocument(DomibusConnectorBigDataReference reference) {
+    public void setDocument(LargeFileReference reference) {
         this.document = reference;
     }
     

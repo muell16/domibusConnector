@@ -1,7 +1,7 @@
 package eu.domibus.connector.domain.testutil;
 
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,7 +11,7 @@ import java.io.OutputStream;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorBigDataReferenceGetSetBased extends DomibusConnectorBigDataReference {
+public class LargeFileReferenceGetSetBased extends LargeFileReference {
 
     byte[] bytes;
     

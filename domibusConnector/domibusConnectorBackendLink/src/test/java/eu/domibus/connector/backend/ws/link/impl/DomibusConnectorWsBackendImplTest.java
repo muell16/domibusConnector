@@ -14,7 +14,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
-import eu.domibus.connector.persistence.service.testutil.DomibusConnectorBigDataPersistenceServiceMemoryImpl;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import org.apache.cxf.interceptor.InterceptorChain;
@@ -88,7 +88,7 @@ public class  DomibusConnectorWsBackendImplTest {
         Mockito.when(backendSubmissionService.processMessageBeforeDeliverToBackend(any(DomibusConnectorMessage.class)))
                 .thenAnswer(invoc -> invoc.getArgument(0));
 
-        DomibusConnectorBigDataPersistenceServiceMemoryImpl bigDataPersistenceService = new DomibusConnectorBigDataPersistenceServiceMemoryImpl();
+        LargeFilePersistenceServiceMemoryImpl bigDataPersistenceService = new LargeFilePersistenceServiceMemoryImpl();
         domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceServiceImpl());
         ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService).setBigDataPersistenceServiceImpl(bigDataPersistenceService);
 

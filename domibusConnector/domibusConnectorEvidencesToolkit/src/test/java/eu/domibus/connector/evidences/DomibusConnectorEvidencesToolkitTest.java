@@ -3,7 +3,7 @@ package eu.domibus.connector.evidences;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.evidences.spring.DomibusConnectorEvidencesToolkitContext;
 import eu.domibus.connector.evidences.spring.EvidencesToolkitConfigurationProperties;
@@ -110,7 +110,7 @@ public class DomibusConnectorEvidencesToolkitTest {
 
         DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
 
-        DomibusConnectorBigDataReferenceMemoryBacked ref = new DomibusConnectorBigDataReferenceMemoryBacked("originalMessage".getBytes());
+        LargeFileReferenceMemoryBacked ref = new LargeFileReferenceMemoryBacked("originalMessage".getBytes());
 
         DomibusConnectorMessageDocument document =
                 new DomibusConnectorMessageDocument(ref, "documentName", null);

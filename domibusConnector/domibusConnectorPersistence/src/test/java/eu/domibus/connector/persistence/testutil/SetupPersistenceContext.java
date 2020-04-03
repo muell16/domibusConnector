@@ -13,6 +13,8 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.*;
 
+import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
+
 
 @SpringBootApplication(scanBasePackages={"eu.domibus.connector.persistence"})
 public class SetupPersistenceContext {
@@ -51,7 +53,7 @@ public class SetupPersistenceContext {
 
     public static Set<String> getDefaultProfiles() {
         Set<String> defaultProfiles =  new HashSet<String>();
-        defaultProfiles.addAll(Arrays.asList(new String[]{"test", "db_h2", "storage-db"}));
+        defaultProfiles.addAll(Arrays.asList(new String[]{"test", "db_h2", STORAGE_DB_PROFILE_NAME}));
         return defaultProfiles;
     }
 

@@ -80,7 +80,7 @@ public class BackendLinkWsTestMessageFlowITCase {
     private static void setUpBackend() {
         MDC.put("COLOR", "GREEN");
         String dbName = UUID.randomUUID().toString().substring(0, 10); //use random db name to avoid reusing db between test runs
-        String[] backendProfiles = new String[]{"db_h2", "backendlink-ws", "storage-db"};
+        String[] backendProfiles = new String[]{"db_h2", "backendlink-ws", STORAGE_DB_PROFILE_NAME};
         String[] backendProperties = new String[]{"server.port=0",
                 "spring.datasource.url=jdbc:h2:mem:" + dbName,
                 "logging.config=classpath:log4j2-test.xml",

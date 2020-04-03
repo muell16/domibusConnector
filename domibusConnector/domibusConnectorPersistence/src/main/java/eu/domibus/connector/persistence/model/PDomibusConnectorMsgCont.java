@@ -1,27 +1,21 @@
 package eu.domibus.connector.persistence.model;
 
+import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 
 /**
- *  This class stores message content like
+ *  This class stores message content metadata for
  *   <ul>
  *      <li>message attachments</li>
  *      <li>message content xml</li>
  *      <li>message content document</li>
  *   </ul>
+ *
+ *   The storage itself is delegated to a storage provider
+ *    the name and reference of the storage provider is also stored
  * 
  * 
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -31,32 +25,56 @@ import javax.persistence.TableGenerator;
 public class PDomibusConnectorMsgCont implements Serializable {
 
     @Id
-    @Column(name="ID", length=512)
+    @Column(name="ID")
     @TableGenerator(name = "seqStoreMsgContent", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_CONT.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgContent")
     private Long id;
 
+    @Column(name = "STORAGE_PROVIDER_NAME")
+    private String storageProviderName;
+
+    @Column(name = "STORAGE_REFERENCE_ID")
+    private String storageReferenceId;
+
+    @Deprecated
     @Column(name="CONTENT")
     @Lob
     private byte[] content;
-    
+
+    @Deprecated
     @Column(name="CHECKSUM")
     private String checksum;
+
+    @Column(name="DIGEST")
+    private String digest;
     
     @Column(name="CONTENT_TYPE")
-    private String contentType;
+    private StoreType contentType;
+
+    @Column(name = "CONTENT_NAME")
+    private String contentName;
     
     @ManyToOne
     @JoinColumn(name="MESSAGE_ID")
     private PDomibusConnectorMessage message;
-    
-    
+
+    @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
+    private PDomibusConnectorDetachedSignature detachedSignature;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getContentName() {
+        return contentName;
+    }
+
+    public void setContentName(String contentName) {
+        this.contentName = contentName;
     }
 
     public byte[] getContent() {
@@ -75,11 +93,11 @@ public class PDomibusConnectorMsgCont implements Serializable {
         this.checksum = checksum;
     }
 
-    public String getContentType() {
+    public StoreType getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
+    public void setContentType(StoreType contentType) {
         this.contentType = contentType;
     }
 
@@ -89,6 +107,39 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     public void setMessage(PDomibusConnectorMessage message) {
         this.message = message;
+    }
+
+    public String getDigest() {
+        return digest;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public String getStorageProviderName() {
+        return storageProviderName;
+    }
+
+    public void setStorageProviderName(String storageProviderName) {
+        this.storageProviderName = storageProviderName;
+    }
+
+    public String getStorageReferenceId() {
+        return storageReferenceId;
+    }
+
+    public PDomibusConnectorDetachedSignature getDetachedSignature() {
+        return detachedSignature;
+    }
+
+    public void setDetachedSignature(PDomibusConnectorDetachedSignature detachedSignature) {
+        this.detachedSignature = detachedSignature;
+        detachedSignature.setContent(this);
+    }
+
+    public void setStorageReferenceId(String storageReferenceId) {
+        this.storageReferenceId = storageReferenceId;
     }
 
     @Override

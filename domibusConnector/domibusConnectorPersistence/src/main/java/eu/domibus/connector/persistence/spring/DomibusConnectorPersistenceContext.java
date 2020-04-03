@@ -1,20 +1,15 @@
 package eu.domibus.connector.persistence.spring;
 
 import eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
-import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl;
-import eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceJpaImpl;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import eu.domibus.connector.persistence.dao.PackageDomibusConnectorRepositories;
 
@@ -38,18 +33,15 @@ public class DomibusConnectorPersistenceContext {
 
 
     @Bean
-//    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
-//    @ConditionalOnMissingBean(DomibusConnectorBigDataPersistenceService.class)
     @Profile(STORAGE_FS_PROFILE_NAME)
-    public DomibusConnectorBigDataPersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
-        return new DomibusConnectorBigDataPersistenceServiceFilesystemImpl();
+    public LargeFilePersistenceServiceFilesystemImpl domibusConnectorBigDataPersistenceServiceFilesystemImpl() {
+        return new LargeFilePersistenceServiceFilesystemImpl();
     }
 
     @Bean
     @Profile(STORAGE_DB_PROFILE_NAME)
-//    @ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl")
-    public DomibusConnectorBigDataPersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
-        return new DomibusConnectorBigDataPersistenceServiceJpaImpl();
+    public LargeFilePersistenceServiceJpaImpl domibusConnectorBigDataPersistenceServiceJpaImpl() {
+        return new LargeFilePersistenceServiceJpaImpl();
     }
 
     @Bean

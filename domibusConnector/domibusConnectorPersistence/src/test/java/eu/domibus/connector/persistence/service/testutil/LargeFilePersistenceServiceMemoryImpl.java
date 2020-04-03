@@ -1,11 +1,11 @@
 
 package eu.domibus.connector.persistence.service.testutil;
 
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.testutil.DomibusConnectorBigDataReferenceGetSetBased;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
-import eu.domibus.connector.persistence.service.DomibusConnectorBigDataPersistenceService;
+import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,11 +18,18 @@ import java.util.Map;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public class DomibusConnectorBigDataPersistenceServiceMemoryImpl implements DomibusConnectorBigDataPersistenceService {
+public class LargeFilePersistenceServiceMemoryImpl implements LargeFilePersistenceProvider {
 
-	@Override
-	public DomibusConnectorBigDataReference getReadableDataSource(DomibusConnectorBigDataReference bigDataReference) {
-		DomibusConnectorBigDataReferenceGetSetBased bigDataReference2 = (DomibusConnectorBigDataReferenceGetSetBased) bigDataReference;
+    public static final String PROVIDER_NAME = "MEMORY";
+
+    @Override
+    public String getProviderName() {
+        return PROVIDER_NAME;
+    }
+
+    @Override
+	public LargeFileReference getReadableDataSource(LargeFileReference bigDataReference) {
+		LargeFileReferenceGetSetBased bigDataReference2 = (LargeFileReferenceGetSetBased) bigDataReference;
 		try {
 			if(bigDataReference2.getInputStream()==null) {				
 				bigDataReference2.setInputStream(new ByteArrayInputStream(bigDataReference2.getBytes()));
@@ -36,14 +43,14 @@ public class DomibusConnectorBigDataPersistenceServiceMemoryImpl implements Domi
 	}
 
 	@Override
-	public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
-    		String documentContentType) {
+	public LargeFileReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName,
+                                                                     String documentContentType) {
 		return createDomibusConnectorBigDataReference(connectorMessageId, documentName, documentContentType);
 	}
 
     @Override
-    public DomibusConnectorBigDataReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
-        DomibusConnectorBigDataReferenceGetSetBased dataRef = new DomibusConnectorBigDataReferenceGetSetBased();
+    public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
+        LargeFileReferenceGetSetBased dataRef = new LargeFileReferenceGetSetBased();
         dataRef.setOutputStream(new MyOutputStream(dataRef));
         dataRef.setWriteable(true);
         dataRef.setReadable(false);
@@ -51,21 +58,21 @@ public class DomibusConnectorBigDataPersistenceServiceMemoryImpl implements Domi
     }
 
     @Override
-    public void deleteDomibusConnectorBigDataReference(DomibusConnectorBigDataReference ref) {
+    public void deleteDomibusConnectorBigDataReference(LargeFileReference ref) {
         //Just do nothing!
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<DomibusConnectorBigDataReference>> getAllAvailableReferences() {
+    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
 	    //just return empty map
         return new HashMap<>();
     }
 
     public static class MyOutputStream extends ByteArrayOutputStream {
 
-        private final DomibusConnectorBigDataReferenceGetSetBased reference;
+        private final LargeFileReferenceGetSetBased reference;
         
-        public MyOutputStream(DomibusConnectorBigDataReferenceGetSetBased reference) {
+        public MyOutputStream(LargeFileReferenceGetSetBased reference) {
             this.reference = reference;
         }
         

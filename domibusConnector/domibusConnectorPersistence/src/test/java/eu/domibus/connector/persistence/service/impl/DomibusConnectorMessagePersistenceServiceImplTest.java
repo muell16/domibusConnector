@@ -83,7 +83,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
                 builder.setMessageContent(new DomibusConnectorMessageContent());
                 return null;
             }
-        }).when(msgContService).loadMsgContent(any(DomibusConnectorMessageBuilder.class), any(PDomibusConnectorMessage.class));
+        }).when(msgContService).loadMessagePayloads(any(DomibusConnectorMessageBuilder.class), any(PDomibusConnectorMessage.class));
     }
 
 

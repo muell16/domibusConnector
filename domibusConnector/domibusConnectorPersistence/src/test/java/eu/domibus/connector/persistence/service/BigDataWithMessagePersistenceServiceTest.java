@@ -1,10 +1,10 @@
 package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
-import eu.domibus.connector.domain.model.DomibusConnectorBigDataReference;
+import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
-import eu.domibus.connector.domain.transformer.util.DomibusConnectorBigDataReferenceMemoryBacked;
+import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -25,7 +25,7 @@ import org.mockito.MockitoAnnotations;
 public class BigDataWithMessagePersistenceServiceTest {
     
     @Mock
-    private DomibusConnectorBigDataPersistenceService bigDataPersistenceServiceImpl;
+    private LargeFilePersistenceService bigDataPersistenceServiceImpl;
 
     DomibusConnectorPersistAllBigDataOfMessageService persistenceService;
 
@@ -37,8 +37,8 @@ public class BigDataWithMessagePersistenceServiceTest {
         persistenceService = impl;
     }
     
-    private static DomibusConnectorBigDataReferenceMemoryBacked generateNewDomibusConnectorBigDataReferenceMemoryBacked() {
-        DomibusConnectorBigDataReferenceMemoryBacked ref = new DomibusConnectorBigDataReferenceMemoryBacked();
+    private static LargeFileReferenceMemoryBacked generateNewDomibusConnectorBigDataReferenceMemoryBacked() {
+        LargeFileReferenceMemoryBacked ref = new LargeFileReferenceMemoryBacked();
         ref.setStorageIdReference(UUID.randomUUID().toString());
         return ref;
     }
@@ -63,7 +63,7 @@ public class BigDataWithMessagePersistenceServiceTest {
             persistenceService.loadAllBigFilesFromMessage(msg);
 
             // 2 attachments should be load from db: one document, one attachment
-            Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).getReadableDataSource(any(DomibusConnectorBigDataReference.class));
+            Mockito.verify(bigDataPersistenceServiceImpl, Mockito.times(2)).getReadableDataSource(any(LargeFileReference.class));
         });
     }
     
