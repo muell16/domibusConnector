@@ -158,8 +158,13 @@ public class ConnectorMessageFlowITCase {
 
 
             DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
-            assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-            assertThat(take).as("Gw has RCV message").isNotNull();
+
+//            DomibusConnectorMessage m2 = toGwDeliveredMessages.take();
+
+
+
+            assertThat(toBackendDeliveredMessages.isEmpty()).isTrue();
+            assertThat(take).as("Gw must RCV message").isNotNull();
 
             //TODO: analyze take
             assertThat(take.getMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
