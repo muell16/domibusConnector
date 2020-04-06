@@ -29,7 +29,7 @@ public class PDomibusConnectorTransportStep {
     private Long id;
 
 //    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "CONNECTOR_MESSAGE_ID")
+    @Column(name = "CONNECTOR_MESSAGE_ID")
     private String connectorMessageId;
 
     @Column(name = "LINK_PARTNER_NAME")

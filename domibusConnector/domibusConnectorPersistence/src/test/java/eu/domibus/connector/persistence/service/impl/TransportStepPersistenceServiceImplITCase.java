@@ -55,11 +55,11 @@ class TransportStepPersistenceServiceImplITCase {
 
     @Test
     void createNewTransportStep() {
-        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
-        msg.setConnectorMessageId("msg2");
-        msg.setDirectionSource(MessageTargetSource.GATEWAY);
-        msg.setDirectionTarget(MessageTargetSource.BACKEND);
-        msgDao.save(msg);
+//        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
+//        msg.setConnectorMessageId("msg2");
+//        msg.setDirectionSource(MessageTargetSource.GATEWAY);
+//        msg.setDirectionTarget(MessageTargetSource.BACKEND);
+//        msgDao.save(msg);
 
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
