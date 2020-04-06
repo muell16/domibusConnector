@@ -103,8 +103,8 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, message.getConnectorMessageId());
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         LOGGER.debug("#submitToController: message persisted");
-        message = bigDataPersistence.persistAllBigFilesFromMessage(message);
-        LOGGER.debug("#submitToController: message [{}] data persisted", message);
+//        message = bigDataPersistence.persistAllBigFilesFromMessage(message);
+//        LOGGER.debug("#submitToController: message [{}] data persisted", message);
         message = messagePersistenceService.mergeMessageWithDatabase(message);
 
 

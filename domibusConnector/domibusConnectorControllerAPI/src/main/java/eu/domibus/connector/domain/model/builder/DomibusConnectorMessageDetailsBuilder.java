@@ -93,6 +93,7 @@ public class DomibusConnectorMessageDetailsBuilder {
         details.setConversationId(this.conversationId);
         details.setEbmsMessageId(this.ebmsMessageId);
         details.setFinalRecipient(this.finalRecipient);
+        details.setBackendMessageId(this.backendMessageId);
         details.setOriginalSender(this.originalSender);
         details.setFromParty(this.fromParty);
         details.setToParty(this.toParty);

@@ -144,6 +144,7 @@ public class ConnectorMessageFlowITCase {
                             .withService("service1", "servicetype")
                             .withBackendMessageId("backend1")
                             .withConversationId("conv1")
+                            .withBackendMessageId("b1")
                             .withFromParty(DomainEntityCreator.createPartyAT())
                             .withToParty(DomainEntityCreator.createPartyDE())
                             .withFinalRecipient("final")
@@ -158,9 +159,10 @@ public class ConnectorMessageFlowITCase {
 
             DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
             assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-            assertThat(take).isNotNull();
+            assertThat(take).as("Gw has RCV message").isNotNull();
 
             //TODO: analyze take
+            assertThat(take.getMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
 
             //TODO: check DB
 
