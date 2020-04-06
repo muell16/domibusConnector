@@ -3,4 +3,5 @@
     <include file="upgrade-to-42-enable-loopback-msg.xml" relativeToChangelogFile="true"/>
     <include file="upgrade-4_1-to-4_2_create_link_tables.xml" relativeToChangelogFile="true"/>
     <include file="upgrade-4_1-to-4_2_update_large_tables.xml" relativeToChangelogFile="true" />
+    <include file="upgrade-4_1-to-4_2_fix_evidence_step_problem.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
