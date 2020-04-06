@@ -110,7 +110,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
 
         TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
         transportState.setConnectorTransportId(new TransportStatusService.TransportId(jmsCorrelationID));
-        transportState.setRemoteTransportId(messageId);
+        transportState.setRemoteMessageId(messageId);
 
         if (errorDetail != null) {
             DomibusConnectorMessageError messageError = new DomibusConnectorMessageError("Error from Gateway", errorDetail, this.getClass().getName());

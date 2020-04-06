@@ -14,7 +14,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorRejectSubmissio
  *
  * <ul>
  * <li>if the message is a business_message a SUBMISSION_REJECTION is generated and submitted to the submitting connectorBackend</li>
- * <li>if the mssage is just an ConfirmationMessage/EvidenceMessage no evidence/confirmation is generated.</li>
+ * <li>if the message is just a ConfirmationMessage/EvidenceMessage no evidence/confirmation is generated.</li>
  * </ul>
  *
  */

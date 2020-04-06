@@ -33,6 +33,8 @@ public class LoadStoreMessageFromPath {
 
     private Properties messageProperties;
 
+
+
     public static void storeMessageTo(Resource resource, DomibusConnectorMessage message) throws IOException {
         LoadStoreMessageFromPath loadStoreMessageFromPath = new LoadStoreMessageFromPath(resource);
         loadStoreMessageFromPath.storeMessage(message);

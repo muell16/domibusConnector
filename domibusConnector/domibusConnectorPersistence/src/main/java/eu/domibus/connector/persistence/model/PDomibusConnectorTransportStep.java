@@ -1,23 +1,36 @@
 package eu.domibus.connector.persistence.model;
 
 
+import eu.domibus.connector.controller.service.TransportStatusService;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import static eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep.TABLE_NAME;
+
 @Entity
-@Table(name = "DC_TRANSPORT_STEP")
+@Table(name = TABLE_NAME)
 public class PDomibusConnectorTransportStep {
+
+    public static final String TABLE_NAME = "DC_TRANSPORT_STEP";
 
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqTransportStep", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DC_TRANSPORT_STEP.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
+    @TableGenerator(name = "seqTransportStep",
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = 100,
+            allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqTransportStep")
     private Long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "MESSAGE_ID")
-    private PDomibusConnectorMessage message;
+//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CONNECTOR_MESSAGE_ID")
+    private String connectorMessageId;
 
     @Column(name = "LINK_PARTNER_NAME")
     private String linkPartnerName;
@@ -26,7 +39,7 @@ public class PDomibusConnectorTransportStep {
     private int attempt = 1;
 
     @Column(name = "TRANSPORT_ID")
-    private String transportId;
+    private TransportStatusService.TransportId transportId;
 
     /**
      * The message id of the system used to transport the message
@@ -41,19 +54,20 @@ public class PDomibusConnectorTransportStep {
     @Column(name = "CREATED")
     private LocalDateTime created;
 
-    @OneToMany
-    private List<PDomibusConnectorTransportStepStatusUpdate> statusUpdates;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transportStep", fetch = FetchType.EAGER)
+    private List<PDomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
+        statusUpdates.forEach(u -> u.setTransportStep(this));
         created = LocalDateTime.now();
     }
 
-    public String getTransportId() {
+    public TransportStatusService.TransportId getTransportId() {
         return transportId;
     }
 
-    public void setTransportId(String transportId) {
+    public void setTransportId(TransportStatusService.TransportId transportId) {
         this.transportId = transportId;
     }
 
@@ -65,12 +79,12 @@ public class PDomibusConnectorTransportStep {
         this.id = id;
     }
 
-    public PDomibusConnectorMessage getMessage() {
-        return message;
+    public String getConnectorMessageId() {
+        return connectorMessageId;
     }
 
-    public void setMessage(PDomibusConnectorMessage message) {
-        this.message = message;
+    public void setConnectorMessageId(String message) {
+        this.connectorMessageId = message;
     }
 
     public String getLinkPartnerName() {

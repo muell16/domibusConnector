@@ -4,7 +4,11 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +20,16 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
 
 @SpringBootApplication(scanBasePackages = {
         "eu.domibus.connector.controller",
@@ -41,10 +48,28 @@ public class ITCaseTestContext {
     public static final String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
     public static final String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
 
+    /**
+     * Use this interface to tamper with the test...
+     */
     public interface DomibusConnectorGatewaySubmissionServiceInterceptor {
         public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException;
     }
 
+
+    /**
+     * Use this interface to tamper with the test...
+     */
+    public interface DomibusConnectorBackendDeliveryServiceInterceptor {
+        void deliveryToBackend(DomibusConnectorMessage message);
+    }
+
+    @Autowired
+    PlatformTransactionManager txManager;
+
+
+
+    @Autowired
+    DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Bean
     public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -71,33 +96,103 @@ public class ITCaseTestContext {
         return Mockito.mock(DomibusConnectorGatewaySubmissionServiceInterceptor.class);
     }
 
+    @Bean
+    public DomibusConnectorBackendDeliveryServiceInterceptor domibusConnectorBackendDeliveryServiceInterceptor() {
+        return Mockito.mock(DomibusConnectorBackendDeliveryServiceInterceptor.class);
+    }
 
     @Bean
     public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
-        return new DomibusConnectorBackendDeliveryService() {
-            @Override
-            public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
-                LOGGER.info("Delivered Message [{}] to Backend");
-                toBackendDeliveredMessages().add(message);
-            }
+        final TransactionTemplate txTemplate = new TransactionTemplate(txManager);
+        txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+        return message -> {
+            LOGGER.info("Delivered Message [{}] to Backend");
+
+
+////            txTemplate.executeWithoutResult(transactionStatus -> {
+//            TransportStatusService.TransportId dummyBackend = transportStatusService.createOrGetTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
+//            TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+//            state.setConnectorTransportId(dummyBackend);
+//            state.setStatus(TransportState.ACCEPTED);
+//            state.setRemoteMessageId("NAT_" + UUID.randomUUID().toString()); //assign national message id
+//            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
+////            transportStatusService.updateTransportStatus(state);
+////            });
+
+            toBackendDeliveredMessages().add(message);
         };
     }
 
     @Bean
     public DomibusConnectorGatewaySubmissionService sendMessageToGwService() {
-        return new DomibusConnectorGatewaySubmissionService() {
-            @Override
-            public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
-                domibusConnectorGatewaySubmissionServiceInterceptor().submitToGateway(message);
-                LOGGER.info("Delivered Message [{}] to Gateway");
-                toGatewayDeliveredMessages().add(message);
-            }
-        };
+        return new QueueBasedDomibusConnectorGatewaySubmissionService();
     }
 
     @Bean
     public TaskScheduler taskScheduler() {
         return new ConcurrentTaskScheduler();
+    }
+
+    public static class QueueBasedDomibusConnectorBackendDeliveryService implements DomibusConnectorBackendDeliveryService {
+
+        @Autowired
+        TransportStatusService transportStatusService;
+
+        @Autowired
+        DomibusConnectorBackendDeliveryServiceInterceptor interceptor;
+
+        @Autowired
+        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
+
+        @Override
+        public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+            interceptor.deliveryToBackend(message);
+
+            LOGGER.info("Delivered Message [{}] to Backend");
+
+
+            TransportStatusService.TransportId dummyBackend = transportStatusService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
+            TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+            state.setConnectorTransportId(dummyBackend);
+            state.setStatus(TransportState.ACCEPTED);
+            state.setRemoteMessageId("BACKEND_" + UUID.randomUUID().toString()); //assigned EBMS ID
+            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
+            transportStatusService.updateTransportToBackendClientStatus(dummyBackend , state);
+
+            toBackendDeliveredMessages.add(message);
+        }
+    }
+
+    public static class QueueBasedDomibusConnectorGatewaySubmissionService implements DomibusConnectorGatewaySubmissionService {
+
+        @Autowired
+        TransportStatusService transportStatusService;
+
+        @Autowired
+        DomibusConnectorGatewaySubmissionServiceInterceptor interceptor;
+
+        @Autowired
+        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages;
+
+        @Override
+        public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
+            interceptor.submitToGateway(message);
+            LOGGER.info("Delivered Message [{}] to Gateway", message);
+
+            TransportStatusService.TransportId dummyGW = transportStatusService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_gw"));
+            TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+            state.setConnectorTransportId(dummyGW);
+//            state.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
+            state.setStatus(TransportState.ACCEPTED);
+            state.setRemoteMessageId("EBMS_" + UUID.randomUUID().toString()); //assigned EBMS ID
+            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
+            transportStatusService.updateTransportToGatewayStatus(dummyGW , state);
+
+            toGatewayDeliveredMessages.add(message);
+        }
     }
 
 }

@@ -146,4 +146,5 @@ public interface DomibusConnectorMessagePersistenceService {
     void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message);
 
 
+    DomibusConnectorMessage updateMessageDetails(DomibusConnectorMessage message);
 }

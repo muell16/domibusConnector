@@ -1,7 +1,11 @@
 package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
+import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
@@ -10,13 +14,13 @@ import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +35,9 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     @Autowired
     DomibusConnectorMessageDao messageDao;
+
+    @Autowired
+    DomibusConnectorEvidenceDao evidenceDao;
 
     @Override
     public DomibusConnectorTransportStep createNewTransportStep(DomibusConnectorTransportStep transportStep) {
@@ -48,19 +55,22 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         int nextAttempt = nAttempt.orElse(0) + 1;
         transportStep.setAttempt(nextAttempt);
 
-        PDomibusConnectorTransportStep dbStep = mapTransportStepToDb(transportStep);
-
-        PDomibusConnectorTransportStep savedDbStep = transportStepDao.save(dbStep);
-
         transportStep.setTransportId(new TransportStatusService.TransportId(msgId + "_" + linkPartnerName + "_" + nextAttempt));
+
+        PDomibusConnectorTransportStep dbStep = mapTransportStepToDb(transportStep);
+        PDomibusConnectorTransportStep savedDbStep = transportStepDao.save(dbStep);
 
         return transportStep;
     }
 
     @Override
     public DomibusConnectorTransportStep getTransportStepByTransportId(TransportStatusService.TransportId transportId) {
-        Optional<DomibusConnectorTransportStep> foundTransport = transportStepDao.findByTransportId(transportId.toString());
-        return foundTransport.get();
+        Optional<PDomibusConnectorTransportStep> foundTransport = transportStepDao.findByTransportId(transportId);
+        if (foundTransport.isPresent()) {
+            return mapTransportStepToDomain(foundTransport.get());
+        } else {
+            throw new RuntimeException(String.format("No Transport found with transport id [%s]", transportId));
+        }
     }
 
     @Override
@@ -73,7 +83,14 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
-        BeanUtils.copyProperties(dbTransportStep, step);
+//        BeanUtils.copyProperties(dbTransportStep, step);
+        step.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
+        step.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(dbTransportStep.getLinkPartnerName()));
+        step.setTransportId(dbTransportStep.getTransportId());
+        step.setAttempt(dbTransportStep.getAttempt());
+        step.setCreated(dbTransportStep.getCreated());
+        step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
+        step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
 
         List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
                 .getStatusUpdates()
@@ -87,8 +104,12 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     }
 
     private DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate mapTransportStepState(PDomibusConnectorTransportStepStatusUpdate dbTransportUpdate) {
-        DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate update = new DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate();
-        BeanUtils.copyProperties(dbTransportUpdate, update);
+        DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate update =
+                new DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate();
+//        BeanUtils.copyProperties(dbTransportUpdate, update);
+        update.setCreated(dbTransportUpdate.getCreated());
+        update.setText(dbTransportUpdate.getText());
+        update.setTransportState(dbTransportUpdate.getTransportState());
         return update;
     }
 
@@ -98,20 +119,39 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         String partnerName = transportStep.getLinkPartnerName().getLinkName();
 
         Optional<PDomibusConnectorTransportStep> foundStep = transportStepDao.findbyMsgLinkPartnerAndAttempt(msgId, partnerName, transportStep.getAttempt());
-        PDomibusConnectorTransportStep step = foundStep.orElseGet(  () -> {
+        PDomibusConnectorTransportStep dbStep = foundStep.orElseGet(  () -> {
             PDomibusConnectorTransportStep s = new PDomibusConnectorTransportStep();
-            PDomibusConnectorMessage oneByConnectorMessageId = messageDao.findOneByConnectorMessageId(msgId);
-            if (oneByConnectorMessageId == null) {
-                throw new IllegalArgumentException(String.format("No message found for the connector message id [%s] within the database", msgId));
-            }
-            s.setMessage(oneByConnectorMessageId);
+            s.setConnectorMessageId(msgId);
             s.setLinkPartnerName(partnerName);
+            s.setTransportId(transportStep.getTransportId());
             return s;
         });
 
-        BeanUtils.copyProperties(transportStep, step);
+        dbStep.setAttempt(transportStep.getAttempt());
+        dbStep.setRemoteMessageId(transportStep.getRemoteMessageId());
+        dbStep.setTransportSystemMessageId(transportStep.getTransportSystemMessageId());
 
-        return step;
+        Set<TransportState> updates = dbStep.getStatusUpdates()
+                .stream()
+                .map(u -> u.getTransportState())
+                .collect(Collectors.toSet());
+
+        List<PDomibusConnectorTransportStepStatusUpdate> newStatus = transportStep.getStatusUpdates()
+                .stream()
+                //if db not alredy contains update add it
+                .filter(u -> !updates.contains(u.getTransportState()))
+                .map(u -> {
+                    PDomibusConnectorTransportStepStatusUpdate update = new PDomibusConnectorTransportStepStatusUpdate();
+                    update.setCreated(u.getCreated());
+                    update.setTransportState(u.getTransportState());
+                    update.setText(u.getText());
+                    update.setTransportStep(dbStep);
+                    return update;
+                }).collect(Collectors.toList());
+
+        dbStep.getStatusUpdates().addAll(newStatus);
+
+        return dbStep;
     }
 
 }

@@ -26,12 +26,12 @@ import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 @Component("domibusConnectorGatewayDeliveryServiceImpl")
 public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnectorGatewayDeliveryService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
 
-	private PutMessageOnQueue putMessageOnQueue;
-	private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private PutMessageOnQueue putMessageOnQueue;
+    private DomibusConnectorMessagePersistenceService messagePersistenceService;
     private DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService;
-	private DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private DomibusConnectorMessageIdGenerator messageIdGenerator;
     private DomibusGatewayLoopbackReceiveProcessor domibusGatewayLoopbackReceiveProcessor;
 
     //setter
@@ -62,29 +62,30 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     }
 
     @Override
-	public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
-		
-		//Check consistence of message:
-		// Either a message content, or at least one confirmation must exist for processing
-		if(!checkMessageForProcessability(message))
-			throw new DomibusConnectorControllerException("Message cannot be processed as it contains neither message content, nor message confirmation!");
-
-		domibusGatewayLoopbackReceiveProcessor.processMessage(message);
-
-		String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
-
-		if(StringUtils.isEmpty(connectorMessageId))
-			throw new DomibusConnectorControllerException("domibus connector message ID not generated!");
-		
-		message.setConnectorMessageId(connectorMessageId);
+    public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+        if (StringUtils.isEmpty(message.getConnectorMessageId())) {
+            String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+            if (StringUtils.isEmpty(connectorMessageId))
+                throw new DomibusConnectorControllerException("domibus connector message ID not generated!");
+            message.setConnectorMessageId(connectorMessageId);
+        }
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message);
-		
-		try {
+
+        //Check consistence of message:
+        // Either a message content, or at least one confirmation must exist for processing
+        if (!checkMessageForProcessability(message))
+            throw new DomibusConnectorControllerException("Message cannot be processed as it contains neither message content, nor message confirmation!");
+
+        domibusGatewayLoopbackReceiveProcessor.processMessage(message);
+
+
+
+        try {
             message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-		}catch(PersistenceException e) {
-			throw new DomibusConnectorControllerException("Message could not be persisted!", e);
-		}
-		
+        } catch (PersistenceException e) {
+            throw new DomibusConnectorControllerException("Message could not be persisted!", e);
+        }
+
 //        try {
 //            message = bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(message);
 //            message = messagePersistenceService.mergeMessageWithDatabase(message);
@@ -93,22 +94,22 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 //        }
 
         putMessageOnQueue.putMessageOnMessageQueue(message);
-	}
+    }
 
 
-	private boolean checkMessageForProcessability(DomibusConnectorMessage message) {
-		
-		if(message == null)
-			return false;
-		
-		if(message.getMessageContent()!=null)
-			return true;
-		
-		if(!CollectionUtils.isEmpty(message.getMessageConfirmations()))
-			return true;
-		
-		return false;
-	}
+    private boolean checkMessageForProcessability(DomibusConnectorMessage message) {
+
+        if (message == null)
+            return false;
+
+        if (message.getMessageContent() != null)
+            return true;
+
+        if (!CollectionUtils.isEmpty(message.getMessageConfirmations()))
+            return true;
+
+        return false;
+    }
 
 
 }

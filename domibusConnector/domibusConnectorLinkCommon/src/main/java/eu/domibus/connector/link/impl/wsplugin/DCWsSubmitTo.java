@@ -92,7 +92,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     private void setTransportStateByAck(TransportStatusService.TransportId transportId, DomibsConnectorAcknowledgementType ack) {
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
         state.setConnectorTransportId(transportId);
-        state.setRemoteTransportId(ack.getMessageId());
+        state.setRemoteMessageId(ack.getMessageId());
         state.setText(ack.getResultMessage());
         if (ack.isResult()) {
             state.setStatus(TransportState.ACCEPTED);

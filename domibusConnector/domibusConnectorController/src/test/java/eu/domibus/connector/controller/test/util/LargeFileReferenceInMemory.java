@@ -11,9 +11,9 @@ import java.io.OutputStream;
  */
 public class LargeFileReferenceInMemory extends LargeFileReference {
 
-    InputStream inputStream;
+    transient InputStream inputStream;
     
-    OutputStream outputStream;
+    transient OutputStream outputStream;
 
     boolean readable;
     

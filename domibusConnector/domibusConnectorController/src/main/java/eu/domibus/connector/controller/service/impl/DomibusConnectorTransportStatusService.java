@@ -5,7 +5,6 @@ import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
-import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
@@ -31,9 +30,12 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
     private DomibusConnectorPersistAllBigDataOfMessageService contentStorageService;
     private DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
+    private TransportStepPersistenceService transportStepPersistenceService;
 
     @Autowired
-    TransportStepPersistenceService transportStepPersistenceService;
+    public void setTransportStepPersistenceService(TransportStepPersistenceService transportStepPersistenceService) {
+        this.transportStepPersistenceService = transportStepPersistenceService;
+    }
 
     @Autowired
     public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
@@ -51,68 +53,48 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     }
 
 
+    @Override
+    @Transactional
+    public void updateTransportToGatewayStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
+
+        this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
+            m.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
+            messagePersistenceService.mergeMessageWithDatabase(m);
+            messagePersistenceService.setDeliveredToGateway(m);
+        });
+
+    }
+
+
 
     @Override
     @Transactional
-    public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState) {
-        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getConnectorTransportId().getTransportId());
-        if (message == null) {
-            //cannot update a transport for a null message maybe it's a evidence message, but they don't have
-            // a relation to connector message id yet...so cannot set transport state for them!
-            LOGGER.debug("#updateTransportToGatewayStatus:: No message with transport id [{}] was found within database, maybe it's an evidence message", transportState.getConnectorTransportId());
-            return;
-        }
+    public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState) {
+        this.updateTransportStatus(transportId, transportState, (DomibusConnectorMessage m) -> {
+                m.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());
+                messagePersistenceService.setMessageDeliveredToNationalSystem(m);
+                messagePersistenceService.mergeMessageWithDatabase(m);
+        });
+    }
 
-        if (transportState.getStatus() == TransportState.ACCEPTED) {
-            if (message != null) {
-                message.getMessageDetails().setEbmsMessageId(transportState.getRemoteTransportId());
-                messagePersistenceService.mergeMessageWithDatabase(message);
-                messagePersistenceService.setDeliveredToGateway(message);
-            }
-        } else if (transportState.getStatus() == TransportState.FAILED) {
-            //TODO: reject message async... -> inform backend async of rejection!
-            transportState.getMessageErrorList().stream().forEach( error ->
-                    errorPersistenceService.persistMessageError(transportState.getConnectorTransportId().getTransportId(), error)
-            );
-        }
-
-        //TODO: async call!
-        if (!isEvidenceMessage(message)) {
-            try {
-                contentStorageService.cleanForMessage(message);
-                LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of outgoing message [{}]", message.getConnectorMessageId());
-            } catch (RuntimeException e) {
-                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of outgoing message", e);
-            }
-        } else {
-            LOGGER.debug("#updateTransportToGatewayStatus:: Message is an evidence message, no content deletion will be triggered!");
-        }
-
+    private static interface SuccessHandler {
+        void success(DomibusConnectorMessage message);
     }
 
 
-    @Override
-    public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState) {
-
-
-
-
-//        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportState.getTransportId());
-//        messagePersistenceService.confirmMessage(message);
-//        message.getMessageDetails().setEbmsMessageId(transportState.getRemoteTransportId());
-//        messagePersistenceService.mergeMessageWithDatabase(message);
-
-        //TODO: trigger content deletion, failure handling, ...
-    }
-
-    @Override
-    public void updateTransportStatus(DomibusConnectorTransportState transportState) {
-        //TODO: update transport state!
-
+    @Transactional
+    public void updateTransportStatus(TransportId transportId, DomibusConnectorTransportState transportState, SuccessHandler successHandler) {
+        if (transportId == null) {
+            throw new IllegalArgumentException("TransportId is not allowed to be null!");
+        }
+        if (transportState == null) {
+            throw new IllegalArgumentException("TransportState is not allowed to be null!");
+        }
         DomibusConnectorTransportStep transportStep = transportStepPersistenceService.getTransportStepByTransportId(transportState.getConnectorTransportId());
 
+
         if (StringUtils.isEmpty(transportStep.getRemoteMessageId())) {
-            transportStep.setRemoteMessageId(transportState.getRemoteTransportId());
+            transportStep.setRemoteMessageId(transportState.getRemoteMessageId());
         }
         if (StringUtils.isEmpty(transportStep.getTransportSystemMessageId())) {
             transportStep.setTransportSystemMessageId(transportState.getTransportImplId());
@@ -120,18 +102,54 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate statusUpdate = new DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate();
         statusUpdate.setCreated(LocalDateTime.now());
         statusUpdate.setTransportState(transportState.getStatus());
-
-
         transportStep.addTransportStatus(statusUpdate);
-
         transportStepPersistenceService.update(transportStep);
 
 
-//        transportStep.setRemoteMessageId(transportState.getRemoteTransportId());
+        DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportStep.getMessageId().getConnectorMessageId());
+        if (message == null) {
+            //cannot update a transport for a null message maybe it's a evidence message, but they don't have
+            // a relation to connector message id yet...so cannot set transport state for them!
+            LOGGER.debug("#updateTransportToBackendStatus:: No message with transport id [{}] was found within database!", transportState.getConnectorTransportId());
+            return;
+        }
 
+        if (transportState.getStatus() == TransportState.ACCEPTED) {
+            if (message != null) {
+                successHandler.success(message);
+            }
+        } else if (transportState.getStatus() == TransportState.FAILED) {
+            //TODO: reject message async... -> inform backend async of rejection!
+            transportState.getMessageErrorList().stream().forEach( error ->
+                    errorPersistenceService.persistMessageError(transportState.getConnectorTransportId().getTransportId(), error)
+            );
+            if (message != null) {
+                messagePersistenceService.rejectMessage(message);
+            }
+        }
+
+        //TODO: async call!
+        if (!isEvidenceMessage(message)) {
+            try {
+                contentStorageService.cleanForMessage(message);
+                LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
+            } catch (RuntimeException e) {
+                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
+            }
+        } else {
+            LOGGER.debug("#updateTransportToBackendStatus:: Message is an evidence message, no content deletion will be triggered!");
+        }
+    }
+
+
+    @Override
+    @Transactional
+    public void updateTransportStatus(DomibusConnectorTransportState transportState) {
+        this.updateTransportStatus(transportState.getConnectorTransportId(), transportState, (m) -> {});
     }
 
     @Override
+    @Transactional
     public TransportId createTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
 
         DomibusConnectorTransportStep transportStep = new DomibusConnectorTransportStep();
@@ -146,6 +164,7 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
 
     @Override
     public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        //TODO: check for active transport...
         return createTransportFor(message, linkPartnerName);
     }
 

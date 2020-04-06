@@ -64,7 +64,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
             LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW accepted message and sent id [{}] back", ebmsId);
 //            message.getMessageDetails().setEbmsMessageId(ebmsId);
 
-            state.setRemoteTransportId(ebmsId);
+            state.setRemoteMessageId(ebmsId);
             state.setStatus(TransportState.ACCEPTED);
             gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
         } else if (ack != null){

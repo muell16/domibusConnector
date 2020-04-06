@@ -26,7 +26,7 @@ public class HandleFromGwToConnectorSentResponse {
         TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
 
         transportState.setConnectorTransportId(new TransportStatusService.TransportId(response.getResponseForMessageId()));
-        transportState.setRemoteTransportId(response.getAssignedMessageId());
+        transportState.setRemoteMessageId(response.getAssignedMessageId());
 
         if (response.isResult()) {
             transportState.setStatus(TransportState.ACCEPTED);

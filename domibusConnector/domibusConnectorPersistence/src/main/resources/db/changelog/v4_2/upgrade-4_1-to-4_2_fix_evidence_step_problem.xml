@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <property name="id.type" value="BIGINT" dbms="postgresql"/>
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql"/>
+    <property name="id.type" value="NUMBER(10)" dbms="oracle"/>
+
+
+    <changeSet id="drop_foreign_key" author="SKS">
+        <dropColumn tableName="DC_TRANSPORT_STEP" columnName="MESSAGE_ID" />
+        <addColumn tableName="DC_TRANSPORT_STEP">
+            <column name="CONNECTOR_MESSAGE_ID" type="java.sql.Types.varchar(255)"></column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

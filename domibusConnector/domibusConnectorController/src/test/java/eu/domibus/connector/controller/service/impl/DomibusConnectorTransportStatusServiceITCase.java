@@ -23,9 +23,9 @@ public class DomibusConnectorTransportStatusServiceITCase {
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
         state.setStatus(TransportState.ACCEPTED);
         state.setConnectorTransportId(new TransportStatusService.TransportId("CONNID1"));
-        state.setRemoteTransportId("REMOTE1");
+        state.setRemoteMessageId("REMOTE1");
 
-        transportStatusService.updateTransportToGatewayStatus(state);
+        transportStatusService.updateTransportToGatewayStatus(new TransportStatusService.TransportId("id"), state);
 
     }
 

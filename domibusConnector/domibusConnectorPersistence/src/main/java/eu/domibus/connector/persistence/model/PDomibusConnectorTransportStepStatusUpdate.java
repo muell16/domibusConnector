@@ -7,14 +7,16 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "DC_TRANSPORT_STEP_STATUS")
+@Table(name = PDomibusConnectorTransportStepStatusUpdate.TABLE_NAME)
 @IdClass(PDomibusConnectorTransportStepStatusUpdateIdClass.class)
 public class PDomibusConnectorTransportStepStatusUpdate {
 
+    public static final String TABLE_NAME = "DC_TRANSPORT_STEP_STATUS";
 
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @Id
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "TRANSPORT_STEP_ID")
+    @JoinColumn(name = "TRANSPORT_STEP_ID", referencedColumnName = "ID")
+    @MapsId
     private PDomibusConnectorTransportStep transportStep;
 
     @Id
@@ -25,7 +27,7 @@ public class PDomibusConnectorTransportStepStatusUpdate {
     private LocalDateTime created;
 
     @Lob
-    @Column(name = "text")
+    @Column(name = "TEXT")
     private String text;
 
     @PrePersist

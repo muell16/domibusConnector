@@ -270,6 +270,19 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         }
     }
 
+    @Override
+    @Transactional
+    public DomibusConnectorMessage updateMessageDetails(DomibusConnectorMessage message) {
+        PDomibusConnectorMessage messageByMessage = this.findMessageByMessage(message);
+        this.internalMessageInfoPersistenceService.mergeMessageInfo(message, messageByMessage);
+        return message;
+    }
+
+//    private void updateMessageDetailsIntoDb(PDomibusConnectorMessage dbMessage, DomibusConnectorMessage message) {
+//
+//    }
+
+
 //    PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
 //        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
 //        DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();

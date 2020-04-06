@@ -21,15 +21,18 @@ public interface TransportStatusService {
 
     /**
      * Sets the transport status for transports to GW
-     * @param transportState the transport status to set, contains also the transport id / connector message id
+     * @param transportState the transport status to set
+     * @param transportId contains the transportId
      */
-    public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState);
+    public void updateTransportToGatewayStatus(TransportId transportId, DomibusConnectorTransportState transportState);
 
     /**
      * Sets the transport status for transport to backendClient
      * @param transportState the transport status to set, contains also the transport id / connector message id
+     * @param transportId contains the transportId
      */
-    public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState);
+    public void updateTransportToBackendClientStatus(TransportId transportId, DomibusConnectorTransportState transportState);
+
 
     public void updateTransportStatus(DomibusConnectorTransportState transportState);
 
@@ -77,12 +80,20 @@ public interface TransportStatusService {
         public int hashCode() {
             return Objects.hash(transportId);
         }
+
+        @Override
+        public String toString() {
+            return "TransportId{" +
+                    "transportId='" + transportId + '\'' +
+                    '}';
+        }
     }
 
     public static class DomibusConnectorTransportState {
         private TransportId connectorTransportId; //may be the same as the connectorMessageId but must not...
+        private DomibusConnectorMessage.DomibusConnectorMessageId connectorMessageId;
         private String transportImplId; // the id of the transport attempt itself, can be null, eg. a jms id
-        private String remoteTransportId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
+        private String remoteMessageId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
         private TransportState status;
         private List<DomibusConnectorMessageError> messageErrorList = new ArrayList<>();
         private String text;
@@ -103,12 +114,20 @@ public interface TransportStatusService {
             this.connectorTransportId = connectorTransportId;
         }
 
-        public String getRemoteTransportId() {
-            return remoteTransportId;
+        public DomibusConnectorMessage.DomibusConnectorMessageId getConnectorMessageId() {
+            return connectorMessageId;
         }
 
-        public void setRemoteTransportId(String remoteTransportId) {
-            this.remoteTransportId = remoteTransportId;
+        public void setConnectorMessageId(DomibusConnectorMessage.DomibusConnectorMessageId connectorMessageId) {
+            this.connectorMessageId = connectorMessageId;
+        }
+
+        public String getRemoteMessageId() {
+            return remoteMessageId;
+        }
+
+        public void setRemoteMessageId(String remoteMessageId) {
+            this.remoteMessageId = remoteMessageId;
         }
 
         public List<DomibusConnectorMessageError> getMessageErrorList() {
@@ -132,7 +151,7 @@ public interface TransportStatusService {
         public String toString() {
             return new ToStringCreator(this)
                     .append("msgId", this.connectorTransportId)
-                    .append("remote id", this.remoteTransportId)
+                    .append("remote id", this.remoteMessageId)
                     .append("status", this.status)
                     .toString();
         }

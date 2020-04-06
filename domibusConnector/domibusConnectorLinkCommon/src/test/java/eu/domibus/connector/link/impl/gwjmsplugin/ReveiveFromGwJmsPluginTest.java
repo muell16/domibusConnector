@@ -9,7 +9,6 @@ import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +30,6 @@ import java.nio.file.Paths;
 import static eu.domibus.connector.domain.enums.TransportState.ACCEPTED;
 import static eu.domibus.connector.domain.enums.TransportState.FAILED;
 import static eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginConstants.ASIC_S_MIMETYPE;
-import static test.eu.domibus.connector.link.impl.wsplugin.DCWsGatewayPluginTestContext.getWsGatewayLinkConfig;
 import static org.mockito.ArgumentMatchers.refEq;
 
 @SpringBootTest(classes = {ReveiveFromGwJmsPlugin.class, GwJmsPluginConfigurationProperties.class}
@@ -196,7 +194,7 @@ class ReveiveFromGwJmsPluginTest {
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
         state.setStatus(FAILED);
         state.setConnectorTransportId(new TransportStatusService.TransportId("jms1"));
-        state.setRemoteTransportId(null);
+        state.setRemoteMessageId(null);
         state.setTransportImplId(null);
 
 
@@ -220,7 +218,7 @@ class ReveiveFromGwJmsPluginTest {
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
         state.setStatus(ACCEPTED);
         state.setConnectorTransportId(new TransportStatusService.TransportId("jms1"));
-        state.setRemoteTransportId("ebms1234");
+        state.setRemoteMessageId("ebms1234");
         state.setTransportImplId(null);
 
 

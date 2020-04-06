@@ -131,6 +131,24 @@
             <column name="TEXT" type="java.sql.Types.CLOB"/>
         </createTable>
         <addPrimaryKey tableName="DC_TRANSPORT_STEP_STATUS" columnNames="TRANSPORT_STEP_ID, STATE" constraintName="PK_DC_TRANSPORT_STEP_STATUS"/>
-        <addForeignKeyConstraint baseTableName="DC_TRANSPORT_STEP_STATUS" baseColumnNames="TRANSPORT_STEP_ID" constraintName="FK_transportstepstatus_transportstep" referencedTableName="DC_TRANSPORT_STEP" referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="DC_TRANSPORT_STEP_STATUS"
+                                 baseColumnNames="TRANSPORT_STEP_ID"
+                                 constraintName="FK_transportstepstatus_transportstep"
+                                 referencedTableName="DC_TRANSPORT_STEP"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+    <changeSet id="create_message_process_table" author="SKS">
+        <comment>Create MessageLaneTable to support different settings for different messages</comment>
+        <createTable tableName="DC_MESSAGE_PROCESS">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROCESS_ID" type="java.sql.Types.VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <addUniqueConstraint tableName="DC_MESSAGE_PROCESS" columnNames="PROCESS_ID" constraintName="UNQ_DC_MESSAGE_PROCESS"/>
+        <addPrimaryKey tableName="DC_MESSAGE_PROCESS" columnNames="ID" constraintName="PK_DC_MESSAGE_PROCESS"/>
     </changeSet>
 </databaseChangeLog>
