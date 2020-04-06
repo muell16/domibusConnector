@@ -40,7 +40,7 @@ public interface DomibusConnectorPersistAllBigDataOfMessageService {
      * @return the message, with refreshed storage references (ready to read)
      * 
      */
-    @Nonnull DomibusConnectorMessage persistAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message);
+//    @Nonnull DomibusConnectorMessage persistAllBigFilesFromMessage(@Nonnull DomibusConnectorMessage message);
 
     /**
      * this method should remove all messages from storage which is related to this

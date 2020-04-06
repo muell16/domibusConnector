@@ -85,12 +85,12 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 			throw new DomibusConnectorControllerException("Message could not be persisted!", e);
 		}
 		
-        try {
-            message = bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(message);
-            message = messagePersistenceService.mergeMessageWithDatabase(message);
-        } catch (PersistenceException e) {
-            throw new DomibusConnectorControllerException("Big data of message could not be persisted!", e);
-        }
+//        try {
+//            message = bigDataOfMessagePersistenceService.persistAllBigFilesFromMessage(message);
+//            message = messagePersistenceService.mergeMessageWithDatabase(message);
+//        } catch (PersistenceException e) {
+//            throw new DomibusConnectorControllerException("Big data of message could not be persisted!", e);
+//        }
 
         putMessageOnQueue.putMessageOnMessageQueue(message);
 	}

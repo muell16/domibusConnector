@@ -459,8 +459,8 @@ create table DC_MSG_CONTENT_DETACHED_SIGNATURE
 (
     ID NUMBER(10) not null,
     SIGNATURE CLOB,
-    SIGNATURE_NAME varchar2(255),
-    SIGNATURE_TYPE varchar2(255),
+    SIGNATURE_NAME VARCHAR(255),
+    SIGNATURE_TYPE VARCHAR(255),
         constraint PK_DETACHED_SIGNATURE
-        primary key (ID),
+        primary key (ID)
 );

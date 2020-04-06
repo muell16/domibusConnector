@@ -27,9 +27,9 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes={ITCaseTestContext.class})
-@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource("classpath:config/application-test.properties")
 @Commit
-@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME})
+@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @Sql(scripts = {"/testdata.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CheckEvidencesTimeoutProcessorITCase {

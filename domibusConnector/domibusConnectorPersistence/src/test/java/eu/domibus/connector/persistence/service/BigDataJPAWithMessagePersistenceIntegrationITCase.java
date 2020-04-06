@@ -38,8 +38,8 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
     @Autowired
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
-    @Autowired
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
+//    @Autowired
+//    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -93,7 +93,7 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
             transactionTemplate.execute((TransactionStatus status) -> {
                         DomibusConnectorMessage domibusConnectorMessage = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
                         //message is in db
-                        domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
+//                        domibusConnectorMessage = bigDataPersistenceService.persistAllBigFilesFromMessage(domibusConnectorMessage);
                         assertThat(domibusConnectorMessage.getMessageContent().getDocument().getDocument().getStorageIdReference()).isNotNull();
                         return null;
                     }
@@ -103,14 +103,16 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
             ITable bigdata = conn.createQueryTable("BIGDATA", "SELECT * FROM DOMIBUS_CONNECTOR_BIGDATA");
             int rowCount = bigdata.getRowCount();
 
-            assertThat(rowCount).isEqualTo(2);
-            byte[] attachmentContent = (byte[]) bigdata.getValue(0, "content");
+            assertThat(rowCount).isEqualTo(2); //
+
+            byte[] documentContent = (byte[]) bigdata.getValue(0, "content");
+            assertThat(documentContent).isNotNull();
+            assertThat(new String(documentContent)).isEqualTo("documentbytes");
+
+            byte[] attachmentContent = (byte[]) bigdata.getValue(1, "content");
             assertThat(attachmentContent).isNotNull();
             assertThat(new String(attachmentContent)).isEqualTo("attachment");
 
-            byte[] documentContent = (byte[]) bigdata.getValue(1, "content");
-            assertThat(documentContent).isNotNull();
-            assertThat(new String(documentContent)).isEqualTo("documentbytes");
 
         });
     }

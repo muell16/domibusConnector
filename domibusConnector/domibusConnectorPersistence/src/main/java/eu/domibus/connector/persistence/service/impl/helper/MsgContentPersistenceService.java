@@ -226,8 +226,10 @@ public class MsgContentPersistenceService {
         List<PDomibusConnectorMsgCont> toStoreList = new ArrayList<>();
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
         PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-        if (messageContent != null) {
+        if (messageContent != null && messageContent.getDocument() != null) {
             toStoreList.add(mapDocumentToDb(dbMessage, messageContent.getDocument()));
+        }
+        if (messageContent != null) {
             toStoreList.add(mapXmlContentToDB(message.getConnectorMessageId(), dbMessage, messageContent.getXmlContent()));
         }
         //handle attachments
@@ -334,6 +336,9 @@ public class MsgContentPersistenceService {
         } catch (IOException e) {
             throw new RuntimeException("Copying from unsupported LargeFileReference to default LargeFileReference failed due", e);
         }
+        //also set storage name and provider for the "old" large file reference
+        ref.setStorageProviderName(newRef.getStorageProviderName());
+        ref.setStorageIdReference(newRef.getStorageIdReference());
         return newRef;
     }
 

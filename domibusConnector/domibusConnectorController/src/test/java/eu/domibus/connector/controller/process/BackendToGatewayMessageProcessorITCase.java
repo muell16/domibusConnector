@@ -49,9 +49,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ITCaseTestContext.class})
-@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource("classpath:config/application-test.properties")
 @Commit
-@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME})
+@ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BackendToGatewayMessageProcessorITCase {
@@ -236,8 +236,8 @@ public class BackendToGatewayMessageProcessorITCase {
         message.getMessageContent().setDocument(signedDocument);
 
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-        message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
-        message = messagePersistenceService.mergeMessageWithDatabase(message);
+//        message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
+//        message = messagePersistenceService.mergeMessageWithDatabase(message);
         return message;
     }
 }

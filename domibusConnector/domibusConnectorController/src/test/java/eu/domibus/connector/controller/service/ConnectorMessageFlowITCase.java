@@ -53,7 +53,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ITCaseTestContext.class})
-@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource("classpath:config/application-test.properties")
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
