@@ -27,8 +27,7 @@ public class HandleFromGwToConnectorDeliveredMessage implements DomibusConnector
     @Lazy
     private DomibusConnectorAsyncDeliverToConnectorReceiveResponseService sendResponseService;
 
-    @Autowired
-    DomibusConnectorDomainMessageTransformerService transformerService;
+
 
     public void setControllerService(DomibusConnectorGatewayDeliveryService controllerService) {
         this.controllerService = controllerService;

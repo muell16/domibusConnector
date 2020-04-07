@@ -40,8 +40,6 @@ public class DCWsSubmitTo implements SubmitToLink {
     @Autowired
     TransportStatusService transportStatusService;
 
-    @Autowired
-    DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
@@ -76,7 +74,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     private void handlePushGatewayLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner linkPartner) {
         LOGGER.trace("#handlePushGatewayLink");
         DomibusConnectorGatewaySubmissionWebService gateway = webServiceClientFactory.createGateway(linkPartner);
-        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
+        DomibusConnectorMessageType domibusConnectorMessageType = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType ack = gateway.submitMessage(domibusConnectorMessageType);
 
         setTransportStateByAck(transportId, ack);
@@ -86,7 +84,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     private void handlePushBackendLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner linkPartner) {
         LOGGER.trace("#handlePushBackendLink");
         DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(linkPartner);
-        @NotNull DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
+        @NotNull DomibusConnectorMessageType domibusConnectorMessageType = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType ack = backendWsClient.deliverMessage(domibusConnectorMessageType);
 
         setTransportStateByAck(transportId, ack);

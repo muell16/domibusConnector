@@ -54,7 +54,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
     private MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
-    private DomibusConnectorDomainMessageTransformerService transformerService;
+
 
     //setter
     @Resource
@@ -65,11 +65,6 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     @Autowired
     public void setBackendClientInfoPersistenceService(BackendClientInfoPersistenceService backendClientInfoPersistenceService) {
         this.backendClientInfoPersistenceService = backendClientInfoPersistenceService;
-    }
-
-    @Autowired
-    public void setDomibusConnectorDomainMessageTransformerService(DomibusConnectorDomainMessageTransformerService transformerService) {
-        this.transformerService = transformerService;
     }
 
     @Autowired
@@ -126,8 +121,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
         DomibusConnectorMessage processedMessage = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-//        return DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(processedMessage);
-        return transformerService.transformDomainToTransition(processedMessage);
+        return DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(processedMessage);
     }
 
 
@@ -139,7 +133,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             DomibusConnectorBackendClientInfo backendClientInfoByName = null;
             backendClientInfoByName = checkBackendClient();
 
-            DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
+            DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformerService.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getBackendName());
             LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getBackendName());
 

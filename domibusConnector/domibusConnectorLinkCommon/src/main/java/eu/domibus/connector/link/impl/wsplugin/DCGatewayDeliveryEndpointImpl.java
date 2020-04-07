@@ -30,8 +30,7 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
     @Autowired
     SubmitToConnector submitToConnector;
 
-    @Autowired
-    DomibusConnectorDomainMessageTransformerService transformerService;
+
 
     private WebServiceContext webServiceContext;
 
@@ -45,7 +44,7 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
         ActiveLinkPartner activeLinkPartner = endpointAuthenticator.checkBackendClient(webServiceContext);
 
-        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformerService.transformTransitionToDomain(deliverMessageRequest);
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {

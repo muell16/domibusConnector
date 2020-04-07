@@ -23,8 +23,7 @@ public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDe
     @Autowired
     private DomibusConnectorGatewayDeliveryService controllerService;
 
-    @Autowired
-    DomibusConnectorDomainMessageTransformerService transformerService;
+
 
     @Override
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {

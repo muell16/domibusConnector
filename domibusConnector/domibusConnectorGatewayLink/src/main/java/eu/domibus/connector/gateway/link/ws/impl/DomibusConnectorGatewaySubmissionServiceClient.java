@@ -33,8 +33,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	@Autowired
     private TransportStatusService gatewaySubmissionTransportStatusService;
 
-	@Autowired
-    DomibusConnectorDomainMessageTransformerService transformerService;
+
 
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {

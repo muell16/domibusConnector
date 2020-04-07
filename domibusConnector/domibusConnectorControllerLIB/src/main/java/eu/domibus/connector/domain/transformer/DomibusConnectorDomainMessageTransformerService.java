@@ -62,7 +62,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @throws CannotBeMappedToTransitionException if a
      */
     public static @NotNull
-    DomibusConnectorMessageType transformDomainToTransition(final @NotNull DomibusConnectorMessage domainMessage) {
+    DomibusConnectorMessageType transformDomainToTransition(final @NotNull DomibusConnectorMessage domainMessage) throws CannotBeMappedToTransitionException {
         LOGGER.debug("transformDomainToTransition: with domainMessage [{}]", domainMessage);
         if (domainMessage == null) {
             throw new CannotBeMappedToTransitionException("domainMessage is not allowed to be null!");
