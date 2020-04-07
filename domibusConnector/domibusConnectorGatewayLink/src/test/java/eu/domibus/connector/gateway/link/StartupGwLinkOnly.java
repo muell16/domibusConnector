@@ -95,13 +95,13 @@ public class StartupGwLinkOnly {
         return new TransportStatusService() {
 
             @Override
-            public void updateTransportToGatewayStatus(DomibusConnectorTransportState transportState) {
+            public void updateTransportToGatewayStatus(TransportId id, DomibusConnectorTransportState transportState) {
                 LOGGER.info("setting transport: [{}]", transportState);
                 transportStatesQueue().add(transportState);
             }
 
             @Override
-            public void updateTransportToBackendClientStatus(DomibusConnectorTransportState transportState) {
+            public void updateTransportToBackendClientStatus(TransportId id, DomibusConnectorTransportState transportState) {
                 throw new IllegalStateException("Not implemented!");
             }
 
