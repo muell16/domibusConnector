@@ -37,7 +37,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
-		DomibusConnectorMessageType request = transformerService.transformDomainToTransition(message);
+		DomibusConnectorMessageType request = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
 
 		if (LOGGER.isTraceEnabled()) {
 		    LOGGER.trace("Printing out request message:");
