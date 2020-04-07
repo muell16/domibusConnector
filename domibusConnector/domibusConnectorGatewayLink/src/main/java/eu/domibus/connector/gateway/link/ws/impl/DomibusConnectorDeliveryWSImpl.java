@@ -4,13 +4,11 @@ import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
@@ -25,10 +23,13 @@ public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDe
     @Autowired
     private DomibusConnectorGatewayDeliveryService controllerService;
 
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
     @Override
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
-        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest);
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {

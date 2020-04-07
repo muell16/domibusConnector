@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Builder for @see eu.domibus.connector.domain.model.DomibusConnectorMessage
@@ -137,4 +138,28 @@ public final class DomibusConnectorMessageBuilder {
         return message;
     }
 
+    public DomibusConnectorMessageBuilder copyPropertiesFrom(DomibusConnectorMessage message) {
+        this.messageDetails = DomibusConnectorMessageDetailsBuilder.create()
+                .copyPropertiesFrom(message.getMessageDetails())
+                .build();
+        this.connectorMessageId = message.getConnectorMessageId();
+        if (message.getMessageContent() != null) {
+            this.messageContent = DomibusConnectorMessageContentBuilder.createBuilder()
+                    .copyPropertiesFrom(message.getMessageContent())
+                    .build();
+        }
+        this.messageAttachments = message.getMessageAttachments()
+                .stream()
+                .map(a -> DomibusConnectorMessageAttachmentBuilder.createBuilder()
+                        .copyPropertiesFrom(a).build())
+                .collect(Collectors.toList());
+
+        this.messageConfirmations = message.getMessageConfirmations()
+                .stream()
+                .map(c -> DomibusConnectorMessageConfirmationBuilder.createBuilder()
+                .copyPropertiesFrom(c).build())
+                .collect(Collectors.toList());
+
+        return this;
+    }
 }

@@ -126,10 +126,13 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			LOGGER.info("#processMessage: Message [{}] is a connector to connector test originalMessage. \nIt will NOT be delivered to the backend!", message);
 			createDeliveryEvidenceAndSendIt(message);
 			LOGGER.info("#processMessage: Connector to Connector Test originalMessage [{}] is confirmed!", message);
-		}else{
-			backendDeliveryService.deliverMessageToBackend(message);
+		} else {
+			try {
+				backendDeliveryService.deliverMessageToBackend(message);
+			} catch (Exception e) {
+				createNonDeliveryEvidenceAndSendIt(message);
+			}
 		}
-
 
 		LOGGER.info(BUSINESS_LOG, "Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());
 	}

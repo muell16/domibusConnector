@@ -8,7 +8,7 @@ import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
@@ -39,6 +39,9 @@ public class DCWsSubmitTo implements SubmitToLink {
 
     @Autowired
     TransportStatusService transportStatusService;
+
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
@@ -73,7 +76,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     private void handlePushGatewayLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner linkPartner) {
         LOGGER.trace("#handlePushGatewayLink");
         DomibusConnectorGatewaySubmissionWebService gateway = webServiceClientFactory.createGateway(linkPartner);
-        DomibusConnectorMessageType domibusConnectorMessageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType ack = gateway.submitMessage(domibusConnectorMessageType);
 
         setTransportStateByAck(transportId, ack);
@@ -83,7 +86,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     private void handlePushBackendLink(TransportStatusService.TransportId transportId, DomibusConnectorMessage message, DCWsActiveLinkPartner linkPartner) {
         LOGGER.trace("#handlePushBackendLink");
         DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(linkPartner);
-        @NotNull DomibusConnectorMessageType domibusConnectorMessageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+        @NotNull DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType ack = backendWsClient.deliverMessage(domibusConnectorMessageType);
 
         setTransportStateByAck(transportId, ack);

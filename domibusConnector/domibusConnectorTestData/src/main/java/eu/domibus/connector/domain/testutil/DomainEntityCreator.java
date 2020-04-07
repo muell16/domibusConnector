@@ -55,6 +55,13 @@ public class DomainEntityCreator {
         DomibusConnectorService s = new DomibusConnectorService("EPO", "urn:e-codex:services:");
         return s;
     }
+
+    public static DomibusConnectorMessageConfirmation createMessageRelayRemmdAcceptanceConfirmation() {
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+        confirmation.setEvidence("<EVIDENCE1_RELAY_REMMD/>".getBytes());
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
+        return confirmation;
+    }
     
     public static DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation() {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
@@ -195,6 +202,35 @@ public class DomainEntityCreator {
         return message;
     }
 
+
+    public static DomibusConnectorMessage createRelayRemmdAcceptanceEvidenceForMessage(DomibusConnectorMessage message) {
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
+
+        //messageDetails.setConversationId(null);      //first message no conversation set yet!
+        messageDetails.setEbmsMessageId(null); //message from backend
+        messageDetails.setBackendMessageId(null);   //has not been processed by the backend yet
+        messageDetails.setFinalRecipient(null);
+        messageDetails.setOriginalSender(null);
+        messageDetails.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());     //reference the previous message
+
+        messageDetails.setAction(createActionForm_A());
+        messageDetails.setService(createServiceEPO());
+        messageDetails.setToParty(createPartyAT());
+        messageDetails.setFromParty(createPartyDE());
+
+        DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
+
+//        messageDeliveryConfirmation.setEvidence("<xml></xml>".getBytes()); //TODO: load correct xml
+
+        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                .setMessageDetails(messageDetails)
+                .addConfirmation(messageDeliveryConfirmation)
+                .build();
+
+        return msg;
+    }
+
     public static DomibusConnectorMessage createDeliveryEvidenceForMessage(DomibusConnectorMessage message) {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
         BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
@@ -213,7 +249,7 @@ public class DomainEntityCreator {
 
         DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageDeliveryConfirmation();
 
-        //messageDeliveryConfirmation.setEvidence(); //TODO: load correct xml
+//        messageDeliveryConfirmation.setEvidence("<xml></xml>".getBytes()); //TODO: load correct xml
 
         DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setMessageDetails(messageDetails)

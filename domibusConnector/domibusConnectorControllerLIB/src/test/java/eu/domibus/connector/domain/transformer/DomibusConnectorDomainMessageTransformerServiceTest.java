@@ -3,10 +3,11 @@ package eu.domibus.connector.domain.transformer;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer.CannotBeMappedToTransitionException;
+import eu.domibus.connector.domain.transformer.transformerService.CannotBeMappedToTransitionException;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.testdata.TransitionCreator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
 
@@ -22,9 +23,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  *
  */
-public class DomibusConnectorDomainMessageTransformerTest {
+public class DomibusConnectorDomainMessageTransformerServiceTest {
     
-    public DomibusConnectorDomainMessageTransformerTest() {
+    public DomibusConnectorDomainMessageTransformerServiceTest() {
+    }
+
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
+    @BeforeEach
+    public void init() {
+        transformerService = new DomibusConnectorDomainMessageTransformerService();
     }
 
     
@@ -32,7 +40,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformDomainToTransition() {
         DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
         
-        DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+        DomibusConnectorMessageType messageType = transformerService.transformDomainToTransition(domainMessage);
                 
         assertThat(messageType).as("transformed object is not allowed to be null").isNotNull();
         
@@ -50,7 +58,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
             DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
             domainMessage.getMessageDetails().setFinalRecipient(null);
-            DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+            DomibusConnectorMessageType messageType = transformerService.transformDomainToTransition(domainMessage);
         });
     }
     
@@ -59,7 +67,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         Assertions.assertThrows(CannotBeMappedToTransitionException.class, () -> {
             DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
             domainMessage.getMessageDetails().setOriginalSender(null);
-            DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+            DomibusConnectorMessageType messageType = transformerService.transformDomainToTransition(domainMessage);
         });
     }
     
@@ -71,7 +79,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
 
                 DomibusConnectorMessageConfirmation createMessageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
                 DomibusConnectorMessage domainMessage = new DomibusConnectorMessage(null, createMessageDeliveryConfirmation);
-                DomibusConnectorDomainMessageTransformer.transformDomainToTransition(domainMessage);
+                transformerService.transformDomainToTransition(domainMessage);
             });
     }
             
@@ -79,7 +87,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageConfirmationDomainToTransition() {
         DomibusConnectorMessageConfirmation messageDeliveryConfirmation = DomainEntityCreator.createMessageDeliveryConfirmation();
         DomibusConnectorMessageConfirmationType messageConfirmationTO = 
-                DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
+                transformerService.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
         
         //assertThat(messageConfirmationTO.getConfirmation()).isEqualTo("EVIDENCE1_DELIVERY".getBytes());
         assertThat(messageConfirmationTO.getConfirmation()).isNotNull(); //TODO: better check!
@@ -95,7 +103,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
 
 
             DomibusConnectorMessageConfirmationType messageConfirmationTO =
-                    DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
+                    transformerService.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
         });
     }
     
@@ -104,7 +112,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessageAttachment messageAttachment = DomainEntityCreator.createSimpleMessageAttachment();
         
         DomibusConnectorMessageAttachmentType attachmentTO = 
-                DomibusConnectorDomainMessageTransformer.transformMessageAttachmentDomainToTransition(messageAttachment);
+                transformerService.transformMessageAttachmentDomainToTransition(messageAttachment);
                                 
         assertThat(attachmentTO.getAttachment()).isNotNull(); //TODO: better check!        
         assertThat(attachmentTO.getIdentifier()).isEqualTo("identifier");
@@ -134,7 +142,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
          messageDeliveryConfirmation.setEvidenceType(null); //set evidence to null to provoke exception
          
          DomibusConnectorMessageConfirmationType messageConfirmationTO = 
-                DomibusConnectorDomainMessageTransformer.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
+                transformerService.transformMessageConfirmationDomainToTransition(messageDeliveryConfirmation);
         });
     }
     
@@ -143,7 +151,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
         DomibusConnectorMessageContent messageContent = domainMessage.getMessageContent();
         
-        DomibusConnectorMessageContentType messageContentTO = DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(messageContent);        
+        DomibusConnectorMessageContentType messageContentTO = transformerService.transformMessageContentDomainToTransition(messageContent);
                 
         assertThat(messageContentTO).as("message content is set in test entity!").isNotNull();
         //assertThat(messageContentTO.getXmlContent()).isEqualTo(domainMessage.getMessageContent().getXmlContent());
@@ -158,7 +166,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
        
  
         DomibusConnectorMessageContentType messageContentTO = 
-                DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(domainMessage.getMessageContent());        
+                transformerService.transformMessageContentDomainToTransition(domainMessage.getMessageContent());
         DomibusConnectorMessageDocumentType document = messageContentTO.getDocument();
                 
         assertThat(document.getDocument()).isNotNull();
@@ -178,7 +186,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageContentDomainToTransition_noDetachedSignature() {
         DomibusConnectorMessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoSignature();
         
-        DomibusConnectorMessageContentType messageContentTO = DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(messageContent);        
+        DomibusConnectorMessageContentType messageContentTO = transformerService.transformMessageContentDomainToTransition(messageContent);
                 
         assertThat(messageContentTO).as("message content is set in test entity!").isNotNull();
         //assertThat(messageContentTO.getXmlContent()).isEqualTo(domainMessage.getMessageContent().getXmlContent());
@@ -191,7 +199,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageContentDomainToTransition_noPdfDocument() {
         DomibusConnectorMessageContent messageContent = DomainEntityCreator.createMessageContentWithDocumentWithNoPdfDocument();
         
-        DomibusConnectorMessageContentType messageContentTO = DomibusConnectorDomainMessageTransformer.transformMessageContentDomainToTransition(messageContent);        
+        DomibusConnectorMessageContentType messageContentTO = transformerService.transformMessageContentDomainToTransition(messageContent);
                 
         assertThat(messageContentTO).as("message content is set in test entity!").isNotNull();
         //assertThat(messageContentTO.getXmlContent()).isEqualTo(domainMessage.getMessageContent().getXmlContent());
@@ -205,7 +213,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageDetailsDomainToTransition() { 
         DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
         
-        DomibusConnectorMessageDetailsType messageDetailsType = DomibusConnectorDomainMessageTransformer.transformMessageDetailsDomainToTransition(messageDetails);
+        DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(messageDetails);
                 
         assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped").isEqualTo("national1");
         assertThat(messageDetailsType.getEbmsMessageId()).as("ebmsMessageId must be mapped").isEqualTo("ebms1");
@@ -224,7 +232,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
 
     @Test
     public void testTransformTransitionToDomain() {
-        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(TransitionCreator.createMessage());
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(TransitionCreator.createMessage());
         
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
@@ -254,7 +262,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
 
         msg.getMessageConfirmations().add(confirmation);
 
-        DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(msg);
+        transformerService.transformTransitionToDomain(msg);
     }
 
     @Test
@@ -262,7 +270,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessageType transitionMessage = TransitionCreator.createMessage();
         transitionMessage.setMessageContent(null);
         
-        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(transitionMessage);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(transitionMessage);
         
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
@@ -276,7 +284,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageContentTransitionToDomain() {
         DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
         
-        DomibusConnectorMessageContent messageContent = DomibusConnectorDomainMessageTransformer.transformMessageContentTransitionToDomain(messageContentTO);
+        DomibusConnectorMessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
         
         assertThat(messageContent).isNotNull();
         assertThat(messageContent.getXmlContent()).isNotNull(); //TODO compare byte[]
@@ -292,7 +300,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
         messageContentTO.setDocument(null);
         
-        DomibusConnectorMessageContent messageContent = DomibusConnectorDomainMessageTransformer.transformMessageContentTransitionToDomain(messageContentTO);
+        DomibusConnectorMessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
         
         assertThat(messageContent).isNotNull();
         assertThat(messageContent.getXmlContent()).isNotNull(); //TODO compare byte[]
@@ -304,7 +312,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
         DomibusConnectorMessageContentType messageContentTO = TransitionCreator.createMessageContent();
         messageContentTO.getDocument().setDetachedSignature(null);
         
-        DomibusConnectorMessageContent messageContent = DomibusConnectorDomainMessageTransformer.transformMessageContentTransitionToDomain(messageContentTO);
+        DomibusConnectorMessageContent messageContent = transformerService.transformMessageContentTransitionToDomain(messageContentTO);
         
         assertThat(messageContent).isNotNull();
         assertThat(messageContent.getXmlContent()).isNotNull();
@@ -316,7 +324,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageDetailsTransitionToDomain() {
         DomibusConnectorMessageDetailsType messageDetailsTO = TransitionCreator.createMessageDetails();
         
-        DomibusConnectorMessageDetails messageDetails = DomibusConnectorDomainMessageTransformer.transformMessageDetailsTransitionToDomain(messageDetailsTO);
+        DomibusConnectorMessageDetails messageDetails = transformerService.transformMessageDetailsTransitionToDomain(messageDetailsTO);
         
         assertThat(messageDetails.getBackendMessageId()).as("backend message id must match").isEqualTo("backendMessageId");
         assertThat(messageDetails.getConversationId()).as("conversation id must match").isEqualTo("conversationId");
@@ -344,7 +352,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageAttachmentTransitionToDomain() throws IOException {
         DomibusConnectorMessageAttachmentType messageAttachmentTO = TransitionCreator.createMessageAttachment();
         DomibusConnectorMessageAttachment attachment = 
-                DomibusConnectorDomainMessageTransformer.transformMessageAttachmentTransitionToDomain(messageAttachmentTO);    
+                transformerService.transformMessageAttachmentTransitionToDomain(messageAttachmentTO);
         
         byte[] attachmentBytes = StreamUtils.copyToByteArray(attachment.getAttachment().getInputStream());
         
@@ -359,7 +367,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageErrorTransitionToDomain() {
         DomibusConnectorMessageErrorType messageErrorTO = TransitionCreator.createMessageError();
         DomibusConnectorMessageError error = 
-                DomibusConnectorDomainMessageTransformer.transformMessageErrorTransitionToDomain(messageErrorTO);
+                transformerService.transformMessageErrorTransitionToDomain(messageErrorTO);
         
         assertThat(error.getDetails()).isEqualTo("error details");
         assertThat(error.getText()).isEqualTo("error message");
@@ -370,7 +378,7 @@ public class DomibusConnectorDomainMessageTransformerTest {
     public void testTransformMessageConfirmationTransitionToDomain() throws UnsupportedEncodingException {
         DomibusConnectorMessageConfirmationType messageConfirmationTO = TransitionCreator.createMessageConfirmationType_DELIVERY();
         DomibusConnectorMessageConfirmation confirmation = 
-                DomibusConnectorDomainMessageTransformer.transformMessageConfirmationTransitionToDomain(messageConfirmationTO);
+                transformerService.transformMessageConfirmationTransitionToDomain(messageConfirmationTO);
         
         //TODO: repair check!
         //assertThat(new String(confirmation.getEvidence(), "UTF-8")).isEqualTo("<DELIVERY></DELIVERY>");

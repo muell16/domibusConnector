@@ -1,29 +1,21 @@
 
 package eu.domibus.connector.link.impl.wsplugin;
 
-import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
-import eu.domibus.connector.controller.exception.DomibusConnectorBackendDeliveryException;
 import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
-import org.apache.cxf.jaxws.context.WrappedMessageContext;
-import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
-import java.security.Principal;
 
 /**
  * Handles transmitting messages (push/pull) from and to backendClients over webservice
@@ -44,6 +36,9 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
 
     @Autowired
     SubmitToConnector submitToConnector;
+
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
@@ -107,7 +102,7 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
             ActiveLinkPartner backendClientInfoByName = null;
             backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext);
 
-            DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(submitMessageRequest);
+            DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getLinkPartnerName().getLinkName());
             LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getLinkPartnerName().getLinkName());
 

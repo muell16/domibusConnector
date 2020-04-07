@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Profile;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
@@ -33,9 +33,12 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	@Autowired
     private TransportStatusService gatewaySubmissionTransportStatusService;
 
+	@Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
-		DomibusConnectorMessageType request = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+		DomibusConnectorMessageType request = transformerService.transformDomainToTransition(message);
 
 		if (LOGGER.isTraceEnabled()) {
 		    LOGGER.trace("Printing out request message:");

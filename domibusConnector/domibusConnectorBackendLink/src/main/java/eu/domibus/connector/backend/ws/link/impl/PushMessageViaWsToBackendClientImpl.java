@@ -8,7 +8,7 @@ import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliv
 import eu.domibus.connector.controller.exception.DomibusConnectorRejectSubmissionException;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -77,7 +77,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
 
         //transform message to transition
         message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-        DomibusConnectorMessageType transitionMessage = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+        DomibusConnectorMessageType transitionMessage = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
 
         //send message
         try {

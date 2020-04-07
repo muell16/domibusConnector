@@ -2,6 +2,7 @@ package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
+import org.apache.commons.lang3.ArrayUtils;
 
 public final class DomibusConnectorMessageConfirmationBuilder {
 
@@ -31,5 +32,11 @@ public final class DomibusConnectorMessageConfirmationBuilder {
             throw new IllegalArgumentException("Evidence type must be set!");
         }
         return new DomibusConnectorMessageConfirmation(evidenceType, evidence);
+    }
+
+    public DomibusConnectorMessageConfirmationBuilder copyPropertiesFrom(DomibusConnectorMessageConfirmation c) {
+        this.evidence = ArrayUtils.clone(c.getEvidence());
+        this.evidenceType = c.getEvidenceType();
+        return this;
     }
 }

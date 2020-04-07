@@ -13,9 +13,6 @@ import java.nio.file.Paths;
 
 @Component
 @ConfigurationProperties(prefix = "connector.persistence.filesystem")
-@PropertySource("classpath:eu/domibus/connector/persistence/config/default-filesystem-config.properties")
-//@ConditionalOnProperty(name="connector.persistence.big-data-impl-class", havingValue = "eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceFilesystemImpl")
-//@Profile("storage-fs")
 @Validated
 public class DomibusConnectorFilesystemPersistenceProperties {
 

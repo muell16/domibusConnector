@@ -5,7 +5,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmission
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -25,10 +25,13 @@ public class GatewayLinkAsyncSubmitToGwService implements DomibusConnectorGatewa
     @Autowired
     private TransportStatusService transportStatusService;
 
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
     @Override
     public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
 
-        DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
+        DomibusConnectorMessageType messageType = transformerService.transformDomainToTransition(message);
 
         //TODO: try catch ...?
 //        submitToGatewayService.submitMessage(messageType);

@@ -1,6 +1,9 @@
 package eu.domibus.connector.controller.service.queue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -25,6 +29,7 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
     private JmsTemplate jmsTemplate;
 
     private String queueName;
+    private ObjectMapper objectMapper;
 
     //setter
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
@@ -33,6 +38,11 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
 
     public void setQueueName(String queueName) {
         this.queueName = queueName;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.objectMapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
     }
 
     @Override
@@ -45,11 +55,12 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
             jmsTemplate.send(queueName, new MessageCreator() {
                 @Override
                 public Message createMessage(Session session) throws JMSException {
-                    //TextMessage textMessage = session.createTextMessage(connectorMessageId);
-                    //return textMessage;
-                    return session.createObjectMessage(message);
+                    try {
+                        return session.createTextMessage(objectMapper.writeValueAsString(message));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Error while serializing message to json", e);
+                    }
                 }
-
             });
         } catch (JmsException je) {
             LOGGER.error("Exception putting message [{}] on queue [{}]!", connectorMessageId, queueName);

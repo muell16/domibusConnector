@@ -27,7 +27,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorBackendDelivery
 import eu.domibus.connector.backend.persistence.service.BackendClientInfoPersistenceService;
 import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliverToController;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
@@ -50,14 +50,11 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorWsBackendImpl.class);
 
-
     private WebServiceContext webServiceContext;
-
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
-
     private MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
-
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
+    private DomibusConnectorDomainMessageTransformerService transformerService;
 
     //setter
     @Resource
@@ -68,6 +65,11 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     @Autowired
     public void setBackendClientInfoPersistenceService(BackendClientInfoPersistenceService backendClientInfoPersistenceService) {
         this.backendClientInfoPersistenceService = backendClientInfoPersistenceService;
+    }
+
+    @Autowired
+    public void setDomibusConnectorDomainMessageTransformerService(DomibusConnectorDomainMessageTransformerService transformerService) {
+        this.transformerService = transformerService;
     }
 
     @Autowired
@@ -124,7 +126,8 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
         DomibusConnectorMessage processedMessage = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-        return DomibusConnectorDomainMessageTransformer.transformDomainToTransition(processedMessage);
+//        return DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(processedMessage);
+        return transformerService.transformDomainToTransition(processedMessage);
     }
 
 
@@ -136,7 +139,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             DomibusConnectorBackendClientInfo backendClientInfoByName = null;
             backendClientInfoByName = checkBackendClient();
 
-            DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(submitMessageRequest);
+            DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getBackendName());
             LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getBackendName());
 

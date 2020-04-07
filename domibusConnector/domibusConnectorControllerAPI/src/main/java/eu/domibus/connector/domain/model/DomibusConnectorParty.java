@@ -65,4 +65,23 @@ public class DomibusConnectorParty implements Serializable {
         return builder.toString();        
     }
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof DomibusConnectorParty)) return false;
+
+		DomibusConnectorParty that = (DomibusConnectorParty) o;
+
+		if (partyId != null ? !partyId.equals(that.partyId) : that.partyId != null) return false;
+		if (partyIdType != null ? !partyIdType.equals(that.partyIdType) : that.partyIdType != null) return false;
+		return role != null ? role.equals(that.role) : that.role == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = partyId != null ? partyId.hashCode() : 0;
+		result = 31 * result + (partyIdType != null ? partyIdType.hashCode() : 0);
+		result = 31 * result + (role != null ? role.hashCode() : 0);
+		return result;
+	}
 }

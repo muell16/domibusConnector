@@ -3,7 +3,6 @@ package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
-import eu.domibus.connector.domain.model.helper.CopyHelper;
 
 import java.util.Arrays;
 
@@ -43,8 +42,10 @@ public final class DomibusConnectorMessageContentBuilder {
         return xmlContent != null && document != null;
     }
 
-    public DomibusConnectorMessageContentBuilder copyPropertiesForm(DomibusConnectorMessageContent content) {
-        this.document = CopyHelper.copyDocument(content.getDocument());
+    public DomibusConnectorMessageContentBuilder copyPropertiesFrom(DomibusConnectorMessageContent content) {
+        this.document = DomibusConnectorMessageDocumentBuilder.createBuilder()
+                .copyPropertiesFrom(content.getDocument())
+                .build();
         this.xmlContent = Arrays.copyOf(content.getXmlContent(), content.getXmlContent().length);
         return this;
     }

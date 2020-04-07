@@ -114,12 +114,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = confirmationMessageBuilder
 					.useNationalIdAsRefToMessageId()
+					.switchFromToParty()
 					.build();
 			confirmationMessage.persistEvidenceToMessage();
 
 			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
 		} catch (DomibusConnectorEvidencesToolkitException ete) {
-			//TODO: better logging....
 		    LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
 			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, ete.getMessage());
 			messagePersistenceService.rejectMessage(message);

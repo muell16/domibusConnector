@@ -3,7 +3,7 @@ package eu.domibus.connector.link.impl.wsplugin;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
@@ -12,7 +12,6 @@ import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatew
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
@@ -31,6 +30,9 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
     @Autowired
     SubmitToConnector submitToConnector;
 
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
     private WebServiceContext webServiceContext;
 
     @Resource
@@ -43,7 +45,7 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
         ActiveLinkPartner activeLinkPartner = endpointAuthenticator.checkBackendClient(webServiceContext);
 
-        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest);
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {

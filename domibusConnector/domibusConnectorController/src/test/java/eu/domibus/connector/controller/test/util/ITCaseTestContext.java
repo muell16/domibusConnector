@@ -8,6 +8,7 @@ import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -21,15 +22,10 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.function.Consumer;
 
 @SpringBootApplication(scanBasePackages = {
         "eu.domibus.connector.controller",
@@ -80,15 +76,12 @@ public class ITCaseTestContext {
     @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
     public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
         return new ArrayBlockingQueue<>(100);
-        //return Collections.synchronizedList(new ArrayList<>());
-
     }
 
     @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
     @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
     public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
         return new ArrayBlockingQueue<>(100);
-//            return Collections.synchronizedList(new ArrayList<>());
     }
 
     @Bean
@@ -103,25 +96,7 @@ public class ITCaseTestContext {
 
     @Bean
     public DomibusConnectorBackendDeliveryService domibusConnectorBackendDeliveryService() {
-        final TransactionTemplate txTemplate = new TransactionTemplate(txManager);
-        txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-        return message -> {
-            LOGGER.info("Delivered Message [{}] to Backend");
-
-
-////            txTemplate.executeWithoutResult(transactionStatus -> {
-//            TransportStatusService.TransportId dummyBackend = transportStatusService.createOrGetTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
-//            TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-//            state.setConnectorTransportId(dummyBackend);
-//            state.setStatus(TransportState.ACCEPTED);
-//            state.setRemoteMessageId("NAT_" + UUID.randomUUID().toString()); //assign national message id
-//            state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-////            transportStatusService.updateTransportStatus(state);
-////            });
-
-            toBackendDeliveredMessages().add(message);
-        };
+        return new QueueBasedDomibusConnectorBackendDeliveryService();
     }
 
     @Bean
@@ -157,11 +132,19 @@ public class ITCaseTestContext {
             TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
             state.setConnectorTransportId(dummyBackend);
             state.setStatus(TransportState.ACCEPTED);
-            state.setRemoteMessageId("BACKEND_" + UUID.randomUUID().toString()); //assigned EBMS ID
+
+            String backendId = "BACKEND_" + UUID.randomUUID().toString();
+            state.setRemoteMessageId(backendId); //assigned EBMS ID
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStatusService.updateTransportToBackendClientStatus(dummyBackend , state);
 
-            toBackendDeliveredMessages.add(message);
+            DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                    .copyPropertiesFrom(message)
+                    .build();
+            msg.getMessageDetails().setBackendMessageId(backendId);
+
+            toBackendDeliveredMessages.add(msg);
+
         }
     }
 
@@ -187,11 +170,17 @@ public class ITCaseTestContext {
             state.setConnectorTransportId(dummyGW);
 //            state.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
             state.setStatus(TransportState.ACCEPTED);
-            state.setRemoteMessageId("EBMS_" + UUID.randomUUID().toString()); //assigned EBMS ID
+            String ebmsId = "EBMS_" + UUID.randomUUID().toString();
+            state.setRemoteMessageId(ebmsId); //assigned EBMS ID
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStatusService.updateTransportToGatewayStatus(dummyGW , state);
 
-            toGatewayDeliveredMessages.add(message);
+            DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                    .copyPropertiesFrom(message)
+                    .build();
+            msg.getMessageDetails().setEbmsMessageId(ebmsId);
+
+            toGatewayDeliveredMessages.add(msg);
         }
     }
 

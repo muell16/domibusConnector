@@ -2,7 +2,7 @@ package eu.domibus.connector.gateway.link.jms.impl;
 
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformer;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncDeliverToConnectorReceiveResponseService;
@@ -27,6 +27,9 @@ public class HandleFromGwToConnectorDeliveredMessage implements DomibusConnector
     @Lazy
     private DomibusConnectorAsyncDeliverToConnectorReceiveResponseService sendResponseService;
 
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
     public void setControllerService(DomibusConnectorGatewayDeliveryService controllerService) {
         this.controllerService = controllerService;
     }
@@ -39,7 +42,7 @@ public class HandleFromGwToConnectorDeliveredMessage implements DomibusConnector
     public void deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("Deliver Message....");
 
-        DomibusConnectorMessage message = DomibusConnectorDomainMessageTransformer.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage message = transformerService.transformTransitionToDomain(deliverMessageRequest);
 
         DomibusConnectorMessageResponseType response = new DomibusConnectorMessageResponseType();
         response.setResponseForMessageId(deliverMessageRequest.getMessageDetails().getEbmsMessageId());
