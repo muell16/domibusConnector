@@ -18,12 +18,18 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessage implements Serializable {
 
-	private final DomibusConnectorMessageDetails messageDetails;
+	private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<DomibusConnectorMessageAttachment>();
 	private final List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
 	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
     private String connectorMessageId;
+
+	/**
+	 * Default constructor, needed for frameworks
+	 * to serialize and deserialize objects of this class
+	 */
+    public DomibusConnectorMessage() {}
 
 	/**
 	 * This constructor initializes an instance of a DomibusConnectorMessage in case

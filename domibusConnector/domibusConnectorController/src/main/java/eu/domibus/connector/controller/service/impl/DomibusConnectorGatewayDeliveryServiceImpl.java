@@ -63,6 +63,10 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 
     @Override
     public void deliverMessageFromGatewayToController(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
+        if (message == null) {
+            throw new DomibusConnectorControllerException("Message must not be null!");
+        }
+
         if (StringUtils.isEmpty(message.getConnectorMessageId())) {
             String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
             if (StringUtils.isEmpty(connectorMessageId))

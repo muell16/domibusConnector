@@ -1,6 +1,8 @@
 
 package eu.domibus.connector.backend.ws.link.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueProperties;
@@ -11,6 +13,7 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.jms.*;
 
+import eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactory;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +59,16 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
 
     private long receiveTimeout;
     private String waitQueueName;
+    private ObjectMapper mapper;
 
 
     @PostConstruct
     public void init() {
         this.waitQueueName = backendLinkInternalWaitQueueProperties.getName();
         this.receiveTimeout = backendLinkInternalWaitQueueProperties.getReceiveTimeout();
+
+        this.mapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
+
     }
 
     @Override
@@ -83,24 +90,38 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         LOGGER.debug("#putMessageInWaitingQueue: put message id [{}] for backendClientName [{}] in waiting queue [{}]",
                 connectorMessageId, backendClientName, waitQueueName);
         jmsTemplate.send(waitQueueName, (Session session) -> {
-            Message msg = session.createObjectMessage(backendMessage);
-            msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
-            msg.setStringProperty(BACKEND_CLIENT_NAME, backendClientName);
-            msg.setStringProperty(CONNECTOR_MESSAGE_ID, connectorMessageId);
-            msg.setBooleanProperty(CONNECTOR_BACKEND_IS_PUSH_BACKEND, backendClientInfo.isPushBackend());                
-            msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
-            LOGGER.trace("#putMessageInWaitingQueue: Send message [{}] to queue [{}]", msg, waitQueueName);
-            return msg;          
+
+            try {
+                //Message msg = session.createObjectMessage(backendMessage);
+                Message msg = session.createTextMessage(mapper.writeValueAsString(backendMessage));
+                msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
+                msg.setStringProperty(BACKEND_CLIENT_NAME, backendClientName);
+                msg.setStringProperty(CONNECTOR_MESSAGE_ID, connectorMessageId);
+                msg.setBooleanProperty(CONNECTOR_BACKEND_IS_PUSH_BACKEND, backendClientInfo.isPushBackend());
+                msg.setIntProperty(BACKEND_CLIENT_DELIVERY_RETRIES, 0);
+                LOGGER.trace("#putMessageInWaitingQueue: Send message [{}] to queue [{}]", msg, waitQueueName);
+                return msg;
+
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+
         });                
     }
         
     @JmsListener(destination="#{backendLinkInternalWaitQueueProperties.getName()}", selector=CONNECTOR_BACKEND_IS_PUSH_BACKEND + " = TRUE")
-    public void pushToBackend(ObjectMessage msg) throws JMSException {
-        LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
-        DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
-        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(backendMessage.getDomibusConnectorMessage().getConnectorMessageId());
-        pushMessageToBackendCallback.push(backendMessage);
-        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC((String)null);
+    public void pushToBackend(TextMessage msg) throws JMSException {
+        try {
+            LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
+            DomibusConnectorBackendMessage backendMessage = mapper.readValue(msg.getText(), DomibusConnectorBackendMessage.class);
+//        DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
+            SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(backendMessage.getDomibusConnectorMessage().getConnectorMessageId());
+            pushMessageToBackendCallback.push(backendMessage);
+            SetMessageOnLoggingContext.putConnectorMessageIdOnMDC((String)null);
+        } catch (JsonProcessingException e) {
+           throw new RuntimeException("Was not able to deserialize message back from queue " + backendLinkInternalWaitQueueProperties.getName(), e);
+        }
     }
 
     @Override
@@ -110,16 +131,23 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         try {            
             jmsTemplate.setReceiveTimeout(receiveTimeout);
 
-            ObjectMessage receiveSelected = null;
+//            ObjectMessage receiveSelected = null;
+            TextMessage receiveSelected = null;
             do {
                 String selector = String.format("%s = '%s' AND %s = FALSE", BACKEND_CLIENT_NAME, backendName, CONNECTOR_BACKEND_IS_PUSH_BACKEND);
                 LOGGER.debug("#getConnectorMessageIdForBackend: try to receiveSelected message from queue [{}] with selector [{}]", waitQueueName, selector);
-                receiveSelected = (ObjectMessage) jmsTemplate.receiveSelected(waitQueueName, selector);
+//                receiveSelected = (ObjectMessage) jmsTemplate.receiveSelected(waitQueueName, selector);
+                receiveSelected = (TextMessage) jmsTemplate.receiveSelected(waitQueueName, selector);
                 LOGGER.trace("#getConnectorMessageIdForBackend: received message [{}]", receiveSelected);
                 if (receiveSelected != null) {
-                    DomibusConnectorBackendMessage msg = (DomibusConnectorBackendMessage) receiveSelected.getObject();
-                    LOGGER.trace("#getConnectorMessageIdForBackend: got message [{}] from queue [{}]", msg, waitQueueName);
-                    waitingMessages.add(msg.getDomibusConnectorMessage());
+                    try {
+//                    DomibusConnectorBackendMessage msg = (DomibusConnectorBackendMessage) receiveSelected.getObject();
+                        DomibusConnectorBackendMessage msg = mapper.readValue(receiveSelected.getText(), DomibusConnectorBackendMessage.class);
+                        LOGGER.trace("#getConnectorMessageIdForBackend: got message [{}] from queue [{}]", msg, waitQueueName);
+                        waitingMessages.add(msg.getDomibusConnectorMessage());
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Was not able to deserialize message back from queue " + backendLinkInternalWaitQueueProperties.getName(), e);
+                    }
                 }
             } while (receiveSelected != null);
             

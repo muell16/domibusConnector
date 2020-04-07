@@ -7,8 +7,10 @@ import java.sql.Blob;
 import java.util.Date;
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_BIGDATA")
+@Table(name = PDomibusConnectorBigData.TABLE_NAME)
 public class PDomibusConnectorBigData {
+
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_BIGDATA";
 
     @Id
     @Column(name="ID")

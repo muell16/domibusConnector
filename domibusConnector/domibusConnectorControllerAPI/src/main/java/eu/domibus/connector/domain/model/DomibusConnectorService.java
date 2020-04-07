@@ -13,6 +13,13 @@ public class DomibusConnectorService implements Serializable {
 	private String service;
 	private String serviceType;
 
+
+	/**
+	 * Default constructor, needed for frameworks
+	 * to serialize and deserialize objects of this class
+	 */
+	public DomibusConnectorService() {}
+
 	/**
 	 * 
 	 * @param service service

@@ -37,7 +37,7 @@ public class HandleFromGwToConnectorSentResponse {
             //TODO: map error list
             //transportState.setMessageErrorList();
         }
-        transportStatusService.updateTransportToGatewayStatus(transportState);
+        transportStatusService.updateTransportToGatewayStatus(new TransportStatusService.TransportId(response.getResponseForMessageId()), transportState);
     }
 
 }

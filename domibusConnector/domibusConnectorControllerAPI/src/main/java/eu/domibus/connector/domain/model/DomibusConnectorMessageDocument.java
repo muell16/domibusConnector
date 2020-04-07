@@ -16,9 +16,12 @@ import org.springframework.core.style.ToStringCreator;
 public class DomibusConnectorMessageDocument implements Serializable  {
 
 	private LargeFileReference document;
-	private final String documentName;
-	private final DetachedSignature detachedSignature;
+	private String documentName;
+	private DetachedSignature detachedSignature;
 	private String hashValue;
+
+
+	public DomibusConnectorMessageDocument() {}
 
 	/**
 	 * Constructor for DomibusConnectorMessageDocument with all attributes required

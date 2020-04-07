@@ -53,7 +53,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 			ack = submissionClient.submitMessage(request);
 		} catch(Exception e) {
 			state.setStatus(TransportState.FAILED);
-            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
+            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state.getConnectorTransportId(), state);
             
 			throw new DomibusConnectorGatewaySubmissionException(e);
 		}
@@ -66,10 +66,10 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
             state.setRemoteMessageId(ebmsId);
             state.setStatus(TransportState.ACCEPTED);
-            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
+            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state.getConnectorTransportId(), state);
         } else if (ack != null){
             state.setStatus(TransportState.FAILED);
-            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state);
+            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state.getConnectorTransportId(), state);
             LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW declined message and sent [{}] back", ack.getResultMessage());
             if (!StringUtils.isEmpty(ack.getResultMessage()))
                 throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());

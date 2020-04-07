@@ -235,7 +235,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
 
         persistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-        bigDataPersistence.persistAllBigFilesFromMessage(epoMessage);
+//        bigDataPersistence.persistAllBigFilesFromMessage(epoMessage);
 
         //start message processing in backendLinkModule
         DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);
@@ -269,7 +269,7 @@ public class BackendLinkWsTestMessageFlowITCase {
             DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
 
             persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
-            bigDataPersistence.persistAllBigFilesFromMessage(message);
+//            bigDataPersistence.persistAllBigFilesFromMessage(message);
 
             //start message processing in backendLinkModule
             DomibusConnectorBackendDeliveryService messageToBackend = backendApplicationContext.getBean(DomibusConnectorBackendDeliveryService.class);

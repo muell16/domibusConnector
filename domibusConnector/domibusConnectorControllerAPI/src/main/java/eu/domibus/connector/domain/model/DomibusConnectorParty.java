@@ -14,8 +14,15 @@ public class DomibusConnectorParty implements Serializable {
 	private String partyIdType;
 	private String role;
 
+
 	/**
-	 * 
+	 * Default constructor, needed for frameworks
+	 * to serialize and deserialize objects of this class
+	 */
+	public DomibusConnectorParty() {}
+
+	/**
+	 * DomibusConnectorMessageDocument
 	 * @param partyId partyId
 	 * @param partyIdType partyIdType
 	 * @param role    role

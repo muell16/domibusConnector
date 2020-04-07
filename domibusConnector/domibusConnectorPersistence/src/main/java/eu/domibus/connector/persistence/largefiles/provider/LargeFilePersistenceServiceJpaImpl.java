@@ -76,6 +76,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             
             if(bigDataOptional.isPresent()) {
             	bigData = bigDataOptional.get();
+            } else {
+                throw new RuntimeException(String.format("No data found in DB for JPA based LargeFileReference with id [%s]\n" +
+                        "Check Table %s", storageRef, PDomibusConnectorBigData.TABLE_NAME));
             }
 
             JpaBasedLargeFileReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedLargeFileReference();

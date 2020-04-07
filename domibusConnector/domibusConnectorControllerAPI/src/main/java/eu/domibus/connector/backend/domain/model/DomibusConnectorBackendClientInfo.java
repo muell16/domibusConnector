@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.core.style.ToStringCreator;
 
@@ -125,6 +126,7 @@ public class DomibusConnectorBackendClientInfo implements Serializable {
         this.enabled = enabled;
     }
 
+    @JsonIgnore
     public boolean isPushBackend() {
         return this.backendPushAddress != null;
     }

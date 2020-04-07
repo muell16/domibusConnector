@@ -38,9 +38,8 @@ public class GatewayLinkAsyncSubmitToGwService implements DomibusConnectorGatewa
                 new TransportStatusService.DomibusConnectorTransportState();
 
         transportState.setStatus(TransportState.PENDING);
-        transportState.setConnectorTransportId(new TransportStatusService.TransportId(message.getConnectorMessageId()));
 
-        transportStatusService.updateTransportToGatewayStatus(transportState);
+        transportStatusService.updateTransportToGatewayStatus(new TransportStatusService.TransportId(message.getConnectorMessageId()), transportState);
     }
 
 

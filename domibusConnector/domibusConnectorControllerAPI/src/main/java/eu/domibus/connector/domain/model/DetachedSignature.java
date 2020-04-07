@@ -9,9 +9,11 @@ import java.io.Serializable;
  */
 public class DetachedSignature implements Serializable {
 
-	private final byte detachedSignature[];
-	private final String detachedSignatureName;
-	private final DetachedSignatureMimeType mimeType;
+	private byte detachedSignature[];
+	private String detachedSignatureName;
+	private DetachedSignatureMimeType mimeType;
+
+	public DetachedSignature() {}
 
 	/**
 	 * 

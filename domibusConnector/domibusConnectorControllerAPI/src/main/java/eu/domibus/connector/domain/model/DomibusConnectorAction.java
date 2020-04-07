@@ -15,6 +15,12 @@ public class DomibusConnectorAction implements Serializable {
 	private boolean documentRequired;
 
 	/**
+	 * Default constructor, needed for frameworks
+	 * to serialize and deserialize objects of this class
+	 */
+	public DomibusConnectorAction() {}
+
+	/**
 	 * 
 	 * @param action action
 	 * @param documentRequired    documentRequired

@@ -16,11 +16,13 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessageAttachment implements Serializable {
 
-	private final String identifier;
+	private String identifier;
 	private LargeFileReference attachment;
 	private String name;
 	private String mimeType;
 	private String description;
+
+	public DomibusConnectorMessageAttachment() {}
 
 	/**
 	 * Constructor filling the two mandatory attributes

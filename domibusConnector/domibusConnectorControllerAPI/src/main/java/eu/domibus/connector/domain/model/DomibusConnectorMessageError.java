@@ -13,9 +13,11 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessageError implements Serializable {
 
-	private final String text;
-	private final String details;
-	private final String source;
+	private String text;
+	private String details;
+	private String source;
+
+	public DomibusConnectorMessageError() {}
 
 	/**
 	 * 
