@@ -11,6 +11,7 @@ import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.core.io.ClassPathResource;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 
 @Disabled("test conflicts with other tests")
+@Ignore
 public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCase {
 
     private DomibusConnectorBigDataDao bigDataDao;
@@ -60,6 +62,7 @@ public class PDomibusConnectorBigDataDBUnit extends CommonPersistenceDBUnitITCas
 
 
     @Test(timeout=20000)
+    @Ignore
     public void testSave() throws SQLException, DataSetException {
         long msgId = 72L;
         PDomibusConnectorMessage msg = messageDao.findById(msgId).get();
