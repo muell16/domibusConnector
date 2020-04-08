@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
@@ -87,7 +88,9 @@
         <spring.cloud.version>2.2.1.RELEASE</spring.cloud.version>
         <spring.boot.version>2.2.5.RELEASE</spring.boot.version>
         <org.junit.jupiter.version>5.5.2</org.junit.jupiter.version>
-        <vaadin.version>14.1.18</vaadin.version>
+        <vaadin.version>14.1.25</vaadin.version>
+        <dss.tools.version>5.4</dss.tools.version>
+        <org.bouncycastl.version>1.64</org.bouncycastl.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -149,18 +152,32 @@
                         <artifactId>bcmail-jdk14</artifactId>
                         <groupId>bouncycastle</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                        <groupId>org.bouncycastl</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-document</artifactId>
+                <version>${dss.tools.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                        <groupId>org.bouncycastl</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-utils-apache-commons</artifactId>
-                <version>5.4</version>
+                <version>${dss.tools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.64</version>
-                <type>jar</type>
+                <version>${org.bouncycastl.version}</version>
             </dependency>
             <!-- jaxb -->
             <dependency>
