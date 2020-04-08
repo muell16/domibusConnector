@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorStarter</artifactId>DomibusConnectorPropertiesPersistenceServiceImpl
+            <artifactId>domibusConnectorStarter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
