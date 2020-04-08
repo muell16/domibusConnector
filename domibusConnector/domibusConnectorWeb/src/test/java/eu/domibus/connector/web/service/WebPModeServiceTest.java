@@ -34,8 +34,7 @@ public class WebPModeServiceTest {
             return new WebPModeService();
         }
     }
-
-    LiquibaseUpgradeInitITCase
+    
     @Autowired
     WebPModeService webPModeService;
 
