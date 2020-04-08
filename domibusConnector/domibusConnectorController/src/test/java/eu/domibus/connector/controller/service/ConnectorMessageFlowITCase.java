@@ -765,7 +765,7 @@ public class ConnectorMessageFlowITCase {
             this.gatewaySubmissionService.deliverMessageFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             DomibusConnectorMessage deliveryEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(domibusConnectorMessage,
-                    DomainEntityCreator.createDeliveryEvidenceForMessage());
+                    DomainEntityCreator.createMessageDeliveryConfirmation());
             deliveryEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             deliveryEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_3");
             this.gatewaySubmissionService.deliverMessageFromGatewayToController(deliveryEvidenceForMessage);
