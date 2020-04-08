@@ -43,6 +43,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
  * within spring context
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+ @Disabled
 public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DatabaseInitUpgradeITCase.class);
@@ -100,6 +101,7 @@ public class DatabaseInitUpgradeITCase extends CommonDatabaseMigrationITCase {
 
 
     @Test //(timeout=20000)
+    @Disabled
     public void testMigrate3to4_h2() throws SQLException, LiquibaseException, DatabaseException, IOException {
         Properties props = loadH2TestProperties();
         props.put("spring.datasource.url", "jdbc:h2:mem:3to4db");
