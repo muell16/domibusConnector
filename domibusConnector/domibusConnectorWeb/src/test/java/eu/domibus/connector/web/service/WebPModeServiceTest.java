@@ -3,6 +3,7 @@ package eu.domibus.connector.web.service;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
 import eu.domibus.connector.web.viewAreas.configuration.util.ConfigurationUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
     properties = { "spring.liquibase.change-log=classpath:/db/changelog/install.xml" }
 )
@@ -34,7 +37,7 @@ public class WebPModeServiceTest {
             return new WebPModeService();
         }
     }
-    
+
     @Autowired
     WebPModeService webPModeService;
 
