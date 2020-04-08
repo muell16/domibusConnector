@@ -508,7 +508,7 @@ public class DomibusSecurityContainer {
      * @return the created InMemoryDocument
      */
     @Deprecated
-    DSSDocument createInMemoryDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
+    DSSDocument createLargeFileBasedDssDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
         LargeFileReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
         try (InputStream inputStream = readableDataSource.getInputStream()){
             byte[] content = StreamUtils.copyToByteArray(inputStream);
@@ -519,9 +519,9 @@ public class DomibusSecurityContainer {
         }
     }
 
-    DSSDocument createLargeFileBasedDssDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
-        return new LargeFileBasedDssDocument(bigDataPersistenceService, dataRef);
-    }
+//    DSSDocument createLargeFileBasedDssDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
+//        return new LargeFileBasedDssDocument(bigDataPersistenceService, dataRef);
+//    }
 
 
 }

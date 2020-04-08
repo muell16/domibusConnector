@@ -254,6 +254,8 @@ public class ConnectorMessageFlowITCase {
                     .as("Parties must be switched")
                     .isEqualTo(DomainEntityCreator.createPartyAT());
 
+            DomibusConnectorMessage deliveryEvidenceMsg = toBackendDeliveredMessages.take();
+
             DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))
                     .as("Message must be in confirmed state")

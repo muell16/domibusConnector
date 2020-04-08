@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
@@ -47,9 +48,9 @@ import java.util.concurrent.BlockingQueue;
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ITCaseTestContext.class})
-@TestPropertySource("classpath:config/application-test.properties")
+//@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {ITCaseTestContext.class})
+//@TestPropertySource("classpath:config/application-test.properties")
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
