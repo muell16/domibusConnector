@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -812,7 +813,8 @@ public class ConnectorMessageFlowITCase {
      *   -) Generate evidence RETRIEVAL
      *
      *  ASSERT:
-     *   -) backend has received RELAY_REMMD_ACCEPTANCE, NON_DELIVERY, RETRIEVAL
+     *   -) backend has received RELAY_REMMD_ACCEPTANCE, NON_DELIVERY
+     *   -) backend has NOT received any RETRIEVAL evidence!
      *
      *   -) message is still in rejected state
      *
@@ -859,15 +861,15 @@ public class ConnectorMessageFlowITCase {
             assertThat(deliveryEvidenceMsg)
                     .isNotNull();
 
-            DomibusConnectorMessage retrievalEvidenceMsg = toBackendDeliveredMessages.take();
-            assertThat(retrievalEvidenceMsg)
-                    .isNotNull();
 
+            DomibusConnectorMessage retrieval = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
+            assertThat(deliveryEvidenceMsg).as("There should be no retrieval message transported to the backend!").isNull();
 
             //ASSERT MSG State
             DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageRejected(originalMessage))
                     .isTrue();
+
 
         });
     }
