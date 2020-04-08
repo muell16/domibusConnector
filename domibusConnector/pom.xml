@@ -1040,15 +1040,32 @@
     
     <reporting>
         <plugins>
-            <plugin>
-                <groupId>at.gv.brz.jqeu</groupId>
+             <plugin>
+                <groupId>eu.ecodex.connector.utils.property-reporting</groupId>
                 <artifactId>spring-properties-reporting-plugin</artifactId>
-                <version>0.9-alpha4-SNAPSHOT</version>
+                <reportSets>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>spring-properties-report</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
                 <configuration>
+                    <linkJavadoc>true</linkJavadoc>
                     <includedDependencies>
-                        <dependency>
-                            <groupId>^eu.domibus.connector</groupId>
-                        </dependency>
+                        <includedDependency>
+                            <groupId>^org.springframework</groupId>
+                        </includedDependency>
+                        <includedDependency>
+                            <groupId>^eu.domibus</groupId>
+                        </includedDependency>
                     </includedDependencies>
                 </configuration>
             </plugin>
