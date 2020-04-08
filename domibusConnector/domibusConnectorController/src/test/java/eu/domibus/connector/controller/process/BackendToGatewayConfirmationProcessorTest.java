@@ -11,6 +11,7 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -133,7 +134,7 @@ public class BackendToGatewayConfirmationProcessorTest {
 //                        Mockito.any(),
 //                        any(DomibusConnectorEvidenceType.class));
 
-        Mockito.verify(messagePersistenceService, times(1)).checkMessageConfirmed(any(DomibusConnectorMessage.class));
+//        Mockito.verify(messagePersistenceService, times(1)).checkMessageConfirmed(any(DomibusConnectorMessage.class));
 
     }
 
