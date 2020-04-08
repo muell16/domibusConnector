@@ -235,7 +235,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            backendSubmissionService.submitToController(deliveryTriggerMessage);
+            gatewaySubmissionService.deliverMessageFromGatewayToController(deliveryTriggerMessage);
 
 
             DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.take();
