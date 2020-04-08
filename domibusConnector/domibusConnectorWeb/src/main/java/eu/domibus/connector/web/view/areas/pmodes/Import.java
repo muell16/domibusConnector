@@ -20,8 +20,7 @@ import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
 import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
 
-//@HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
+
 @Component
 @UIScope
 public class Import extends VerticalLayout {
