@@ -94,5 +94,8 @@ Upgraded to latest e-Codex Security Library 1.12.2 (this includes the DSS Update
 Added ID column in Table DOMIBUS_CONNECTOR_PROPERTY, check the migration scripts
 
 === 4.1.9
-Bugfix: Fixes on with connector distributed documentation artifacts
+Bugfix: 
+
+* Fixes the with the connector distributed documentation artifacts
+* Fixes errors within the migration scripts and initial database scripts for pre 4.1.8 to upgrade to 4.1.8 database
 
