@@ -99,15 +99,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         setDeliveredToGateway(evidenceMessage);
 
 
-        if (!messagePersistenceService.checkMessageConfirmed(originalMessage)) {
-            messagePersistenceService.confirmMessage(originalMessage);
-        }
+        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
+        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
-
-        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type {} for originalMessage {} to gateway.", confirmation.getEvidenceType(), originalMessage);
+        LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", confirmation.getEvidenceType(), originalMessage);
 	}
 
-	private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {
+    private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {
         try {
             gwSubmissionService.submitToGateway(evidenceMessage);
         } catch (DomibusConnectorGatewaySubmissionException gwse) {
@@ -127,6 +125,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             LOGGER.error("persistence Exception occured", persistenceException);
         }
     }
+
 
 
 }

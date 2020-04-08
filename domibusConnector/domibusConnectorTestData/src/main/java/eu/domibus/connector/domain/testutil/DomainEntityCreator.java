@@ -56,6 +56,22 @@ public class DomainEntityCreator {
         return s;
     }
 
+    public static DomibusConnectorMessageConfirmation createMessageSubmissionAcceptanceConfirmation() {
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+        confirmation.setEvidence("<EVIDENCE1_SUBMISSION_ACCEPTANCE/>".getBytes());
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+        return confirmation;
+    }
+
+
+
+    public static DomibusConnectorMessageConfirmation createMessageSubmissionRejectionConfirmation() {
+        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
+        confirmation.setEvidence("<EVIDENCE1_SUBMISSION_REJECT/>".getBytes());
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
+        return confirmation;
+    }
+
     public static DomibusConnectorMessageConfirmation createMessageRelayRemmdAcceptanceConfirmation() {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
         confirmation.setEvidence("<EVIDENCE1_RELAY_REMMD/>".getBytes());
@@ -77,17 +93,10 @@ public class DomainEntityCreator {
         return confirmation;
     }
 
-    public static DomibusConnectorMessageConfirmation createMessageSubmissionAcceptanceConfirmation() {
+    public static DomibusConnectorMessageConfirmation createRetrievalEvidenceMessage() {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
-        confirmation.setEvidence("<EVIDENCE1_SUBMISSION_ACCEPTANCE/>".getBytes());
-        confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
-        return confirmation;
-    }
-
-    public static DomibusConnectorMessageConfirmation createMessageSubmissionRejectionConfirmation() {
-        DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
-        confirmation.setEvidence("<EVIDENCE1_SUBMISSION_REJECT/>".getBytes());
-        confirmation.setEvidenceType(DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
+        confirmation.setEvidence("<EVIDENCE_RETRIEVAL/>".getBytes());
+        confirmation.setEvidenceType(DomibusConnectorEvidenceType.RETRIEVAL);
         return confirmation;
     }
     
@@ -216,8 +225,8 @@ public class DomainEntityCreator {
 
         messageDetails.setAction(createActionForm_A());
         messageDetails.setService(createServiceEPO());
-        messageDetails.setToParty(createPartyAT());
-        messageDetails.setFromParty(createPartyDE());
+        messageDetails.setToParty(message.getMessageDetails().getFromParty());
+        messageDetails.setFromParty(message.getMessageDetails().getToParty());
 
         DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
 
@@ -226,6 +235,34 @@ public class DomainEntityCreator {
         DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setMessageDetails(messageDetails)
                 .addConfirmation(messageDeliveryConfirmation)
+                .build();
+
+        return msg;
+    }
+
+    public static DomibusConnectorMessage creatEvidenceMsgForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
+        DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
+        BeanUtils.copyProperties(message.getMessageDetails(), messageDetails);
+
+        messageDetails.setConversationId(message.getMessageDetails().getConversationId());
+        messageDetails.setEbmsMessageId(null);
+        messageDetails.setBackendMessageId(null);
+        messageDetails.setFinalRecipient(message.getMessageDetails().getOriginalSender());
+        messageDetails.setOriginalSender(message.getMessageDetails().getFinalRecipient());
+        messageDetails.setRefToMessageId(message.getMessageDetails().getEbmsMessageId());     //reference the previous message
+
+        messageDetails.setAction(createActionForm_A());
+        messageDetails.setService(createServiceEPO());
+        messageDetails.setToParty(message.getMessageDetails().getFromParty());
+        messageDetails.setFromParty(message.getMessageDetails().getToParty());
+
+//        DomibusConnectorMessageConfirmation messageDeliveryConfirmation = createMessageRelayRemmdAcceptanceConfirmation();
+
+//        messageDeliveryConfirmation.setEvidence("<xml></xml>".getBytes()); //TODO: load correct xml
+
+        DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
+                .setMessageDetails(messageDetails)
+                .addConfirmation(confirmation)
                 .build();
 
         return msg;

@@ -19,6 +19,10 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 
+import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
+import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.NON_RETRIEVAL;
+import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
+
 @Component(GatewayToBackendConfirmationProcessor.GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
 public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMessageProcessor {
 	
@@ -86,13 +90,9 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
         backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
 
-        boolean confirmedOrRejected = messagePersistenceService.checkMessageConfirmedOrRejected(originalMessage);
-        if (!confirmedOrRejected) {
-        	if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE)
-                    || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.DELIVERY)) {
-                messagePersistenceService.confirmMessage(originalMessage);
-        	}
-        }
+        DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
+        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
+        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
                 originalMessage.getConnectorMessageId());
