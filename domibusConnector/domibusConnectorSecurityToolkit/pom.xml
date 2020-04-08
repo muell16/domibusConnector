@@ -61,6 +61,10 @@
             <artifactId>dss-utils-apache-commons</artifactId>
         </dependency>
         <dependency>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <groupId>org.bouncycastle</groupId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
