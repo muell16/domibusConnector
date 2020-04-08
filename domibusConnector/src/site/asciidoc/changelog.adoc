@@ -91,6 +91,8 @@ Fixed Issue JUEUSW-114, related to Key too long Problem
 === 4.1.8
 Bugfix
 Upgraded to latest e-Codex Security Library 1.12.2 (this includes the DSS Update to 5.2) This enables the usage of newer Algorithms
+Added ID column in Table DOMIBUS_CONNECTOR_PROPERTY, check the migration scripts
 
 === 4.1.9
 Bugfix: Fixes on with connector distributed documentation artifacts
+
