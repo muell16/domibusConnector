@@ -1,76 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>domibusConnectorLauncher</artifactId>
-        <groupId>eu.domibus.connector</groupId>
-        <version>4.1.9-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
     <groupId>eu.domibus.connector</groupId>
-    <artifactId>domibusConnectorWarLauncher</artifactId>
-
-    <packaging>war</packaging>
-
-
-
-    <dependencies>
+    <artifactId>domibusConnectorLauncher</artifactId>
+    <version>4.1.9-RELEASE</version>
+  </parent>
+  <groupId>eu.domibus.connector</groupId>
+  <artifactId>domibusConnectorWarLauncher</artifactId>
+  <packaging>war</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>eu.domibus.connector</groupId>
+      <artifactId>domibusConnectorWeb</artifactId>
+      <version>${project.version}</version>
+      <classifier>classes</classifier>
+      <exclusions>
+        <exclusion>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+          <groupId>org.springframework.boot</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+  <profiles>
+    <profile>
+      <id>productionMode</id>
+      <activation>
+        <property>
+          <name>vaadin.productionMode</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>copy-production-files</goal>
+                  <goal>package-for-production</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <ignoreMavenProxies>false</ignoreMavenProxies>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
         <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
-            <classifier>classes</classifier>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
+          <groupId>com.vaadin</groupId>
+          <artifactId>flow-server-production-mode</artifactId>
         </dependency>
-    </dependencies>
-
-
-
-    <profiles>
-
-        <profile>
-            <id>productionMode</id>
-            <activation>
-                <property>
-                    <name>vaadin.productionMode</name>
-                </property>
-            </activation>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>flow-server-production-mode</artifactId>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>vaadin-maven-plugin</artifactId>
-                        <configuration>
-                            <ignoreMavenProxies>false</ignoreMavenProxies>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>copy-production-files</goal>
-                                    <goal>package-for-production</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
