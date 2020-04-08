@@ -17,10 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -189,6 +191,11 @@ public class MsgContentPersistenceService {
         LargeFileReference largeFileReference = new LargeFileReference();
         largeFileReference.setStorageIdReference(pDomibusConnectorMsgCont.getStorageReferenceId());
         largeFileReference.setStorageProviderName(pDomibusConnectorMsgCont.getStorageProviderName());
+        if (pDomibusConnectorMsgCont.getContent() != null) {
+            largeFileReference.setText(new String(pDomibusConnectorMsgCont.getContent(), StandardCharsets.UTF_8));
+        }
+        largeFileReference.setName(pDomibusConnectorMsgCont.getPayloadName());
+        largeFileReference.setMimetype(pDomibusConnectorMsgCont.getPayloadMimeType());
         LargeFileReference readableDataSource = largeFilePersistenceService.getReadableDataSource(largeFileReference);
         return readableDataSource;
     }
@@ -316,15 +323,24 @@ public class MsgContentPersistenceService {
             msgCont.setMessage(message);
 
             if (ref != null && StringUtils.isEmpty(ref.getStorageProviderName())) {
-                LOGGER.warn("No storage provider is set for the large file reference [{}]!\nWill be converted to default Storage provider!", ref);
+                LOGGER.debug("No storage provider is set for the large file reference [{}]!\nWill be converted to default Storage provider!", ref);
                 ref = convertToDefaultStorageProvider(message.getConnectorMessageId(), ref);
             }
             if (ref != null && StringUtils.isEmpty(ref.getStorageIdReference())) {
                 throw new PersistenceException("No storage id reference is set for the large file reference!");
             }
+            if (ref != null && ref.getStorageProviderName() != null && !largeFilePersistenceService.isStorageProviderAvailable(ref)) {
+                LOGGER.warn("Storage Provider [{}] is not available, will be converted to default provider [{}]",
+                        ref.getStorageProviderName(),
+                        largeFilePersistenceService.getDefaultProvider());
+                ref = convertToDefaultStorageProvider(message.getConnectorMessageId(), ref);
+            }
             if (ref != null) {
                 msgCont.setStorageProviderName(ref.getStorageProviderName());
                 msgCont.setStorageReferenceId(ref.getStorageIdReference());
+                if (StringUtils.isNotEmpty(ref.getText())) {
+                    msgCont.setContent(ref.getText().getBytes(StandardCharsets.UTF_8));
+                }
             }
             return msgCont;
     }

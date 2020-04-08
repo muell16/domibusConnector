@@ -25,6 +25,8 @@ public class LargeFileReference implements DataSource, Serializable {
 
     private Long size = -1l;
 
+    private String text = "";
+
     public LargeFileReference() {}
 
     public LargeFileReference(@NotNull String storageIdReference) {
@@ -32,6 +34,15 @@ public class LargeFileReference implements DataSource, Serializable {
             throw new IllegalArgumentException("StorageIdReference cannot be null!");
         }
         this.storageIdReference = storageIdReference;
+    }
+
+    public LargeFileReference(LargeFileReference ref) {
+        this.storageIdReference = ref.storageIdReference;
+        this.storageProviderName = ref.storageProviderName;
+        this.name = ref.name;
+        this.mimetype = ref.mimetype;
+        this.size = ref.size;
+        this.text = ref.text;
     }
 
     public @Nullable
@@ -89,6 +100,22 @@ public class LargeFileReference implements DataSource, Serializable {
 
     public void setStorageProviderName(String storageProviderName) {
         this.storageProviderName = storageProviderName;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override

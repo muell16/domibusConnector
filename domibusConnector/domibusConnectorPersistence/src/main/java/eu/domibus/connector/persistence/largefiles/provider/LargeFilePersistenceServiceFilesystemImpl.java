@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
+import liquibase.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.security.*;
 import java.util.List;
@@ -46,11 +49,11 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     @Override
     public LargeFileReference getReadableDataSource(LargeFileReference ref) {
-        if (!(ref instanceof FileBasedLargeFileReference)) {
-            throw new PersistenceException(String.format("Can only getReadableDataSource for a [%s] BigDataReference but the provided reference was of type [%s]",
-                    FileBasedLargeFileReference.class, ref.getClass()));
-        }
-        FileBasedLargeFileReference fileBasedReference = (FileBasedLargeFileReference)ref;
+//        if (!(ref instanceof FileBasedLargeFileReference)) {
+//            throw new PersistenceException(String.format("Can only getReadableDataSource for a [%s] BigDataReference but the provided reference was of type [%s]",
+//                    FileBasedLargeFileReference.class, ref.getClass()));
+//        }
+        FileBasedLargeFileReference fileBasedReference = new FileBasedLargeFileReference(ref);
 
         String storageIdReference = fileBasedReference.getStorageIdReference();
         Path filePath = getStoragePath().resolve(storageIdReference);
@@ -344,6 +347,8 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
      */
     public static final class FileBasedLargeFileReference extends LargeFileReference {
 
+        Charset charset = StandardCharsets.UTF_8;
+
         /**
          *
          */
@@ -364,6 +369,19 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         private String initVector;
 
         private String cipherSuite;
+
+        public FileBasedLargeFileReference() {}
+
+        public FileBasedLargeFileReference(LargeFileReference ref) {
+            super(ref);
+
+            if (!StringUtils.isEmpty(ref.getText())) {
+                String[] s = ref.getText().split("__");
+                encryptionKey = new String(Base64Utils.decodeFromString(s[0]), charset);
+                initVector = new String(Base64Utils.decodeFromString(s[1]), charset);
+                cipherSuite = new String(Base64Utils.decodeFromString(s[2]), charset);
+            }
+        }
 
         @Override
         public String getStorageProviderName() {
@@ -429,6 +447,18 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         public void setCipherSuite(String cipherSuite) {
             this.cipherSuite = cipherSuite;
         }
+
+        public String getText() {
+            if (encryptionKey == null) {
+                return "";
+            }
+            return Base64Utils.encodeToString(encryptionKey.getBytes(charset))
+                    + "__" +
+                    Base64Utils.encodeToString(initVector.getBytes(charset))
+                    + "__" +
+                    Base64Utils.encodeToString(cipherSuite.getBytes(charset));
+        }
+
 
     }
 }

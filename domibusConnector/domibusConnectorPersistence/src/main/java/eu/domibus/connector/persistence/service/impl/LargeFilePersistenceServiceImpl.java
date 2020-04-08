@@ -87,7 +87,7 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     }
 
     @Override
-    public boolean isAvailable(LargeFileReference toCopy) {
+    public boolean isStorageProviderAvailable(LargeFileReference toCopy) {
         return getProviderByName(toCopy.getStorageProviderName()).isPresent();
     }
 

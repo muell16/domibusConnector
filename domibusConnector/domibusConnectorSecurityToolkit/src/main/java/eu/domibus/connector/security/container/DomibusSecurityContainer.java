@@ -100,7 +100,7 @@ public class DomibusSecurityContainer {
             String pdfName = StringUtils.isEmpty(document.getDocumentName()) ? MAIN_DOCUMENT_NAME
                     + ".pdf"
                     : messageContent.getDocument().getDocumentName();            
-            dssDocument = createInMemoryDocument(document.getDocument(), pdfName, MimeType.PDF);
+            dssDocument = createLargeFileBasedDssDocument(document.getDocument(), pdfName, MimeType.PDF);
         
         // message action does not require a document, make xml to main document
         } else if (!message.getMessageDetails().getAction().isDocumentRequired() && message.getMessageContent().getXmlContent() != null) {
@@ -137,7 +137,7 @@ public class DomibusSecurityContainer {
             MimeType mimeType = MimeType.fromMimeTypeString(attachment.getMimeType());
             LOGGER.debug("buildBusinessContent: detected mimeType [{}] in attachment [{}]", mimeType.getMimeTypeString(), attachment);
             
-            DSSDocument dssInMemoryDoc = createInMemoryDocument(attachment.getAttachment(), attachment.getName(), mimeType);
+            DSSDocument dssInMemoryDoc = createLargeFileBasedDssDocument(attachment.getAttachment(), attachment.getName(), mimeType);
 
             
             businessContent.addAttachment(dssInMemoryDoc);
@@ -507,10 +507,10 @@ public class DomibusSecurityContainer {
      * @param mimeType mimeType of the dssDocument
      * @return the created InMemoryDocument
      */
+    @Deprecated
     DSSDocument createInMemoryDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
-        try {
-            LargeFileReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
-            InputStream inputStream = readableDataSource.getInputStream();
+        LargeFileReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
+        try (InputStream inputStream = readableDataSource.getInputStream()){
             byte[] content = StreamUtils.copyToByteArray(inputStream);
             InMemoryDocument dssDocument = new InMemoryDocument(content, name, MimeType.PDF);
             return dssDocument;
@@ -518,6 +518,10 @@ public class DomibusSecurityContainer {
             throw new RuntimeException("error while loading data from bigDataPersistenceService", ioe);
         }
     }
-    
-    
+
+    DSSDocument createLargeFileBasedDssDocument(LargeFileReference dataRef, String name, MimeType mimeType) {
+        return new LargeFileBasedDssDocument(bigDataPersistenceService, dataRef);
+    }
+
+
 }

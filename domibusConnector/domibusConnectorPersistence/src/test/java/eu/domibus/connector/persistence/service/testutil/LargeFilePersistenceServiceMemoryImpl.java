@@ -69,7 +69,7 @@ public class LargeFilePersistenceServiceMemoryImpl implements LargeFilePersisten
     }
 
     @Override
-    public boolean isAvailable(LargeFileReference toCopy) {
+    public boolean isStorageProviderAvailable(LargeFileReference toCopy) {
         return true;
     }
 

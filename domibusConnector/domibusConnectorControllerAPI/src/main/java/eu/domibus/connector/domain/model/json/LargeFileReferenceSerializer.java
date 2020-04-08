@@ -14,6 +14,8 @@ public class LargeFileReferenceSerializer extends StdSerializer<LargeFileReferen
     public static final String STORAGE_PROVIDER_FIELD_NAME = "provider";
     public static final String NAME_FIELD_NAME = "name";
     public static final String MIME_TYPE_FIELD_NAME = "mimeType";
+    public static final String TEXT_FIELD_NAME = "text";
+    public static final String SIZE_FIELD_NAME = "size";
 
     protected LargeFileReferenceSerializer(Class<LargeFileReference> t) {
         super(t);
@@ -34,7 +36,10 @@ public class LargeFileReferenceSerializer extends StdSerializer<LargeFileReferen
         jgen.writeStringField(STORAGE_PROVIDER_FIELD_NAME, value.getStorageProviderName());
         jgen.writeStringField(NAME_FIELD_NAME, value.getName());
         jgen.writeStringField(MIME_TYPE_FIELD_NAME, value.getContentType());
+        jgen.writeStringField(TEXT_FIELD_NAME, value.getText());
+        jgen.writeNumberField(SIZE_FIELD_NAME, value.getSize());
         jgen.writeEndObject();
     }
 
 }
+

@@ -70,7 +70,7 @@ public interface LargeFilePersistenceService {
      */
     public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
 
-    boolean isAvailable(LargeFileReference toCopy);
+    boolean isStorageProviderAvailable(LargeFileReference toCopy);
 
     LargeFilePersistenceProvider getDefaultProvider();
 }
