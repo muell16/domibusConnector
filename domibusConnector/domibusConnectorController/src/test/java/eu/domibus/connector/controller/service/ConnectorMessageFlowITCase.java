@@ -70,7 +70,7 @@ public class ConnectorMessageFlowITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorMessageFlowITCase.class);
 
-    public static final Duration TEST_TIMEOUT = Duration.ofSeconds(20);
+    public static final Duration TEST_TIMEOUT = Duration.ofSeconds(60);
 
     public static String TEST_FILE_RESULTS_DIR_PROPERTY_NAME = "test.file.results";
     private File testResultsFolder;
@@ -862,13 +862,17 @@ public class ConnectorMessageFlowITCase {
                     .isNotNull();
 
 
-            DomibusConnectorMessage retrieval = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
-            assertThat(deliveryEvidenceMsg).as("There should be no retrieval message transported to the backend!").isNull();
+//            DomibusConnectorMessage retrieval = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
+//            assertThat(deliveryEvidenceMsg).isNull();
 
             //ASSERT MSG State
             DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageRejected(originalMessage))
                     .isTrue();
+
+            assertThat(toBackendDeliveredMessages)
+                    .as("There should be no retrieval message transported to the backend!")
+                    .isEmpty();
 
 
         });
