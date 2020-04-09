@@ -1,90 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>eu.domibus.connector</groupId>
-        <artifactId>domibusConnectorTest</artifactId>
-        <version>4.1.8-RELEASE</version>
-    </parent>
-
-    <artifactId>domibusConnectorOnlyStarter</artifactId>
-    <packaging>jar</packaging>
-    <name>${project.artifactId}</name>
-    <description>This module packages the connector with an embedded tomcat and database (h2).
-        This makes this module perfect for local testing. It also contains a reasonably default configuration with certifcates.
-    </description>
-
-    <properties>
-        <mainClass>eu.domibus.connector.starter.ConnectorStarter</mainClass>
-    </properties>
-
-    <dependencies>
-
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.domibus.connector</groupId>
+    <artifactId>domibusConnectorTest</artifactId>
+    <version>4.1.9-RELEASE</version>
+  </parent>
+  <artifactId>domibusConnectorOnlyStarter</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  <description>This module packages the connector with an embedded tomcat and database (h2).
+        This makes this module perfect for local testing. It also contains a reasonably default configuration with certifcates.</description>
+  <properties>
+    <mainClass>eu.domibus.connector.starter.ConnectorStarter</mainClass>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>eu.domibus.connector</groupId>
+      <artifactId>domibusConnectorWeb</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources-filtered</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>eu.domibus.connector.starter.ConnectorStarter</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>h2</id>
+      <dependencies>
         <dependency>
-            <groupId>eu.domibus.connector</groupId>
-            <artifactId>domibusConnectorWeb</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
         </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>mysql</id>
+      <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <id>h2</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>mysql</id>
-            <dependencies>
-                <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
-
-
-    <build>
-
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources-filtered</directory>
-                <filtering>true</filtering>                
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>eu.domibus.connector.starter.ConnectorStarter</mainClass>
-                </configuration>
-			<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-            </plugin>
-
-        </plugins>
-    </build>
-    
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

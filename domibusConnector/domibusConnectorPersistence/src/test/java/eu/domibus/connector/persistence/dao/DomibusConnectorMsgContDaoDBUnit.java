@@ -15,13 +15,17 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.core.io.ClassPathResource;
 
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
+@Disabled("test conflicts with other tests")
+@Ignore
 public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITCase {
 
     private DomibusConnectorMsgContDao msgContDao;
@@ -44,6 +48,7 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
     }
 
     @Test(timeout=20000)
+    @Ignore
     public void testDeleteByMessage() throws SQLException, AmbiguousTableNameException, DataSetException {
         PDomibusConnectorMessage message = messageDao.findOneByConnectorMessageId("conn1");
         msgContDao.deleteByMessage(message);

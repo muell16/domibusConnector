@@ -9,10 +9,9 @@
   </meta>
 
   <toc name="Table of Contents">
-    <item name="Introduction" ref="installation/installation.md"/>
+    <!-- <item name="Introduction" ref="installation/installation.md"/> -->
     <item name="Deploy on Tomcat" ref="installation/tomcat_deploy.md"/>
-    <item name="Deploy on Weblogic" ref="installation/weblogic_deploy.md"/>
-    <item name="Database Setup" ref="installation/database.md" />
+    <!-- <item name="Database Setup" ref="installation/database.md" /> -->
     <item name="Key Stores, Trust Stores - Certificates" ref="installation/certificates.html" />
     <item name="Backend Configuration" ref="installation/backend_configuration.html" />
   </toc>

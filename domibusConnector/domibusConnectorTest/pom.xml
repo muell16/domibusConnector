@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>eu.domibus.connector</groupId>
-        <artifactId>domibusConnector</artifactId>
-        <version>4.1.8-RELEASE</version>
-    </parent>
-    <name>${project.artifactId}</name>
-    <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>
-    <artifactId>domibusConnectorTest</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <!-- deactivated due dependency issues - dep enforcer rules are violated -->
-        <module>domibusConnectorOnlyStarter</module>
-        <module>domibusConnectorTestSuite</module>
-        <module>domibusConnectorTestData</module>
-        <module>domibusConnectorDatabaseInitializer</module>
-        <module>domibusConnectorTestLogging</module>
-    </modules>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>eu.domibus.connector</groupId>
+    <artifactId>domibusConnector</artifactId>
+    <version>4.1.9-RELEASE</version>
+  </parent>
+  <artifactId>domibusConnectorTest</artifactId>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>This module contains submodules with test related stuff. Eg. soap UI-tests.</description>
+  <modules>
+    <!-- deactivated due dependency issues - dep enforcer rules are violated -->
+    <module>domibusConnectorOnlyStarter</module>
+    <module>domibusConnectorTestSuite</module>
+    <module>domibusConnectorTestData</module>
+    <module>domibusConnectorDatabaseInitializer</module>
+    <module>domibusConnectorTestLogging</module>
+  </modules>
 </project>

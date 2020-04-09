@@ -1,15 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>eu.domibus.connector</groupId>
     <artifactId>domibusConnector</artifactId>
-    <version>4.1.8-RELEASE</version>
+    <version>4.1.9-RELEASE</version>
   </parent>
   <artifactId>domibusConnectorWebLib</artifactId>
-  
-   <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- <webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- <webadmin.resources.dir>${project.basedir}/src/main/resources</webadmin.resources.dir>
         <webadmin.build.dir>domibusWebAdmin/</webadmin.build.dir>
         <documentation.output.dir>${webadmin.build.dir}documentation/</documentation.output.dir>
         <db.scripts.output.dir>${documentation.output.dir}db-scripts</db.scripts.output.dir>
@@ -17,36 +17,34 @@
         <lib.output.dir>${webadmin.build.dir}lib</lib.output.dir>
         <release.notes.output.dir>${documentation.output.dir}release-notes</release.notes.output.dir>
         <properties.output.dir>${documentation.output.dir}properties</properties.output.dir> -->
-        <pmode.xsd.resources.path>src/main/resources/pmode/domibus_3_2_4</pmode.xsd.resources.path>
-        <!-- <start-class>eu.domibus.webadmin.spring.WebRunner</start-class> -->
-    </properties>
-    
-    <build>
-    	<plugins>
-    		<plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>PModes</id>
-                        <configuration>
-                            <schemaDirectory>${pmode.xsd.resources.path}</schemaDirectory>
-                            <schemaIncludes>
-                                <include>domibus-pmode.xsd</include>
-                            </schemaIncludes>
-                            <generateDirectory>src/main/java</generateDirectory>
-                            <strict>true</strict>
-                            <extension>true</extension>
-                            <args>
-                                <arg>-no-header</arg>
-                            </args>
-                        </configuration>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-    	</plugins>
-    </build>
+    <pmode.xsd.resources.path>src/main/resources/pmode/domibus_3_2_4</pmode.xsd.resources.path>
+    <!-- <start-class>eu.domibus.webadmin.spring.WebRunner</start-class> -->
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>PModes</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <schemaDirectory>${pmode.xsd.resources.path}</schemaDirectory>
+              <schemaIncludes>
+                <include>domibus-pmode.xsd</include>
+              </schemaIncludes>
+              <strict>true</strict>
+              <extension>true</extension>
+              <args>
+                <arg>-no-header</arg>
+              </args>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
