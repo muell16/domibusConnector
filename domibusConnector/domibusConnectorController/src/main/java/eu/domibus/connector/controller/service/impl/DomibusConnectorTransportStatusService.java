@@ -87,10 +87,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         if (transportId == null) {
             throw new IllegalArgumentException("TransportId is not allowed to be null!");
         }
+        transportState.setConnectorTransportId(transportId);
         if (transportState == null) {
             throw new IllegalArgumentException("TransportState is not allowed to be null!");
         }
-        DomibusConnectorTransportStep transportStep = transportStepPersistenceService.getTransportStepByTransportId(transportState.getConnectorTransportId());
+        DomibusConnectorTransportStep transportStep = transportStepPersistenceService.getTransportStepByTransportId(transportId);
 
 
         if (StringUtils.isEmpty(transportStep.getRemoteMessageId())) {
@@ -158,11 +159,12 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         transportStep.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
 
         transportStep = transportStepPersistenceService.createNewTransportStep(transportStep);
-
+        LOGGER.debug("#createTransportFor:: created new transport step within database with id [{}]", transportStep.getTransportId());
         return transportStep.getTransportId();
     }
 
     @Override
+    @Transactional
     public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         //TODO: check for active transport...
         return createTransportFor(message, linkPartnerName);

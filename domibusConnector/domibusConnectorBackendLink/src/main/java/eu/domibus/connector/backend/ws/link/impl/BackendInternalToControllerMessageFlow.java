@@ -94,10 +94,14 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         message.getMessageDetails().setConnectorBackendClientName(backendMessage.getBackendClientInfo().getBackendName());
 
         String msgId = messageIdGenerator.generateDomibusConnectorMessageId();
-        if (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
-            LOGGER.debug("No ebmsId was passed from the client, setting ebmsId to [{}]", msgId);
-            message.getMessageDetails().setEbmsMessageId(msgId);
+//        if (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
+//            LOGGER.debug("No ebmsId was passed from the client, setting ebmsId to [{}]", msgId);
+//            message.getMessageDetails().setEbmsMessageId(msgId);
+//        }
+        if (StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId()) && StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
+            throw new RuntimeException("Both BackendMessage_ID AND EBMS_ID are NULL! This is not allowed one of them has to be set by the backend!");
         }
+
         message.setConnectorMessageId(msgId);
         LOGGER.debug("#submitToController: start to process message with message id [{}]", message.getConnectorMessageId());
         MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, message.getConnectorMessageId());
@@ -105,7 +109,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         LOGGER.debug("#submitToController: message persisted");
 //        message = bigDataPersistence.persistAllBigFilesFromMessage(message);
 //        LOGGER.debug("#submitToController: message [{}] data persisted", message);
-        message = messagePersistenceService.mergeMessageWithDatabase(message);
+//        message = messagePersistenceService.mergeMessageWithDatabase(message);
 
 
         LOGGER.debug("#submitToController: message.getMessageDetails().getService() [{}]", message.getMessageDetails().getService());

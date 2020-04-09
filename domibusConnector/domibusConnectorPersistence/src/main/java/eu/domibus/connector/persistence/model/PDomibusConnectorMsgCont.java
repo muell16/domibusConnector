@@ -62,6 +62,9 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     @Column(name = "PAYLOAD_MIMETYPE")
     private String payloadMimeType;
+
+    @Column(name = "PAYLOAD_SIZE")
+    private long size = -1;
     
     @ManyToOne
     @JoinColumn(name="MESSAGE_ID")
@@ -109,6 +112,14 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     public void setPayloadDescription(String payloadDescription) {
         this.payloadDescription = payloadDescription;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public byte[] getContent() {

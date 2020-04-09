@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.transition.tools.PrintDomibusConnectorMessageType;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.cxf.common.util.StringUtils;
@@ -31,7 +32,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	private DomibusConnectorGatewaySubmissionWebService submissionClient;
 
 	@Autowired
-    private TransportStatusService gatewaySubmissionTransportStatusService;
+    private TransportStatusService transportStatusService;
 
 
 
@@ -46,16 +47,15 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
 
         TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
-        state.setConnectorTransportId(new TransportStatusService.TransportId(message.getConnectorMessageId()));
+        TransportStatusService.TransportId transportId = transportStatusService.createOrGetTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("default_gw"));
 
-
-		LOGGER.debug("#submitToGateway: calling webservice to send request");
+        LOGGER.debug("#submitToGateway: calling webservice to send request");
 		DomibsConnectorAcknowledgementType ack = null;
 		try {
 			ack = submissionClient.submitMessage(request);
 		} catch(Exception e) {
 			state.setStatus(TransportState.FAILED);
-            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state.getConnectorTransportId(), state);
+            transportStatusService.updateTransportToGatewayStatus(transportId, state);
             
 			throw new DomibusConnectorGatewaySubmissionException(e);
 		}
@@ -68,10 +68,10 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 
             state.setRemoteMessageId(ebmsId);
             state.setStatus(TransportState.ACCEPTED);
-            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state.getConnectorTransportId(), state);
+            transportStatusService.updateTransportToGatewayStatus(transportId, state);
         } else if (ack != null){
             state.setStatus(TransportState.FAILED);
-            gatewaySubmissionTransportStatusService.updateTransportToGatewayStatus(state.getConnectorTransportId(), state);
+            transportStatusService.updateTransportToGatewayStatus(transportId, state);
             LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW declined message and sent [{}] back", ack.getResultMessage());
             if (!StringUtils.isEmpty(ack.getResultMessage()))
                 throw new DomibusConnectorGatewaySubmissionException(ack.getResultMessage());

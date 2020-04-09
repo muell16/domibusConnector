@@ -45,8 +45,10 @@ import java.util.Optional;
 @Transactional
 public class MsgContentPersistenceService {
 
-    public static final String BUSINESS_XML_DOCUMENT_IDENTIFIER = "BusinessDocument";
+    public static final String BUSINESS_XML_DOCUMENT_IDENTIFIER = "BusinessDocumentXML";
     public static final String BUSINESS_XML_DOCUMENT_NAME = "BusinessDocument.xml";
+
+    public static final String BUSINESS_DOCUMENT_IDENTIFIER = "BusinessDocument";
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MsgContentPersistenceService.class);
 
@@ -196,6 +198,7 @@ public class MsgContentPersistenceService {
         }
         largeFileReference.setName(pDomibusConnectorMsgCont.getPayloadName());
         largeFileReference.setMimetype(pDomibusConnectorMsgCont.getPayloadMimeType());
+        largeFileReference.setSize(pDomibusConnectorMsgCont.getSize());
         LargeFileReference readableDataSource = largeFilePersistenceService.getReadableDataSource(largeFileReference);
         return readableDataSource;
     }
@@ -274,6 +277,7 @@ public class MsgContentPersistenceService {
         PDomibusConnectorMsgCont pDomibusConnectorMsgCont = storeObjectIntoMsgCont(message, StoreType.MESSAGE_BUSINESS_CONTENT_DOCUMENT, document.getDocument());
         pDomibusConnectorMsgCont.setPayloadName(document.getDocumentName());
         pDomibusConnectorMsgCont.setDigest(document.getHashValue());
+        pDomibusConnectorMsgCont.setPayloadIdentifier(BUSINESS_DOCUMENT_IDENTIFIER);
 
         DetachedSignature detachedSignature = document.getDetachedSignature();
         if (detachedSignature != null) {
@@ -338,6 +342,9 @@ public class MsgContentPersistenceService {
             if (ref != null) {
                 msgCont.setStorageProviderName(ref.getStorageProviderName());
                 msgCont.setStorageReferenceId(ref.getStorageIdReference());
+                msgCont.setPayloadMimeType(ref.getContentType());
+                msgCont.setPayloadName(ref.getName());
+                msgCont.setSize(ref.getSize());
                 if (StringUtils.isNotEmpty(ref.getText())) {
                     msgCont.setContent(ref.getText().getBytes(StandardCharsets.UTF_8));
                 }
