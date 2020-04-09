@@ -7,6 +7,7 @@ import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueP
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -70,6 +71,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
     PushMessageToBackendClient pushMessageToBackend;
         
     @Test
+    @Disabled("test not stable")
     public void testPutMessageOnQueue() throws InterruptedException {
         DomibusConnectorMessage msg = DomainEntityCreator.createMessage();
         msg.getMessageDetails().setConnectorBackendClientName("bob");
