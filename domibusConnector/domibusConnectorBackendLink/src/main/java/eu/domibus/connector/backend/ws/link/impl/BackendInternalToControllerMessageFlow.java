@@ -98,7 +98,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 //            LOGGER.debug("No ebmsId was passed from the client, setting ebmsId to [{}]", msgId);
 //            message.getMessageDetails().setEbmsMessageId(msgId);
 //        }
-        if (StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId()) && StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
+        if (message.getMessageContent() != null && StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId()) && StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
             throw new RuntimeException("Both BackendMessage_ID AND EBMS_ID are NULL! This is not allowed one of them has to be set by the backend!");
         }
 
