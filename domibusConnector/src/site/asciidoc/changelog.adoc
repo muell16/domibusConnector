@@ -104,9 +104,12 @@ link:upgrade/upgrade-4.2.0.html[Upgrade to 4.2.0]
 * Support for distributed timer jobs (needed for cluster setup)
 * UI enhancements / Closing Security issues within UI
 * Integration of spring-actuator (for monitoring)
+* Integration of spring-sleuth (to improve/enable distributed monitoring with backend eg. e-Evidence RI)
 * Packaged with web based documentation (as part of the distribution package)
 * Standalone Package (as part of the Distribution package)
 * Docker assembly (available via nexus: https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/domibusConnectorStandaloneLauncher/<version>/domibusConnectorStandaloneLauncher-<version>-docker-assembly.zip)
+* Multiple updates/enhancements on database handling of p-Mode handling
+* Removed Java de-/serialization from connector code
 
 ==== Compatibility:
 * The 4.2.x connector is compatible with the 4.1.3-RELEASE of the domibus-connector-plugin-Distribution (available via nexus: https://secure.e-codex.eu/nexus/content/groups/public/eu/domibus/connector/plugin/domibus-connector-plugin-Distribution/4.1.3-RELEASE/)
