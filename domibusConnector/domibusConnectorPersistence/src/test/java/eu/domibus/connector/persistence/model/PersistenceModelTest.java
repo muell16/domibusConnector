@@ -45,7 +45,6 @@ public class PersistenceModelTest {
             EntityManager bean = appContext.getBean(EntityManager.class);
             PDomibusConnectorService service = bean.find(PDomibusConnectorService.class, "service");
 
-            PDomibusConnectorParty party = bean.find(PDomibusConnectorParty.class, new PDomibusConnectorPartyPK("AT", "GW"));
         });
     }
 

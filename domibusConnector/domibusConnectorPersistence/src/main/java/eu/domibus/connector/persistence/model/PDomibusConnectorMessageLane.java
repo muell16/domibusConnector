@@ -10,8 +10,8 @@ import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenc
  * to process the message
  */
 @Entity
-@Table(name = "DC_DOMAIN")
-public class PDomibusConnectorDomain {
+@Table(name = "DC_MESSAGE_LANE")
+public class PDomibusConnectorMessageLane {
 
     @Id
     @Column(name="ID")
@@ -27,7 +27,7 @@ public class PDomibusConnectorDomain {
     private String description;
 
     @ManyToOne(optional = true)
-    private PDomibusConnectorDomain parent;
+    private PDomibusConnectorMessageLane parent;
 
     //TODO: add properties...
 }

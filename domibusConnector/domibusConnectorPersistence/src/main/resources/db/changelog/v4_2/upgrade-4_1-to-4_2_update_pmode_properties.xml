@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <property name="id.type" value="BIGINT" dbms="postgresql"/>
+    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql"/>
+    <property name="id.type" value="NUMBER(10)" dbms="oracle"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="now()" dbms="mysql"/>
+    <property name="now" value="now()" dbms="postgresql,h2"/>
+
+
+    <changeSet id="SKS" author="create_default_message_lane">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT count(*) FROM DC_MESSAGE_LANE WHERE NAME = 'default';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <insert tableName="DC_MESSAGE_LANE">
+            <column name="ID">1</column>
+            <column name="NAME">default</column>
+            <column name="DESCRIPTION">default message lane</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="create_p_mode_set_table" author="SKS">
+        <createTable tableName="DC_PMODE_SET">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="FK_MESSAGE_LANE" type="${id.type}" />
+            <column name="CREATED" type="java.sql.Types.TIMESTAMP" />
+            <column name="DESCRIPTION" type="java.sql.Types.CLOB" />
+        </createTable>
+        <addPrimaryKey tableName="DC_PMODE_SET" columnNames="ID" constraintName="PK_DC_PMODE_SET" />
+    </changeSet>
+
+    <changeSet id="SKS" author="create_default_p_mode_set">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM DC_PMODE_SET WHERE ID = 1;
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="DC_PMODE_SET">
+            <column name="ID">1</column>
+            <column name="CREATED" defaultValueComputed="${now}"></column>
+            <column name="DESCRIPTION">initial set created by auto upgrade</column>
+        </insert>
+    </changeSet>
+
+
+    <!-- add a technical key to party table, service table and action table -->
+    <changeSet id="SKS" author="drop_fk_on_message_info_table">
+        <comment>Drop foreign keys, so we can change the referenced primary keys on the service, action and party table</comment>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_FROM_PARTY" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_TO_PARTY" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_SERVICE" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_ACTION" />
+    </changeSet>
+
+    <!-- drop foreign key on backe_2_s table to help with changing the pk -->
+    <changeSet id="drop_fk_on_service_to_backend_table" author="SKS">
+        <comment>drop foreign key on DOMIBUS_CONNECTOR_BACK_2_S (backend to service mapping table) to DOMIBUS_CONNECTOR_SERVICE</comment>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_BACK_2_S" constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_02" />
+    </changeSet>
+
+    <!-- party table add technical key -->
+    <changeSet id="SKS" author="modify_party_table_drop_primary_key">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" constraintName="PK_DOMIBUS_CONNECTOR_PARTY"/>
+    </changeSet>
+
+    <changeSet id="SKS" author="modify_party_table_add_columns">
+        <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
+            <column name="IDENTIFIER" type="java.sql.Types.Varchar(255)" />
+        </addColumn>
+        <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
+            <column name="FK_PMODE_SET" type="${id.type}" />
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_PARTY"
+                                 baseColumnNames="FK_PMODE_SET"
+                                 constraintName="FK_PARTY_PMODE_SET_ID"
+                                 referencedTableName="DC_PMODE_SET"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+    <changeSet id="modify_party_table_create_autoincrement_id_column_mysql" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql"/>
+        </preConditions>
+        <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
+            <column name="ID_GEN" type="${id.type}" autoIncrement="true">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="modify_party_table_create_autoincrement_id_column_other" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="mysql"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="temp_seq" />
+        <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
+            <column name="ID_GEN" type="${id.type}" defaultValueSequenceNext="temp_seq">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <dropSequence sequenceName="temp_seq" />
+    </changeSet>
+
+    <changeSet id="modify_party_table_set_id_values" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_PARTY SET ID=ID_GEN</sql>
+    </changeSet>
+
+    <changeSet id="modify_party_create_pk_column" author="SKS">
+        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_PARTY" columnName="ID" />
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_PARTY" />
+    </changeSet>
+
+    <changeSet id="modify_party_table_drop_id_gen_column" author="SKS">
+        <dropColumn tableName="DOMIBUS_CONNECTOR_PARTY" columnName="ID_GEN" />
+    </changeSet>
+
+
+    <!-- action table add technical key -->
+    <changeSet id="SKS" author="modify_action_table_drop_primary_key">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION"/>
+    </changeSet>
+
+    <changeSet id="SKS" author="modify_action_table_add_columns">
+        <addColumn tableName="DOMIBUS_CONNECTOR_ACTION">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="DOMIBUS_CONNECTOR_ACTION">
+            <column name="FK_PMODE_SET" type="${id.type}" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_ACTION"
+                                 baseColumnNames="FK_PMODE_SET"
+                                 constraintName="FK_ACTION_PMODE_SET_ID"
+                                 referencedTableName="DC_PMODE_SET"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+    <changeSet id="modify_action_table_create_autoincrement_id_column_mysql" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql"/>
+        </preConditions>
+        <addColumn tableName="DOMIBUS_CONNECTOR_ACTION">
+            <column name="ID_GEN" type="${id.type}" autoIncrement="true">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="modify_action_table_create_autoincrement_id_column_other" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="mysql"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="temp_seq" />
+        <addColumn tableName="DOMIBUS_CONNECTOR_ACTION">
+            <column name="ID_GEN" type="${id.type}" defaultValueSequenceNext="temp_seq">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <dropSequence sequenceName="temp_seq" />
+    </changeSet>
+
+    <changeSet id="modify_action_table_set_id_values" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_ACTION SET ID=ID_GEN</sql>
+    </changeSet>
+
+    <changeSet id="modify_action_create_pk_column" author="SKS">
+        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_ACTION" columnName="ID" />
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_ACTION" />
+    </changeSet>
+
+    <changeSet id="modify_action_table_drop_id_gen_column" author="SKS">
+        <dropColumn tableName="DOMIBUS_CONNECTOR_ACTION" columnName="ID_GEN" />
+    </changeSet>
+
+
+    <!-- service table add technical key -->
+    <changeSet id="SKS" author="modify_service_table_drop_primary_key">
+        <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE"/>
+    </changeSet>
+
+    <changeSet id="SKS" author="modify_service_table_add_columns">
+        <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
+            <column name="ID" type="${id.type}">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
+            <column name="FK_PMODE_SET" type="${id.type}" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_SERVICE"
+                                 baseColumnNames="FK_PMODE_SET"
+                                 constraintName="FK_SERVICE_PMODE_SET_ID"
+                                 referencedTableName="DC_PMODE_SET"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+    <changeSet id="modify_service_table_create_autoincrement_id_column_mysql" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql"/>
+        </preConditions>
+        <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
+            <column name="ID_GEN" type="${id.type}" autoIncrement="true">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="modify_service_table_create_autoincrement_id_column_other" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="mysql"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="temp_seq" />
+        <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
+            <column name="ID_GEN" type="${id.type}" defaultValueSequenceNext="temp_seq">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <dropSequence sequenceName="temp_seq" />
+    </changeSet>
+
+    <changeSet id="modify_service_table_set_id_values" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_SERVICE SET ID=ID_GEN</sql>
+    </changeSet>
+
+    <changeSet id="modify_service_table_create_pk_column" author="SKS">
+        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_SERVICE" columnName="ID" />
+        <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" columnNames="ID" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
+    </changeSet>
+
+    <changeSet id="modify_service_table_drop_id_gen_column" author="SKS">
+        <dropColumn tableName="DOMIBUS_CONNECTOR_SERVICE" columnName="ID_GEN" />
+    </changeSet>
+    
+    <!-- update fks on message info table -->
+
+    <changeSet id="modify_message_info_for_new_action_party_service_fk" author="SKS">
+        <comment>add new columsn for technical foreign key on message info table</comment>
+        <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO">
+            <column name="FK_FROM_PARTY_ID" type="${id.type}" />
+            <column name="FK_TO_PARTY_ID" type="${id.type}" />
+            <column name="FK_SERVICE" type="${id.type}" />
+            <column name="FK_ACTION" type="${id.type}" />
+        </addColumn>
+    </changeSet>
+
+
+
+    <changeSet id="update_fk_from_parties_in_message_info" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE_INFO info
+            SET info.FK_TO_PARTY_ID = (SELECT party.id FROM DOMIBUS_CONNECTOR_PARTY party WHERE info.TO_PARTY_ID = party.PARTY_ID AND info.TO_PARTY_ROLE = party.ROLE)
+            WHERE exists (SELECT * FROM DOMIBUS_CONNECTOR_PARTY party WHERE info.TO_PARTY_ID = party.PARTY_ID AND info.TO_PARTY_ROLE = party.ROLE)
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_fk_to_parties_in_message_info" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE_INFO info
+            SET info.FK_FROM_PARTY_ID = (SELECT party.id FROM DOMIBUS_CONNECTOR_PARTY party WHERE info.FROM_PARTY_ID = party.PARTY_ID AND info.FROM_PARTY_ROLE = party.ROLE)
+            WHERE exists (SELECT * FROM DOMIBUS_CONNECTOR_PARTY party WHERE info.FROM_PARTY_ID = party.PARTY_ID AND info.FROM_PARTY_ROLE = party.ROLE)
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_fk_action_in_message_info" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE_INFO info
+            SET info.FK_ACTION = (SELECT action.id FROM DOMIBUS_CONNECTOR_ACTION action WHERE info.ACTION = action.ACTION )
+            WHERE exists (SELECT * FROM DOMIBUS_CONNECTOR_ACTION action WHERE info.ACTION = action.ACTION )
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_fk_service_in_message_info" author="SKS">
+        <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE_INFO info
+            SET info.FK_SERVICE = (SELECT service.id FROM DOMIBUS_CONNECTOR_SERVICE service WHERE info.SERVICE = service.SERVICE )
+            WHERE exists (SELECT service.id FROM DOMIBUS_CONNECTOR_SERVICE service WHERE info.SERVICE = service.SERVICE )
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="SKS" author="create_fk_for_party_on_message_info_table">
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
+                                 baseColumnNames="FK_FROM_PARTY_ID"
+                                 constraintName="FK_MSGINFO_FROM_PARTY"
+                                 referencedTableName="DOMIBUS_CONNECTOR_PARTY"
+                                 referencedColumnNames="ID" />
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
+                                 baseColumnNames="FK_TO_PARTY_ID"
+                                 constraintName="FK_MSGINFO_TO_PARTY"
+                                 referencedTableName="DOMIBUS_CONNECTOR_PARTY"
+                                 referencedColumnNames="ID" />
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
+                                 baseColumnNames="FK_SERVICE"
+                                 constraintName="FK_MSGINFO_SERVICE"
+                                 referencedTableName="DOMIBUS_CONNECTOR_SERVICE"
+                                 referencedColumnNames="ID" />
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
+                                 baseColumnNames="FK_ACTION"
+                                 constraintName="FK_MSGINFO_ACTION"
+                                 referencedTableName="DOMIBUS_CONNECTOR_ACTION"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+
+</databaseChangeLog>
+
+
+

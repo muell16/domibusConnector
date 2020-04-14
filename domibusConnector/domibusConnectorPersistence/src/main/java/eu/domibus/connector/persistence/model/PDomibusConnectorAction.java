@@ -3,10 +3,7 @@ package eu.domibus.connector.persistence.model;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_ACTION")
@@ -18,6 +15,10 @@ public class PDomibusConnectorAction implements Serializable {
 
     @Column(name = "PDF_REQUIRED")
     private boolean documentRequired;
+
+    @ManyToOne
+    @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
+    private PDomibusConnectorPModeSet pModeSet;
 
     public String getAction() {
         return action;

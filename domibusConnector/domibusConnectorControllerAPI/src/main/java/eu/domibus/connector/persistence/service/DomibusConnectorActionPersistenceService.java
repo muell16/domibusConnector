@@ -8,7 +8,9 @@ import java.util.List;
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ * @deprecated use DomibusConnectorPModeService instead and also make use of default DomibusConnectorMessageLane
  */
+@Deprecated
 public interface DomibusConnectorActionPersistenceService {
 
     public DomibusConnectorAction persistNewAction(DomibusConnectorAction service);

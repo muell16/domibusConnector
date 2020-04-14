@@ -10,6 +10,9 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorParty implements Serializable {
 
+	private Long dbKey;
+	private String identifier;
+
 	private String partyId;
 	private String partyIdType;
 	private String role;
@@ -31,6 +34,22 @@ public class DomibusConnectorParty implements Serializable {
 	   this.partyId = partyId;
 	   this.partyIdType = partyIdType;
 	   this.role = role;
+	}
+
+	public Long getDbKey() {
+		return dbKey;
+	}
+
+	public void setDbKey(Long dbKey) {
+		this.dbKey = dbKey;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public String getPartyId(){

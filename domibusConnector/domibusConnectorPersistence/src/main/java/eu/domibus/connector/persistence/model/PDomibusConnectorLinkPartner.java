@@ -2,7 +2,6 @@ package eu.domibus.connector.persistence.model;
 
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
-import eu.domibus.connector.persistence.model.PDomibusConnectorDomain;
 
 import javax.persistence.*;
 

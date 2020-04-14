@@ -2,10 +2,7 @@ package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "DOMIBUS_CONNECTOR_SERVICE")
@@ -17,6 +14,10 @@ public class PDomibusConnectorService {
 
     @Column(name = "SERVICE_TYPE", nullable = false)
     private String serviceType;
+
+    @ManyToOne
+    @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
+    private PDomibusConnectorPModeSet pModeSet;
 
     public String getService() {
         return service;

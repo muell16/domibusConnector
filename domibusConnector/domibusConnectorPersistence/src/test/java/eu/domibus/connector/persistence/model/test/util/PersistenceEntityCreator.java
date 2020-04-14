@@ -83,9 +83,9 @@ public class PersistenceEntityCreator {
         return at;
     }
     
-    public static PDomibusConnectorPartyPK createPartyPKforPartyAT() {
-        return new PDomibusConnectorPartyPK("AT", "GW");
-    }
+//    public static PDomibusConnectorPartyPK createPartyPKforPartyAT() {
+//        return new PDomibusConnectorPartyPK("AT", "GW");
+//    }
     
     public static PDomibusConnectorEvidence createDeliveryEvidence() {
         PDomibusConnectorEvidence evidence = new PDomibusConnectorEvidence();

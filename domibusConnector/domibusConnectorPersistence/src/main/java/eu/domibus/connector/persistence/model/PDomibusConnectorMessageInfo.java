@@ -20,16 +20,18 @@ public class PDomibusConnectorMessageInfo {
     private PDomibusConnectorMessage message;
 
     @ManyToOne
-    @JoinColumns(value = { 
-        @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
-        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true)
-    })
+    @JoinColumn(name = "FK_FROM_PARTY_ID", referencedColumnName = "ID")
+//    @JoinColumns(value = {
+//        @JoinColumn(name = "FROM_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
+//        @JoinColumn(name = "FROM_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true)
+//    })
     private PDomibusConnectorParty from;
 
     @ManyToOne
-    @JoinColumns(value = { 
-        @JoinColumn(name = "TO_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
-        @JoinColumn(name = "TO_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) })
+    @JoinColumn(name = "FK_TO_PARTY_ID", referencedColumnName = "ID")
+//    @JoinColumns(value = {
+//        @JoinColumn(name = "TO_PARTY_ID", referencedColumnName = "PARTY_ID", nullable = true),
+//        @JoinColumn(name = "TO_PARTY_ROLE", referencedColumnName = "ROLE", nullable = true) })
     private PDomibusConnectorParty to;
 
     @Column(name = "ORIGINAL_SENDER")

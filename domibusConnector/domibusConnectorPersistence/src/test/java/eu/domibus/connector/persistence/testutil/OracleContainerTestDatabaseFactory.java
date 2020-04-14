@@ -19,6 +19,10 @@ public class OracleContainerTestDatabaseFactory extends AbstractContainerTestDat
 
     List<String> availableVersions = Stream.of("4.1.x", "3.5.x").collect(Collectors.toList());
 
+    public static final String SID = "testsid";
+    public static final String DB_DOMAIN = "example.com";
+    public static final String DB_PASSWORD = "test";
+
     @Override
     public String getDatabaseType() {
         return "oracle";
@@ -31,7 +35,11 @@ public class OracleContainerTestDatabaseFactory extends AbstractContainerTestDat
 
     protected JdbcDatabaseContainer getDatabaseContainer(String version) {
 
-        OracleContainer oracle = new OracleContainer("oracleinanutshell/oracle-xe-11g");
+        OracleContainer oracle = new OracleContainer("registry.oracle.com/database/standard:12.1.0.2");
+        oracle.withEnv("DB_SID", SID)
+                .withEnv("DB_PASSWD", DB_PASSWORD)
+                .withEnv("DB_DOMAIN", DB_DOMAIN)
+                .withEnv("DB_BUNDLE", "basic");
 
         return oracle;
     }

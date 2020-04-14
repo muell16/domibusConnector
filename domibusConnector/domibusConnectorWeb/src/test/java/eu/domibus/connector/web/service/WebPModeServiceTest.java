@@ -1,5 +1,9 @@
 package eu.domibus.connector.web.service;
 
+import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
+import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
 import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
 import org.junit.jupiter.api.Test;
@@ -11,6 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
@@ -39,6 +46,21 @@ public class WebPModeServiceTest {
     @Autowired
     WebPModeService webPModeService;
 
+    @Autowired
+    private DomibusConnectorActionPersistenceService actionPersistenceService;
+
+    @Autowired
+    private DomibusConnectorServicePersistenceService servicePersistenceService;
+
+    @Autowired
+    private DomibusConnectorPartyPersistenceService partyPersistenceService;
+
+    @Autowired
+    private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
+
+    @Autowired
+    PlatformTransactionManager txManager;
+
     @Test
     void importPModes() throws IOException {
         assertThat(webPModeService).isNotNull();
@@ -46,12 +68,19 @@ public class WebPModeServiceTest {
         Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
         byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
 
+        TransactionStatus transaction = txManager.getTransaction(TransactionDefinition.withDefaults());
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+        txManager.commit(transaction);
+
+
+        assertThat(partyPersistenceService.getPartyList())
+                .as("example pmodes contains 12 parties")
+                .hasSize(12);
 
     }
 
 
-    @Test
+//    @Test
     void importPModesTwice() throws IOException {
         assertThat(webPModeService).isNotNull();
 

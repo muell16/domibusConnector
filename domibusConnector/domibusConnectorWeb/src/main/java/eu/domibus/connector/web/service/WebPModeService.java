@@ -151,11 +151,15 @@ public class WebPModeService {
 				if (!CollectionUtils.isEmpty(party.getIdentifier()) && party.getIdentifier().get(0) != null) {
 					homePartyIdentifierName = party.getIdentifier().get(0).getPartyId();
 				}
-				Properties homePartyProperties = new Properties();
-				homePartyProperties.put(EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homePartyIdentifierName);
-				homePartyProperties.put(EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homePartyEndpointAddress);
-				propertiesPersistenceService.saveProperties(homePartyProperties);
-				util.updateConfigurationComponentsOnProperties(homePartyProperties);
+				try {
+					Properties homePartyProperties = new Properties();
+					homePartyProperties.put(EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homePartyIdentifierName);
+					homePartyProperties.put(EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homePartyEndpointAddress);
+					propertiesPersistenceService.saveProperties(homePartyProperties);
+					util.updateConfigurationComponentsOnProperties(homePartyProperties);
+				} catch (Exception e) {
+					LOGGER.error("Error while setting gateway properties for home gateway!", e);
+				}
 				
 			}
 			if (!CollectionUtils.isEmpty(party.getIdentifier()) && party.getIdentifier().get(0) != null) {

@@ -8,7 +8,7 @@ public class PostgresContainerTestDatabaseFactory extends AbstractContainerTestD
 
     @Override
     protected JdbcDatabaseContainer getDatabaseContainer(String version) {
-        PostgreSQLContainer  pgsql = new PostgreSQLContainer();
+        PostgreSQLContainer  pgsql = new PostgreSQLContainer("postgres:9");
         return pgsql;
     }
 

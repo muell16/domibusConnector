@@ -4,4 +4,9 @@
     <include file="upgrade-4_1-to-4_2_create_link_tables.xml" relativeToChangelogFile="true"/>
     <include file="upgrade-4_1-to-4_2_update_large_tables.xml" relativeToChangelogFile="true" />
     <include file="upgrade-4_1-to-4_2_fix_evidence_step_problem.xml" relativeToChangelogFile="true" />
+    <include file="upgrade-4_1-to-4_2_update_pmode_properties.xml" relativeToChangelogFile="true" />
+
+    <changeSet id="tag-db-domibus-4.2" author="SKS">
+        <tagDatabase tag="DOMIBUS_DB_V4.2"/>
+    </changeSet>
 </databaseChangeLog>

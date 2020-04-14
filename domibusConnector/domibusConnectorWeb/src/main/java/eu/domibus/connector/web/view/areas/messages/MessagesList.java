@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +37,7 @@ import eu.domibus.connector.web.service.WebMessageService;
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
-public class MessagesList extends VerticalLayout {
+public class MessagesList extends VerticalLayout implements AfterNavigationObserver {
 	
 	private Grid<WebMessage> grid = new Grid<>();
 	private LinkedList<WebMessage> fullList = null;
@@ -55,7 +57,7 @@ public class MessagesList extends VerticalLayout {
 	public MessagesList(@Autowired WebMessageService messageService) {
 		this.messageService = messageService;
 		
-		fullList = messageService.getInitialList();
+		fullList = new LinkedList<>();
 		
 		grid.setItems(fullList);
 		grid.addComponentColumn(webMessage -> getDetailsLink(webMessage.getConnectorMessageId())).setHeader("Details").setWidth("30px");
@@ -223,7 +225,12 @@ public class MessagesList extends VerticalLayout {
 	public void reloadList() {
 		grid.setItems(messageService.getInitialList());
 	}
-	
-	
+
+
+	@Override
+	public void afterNavigation(AfterNavigationEvent event) {
+		reloadList();
+	}
+
 	
 }

@@ -19,10 +19,10 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
 
     public static final List<TestDatabaseFactory> AVAILABLE_DBMS = Stream.of(
 
-//            new PostgresContainerTestDatabaseFactory(), //not supported yet!
+            new PostgresContainerTestDatabaseFactory(), //not supported yet!
             H2TestDatabaseFactory.h2Mysql(),
             H2TestDatabaseFactory.h2Oracle(),
-//            new OracleContainerTestDatabaseFactory(),
+            new OracleContainerTestDatabaseFactory(),
             new MysqlContainerTestDatabaseFactory()
     ).collect(Collectors.toList());
 

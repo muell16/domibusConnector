@@ -2,27 +2,69 @@ package eu.domibus.connector.persistence.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@IdClass(PDomibusConnectorPartyPK.class)
-@Table(name = "DOMIBUS_CONNECTOR_PARTY")
+//@IdClass(PDomibusConnectorPartyPK.class)
+@Table(name = PDomibusConnectorParty.TABLE_NAME)
 public class PDomibusConnectorParty {
 
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_PARTY";
+
     @Id
+    @Column(name="ID")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
+    private Long id;
+
+    @Column(name = "IDENTIFIER")
+    private String pmodePartyIdentifier;
+
     @Column(name = "PARTY_ID")
     private String partyId;
 
-    @Id
     @Column(name = "ROLE")
     private String role;
 
     @Column(name = "PARTY_ID_TYPE")
     private String partyIdType;
+
+    @Column(name = "DELETED")
+    private boolean deleted;
+
+    @ManyToOne
+    @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
+    private PDomibusConnectorPModeSet pModeSet;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPmodePartyIdentifier() {
+        return pmodePartyIdentifier;
+    }
+
+    public void setPmodePartyIdentifier(String pmodePartyIdentifier) {
+        this.pmodePartyIdentifier = pmodePartyIdentifier;
+    }
+
+    public PDomibusConnectorPModeSet getpModeSet() {
+        return pModeSet;
+    }
+
+    public void setpModeSet(PDomibusConnectorPModeSet pModeSet) {
+        this.pModeSet = pModeSet;
+    }
 
     public String getPartyId() {
         return partyId;
@@ -46,6 +88,14 @@ public class PDomibusConnectorParty {
 
     public void setPartyIdType(String partyIdType) {
         this.partyIdType = partyIdType;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

@@ -7,7 +7,9 @@ import java.util.List;
 /**
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ * @deprecated use DomibusConnectorPModeService instead
  */
+@Deprecated
 public interface DomibusConnectorPartyPersistenceService {
 
     public DomibusConnectorParty persistNewParty(DomibusConnectorParty newParty);

@@ -32,7 +32,7 @@ public class HandWrittenDatabaseScriptsITCase {
     public static List<TestDatabaseFactory> TEST_DATABASE_FACTORIES_LIST = Stream
             .of(
                     H2TestDatabaseFactory.h2Oracle(),
-                    H2TestDatabaseFactory.h2Mysql(),
+//                    H2TestDatabaseFactory.h2Mysql(),
                     new MysqlTestDatabaseFactory(),
                     new OracleTestDatabaseFactory(),
                     new MysqlContainerTestDatabaseFactory()
