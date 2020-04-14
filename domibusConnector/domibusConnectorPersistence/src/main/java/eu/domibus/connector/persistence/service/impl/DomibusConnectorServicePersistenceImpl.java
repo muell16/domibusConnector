@@ -65,7 +65,8 @@ public class DomibusConnectorServicePersistenceImpl implements DomibusConnectorS
 
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorService getService(String service) {
-        PDomibusConnectorService srv = serviceDao.findById(service).get();
-        return ServiceMapper.mapServiceToDomain(srv);
+//        PDomibusConnectorService srv = serviceDao.findById(service).get();
+//        return ServiceMapper.mapServiceToDomain(srv);
+        return null;
     }
 }

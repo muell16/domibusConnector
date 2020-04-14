@@ -1,5 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
+
 import javax.persistence.*;
 
 import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME;
@@ -10,24 +12,57 @@ import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenc
  * to process the message
  */
 @Entity
-@Table(name = "DC_MESSAGE_LANE")
+@Table(name = PDomibusConnectorMessageLane.TABLE_NAME)
 public class PDomibusConnectorMessageLane {
+
+    public static final String TABLE_NAME = "DC_MESSAGE_LANE";
 
     @Id
     @Column(name="ID")
-    @TableGenerator(name = "seqStoreLinkInfo", table = SEQ_STORE_TABLE_NAME, pkColumnName = "SEQ_NAME", pkColumnValue = "DC_DOMAIN.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreLinkInfo")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = 100,
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
     private Long id;
 
     @Column(name= "NAME", unique = true, length = 255)
-    private String name;
+    private DomibusConnectorMessageLane.MessageLaneId name;
 
     @Column(name = "DESCRIPTION")
     @Lob
     private String description;
 
-    @ManyToOne(optional = true)
-    private PDomibusConnectorMessageLane parent;
+//    @ManyToOne(optional = true)
+//    private PDomibusConnectorMessageLane parent;
 
     //TODO: add properties...
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public DomibusConnectorMessageLane.MessageLaneId getName() {
+        return name;
+    }
+
+    public void setName(DomibusConnectorMessageLane.MessageLaneId name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

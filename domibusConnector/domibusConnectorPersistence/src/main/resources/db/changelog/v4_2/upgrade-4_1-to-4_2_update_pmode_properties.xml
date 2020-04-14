@@ -33,6 +33,7 @@
             <column name="FK_MESSAGE_LANE" type="${id.type}" />
             <column name="CREATED" type="java.sql.Types.TIMESTAMP" />
             <column name="DESCRIPTION" type="java.sql.Types.CLOB" />
+            <column name="ACTIVE" type="java.sql.Types.BOOLEAN" />
         </createTable>
         <addPrimaryKey tableName="DC_PMODE_SET" columnNames="ID" constraintName="PK_DC_PMODE_SET" />
     </changeSet>

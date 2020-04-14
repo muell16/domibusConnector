@@ -23,7 +23,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DomibusConnectorAction> getConfigured(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorAction action);
+    Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorAction action);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -35,7 +35,7 @@ public interface DomibusConnectorPModeService {
      *          empty Optional if no service was found
      *          the domibusConnectorService where all attributes are filled
      */
-    Optional<DomibusConnectorService> getConfigured(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorService domibusConnectorService);
+    Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorService domibusConnectorService);
 
     /**
      * Will check if the current p-Mode set for this message lane contains
@@ -66,6 +66,6 @@ public interface DomibusConnectorPModeService {
      * @param lane - the MessageLaneConfiguration which is changed
      * @return  the current PModeSet of the given MessageLane
      */
-    DomibusConnectorPModeSet getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId lane);
+    Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId lane);
 
 }

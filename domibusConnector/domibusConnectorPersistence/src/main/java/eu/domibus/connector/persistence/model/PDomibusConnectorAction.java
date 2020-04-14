@@ -6,10 +6,23 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "DOMIBUS_CONNECTOR_ACTION")
+@Table(name = PDomibusConnectorAction.TABLE_NAME)
 public class PDomibusConnectorAction implements Serializable {
 
+    public static final String TABLE_NAME = "DOMIBUS_CONNECTOR_ACTION";
+
     @Id
+    @Column(name="ID")
+    @TableGenerator(name = "seq" + TABLE_NAME,
+            table = PDomibusConnectorPersistenceModel.SEQ_STORE_TABLE_NAME,
+            pkColumnName = PDomibusConnectorPersistenceModel.SEQ_NAME_COLUMN_NAME,
+            pkColumnValue = TABLE_NAME + ".ID",
+            valueColumnName = PDomibusConnectorPersistenceModel.SEQ_VALUE_COLUMN_NAME,
+            initialValue = PDomibusConnectorPersistenceModel.INITIAL_VALUE,
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "seq" + TABLE_NAME)
+    private Long id;
+
     @Column(name = "ACTION")
     private String action;
 
@@ -19,6 +32,22 @@ public class PDomibusConnectorAction implements Serializable {
     @ManyToOne
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
     private PDomibusConnectorPModeSet pModeSet;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PDomibusConnectorPModeSet getpModeSet() {
+        return pModeSet;
+    }
+
+    public void setpModeSet(PDomibusConnectorPModeSet pModeSet) {
+        this.pModeSet = pModeSet;
+    }
 
     public String getAction() {
         return action;

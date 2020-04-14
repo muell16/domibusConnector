@@ -16,6 +16,7 @@ public class ActionMapper {
                     persistenceAction.getAction(),
                     persistenceAction.isDocumentRequired()
             );
+            action.setDbKey(persistenceAction.getId());
             return action;
         }
         return null;
@@ -26,6 +27,7 @@ public class ActionMapper {
         if (action != null) {
             PDomibusConnectorAction persistenceAction = new PDomibusConnectorAction();
             BeanUtils.copyProperties(action, persistenceAction);
+            persistenceAction.setId(action.getDbKey());
             return persistenceAction;
         }
         return null;

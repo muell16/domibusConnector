@@ -33,14 +33,16 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
     public eu.domibus.connector.domain.model.DomibusConnectorParty getParty(String partyId, String role) {
 //        PDomibusConnectorPartyPK pk = new PDomibusConnectorPartyPK(partyId, role);
 //        PDomibusConnectorParty party = partyDao.findById(pk).get();
-        PDomibusConnectorParty party = partyDao.findByPartyIdAndRoleAndDeletedIsFalse(partyId, role).get(0);
-        return mapPartyToDomain(party);
+//        PDomibusConnectorParty party = partyDao.findByPartyIdAndRoleAndDeletedIsFalse(partyId, role).get(0);
+//        return mapPartyToDomain(party);
+        return null;
     }
 
     @Override
     public eu.domibus.connector.domain.model.DomibusConnectorParty getPartyByPartyId(String partyId) {
-        PDomibusConnectorParty party = partyDao.findByPartyIdAndDeletedIsNot(partyId).get(0);
-        return mapPartyToDomain(party);
+//        PDomibusConnectorParty party = partyDao.findByPartyIdAndDeletedIsNot(partyId).get(0);
+//        return mapPartyToDomain(party);
+        return null;
     }
 
     @Override
@@ -53,10 +55,10 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
     @Override
     public List<DomibusConnectorParty> getPartyList() {
         final List<DomibusConnectorParty> parties = new ArrayList<>();
-        this.partyDao.findAllByDeletedIsFalse().forEach((dbParty) -> {
-            DomibusConnectorParty p = mapPartyToDomain(dbParty);
-            parties.add(p);
-        });
+//        this.partyDao.findAllByDeletedIsFalse().forEach((dbParty) -> {
+//            DomibusConnectorParty p = mapPartyToDomain(dbParty);
+//            parties.add(p);
+//        });
         return parties;
     }
 

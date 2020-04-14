@@ -18,15 +18,15 @@ import java.util.List;
 public interface DomibusConnectorPartyDao extends CrudRepository<PDomibusConnectorParty, Long> {
 
 
-    @Query("SELECT p FROM PDomibusConnectorParty p WHERE p.partyId = ?1 AND p.deleted = false")
-    public List<PDomibusConnectorParty> findByPartyIdAndDeletedIsNot(String partyId);
+//    @Query("SELECT p FROM PDomibusConnectorParty p WHERE p.partyId = ?1 AND p.deleted = false")
+//    public List<PDomibusConnectorParty> findByPartyIdAndDeletedIsNot(String partyId);
 
-    public List<PDomibusConnectorParty> findByPartyIdAndRoleAndDeletedIsFalse(String partyId, String role);
+//    public List<PDomibusConnectorParty> findByPartyIdAndRoleAndDeletedIsFalse(String partyId, String role);
 
-    List<PDomibusConnectorParty> findAllByDeletedIsFalse();
+//    List<PDomibusConnectorParty> findAllByDeletedIsFalse();
 
-    @Modifying
-    @Query("UPDATE PDomibusConnectorParty p SET p.deleted = true WHERE p = ?1")
-    void setDeleted(PDomibusConnectorParty dbParty);
+//    @Modifying
+//    @Query("UPDATE PDomibusConnectorParty p SET p.deleted = true WHERE p = ?1")
+//    void setDeleted(PDomibusConnectorParty dbParty);
 
 }

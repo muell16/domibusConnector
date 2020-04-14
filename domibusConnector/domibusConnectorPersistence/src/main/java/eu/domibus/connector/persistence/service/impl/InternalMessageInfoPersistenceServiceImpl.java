@@ -6,6 +6,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
 import eu.domibus.connector.persistence.model.*;
+import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,12 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalMessageInfoPersistenceServiceImpl.class);
 
     private DomibusConnectorMessageInfoDao messageInfoDao;
+    private DomibusConnectorPModePersistenceService pModeService;
 //    private DomibusConnectorPartyDao partyDao;
-    private DomibusConnectorPartyPersistenceServiceImpl partyPersistenceService;
-    private DomibusConnectorServiceDao serviceDao;
-    private DomibusConnectorActionDao actionDao;
+//    private DomibusConnectorPartyPersistenceServiceImpl partyPersistenceService;
+//    private DomibusConnectorPModeService pModeService;
+//    private DomibusConnectorServiceDao serviceDao;
+//    private DomibusConnectorActionDao actionDao;
 
     @Autowired
     public void setMessageInfoDao(DomibusConnectorMessageInfoDao messageInfoDao) {
@@ -34,19 +37,29 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     }
 
     @Autowired
-    public void setDomibusConnectorPartyPersistenceServiceImpl(DomibusConnectorPartyPersistenceServiceImpl partyPersistenceService) {
-        this.partyPersistenceService = partyPersistenceService;
+    public void setDomibusConnectorPModePersistenceService(DomibusConnectorPModePersistenceService pModeService) {
+        this.pModeService = pModeService;
     }
 
-    @Autowired
-    public void setServiceDao(DomibusConnectorServiceDao serviceDao) {
-        this.serviceDao = serviceDao;
-    }
+//    @Autowired
+//    public void setpModeService(DomibusConnectorPModeService pModeService) {
+//        this.pModeService = pModeService;
+//    }
 
-    @Autowired
-    public void setActionDao(DomibusConnectorActionDao actionDao) {
-        this.actionDao = actionDao;
-    }
+    //    @Autowired
+//    public void setDomibusConnectorPartyPersistenceServiceImpl(DomibusConnectorPartyPersistenceServiceImpl partyPersistenceService) {
+//        this.partyPersistenceService = partyPersistenceService;
+//    }
+
+//    @Autowired
+//    public void setServiceDao(DomibusConnectorServiceDao serviceDao) {
+//        this.serviceDao = serviceDao;
+//    }
+//
+//    @Autowired
+//    public void setActionDao(DomibusConnectorActionDao actionDao) {
+//        this.actionDao = actionDao;
+//    }
 
     @Override
     @Transactional
@@ -79,29 +92,30 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
      */
     @Override
     public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
+        DomibusConnectorMessageLane.MessageLaneId defaultMessageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
         PDomibusConnectorAction dbAction = messageInfo.getAction();
-        Optional<PDomibusConnectorAction> dbActionFound = actionDao.findById(dbAction.getAction());
+        Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, messageInfo.getAction());
         checkNull(dbAction, dbActionFound,
-                String.format("No action [%s] is configured at the connector!", dbAction.getAction()));
+                String.format("No action [%s] is configured at the connector!", dbAction.getId()));
         messageInfo.setAction(dbActionFound.get());
 
         PDomibusConnectorService dbService = messageInfo.getService();
-        Optional<PDomibusConnectorService> dbServiceFound = serviceDao.findById(dbService.getService());
+        Optional<PDomibusConnectorService> dbServiceFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, messageInfo.getService());
         checkNull(dbService, dbServiceFound,
-                String.format("No service [%s] is configured at the connector!", dbService.getService()));
+                String.format("No service [%s] is configured at the connector!", dbService.getId()));
         messageInfo.setService(dbServiceFound.get());
 
-//        PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
-//        Optional<PDomibusConnectorParty> dbFromPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbFromParty));
-//        checkNull(dbFromParty, dbFromPartyFound,
-//                String.format("No party [%s] is configured at the connector!", new PDomibusConnectorPartyPK(dbFromParty)));
-//        messageInfo.setFrom(dbFromPartyFound.get());
-//
-//        PDomibusConnectorParty dbToParty = messageInfo.getTo();
-//        Optional<PDomibusConnectorParty> dbToPartyFound = partyDao.findById(new PDomibusConnectorPartyPK(dbToParty));
-//        checkNull(dbToParty, dbToPartyFound,
-//                String.format("No party [%s] is configured at the connector!", new PDomibusConnectorPartyPK(dbToParty)));
-//        messageInfo.setTo(dbToPartyFound.get());
+        PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
+        Optional<PDomibusConnectorParty> dbFromPartyFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbFromParty);
+        checkNull(dbFromParty, dbFromPartyFound,
+                String.format("No party [%s] is configured at the connector!", dbFromParty));
+        messageInfo.setFrom(dbFromPartyFound.get());
+
+        PDomibusConnectorParty dbToParty = messageInfo.getTo();
+        Optional<PDomibusConnectorParty> dbToPartyFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbToParty);
+        checkNull(dbToParty, dbToPartyFound,
+                String.format("No party [%s] is configured at the connector!", dbToParty));
+        messageInfo.setTo(dbToPartyFound.get());
 
         return messageInfo;
     }
@@ -146,12 +160,12 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
             details.setOriginalSender(messageInfo.getOriginalSender());
 
             PDomibusConnectorParty fromPartyDb = messageInfo.getFrom();
-            DomibusConnectorParty fromParty = partyPersistenceService.mapPartyToDomain(fromPartyDb);
+            DomibusConnectorParty fromParty = PartyMapper.mapPartyToDomain(fromPartyDb);
             LOGGER.trace("#mapMessageInfoIntoMessageDetails: set fromParty to [{}]", fromParty);
             details.setFromParty(fromParty);
 
             PDomibusConnectorParty dbToParty = messageInfo.getTo();
-            DomibusConnectorParty toParty = partyPersistenceService.mapPartyToDomain(dbToParty);
+            DomibusConnectorParty toParty = PartyMapper.mapPartyToDomain(dbToParty);
             LOGGER.trace("#mapMessageInfoIntoMessageDetails: set toParty to [{}]", toParty);
             details.setToParty(toParty);
         }
@@ -169,9 +183,9 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
         dbMessageInfo.setFinalRecipient(messageDetails.getFinalRecipient());
         dbMessageInfo.setOriginalSender(messageDetails.getOriginalSender());
 
-        PDomibusConnectorParty from = partyPersistenceService.mapPartyToPersistence(messageDetails.getFromParty());
+        PDomibusConnectorParty from = PartyMapper.mapPartyToPersistence(messageDetails.getFromParty());
         dbMessageInfo.setFrom(from);
-        PDomibusConnectorParty to = partyPersistenceService.mapPartyToPersistence(messageDetails.getToParty());
+        PDomibusConnectorParty to = PartyMapper.mapPartyToPersistence(messageDetails.getToParty());
         dbMessageInfo.setTo(to);
     }
 

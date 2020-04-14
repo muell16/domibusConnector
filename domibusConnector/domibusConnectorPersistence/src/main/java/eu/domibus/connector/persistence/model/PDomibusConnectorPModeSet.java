@@ -13,7 +13,6 @@ public class PDomibusConnectorPModeSet {
 
     public static final String TABLE_NAME = "DC_PMODE_SET";
 
-
     @Id
     @Column(name = "ID")
     @TableGenerator(name = "seq" + TABLE_NAME,
@@ -32,6 +31,13 @@ public class PDomibusConnectorPModeSet {
     @Column(name = "CREATED")
     private Timestamp created;
 
+    @ManyToOne
+    @JoinColumn(name = "FK_MESSAGE_LANE", referencedColumnName = "ID")
+    private PDomibusConnectorMessageLane messageLane;
+
+    @Column(name = "ACTIVE")
+    private boolean active;
+
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet")
     private List<PDomibusConnectorParty> parties = new ArrayList<>();
 
@@ -41,8 +47,16 @@ public class PDomibusConnectorPModeSet {
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "pModeSet")
     private List<PDomibusConnectorService> services = new ArrayList<>();
 
+    public PDomibusConnectorMessageLane getMessageLane() {
+        return messageLane;
+    }
+
+    public void setMessageLane(PDomibusConnectorMessageLane messageLane) {
+        this.messageLane = messageLane;
+    }
+
     @PrePersist
-    public void prePersiste() {
+    public void prePersist() {
         this.created = Timestamp.from(Instant.now());
     }
 
@@ -76,6 +90,30 @@ public class PDomibusConnectorPModeSet {
 
     public void setParties(List<PDomibusConnectorParty> parties) {
         this.parties = parties;
+    }
+
+    public List<PDomibusConnectorAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<PDomibusConnectorAction> actions) {
+        this.actions = actions;
+    }
+
+    public List<PDomibusConnectorService> getServices() {
+        return services;
+    }
+
+    public void setServices(List<PDomibusConnectorService> services) {
+        this.services = services;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
 

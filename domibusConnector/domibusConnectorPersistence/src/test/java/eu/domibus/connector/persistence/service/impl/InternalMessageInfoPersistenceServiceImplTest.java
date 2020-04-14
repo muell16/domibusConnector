@@ -25,12 +25,15 @@ public class InternalMessageInfoPersistenceServiceImplTest {
 
     @Mock
     private DomibusConnectorMessageInfoDao messageInfoDao;
-    @Mock
-    private DomibusConnectorPartyDao partyDao;
-    @Mock
-    private DomibusConnectorServiceDao serviceDao;
-    @Mock
-    private DomibusConnectorActionDao actionDao;
+
+
+
+//    @Mock
+//    private DomibusConnectorPartyDao partyDao;
+//    @Mock
+//    private DomibusConnectorServiceDao serviceDao;
+//    @Mock
+//    private DomibusConnectorActionDao actionDao;
 
     private InternalMessageInfoPersistenceService internalMessageInfoPersistenceService;
 
@@ -38,10 +41,10 @@ public class InternalMessageInfoPersistenceServiceImplTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         InternalMessageInfoPersistenceServiceImpl impl = new InternalMessageInfoPersistenceServiceImpl();
-        impl.setActionDao(actionDao);
+//        impl.setActionDao(actionDao);
         impl.setMessageInfoDao(messageInfoDao);
 //        impl.setPartyDao(partyDao);
-        impl.setServiceDao(serviceDao);
+//        impl.setServiceDao(serviceDao);
 
 //        PDomibusConnectorParty partyAT = PersistenceEntityCreator.createPartyAT();
 //        Mockito.when(partyDao.findById(eq(new PDomibusConnectorPartyPK(partyAT))))
@@ -50,14 +53,14 @@ public class InternalMessageInfoPersistenceServiceImplTest {
 //        PDomibusConnectorParty domibusBlue = PersistenceEntityCreator.createPartyDomibusBLUE();
 //        Mockito.when(partyDao.findById(eq(new PDomibusConnectorPartyPK(domibusBlue))))
 //                .thenReturn(Optional.of(domibusBlue));
-
-        PDomibusConnectorService epoService = PersistenceEntityCreator.createServiceEPO();
-        Mockito.when(serviceDao.findById(eq(epoService.getService())))
-                .thenReturn(Optional.of(epoService));
-
-        PDomibusConnectorAction relayREMMDAcceptanceRejectionAction = PersistenceEntityCreator.createRelayREMMDAcceptanceRejectionAction();
-        Mockito.when(actionDao.findById(eq(relayREMMDAcceptanceRejectionAction.getAction())))
-                .thenReturn(Optional.of(relayREMMDAcceptanceRejectionAction));
+//
+//        PDomibusConnectorService epoService = PersistenceEntityCreator.createServiceEPO();
+//        Mockito.when(serviceDao.findById(eq(epoService.getService())))
+//                .thenReturn(Optional.of(epoService));
+//
+//        PDomibusConnectorAction relayREMMDAcceptanceRejectionAction = PersistenceEntityCreator.createRelayREMMDAcceptanceRejectionAction();
+//        Mockito.when(actionDao.findById(eq(relayREMMDAcceptanceRejectionAction.getAction())))
+//                .thenReturn(Optional.of(relayREMMDAcceptanceRejectionAction));
 
 
         this.internalMessageInfoPersistenceService = impl;

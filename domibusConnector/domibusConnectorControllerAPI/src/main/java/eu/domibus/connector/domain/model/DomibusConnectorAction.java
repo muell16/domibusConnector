@@ -10,7 +10,7 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorAction implements Serializable {
 
-
+	private Long dbKey;
 	private String action;
 	private boolean documentRequired;
 
@@ -44,6 +44,14 @@ public class DomibusConnectorAction implements Serializable {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public void setDbKey(Long dbKey) {
+		this.dbKey = dbKey;
+	}
+
+	public Long getDbKey() {
+		return dbKey;
 	}
 
 	@Override

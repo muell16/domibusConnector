@@ -17,6 +17,7 @@ public class ServiceMapper {
                     persistenceService.getService(),
                     persistenceService.getServiceType()
             );
+            service.setDbKey(persistenceService.getId());
             return service;
         }
         return null;
@@ -28,6 +29,7 @@ public class ServiceMapper {
         if (service != null) {
             PDomibusConnectorService persistenceService = new PDomibusConnectorService();
             BeanUtils.copyProperties(service, persistenceService);
+            persistenceService.setId(service.getDbKey());
             return persistenceService;
         }
         return null;

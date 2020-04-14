@@ -35,9 +35,6 @@ public class PDomibusConnectorParty {
     @Column(name = "PARTY_ID_TYPE")
     private String partyIdType;
 
-    @Column(name = "DELETED")
-    private boolean deleted;
-
     @ManyToOne
     @JoinColumn(name = "FK_PMODE_SET", referencedColumnName = "ID")
     private PDomibusConnectorPModeSet pModeSet;
@@ -88,14 +85,6 @@ public class PDomibusConnectorParty {
 
     public void setPartyIdType(String partyIdType) {
         this.partyIdType = partyIdType;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

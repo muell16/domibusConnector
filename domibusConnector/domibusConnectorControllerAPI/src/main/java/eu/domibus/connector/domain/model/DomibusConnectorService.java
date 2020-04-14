@@ -10,6 +10,7 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorService implements Serializable {
 
+	private Long dbKey;
 	private String service;
 	private String serviceType;
 
@@ -44,6 +45,14 @@ public class DomibusConnectorService implements Serializable {
 
 	public void setService(String service) {
 		this.service = service;
+	}
+
+	public Long getDbKey() {
+		return dbKey;
+	}
+
+	public void setDbKey(Long dbKey) {
+		this.dbKey = dbKey;
 	}
 
 	@Override
