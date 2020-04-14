@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -71,17 +72,17 @@ public class ITCaseTestContext {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-//    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
-//        return new ArrayBlockingQueue<>(100);
-//    }
-//
-//    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-//    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
-//        return new ArrayBlockingQueue<>(100);
-//    }
+    @Bean(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages() {
+        return new ArrayBlockingQueue<>(100);
+    }
+
+    @Bean(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+    public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages() {
+        return new ArrayBlockingQueue<>(100);
+    }
 
     @Bean
     public DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor() {
@@ -116,9 +117,9 @@ public class ITCaseTestContext {
         @Autowired
         DomibusConnectorBackendDeliveryServiceInterceptor interceptor;
 
-//        @Autowired
-//        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);;
+        @Autowired
+        @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages; // = new ArrayBlockingQueue<>(100);;
 
         @Override
         public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
@@ -147,7 +148,7 @@ public class ITCaseTestContext {
         }
 
         synchronized public void clearQueue() {
-            toBackendDeliveredMessages = new ArrayBlockingQueue<>(100);
+            toBackendDeliveredMessages.clear();
         }
 
         public synchronized BlockingQueue<DomibusConnectorMessage> getQueue() {
@@ -163,9 +164,9 @@ public class ITCaseTestContext {
         @Autowired
         DomibusConnectorGatewaySubmissionServiceInterceptor interceptor;
 
-//        @Autowired
-//        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
-        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
+        @Autowired
+        @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+        public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages; // = new ArrayBlockingQueue<>(100);
 
         @Override
         synchronized public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
@@ -191,7 +192,7 @@ public class ITCaseTestContext {
         }
 
         synchronized public void clearQueue() {
-            toGatewayDeliveredMessages = new ArrayBlockingQueue<>(100);
+            toGatewayDeliveredMessages.clear();
         }
 
         public synchronized BlockingQueue<DomibusConnectorMessage> getQueue() {
