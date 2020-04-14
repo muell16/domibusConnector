@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
@@ -40,6 +41,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
+	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     //setter
     @Autowired
@@ -57,6 +59,11 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         this.gwSubmissionService = gwSubmissionService;
     }
 
+    @Autowired
+    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
+        this.backendDeliveryService = backendDeliveryService;
+    }
+
     @Override
     @Transactional(propagation=Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
@@ -64,6 +71,10 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 	public void processMessage(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isEvidenceMessage(message)) {
             throw new IllegalArgumentException("The originalMessage is not an evidence originalMessage!");
+        }
+
+        if (!DomainModelHelper.isEvidenceMessageTrigger(message)) {
+            LOGGER.warn("The evidence of the message is already generated. The current connector will generate a new evidence anyway. Future are going to use the already provided evidence!");
         }
 
 		String refToOriginalMessage = message.getMessageDetails().getRefToMessageId();
@@ -84,6 +95,18 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
                 = confirmationMessageService.createConfirmationMessageBuilder(originalMessage, evidenceType);
 
+
+        sendAsEvidenceMessageToGw(evidenceType, originalMessage, confirmationMessageBuilder);
+
+        sendAsEvidenceMessageBackToBackend(confirmationMessageBuilder);
+
+    }
+
+    private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
+        backendDeliveryService.deliverMessageToBackend(confirmationMessageBuilder.useNationalIdAsRefToMessageId().build().getEvidenceMessage());
+    }
+
+    private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation =
                 confirmationMessageBuilder
                 .switchFromToParty()
@@ -98,12 +121,11 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         submitToGateway(evidenceMessage, originalMessage);
         setDeliveredToGateway(evidenceMessage);
 
-
         CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
         commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
         LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", confirmation.getEvidenceType(), originalMessage);
-	}
+    }
 
     private void submitToGateway(DomibusConnectorMessage evidenceMessage, DomibusConnectorMessage originalMessage) {
         try {

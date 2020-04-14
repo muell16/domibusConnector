@@ -41,16 +41,16 @@ public class CommonConfirmationProcessor {
                 .max(Comparator.naturalOrder())
                 .orElse(0);
 
-        if (evidenceType.getPriority() < highestEvidencePriority) {
+        if (evidenceType.getPriority() <= highestEvidencePriority) {
             LOGGER.info("Evidence of type [{}] will not influence the rejected or confirmed state of message [{}]\n because the evidence has lower priority then the already received evidences", evidenceType, originalMessage);
             return;
         }
 
-        if (NON_DELIVERY == evidenceType || NON_RETRIEVAL == evidenceType || RELAY_REMMD_REJECTION == evidenceType || RELAY_REMMD_FAILURE == evidenceType) {
+        if (SUBMISSION_REJECTION == evidenceType || NON_DELIVERY == evidenceType || NON_RETRIEVAL == evidenceType || RELAY_REMMD_REJECTION == evidenceType || RELAY_REMMD_FAILURE == evidenceType) {
             LOGGER.warn(BUSINESS_LOG, "Message [{}] has been rejected by evidence [{}]", originalMessage, evidenceType);
             messagePersistenceService.rejectMessage(originalMessage);
         }
-        if (DELIVERY == evidenceType || RETRIEVAL == evidenceType) {
+        if (DELIVERY == evidenceType || RETRIEVAL == evidenceType) { //TODO: make a configuration switch to configure which evidence is sufficient to set mesg. into confirmed state!
             if (messagePersistenceService.checkMessageRejected(originalMessage)) {
                 LOGGER.warn(BUSINESS_LOG, "Message [{}] has already been rejected by an negative evidence!\nThe positive evidence of type [{}] will be ignored!", originalMessage, evidenceType);
             } else {

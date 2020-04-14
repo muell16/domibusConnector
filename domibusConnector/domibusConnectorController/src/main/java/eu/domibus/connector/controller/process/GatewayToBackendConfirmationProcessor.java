@@ -72,10 +72,10 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
                     .build();	
             
         }
-        if (containsRejectionConfirmation(originalMessage)) {
-            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Confirmation message received of type [{}] - putting message into rejected state", confirmation.getEvidenceType());
-            messagePersistenceService.rejectMessage(originalMessage);
-        }
+//        if (containsRejectionConfirmation(originalMessage)) {
+//            LOGGER.info(LoggingMarker.BUSINESS_LOG, "Confirmation message received of type [{}] - putting message into rejected state", confirmation.getEvidenceType());
+//            messagePersistenceService.rejectMessage(originalMessage);
+//        }
 
         originalMessage.addConfirmation(confirmation);
 
@@ -84,15 +84,15 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
                 new DomibusConnectorMessage.DomibusConnectorMessageId(confirmationMessage.getConnectorMessageId()));
 
 
+        DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
+        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
+        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
+
         if (originalMessage.getMessageDetails().getBackendMessageId() != null) {
             confirmationMessage.getMessageDetails().setBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
         }
         backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
-
-        DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
                 originalMessage.getConnectorMessageId());

@@ -29,6 +29,7 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -361,6 +362,9 @@ public class ConnectorMessageFlowITCase {
      *
      *   -) GW must have received RETRIEVAL_EVIDENCE
      *
+     *   -) Backend must have RCV DELIVERY Evidence
+     *   -) Backend must have RCV RETRIEVAL Evidence
+     *
      *   -) message must be in confirmed state
      *
      */
@@ -460,6 +464,13 @@ public class ConnectorMessageFlowITCase {
             assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))
                     .as("Message must be in confirmed state")
                     .isTrue();
+
+            //check send back of generated evidences
+            DomibusConnectorMessage toBackendDeliveryEvidence = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
+            DomibusConnectorMessage toBackendRetrievalEvidence = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
+
+            List toBackendEvidenceList = CollectionUtils.arrayToList(new DomibusConnectorMessage[]{toBackendDeliveryEvidence, toBackendRetrievalEvidence});
+            assertThat(toBackendEvidenceList).hasSize(2);
 
         });
     }
@@ -834,40 +845,52 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidence).isNotNull();
 
             //DO
+            //deliver relay remmd acceptance
             DomibusConnectorMessage relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(domibusConnectorMessage);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
             this.gatewaySubmissionService.deliverMessageFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
+
+            DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
+            assertThat(relayReemdEvidenceMsg)
+                    .as("Backend must have RCV relayREMMD msg")
+                    .isNotNull();
+
+
+            //deliver non delivery
             DomibusConnectorMessage nonDeliveryEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(domibusConnectorMessage,
                     DomainEntityCreator.createMessageNonDeliveryConfirmation());
             nonDeliveryEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             nonDeliveryEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_3");
             this.gatewaySubmissionService.deliverMessageFromGatewayToController(nonDeliveryEvidenceForMessage);
 
+
+            DomibusConnectorMessage deliveryEvidenceMsg = toBackendDeliveredMessages.take();
+            assertThat(deliveryEvidenceMsg)
+                    .as("Backend must have RCV delivery msg")
+                    .isNotNull();
+
+            //deliver retrieval - must not reach the backend!
             DomibusConnectorMessage retrievalEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(domibusConnectorMessage,
                     DomainEntityCreator.createRetrievalEvidenceMessage());
             retrievalEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             retrievalEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_4");
             this.gatewaySubmissionService.deliverMessageFromGatewayToController(retrievalEvidenceForMessage);
 
-            //ASSERT
-            DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
-            assertThat(relayReemdEvidenceMsg)
-                    .isNotNull();
 
 
-            DomibusConnectorMessage deliveryEvidenceMsg = toBackendDeliveredMessages.take();
-            assertThat(deliveryEvidenceMsg)
-                    .isNotNull();
+            //wait for any more messages for 5s
+            DomibusConnectorMessage retrieval = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
+            assertThat(retrieval)
+                    .as("No more msg should be transported to backend!")
+                    .isNull();
 
-
-//            DomibusConnectorMessage retrieval = toBackendDeliveredMessages.poll(5, TimeUnit.SECONDS);
-//            assertThat(deliveryEvidenceMsg).isNull();
 
             //ASSERT MSG State
             DomibusConnectorMessage originalMessage = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageRejected(originalMessage))
+                    .as("Message must be in rejected state!")
                     .isTrue();
 
             assertThat(toBackendDeliveredMessages)

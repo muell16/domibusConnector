@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
+import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.controller.test.util.MockedCreateConfirmationMessageBuilderFactoryImplProvider;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
@@ -42,6 +43,9 @@ public class BackendToGatewayConfirmationProcessorTest {
     @Mock
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 
+    @Mock
+    private DomibusConnectorBackendDeliveryService backendDeliveryService;
+
     private BackendToGatewayConfirmationProcessor backendToGatewayConfirmationProcessor;
 
     private List<DomibusConnectorMessage> toGwSubmittedMessages;
@@ -59,6 +63,7 @@ public class BackendToGatewayConfirmationProcessorTest {
         backendToGatewayConfirmationProcessor.setConfirmationMessageService(mockingProvider.getCreateConfirmationMessageBuilderFactory());
 
         backendToGatewayConfirmationProcessor.setGwSubmissionService(gwSubmissionService);
+        backendToGatewayConfirmationProcessor.setBackendDeliveryService(backendDeliveryService);
 
         Mockito.doAnswer( (invoc) -> toGwSubmittedMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
