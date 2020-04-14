@@ -41,7 +41,7 @@ public class CommonConfirmationProcessor {
                 .max(Comparator.naturalOrder())
                 .orElse(0);
 
-        if (evidenceType.getPriority() <= highestEvidencePriority) {
+        if (evidenceType.getPriority() < highestEvidencePriority) {
             LOGGER.info("Evidence of type [{}] will not influence the rejected or confirmed state of message [{}]\n because the evidence has lower priority then the already received evidences", evidenceType, originalMessage);
             return;
         }
