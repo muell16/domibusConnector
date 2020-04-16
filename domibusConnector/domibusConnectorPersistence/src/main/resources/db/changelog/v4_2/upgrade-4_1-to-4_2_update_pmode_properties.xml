@@ -20,7 +20,7 @@
         </preConditions>
         <insert tableName="DC_MESSAGE_LANE">
             <column name="ID">1</column>
-            <column name="NAME">default</column>
+            <column name="NAME">default_message_lane</column>
             <column name="DESCRIPTION">default message lane</column>
         </insert>
     </changeSet>
@@ -48,6 +48,8 @@
             <column name="ID">1</column>
             <column name="CREATED" defaultValueComputed="${now}"></column>
             <column name="DESCRIPTION">initial set created by auto upgrade</column>
+            <column name="ACTIVE">1</column>
+            <column name="FK_MESSAGE_LANE">1</column>
         </insert>
     </changeSet>
 

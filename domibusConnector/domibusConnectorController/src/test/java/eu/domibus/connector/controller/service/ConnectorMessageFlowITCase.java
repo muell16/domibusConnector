@@ -62,10 +62,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-@SpringBootTest(classes = {ITCaseTestContext.class}, properties =
-        {"logging.level.org.hibernate=INFO", }
+@SpringBootTest(classes = {ITCaseTestContext.class},
+        properties = { "connector.controller.evidence.timeoutActive=false" } //deactivate the evidence timeout checking timer job during this test
 )
-@Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorMessageFlowITCase {

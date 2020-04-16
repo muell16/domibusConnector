@@ -4,7 +4,10 @@ package eu.domibus.connector.controller.process;
 import javax.annotation.Nonnull;
 
 
+import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
+import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
+import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
@@ -48,11 +51,9 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	public ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	private DomibusConnectorMessageIdGenerator messageIdGenerator;
-	private DomibusConnectorEvidencesToolkit evidencesToolkit;
+	private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
-	private DomibusConnectorActionPersistenceService actionPersistenceService;
 	private DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
 
 	@Autowired
@@ -71,14 +72,10 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 
 	@Autowired
-	public void setMessageIdGenerator(DomibusConnectorMessageIdGenerator messageIdGenerator) {
-		this.messageIdGenerator = messageIdGenerator;
+	public void setConfirmationMessageBuilderFactory(ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory) {
+		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
 	}
 
-	@Autowired
-	public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
-		this.evidencesToolkit = evidencesToolkit;
-	}
 
 	@Autowired
 	public void setSecurityToolkit(DomibusConnectorSecurityToolkit securityToolkit) {
@@ -88,11 +85,6 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	@Autowired
 	public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
 		this.backendDeliveryService = backendDeliveryService;
-	}
-
-	@Autowired
-	public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
-		this.actionPersistenceService = actionPersistenceService;
 	}
 
 	@Autowired
@@ -148,63 +140,121 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private void createDeliveryEvidenceAndSendIt(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
-		DomibusConnectorMessageConfirmation delivery = null;
+		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
+				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
+				.switchFromToParty()
+				.build();
+
+		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
+
+		DomibusConnectorMessage evidenceMessage = wrappedDeliveryEvidenceMsg.getEvidenceMessage();
 		try {
-			delivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.DELIVERY, originalMessage, null, null);
-			originalMessage.addConfirmation(delivery);
-		} catch (DomibusConnectorEvidencesToolkitException e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(originalMessage)
-                    .setText("Error creating Delivery evidence for originalMessage!")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
+			LOGGER.debug("Submitting messageConfirmation [{}] back to GW", evidenceMessage);
+			gwSubmissionService.submitToGateway(evidenceMessage);
+			LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] confirmation for message [{}] successfully sent to gw", wrappedDeliveryEvidenceMsg.getEvidenceType(), originalMessage.getConnectorMessageId());
+//			LOGGER.trace("Confirmation [{}] with sent successfully to gw, the content is:\n\n{}\n\n", messageConfirmation, new String(messageConfirmation.getEvidence(), "UTF-8"));
+
+		} catch (Exception e) {
+			//TODO: improve that!
+			String error = String.format("Exception sending evidenceMessage [%s] of originalMessage with connectorMessageId [%s] back to gateway ",
+					evidenceMessage,
+					originalMessage.getConnectorMessageId());
+			DomibusConnectorMessageException exception = DomibusConnectorMessageExceptionBuilder.createBuilder()
+					.setMessage(originalMessage)
+					.setText(error)
+					.setSource(this.getClass())
+					.setCause(e)
+					.build();
+			LOGGER.error("Exception occured", exception);
+			DomibusConnectorMessageError messageError =
+					DomibusConnectorMessageErrorBuilder.createBuilder()
+							.setSource(this.getClass().getName())
+							.setDetails(e.getStackTrace().toString())
+							.setText(error)
+							.build();
+			messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
 		}
-
-		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
-
-		sendEvidenceBackToGateway(originalMessage, action, delivery);
-
 		messagePersistenceService.confirmMessage(originalMessage);
+
 	}
 	
 	private void createNonDeliveryEvidenceAndSendIt(DomibusConnectorMessage originalMessage)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
-		DomibusConnectorMessageConfirmation nonDelivery = null;
-		try {
-			nonDelivery = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.NON_DELIVERY, originalMessage,DomibusConnectorRejectionReason.OTHER, null);
-		} catch (DomibusConnectorEvidencesToolkitException e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(originalMessage)
-                    .setText("Error creating NonDelivery evidence for originalMessage!")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-		}
 
-		DomibusConnectorAction action = actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
+		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
+				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY)
+				.switchFromToParty()
+				.build();
 
-		sendEvidenceBackToGateway(originalMessage, action, nonDelivery);
+		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
+
+		sendEvidenceBackToGateway(wrappedDeliveryEvidenceMsg);
+
 
 		messagePersistenceService.rejectMessage(originalMessage);
 	}
-	
+
+	private void sendEvidenceBackToGateway(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg) {
+
+
+		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
+
+		DomibusConnectorMessage evidenceMessage = wrappedDeliveryEvidenceMsg.getEvidenceMessage();
+
+
+		try {
+			LOGGER.debug("Submitting messageConfirmation [{}] back to GW", wrappedDeliveryEvidenceMsg.getMessageConfirmation());
+			gwSubmissionService.submitToGateway(evidenceMessage);
+			LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] confirmation for message [{}] successfully sent to gw", wrappedDeliveryEvidenceMsg.getEvidenceType(), wrappedDeliveryEvidenceMsg.getCausedByConnectorMessageId());
+//			LOGGER.trace("Confirmation [{}] with sent successfully to gw, the content is:\n\n{}\n\n", messageConfirmation, new String(messageConfirmation.getEvidence(), "UTF-8"));
+
+		} catch (Exception e) {
+			//TODO: improve that!
+			String error = String.format("Exception sending evidenceMessage [%s] of originalMessage with connectorMessageId [%s] back to gateway ",
+					evidenceMessage,
+					wrappedDeliveryEvidenceMsg.getCausedByConnectorMessageId());
+			DomibusConnectorMessageException exception = DomibusConnectorMessageExceptionBuilder.createBuilder()
+					.setMessage(wrappedDeliveryEvidenceMsg.getOriginalMessage())
+					.setText(error)
+					.setSource(this.getClass())
+					.setCause(e)
+					.build();
+			LOGGER.error("Exception occured", exception);
+			DomibusConnectorMessageError messageError =
+					DomibusConnectorMessageErrorBuilder.createBuilder()
+							.setSource(this.getClass().getName())
+							.setDetails(e.getStackTrace().toString())
+							.setText(error)
+							.build();
+			messageErrorPersistenceService.persistMessageError(wrappedDeliveryEvidenceMsg.getCausedByConnectorMessageId(), messageError);
+		}
+	}
+
 	private void createRelayREMMDEvidenceAndSendIt(DomibusConnectorMessage originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
-		DomibusConnectorMessageConfirmation messageConfirmation = null;
-        DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+		CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder wrappedMessageConfirmationBuilder = null;
+//        DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+
+//		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
+//				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
+//				.switchFromToParty()
+//				.build();
 
 		try {
 			if(isAcceptance) {
 			    LOGGER.trace("relay is acceptance, generating RELAY_REMMD_ACCEPTANCE");
-                messageConfirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE, originalMessage, null, null);
+                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
             } else {
                 LOGGER.trace("relay is denied, generating RELAY_REMMD_REJECTION");
-                messageConfirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION, originalMessage, DomibusConnectorRejectionReason.OTHER, null);
+                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION);
             }
-            LOGGER.trace("generated confirmation is [{}]", messageConfirmation);
-            sendEvidenceBackToGateway(originalMessage, action, messageConfirmation);
+
+			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedEvidenceMessage = wrappedMessageConfirmationBuilder
+					.switchFromToParty()
+					.build();
+			LOGGER.trace("generated confirmation is [{}]", wrappedEvidenceMessage.getMessageConfirmation());
+            sendEvidenceBackToGateway(wrappedEvidenceMessage);
 
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
@@ -213,7 +263,6 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 					.setSource(this.getClass())
 					.setCause(e)
 					.build();
-            //TODO: improve that!
             LOGGER.error("Failed to create Evidence", evidenceBuildFailed);
             DomibusConnectorMessageError messageError =
                     DomibusConnectorMessageErrorBuilder.createBuilder()
@@ -229,69 +278,6 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			LOGGER.warn(BUSINESS_LOG, "Message is not accepted!");
 			messagePersistenceService.rejectMessage(originalMessage);
 		}
-	}
-	
-	private void sendEvidenceBackToGateway(DomibusConnectorMessage originalMessage, DomibusConnectorAction action,
-										   @Nonnull DomibusConnectorMessageConfirmation messageConfirmation) throws DomibusConnectorControllerException,
-	DomibusConnectorMessageException {
-        if (messageConfirmation == null) {
-            throw new IllegalArgumentException("messageConfirmation is not allowed to be null!");
-        }
-
-		originalMessage.addConfirmation(messageConfirmation);
-//		evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage, messageConfirmation);
-
-		DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
-		DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
-		BeanUtils.copyProperties(originalDetails, details);
-
-		details.setFromParty(originalDetails.getToParty());
-		details.setToParty(originalDetails.getFromParty());
-		details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
-		details.setAction(action);
-		details.setCausedBy(originalMessage.getConnectorMessageId());
-
-		DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
-
-		evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
-		messagePersistenceService.persistMessageIntoDatabase(evidenceMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY);
-
-		
-        try {
-        	LOGGER.debug("Submitting messageConfirmation [{}] back to GW", messageConfirmation);
-            gwSubmissionService.submitToGateway(evidenceMessage);
-            LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] confirmation for message [{}] successfully sent to gw", messageConfirmation.getEvidenceType(), originalMessage.getConnectorMessageId());
-            LOGGER.trace("Confirmation [{}] with sent successfully to gw, the content is:\n\n{}\n\n", messageConfirmation, new String(messageConfirmation.getEvidence(), "UTF-8"));
-
-        } catch (Exception e) {
-            //TODO: improve that!
-            String error = String.format("Exception sending evidenceMessage [%s] of originalMessage with connectorMessageId [%s] back to gateway ",
-                    evidenceMessage,
-                    originalMessage.getConnectorMessageId());
-            DomibusConnectorMessageException exception = DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(originalMessage)
-                    .setText(error)
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-            LOGGER.error("Exception occured", exception);
-            DomibusConnectorMessageError messageError =
-                    DomibusConnectorMessageErrorBuilder.createBuilder()
-                            .setSource(this.getClass().getName())
-                            .setDetails(e.getStackTrace().toString())
-                            .setText(error)
-                            .build();
-            messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
-        }
-
-
-//        try {
-//            evidencePersistenceService.setEvidenceDeliveredToGateway(originalMessage, messageConfirmation);
-//        } catch (PersistenceException ex) {
-//        	String error = String.format("Confirmation [%s] could not set to 'delivered' to GW", messageConfirmation);
-//            LOGGER.error(error, ex);
-//            //TODO: further exception handling!
-//        }
 	}
 
 }

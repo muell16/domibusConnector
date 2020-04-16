@@ -61,21 +61,21 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
         this.actionPersistenceService = new DomibusConnectorActionPersistenceServiceImpl();
 
         DomibusConnectorActionDao actionDao = Mockito.mock(DomibusConnectorActionDao.class);
-        Mockito.when(actionDao.findById(any(String.class))).thenAnswer(
-                (Answer<Optional<PDomibusConnectorAction>>) invocation -> {
-                    PDomibusConnectorAction a = new PDomibusConnectorAction();
-                    a.setAction(invocation.getArgument(0));
-                    a.setDocumentRequired(false);
-                    return Optional.of(a);
-                }
-        );
+//        Mockito.when(actionDao.findById(any(String.class))).thenAnswer(
+//                (Answer<Optional<PDomibusConnectorAction>>) invocation -> {
+//                    PDomibusConnectorAction a = new PDomibusConnectorAction();
+//                    a.setAction(invocation.getArgument(0));
+//                    a.setDocumentRequired(false);
+//                    return Optional.of(a);
+//                }
+//        );
         ((DomibusConnectorActionPersistenceServiceImpl) this.actionPersistenceService).setActionDao(actionDao);
 
 
         Mockito.when(evidencesToolkit.createEvidence(any(), any(), any(), any())).thenReturn(DomainEntityCreator.createMessageDeliveryConfirmation());
 
         this.createConfirmationMessageBuilderFactory = new CreateConfirmationMessageBuilderFactoryImpl();
-        createConfirmationMessageBuilderFactory.setActionPersistenceService(this.actionPersistenceService);
+//        createConfirmationMessageBuilderFactory.setActionPersistenceService(this.actionPersistenceService);
         createConfirmationMessageBuilderFactory.setEvidencePersistenceService(this.evidencePersistenceService);
         createConfirmationMessageBuilderFactory.setEvidencesToolkit(this.evidencesToolkit);
         createConfirmationMessageBuilderFactory.setMessageIdGenerator(this.messageIdGenerator);

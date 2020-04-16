@@ -29,6 +29,7 @@ import java.util.concurrent.BlockingQueue;
 
 @SpringBootApplication(scanBasePackages = {
         "eu.domibus.connector.controller",
+        "eu.domibus.connector.common",      //load common
         "eu.domibus.connector.persistence", //load persistence
         "eu.domibus.connector.evidences",   //load evidences toolkit
         "eu.domibus.connector.security"     //load security toolkit,

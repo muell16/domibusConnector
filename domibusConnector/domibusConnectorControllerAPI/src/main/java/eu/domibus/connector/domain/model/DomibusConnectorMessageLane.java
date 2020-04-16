@@ -1,6 +1,6 @@
 package eu.domibus.connector.domain.model;
 
-import eu.domibus.connector.domain.configuration.MessageLaneEvidenceActionServiceConfigurationProperties;
+import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 
 import java.util.Properties;
 
@@ -41,8 +41,8 @@ public class DomibusConnectorMessageLane {
         this.description = description;
     }
 
-    public MessageLaneEvidenceActionServiceConfigurationProperties getMessageLaneActionService() {
-        return new MessageLaneEvidenceActionServiceConfigurationProperties();
+    public EvidenceActionServiceConfigurationProperties getMessageLaneActionService() {
+        return new EvidenceActionServiceConfigurationProperties();
     }
 
     @Override

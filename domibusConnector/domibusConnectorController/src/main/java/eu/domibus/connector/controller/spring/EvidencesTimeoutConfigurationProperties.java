@@ -22,7 +22,7 @@ public class EvidencesTimeoutConfigurationProperties {
      * This property configures if timeouts for messages
      * should be checked!
      */
-    private boolean timeoutActive;
+    private boolean timeoutActive = true;
 
     /**
      * This property defines the how often the timeouts for the

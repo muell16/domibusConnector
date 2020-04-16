@@ -11,6 +11,7 @@ import eu.domibus.connector.persistence.service.exceptions.IncorrectResultSizeEx
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -138,6 +139,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
+    @CacheEvict
     public void updatePModeConfigurationSet(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorPModeSet connectorPModeSet) {
         //TODO: map
 
@@ -148,8 +150,12 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         return getCurrentDBPModeSet(lane).map(this::mapToDomain);
     }
 
+    @Cacheable
     public Optional<PDomibusConnectorPModeSet> getCurrentDBPModeSet(DomibusConnectorMessageLane.MessageLaneId lane) {
         List<PDomibusConnectorPModeSet> currentActivePModeSet = domibusConnectorPModeSetDao.getCurrentActivePModeSet(lane);
+        if (currentActivePModeSet.isEmpty()) {
+            LOGGER.debug("getCurrentDBPModeSet# no active pMode Set found for message lane [{}]", lane);
+        }
         return currentActivePModeSet
                 .stream()
                 .findFirst();

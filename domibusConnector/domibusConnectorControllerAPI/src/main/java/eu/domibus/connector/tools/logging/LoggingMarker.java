@@ -1,7 +1,5 @@
 package eu.domibus.connector.tools.logging;
 
-
-
 import org.apache.logging.log4j.MarkerManager;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;

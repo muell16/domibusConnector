@@ -21,6 +21,14 @@ public class DomibusConnectorAction implements Serializable {
 	public DomibusConnectorAction() {}
 
 	/**
+	 *
+	 * @param action action
+	 */
+	public DomibusConnectorAction(final String action){
+		this(action, false);
+	}
+
+	/**
 	 * 
 	 * @param action action
 	 * @param documentRequired    documentRequired

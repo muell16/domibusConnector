@@ -9,6 +9,7 @@ import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
 import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,7 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
             dbMessageInfo.setUpdated(new Date());
             mapMessageDetailsToDbMessageInfoPersistence(message.getMessageDetails(), dbMessageInfo);
 
+            this.validatePartyServiceActionOfMessageInfo(dbMessageInfo);
 
             dbMessageInfo = this.messageInfoDao.save(dbMessageInfo);
             dbMessageInfo = messageInfoDao.findById(dbMessageInfo.getId()).get();
@@ -86,21 +88,21 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     }
 
     /*
-     * TODO: this validation code is at the wrong place
-     *   it should already check at the very beginning - before the message is being persisted!
+     * Looks up the Action, Service, Party within the database
+     *  and replaces the it with the corresponding persistence object
      *
      */
     @Override
     public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         DomibusConnectorMessageLane.MessageLaneId defaultMessageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
         PDomibusConnectorAction dbAction = messageInfo.getAction();
-        Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, messageInfo.getAction());
+        Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbAction);
         checkNull(dbAction, dbActionFound,
                 String.format("No action [%s] is configured at the connector!", dbAction.getId()));
         messageInfo.setAction(dbActionFound.get());
 
         PDomibusConnectorService dbService = messageInfo.getService();
-        Optional<PDomibusConnectorService> dbServiceFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, messageInfo.getService());
+        Optional<PDomibusConnectorService> dbServiceFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbService);
         checkNull(dbService, dbServiceFound,
                 String.format("No service [%s] is configured at the connector!", dbService.getId()));
         messageInfo.setService(dbServiceFound.get());
@@ -123,8 +125,8 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
     private void checkNull(Object provided, Optional foundInDb, String errorMessage) throws PersistenceException {
         if (! foundInDb.isPresent()) {
             String error = String.format("%s [%s] is not configured in database!", provided.getClass().getSimpleName(), provided);
-            //TÒDO: BUSINESS_LOG
-            LOGGER.error("{} Check your p-modes or reimport them into the connector.", errorMessage);
+
+            LOGGER.error(LoggingMarker.BUSINESS_LOG, "{} Check your p-modes or reimport them into the connector.", errorMessage);
             throw new PersistenceException(error);
         }
     }

@@ -35,6 +35,9 @@ public final class DomibusConnectorActionBuilder {
     }
 
     public DomibusConnectorActionBuilder copyPropertiesFrom(DomibusConnectorAction action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Action cannot be null here!");
+        }
         this.action = action.getAction();
         this.documentRequired = action.isDocumentRequired();
         return this;

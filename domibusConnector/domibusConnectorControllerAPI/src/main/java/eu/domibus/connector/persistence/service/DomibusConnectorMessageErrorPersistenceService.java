@@ -29,6 +29,10 @@ public interface DomibusConnectorMessageErrorPersistenceService {
      */
     void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError);
 
+    default void persistMessageError(DomibusConnectorMessage.DomibusConnectorMessageId id, DomibusConnectorMessageError messageError) {
+        this.persistMessageError(id.getConnectorMessageId(), messageError);
+    }
+
 //    /**
 //     * creates a MessageError from an exception and persists this message error
 //     * @param message - the message the exception is related to

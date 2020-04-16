@@ -1,13 +1,14 @@
 package eu.domibus.connector.controller.process.util;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -23,8 +24,8 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
 
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    private DomibusConnectorActionPersistenceService actionPersistenceService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
+    private ConfigurationPropertyLoaderService configurationPropertyLoaderService;
 
     @Autowired
     public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
@@ -32,8 +33,8 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
     }
 
     @Autowired
-    public void setActionPersistenceService(DomibusConnectorActionPersistenceService actionPersistenceService) {
-        this.actionPersistenceService = actionPersistenceService;
+    public void setConfigurationPropertyLoaderService(ConfigurationPropertyLoaderService configurationPropertyLoaderService) {
+        this.configurationPropertyLoaderService = configurationPropertyLoaderService;
     }
 
     @Autowired
@@ -58,25 +59,38 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
 
     @Override
     public DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
+
+        EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties =
+                configurationPropertyLoaderService.loadConfiguration(DomibusConnectorMessageLane.getDefaultMessageLaneId(), EvidenceActionServiceConfigurationProperties.class);
+
         switch (type) {
             case DELIVERY:
-                return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
+                return evidenceActionServiceConfigurationProperties
+                        .getDelivery().getConnectorAction();
             case NON_DELIVERY:
-                return actionPersistenceService.getDeliveryNonDeliveryToRecipientAction();
+                return evidenceActionServiceConfigurationProperties
+                        .getNonDelivery().getConnectorAction();
             case RETRIEVAL:
-                return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
+                return evidenceActionServiceConfigurationProperties
+                        .getRetrieval().getConnectorAction();
             case NON_RETRIEVAL:
-                return actionPersistenceService.getRetrievalNonRetrievalToRecipientAction();
+                return evidenceActionServiceConfigurationProperties
+                        .getNonRetrieval().getConnectorAction();
             case RELAY_REMMD_FAILURE:
-                return actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+                return evidenceActionServiceConfigurationProperties
+                        .getRelayREMMDFailure().getConnectorAction();
+            case RELAY_REMMD_REJECTION:
+                return evidenceActionServiceConfigurationProperties
+                        .getRelayREEMDRejection().getConnectorAction();
             case RELAY_REMMD_ACCEPTANCE:
-                return actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
+                return evidenceActionServiceConfigurationProperties
+                        .getRelayREEMDAcceptance().getConnectorAction();
             case SUBMISSION_ACCEPTANCE:
-                //is not really a business action...
-                return new DomibusConnectorAction("SubmissionAcceptanceRejection", false);
+                return evidenceActionServiceConfigurationProperties
+                        .getSubmissionAcceptance().getConnectorAction();
             case SUBMISSION_REJECTION:
-                //is not really a business action...
-                return new DomibusConnectorAction("SubmissionAcceptanceRejection", false);
+                return evidenceActionServiceConfigurationProperties
+                        .getSubmissionRejection().getConnectorAction();
             default:
                 throw new DomibusConnectorControllerException("Illegal Evidence type " + type + "! No Action found!");
         }
@@ -122,6 +136,17 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                     new DomibusConnectorMessage.DomibusConnectorMessageId(evidenceMessage.getConnectorMessageId()));
         }
 
+        public DomibusConnectorEvidenceType getEvidenceType() {
+            return this.getEvidenceMessage().getMessageConfirmations().get(0).getEvidenceType();
+        }
+
+        public DomibusConnectorMessage.DomibusConnectorMessageId getCausedByConnectorMessageId() {
+            return new DomibusConnectorMessage.DomibusConnectorMessageId(this.originalMesssage.getConnectorMessageId());
+        }
+
+        public DomibusConnectorMessage getOriginalMessage() {
+            return this.getOriginalMessage();
+        }
     }
 
     /**

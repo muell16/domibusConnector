@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ public class DomibusConnectorPartyPersistenceServiceImpl implements DomibusConne
                     persistenceParty.getRole()
             );
             p.setDbKey(persistenceParty.getId());
-            p.setIdentifier(persistenceParty.getPmodePartyIdentifier());
+            p.setPartyName(persistenceParty.getPmodePartyIdentifier());
             return p;
         }
         return null;

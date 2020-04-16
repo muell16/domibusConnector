@@ -11,7 +11,7 @@ import org.springframework.core.style.ToStringCreator;
 public class DomibusConnectorParty implements Serializable {
 
 	private Long dbKey;
-	private String identifier;
+	private String partyName;
 
 	private String partyId;
 	private String partyIdType;
@@ -44,12 +44,12 @@ public class DomibusConnectorParty implements Serializable {
 		this.dbKey = dbKey;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getPartyName() {
+		return partyName;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setPartyName(String partyName) {
+		this.partyName = partyName;
 	}
 
 	public String getPartyId(){
@@ -80,6 +80,7 @@ public class DomibusConnectorParty implements Serializable {
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
         builder.append("partyId", this.partyId);
+		builder.append("partyIdType", this.partyIdType);
         builder.append("role", this.role);
         return builder.toString();        
     }

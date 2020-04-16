@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 public class DomibusConnectorMessageExceptionBuilder {
 
     private DomibusConnectorMessage message;
+    private DomibusConnectorMessage.DomibusConnectorMessageId messageId;
     private Class<?> source;
     private Throwable cause;
     private String text;
@@ -23,6 +24,11 @@ public class DomibusConnectorMessageExceptionBuilder {
     
     public DomibusConnectorMessageExceptionBuilder setMessage(DomibusConnectorMessage message) {
         this.message = message;
+        return this;
+    }
+
+    public DomibusConnectorMessageExceptionBuilder setMessage(DomibusConnectorMessage.DomibusConnectorMessageId message) {
+        this.messageId = message;
         return this;
     }
 

@@ -1,9 +1,11 @@
 package eu.domibus.connector.controller.processor.confirmation;
 
+import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
+import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -43,13 +45,15 @@ class CheckEvidencesTimeoutProcessorImplTest {
     @Mock
     private DomibusConnectorMessagePersistenceService persistenceService;
     @Mock
-    private DomibusConnectorActionPersistenceService actionPersistenceService;
-    @Mock
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
     @Mock
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
     @Mock
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    @Mock
+    private ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+
+
 
     private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
 
@@ -90,11 +94,16 @@ class CheckEvidencesTimeoutProcessorImplTest {
 
 //        evidencesTimeoutConfigurationProperties.setDeliveryWarnTimeout(DomibusConnectorDuration.valueOf("5m"));
 
+
+        Mockito.when(configurationPropertyLoaderService.loadConfiguration(Mockito.any(), Mockito.eq(EvidenceActionServiceConfigurationProperties.class)))
+            .thenReturn(new EvidenceActionServiceConfigurationProperties());
+
+
         CreateConfirmationMessageBuilderFactoryImpl confirmationMessageFactory = new CreateConfirmationMessageBuilderFactoryImpl();
-        confirmationMessageFactory.setActionPersistenceService(actionPersistenceService);
         confirmationMessageFactory.setEvidencePersistenceService(evidencePersistenceService);
         confirmationMessageFactory.setEvidencesToolkit(evidencesToolkit);
         confirmationMessageFactory.setMessageIdGenerator( () -> UUID.randomUUID().toString());
+        confirmationMessageFactory.setConfigurationPropertyLoaderService(configurationPropertyLoaderService);
         confirmationMessageBuilderFactory = confirmationMessageFactory;
 
         checkEvidencesTimeoutProcessor = new CheckEvidencesTimeoutProcessorImpl();
@@ -102,6 +111,7 @@ class CheckEvidencesTimeoutProcessorImplTest {
         checkEvidencesTimeoutProcessor.setBackendDeliveryService(backendDeliveryService);
         checkEvidencesTimeoutProcessor.setEvidencesTimeoutConfigurationProperties(this.evidencesTimeoutConfigurationProperties);
         checkEvidencesTimeoutProcessor.setConfirmationMessageBuilderFactory(confirmationMessageBuilderFactory);
+
 
 
         Mockito.when(persistenceService.findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD())

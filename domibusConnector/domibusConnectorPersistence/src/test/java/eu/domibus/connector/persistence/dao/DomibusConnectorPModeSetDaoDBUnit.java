@@ -24,6 +24,7 @@ public class DomibusConnectorPModeSetDaoDBUnit {
         List<PDomibusConnectorPModeSet> currentActivePModeSet = dao.getCurrentActivePModeSet(DomibusConnectorMessageLane.getDefaultMessageLaneId());
 
         assertThat(currentActivePModeSet).hasSize(1);
-
     }
+
+
 }
