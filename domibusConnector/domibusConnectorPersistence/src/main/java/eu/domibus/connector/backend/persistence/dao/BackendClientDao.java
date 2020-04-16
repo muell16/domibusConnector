@@ -16,12 +16,12 @@ import java.util.List;
  */
 @Repository
 @Transactional
-@SuppressWarnings({"squid:S00100"})
 public interface BackendClientDao extends CrudRepository<BackendClientInfo, Long> {
 
     BackendClientInfo findOneBackendByBackendNameAndEnabledIsTrue(String name);
 
-    List<BackendClientInfo> findByServices_serviceAndEnabledIsTrue(String service);
+//    List<BackendClientInfo> findByServices_serviceAndEnabledIsTrue(String service);
+    List<BackendClientInfo> findByServicesAndEnabledIsTrue(String service);
 
     BackendClientInfo findOneByDefaultBackendIsTrue();
 

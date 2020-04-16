@@ -25,20 +25,11 @@ public class CreateSubmissionRejectionAndReturnItService {
 
     private final static Logger LOGGER = LogManager.getLogger(CreateSubmissionRejectionAndReturnItService.class);
 
-//    @Autowired
-//    private DomibusConnectorEvidencesToolkit evidencesToolkit;
-//    @Autowired
-//    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-    @Autowired
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
     @Autowired
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
     @Autowired
     private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
 
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
-        this.messagePersistenceService = messagePersistenceService;
-    }
 
     public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
         this.backendDeliveryService = backendDeliveryService;
@@ -59,13 +50,11 @@ public class CreateSubmissionRejectionAndReturnItService {
 
             rejectionMessage = confirmationMessageBuilder
                     .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
+                    .useNationalIdAsRefToMessageId()
+                    .switchFromToParty()
                     .setDetails(errorMessage)
                     .build();
 
-//            // immediately persist new evidence into database
-//            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(message,
-//                    rejectionMessage.getMessageConfirmation(),
-//                    new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
         } catch (Exception e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
@@ -74,29 +63,27 @@ public class CreateSubmissionRejectionAndReturnItService {
                     .setCause(e)
                     .build();
         }
-
-        rejectionMessage.persistEvidenceToMessage();
-
+        try {
+            rejectionMessage.persistEvidenceToMessage();
+        } catch (Exception e) {
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not persist evidence of type SUBMISSION_REJECTION to original message!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
+        }
 
 
         try {
             backendDeliveryService.deliverMessageToBackend(rejectionMessage.getEvidenceMessage());
             LOGGER.info("Setting originalMessage confirmation [{}] as delivered to national system!", rejectionMessage.getMessageConfirmation().getEvidenceType());
             LOGGER.info("Setting originalMessage status to rejected");
-//            messagePersistenceService.rejectMessage(message);
-
-        } catch (PersistenceException persistenceException) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not set evidence of type SUBMISSION_REJECTION as delivered!")
-                    .setSource(this.getClass())
-                    .setCause(persistenceException)
-                    .build();
 
         } catch (Exception e) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
-                    .setText("Could not set evidence of type SUBMISSION_REJECTION as delivered!")
+                    .setText("Could not send evidence of type SUBMISSION_REJECTION to backend!")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();

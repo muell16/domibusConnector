@@ -29,19 +29,18 @@ import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
  * Takes an confirmation originalMessage from backend
  * and creates a new confirmation of the same confirmation type
  * and sends it to the gw
- *
  */
 @Component(BackendToGatewayConfirmationProcessor.BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME)
 public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMessageProcessor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayConfirmationProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayConfirmationProcessor.class);
 
-	public static final String BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME = "BackendToGatewayConfirmationProcessor";
+    public static final String BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME = "BackendToGatewayConfirmationProcessor";
 
     private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private DomibusConnectorGatewaySubmissionService gwSubmissionService;
+    private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     //setter
     @Autowired
@@ -65,10 +64,10 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Override
-    @Transactional(propagation=Propagation.NEVER)
+    @Transactional(propagation = Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
     @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME)
-	public void processMessage(DomibusConnectorMessage message) {
+    public void processMessage(DomibusConnectorMessage message) {
         if (!DomainModelHelper.isEvidenceMessage(message)) {
             throw new IllegalArgumentException("The originalMessage is not an evidence originalMessage!");
         }
@@ -77,7 +76,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             LOGGER.warn("The evidence of the message is already generated. The current connector will generate a new evidence anyway. Future are going to use the already provided evidence!");
         }
 
-		String refToOriginalMessage = message.getMessageDetails().getRefToMessageId();
+        String refToOriginalMessage = message.getMessageDetails().getRefToMessageId();
         LOGGER.debug("#processMessage: refToMessageId is [{}]", refToOriginalMessage);
         DomibusConnectorEvidenceType evidenceType = DomainModelHelper.getEvidenceTypeOfEvidenceMessage(message);
 
@@ -114,10 +113,9 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation =
-                confirmationMessageBuilder
-                    .switchFromToParty()
-                    
+        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation = confirmationMessageBuilder
+                .switchFromToParty()
+                .useEbmsIdAsRefToMessageId()
                 .build();
 
         wrappedConfirmation.persistEvidenceToMessage();
@@ -151,11 +149,10 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private void setDeliveredToGateway(DomibusConnectorMessage evidenceMessage) {
         try {
             messagePersistenceService.setDeliveredToGateway(evidenceMessage);
-        } catch(PersistenceException persistenceException) {
+        } catch (PersistenceException persistenceException) {
             LOGGER.error("persistence Exception occured", persistenceException);
         }
     }
-
 
 
 }

@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
@@ -70,7 +71,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         if (service == null) {
             return null;
         }
-        List<BackendClientInfo> backendInfos = backendClientDao.findByServices_serviceAndEnabledIsTrue(service.getService());
+        List<BackendClientInfo> backendInfos = backendClientDao.findByServicesAndEnabledIsTrue(service.getService());
         if (backendInfos.isEmpty()) {
             LOGGER.debug("#getEnabledBackendClientInfoByService: Found no backend to handle service [{}]", service.getService());
             return null;
@@ -118,11 +119,16 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         }
         DomibusConnectorBackendClientInfo clientInfo = new DomibusConnectorBackendClientInfo();
         BeanUtils.copyProperties(dbBackendInfo, clientInfo, "services");
-        if(!CollectionUtils.isEmpty(dbBackendInfo.getServices())) {
-        	for(PDomibusConnectorService dbService:dbBackendInfo.getServices())
-        		clientInfo.getServices().add(ServiceMapper.mapServiceToDomain(dbService));
-        }
+        dbBackendInfo.getServices()
+                .stream()
+                .map(this::mapServiceToDomain)
+                .forEach(s -> clientInfo.getServices().add(s));
+
         return clientInfo;
+    }
+
+    private DomibusConnectorService mapServiceToDomain(String s) {
+        return new DomibusConnectorService(s, null);
     }
 
     @Nullable
@@ -132,10 +138,7 @@ public class BackendClientInfoPersistenceServiceImpl implements BackendClientInf
         }
         BackendClientInfo dbClientInfo = new BackendClientInfo();
         BeanUtils.copyProperties(clientInfo, dbClientInfo, "services");
-        if(!CollectionUtils.isEmpty(clientInfo.getServices())) {
-        	for(DomibusConnectorService service:clientInfo.getServices())
-        		dbClientInfo.getServices().add(ServiceMapper.mapServiceToPersistence(service));
-        }
+        dbClientInfo.setServices(clientInfo.getServices().stream().map(s -> s.getService()).collect(Collectors.toSet()));
         return dbClientInfo;
     }
 

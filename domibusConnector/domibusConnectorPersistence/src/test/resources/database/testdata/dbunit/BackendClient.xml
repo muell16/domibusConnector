@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <DOMIBUS_CONNECTOR_SERVICE
-            ID="1"
+            ID="201"
             FK_PMODE_SET="1"
             SERVICE="EPO"
             SERVICE_TYPE="e-codex"/>
     <DOMIBUS_CONNECTOR_SERVICE
-            ID="2"
+            ID="202"
             FK_PMODE_SET="1"
             SERVICE="SmallClaims"
             SERVICE_TYPE="e-codex" />
     <DOMIBUS_CONNECTOR_SERVICE
-            ID="1"
-            FK_PMODE_SET="3"
+            ID="203"
+            FK_PMODE_SET="1"
             SERVICE="GW-TEST" SERVICE_TYPE="e-codex"/>
     <DOMIBUS_CONNECTOR_SERVICE
-            ID="1"
-            FK_PMODE_SET="4"
+            ID="204"
+            FK_PMODE_SET="1"
             SERVICE="REMOTE-CONNECTOR-TEST"
             SERVICE_TYPE="e-codex"/>
     <DOMIBUS_CONNECTOR_SERVICE
-            ID="1"
-            FK_PMODE_SET="5"
+            ID="205"
+            FK_PMODE_SET="1"
             SERVICE="LOCAL-CONNECTOR-TEST"
             SERVICE_TYPE="e-codex"/>
 

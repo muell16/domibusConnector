@@ -2,10 +2,12 @@
 package eu.domibus.connector.backend.persistence.model.testutil;
 
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
+import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -28,7 +30,7 @@ public class BackendPersistenceEntityCreator {
         bob.setBackendName("bob");
         bob.setBackendKeyAlias("bob");
                 
-        bob.setServices(createServiceSet());
+        bob.setServices(createServiceSet().stream().map(PDomibusConnectorService::getService).collect(Collectors.toSet()));
         
         return bob;
     }

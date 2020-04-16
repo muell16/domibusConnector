@@ -5,14 +5,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.model.PDomibusConnectorService;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *
@@ -50,13 +43,15 @@ public class BackendClientInfo {
     private String backendServiceType;
     
     
-    @ManyToMany(fetch=FetchType.EAGER)
+//    @ManyToMany(fetch=FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
             name="DOMIBUS_CONNECTOR_BACK_2_S",
-            joinColumns=@JoinColumn(name="DOMIBUS_CONNECTOR_BACKEND_ID", referencedColumnName="ID"),
-            inverseJoinColumns=@JoinColumn(name="DOMIBUS_CONNECTOR_SERVICE_ID", referencedColumnName="SERVICE")
+            joinColumns=@JoinColumn(name="DOMIBUS_CONNECTOR_BACKEND_ID", referencedColumnName="ID")
+//            inverseJoinColumns=@JoinColumn(name="DOMIBUS_CONNECTOR_SERVICE_ID", referencedColumnName="SERVICE")
     )
-    private Set<PDomibusConnectorService> services = new HashSet<>();
+    @Column(name = "DOMIBUS_CONNECTOR_SERVICE_ID")
+    private Set<String> services = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -106,11 +101,11 @@ public class BackendClientInfo {
         this.backendKeyPass = backendKeyPass;
     }
 
-    public Set<PDomibusConnectorService> getServices() {
+    public Set<String> getServices() {
         return services;
     }
 
-    public void setServices(Set<PDomibusConnectorService> services) {
+    public void setServices(Set<String> services) {
         this.services = services;
     }
   

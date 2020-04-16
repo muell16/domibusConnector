@@ -158,14 +158,14 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
         DomibusConnectorEvidenceType evidenceType;
         DomibusConnectorRejectionReason rejectionReason = DomibusConnectorRejectionReason.OTHER;
         String rejectionDetails;
-        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+        DomibusConnectorMessageDetails details;
         private DomibusConnectorAction action;
 
         private ConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
             this.originalMessage = message;
             this.evidenceType = evidenceType;
             DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
-            details = DomibusConnectorMessageDetailsBuilder.create()
+            this.details = DomibusConnectorMessageDetailsBuilder.create()
                     .copyPropertiesFrom(originalDetails)
                     .build();
             //by default ref to message id is the EBMSID of the related msg
@@ -184,7 +184,11 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
          *
          */
         public ConfirmationMessageBuilder useNationalIdAsRefToMessageId() {
-            this.details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
+            String refToMsg = originalMessage.getMessageDetails().getBackendMessageId();
+            if (refToMsg == null) {
+                throw new IllegalArgumentException("Cannot use NationalID as refToMsgId because it is NULL!");
+            }
+            this.details.setRefToMessageId(refToMsg);
             return this;
         }
 
@@ -194,7 +198,11 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
          * transported to the Gateway
          */
         public ConfirmationMessageBuilder useEbmsIdAsRefToMessageId() {
-            this.details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
+            String refToMsg = originalMessage.getMessageDetails().getEbmsMessageId();
+            if (refToMsg == null) {
+                throw new IllegalArgumentException("Cannot use EBMSID as refToMsgId because it is NULL!");
+            }
+            this.details.setRefToMessageId(refToMsg);
             return this;
         }
 
@@ -231,16 +239,8 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 DomibusConnectorMessageConfirmation messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, rejectionDetails);
                 originalMessage.addConfirmation(messageConfirmation);
 
-                DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
-
-                if (originalDetails.getEbmsMessageId() != null) {
-                    details.setRefToMessageId(originalDetails.getEbmsMessageId());
-                } else if (originalDetails.getBackendMessageId() != null) {
-                    details.setRefToMessageId(originalDetails.getBackendMessageId());
-                } else {
-                    String error = String.format("Cannot set refToMessageId: both ebmsMessageId and backendMessageId of original originalMessage [%s] are null!",
-                            originalMessage);
-                    throw new RuntimeException(error);
+                if (details.getRefToMessageId() == null) {
+                    throw new IllegalArgumentException("refToMessageId is not set! Call useNationalIdAsRefToMessageId or useEbmsIdAsRefToMessageId!");
                 }
 
                 details.setAction(action);

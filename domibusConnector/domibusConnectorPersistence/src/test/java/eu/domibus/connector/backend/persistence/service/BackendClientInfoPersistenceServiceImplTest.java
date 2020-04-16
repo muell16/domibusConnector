@@ -70,7 +70,7 @@ public class BackendClientInfoPersistenceServiceImplTest {
     public void testFindByService() {
         BackendClientInfo bob = createBackendClientInfoBob();
 
-        Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO-Service"))).thenReturn(Arrays.asList(new BackendClientInfo[] {bob}));
+        Mockito.when(backendClientDao.findByServicesAndEnabledIsTrue(eq("EPO-Service"))).thenReturn(Arrays.asList(new BackendClientInfo[] {bob}));
 
         DomibusConnectorService service = new DomibusConnectorService("EPO-Service", "");
         DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendInfoPersistenceService.getEnabledBackendClientInfoByService(service);
@@ -84,7 +84,7 @@ public class BackendClientInfoPersistenceServiceImplTest {
             BackendClientInfo bob = createBackendClientInfoBob();
             BackendClientInfo alice = createBackendClientInfoAlice();
 
-            Mockito.when(backendClientDao.findByServices_serviceAndEnabledIsTrue(eq("EPO-Service"))).thenReturn(Arrays.asList(new BackendClientInfo[] {bob, alice}));
+            Mockito.when(backendClientDao.findByServicesAndEnabledIsTrue(eq("EPO-Service"))).thenReturn(Arrays.asList(new BackendClientInfo[] {bob, alice}));
 
             DomibusConnectorService service = new DomibusConnectorService("EPO-Service", "");
             DomibusConnectorBackendClientInfo backendClientInfoByServiceName = backendInfoPersistenceService.getEnabledBackendClientInfoByService(service);
