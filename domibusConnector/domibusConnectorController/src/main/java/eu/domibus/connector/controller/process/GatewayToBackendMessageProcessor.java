@@ -165,7 +165,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 					.setSource(this.getClass())
 					.setCause(e)
 					.build();
-			LOGGER.error("Exception occured", exception);
+			LOGGER.error("Exception occured while sending evidence msg back to GW", exception);
 			DomibusConnectorMessageError messageError =
 					DomibusConnectorMessageErrorBuilder.createBuilder()
 							.setSource(this.getClass().getName())
