@@ -58,6 +58,9 @@ public class PDomibusConnectorPModeSet {
     @PrePersist
     public void prePersist() {
         this.created = Timestamp.from(Instant.now());
+        this.parties.forEach(p -> p.setpModeSet(this));
+        this.actions.forEach(a -> a.setpModeSet(this));
+        this.services.forEach(s -> s.setpModeSet(this));
     }
 
     public Long getId() {

@@ -46,20 +46,10 @@ public class WebPModeServiceTest {
     @Autowired
     WebPModeService webPModeService;
 
-    @Autowired
-    private DomibusConnectorActionPersistenceService actionPersistenceService;
-
-    @Autowired
-    private DomibusConnectorServicePersistenceService servicePersistenceService;
-
-    @Autowired
-    private DomibusConnectorPartyPersistenceService partyPersistenceService;
 
     @Autowired
     private DomibusConnectorPropertiesPersistenceService propertiesPersistenceService;
 
-    @Autowired
-    PlatformTransactionManager txManager;
 
     @Test
     void importPModes() throws IOException {
@@ -68,19 +58,16 @@ public class WebPModeServiceTest {
         Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");
         byte[] pMode = StreamUtils.copyToByteArray(resource.getInputStream());
 
-        TransactionStatus transaction = txManager.getTransaction(TransactionDefinition.withDefaults());
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
-        txManager.commit(transaction);
 
-
-        assertThat(partyPersistenceService.getPartyList())
+        assertThat(webPModeService.getPartyList())
                 .as("example pmodes contains 12 parties")
                 .hasSize(12);
 
     }
 
 
-//    @Test
+    @Test
     void importPModesTwice() throws IOException {
         assertThat(webPModeService).isNotNull();
 
@@ -90,6 +77,10 @@ public class WebPModeServiceTest {
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
 
         webPModeService.importPModes(pMode, Mockito.mock(ConfigurationUtil.class));
+
+        assertThat(webPModeService.getPartyList())
+                .as("example pmodes contains 12 parties")
+                .hasSize(12);
 
     }
 }

@@ -90,7 +90,8 @@ public class WebPModeService {
 		}
 
 		try {
-			mapPModeConfigurationToPModeSet(pmodes);
+			DomibusConnectorPModeSet pModeSet = mapPModeConfigurationToPModeSet(pmodes);
+			this.updatePModeSet(pModeSet);
 		} catch (Exception e) {
 			LOGGER.error("Cannot import provided pmode file into database!", e);
 			throw new RuntimeException(e);
@@ -101,6 +102,8 @@ public class WebPModeService {
 		} catch (Exception e) {
 			LOGGER.error("Error while updating home party properties");
 		}
+
+
 
 		return true;
 	}
