@@ -866,7 +866,7 @@
           <reportSet>
             <id>default</id>
             <reports>
-              <report>springPropertyList</report>
+              <report>spring-properties-report</report>
             </reports>
           </reportSet>
           <reportSet>
