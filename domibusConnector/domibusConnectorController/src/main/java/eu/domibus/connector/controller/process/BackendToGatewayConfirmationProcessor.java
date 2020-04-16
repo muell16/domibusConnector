@@ -82,9 +82,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         DomibusConnectorEvidenceType evidenceType = DomainModelHelper.getEvidenceTypeOfEvidenceMessage(message);
 
         DomibusConnectorMessageDirection origMsgDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
+        //try EBMS id first, then backend message id
         DomibusConnectorMessage originalMessage = messagePersistenceService
                 .findMessageByEbmsIdAndDirection(refToOriginalMessage, origMsgDirection)
-                .orElse(null);
+                .orElse(messagePersistenceService
+                        .findMessageByNationalIdAndDirection(refToOriginalMessage, origMsgDirection)
+                        .orElse(null)
+                );
         LOGGER.debug("#processMessage: processing evidence [{}] of original message [{}]", evidenceType, originalMessage);
         if (originalMessage == null) {
             throw new RuntimeException(String.format("No message for refToMessageId [%s] with direction [%s] found!",
@@ -103,13 +107,17 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        backendDeliveryService.deliverMessageToBackend(confirmationMessageBuilder.useNationalIdAsRefToMessageId().build().getEvidenceMessage());
+        backendDeliveryService.deliverMessageToBackend(confirmationMessageBuilder
+                .useNationalIdAsRefToMessageId()
+                .build()
+                .getEvidenceMessage());
     }
 
     private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation =
                 confirmationMessageBuilder
-                .switchFromToParty()
+                    .switchFromToParty()
+                    
                 .build();
 
         wrappedConfirmation.persistEvidenceToMessage();

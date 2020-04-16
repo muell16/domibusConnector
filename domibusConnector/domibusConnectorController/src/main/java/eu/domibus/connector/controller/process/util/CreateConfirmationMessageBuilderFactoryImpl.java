@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurat
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
+import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
@@ -164,7 +165,11 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
             this.originalMessage = message;
             this.evidenceType = evidenceType;
             DomibusConnectorMessageDetails originalDetails = originalMessage.getMessageDetails();
-            BeanUtils.copyProperties(originalDetails, details);
+            details = DomibusConnectorMessageDetailsBuilder.create()
+                    .copyPropertiesFrom(originalDetails)
+                    .build();
+            //by default ref to message id is the EBMSID of the related msg
+            this.details.setRefToMessageId(originalDetails.getEbmsMessageId());
         }
 
         public ConfirmationMessageBuilder setRejectionReason(DomibusConnectorRejectionReason rejectionReason) {
@@ -180,6 +185,16 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
          */
         public ConfirmationMessageBuilder useNationalIdAsRefToMessageId() {
             this.details.setRefToMessageId(originalMessage.getMessageDetails().getBackendMessageId());
+            return this;
+        }
+
+        /**
+         * Sets the ebmsId as the refToMessageId
+         * within the MessageDetails, used when the message is
+         * transported to the Gateway
+         */
+        public ConfirmationMessageBuilder useEbmsIdAsRefToMessageId() {
+            this.details.setRefToMessageId(originalMessage.getMessageDetails().getEbmsMessageId());
             return this;
         }
 

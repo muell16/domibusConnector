@@ -58,6 +58,16 @@ public interface DomibusConnectorMessagePersistenceService {
      */
     Optional<DomibusConnectorMessage> findMessageByNationalIdAndDirection(String nationalMessageId, DomibusConnectorMessageDirection messageDirection);
 
+
+    /**
+     *
+     *
+     * @param ebmsMessageId - the ebmsId of the message
+     * @param messageDirection - the direction of the message
+     * @return the found message or an empty Optional if no message found with this ebmsId and direction
+     */
+    Optional<DomibusConnectorMessage> findMessageByEbmsIdOrBackendIdAndDirection(String ebmsMessageId, DomibusConnectorMessageDirection messageDirection);
+
     /**
      * returns all messages related to the
      * conversation id

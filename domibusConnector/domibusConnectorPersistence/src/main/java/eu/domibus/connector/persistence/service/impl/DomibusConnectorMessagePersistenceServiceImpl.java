@@ -90,6 +90,12 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     }
 
     @Override
+    public Optional<DomibusConnectorMessage> findMessageByEbmsIdOrBackendIdAndDirection(String messageId, DomibusConnectorMessageDirection messageDirection) {
+        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(messageId, messageDirection.getTarget())
+                .map(this::mapMessageToDomain);
+    }
+
+    @Override
     public boolean checkMessageConfirmedOrRejected(DomibusConnectorMessage message) {
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
         return this.messageDao.checkMessageConfirmedOrRejected(dbMessage.getId());        

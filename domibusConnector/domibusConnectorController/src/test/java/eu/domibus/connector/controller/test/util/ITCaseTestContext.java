@@ -137,7 +137,7 @@ public class ITCaseTestContext {
             String backendId = "BACKEND_" + UUID.randomUUID().toString();
             state.setRemoteMessageId(backendId); //assigned EBMS ID
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStatusService.updateTransportToBackendClientStatus(dummyBackend , state);
+            transportStatusService.updateTransportToBackendClientStatus(dummyBackend, state);
 
             DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)

@@ -209,6 +209,8 @@ public class ConnectorMessageFlowITCase {
      *
      *   -) GW must have received DELIVERY_EVIDENCE
      *
+     *   -) Backend must have rcv DELIVERY_EVIDENCE
+     *
      *
      */
     @Test
@@ -224,9 +226,9 @@ public class ConnectorMessageFlowITCase {
 
             LOGGER.info("message with confirmations: [{}]", testMessage.getMessageConfirmations());
 
-            DomibusConnectorMessage take = toBackendDeliveredMessages.take(); //wait until a message is put into queue
+            DomibusConnectorMessage businessMsg = toBackendDeliveredMessages.take(); //wait until a message is put into queue
             assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
-            assertThat(take).isNotNull();
+            assertThat(businessMsg).isNotNull();
 
             DomibusConnectorMessage relayRemmdEvidenceMsg = toGwDeliveredMessages.take();
 
@@ -241,7 +243,7 @@ public class ConnectorMessageFlowITCase {
                     )
                     .setMessageDetails(DomibusConnectorMessageDetailsBuilder
                             .create()
-                            .withRefToMessageId(EBMS_ID) // <-- wird verwendet um die original nachricht zu finden
+                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
                             .withEbmsMessageId(null) //
                             .withAction("")
                             .withService("", "")
@@ -257,7 +259,8 @@ public class ConnectorMessageFlowITCase {
 
 
             DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.take();
-            assertThat(deliveryEvidenceMessage.getMessageConfirmations().get(0).getEvidenceType())
+            assertThat(deliveryEvidenceMessage)
+                    .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
                     .as("Message must be evidence message of type Delivery")
                     .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
             assertThat(deliveryEvidenceMessage.getMessageConfirmations().get(0).getEvidence())
@@ -272,7 +275,12 @@ public class ConnectorMessageFlowITCase {
                     .as("Parties must be switched")
                     .isEqualTo(DomainEntityCreator.createPartyAT());
 
-
+            DomibusConnectorMessage deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.take();
+            assertThat(deliveryEvidenceToBackendMessage)
+                    .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
+                    .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
+            assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToMessageId())
+                    .isEqualTo(businessMsg.getMessageDetails().getBackendMessageId());
 
             DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))
