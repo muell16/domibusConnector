@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.persistence.model.converter.TransportStateJpaConverter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class PDomibusConnectorTransportStepStatusUpdate {
 
     @Id
     @Column(name = "STATE")
+    @Convert(converter = TransportStateJpaConverter.class)
     private TransportState transportState;
 
     @Column(name = "CREATED")

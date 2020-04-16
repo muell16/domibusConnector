@@ -155,6 +155,11 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
         if (connectorPModeSet == null) {
             throw new IllegalArgumentException("connectorPMode Set is not allowed to be null!");
         }
+
+        connectorPModeSet.getParties().forEach(p -> p.setDbKey(null));
+        connectorPModeSet.getActions().forEach(a -> a.setDbKey(null));
+        connectorPModeSet.getServices().forEach(s -> s.setDbKey(null));
+
         Optional<PDomibusConnectorMessageLane> messageLaneOptional = messageLaneDao.findByName(lane);
         PDomibusConnectorMessageLane pDomibusConnectorMessageLane = messageLaneOptional.orElseThrow(() -> new RuntimeException(String.format("No message lane found with name [%s]", lane)));
 

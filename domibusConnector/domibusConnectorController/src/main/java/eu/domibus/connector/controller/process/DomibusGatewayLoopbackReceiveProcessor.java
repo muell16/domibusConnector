@@ -47,7 +47,7 @@ public class DomibusGatewayLoopbackReceiveProcessor implements DomibusConnectorM
             DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
             String ebmsMessageId = messageDetails.getEbmsMessageId();
             String ebmsMessageIdRemovedSuffix = ebmsMessageId.endsWith(removedSuffix) ? ebmsMessageId.substring(0, ebmsMessageId.length() - removedSuffix.length()) : ebmsMessageId;
-            LOGGER.info("Domibus GW Loopback message sending: Removing suffix [{}] from incoming message ebmsId, for details see domibus gateway admin guide 9.3 Message ID convention");
+            LOGGER.info("Domibus GW Loopback message sending: Removing suffix [{}] from incoming message ebmsId, for details see domibus gateway admin guide 9.3 Message ID convention", removedSuffix);
             messageDetails.setEbmsMessageId(ebmsMessageIdRemovedSuffix);
         } else {
             LOGGER.debug("Domibus GW Loopback message sending: Loopback message processing is disabled, no suffix will be removed from EBMS id");
