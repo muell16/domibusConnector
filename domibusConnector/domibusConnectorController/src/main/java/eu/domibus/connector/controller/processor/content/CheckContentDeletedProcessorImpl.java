@@ -74,20 +74,22 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
             transportFinishedDate = msg.getMessageDetails().getFailed();
         }
 
-        if (transportFinishedDate != null) {
-            LOGGER.info(LoggingMarker.BUSINESS_CONTENT_LOG,
-                    "Transport of message [{}] in direction [{}] has {} on [{}] - deleting content of this message",
-                    msg, direction, failed ? "failed" : "finished", transportFinishedDate);
-            references.stream().forEach(ref -> {
-                        LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting file reference [{}]", ref.getStorageIdReference());
-                        try {
-                            bigDataPersistenceService.deleteDomibusConnectorBigDataReference(ref);
-                        } catch (LargeFileDeletionException delException) {
-                            LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
-                            LOGGER.error("Was unable to delete due exception: ", delException);
-                        }
-                    });
-        }
+
+
+//        if (transportFinishedDate != null) {
+//            LOGGER.info(LoggingMarker.BUSINESS_CONTENT_LOG,
+//                    "Transport of message [{}] in direction [{}] has {} on [{}] - deleting content of this message",
+//                    msg, direction, failed ? "failed" : "finished", transportFinishedDate);
+//            references.forEach(ref -> {
+//                        LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting reference with id [{}]", ref.getStorageIdReference());
+//                        try {
+//                            bigDataPersistenceService.deleteDomibusConnectorBigDataReference(ref);
+//                        } catch (LargeFileDeletionException delException) {
+//                            LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
+//                            LOGGER.error("Was unable to delete due exception: ", delException);
+//                        }
+//                    });
+//        }
     }
 
 }
