@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.2.0-RC7</version>
     </parent>
     <artifactId>domibusConnectorSecurityToolkit</artifactId>
     <name>${project.artifactId}</name>
@@ -61,8 +61,8 @@
             <artifactId>dss-utils-apache-commons</artifactId>
         </dependency>
         <dependency>
-            <artifactId>bcpkix-jdk15on</artifactId>
             <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
