@@ -67,6 +67,7 @@ public class DomainModelHelper {
                 isEvidenceMessage(message)
                 && message.getMessageConfirmations() != null
                 && message.getMessageConfirmations().size() == 1
-                && message.getMessageConfirmations().get(0).getEvidence().length == 0;
+                && message.getMessageConfirmations().get(0).getEvidence() == null
+                || message.getMessageConfirmations().get(0).getEvidence().length == 0;
     }
 }
