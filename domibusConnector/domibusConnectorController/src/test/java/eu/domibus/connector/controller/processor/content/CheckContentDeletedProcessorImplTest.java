@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,8 +18,8 @@ import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 
-
-class CheckContentDeletedProcessorImplTest {
+@Disabled
+public class CheckContentDeletedProcessorImplTest {
 
     CheckContentDeletedProcessorImpl checkContentDeletedProcessor;
 

@@ -234,12 +234,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private void createRelayREMMDEvidenceAndSendIt(DomibusConnectorMessage originalMessage, boolean isAcceptance)
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 		CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder wrappedMessageConfirmationBuilder = null;
-//        DomibusConnectorAction action = actionPersistenceService.getRelayREMMDAcceptanceRejectionAction();
 
-//		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-//				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
-//				.switchFromToParty()
-//				.build();
 
 		try {
 			if(isAcceptance) {

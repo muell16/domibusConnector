@@ -163,10 +163,6 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
             Files.delete(storageFile);
             deleteFolderIfEmpty(reference);
         } catch (IOException e) {
-            //TODO: make exception configureable so on systems with deactivated timer job, this would be fatal
-//            throw new PersistenceException(String.format("Unable to delete file [%s]", storageFile), e);
-//            LOGGER.info("Unable to delete file [{}].", storageFile);
-//            LOGGER.debug(String.format("Unable to delete file [%s] due exception:", storageFile), e);
             LargeFileDeletionException largeFileDeletionException = new LargeFileDeletionException(String.format("Unable to delete file [%s] due exception:", storageFile), e);
             largeFileDeletionException.setReferenceFailedToDelete(reference);
             throw largeFileDeletionException;
@@ -174,7 +170,6 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     }
 
     private void deleteFolderIfEmpty(LargeFileReference reference) {
-//        FileBasedDomibusConnectorBigDataReference ref = (FileBasedDomibusConnectorBigDataReference) reference;
         String folderName = getFolderNameFromReferenceName(reference.getStorageIdReference());
         Path messagePath = getStoragePath().resolve(folderName);
         try {

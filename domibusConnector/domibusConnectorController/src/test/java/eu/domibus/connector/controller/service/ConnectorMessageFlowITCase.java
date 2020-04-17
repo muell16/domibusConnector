@@ -280,7 +280,7 @@ public class ConnectorMessageFlowITCase {
                     .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
                     .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
             assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToMessageId())
-                    .isEqualTo(businessMsg.getMessageDetails().getBackendMessageId());
+                    .isEqualTo(businessMsg.getMessageDetails().getEbmsMessageId());
 
             DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))

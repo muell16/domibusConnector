@@ -107,7 +107,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         backendDeliveryService.deliverMessageToBackend(confirmationMessageBuilder
-                .useNationalIdAsRefToMessageId()
+                .useEbmsIdAsRefToMessageId()
                 .build()
                 .getEvidenceMessage());
     }

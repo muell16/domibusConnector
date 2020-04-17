@@ -81,7 +81,6 @@ public class BackendToGatewayMessageProcessorTest {
         CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService = new CreateSubmissionRejectionAndReturnItService();
         createSubmissionRejectionAndReturnItService.setBackendDeliveryService(backendDeliveryService);
         createSubmissionRejectionAndReturnItService.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
-//        createSubmissionRejectionAndReturnItService.setMessagePersistenceService(messagePersistenceService);
 
         toGwDeliveredMessages = new ArrayList<>();
         toBackendDeliveredMessages = new ArrayList<>();
