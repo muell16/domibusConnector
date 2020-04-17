@@ -104,7 +104,6 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             throw new RuntimeException("Retrieved Message m from WrappedMessageContext is null!");
         }
 
-        //TODO: put interceptor for message deletion in here!
         try {
             List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
             messageIds.stream()

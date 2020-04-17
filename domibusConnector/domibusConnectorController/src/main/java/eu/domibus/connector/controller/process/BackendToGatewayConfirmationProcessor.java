@@ -108,6 +108,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         backendDeliveryService.deliverMessageToBackend(confirmationMessageBuilder
                 .useEbmsIdAsRefToMessageId()
+                .switchFromToParty()
                 .build()
                 .getEvidenceMessage());
     }
@@ -125,7 +126,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
 
         submitToGateway(evidenceMessage, originalMessage);
-        setDeliveredToGateway(evidenceMessage);
+//        setDeliveredToGateway(evidenceMessage);
 
         CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
         commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
@@ -146,13 +147,13 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         }
     }
 
-    private void setDeliveredToGateway(DomibusConnectorMessage evidenceMessage) {
-        try {
-            messagePersistenceService.setDeliveredToGateway(evidenceMessage);
-        } catch (PersistenceException persistenceException) {
-            LOGGER.error("persistence Exception occured", persistenceException);
-        }
-    }
+//    private void setDeliveredToGateway(DomibusConnectorMessage evidenceMessage) {
+//        try {
+//            messagePersistenceService.setDeliveredToGateway(evidenceMessage);
+//        } catch (PersistenceException persistenceException) {
+//            LOGGER.error("persistence Exception occured", persistenceException);
+//        }
+//    }
 
 
 }

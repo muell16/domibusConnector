@@ -77,10 +77,10 @@ public class CreateSubmissionRejectionAndReturnItService {
 
         try {
             backendDeliveryService.deliverMessageToBackend(rejectionMessage.getEvidenceMessage());
-            LOGGER.info("Setting originalMessage confirmation [{}] as delivered to national system!", rejectionMessage.getMessageConfirmation().getEvidenceType());
             LOGGER.info("Setting originalMessage status to rejected");
 
         } catch (Exception e) {
+            LOGGER.error("Exception occured while deliver evidence of of type SUBMISSION_REJECTION to backend!", e);
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText("Could not send evidence of type SUBMISSION_REJECTION to backend!")

@@ -185,11 +185,15 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
             LOGGER.trace("#getBackendClientInfoByRefToMessageIdOrReturnNull: try to find message by refToMessageId [{}]", refToMessageId);
             DomibusConnectorMessage referencedMessage = messagePersistenceService
                     .findMessageByEbmsIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
-                    .orElse(null);
+                    .orElse(messagePersistenceService
+                            .findMessageByNationalIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
+                            .orElse(null));
             if (referencedMessage == null) {
                 referencedMessage = messagePersistenceService
-                        .findMessageByNationalIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)
-                        .orElse(null);
+                        .findMessageByEbmsIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)
+                        .orElse(messagePersistenceService
+                                .findMessageByNationalIdAndDirection(refToMessageId, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND)
+                                .orElse(null));
             }
             if (referencedMessage == null) {
                 throw new IllegalStateException(String.format("Referenced message with ebmsid or nationalBackendId [%s] does not exist!", refToMessageId));

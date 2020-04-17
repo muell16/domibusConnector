@@ -111,8 +111,8 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		try {
 
 
-			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = confirmationMessageBuilder
+			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
 					.useNationalIdAsRefToMessageId()
 					.switchFromToParty()
 					.build();
@@ -145,13 +145,12 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
                     .setCause(e)
                     .buildAndThrow();
 		}
-//		messagePersistenceService.mergeMessageWithDatabase(message);
-//		messagePersistenceService.setDeliveredToGateway(message);
+
 
         //also send evidence back to backend client:
 
 		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", submissionAcceptanceConfirmationMessage);
-        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+//        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
 		backendDeliveryService.deliverMessageToBackend(submissionAcceptanceConfirmationMessage);
 
 		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);

@@ -15,7 +15,7 @@ public class TransportStepIdJpaConverter implements AttributeConverter<Transport
         if (attribute == null) {
             return null;
         }
-        return attribute.getTransportId();
+        return attribute.getTransportId().toString();
     }
 
     @Override

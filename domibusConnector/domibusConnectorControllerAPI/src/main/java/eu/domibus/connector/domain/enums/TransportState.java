@@ -7,7 +7,9 @@ import java.util.stream.Stream;
 public enum TransportState {
 
 
-    ACCEPTED("accepted", 10), PENDING("pending", 1), FAILED("failed", 10);
+    ACCEPTED("accepted", 10),
+    PENDING("pending", 1),
+    FAILED("failed", 10);
 
     private TransportState(String dbName, int priority) {
         this.priority = priority;
