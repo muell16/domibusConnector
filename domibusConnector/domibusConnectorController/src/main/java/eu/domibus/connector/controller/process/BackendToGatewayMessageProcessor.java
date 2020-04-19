@@ -113,7 +113,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
-					.useNationalIdAsRefToMessageId()
+//					.useNationalIdAsRefToMessageId()
 					.switchFromToParty()
 					.build();
 			confirmationMessage.persistEvidenceToMessage();

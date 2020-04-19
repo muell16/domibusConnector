@@ -35,7 +35,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     private MsgContentPersistenceService msgContentService;
     private InternalEvidencePersistenceService evidencePersistenceService;
 
-    private InternalMessageInfoPersistenceService internalMessageInfoPersistenceService;
+    private InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService;
 
     /*
      * DAO SETTER  
@@ -51,7 +51,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     }
 
     @Autowired
-    public void setInternalMessageInfoPersistenceService(InternalMessageInfoPersistenceService internalMessageInfoPersistenceService) {
+    public void setInternalMessageInfoPersistenceService(InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService) {
         this.internalMessageInfoPersistenceService = internalMessageInfoPersistenceService;
     }
 

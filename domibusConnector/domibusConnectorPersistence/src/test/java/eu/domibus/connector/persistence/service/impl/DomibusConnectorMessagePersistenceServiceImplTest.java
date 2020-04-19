@@ -55,7 +55,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     InternalEvidencePersistenceService internalEvidencePersistenceService;
 
     @Mock
-    InternalMessageInfoPersistenceService messageInfoPersistenceService;
+    InternalMessageInfoPersistenceServiceImpl messageInfoPersistenceService;
 
     DomibusConnectorMessagePersistenceService messagePersistenceService;
     

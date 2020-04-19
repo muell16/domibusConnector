@@ -35,7 +35,7 @@ public class InternalMessageInfoPersistenceServiceImplTest {
 //    @Mock
 //    private DomibusConnectorActionDao actionDao;
 
-    private InternalMessageInfoPersistenceService internalMessageInfoPersistenceService;
+    private InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService;
 
     @BeforeEach
     public void setUp() {

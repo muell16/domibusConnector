@@ -50,7 +50,7 @@ public class CreateSubmissionRejectionAndReturnItService {
 
             rejectionMessage = confirmationMessageBuilder
                     .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
-                    .useNationalIdAsRefToMessageId()
+//                    .useNationalIdAsRefToMessageId()
                     .switchFromToParty()
                     .setDetails(errorMessage)
                     .build();

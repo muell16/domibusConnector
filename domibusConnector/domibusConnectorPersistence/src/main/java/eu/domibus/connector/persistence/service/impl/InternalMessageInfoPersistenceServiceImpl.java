@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
-public class InternalMessageInfoPersistenceServiceImpl implements InternalMessageInfoPersistenceService {
+public class InternalMessageInfoPersistenceServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalMessageInfoPersistenceServiceImpl.class);
 
@@ -62,7 +62,7 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
 //        this.actionDao = actionDao;
 //    }
 
-    @Override
+
     @Transactional
     public void persistMessageInfo(DomibusConnectorMessage message, PDomibusConnectorMessage dbMessage) throws PersistenceException {
         try {
@@ -92,7 +92,6 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
      *  and replaces the it with the corresponding persistence object
      *
      */
-    @Override
     public PDomibusConnectorMessageInfo validatePartyServiceActionOfMessageInfo(PDomibusConnectorMessageInfo messageInfo) throws PersistenceException {
         DomibusConnectorMessageLane.MessageLaneId defaultMessageLaneId = DomibusConnectorMessageLane.getDefaultMessageLaneId();
         PDomibusConnectorAction dbAction = messageInfo.getAction();
@@ -145,7 +144,6 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
      * @param details the details, wich are changed
      * @return - the reference of the changed details (same reference as passed via param details)
      */
-    @Override
     public DomibusConnectorMessageDetails mapMessageInfoIntoMessageDetails(PDomibusConnectorMessage dbMessage, DomibusConnectorMessageDetails details) {
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         if (messageInfo != null) {
@@ -174,7 +172,7 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
         return details;
     }
 
-    @Override
+
     public void mapMessageDetailsToDbMessageInfoPersistence(DomibusConnectorMessageDetails messageDetails, PDomibusConnectorMessageInfo dbMessageInfo) {
         PDomibusConnectorAction persistenceAction = ActionMapper.mapActionToPersistence(messageDetails.getAction());
         dbMessageInfo.setAction(persistenceAction);
@@ -191,7 +189,6 @@ public class InternalMessageInfoPersistenceServiceImpl implements InternalMessag
         dbMessageInfo.setTo(to);
     }
 
-    @Override
     public void mergeMessageInfo(DomibusConnectorMessage message, PDomibusConnectorMessage dbMessage) {
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         if (messageInfo == null) {

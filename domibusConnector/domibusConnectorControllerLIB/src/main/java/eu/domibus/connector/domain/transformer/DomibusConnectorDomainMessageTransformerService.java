@@ -3,6 +3,7 @@ package eu.domibus.connector.domain.transformer;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transformer.util.LargeFileHandlerBacked;
 import eu.domibus.connector.domain.transition.*;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         DomibusConnectorMessageType TOMessageType = new DomibusConnectorMessageType();
 
         //map messageDetails
-        TOMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage.getMessageDetails()));
+        TOMessageType.setMessageDetails(transformMessageDetailsDomainToTransition(domainMessage));
         //map messageContent
         TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent()));
         //map message confirmations
@@ -298,7 +299,8 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
     static @NotNull
-    DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @NotNull DomibusConnectorMessageDetails messageDetails) {
+    DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @NotNull DomibusConnectorMessage message) {
+        DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         LOGGER.debug("transformMessageDetailsDomaintToTransition: messageDetails are [{}]", messageDetails);
         if (messageDetails == null) {
             throw new CannotBeMappedToTransitionException("messageDetails are not allowed to be null!");
@@ -345,6 +347,12 @@ public class DomibusConnectorDomainMessageTransformerService {
         DomibusConnectorServiceType serviceTO = new DomibusConnectorServiceType();
         BeanUtils.copyProperties(messageDetails.getService(), serviceTO);
         TODetailsType.setService(serviceTO);
+
+        //map backendMessageId
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            LOGGER.debug("Message is an evidence message, setting backendMessageId to [{}] (from refToBackendMessageId)!", messageDetails.getRefToBackendMessageId());
+            TODetailsType.setBackendMessageId(messageDetails.getRefToBackendMessageId());
+        }
 
         return TODetailsType;
     }

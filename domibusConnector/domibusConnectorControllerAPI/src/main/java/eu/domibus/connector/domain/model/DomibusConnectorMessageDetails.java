@@ -25,6 +25,9 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	//the transportStateService
 	private String backendMessageId;
 
+	@Nullable
+	private String refToBackendMessageId;
+
 	//AS4 properties:
 	@Nullable
 	private String ebmsMessageId;
@@ -228,6 +231,15 @@ public class DomibusConnectorMessageDetails implements Serializable {
 
 	public void setDirection(DomibusConnectorMessageDirection direction) {
 		this.direction = direction;
+	}
+
+	@Nullable
+	public String getRefToBackendMessageId() {
+		return refToBackendMessageId;
+	}
+
+	public void setRefToBackendMessageId(@Nullable String refToBackendMessageId) {
+		this.refToBackendMessageId = refToBackendMessageId;
 	}
 
 	@Nullable

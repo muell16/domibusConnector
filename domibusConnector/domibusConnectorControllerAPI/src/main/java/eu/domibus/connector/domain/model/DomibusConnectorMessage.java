@@ -102,6 +102,10 @@ public class DomibusConnectorMessage implements Serializable {
 		return this.messageDetails;
 	}
 
+	public void setMessageDetails(DomibusConnectorMessageDetails messageDetails) {
+		this.messageDetails = messageDetails;
+	}
+
 	public DomibusConnectorMessageContent getMessageContent(){
 		return this.messageContent;
 	}
@@ -138,7 +142,6 @@ public class DomibusConnectorMessage implements Serializable {
 	public List<DomibusConnectorMessageError> getMessageErrors(){
 		return this.messageErrors;
 	}
-
 	/**
 	 * Method to add a new {@link DomibusConnectorMessageError} to the collection.
 	 * This collection is filled during the processing of the message inside the

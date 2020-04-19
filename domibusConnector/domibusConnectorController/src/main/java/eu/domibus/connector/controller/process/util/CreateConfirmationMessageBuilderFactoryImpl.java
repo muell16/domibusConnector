@@ -170,6 +170,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                     .build();
             //by default ref to message id is the EBMSID of the related msg
             this.details.setRefToMessageId(originalDetails.getEbmsMessageId());
+            this.details.setRefToBackendMessageId(originalDetails.getBackendMessageId());
         }
 
         public ConfirmationMessageBuilder setRejectionReason(DomibusConnectorRejectionReason rejectionReason) {

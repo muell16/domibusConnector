@@ -211,9 +211,12 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
 
     @Test
     public void testTransformMessageDetailsDomainToTransition() {
+        DomibusConnectorMessage message = DomainEntityCreator.createMessage();
         DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
+        message.setMessageDetails(messageDetails);
 
-        DomibusConnectorMessageDetailsType messageDetailsType = DomibusConnectorDomainMessageTransformerService.transformMessageDetailsDomainToTransition(messageDetails);
+
+        DomibusConnectorMessageDetailsType messageDetailsType = DomibusConnectorDomainMessageTransformerService.transformMessageDetailsDomainToTransition(message);
 
         assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped").isEqualTo("national1");
         assertThat(messageDetailsType.getEbmsMessageId()).as("ebmsMessageId must be mapped").isEqualTo("ebms1");
@@ -227,6 +230,18 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         assertThat(messageDetailsType.getService()).as("service must be mappted!").isNotNull();
     }
 
+    @Test
+    public void testTransformMessageDetailsDomainToTransition_asConfirmationMessage() {
+        DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createEvidenceNonDeliveryMessage();
+        DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
+        messageDetails.setRefToBackendMessageId("refToBackendId");
+        confirmationMessage.setMessageDetails(messageDetails);
+
+        DomibusConnectorMessageDetailsType messageDetailsType = DomibusConnectorDomainMessageTransformerService.transformMessageDetailsDomainToTransition(confirmationMessage);
+
+        assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped from refToBackendMessageId of messageDetails").isEqualTo("refToBackendId");
+
+    }
 
 
 

@@ -54,7 +54,90 @@ Describe Message Type
 
 TODO: describe some basic flows...
 
-== Signed Document
+=== Sending a Business Message
+
+To send/submit a business message the following fields have to be filled:
+
+
+|===
+| field | mandatory | description
+
+| messageContent/xmlContent | required | Business XML
+
+| messageContent/document/document | required | The Business Document, usually a human readable representation of the BusinessXML
+It should be a PDF-A document, to always make it possible for a e-Codex receiver to have at least one document which
+can be read by a human.
+
+| messageContent/document/detachedSignature | optional | If the document is not signed inline, then the detached signature takes
+place here. If the document as an example origins from an asic-s container, the detached signature should be put here.
+
+| messageAttachments/ | optional | multiple attachments to the message, the message attachments should be referenced within
+the business doc or business xml
+
+| messageAttachments/identifier | required | This is the only name of the attachment which is transported to the ecodex receiver
+
+| messageAttachments/name | optional | will only be stored in the local connector database
+
+| messageAttachments/mimeType | optional | will only be stored in the local connector database
+
+| messageAttachments/name | optional | will only be stored in the local connector database
+
+| messageDetails/backendMessageId | must be set | the message id on the backend side. It must also as the EBMS ID
+a unique message id within the backend system
+
+| messageDetails/ebmsMessageId | might be set | The EBMS ID might be set by the backend, but then it must be assured, that
+the following AS4 Gateway Implementation is not changing this EBMS ID.
+
+| messageDetails/refToMessageId | must remain empty | the refToMessageId field within e-Codex is only used by evidences
+multiple business messages are grouped together by the conversationId
+
+| messageDetails/conversationId | optional | for grouping together multiple business messages to a conversation, this
+field is used. It depends on the usecase if this id might match the eg. casenumber of an case. This would be true
+if within a case there is only communication with one other party.
+Any value on this field has no implications on the connector
+
+| messageDetails/originalSender | required | The specific value here depends on the use case, but it must be filled
+at least with an empty string
+If the message comes from an national message system, this would be the senders (technical) national address.
+
+| messageDetails/finalRecipient | required | The specific value here depends on the use case, but it must be filled
+at least with an empty string. If a national messaging system is connected here, this would be the national recipients
+(technical) address
+
+| messageDetails/service | required | The AS4 service which is used by this message
+
+| messageDetails/service/service | most likely required | The AS4 service name which is used by this message, it can be an empty string.
+Then the connector will try to lookup any matching service. This would work if only one service is configured.
+
+| messageDetails/service/serviceType |  | The AS4 service type which is used by this message, it can be an empty string.
+Most likely it is an empty string, because the connector has the full service configuration within database.
+The connector will lookup the service by the name and fill out the serviceType, as long as the service name is
+sufficient to identify the service
+
+| messageDetails/action/action | required | The AS4 action which is used by this message.
+
+| messageDetails/fromParty | required | The AS4 sending party, for details see party lookup
+
+| messageDetails/toParty | required | The AS4 receiving party
+
+
+|===
+
+
+==== Party, Service lookup
+
+
+
+
+The connector has the AS4 configuration in place. So if a party or service is provided with insufficient informations.
+The connector will try to look it up within the configuration.
+For the party this means every empty string is ignored by looking up the party within the connector configuration.
+If only ONE matching party is found all other attributes are filled out by the found party. If more than one party
+was found an error will occur!
+For the sending application this means it is usually sufficient to only use the party name like (AT, DE, ...)
+
+
+==== Signed Document
 
 If SIGNATURE_BASED is used the connector expects a signed PDF document. The document signature will be checked. It
 is also possible to use detached signatures. So if you are using ASIC-S container within your environment you have
@@ -83,3 +166,51 @@ See the following excerpt of the xsd:
 So basically the detached signature for the PDF should be put into the detachedSignature. With this approach
 ASIC-S based documents can be put into the connector.
 
+
+
+=== Triggering an evidence message
+
+If the application has received an ecodex message from the connector, it should respond accordingly to the
+use case with an evidence message. This can be done by sending a evidence trigger to the connector. The
+trigger message is missing the actual cryptographic evidence, which is actually generated by the connector.
+
+
+
+
+|===
+| field | mandatory | description
+
+| messageContent | must be empty! | Business XML
+
+| messageAttachments/ | must be empty | attachments on an evidence message are ignored!
+
+| messageDetails/backendMessageId | must be set | the message id on the backend side. It must also as the EBMS ID
+a unique message id within the backend system. If there is a national system this would be the id of the national
+evidence message
+For the evidence message this is a NEW message id!
+
+| messageDetails/ebmsMessageId | might be set | The EBMS ID might be set by the backend, but then it must be assured, that
+the following AS4 Gateway Implementation is not changing this EBMS ID.
+For the evidence message this is a NEW message id!
+
+| messageDetails/refToMessageId | must be set| the refToMessageId must be set to the EBMS id of the message
+which should be confirmed. The backend message id works to, but only if the backend system is responding
+with an message id to a new delivered message
+
+| messageDetails/conversationId | empty | filled out by the connector, it will be taken from the original message
+
+| messageDetails/originalSender | empty | filled out by the connector, it will be taken from the original message (finalRecipient)
+
+| messageDetails/finalRecipient | empty | filled out by the connector, it will be taken from the original message (originalSender)
+
+| messageDetails/service | empty | filled out by the connector, it will be taken from the original message
+
+| messageDetails/action/action | empty | filled out by the connector, it will be taken from configuration
+
+| messageDetails/fromParty | required | filled out by the connector, it will be taken from the original message (toParty)
+
+| messageDetails/toParty | required | filled out by the connector, it will be taken from the original message (fromParty)
+
+
+After the evidence was triggered the generated evidence message will not only submitted to the other party
+it will also be delivered to the backend system as an confirmation, that the trigger was successfully.
