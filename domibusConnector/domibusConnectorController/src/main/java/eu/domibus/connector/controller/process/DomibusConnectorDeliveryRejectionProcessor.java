@@ -8,6 +8,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmission
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -63,6 +64,10 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
     @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = DELIVERY_REJECTION_PROCESSOR_BEAN_NAME)
     public void processMessageTransportException(DomibusConnectorMessageTransportException messageTransportException) {
         DomibusConnectorMessage originalMessage = messageTransportException.getConnectorMessage();
+        if (DomainModelHelper.isEvidenceMessage(originalMessage)) {
+            LOGGER.debug("message transport exception is ignored for evidence message!");
+            return;
+        }
 
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
 
