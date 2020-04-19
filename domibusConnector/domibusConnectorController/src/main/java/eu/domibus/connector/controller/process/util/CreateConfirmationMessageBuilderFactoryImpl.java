@@ -184,7 +184,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
          * transported back only to the connectorClient system
          *
          */
-        public ConfirmationMessageBuilder useNationalIdAsRefToMessageId() {
+        private ConfirmationMessageBuilder useNationalIdAsRefToMessageId() {
             String refToMsg = originalMessage.getMessageDetails().getBackendMessageId();
             if (refToMsg == null) {
                 throw new IllegalArgumentException("Cannot use NationalID as refToMsgId because it is NULL!");
@@ -241,7 +241,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 originalMessage.addConfirmation(messageConfirmation);
 
                 if (details.getRefToMessageId() == null) {
-                    throw new IllegalArgumentException("refToMessageId is not set! Call useNationalIdAsRefToMessageId or useEbmsIdAsRefToMessageId!");
+                    this.useNationalIdAsRefToMessageId();
                 }
 
                 details.setAction(action);
