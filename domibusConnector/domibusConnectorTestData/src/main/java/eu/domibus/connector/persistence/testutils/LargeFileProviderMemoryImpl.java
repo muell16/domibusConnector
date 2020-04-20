@@ -1,4 +1,4 @@
-package eu.domibus.connector.domain.transformer;
+package eu.domibus.connector.persistence.testutils;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.LargeFileReference;

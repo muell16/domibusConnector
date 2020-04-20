@@ -41,10 +41,15 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
 
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
 
-    @Autowired
+
     private DomibusConnectorDomainMessageTransformerService transformerService;
     
     //SETTER
+    @Autowired
+    public void setTransformerService(DomibusConnectorDomainMessageTransformerService transformerService) {
+        this.transformerService = transformerService;
+    }
+
     @Autowired
     public void setBackendClientPersistenceService(BackendClientInfoPersistenceService backendClientPersistenceService) {
         this.backendClientPersistenceService = backendClientPersistenceService;

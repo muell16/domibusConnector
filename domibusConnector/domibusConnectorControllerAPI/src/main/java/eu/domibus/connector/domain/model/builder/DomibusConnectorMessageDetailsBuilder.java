@@ -9,6 +9,8 @@ import org.springframework.lang.Nullable;
 
 public class DomibusConnectorMessageDetailsBuilder {
 
+
+    private String refToBackendMessageId;
     private String backendMessageId;
     private String ebmsMessageId;
     private String refToMessageId;
@@ -98,6 +100,7 @@ public class DomibusConnectorMessageDetailsBuilder {
         details.setFromParty(this.fromParty);
         details.setToParty(this.toParty);
         details.setRefToMessageId(this.refToMessageId);
+        details.setRefToBackendMessageId(this.refToBackendMessageId);
         return details;
     }
 
@@ -119,6 +122,7 @@ public class DomibusConnectorMessageDetailsBuilder {
                 .copyPropertiesFrom(messageDetails.getToParty())
                 .build();
         this.refToMessageId = messageDetails.getRefToMessageId();
+        this.refToBackendMessageId = messageDetails.getRefToBackendMessageId();
 
         return this;
     }

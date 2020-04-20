@@ -135,7 +135,7 @@ public class ITCaseTestContext {
             state.setStatus(TransportState.ACCEPTED);
 
             String backendId = "BACKEND_" + UUID.randomUUID().toString();
-            state.setRemoteMessageId(backendId); //assigned EBMS ID
+            state.setRemoteMessageId(backendId); //assigned backend message id
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStatusService.updateTransportToBackendClientStatus(dummyBackend, state);
 

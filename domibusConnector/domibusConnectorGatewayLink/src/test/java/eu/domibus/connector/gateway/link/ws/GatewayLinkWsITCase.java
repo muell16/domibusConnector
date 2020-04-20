@@ -19,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@Disabled("Policy cannot be satisfied!")
+
 public class GatewayLinkWsITCase {
 
 
@@ -69,8 +69,6 @@ public class GatewayLinkWsITCase {
     public void testSendMessageFromGwToGwLink() throws InterruptedException {
         DomibusConnectorGatewayDeliveryWebService connectorDeliveryClient = TestGW.getConnectorDeliveryClient(TEST_GW_APPLICATION_CONTEXT);
         DomibusConnectorMessageType message = TransitionCreator.createMessage();
-
-//        Thread.sleep(2000000);
 
         connectorDeliveryClient.deliverMessage(message);
 

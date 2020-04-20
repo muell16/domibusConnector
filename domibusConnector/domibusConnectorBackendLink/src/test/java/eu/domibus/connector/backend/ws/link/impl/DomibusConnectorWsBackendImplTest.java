@@ -8,6 +8,7 @@ import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliv
 import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
@@ -61,6 +62,8 @@ public class  DomibusConnectorWsBackendImplTest {
 
     WrappedMessageContext wrappedMessageContext;
 
+    DomibusConnectorDomainMessageTransformerService transformerService = new DomibusConnectorDomainMessageTransformerService(new LargeFilePersistenceServiceMemoryImpl());
+
     @Mock
     Message message;
 
@@ -81,6 +84,7 @@ public class  DomibusConnectorWsBackendImplTest {
         domibusConnectorBackendImpl.setWsContext(webServiceContext);
         domibusConnectorBackendImpl.setBackendClientInfoPersistenceService(backendClientInfoPersistenceService);
         domibusConnectorBackendImpl.setMessageToBackendClientWaitQueue(messageToBackendClientWaitQueue);
+        domibusConnectorBackendImpl.setTransformerService(transformerService);
 
         domibusConnectorBackendImpl.setBackendSubmissionService(backendSubmissionService);
 

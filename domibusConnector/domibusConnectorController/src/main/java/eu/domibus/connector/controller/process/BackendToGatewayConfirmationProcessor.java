@@ -106,11 +106,12 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
-        backendDeliveryService.deliverMessageToBackend(confirmationMessageBuilder
+        DomibusConnectorMessage evidenceMessage = confirmationMessageBuilder
                 .useEbmsIdAsRefToMessageId()
                 .switchFromToParty()
                 .build()
-                .getEvidenceMessage());
+                .getEvidenceMessage();
+        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
     }
 
     private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {

@@ -226,11 +226,12 @@ public class ConnectorMessageFlowITCase {
 
             LOGGER.info("message with confirmations: [{}]", testMessage.getMessageConfirmations());
 
-            DomibusConnectorMessage businessMsg = toBackendDeliveredMessages.take(); //wait until a message is put into queue
+            DomibusConnectorMessage businessMsg = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS); //wait until a message is put into queue
             assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
             assertThat(businessMsg).isNotNull();
 
-            DomibusConnectorMessage relayRemmdEvidenceMsg = toGwDeliveredMessages.take();
+            DomibusConnectorMessage relayRemmdEvidenceMsg = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
+            assertThat(relayRemmdEvidenceMsg).isNotNull();
 
             DomibusConnectorMessage deliveryTriggerMessage = DomibusConnectorMessageBuilder
                     .createBuilder()
@@ -258,7 +259,7 @@ public class ConnectorMessageFlowITCase {
             fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage);
 
 
-            DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.take();
+            DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
             assertThat(deliveryEvidenceMessage)
                     .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
                     .as("Message must be evidence message of type Delivery")
@@ -267,6 +268,7 @@ public class ConnectorMessageFlowITCase {
                     .as("Generated evidence must be longer than 100 bytes! Ensure that there was really a evidence generated!")
                     .hasSizeGreaterThan(100);
             DomibusConnectorMessageDetails deliveryEvidenceMessageDetails = deliveryEvidenceMessage.getMessageDetails();
+            assertThat(deliveryEvidenceMessageDetails).isNotNull();
             assertThat(deliveryEvidenceMessageDetails.getRefToMessageId()).isEqualTo(EBMS_ID);
             assertThat(deliveryEvidenceMessageDetails.getFromParty())
                     .as("Parties must be switched")
@@ -275,12 +277,17 @@ public class ConnectorMessageFlowITCase {
                     .as("Parties must be switched")
                     .isEqualTo(DomainEntityCreator.createPartyAT());
 
-            DomibusConnectorMessage deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.take();
+            DomibusConnectorMessage deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
             assertThat(deliveryEvidenceToBackendMessage)
+                    .isNotNull()
                     .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
                     .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
             assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToMessageId())
+                    .as("The refToMessageId must match the EBMSID of the original message!")
                     .isEqualTo(businessMsg.getMessageDetails().getEbmsMessageId());
+            assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToBackendMessageId())
+                    .as("The backend ref to message id must match the backend message id of the original message!")
+                    .isEqualTo(businessMsg.getMessageDetails().getBackendMessageId());
 
             DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))

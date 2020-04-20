@@ -7,10 +7,12 @@ import eu.domibus.connector.backend.service.DomibusConnectorBackendInternalDeliv
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceContentManagerImpl;
+import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,8 @@ public class PushMessageViaWsToBackendClientImplTest {
     @Mock
     DomibusConnectorMessagePersistenceService messagePersistenceService;
 
+    DomibusConnectorDomainMessageTransformerService transformerService = new DomibusConnectorDomainMessageTransformerService(new LargeFilePersistenceServiceMemoryImpl());
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -63,9 +67,10 @@ public class PushMessageViaWsToBackendClientImplTest {
 
         pushMessageOverWs.setBackendClientPersistenceService(backendClientInfoPersistenceService);
         pushMessageOverWs.setBackendClientWebServiceClientFactory(this.webServiceClientFactory);
-//        pushMessageOverWs.setBigDataMessageService(this.bigDataMessageService);
+        pushMessageOverWs.setTransformerService(this.transformerService);
         pushMessageOverWs.setMessagePersistenceService(this.messagePersistenceService);
         pushMessageOverWs.setDomibusConnectorBackendInternalDeliverToController(this.backendSubmissionService);
+
 
         pushMessageToBackendService = pushMessageOverWs;
 

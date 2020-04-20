@@ -157,12 +157,14 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
         try {
             Files.delete(storageFile);
-            deleteFolderIfEmpty(reference);
         } catch (IOException e) {
             LargeFileDeletionException largeFileDeletionException = new LargeFileDeletionException(String.format("Unable to delete file [%s] due exception:", storageFile), e);
             largeFileDeletionException.setReferenceFailedToDelete(reference);
             throw largeFileDeletionException;
+        } finally {
+            storageFile = null;
         }
+        deleteFolderIfEmpty(reference);
     }
 
     private void deleteFolderIfEmpty(LargeFileReference reference) {
@@ -176,6 +178,15 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         } catch (IOException e) {
             LOGGER.warn("#deleteFolderIfEmpty:: An IOException occured while trying to delete directory [" + messagePath + "]", e);
         }
+
+        try {
+            //call list to avoid strange behaviour on windows systems
+            Files.list(messagePath.getParent());
+        } catch (IOException e) {
+            //just ignore
+        }
+        messagePath = null;
+
     }
 
     @Override

@@ -413,12 +413,14 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         //delete msg content fields within database
         byMessage
                 .stream()
+                .filter(msgCont -> msgCont.getContentType() != StoreType.MESSAGE_CONFIRMATION_XML) //do not delete evidences...
                 .forEach(this::deleteMsgContent);
 
         //delete large file references, by calling the responsible LargeFilePersistenceProvider
         List<LargeFileDeletionException> deletionExceptions = new ArrayList<>();
         byMessage
                 .stream()
+                .filter(msgCont -> msgCont.getStorageProviderName() != null)
                 .map(this::loadLargeFileReference)
                 .forEach(ref ->  {
                     try {
@@ -426,7 +428,7 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                     } catch (LargeFileDeletionException deletionException) {
                         deletionExceptions.add(deletionException);
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.trace(String.format("The following largeFile Reference [%s] will be deleted later by timer jobs.\n" +
+                            LOGGER.debug(String.format("The following largeFile Reference [%s] will be deleted later by timer jobs.\n" +
                                     "Because I was unable to delete it now due the following exception:", ref), deletionException);
                         }
                     }

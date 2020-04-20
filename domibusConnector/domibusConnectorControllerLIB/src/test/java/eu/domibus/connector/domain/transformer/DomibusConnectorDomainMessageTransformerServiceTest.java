@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService.CannotBeMappedToTransitionException;
 import org.junit.jupiter.api.Assertions;

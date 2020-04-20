@@ -5,7 +5,9 @@ import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliverySe
 import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
+import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -87,6 +89,12 @@ public class StartupGwLinkOnly {
                 fromGwReceivedMessagesList().add(message);
             }
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DomibusConnectorDomainMessageTransformerService messageTransformerService() {
+        return new DomibusConnectorDomainMessageTransformerService(new LargeFileProviderMemoryImpl());
     }
 
     @Bean

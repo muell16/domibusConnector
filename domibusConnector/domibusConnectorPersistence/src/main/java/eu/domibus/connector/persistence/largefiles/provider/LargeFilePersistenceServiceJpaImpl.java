@@ -81,7 +81,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
                         "Check Table %s", storageRef, PDomibusConnectorBigData.TABLE_NAME));
             }
 
-            JpaBasedLargeFileReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedLargeFileReference();
+            JpaBasedLargeFileReference jpaBasedDomibusConnectorBigDataReference = new JpaBasedLargeFileReference(this);
             jpaBasedDomibusConnectorBigDataReference.setStorageProviderName(this.getProviderName());
 
             //TODO: use stream from db!
@@ -125,7 +125,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
-        JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
+        JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
         reference.setStorageProviderName(this.getProviderName());
         reference.setReadable(false);
         reference.setWriteable(true);
@@ -171,7 +171,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
             PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
-            JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
+            JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
             reference.setReadable(false);
             reference.setWriteable(false);
 
@@ -216,19 +216,14 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     @Transactional(readOnly = false)
     public void deleteDomibusConnectorBigDataReference(LargeFileReference bigDataReference) {
         LOGGER.trace("deleteDomibusConnectorBigDataReference: called to delete all data {}", bigDataReference);
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-        JpaBasedLargeFileReference ref = (JpaBasedLargeFileReference) bigDataReference;
+
+        JpaBasedLargeFileReference ref = new JpaBasedLargeFileReference(this, bigDataReference);
+
         long dataId = convertStorageIdReferenceToDbId(ref.getStorageIdReference());
 
         LOGGER.debug("Deleting big data entry with db id: [{}]", dataId);
         bigDataDao.deleteById(dataId);
 
-//        if (dbMessage != null) {
-//            List<PDomibusConnectorBigData> dataByMsg = bigDataDao.findAllByMessage(dbMessage.getId());
-//            bigDataDao.deleteAll(dataByMsg);
-//        } else {
-//            LOGGER.warn(String.format("Did not delete big data of message with connector id [%s], because there was no entry in database", message));
-//        }
 
     }
 
@@ -251,7 +246,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
                 }
 
                 List<LargeFileReference> dataRefList = map.get(connectorMessageId);
-                JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference();
+                JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
                 reference.setStorageProviderName(this.getProviderName());
                 reference.setReadable(false);
                 reference.setWriteable(false);
@@ -325,14 +320,24 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 		 * 
 		 */
 		private static final long serialVersionUID = -4587251476768140113L;
+        private final LargeFilePersistenceServiceJpaImpl persistenceServiceJpa;
 
-		transient InputStream inputStream;
+        transient InputStream inputStream;
 
         transient OutputStream outputStream;
 
         boolean readable;
 
         boolean writeable;
+
+        public JpaBasedLargeFileReference(LargeFilePersistenceServiceJpaImpl persistenceServiceJpa) {
+            this.persistenceServiceJpa = persistenceServiceJpa;
+        }
+
+        public JpaBasedLargeFileReference(LargeFilePersistenceServiceJpaImpl persistenceServiceJpa, LargeFileReference bigDataReference) {
+            super(bigDataReference);
+            this.persistenceServiceJpa = persistenceServiceJpa;
+        }
 
         @Override
         public String getStorageProviderName() {

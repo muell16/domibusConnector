@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
@@ -243,9 +244,9 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 if (details.getRefToMessageId() == null) {
                     this.useNationalIdAsRefToMessageId();
                 }
-
                 details.setAction(action);
                 details.setCausedBy(originalMessage.getConnectorMessageId());
+
 
                 DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
                 evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
