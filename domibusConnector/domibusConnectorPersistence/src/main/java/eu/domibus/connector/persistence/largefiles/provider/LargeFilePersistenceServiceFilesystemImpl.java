@@ -49,11 +49,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     @Override
     public LargeFileReference getReadableDataSource(LargeFileReference ref) {
-//        if (!(ref instanceof FileBasedLargeFileReference)) {
-//            throw new PersistenceException(String.format("Can only getReadableDataSource for a [%s] BigDataReference but the provided reference was of type [%s]",
-//                    FileBasedLargeFileReference.class, ref.getClass()));
-//        }
-        FileBasedLargeFileReference fileBasedReference = new FileBasedLargeFileReference(ref);
+        FileBasedLargeFileReference fileBasedReference = new FileBasedLargeFileReference(this, ref);
 
         String storageIdReference = fileBasedReference.getStorageIdReference();
         Path filePath = getStoragePath().resolve(storageIdReference);
@@ -67,7 +63,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
             }
 
         } catch (FileNotFoundException e) {
-            throw new PersistenceException(String.format("Could not found the required file [{}]!", filePath), e);
+            throw new PersistenceException(String.format("Could not found the required file [%s]!", filePath), e);
         }
 
         return fileBasedReference;
@@ -81,7 +77,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     @Override
     public LargeFileReference createDomibusConnectorBigDataReference(InputStream input, String connectorMessageId, String documentName, String documentContentType) {
-        FileBasedLargeFileReference bigDataReference = new FileBasedLargeFileReference();
+        FileBasedLargeFileReference bigDataReference = new FileBasedLargeFileReference(this);
         bigDataReference.setName(documentName);
         bigDataReference.setMimetype(documentContentType);
         bigDataReference.setStorageProviderName(this.getProviderName());
@@ -210,7 +206,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     private LargeFileReference mapMessageFolderAndFileNameToReference(String messageFolderName, String fileName) {
         String storageIdRef = createReferenceName(messageFolderName, fileName);
-        FileBasedLargeFileReference ref = new FileBasedLargeFileReference();
+        FileBasedLargeFileReference ref = new FileBasedLargeFileReference(this);
         ref.setStorageIdReference(storageIdRef);
         return ref;
     }
@@ -340,7 +336,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
      * BigDataPersistenceServiceFilesystemImpl implementation of BigDataReference
      *  this class is internal api do not use this class outside the BigDataPersistenceServiceFilesystemImpl
      */
-    public static final class FileBasedLargeFileReference extends LargeFileReference {
+    static final class FileBasedLargeFileReference extends LargeFileReference {
 
         Charset charset = StandardCharsets.UTF_8;
 
@@ -365,11 +361,13 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
         private String cipherSuite;
 
-        public FileBasedLargeFileReference() {}
+        public FileBasedLargeFileReference(LargeFilePersistenceServiceFilesystemImpl fsService) {
+            this.fsService = fsService;
+        }
 
-        public FileBasedLargeFileReference(LargeFileReference ref) {
+        public FileBasedLargeFileReference(LargeFilePersistenceServiceFilesystemImpl fsService, LargeFileReference ref) {
             super(ref);
-
+            this.fsService = fsService;
             if (!StringUtils.isEmpty(ref.getText())) {
                 String[] s = ref.getText().split("__");
                 encryptionKey = new String(Base64Utils.decodeFromString(s[0]), charset);

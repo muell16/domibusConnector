@@ -37,7 +37,7 @@ public class CheckContentDeletedProcessorImplTest {
         MockitoAnnotations.initMocks(this);
 
         checkContentDeletedProcessor = new CheckContentDeletedProcessorImpl();
-        checkContentDeletedProcessor.setBigDataPersistenceService(bigDataPersistenceService);
+        checkContentDeletedProcessor.setLargeFilePersistenceService(bigDataPersistenceService);
         checkContentDeletedProcessor.setMessagePersistenceService(messagePersistenceService);
 
 

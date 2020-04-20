@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.impl;
+package eu.domibus.connector.persistence.largefiles.provider;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -80,7 +80,7 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
 
     @Test
     public void getReadableDataSource() throws IOException {
-        LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference fsRef = new LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference();
+        LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference fsRef = new LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference(filesystemImpl);
         fsRef.setStorageIdReference("testmsg1" + File.separator + "file1");
         fsRef.setName("file1");
         fsRef.setMimetype("text");
@@ -131,7 +131,7 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
 
     @Test
     public void readEncryptedBigDataReference() throws IOException {
-        FileBasedLargeFileReference fRef = new FileBasedLargeFileReference();
+        FileBasedLargeFileReference fRef = new FileBasedLargeFileReference(filesystemImpl);
         fRef.setEncryptionKey("AES#@#kC6lanKld+xuiVfarsZNLQ==");
         fRef.setInitVector("cO+U0ufVjzCheGnXYkfvXg==");
         fRef.setCipherSuite("AES/CBC/PKCS5Padding");
@@ -148,7 +148,7 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
     @Test
     public void deleteDomibusConnectorBigDataReference() {
         String msgId = "testmsg2";
-        FileBasedLargeFileReference fsRef = new FileBasedLargeFileReference();
+        FileBasedLargeFileReference fsRef = new LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference(filesystemImpl);
         String storageRef = msgId + File.separator + "file1";
         fsRef.setStorageIdReference(storageRef);
 

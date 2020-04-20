@@ -211,6 +211,7 @@ with an message id to a new delivered message
 
 | messageDetails/toParty | required | filled out by the connector, it will be taken from the original message (fromParty)
 
+|===
 
 After the evidence was triggered the generated evidence message will not only submitted to the other party
 it will also be delivered to the backend system as an confirmation, that the trigger was successfully.

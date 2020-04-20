@@ -1,5 +1,6 @@
 package eu.domibus.connector.web.login;
 
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyPressEvent;
@@ -15,10 +16,18 @@ import eu.domibus.connector.web.service.WebUserService;
 import eu.domibus.connector.web.view.DashboardView;
 
 public class LoginDialog extends Dialog {
-	
-	Button loginButton = new Button("Login");
+
+	private WebUserService userService;
+
+	private Button loginButton = new Button("Login");
+	private Button changePasswordButton;
+
+	private PasswordField password;
+	private TextField username;
 
 	public LoginDialog(WebUserService userService) {
+		this.userService = userService;
+
 		Div usernameDiv = new Div();
 		TextField username = new TextField();
 		username.setLabel("Username");
@@ -56,41 +65,10 @@ public class LoginDialog extends Dialog {
 		loginButtonContent.getStyle().set("text-align", "center");
 		loginButtonContent.getStyle().set("padding", "10px");
 		
-		loginButton.addClickListener(e -> {
-			if(username.getValue().isEmpty()) {
-				Dialog errorDialog = new LoginErrorDialog("The field \"Username\" must not be empty!");
-				username.clear();
-				password.clear();
-				errorDialog.open();
-				return;
-			}
-			if(password.getValue().isEmpty()) {
-				Dialog errorDialog = new LoginErrorDialog("The field \"Password\" must not be empty!");
-				password.clear();
-				errorDialog.open();
-				return;
-			}
-			try {
-				userService.login(username.getValue(), password.getValue());
-			} catch (UserLoginException e1) {
-				Dialog errorDialog = new LoginErrorDialog(e1.getMessage());
-				username.clear();
-				password.clear();
-				errorDialog.open();
-				return;
-			} catch (InitialPasswordException e1) {
-				Dialog changePasswordDialog = new ChangePasswordDialog(userService,username.getValue(), password.getValue());
-				username.clear();
-				password.clear();
-				close();
-				changePasswordDialog.open();
-			}
-			this.getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
-			close();
-		});
+		loginButton.addClickListener(this::loginButtonClicked);
 		loginButtonContent.add(loginButton);
 		
-		Button changePasswordButton = new Button("Change Password");
+		changePasswordButton = new Button("Change Password");
 		changePasswordButton.addClickListener(e -> {
 			if(username.getValue().isEmpty()) {
 				Dialog errorDialog = new LoginErrorDialog("The field \"Username\" must not be empty!");
@@ -109,6 +87,40 @@ public class LoginDialog extends Dialog {
 		
 		
 		add(loginButtonContent);
+	}
+
+	private void loginButtonClicked(ClickEvent<Button> buttonClickEvent) {
+		if(username.getValue().isEmpty()) {
+			Dialog errorDialog = new LoginErrorDialog("The field \"Username\" must not be empty!");
+			username.clear();
+			password.clear();
+			errorDialog.open();
+			return;
+		}
+		if(password.getValue().isEmpty()) {
+			Dialog errorDialog = new LoginErrorDialog("The field \"Password\" must not be empty!");
+			password.clear();
+			errorDialog.open();
+			return;
+		}
+		try {
+			userService.login(username.getValue(), password.getValue());
+		} catch (UserLoginException e1) {
+			Dialog errorDialog = new LoginErrorDialog(e1.getMessage());
+			username.clear();
+			password.clear();
+			errorDialog.open();
+			return;
+		} catch (InitialPasswordException e1) {
+			Dialog changePasswordDialog = new ChangePasswordDialog(userService,username.getValue(), password.getValue());
+			username.clear();
+			password.clear();
+			close();
+			changePasswordDialog.open();
+		}
+		this.getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
+		close();
+
 	}
 
 }

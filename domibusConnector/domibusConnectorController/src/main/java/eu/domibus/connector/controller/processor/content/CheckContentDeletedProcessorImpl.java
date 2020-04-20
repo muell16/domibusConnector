@@ -18,19 +18,21 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessor.class);
 
-    LargeFilePersistenceService bigDataPersistenceService;
+    LargeFilePersistenceService largeFilePersistenceService;
     DomibusConnectorMessagePersistenceService messagePersistenceService;
     ContentDeletionTimeoutConfigurationProperties contentDeletionTimeoutConfigurationProperties;
 
     @Autowired
-    public void setBigDataPersistenceService(LargeFilePersistenceService bigDataPersistenceService) {
-        this.bigDataPersistenceService = bigDataPersistenceService;
+    public void setLargeFilePersistenceService(LargeFilePersistenceService largeFilePersistenceService) {
+        this.largeFilePersistenceService = largeFilePersistenceService;
     }
 
     @Autowired
@@ -41,22 +43,34 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
     @Override
     @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = bigDataPersistenceService.getAllAvailableReferences();
-        allAvailableReferences.forEach( (id, refList) -> {
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
+
+
+        List<LargeFileReference> referencesToDelete = allAvailableReferences
+                .entrySet()
+                .stream()
+                .flatMap(e -> getDeleteableReferences(e.getKey(), e.getValue()).stream())
+                .collect(Collectors.toList());
+
+        referencesToDelete.forEach(ref -> {
+            LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting reference with id [{}]", ref.getStorageIdReference());
             try {
-                checkDeletion(id, refList);
-            } catch (Exception e) {
-                LOGGER.error("Exception occured while cleaning up content for message [{}]", id);
+                largeFilePersistenceService.deleteDomibusConnectorBigDataReference(ref);
+            } catch (LargeFileDeletionException delException) {
+                LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
+                LOGGER.error("Was unable to delete due exception: ", delException);
             }
         });
     }
 
-    void checkDeletion(DomibusConnectorMessageId id, List<LargeFileReference> references) {
+    List<LargeFileReference> getDeleteableReferences(DomibusConnectorMessageId id, List<LargeFileReference> references) {
         DomibusConnectorMessage msg = messagePersistenceService.findMessageByConnectorMessageId(id.getConnectorMessageId());
         if (msg == null) {
             LOGGER.warn("No message with connector message id [{}] found in database. This content will NOT be deleted. Please check and remove manual!", id.getConnectorMessageId());
-            return;
+            return references;
         }
+
+
         DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
         Date transportFinishedDate = null;
         boolean failed = false;
@@ -75,21 +89,14 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
         }
 
 
+        if (transportFinishedDate != null) {
+            LOGGER.info(LoggingMarker.BUSINESS_CONTENT_LOG,
+                    "Transport of message [{}] in direction [{}] has {} on [{}] - deleting content of this message",
+                    msg, direction, failed ? "failed" : "finished", transportFinishedDate);
 
-//        if (transportFinishedDate != null) {
-//            LOGGER.info(LoggingMarker.BUSINESS_CONTENT_LOG,
-//                    "Transport of message [{}] in direction [{}] has {} on [{}] - deleting content of this message",
-//                    msg, direction, failed ? "failed" : "finished", transportFinishedDate);
-//            references.forEach(ref -> {
-//                        LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting reference with id [{}]", ref.getStorageIdReference());
-//                        try {
-//                            bigDataPersistenceService.deleteDomibusConnectorBigDataReference(ref);
-//                        } catch (LargeFileDeletionException delException) {
-//                            LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
-//                            LOGGER.error("Was unable to delete due exception: ", delException);
-//                        }
-//                    });
-//        }
+            return references;
+        }
+        return references;
     }
 
 }

@@ -199,8 +199,8 @@ public class MsgContentPersistenceService {
         largeFileReference.setName(pDomibusConnectorMsgCont.getPayloadName());
         largeFileReference.setMimetype(pDomibusConnectorMsgCont.getPayloadMimeType());
         largeFileReference.setSize(pDomibusConnectorMsgCont.getSize());
-        LargeFileReference readableDataSource = largeFilePersistenceService.getReadableDataSource(largeFileReference);
-        return readableDataSource;
+//        LargeFileReference readableDataSource = largeFilePersistenceService.getReadableDataSource(largeFileReference);
+        return largeFileReference;
     }
 
     private byte[] largeFileReferenceToByte(LargeFileReference largeFileReference) {
