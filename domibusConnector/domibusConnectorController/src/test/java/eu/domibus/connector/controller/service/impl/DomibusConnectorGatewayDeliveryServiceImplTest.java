@@ -4,13 +4,12 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
-import eu.domibus.connector.controller.spring.ConnectorControllerProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Mock
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService;
+    private DomibusConnectorMessageContentManager bigDataOfMessagePersistenceService;
 
     @Mock
     private DomibusConnectorMessageIdGenerator messageIdGenerator;

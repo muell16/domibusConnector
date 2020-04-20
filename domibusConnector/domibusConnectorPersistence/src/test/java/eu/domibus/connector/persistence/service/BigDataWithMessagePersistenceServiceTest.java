@@ -1,22 +1,16 @@
 package eu.domibus.connector.persistence.service;
 
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
-import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.test.util.DomainEntityCreatorForPersistenceTests;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceContentManagerImpl;
 import eu.domibus.connector.domain.transformer.util.LargeFileReferenceMemoryBacked;
 
-import java.time.Duration;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+
 import static org.mockito.ArgumentMatchers.any;
 
-import org.junit.jupiter.api.Assertions;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 /**
@@ -29,12 +23,12 @@ public class BigDataWithMessagePersistenceServiceTest {
     @Mock
     private LargeFilePersistenceService bigDataPersistenceServiceImpl;
 
-    DomibusConnectorPersistAllBigDataOfMessageService persistenceService;
+    DomibusConnectorMessageContentManager persistenceService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        BigDataWithMessagePersistenceServiceImpl impl = new BigDataWithMessagePersistenceServiceImpl();
+        BigDataWithMessagePersistenceContentManagerImpl impl = new BigDataWithMessagePersistenceContentManagerImpl();
         impl.setLargeFilePersistenceService(bigDataPersistenceServiceImpl);
         persistenceService = impl;
     }

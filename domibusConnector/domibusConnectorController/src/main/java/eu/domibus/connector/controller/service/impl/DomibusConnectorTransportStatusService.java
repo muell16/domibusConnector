@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +28,7 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStatusService.class);
 
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-    private DomibusConnectorPersistAllBigDataOfMessageService contentStorageService;
+    private DomibusConnectorMessageContentManager contentStorageService;
     private DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
     private TransportStepPersistenceService transportStepPersistenceService;
 
@@ -43,7 +43,7 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     }
 
     @Autowired
-    public void setContentStorageService(DomibusConnectorPersistAllBigDataOfMessageService contentStorageService) {
+    public void setContentStorageService(DomibusConnectorMessageContentManager contentStorageService) {
         this.contentStorageService = contentStorageService;
     }
 
@@ -134,7 +134,7 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
             try {
                 contentStorageService.cleanForMessage(message);
                 LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
             }
         } else {

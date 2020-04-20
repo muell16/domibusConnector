@@ -17,7 +17,7 @@ import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkit
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import eu.domibus.connector.testutil.matcher.MockitoDomainMatcher;
@@ -57,7 +57,7 @@ public class BackendToGatewayMessageProcessorTest {
     @Mock
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
     @Mock
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
+    private DomibusConnectorMessageContentManager bigDataPersistenceService;
 
 
 
@@ -101,8 +101,8 @@ public class BackendToGatewayMessageProcessorTest {
             return null;
         }).when(backendDeliveryService).deliverMessageToBackend(any(DomibusConnectorMessage.class));
 
-        Mockito.when(bigDataPersistenceService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
-                .thenAnswer(invoc -> invoc.getArgument(0));
+//        Mockito.when(bigDataPersistenceService.setAllLargeFilesReadable(any(DomibusConnectorMessage.class)))
+//                .thenAnswer(invoc -> invoc.getArgument(0));
 
 
         

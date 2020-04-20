@@ -4,6 +4,7 @@ import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.*;
 
 /**
@@ -73,6 +74,10 @@ public class PDomibusConnectorMsgCont implements Serializable {
     @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "DETACHED_SIGNATURE_ID", referencedColumnName = "ID")
     private PDomibusConnectorDetachedSignature detachedSignature;
+
+    @javax.persistence.Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "DELETED")
+    private Date deleted;
 
     public Long getId() {
         return id;
@@ -184,6 +189,14 @@ public class PDomibusConnectorMsgCont implements Serializable {
 
     public void setStorageReferenceId(String storageReferenceId) {
         this.storageReferenceId = storageReferenceId;
+    }
+
+    public Date getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Date deleted) {
+        this.deleted = deleted;
     }
 
     @Override

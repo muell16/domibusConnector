@@ -8,7 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class DomibusConnectorTransportStatusServiceTest {
     TransportStepPersistenceService transportStepPersistenceService;
 
     @Mock
-    DomibusConnectorPersistAllBigDataOfMessageService contentStorageService;
+    DomibusConnectorMessageContentManager contentStorageService;
 
     DomibusConnectorMessage testMessage;
 

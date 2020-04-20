@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
+import eu.domibus.connector.domain.model.LargeFileReference;
 import org.springframework.lang.Nullable;
 
 /**

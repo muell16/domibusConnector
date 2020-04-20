@@ -10,7 +10,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceContentManagerImpl;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class PushMessageViaWsToBackendClientImplTest {
     @Mock
     BackendClientWebServiceClientFactory webServiceClientFactory;
     @Mock
-    BigDataWithMessagePersistenceServiceImpl bigDataMessageService;
+    BigDataWithMessagePersistenceContentManagerImpl bigDataMessageService;
     @Mock
     DomibusConnectorMessagePersistenceService messagePersistenceService;
 
@@ -52,7 +52,7 @@ public class PushMessageViaWsToBackendClientImplTest {
                 });
 
         //just pass message through bigDataMessageService
-        Mockito.when(bigDataMessageService.loadAllBigFilesFromMessage(any(DomibusConnectorMessage.class)))
+        Mockito.when(bigDataMessageService.setAllLargeFilesReadable(any(DomibusConnectorMessage.class)))
                 .then((Answer<DomibusConnectorMessage>) invocation -> invocation.getArgument(0));
 
         Mockito.when(backendSubmissionService.processMessageBeforeDeliverToBackend(any(DomibusConnectorMessage.class)))

@@ -17,6 +17,14 @@
         <modifyDataType tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnName="ERROR_MESSAGE" newDataType="java.sql.Types.CLOB" />
     </changeSet>
 
+    <changeSet id="add_deleted_column_to_msg_content" author="SKS">
+        <comment>Add a timestamp to mark if a msg content was deleted</comment>
+        <addColumn tableName="DOMIBUS_CONNECTOR_MSG_CONT">
+            <column name="DELETED" type="java.sql.Types.TIMESTAMP"></column>
+        </addColumn>
+
+    </changeSet>
+
 
 </databaseChangeLog>
 

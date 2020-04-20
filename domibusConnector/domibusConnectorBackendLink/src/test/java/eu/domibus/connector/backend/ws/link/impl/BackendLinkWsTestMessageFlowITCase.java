@@ -14,7 +14,7 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.testdata.TransitionCreator;
 import org.junit.jupiter.api.*;
 import test.eu.domibus.connector.backend.ws.linktest.client.BackendClientPushWebServiceConfiguration;
@@ -232,7 +232,7 @@ public class BackendLinkWsTestMessageFlowITCase {
 
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
         DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-        DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
+        DomibusConnectorMessageContentManager bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorMessageContentManager.class);
 
         persistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 //        bigDataPersistence.persistAllBigFilesFromMessage(epoMessage);
@@ -266,7 +266,7 @@ public class BackendLinkWsTestMessageFlowITCase {
 
             BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
             DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
-            DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorPersistAllBigDataOfMessageService.class);
+            DomibusConnectorMessageContentManager bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorMessageContentManager.class);
 
             persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 //            bigDataPersistence.persistAllBigFilesFromMessage(message);

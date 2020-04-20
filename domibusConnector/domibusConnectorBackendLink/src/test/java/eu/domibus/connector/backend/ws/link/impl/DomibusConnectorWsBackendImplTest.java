@@ -12,8 +12,8 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
-import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceServiceImpl;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
+import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceContentManagerImpl;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
@@ -55,7 +55,7 @@ public class  DomibusConnectorWsBackendImplTest {
     @Mock
     DomibusConnectorMessagePersistenceService messagePersistenceService;
     @Mock
-    DomibusConnectorPersistAllBigDataOfMessageService domibusConnectorPersistAllBigDataOfMessageService;
+    DomibusConnectorMessageContentManager domibusConnectorMessageContentManager;
     @Mock
     DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
 
@@ -89,8 +89,8 @@ public class  DomibusConnectorWsBackendImplTest {
                 .thenAnswer(invoc -> invoc.getArgument(0));
 
         LargeFilePersistenceServiceMemoryImpl bigDataPersistenceService = new LargeFilePersistenceServiceMemoryImpl();
-        domibusConnectorPersistAllBigDataOfMessageService = spy(new BigDataWithMessagePersistenceServiceImpl());
-        ((BigDataWithMessagePersistenceServiceImpl)domibusConnectorPersistAllBigDataOfMessageService)
+        domibusConnectorMessageContentManager = spy(new BigDataWithMessagePersistenceContentManagerImpl());
+        ((BigDataWithMessagePersistenceContentManagerImpl) domibusConnectorMessageContentManager)
                 .setLargeFilePersistenceService(bigDataPersistenceService);
 
 

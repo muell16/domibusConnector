@@ -2,10 +2,8 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +14,8 @@ import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissi
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
-import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
@@ -46,7 +38,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
-	private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;
+	private DomibusConnectorMessageContentManager bigDataPersistenceService;
 
 	@Autowired
 	private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
@@ -68,7 +60,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
     }
 
 	@Autowired
-	public void setBigDataPersistenceService(DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService) {
+	public void setBigDataPersistenceService(DomibusConnectorMessageContentManager bigDataPersistenceService) {
 		this.bigDataPersistenceService = bigDataPersistenceService;
 	}
 
@@ -132,7 +124,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 		}
 
 		try {
-			message = bigDataPersistenceService.loadAllBigFilesFromMessage(message);
+//			message = bigDataPersistenceService.setAllLargeFilesReadable(message);
 			gwSubmissionService.submitToGateway(message);
 		} catch (DomibusConnectorGatewaySubmissionException e) {
 		    LOGGER.warn("Cannot submit message to gateway", e);

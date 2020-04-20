@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.impl.helper;
+package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
@@ -8,8 +8,11 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMsgContDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorDetachedSignature;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMsgCont;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
+import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
+import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,15 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service for persisting message content like:
@@ -43,7 +44,7 @@ import java.util.Optional;
  */
 @Component
 @Transactional
-public class MsgContentPersistenceService {
+public class MsgContentPersistenceService implements DomibusConnectorMessageContentManager {
 
     public static final String BUSINESS_XML_DOCUMENT_IDENTIFIER = "BusinessDocumentXML";
     public static final String BUSINESS_XML_DOCUMENT_NAME = "BusinessDocument.xml";
@@ -200,6 +201,7 @@ public class MsgContentPersistenceService {
         largeFileReference.setMimetype(pDomibusConnectorMsgCont.getPayloadMimeType());
         largeFileReference.setSize(pDomibusConnectorMsgCont.getSize());
 //        LargeFileReference readableDataSource = largeFilePersistenceService.getReadableDataSource(largeFileReference);
+//        LargeFileReference largeFileReference = largeFilePersistenceService.getLargeFileReference(largeFileReference);
         return largeFileReference;
     }
 
@@ -403,4 +405,56 @@ public class MsgContentPersistenceService {
     }
 
 
+    @Override
+    @Transactional
+    public void cleanForMessage(DomibusConnectorMessage message) {
+        List<PDomibusConnectorMsgCont> byMessage = findByMessage(message);
+
+        //delete msg content fields within database
+        byMessage
+                .stream()
+                .forEach(this::deleteMsgContent);
+
+        //delete large file references, by calling the responsible LargeFilePersistenceProvider
+        List<LargeFileDeletionException> deletionExceptions = new ArrayList<>();
+        byMessage
+                .stream()
+                .map(this::loadLargeFileReference)
+                .forEach(ref ->  {
+                    try {
+                        largeFilePersistenceService.deleteDomibusConnectorBigDataReference(ref);
+                    } catch (LargeFileDeletionException deletionException) {
+                        deletionExceptions.add(deletionException);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.trace(String.format("The following largeFile Reference [%s] will be deleted later by timer jobs.\n" +
+                                    "Because I was unable to delete it now due the following exception:", ref), deletionException);
+                        }
+                    }
+                });
+
+        String storageRefs = deletionExceptions.stream().map(d -> d.getReferenceFailedToDelete().getStorageIdReference()).collect(Collectors.joining(","));
+        LOGGER.info("The following storage references [{}] failed to be deleted immediately. The will be deleted later by timer jobs.", storageRefs);
+
+    }
+
+    /**
+     * set the content and the delete date within the
+     * database, and call save of the dao
+     * @param pDomibusConnectorMsgCont - the message content
+     */
+    private void deleteMsgContent(PDomibusConnectorMsgCont pDomibusConnectorMsgCont) {
+        pDomibusConnectorMsgCont.setContent(null);
+        pDomibusConnectorMsgCont.setDeleted(new Date());
+        this.msgContDao.save(pDomibusConnectorMsgCont);
+    }
+
+    /**
+     * Finds all messageContent for a message
+     * @param message - the message from DomainModel
+     * @return a list of message content
+     */
+    public List<PDomibusConnectorMsgCont> findByMessage(DomibusConnectorMessage message) {
+        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        return this.msgContDao.findByMessage(dbMessage);
+    }
 }

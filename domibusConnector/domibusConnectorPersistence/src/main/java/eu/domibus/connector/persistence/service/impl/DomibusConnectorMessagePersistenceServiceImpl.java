@@ -10,7 +10,6 @@ import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
-import eu.domibus.connector.persistence.service.impl.helper.MsgContentPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

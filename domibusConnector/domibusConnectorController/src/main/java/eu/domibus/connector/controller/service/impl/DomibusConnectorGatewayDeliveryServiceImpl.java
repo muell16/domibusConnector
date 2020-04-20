@@ -3,8 +3,6 @@ package eu.domibus.connector.controller.service.impl;
 import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
-import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
 
@@ -30,7 +28,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
 
     private PutMessageOnQueue putMessageOnQueue;
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService;
+    private DomibusConnectorMessageContentManager bigDataOfMessagePersistenceService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
     private DomibusGatewayLoopbackReceiveProcessor domibusGatewayLoopbackReceiveProcessor;
 
@@ -47,7 +45,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     }
 
     @Autowired
-    public void setBigDataOfMessagePersistenceService(DomibusConnectorPersistAllBigDataOfMessageService bigDataOfMessagePersistenceService) {
+    public void setBigDataOfMessagePersistenceService(DomibusConnectorMessageContentManager bigDataOfMessagePersistenceService) {
         this.bigDataOfMessagePersistenceService = bigDataOfMessagePersistenceService;
     }
 

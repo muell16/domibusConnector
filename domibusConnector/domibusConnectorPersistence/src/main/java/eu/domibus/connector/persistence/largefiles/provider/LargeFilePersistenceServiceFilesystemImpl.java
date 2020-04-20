@@ -200,7 +200,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
                     .map(s -> mapMessageFolderAndFileNameToReference(messageFolderName, s))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Error while listing all files in messageFolder [%s]", messageFolder));
+            throw new RuntimeException(String.format("Error while listing all files in messageFolder [%s]", messageFolder), e);
         }
     }
 

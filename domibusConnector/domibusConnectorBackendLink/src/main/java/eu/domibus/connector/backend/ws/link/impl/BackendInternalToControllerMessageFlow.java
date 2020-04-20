@@ -13,7 +13,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence;
+    private DomibusConnectorMessageContentManager bigDataPersistence;
 
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
 
@@ -56,7 +56,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
     }
 
     @Autowired
-    public void setBigDataPersistence(DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistence) {
+    public void setBigDataPersistence(DomibusConnectorMessageContentManager bigDataPersistence) {
         this.bigDataPersistence = bigDataPersistence;
     }
 
@@ -142,7 +142,8 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     @Override
     public DomibusConnectorMessage processMessageBeforeDeliverToBackend(DomibusConnectorMessage message) {
-        return bigDataPersistence.loadAllBigFilesFromMessage(message);
+//        return bigDataPersistence.setAllLargeFilesReadable(message);
+        return message;
     }
 
     @Override

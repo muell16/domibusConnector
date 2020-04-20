@@ -6,7 +6,7 @@ import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorPersistAllBigDataOfMessageService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -56,7 +56,7 @@ public class GatewayToBackendMessageProcessorITCase {
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
 
     @Autowired
-    private DomibusConnectorPersistAllBigDataOfMessageService bigDataWithMessagePersistenceService;
+    private DomibusConnectorMessageContentManager bigDataWithMessagePersistenceService;
 
     @Test
     @Disabled("testmessage msg2 crt is outdated")
@@ -71,7 +71,7 @@ public class GatewayToBackendMessageProcessorITCase {
             message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 //            message = bigDataWithMessagePersistenceService.persistAllBigFilesFromMessage(message);
 //            message = messagePersistenceService.mergeMessageWithDatabase(message);
-            message = bigDataWithMessagePersistenceService.loadAllBigFilesFromMessage(message);
+//            message = bigDataWithMessagePersistenceService.setAllLargeFilesReadable(message);
 
             //start test
             gatewayToBackendMessageProcessor.processMessage(message);

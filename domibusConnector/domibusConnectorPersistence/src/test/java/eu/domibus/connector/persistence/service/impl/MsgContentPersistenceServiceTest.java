@@ -1,4 +1,4 @@
-package eu.domibus.connector.persistence.service.impl.helper;
+package eu.domibus.connector.persistence.service.impl;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 
+import eu.domibus.connector.persistence.service.impl.MsgContentPersistenceService;
+import eu.domibus.connector.persistence.service.impl.helper.StoreType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -58,7 +60,7 @@ public class MsgContentPersistenceServiceTest {
     @Mock
     private DomibusConnectorMessageDao msgDao;
         
-    @InjectMocks   
+    @InjectMocks
     MsgContentPersistenceService msgContService;
     
     @BeforeEach
