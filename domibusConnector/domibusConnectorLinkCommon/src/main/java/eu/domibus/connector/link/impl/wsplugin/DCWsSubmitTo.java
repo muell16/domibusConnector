@@ -41,7 +41,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     TransportStatusService transportStatusService;
 
     @Autowired
-    DomibusConnectorDomainMessageTransformerService transformerService; // = new DomibusConnectorDomainMessageTransformerService();
+    DomibusConnectorDomainMessageTransformerService transformerService;
 
 
     @Override

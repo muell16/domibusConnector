@@ -8,10 +8,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.LinkPluginQualifier;
+import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +25,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -86,6 +89,12 @@ public class DCWsGatewayPluginSendReceiveTest {
             };
         }
 
+        @Bean
+        @ConditionalOnMissingBean
+        public DomibusConnectorDomainMessageTransformerService domibusConnectorDomainMessageTransformerService() {
+            return new DomibusConnectorDomainMessageTransformerService(new LargeFileProviderMemoryImpl());
+        }
+
 
     }
 
@@ -125,6 +134,8 @@ public class DCWsGatewayPluginSendReceiveTest {
 
     @LocalServerPort
     int serverPort;
+
+
 
 
     @BeforeEach
