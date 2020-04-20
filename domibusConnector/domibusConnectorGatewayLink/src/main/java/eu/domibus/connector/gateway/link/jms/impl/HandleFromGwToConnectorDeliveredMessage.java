@@ -27,6 +27,8 @@ public class HandleFromGwToConnectorDeliveredMessage implements DomibusConnector
     @Lazy
     private DomibusConnectorAsyncDeliverToConnectorReceiveResponseService sendResponseService;
 
+    @Autowired
+    private DomibusConnectorDomainMessageTransformerService transformerService;
 
 
     public void setControllerService(DomibusConnectorGatewayDeliveryService controllerService) {
@@ -41,7 +43,7 @@ public class HandleFromGwToConnectorDeliveredMessage implements DomibusConnector
     public void deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("Deliver Message....");
 
-        DomibusConnectorMessage message = DomibusConnectorDomainMessageTransformerService.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage message = transformerService.transformTransitionToDomain(deliverMessageRequest);
 
         DomibusConnectorMessageResponseType response = new DomibusConnectorMessageResponseType();
         response.setResponseForMessageId(deliverMessageRequest.getMessageDetails().getEbmsMessageId());

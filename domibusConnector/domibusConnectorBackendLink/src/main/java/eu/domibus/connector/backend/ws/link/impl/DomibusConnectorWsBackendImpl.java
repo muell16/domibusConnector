@@ -54,12 +54,18 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
     private BackendClientInfoPersistenceService backendClientInfoPersistenceService;
     private MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
+    private DomibusConnectorDomainMessageTransformerService transformerService;
 
 
     //setter
     @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
         this.webServiceContext = webServiceContext;
+    }
+
+    @Autowired
+    public void setTransformerService(DomibusConnectorDomainMessageTransformerService transformerService) {
+        this.transformerService = transformerService;
     }
 
     @Autowired
@@ -120,7 +126,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
 
     private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
         DomibusConnectorMessage processedMessage = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-        return DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(processedMessage);
+        return transformerService.transformDomainToTransition(processedMessage);
     }
 
 
@@ -132,7 +138,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             DomibusConnectorBackendClientInfo backendClientInfoByName = null;
             backendClientInfoByName = checkBackendClient();
 
-            DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformerService.transformTransitionToDomain(submitMessageRequest);
+            DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getBackendName());
             LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getBackendName());
 

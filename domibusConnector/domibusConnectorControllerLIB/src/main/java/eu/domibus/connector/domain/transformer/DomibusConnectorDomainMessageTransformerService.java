@@ -6,9 +6,11 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transformer.util.LargeFileHandlerBacked;
 import eu.domibus.connector.domain.transition.*;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
@@ -27,9 +29,12 @@ import java.util.stream.Collectors;
 /**
  * Transforms the TransitionObjects to the internal domainModel
  */
+@Service
 public class DomibusConnectorDomainMessageTransformerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDomainMessageTransformerService.class);
+    private final LargeFilePersistenceProvider largeFilePersistenceProvider;
+
 
     /**
      * This exception is thrown when the provided
@@ -48,6 +53,11 @@ public class DomibusConnectorDomainMessageTransformerService {
 
     }
 
+    @Autowired
+    public DomibusConnectorDomainMessageTransformerService(LargeFilePersistenceProvider largeFilePersistenceProvider) {
+        this.largeFilePersistenceProvider = largeFilePersistenceProvider;
+    }
+
 
     /**
      * transforms a message from domain model to
@@ -62,7 +72,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @return - the transformed message (transition model)
      * @throws CannotBeMappedToTransitionException if a
      */
-    public static @NotNull
+    public  @NotNull
     DomibusConnectorMessageType transformDomainToTransition(final @NotNull DomibusConnectorMessage domainMessage) throws CannotBeMappedToTransitionException {
         LOGGER.debug("transformDomainToTransition: with domainMessage [{}]", domainMessage);
         if (domainMessage == null) {
@@ -110,7 +120,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @throws IllegalArgumentException is thrown if DomibusConnectorMessageConfirmation#getEvidence returns null or
      *                                  DomibusConnectorMessageConfirmation#getEvidenceType returns null
      */
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageConfirmationType transformMessageConfirmationDomainToTransition(final @NotNull DomibusConnectorMessageConfirmation messageConfirmation) {
         DomibusConnectorMessageConfirmationType confirmationTO = new DomibusConnectorMessageConfirmationType();
         if (messageConfirmation.getEvidence() == null) {
@@ -140,7 +150,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @param messageError - the (domain model) messageError
      * @return the translated (transition model) messageError
      */
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageErrorType transformMessageErrorDomainToTransition(final @NotNull DomibusConnectorMessageError messageError) {
         DomibusConnectorMessageErrorType errorTO = new DomibusConnectorMessageErrorType();
         BeanUtils.copyProperties(messageError, errorTO);
@@ -155,7 +165,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @param messageAttachment - the (domain model) messageAttachment
      * @return the translated (transition model) messageAttachment
      */
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageAttachmentType transformMessageAttachmentDomainToTransition(final @NotNull DomibusConnectorMessageAttachment messageAttachment) {
         DomibusConnectorMessageAttachmentType attachmentTO = new DomibusConnectorMessageAttachmentType();
         if (messageAttachment.getAttachment() == null) {
@@ -177,7 +187,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @param messageContent - the (domain model) messageContent
      * @return the translated (transition model) messageContent or null if null provided
      */
-    static @Nullable
+    @Nullable
     DomibusConnectorMessageContentType transformMessageContentDomainToTransition(final @Nullable DomibusConnectorMessageContent messageContent) {
         if (messageContent == null) {
             return null;
@@ -235,7 +245,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      *                 "application/octet-stream" mimeType will be set
      * @return the DataHandler
      */
-    static @NotNull
+    @NotNull
     DataHandler convertByteArrayToDataHandler(@NotNull byte[] array, @Nullable String mimeType) {
         if (mimeType == null) {
             mimeType = "application/octet-stream";
@@ -244,17 +254,17 @@ public class DomibusConnectorDomainMessageTransformerService {
         return dataHandler;
     }
 
-    static @NotNull
-    DataHandler convertBigDataReferenceToDataHandler(@NotNull LargeFileReference bigDataReference, @Nullable String mimeType) {
+    @NotNull
+    DataHandler convertBigDataReferenceToDataHandler(@NotNull LargeFileReference largeFileReference, @Nullable String mimeType) {
         if (mimeType == null) {
             mimeType = "application/octet-stream";
         }
-
-        DataHandler dataHandler = new DataHandler(bigDataReference);
+        LargeFileReference readableDataSource = this.largeFilePersistenceProvider.getReadableDataSource(largeFileReference);
+        DataHandler dataHandler = new DataHandler(readableDataSource);
         return dataHandler;
     }
 
-    static @NotNull
+    @NotNull
     byte[] convertDataHandlerToByteArray(@NotNull DataHandler dataHandler) {
         try {
             //InputStream inputStream = dataHandler.getInputStream();
@@ -283,7 +293,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @return the byte[]
      * @throws RuntimeException - in case of any error! //TODO: improve exceptions
      */
-    static @NotNull
+    @NotNull
     byte[] convertXmlSourceToByteArray(@NotNull Source xmlInput) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -298,7 +308,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         }
     }
 
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @NotNull DomibusConnectorMessage message) {
         DomibusConnectorMessageDetails messageDetails = message.getMessageDetails();
         LOGGER.debug("transformMessageDetailsDomaintToTransition: messageDetails are [{}]", messageDetails);
@@ -362,7 +372,7 @@ public class DomibusConnectorDomainMessageTransformerService {
      * @param transitionMessage - the TransitionMessage
      * @return the domainModel message
      */
-    public static @NotNull
+    public  @NotNull
     DomibusConnectorMessage transformTransitionToDomain(final @NotNull DomibusConnectorMessageType transitionMessage) {
         LOGGER.trace("#transformTransitionToDomain: transforming transition message object [{}] to domain message object", transitionMessage);
         DomibusConnectorMessageDetailsType messageDetailsTO = transitionMessage.getMessageDetails();
@@ -420,7 +430,7 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
 
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageAttachment transformMessageAttachmentTransitionToDomain(final @NotNull DomibusConnectorMessageAttachmentType messageAttachmentTO) {
 
         DomibusConnectorMessageAttachment messageAttachment = new DomibusConnectorMessageAttachment(
@@ -433,7 +443,7 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
 
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageError transformMessageErrorTransitionToDomain(final @NotNull DomibusConnectorMessageErrorType errorTypeTO) {
         //(final String text, final String details, final String source){
         DomibusConnectorMessageError error = new DomibusConnectorMessageError(
@@ -444,7 +454,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         return error;
     }
 
-    static DomibusConnectorMessageConfirmation transformMessageConfirmationTransitionToDomain(final @NotNull DomibusConnectorMessageConfirmationType messageConfirmationTO) {
+    DomibusConnectorMessageConfirmation transformMessageConfirmationTransitionToDomain(final @NotNull DomibusConnectorMessageConfirmationType messageConfirmationTO) {
         DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation();
 
         Source evidence = messageConfirmationTO.getConfirmation();
@@ -457,7 +467,7 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
 
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageContent transformMessageContentTransitionToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
 
@@ -492,14 +502,14 @@ public class DomibusConnectorDomainMessageTransformerService {
     }
 
 
-    static @NotNull
+    @NotNull
     LargeFileReference convertDataHandlerToBigFileReference(DataHandler dataHandler) {
         LargeFileHandlerBacked bigDataReference = new LargeFileHandlerBacked();
         bigDataReference.setDataHandler(dataHandler);
         return bigDataReference;
     }
 
-    static @NotNull
+    @NotNull
     DomibusConnectorMessageDetails transformMessageDetailsTransitionToDomain(final @NotNull DomibusConnectorMessageDetailsType messageDetailsTO) {
         DomibusConnectorMessageDetails messageDetails = new DomibusConnectorMessageDetails();
 

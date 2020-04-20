@@ -34,11 +34,12 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 	@Autowired
     private TransportStatusService transportStatusService;
 
-
+    @Autowired
+    private DomibusConnectorDomainMessageTransformerService transformerService;
 
 	@Override
 	public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
-		DomibusConnectorMessageType request = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
+		DomibusConnectorMessageType request = transformerService.transformDomainToTransition(message);
 
 		if (LOGGER.isTraceEnabled()) {
 		    LOGGER.trace("Printing out request message:");

@@ -25,11 +25,14 @@ public class GatewayLinkAsyncSubmitToGwService implements DomibusConnectorGatewa
     @Autowired
     private TransportStatusService transportStatusService;
 
+    @Autowired
+    private DomibusConnectorDomainMessageTransformerService transformerService;
+
 
     @Override
     public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
 
-        DomibusConnectorMessageType messageType = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
+        DomibusConnectorMessageType messageType = transformerService.transformDomainToTransition(message);
 
         //TODO: try catch ...?
 //        submitToGatewayService.submitMessage(messageType);

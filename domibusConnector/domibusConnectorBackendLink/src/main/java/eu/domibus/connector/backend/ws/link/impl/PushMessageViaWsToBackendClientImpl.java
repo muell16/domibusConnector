@@ -11,6 +11,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
     private BackendClientWebServiceClientFactory webServiceClientFactory;
 
     private DomibusConnectorBackendInternalDeliverToController backendSubmissionService;
+
+    @Autowired
+    private DomibusConnectorDomainMessageTransformerService transformerService;
     
     //SETTER
     @Autowired
@@ -77,7 +81,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
 
         //transform message to transition
         message = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-        DomibusConnectorMessageType transitionMessage = DomibusConnectorDomainMessageTransformerService.transformDomainToTransition(message);
+        DomibusConnectorMessageType transitionMessage = transformerService.transformDomainToTransition(message);
 
         //send message
         try {

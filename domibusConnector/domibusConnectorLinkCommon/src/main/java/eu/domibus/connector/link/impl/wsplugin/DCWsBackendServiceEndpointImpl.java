@@ -37,7 +37,8 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
     @Autowired
     SubmitToConnector submitToConnector;
 
-
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
@@ -101,7 +102,7 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
             ActiveLinkPartner backendClientInfoByName = null;
             backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext);
 
-            DomibusConnectorMessage msg = DomibusConnectorDomainMessageTransformerService.transformTransitionToDomain(submitMessageRequest);
+            DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getLinkPartnerName().getLinkName());
             LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getLinkPartnerName().getLinkName());
 

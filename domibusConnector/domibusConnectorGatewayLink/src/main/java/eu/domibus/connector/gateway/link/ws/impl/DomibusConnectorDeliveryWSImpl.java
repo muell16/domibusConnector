@@ -23,12 +23,13 @@ public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDe
     @Autowired
     private DomibusConnectorGatewayDeliveryService controllerService;
 
-
+    @Autowired
+    private DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Override
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
-        DomibusConnectorMessage domainMessage = DomibusConnectorDomainMessageTransformerService.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest);
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {
