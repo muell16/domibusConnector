@@ -1,6 +1,7 @@
-package eu.domibus.connector.web.areas.configuration.evidences;
+package eu.domibus.connector.web.view.areas.configuration.evidences;
 
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationLabel;
+
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationLabel;
 
 public class EvidenceBuilderConfigurationLabels {
 

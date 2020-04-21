@@ -1,6 +1,7 @@
-package eu.domibus.connector.web.areas.configuration.security;
+package eu.domibus.connector.web.view.areas.configuration.security;
 
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationLabel;
+
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationLabel;
 
 public class SecurityConfigurationLabels {
 
@@ -9,16 +10,22 @@ public class SecurityConfigurationLabels {
 			"token.issuer.country",
 			"The ISO 2 Countrycode of the token issuer. "
 			);
+
+	public static final ConfigurationLabel tokenIssuerIdentityProvider = new ConfigurationLabel(
+			"Token issuer - Identity Provider",
+			"token.issuer.identity-provider",
+			"Who has authenticated the sending system, only needed if AUTHENTICATION_BASED is enabled"
+	);
 	
 	public static final ConfigurationLabel tokenIssuerServiceProviderLabels = new ConfigurationLabel(
 			"Token issuer - Serviceprovider",
-			"token.issuer.service.provider",
+			"token.issuer.service-provider",
 			"The service provider name of the token issuer. "
 			);
 	
 	public static final ConfigurationLabel tokenIssuerAESValueLabels = new ConfigurationLabel(
 			"Token issuer - Advanced Electronic System",
-			"token.issuer.aes.value",
+			"token.issuer.advanced-electronic-system-type",
 			"This value indicates whether the main documents used in messages are already signed by the backend or not. ",
 			"Values:",
 			"SIGNATURE_BASED: The main document is signed. The signature is validated by the connector using the certificate which has to be in the truststore. ",

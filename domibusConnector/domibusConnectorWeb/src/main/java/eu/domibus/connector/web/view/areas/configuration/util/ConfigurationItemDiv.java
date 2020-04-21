@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.configuration.util;
+package eu.domibus.connector.web.view.areas.configuration.util;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;

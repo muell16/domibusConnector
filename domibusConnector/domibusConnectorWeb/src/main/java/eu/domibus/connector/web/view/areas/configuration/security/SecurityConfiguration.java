@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.configuration.security;
+package eu.domibus.connector.web.view.areas.configuration.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.web.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +18,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.forms.FormsUtil;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationItemChapterDiv;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+
 
 /**
  * 
@@ -32,8 +33,8 @@ import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
  * connector.security.trust-store.password
  *	
  * token.issuer.country
- * token.issuer.service.provider
- * token.issuer.aes.value
+ * token.issuer.service-provider
+ * token.issuer.advanced-electronic-system-type
  *
  * security.lotl.scheme.uri
  * security.lotl.url
@@ -58,6 +59,7 @@ public class SecurityConfiguration extends VerticalLayout{
 	
 	TextField tokenIssuerCountryField = FormsUtil.getFormattedTextField();
 	TextField tokenIssuerServiceProviderField = FormsUtil.getFormattedTextField();
+	TextField tokenIssuerIdentityProvider = FormsUtil.getFormattedTextField();
 	ComboBox<String> tokenIssuerAESValueBox = new ComboBox<String>();
 	
 	TextField lotlSchemeURIField = FormsUtil.getFormattedTextField();
@@ -88,6 +90,8 @@ public class SecurityConfiguration extends VerticalLayout{
 				tokenIssuerAESValueBox, 
 				aesValues
 				));
+
+		add(util.createConfigurationItemTextFieldDiv(SecurityConfigurationLabels.tokenIssuerIdentityProvider, tokenIssuerIdentityProvider));
 		
 		add(new ConfigurationItemChapterDiv("Trusted lists configuration:"));
 		
