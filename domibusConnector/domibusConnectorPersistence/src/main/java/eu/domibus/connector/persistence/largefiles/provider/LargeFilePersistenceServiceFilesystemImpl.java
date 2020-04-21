@@ -51,23 +51,24 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     @Override
     public LargeFileReference getReadableDataSource(LargeFileReference ref) {
         FileBasedLargeFileReference fileBasedReference = new FileBasedLargeFileReference(this, ref);
+        fileBasedReference.setReadable(true);
+        return fileBasedReference;
+    }
 
-        String storageIdReference = fileBasedReference.getStorageIdReference();
+    private InputStream getInputStream(FileBasedLargeFileReference ref) {
+        String storageIdReference = ref.getStorageIdReference();
         Path filePath = getStoragePath().resolve(storageIdReference);
-
         try {
             FileInputStream fis = new FileInputStream(filePath.toFile());
-            if (fileBasedReference.getEncryptionKey() != null) {
-                fileBasedReference.setInputStream(generateDecryptedInputStream(fileBasedReference, fis));
+            if (ref.getEncryptionKey() != null) {
+                return generateDecryptedInputStream(ref, fis);
             } else {
-                fileBasedReference.setInputStream(fis);
+                return fis;
             }
-
         } catch (FileNotFoundException e) {
             throw new PersistenceException(String.format("Could not found the required file [%s]!", filePath), e);
         }
 
-        return fileBasedReference;
     }
 
 
@@ -425,8 +426,14 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         }
 
         @Override
-        public InputStream getInputStream() throws IOException {
-            return this.inputStream;
+        public synchronized InputStream getInputStream() throws IOException {
+            if (isReadable()) {
+                this.setReadable(false);
+                return fsService.getInputStream(this);
+            } else {
+                throw new IOException("Input Stream already consumed");
+            }
+//            return this.inputStream;
         }
 
         @Override
