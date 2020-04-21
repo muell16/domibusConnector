@@ -129,6 +129,7 @@
                     <execution>
                         <id>standalone-jar</id>
                         <goals>
+                            <goal>build-info</goal>
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
@@ -139,6 +140,7 @@
                 </executions>
                 <configuration>
                     <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
+
                 </configuration>
             </plugin>
             <plugin>

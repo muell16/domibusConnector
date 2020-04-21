@@ -50,6 +50,13 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     @Override
     public LargeFileReference getReadableDataSource(LargeFileReference ref) {
+        if (ref instanceof FileBasedLargeFileReference && ((FileBasedLargeFileReference) ref).inputStream != null) {
+            try {
+                ((FileBasedLargeFileReference) ref).inputStream.close();
+            } catch (IOException e) {
+                //ignore
+            }
+        }
         FileBasedLargeFileReference fileBasedReference = new FileBasedLargeFileReference(this, ref);
         fileBasedReference.setReadable(true);
         return fileBasedReference;
@@ -163,31 +170,13 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         } else {
             reference = new FileBasedLargeFileReference(this, ref);
         }
-
-        //make sure all streams are closed...
-        try {
-            InputStream inputStream = reference.getInputStream();
-            if (inputStream != null) inputStream.close();
-        } catch(IOException ioe) {
-            LOGGER.error(
-                    String.format("Exception occurred while closing input stream of [%s]", reference),
-                    ioe);
+        if (reference.inputStream != null) {
+            try {
+                reference.inputStream.close();
+            } catch (IOException e) {
+                //ignore
+            }
         }
-        try {
-            OutputStream outputStream = reference.getOutputStream();
-            if (outputStream != null) outputStream.close();
-        } catch(IOException ioe) {
-            LOGGER.error(
-                    String.format("Exception occurred while closing output stream of [%s]", reference),
-                    ioe);
-        }
-        try {
-            InputStream inputStream = reference.getInputStream();
-            if (inputStream != null) inputStream.close();
-        } catch(IOException ioe) {
-            //do nothing...
-        }
-
         try {
             Files.delete(storageFile);
         } catch (IOException e) {
@@ -427,13 +416,16 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
         @Override
         public synchronized InputStream getInputStream() throws IOException {
+            if (this.inputStream != null) {
+                return this.inputStream;
+            }
             if (isReadable()) {
                 this.setReadable(false);
-                return fsService.getInputStream(this);
+                this.inputStream = fsService.getInputStream(this);
+                return this.inputStream;
             } else {
                 throw new IOException("Input Stream already consumed");
             }
-//            return this.inputStream;
         }
 
         @Override

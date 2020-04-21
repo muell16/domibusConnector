@@ -5,6 +5,8 @@ import eu.domibus.connector.web.view.MainLayout;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.info.BuildProperties;
 
 import com.vaadin.flow.component.Component;
@@ -29,18 +31,12 @@ public class Info extends VerticalLayout implements InitializingBean {
 
 	public static final String ROUTE = "info";
 
-	@Value("${build.version:not available}")
-	public String applicationVersion;
-	
-	@Value("${spring.datasource.url:not available}")
-	public String dbUrl;
-	
-	@Value("${spring.datasource.driver-class-name:not available}")
-	public String dbDriverClass;
-	
-	@Value("${spring.datasource.username:not available}")
-	public String dbUsername;
-	
+	@Autowired
+	BuildProperties buildProperties;
+
+	@Autowired
+	DataSourceProperties dataSourceProperties;
+
 	LumoLabel connectorVersion = new LumoLabel("");
 	TextField dbUrlTextField;
 	TextField dbDriverClassTextField;
@@ -114,10 +110,10 @@ public class Info extends VerticalLayout implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		connectorVersion.setText(applicationVersion);
-		dbUrlTextField.setValue(dbUrl);
-		dbDriverClassTextField.setValue(dbDriverClass);
-		dbUsernameTextField.setValue(dbUsername);
+		connectorVersion.setText("Version: " + buildProperties.getVersion() + " build time: " + buildProperties.getTime());
+		dbUrlTextField.setValue(dataSourceProperties.getUrl());
+		dbDriverClassTextField.setValue(dataSourceProperties.getDriverClassName());
+		dbUsernameTextField.setValue(dataSourceProperties.getUsername());
 	}
 
 	
