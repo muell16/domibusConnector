@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.largefiles.provider;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
@@ -152,9 +153,40 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     }
 
     @Override
-    public void deleteDomibusConnectorBigDataReference(LargeFileReference reference) {
-        LOGGER.trace("#deleteDomibusConnectorBigDataReference:: called with reference [{}]", reference);
-        Path storageFile = getStoragePath().resolve(reference.getStorageIdReference());
+    public void deleteDomibusConnectorBigDataReference(LargeFileReference ref) {
+        FileBasedLargeFileReference reference;
+        LOGGER.trace("#deleteDomibusConnectorBigDataReference:: called with reference [{}]", ref);
+        Path storageFile = getStoragePath().resolve(ref.getStorageIdReference());
+        if ((ref instanceof FileBasedLargeFileReference)) {
+            reference = (FileBasedLargeFileReference) ref;
+        } else {
+            reference = new FileBasedLargeFileReference(this, ref);
+        }
+
+        //make sure all streams are closed...
+        try {
+            InputStream inputStream = reference.getInputStream();
+            if (inputStream != null) inputStream.close();
+        } catch(IOException ioe) {
+            LOGGER.error(
+                    String.format("Exception occurred while closing input stream of [%s]", reference),
+                    ioe);
+        }
+        try {
+            OutputStream outputStream = reference.getOutputStream();
+            if (outputStream != null) outputStream.close();
+        } catch(IOException ioe) {
+            LOGGER.error(
+                    String.format("Exception occurred while closing output stream of [%s]", reference),
+                    ioe);
+        }
+        try {
+            InputStream inputStream = reference.getInputStream();
+            if (inputStream != null) inputStream.close();
+        } catch(IOException ioe) {
+            //do nothing...
+        }
+
         try {
             Files.delete(storageFile);
         } catch (IOException e) {
@@ -167,7 +199,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         deleteFolderIfEmpty(reference);
     }
 
-    private void deleteFolderIfEmpty(LargeFileReference reference) {
+    private void deleteFolderIfEmpty(FileBasedLargeFileReference reference) {
         String folderName = getFolderNameFromReferenceName(reference.getStorageIdReference());
         Path messagePath = getStoragePath().resolve(folderName);
         try {

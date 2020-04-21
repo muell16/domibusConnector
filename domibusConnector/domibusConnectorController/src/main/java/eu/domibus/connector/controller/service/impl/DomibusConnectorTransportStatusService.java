@@ -130,15 +130,19 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
         }
 
         //TODO: async call!
-        if (!isEvidenceMessage(message)) {
-            try {
-                contentStorageService.cleanForMessage(message);
-                LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
-            } catch (Exception e) {
-                LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
+        try {
+            if (!isEvidenceMessage(message)) {
+                try {
+                    contentStorageService.cleanForMessage(message);
+                    LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
+                } catch (Exception e) {
+                    LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
+                }
+            } else {
+                LOGGER.debug("#updateTransportToBackendStatus:: Message is an evidence message, no content deletion will be triggered!");
             }
-        } else {
-            LOGGER.debug("#updateTransportToBackendStatus:: Message is an evidence message, no content deletion will be triggered!");
+        } catch (Exception e) {
+            LOGGER.error(String.format("Exception occured while cleaning up after message successfully handed over with transport id [%s]", transportId), e);
         }
     }
 
