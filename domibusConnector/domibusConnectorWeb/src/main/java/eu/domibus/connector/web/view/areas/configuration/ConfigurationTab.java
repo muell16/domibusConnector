@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.configuration;
+package eu.domibus.connector.web.view.areas.configuration;
 
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;

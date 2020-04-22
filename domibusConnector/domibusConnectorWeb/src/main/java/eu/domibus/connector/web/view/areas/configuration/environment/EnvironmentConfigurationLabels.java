@@ -1,6 +1,7 @@
-package eu.domibus.connector.web.areas.configuration.environment;
+package eu.domibus.connector.web.view.areas.configuration.environment;
 
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationLabel;
+
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationLabel;
 
 public class EnvironmentConfigurationLabels {
 

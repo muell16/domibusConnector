@@ -1,13 +1,15 @@
-package eu.domibus.connector.web.areas.configuration.backend;
+package eu.domibus.connector.web.view.areas.configuration.backend;
 
 import java.util.List;
 
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
-import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.areas.configuration.ConfigurationTab;
-import eu.domibus.connector.web.areas.configuration.environment.EnvironmentConfiguration;
+
 import eu.domibus.connector.web.areas.configuration.link.GatewayLinkConfiguration;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -30,8 +32,7 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebBackendClientService;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationItemChapterDiv;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+
 
 import javax.annotation.PostConstruct;
 
@@ -72,7 +73,8 @@ public class BackendConfiguration extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Autowired ConfigurationUtil util;
+	@Autowired
+	ConfigurationUtil util;
 	@Autowired WebBackendClientService backendClientService;
 	
 	private Grid<DomibusConnectorBackendClientInfo> grid = new Grid<>();
@@ -89,8 +91,6 @@ public class BackendConfiguration extends VerticalLayout {
 
 	@PostConstruct
 	public void init() {
-		this.util = util;
-		this.backendClientService = backendClientService;
 		
 		add(new ConfigurationItemChapterDiv("Keystore/Truststore configuration:"));
 		

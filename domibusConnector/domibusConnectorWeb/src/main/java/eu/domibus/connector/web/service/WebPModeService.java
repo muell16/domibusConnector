@@ -16,6 +16,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.persistence.service.*;
+import eu.domibus.connector.web.view.areas.configuration.evidences.EvidenceBuilderConfigurationLabels;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,7 @@ import org.xml.sax.SAXException;
 import eu.domibus.configuration.Configuration;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Parties.PartyIdTypes.PartyIdType;
 import eu.domibus.configuration.Configuration.BusinessProcesses.Roles.Role;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+
 
 @Service("webPModeService")
 public class WebPModeService {
@@ -162,8 +164,8 @@ public class WebPModeService {
 				.get();
 
 		Properties homePartyProperties = new Properties();
-		homePartyProperties.put(eu.domibus.connector.web.areas.configuration.evidences.EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homeParty.getName());
-		homePartyProperties.put(eu.domibus.connector.web.areas.configuration.evidences.EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homeParty.getEndpoint());
+		homePartyProperties.put(EvidenceBuilderConfigurationLabels.gatewayNameLabels.PROPERTY_NAME_LABEL, homeParty.getName());
+		homePartyProperties.put(EvidenceBuilderConfigurationLabels.endpointAddressLabels.PROPERTY_NAME_LABEL, homeParty.getEndpoint());
 		propertiesPersistenceService.saveProperties(homePartyProperties);
 		configurationUtil.updateConfigurationComponentsOnProperties(homePartyProperties);
 

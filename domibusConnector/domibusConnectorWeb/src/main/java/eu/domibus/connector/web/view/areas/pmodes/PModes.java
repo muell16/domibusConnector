@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.pmodes;
+package eu.domibus.connector.web.view.areas.pmodes;
 
 import java.util.HashMap;
 import java.util.Map;

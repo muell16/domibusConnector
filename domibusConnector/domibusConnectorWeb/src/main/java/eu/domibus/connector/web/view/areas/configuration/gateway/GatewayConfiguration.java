@@ -1,10 +1,12 @@
-package eu.domibus.connector.web.areas.configuration.gateway;
+package eu.domibus.connector.web.view.areas.configuration.gateway;
 
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
-import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.areas.configuration.ConfigurationTab;
+
 import eu.domibus.connector.web.areas.configuration.link.GatewayLinkConfiguration;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -15,13 +17,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.forms.FormsUtil;
-import eu.domibus.connector.web.areas.configuration.backend.BackendConfigurationLabels;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
 
-import java.lang.annotation.Annotation;
-
-import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
-import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.GW_LINK_WS_PROFILE;
 
 //@Profile(GW_LINK_WS_PROFILE) //does not work with vaadin!
 @Component

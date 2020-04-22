@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.configuration.link;
+package eu.domibus.connector.web.view.areas.configuration.link;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.checkbox.Checkbox;

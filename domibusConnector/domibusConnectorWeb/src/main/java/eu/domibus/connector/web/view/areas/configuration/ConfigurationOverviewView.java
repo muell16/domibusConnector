@@ -7,7 +7,9 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.utils.RoleRequired;
-import eu.domibus.connector.web.areas.configuration.environment.EnvironmentConfiguration;
+
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.web.view.areas.configuration.environment.EnvironmentConfiguration;
 import org.springframework.stereotype.Component;
 
 @UIScope

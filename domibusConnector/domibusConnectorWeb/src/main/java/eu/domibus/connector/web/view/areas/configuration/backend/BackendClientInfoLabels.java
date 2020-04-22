@@ -1,6 +1,7 @@
-package eu.domibus.connector.web.areas.configuration.backend;
+package eu.domibus.connector.web.view.areas.configuration.backend;
 
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationLabel;
+
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationLabel;
 
 public class BackendClientInfoLabels {
 

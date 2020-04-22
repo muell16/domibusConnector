@@ -1,6 +1,7 @@
-package eu.domibus.connector.web.areas.configuration.gateway;
+package eu.domibus.connector.web.view.areas.configuration.gateway;
 
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationLabel;
+
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationLabel;
 
 public class GatewayConfigurationLabels {
 

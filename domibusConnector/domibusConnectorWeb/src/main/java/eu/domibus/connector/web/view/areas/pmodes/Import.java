@@ -1,8 +1,9 @@
-package eu.domibus.connector.web.areas.pmodes;
+package eu.domibus.connector.web.view.areas.pmodes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import eu.domibus.connector.web.component.LumoLabel;
 import eu.domibus.connector.web.service.WebPModeService;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+
 
 
 @Component

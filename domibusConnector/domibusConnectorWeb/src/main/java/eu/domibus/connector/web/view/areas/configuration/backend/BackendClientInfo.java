@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.configuration.backend;
+package eu.domibus.connector.web.view.areas.configuration.backend;
 
 import java.util.List;
 
@@ -15,11 +15,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.web.component.LumoCheckbox;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationItemCheckboxDiv;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationItemDiv;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationItemTextFieldDiv;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationProperties;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
+
 
 public class BackendClientInfo extends VerticalLayout{
 
@@ -28,7 +25,9 @@ public class BackendClientInfo extends VerticalLayout{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public BackendClientInfo(DomibusConnectorBackendClientInfo domibusConnectorBackendClientInfo, BackendConfiguration backendConfiguration, Dialog newBackendClientDialog, ConfigurationUtil util) {
+	public BackendClientInfo(DomibusConnectorBackendClientInfo domibusConnectorBackendClientInfo,
+							 BackendConfiguration backendConfiguration, Dialog newBackendClientDialog,
+							 ConfigurationUtil util) {
 		DomibusConnectorBackendClientInfo newBackendClientInfo = domibusConnectorBackendClientInfo;
 		
 		TextField backendName = new TextField();

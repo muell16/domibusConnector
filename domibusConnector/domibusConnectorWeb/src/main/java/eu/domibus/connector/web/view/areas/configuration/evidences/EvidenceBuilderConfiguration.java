@@ -2,8 +2,9 @@ package eu.domibus.connector.web.view.areas.configuration.evidences;
 
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
-import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.areas.configuration.ConfigurationTab;
+
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;

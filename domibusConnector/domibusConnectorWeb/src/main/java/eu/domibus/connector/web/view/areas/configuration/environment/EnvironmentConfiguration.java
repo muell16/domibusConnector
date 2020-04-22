@@ -1,12 +1,15 @@
-package eu.domibus.connector.web.areas.configuration.environment;
+package eu.domibus.connector.web.view.areas.configuration.environment;
 
 import java.util.Collection;
 import java.util.List;
 
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
-import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.areas.configuration.ConfigurationTab;
+
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
+import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationItemChapterDiv;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +22,7 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import eu.domibus.connector.web.component.LumoCheckbox;
 import eu.domibus.connector.web.forms.FormsUtil;
 import eu.domibus.connector.web.service.WebPModeService;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationItemChapterDiv;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+
 
 /**
  * @author riederb

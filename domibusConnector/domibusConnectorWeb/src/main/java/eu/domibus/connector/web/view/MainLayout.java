@@ -1,42 +1,27 @@
 package eu.domibus.connector.web.view;
 
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.spring.annotation.UIScope;
-import eu.domibus.connector.web.configuration.SecurityUtils;
-import eu.domibus.connector.web.login.LoginView;
+import eu.domibus.connector.web.areas.configuration.ConfigurationOverviewView;
+import eu.domibus.connector.web.areas.info.Info;
+import eu.domibus.connector.web.areas.messages.Messages;
+import eu.domibus.connector.web.areas.testing.ConnectorTests;
+import eu.domibus.connector.web.areas.users.Users;
 import eu.domibus.connector.web.login.LogoutView;
 import eu.domibus.connector.web.utils.TabViewRouterHelper;
-import eu.domibus.connector.web.areas.configuration.ConfigurationOverviewView;
+import eu.domibus.connector.web.view.areas.pmodes.PModes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import eu.domibus.connector.web.areas.configuration.ConfigurationLayout;
-import eu.domibus.connector.web.areas.info.Info;
-import eu.domibus.connector.web.areas.messages.Messages;
-import eu.domibus.connector.web.areas.pmodes.PModes;
-import eu.domibus.connector.web.areas.testing.ConnectorTests;
-import eu.domibus.connector.web.areas.users.Users;
 
 @UIScope
 @org.springframework.stereotype.Component
