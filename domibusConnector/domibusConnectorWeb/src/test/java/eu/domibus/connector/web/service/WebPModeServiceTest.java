@@ -5,7 +5,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistence
 import eu.domibus.connector.persistence.service.DomibusConnectorPropertiesPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorServicePersistenceService;
 import eu.domibus.connector.persistence.spring.PersistenceProfiles;
-import eu.domibus.connector.web.areas.configuration.util.ConfigurationUtil;
+import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
