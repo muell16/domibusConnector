@@ -101,7 +101,7 @@
         </preConditions>
         <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
             <column name="ID_GEN" type="${id.type}" autoIncrement="true">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true"/>
             </column>
         </addColumn>
     </changeSet>
@@ -163,7 +163,7 @@
         </preConditions>
         <addColumn tableName="DOMIBUS_CONNECTOR_ACTION">
             <column name="ID_GEN" type="${id.type}" autoIncrement="true">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true"/>
             </column>
         </addColumn>
     </changeSet>
@@ -205,7 +205,7 @@
     <changeSet id="SKS" author="modify_service_table_add_columns">
         <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
             <column name="ID" type="${id.type}">
-                <constraints nullable="true" />
+                <constraints nullable="false" unique="true"/>
             </column>
         </addColumn>
         <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
