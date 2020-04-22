@@ -3,7 +3,6 @@ package eu.domibus.connector.web.view.areas.configuration.gateway;
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
 
-import eu.domibus.connector.web.areas.configuration.link.GatewayLinkConfiguration;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationLayout;
 import eu.domibus.connector.web.view.areas.configuration.ConfigurationTab;
 import eu.domibus.connector.web.view.areas.configuration.util.ConfigurationUtil;
