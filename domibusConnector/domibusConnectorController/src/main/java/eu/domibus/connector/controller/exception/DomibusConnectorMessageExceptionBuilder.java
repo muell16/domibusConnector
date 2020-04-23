@@ -2,6 +2,9 @@
 package eu.domibus.connector.controller.exception;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -10,11 +13,14 @@ import javax.annotation.Nonnull;
  */
 public class DomibusConnectorMessageExceptionBuilder {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessageExceptionBuilder.class);
+
     private DomibusConnectorMessage message;
     private DomibusConnectorMessage.DomibusConnectorMessageId messageId;
     private Class<?> source;
     private Throwable cause;
     private String text;
+    private boolean logBeforeThrow = true;
 
     private DomibusConnectorMessageExceptionBuilder() {}
     
@@ -61,7 +67,12 @@ public class DomibusConnectorMessageExceptionBuilder {
         this.text = text;
         return this;
     }
-    
+
+    public DomibusConnectorMessageExceptionBuilder setLogBeforeThrow(boolean logBeforeThrow) {
+        this.logBeforeThrow = logBeforeThrow;
+        return this;
+    }
+
     public DomibusConnectorMessageException build() {
         if (message == null) {
             throw new IllegalArgumentException("Cannot create Exception without message set!");
@@ -79,9 +90,14 @@ public class DomibusConnectorMessageExceptionBuilder {
         }                
         return exception;
     }
-    
+
     public void buildAndThrow() throws DomibusConnectorMessageException {
         DomibusConnectorMessageException build = build();
+        if (logBeforeThrow && this.source != null) {
+            LoggerFactory.getLogger(this.source).debug("Throwing exception with MessageExceptionBuilder", build);
+        } else if (logBeforeThrow) {
+            LOGGER.debug("Throwing exception with MessageExceptionBuilder", build);
+        }
         throw build;
     }
 

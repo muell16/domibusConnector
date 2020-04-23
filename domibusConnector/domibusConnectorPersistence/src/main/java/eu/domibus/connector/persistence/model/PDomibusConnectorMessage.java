@@ -1,29 +1,19 @@
 package eu.domibus.connector.persistence.model;
 
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 
 import java.io.Serializable;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+
+import eu.domibus.connector.persistence.model.converter.ZonedDateTimeToTimestampJpaConverter;
 import org.springframework.core.style.ToStringCreator;
 
 @Entity
@@ -75,13 +65,15 @@ public class PDomibusConnectorMessage implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredToGateway;
 
+    @Convert(converter = ZonedDateTimeToTimestampJpaConverter.class)
     @Column(name = "CONFIRMED")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date confirmed;
+//    @Temporal(TemporalType.TIMESTAMP)
+    private ZonedDateTime confirmed;
 
+    @Convert(converter = ZonedDateTimeToTimestampJpaConverter.class)
     @Column(name = "REJECTED")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date rejected;
+//    @Temporal(TemporalType.TIMESTAMP)
+    private ZonedDateTime rejected;
 
     @Column(name = "UPDATED", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -174,19 +166,19 @@ public class PDomibusConnectorMessage implements Serializable {
         this.deliveredToGateway = deliveredToGateway;
     }
 
-    public Date getConfirmed() {
+    public ZonedDateTime getConfirmed() {
         return confirmed;
     }
 
-    public void setConfirmed(Date confirmed) {
+    public void setConfirmed(ZonedDateTime confirmed) {
         this.confirmed = confirmed;
     }
 
-    public Date getRejected() {
+    public ZonedDateTime getRejected() {
         return rejected;
     }
 
-    public void setRejected(Date rejected) {
+    public void setRejected(ZonedDateTime rejected) {
         this.rejected = rejected;
     }
 

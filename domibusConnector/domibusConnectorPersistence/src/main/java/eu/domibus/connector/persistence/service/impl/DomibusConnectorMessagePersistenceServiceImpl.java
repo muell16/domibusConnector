@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -365,11 +367,13 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         if (message == null) {
             throw new IllegalArgumentException("Argument message must be not null! Cannot confirm null!");
         }
+        ZonedDateTime confirmedDate = ZonedDateTime.now();
+        message.getMessageDetails().setConfirmed(confirmedDate);
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
         if (dbMessage == null) {
             throw new IllegalArgumentException("Message must be already persisted to database! Call persistMessageIntoDatabase first");
         }
-        int confirmed = messageDao.confirmMessage(dbMessage.getId());
+        int confirmed = messageDao.confirmMessage(dbMessage.getId(), confirmedDate);
         if (confirmed == 1) {
             LOGGER.debug("Message {} successfully confirmed in db", message);
         } else if (confirmed < 1) {
@@ -385,6 +389,8 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         if (message == null) {
             throw new IllegalArgumentException("Argument message must be not null! Cannot reject null!");
         }
+        ZonedDateTime confirmedDate = ZonedDateTime.now();
+        message.getMessageDetails().setRejected(confirmedDate);
         PDomibusConnectorMessage dbMessage = this.findMessageByMessage(message);
         if (dbMessage == null) {
             throw new IllegalArgumentException("Message must be already persisted to database! Call persistMessageIntoDatabase message first!");
@@ -425,8 +431,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         details.setDirection(MessageDirectionMapper.mapFromPersistenceToDomain(dbMessage.getDirectionSource(), dbMessage.getDirectionTarget()));
 
 
+        details.setRejected(dbMessage.getRejected());
+        details.setConfirmed(dbMessage.getConfirmed());
 
-        details.setFailed(dbMessage.getRejected());
+//        details.setFailed(dbMessage.getRejected());
 
         //mapMessageInfoIntoMessageDetails(dbMessage, details);
         this.internalMessageInfoPersistenceService.mapMessageInfoIntoMessageDetails(dbMessage, details);

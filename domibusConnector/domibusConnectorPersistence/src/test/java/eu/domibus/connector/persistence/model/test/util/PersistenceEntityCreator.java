@@ -7,6 +7,7 @@ import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -127,23 +128,19 @@ public class PersistenceEntityCreator {
      * @return - the message
      */
     public static PDomibusConnectorMessage createSimpleDomibusConnectorMessage() {
-        try {
-            PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
-            msg.setBackendMessageId("national1");
-            msg.setEbmsMessageId("ebms1");
-            msg.setConfirmed(dateFormat.parse("2017-12-23 23:45:23"));            
-            msg.setConversationId("conversation1");
-            msg.setHashValue("hashvalue");
-            msg.setConnectorMessageId("messagestamp");
-            msg.setId(47L);
-            msg.setEvidences(new HashSet<>());
+        PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
+        msg.setBackendMessageId("national1");
+        msg.setEbmsMessageId("ebms1");
+        msg.setConfirmed(ZonedDateTime.parse("2017-12-23 23:45:23"));
+        msg.setConversationId("conversation1");
+        msg.setHashValue("hashvalue");
+        msg.setConnectorMessageId("messagestamp");
+        msg.setId(47L);
+        msg.setEvidences(new HashSet<>());
 //            msg.setDirection(PMessageDirection.NAT_TO_GW);
-            msg.setDirectionSource(MessageTargetSource.BACKEND);
-            msg.setDirectionTarget(MessageTargetSource.GATEWAY);
-            return msg;
-        } catch (ParseException ex) {
-            throw new RuntimeException("should not happen!");
-        }
+        msg.setDirectionSource(MessageTargetSource.BACKEND);
+        msg.setDirectionTarget(MessageTargetSource.GATEWAY);
+        return msg;
     }
 
     public static PDomibusConnectorMessageInfo createSimpleMessageInfo() {

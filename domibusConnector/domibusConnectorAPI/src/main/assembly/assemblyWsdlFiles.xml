@@ -16,5 +16,12 @@
                 <include>**/*.xsd</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/wsdl/</directory>
+            <outputDirectory>/policy/</outputDirectory>
+            <includes>
+                <include>**/*.policy.xml</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

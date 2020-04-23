@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 
@@ -55,6 +56,12 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	//should be moved to the transportStateService
 	@Nullable
 	private Date deliveredToBackend;
+
+	@Nullable
+	private ZonedDateTime confirmed;
+
+	@Nullable
+	private ZonedDateTime rejected;
 
 	@Nullable
 	private String causedBy;
@@ -240,6 +247,24 @@ public class DomibusConnectorMessageDetails implements Serializable {
 
 	public void setRefToBackendMessageId(@Nullable String refToBackendMessageId) {
 		this.refToBackendMessageId = refToBackendMessageId;
+	}
+
+	@Nullable
+	public ZonedDateTime getConfirmed() {
+		return confirmed;
+	}
+
+	public void setConfirmed(@Nullable ZonedDateTime confirmed) {
+		this.confirmed = confirmed;
+	}
+
+	@Nullable
+	public ZonedDateTime getRejected() {
+		return rejected;
+	}
+
+	public void setRejected(@Nullable ZonedDateTime rejected) {
+		this.rejected = rejected;
 	}
 
 	@Nullable

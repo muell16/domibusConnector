@@ -4,8 +4,10 @@ import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionI
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
+import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -76,9 +78,17 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
             LOGGER.warn("The evidence of the message is already generated. The current connector will generate a new evidence anyway. Future are going to use the already provided evidence!");
         }
 
+        DomibusConnectorEvidenceType evidenceType = DomainModelHelper.getEvidenceTypeOfEvidenceMessage(message);
+        if ((evidenceType == DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE || evidenceType == DomibusConnectorEvidenceType.SUBMISSION_REJECTION)) {
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setText("The backend is not allowed to trigger a SUBMISSION_ACCEPTANCE or SUBMISSION_REJECTION evidence!")
+                    .setSource(this.getClass())
+                    .buildAndThrow();
+        }
+
         String refToOriginalMessage = message.getMessageDetails().getRefToMessageId();
         LOGGER.debug("#processMessage: refToMessageId is [{}]", refToOriginalMessage);
-        DomibusConnectorEvidenceType evidenceType = DomainModelHelper.getEvidenceTypeOfEvidenceMessage(message);
+
 
         DomibusConnectorMessageDirection origMsgDirection = DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
         //try EBMS id first, then backend message id
@@ -90,9 +100,22 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                 );
         LOGGER.debug("#processMessage: processing evidence [{}] of original message [{}]", evidenceType, originalMessage);
         if (originalMessage == null) {
-            throw new RuntimeException(String.format("No message for refToMessageId [%s] with direction [%s] found!",
-                    refToOriginalMessage,
-                    origMsgDirection));
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setText(String.format("No message for refToMessageId [%s] with direction [%s] found!",
+                            refToOriginalMessage,
+                            origMsgDirection))
+                    .setSource(this.getClass())
+                    .buildAndThrow();
+        }
+
+        checkEvidenceAlreadyCreated(evidenceType, originalMessage);
+        if (messagePersistenceService.checkMessageConfirmedOrRejected(originalMessage)
+                && evidenceType != DomibusConnectorEvidenceType.RETRIEVAL && evidenceType != DomibusConnectorEvidenceType.NON_RETRIEVAL) {
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText(String.format("Message [%s] is already confirmed or rejected no more evidences will be handled for that message!", originalMessage.getConnectorMessageId())                          )
+                    .setSource(this.getClass())
+                    .buildAndThrow();
         }
 
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder
@@ -101,8 +124,35 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
 
         sendAsEvidenceMessageToGw(evidenceType, originalMessage, confirmationMessageBuilder);
 
+        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
+        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
+
         sendAsEvidenceMessageBackToBackend(confirmationMessageBuilder);
 
+    }
+
+    /**
+     * Is checking if an evidence has already reached the maximum creation limit the message
+     *  see {@link DomibusConnectorEvidenceType#getMaxOccurence()} for details how often
+     *  an evidence can be assigned to an message
+     *
+     * @param evidenceType - the type of the evidence
+     * @param originalMessage - the original message, the evidence is related to
+     */
+    private void checkEvidenceAlreadyCreated(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage) {
+        LOGGER.debug("Checking if evidence of type [{}] has not already been created", evidenceType);
+        if (evidenceType.getMaxOccurence() > 0 && originalMessage
+                .getMessageConfirmations()
+                .stream()
+                .filter(c -> evidenceType.equals(c.getEvidenceType()))
+                .count() > evidenceType.getMaxOccurence()
+        ) {
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(originalMessage)
+                    .setText(String.format("Cannot create evidence [%s] more than [%d] times!", evidenceType, evidenceType.getMaxOccurence()))
+                    .setSource(this.getClass())
+                    .buildAndThrow();
+        }
     }
 
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
@@ -127,10 +177,6 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
         DomibusConnectorMessage evidenceMessage = wrappedConfirmation.getEvidenceMessage();
 
         submitToGateway(evidenceMessage, originalMessage);
-//        setDeliveredToGateway(evidenceMessage);
-
-        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
         LOGGER.info(BUSINESS_LOG, "Successfully sent evidence of type [{}] for originalMessage [{}] to gateway.", confirmation.getEvidenceType(), originalMessage);
     }

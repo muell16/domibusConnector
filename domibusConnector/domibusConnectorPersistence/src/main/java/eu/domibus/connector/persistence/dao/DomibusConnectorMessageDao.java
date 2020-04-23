@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -73,10 +74,19 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     @Modifying
     @Query("update PDomibusConnectorMessage m set confirmed=CURRENT_TIMESTAMP, rejected=NULL WHERE m.id = ?1")
     public int confirmMessage(Long messageId);
+
+    @Modifying
+    @Query("update PDomibusConnectorMessage m set confirmed=?2, rejected=NULL WHERE m.id = ?1")
+    public int confirmMessage(Long messageId, ZonedDateTime d);
     
     @Modifying
     @Query("update PDomibusConnectorMessage m set rejected=CURRENT_TIMESTAMP, confirmed=NULL WHERE m.id = ?1")
     public int rejectMessage(Long messageId);
+
+    @Modifying
+    @Query("update PDomibusConnectorMessage m set rejected=?2, confirmed=NULL WHERE m.id = ?1")
+    public int rejectMessage(Long messageId, ZonedDateTime d);
+
 
     @Modifying
     @Query("update PDomibusConnectorMessage m set m.deliveredToGateway=CURRENT_TIMESTAMP WHERE m = ?1")

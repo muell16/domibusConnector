@@ -86,12 +86,8 @@ public class ConnectorMessageFlowITCase {
     @Autowired
     ITCaseTestContext.DomibusConnectorBackendDeliveryServiceInterceptor backendInterceptor;
 
-//    @Autowired
-//    @Qualifier(ITCaseTestContext.TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
     BlockingQueue<DomibusConnectorMessage> toGwDeliveredMessages;
-//
-//    @Autowired
-//    @Qualifier(ITCaseTestContext.TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
+
     BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
@@ -297,6 +293,141 @@ public class ConnectorMessageFlowITCase {
 
         });
     }
+
+
+    /**
+     * RCV message from GW
+     *
+     *   -) Backend must have received MSG
+     *   -) GW must have received RELAY_REMMD_ACCEPTANCE
+     *
+     *   -) test responds with DELIVERY Trigger
+     *   -) test responds with a 2nd DELIVERY Trigger
+     *
+     *   -) GW must have received only one DELIVERY_EVIDENCE
+     *
+     *   -) Backend must have rcv only one DELIVERY_EVIDENCE
+     *
+     *
+     */
+    @Test
+    public void testReceiveMessageFromGw_triggerDeliveryTwice_shouldOnlyRcvOne(TestInfo testInfo) throws IOException, DomibusConnectorGatewaySubmissionException, InterruptedException {
+
+        String EBMS_ID = "EBMS_" + testInfo.getDisplayName();
+        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        String MSG_FOLDER = "msg2";
+
+        Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
+
+            DomibusConnectorMessage testMessage = deliverMessageFromGw(MSG_FOLDER, EBMS_ID, CONNECTOR_MESSAGE_ID);
+
+            LOGGER.info("message with confirmations: [{}]", testMessage.getMessageConfirmations());
+
+            DomibusConnectorMessage businessMsg = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS); //wait until a message is put into queue
+            assertThat(toBackendDeliveredMessages).hasSize(0); //queue should be empty!
+            assertThat(businessMsg).isNotNull();
+
+            DomibusConnectorMessage relayRemmdEvidenceMsg = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
+            assertThat(relayRemmdEvidenceMsg).isNotNull();
+
+            DomibusConnectorMessage deliveryTriggerMessage = DomibusConnectorMessageBuilder
+                    .createBuilder()
+                    .setConnectorMessageId(CONNECTOR_MESSAGE_ID + "_ev1")
+                    .addConfirmation(DomibusConnectorMessageConfirmationBuilder
+                            .createBuilder()
+                            .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
+                            .setEvidence(new byte[0])
+                            .build()
+                    )
+                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
+                            .create()
+                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
+                            .withEbmsMessageId(null) //
+                            .withAction("")
+                            .withService("", "")
+                            .withBackendMessageId("")
+                            .withConversationId("")
+                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
+                            .withFinalRecipient("")
+                            .withOriginalSender("")
+                            .build())
+                    .build();
+            fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage);
+
+            DomibusConnectorMessage deliveryTriggerMessage2 = DomibusConnectorMessageBuilder
+                    .createBuilder()
+                    .setConnectorMessageId(CONNECTOR_MESSAGE_ID + "_ev1_1")
+                    .addConfirmation(DomibusConnectorMessageConfirmationBuilder
+                            .createBuilder()
+                            .setEvidenceType(DomibusConnectorEvidenceType.DELIVERY)
+                            .setEvidence(new byte[0])
+                            .build()
+                    )
+                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
+                            .create()
+                            .withRefToMessageId(businessMsg.getMessageDetails().getBackendMessageId()) // <-- wird verwendet um die original nachricht zu finden
+                            .withEbmsMessageId(null) //
+                            .withAction("")
+                            .withService("", "")
+                            .withBackendMessageId("")
+                            .withConversationId("")
+                            .withFromParty(DomainEntityCreator.createPartyAT()) //hier auch leer!
+                            .withToParty(DomainEntityCreator.createPartyDE()) //hier auch leer!
+                            .withFinalRecipient("")
+                            .withOriginalSender("")
+                            .build())
+                    .build();
+            fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage2);
+
+
+            DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
+            assertThat(deliveryEvidenceMessage)
+                    .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
+                    .as("Message must be evidence message of type Delivery")
+                    .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
+            assertThat(deliveryEvidenceMessage.getMessageConfirmations().get(0).getEvidence())
+                    .as("Generated evidence must be longer than 100 bytes! Ensure that there was really a evidence generated!")
+                    .hasSizeGreaterThan(100);
+            DomibusConnectorMessageDetails deliveryEvidenceMessageDetails = deliveryEvidenceMessage.getMessageDetails();
+            assertThat(deliveryEvidenceMessageDetails).isNotNull();
+            assertThat(deliveryEvidenceMessageDetails.getRefToMessageId()).isEqualTo(EBMS_ID);
+            assertThat(deliveryEvidenceMessageDetails.getFromParty())
+                    .as("Parties must be switched")
+                    .isEqualTo(DomainEntityCreator.createPartyDE());
+            assertThat(deliveryEvidenceMessageDetails.getToParty())
+                    .as("Parties must be switched")
+                    .isEqualTo(DomainEntityCreator.createPartyAT());
+
+            DomibusConnectorMessage deliveryEvidenceToBackendMessage = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
+            assertThat(deliveryEvidenceToBackendMessage)
+                    .isNotNull()
+                    .extracting(DomainModelHelper::getEvidenceTypeOfEvidenceMessage)
+                    .isEqualTo(DomibusConnectorEvidenceType.DELIVERY);
+            assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToMessageId())
+                    .as("The refToMessageId must match the EBMSID of the original message!")
+                    .isEqualTo(businessMsg.getMessageDetails().getEbmsMessageId());
+            assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToBackendMessageId())
+                    .as("The backend ref to message id must match the backend message id of the original message!")
+                    .isEqualTo(businessMsg.getMessageDetails().getBackendMessageId());
+
+            DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+            assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))
+                    .as("Message must be in confirmed state")
+                    .isTrue();
+
+            DomibusConnectorMessage deliveryEvidenceMessage2 = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
+            assertThat(deliveryEvidenceMessage2)
+                    .as("No more delivery messages must be transported to GW")
+                    .isNull();
+            DomibusConnectorMessage deliveryEvidenceToBackendMessage2 = toBackendDeliveredMessages.poll(10, TimeUnit.SECONDS);
+            assertThat(deliveryEvidenceToBackendMessage2)
+                    .as("No more delivery messages must be transported to Backend")
+                    .isNull();
+
+        });
+    }
+
 
     //was ist mit DELIVERY danach NON_RETRIEVAL?
 
@@ -960,8 +1091,6 @@ public class ConnectorMessageFlowITCase {
         });
     }
 
-    //TODO: ASIC-S container fehler, SUBMISSION_REJECTION
-
     /**
      * Send message from Backend to GW
      *
@@ -1001,10 +1130,6 @@ public class ConnectorMessageFlowITCase {
         });
     }
 
-    //empfang negativ evidences NON_DELIVERY, NON_RETRIEVAL
-
-    //DELIVERY kommt nach einer RELAY_REMMD_REJECTION
-    //result Logging event ins Business Log KEINE nachricht ans Backend!
 
 
     private DomibusConnectorMessage submitMessage(String ebmsId, String connectorMessageId, String backendMessageId) {
