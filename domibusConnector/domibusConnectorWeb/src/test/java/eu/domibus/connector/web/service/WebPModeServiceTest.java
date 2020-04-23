@@ -68,7 +68,7 @@ public class WebPModeServiceTest {
 
 
     @Test
-    void importPModesTwice() thupgrade-4_1-to-4_2_update_pmode_properties.xmlrows IOException {
+    void importPModesTwice() throws IOException {
         assertThat(webPModeService).isNotNull();
 
         Resource resource = new ClassPathResource("pmodes/example-pmodes-1.xml");

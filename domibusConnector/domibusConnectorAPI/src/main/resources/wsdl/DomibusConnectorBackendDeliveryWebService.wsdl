@@ -17,7 +17,7 @@
 		<wsdl:part name="deliverMessageResponse" type="dct:DomibsConnectorAcknowledgementType"></wsdl:part>
 	</wsdl:message>
 	<!-- <wsdl:message name="deliverMessageFault">
-		<wsdl:part name="deliverMessageFault" element="xsd:Fault">
+		<wsdl:part name="deliverMessageFault" WebPModeServiceTestelement="xsd:Fault">
 		</wsdl:part>
 	</wsdl:message> -->
 	
