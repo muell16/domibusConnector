@@ -7,7 +7,10 @@ import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -131,13 +134,12 @@ public class PersistenceEntityCreator {
         PDomibusConnectorMessage msg = new PDomibusConnectorMessage();
         msg.setBackendMessageId("national1");
         msg.setEbmsMessageId("ebms1");
-        msg.setConfirmed(ZonedDateTime.parse("2017-12-23 23:45:23"));
+        msg.setConfirmed(LocalDateTime.parse("2017-12-23T23:45:23").atZone(ZoneId.systemDefault()));
         msg.setConversationId("conversation1");
         msg.setHashValue("hashvalue");
         msg.setConnectorMessageId("messagestamp");
         msg.setId(47L);
         msg.setEvidences(new HashSet<>());
-//            msg.setDirection(PMessageDirection.NAT_TO_GW);
         msg.setDirectionSource(MessageTargetSource.BACKEND);
         msg.setDirectionTarget(MessageTargetSource.GATEWAY);
         return msg;

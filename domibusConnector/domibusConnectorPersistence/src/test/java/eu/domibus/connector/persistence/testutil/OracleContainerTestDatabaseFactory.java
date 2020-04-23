@@ -35,7 +35,7 @@ public class OracleContainerTestDatabaseFactory extends AbstractContainerTestDat
 
     protected JdbcDatabaseContainer getDatabaseContainer(String version) {
 
-        OracleContainer oracle = new OracleContainer("registry.oracle.com/database/standard:12.1.0.2");
+        OracleContainer oracle = new OracleContainer("store/oracle/database-enterprices:12.2.0.1");
         oracle.withEnv("DB_SID", SID)
                 .withEnv("DB_PASSWD", DB_PASSWORD)
                 .withEnv("DB_DOMAIN", DB_DOMAIN)
