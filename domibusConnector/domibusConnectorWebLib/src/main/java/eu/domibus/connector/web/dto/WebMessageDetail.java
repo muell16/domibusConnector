@@ -1,5 +1,6 @@
 package eu.domibus.connector.web.dto;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -11,8 +12,8 @@ public class WebMessageDetail extends WebMessage {
 	private String originalSender;
 	private String finalRecipient;
 	private String direction;
-	private Date confirmed;
-	private Date rejected;
+	private ZonedDateTime confirmed;
+	private ZonedDateTime rejected;
 	
 	private LinkedList<WebMessageEvidence> evidences = new LinkedList<WebMessageEvidence>();
 	private LinkedList<WebMessageError> errors = new LinkedList<WebMessageError>();
@@ -78,7 +79,7 @@ public class WebMessageDetail extends WebMessage {
 	}
 
 
-	public Date getConfirmed() {
+	public ZonedDateTime getConfirmed() {
 		return confirmed;
 	}
 	
@@ -87,7 +88,7 @@ public class WebMessageDetail extends WebMessage {
 	}
 
 
-	public void setConfirmed(Date confirmed) {
+	public void setConfirmed(ZonedDateTime confirmed) {
 		this.confirmed = confirmed;
 	}
 	
@@ -95,7 +96,7 @@ public class WebMessageDetail extends WebMessage {
 	}
 
 
-	public Date getRejected() {
+	public ZonedDateTime getRejected() {
 		return rejected;
 	}
 	
@@ -104,7 +105,7 @@ public class WebMessageDetail extends WebMessage {
 	}
 
 
-	public void setRejected(Date rejected) {
+	public void setRejected(ZonedDateTime rejected) {
 		this.rejected = rejected;
 	}
 	
