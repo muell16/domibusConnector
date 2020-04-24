@@ -1,5 +1,6 @@
 package eu.domibus.connector.domain.model.builder;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorAction;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorParty;
@@ -21,6 +22,7 @@ public class DomibusConnectorMessageDetailsBuilder {
     private DomibusConnectorAction action;
     private DomibusConnectorParty fromParty;
     private DomibusConnectorParty toParty;
+    private DomibusConnectorMessageDirection messageDirection;
 
     private DomibusConnectorMessageDetailsBuilder() {}
 
@@ -101,6 +103,7 @@ public class DomibusConnectorMessageDetailsBuilder {
         details.setToParty(this.toParty);
         details.setRefToMessageId(this.refToMessageId);
         details.setRefToBackendMessageId(this.refToBackendMessageId);
+        details.setDirection(this.messageDirection);
         return details;
     }
 
@@ -123,6 +126,7 @@ public class DomibusConnectorMessageDetailsBuilder {
                 .build();
         this.refToMessageId = messageDetails.getRefToMessageId();
         this.refToBackendMessageId = messageDetails.getRefToBackendMessageId();
+        this.messageDirection = messageDetails.getDirection();
 
         return this;
     }

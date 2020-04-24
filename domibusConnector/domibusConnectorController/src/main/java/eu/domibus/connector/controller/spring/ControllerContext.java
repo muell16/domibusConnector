@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.spring;
 
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueueServiceImpl;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.jms.ConnectionFactory;
+import javax.validation.Valid;
 
 /**
  * Configures Controller Context
@@ -66,6 +68,7 @@ public class ControllerContext {
         PutMessageOnQueueServiceImpl putMessageOnQueueService = new PutMessageOnQueueServiceImpl();
         putMessageOnQueueService.setQueueName(internalBackendToControllerQueueName);
         putMessageOnQueueService.setJmsTemplate(jmsTemplate);
+        putMessageOnQueueService.setMessageDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         return putMessageOnQueueService;
     }
 
@@ -75,6 +78,7 @@ public class ControllerContext {
         PutMessageOnQueueServiceImpl putMessageOnQueueService = new PutMessageOnQueueServiceImpl();
         putMessageOnQueueService.setQueueName(internalGWToControllerQueueName);
         putMessageOnQueueService.setJmsTemplate(jmsTemplate);
+        putMessageOnQueueService.setMessageDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         return putMessageOnQueueService;
     }
 

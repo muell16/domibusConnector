@@ -4,7 +4,6 @@ import javax.jms.Message;
 
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.service.queue.GetDomibusConnectorMessageFromJmsMessage;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.slf4j.Logger;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -41,15 +40,13 @@ public abstract class AbstractControllerMessageListener {
 				getConfirmationProcessor().processMessage(connectorMessage);
 			}
 			if (connectorMessage.getMessageDetails().getDirection() == null) {
-				connectorMessage.getMessageDetails().setDirection(getDirection());
+				throw new IllegalArgumentException("The message direction must be set!");
 			}
 		} catch (Exception e) {
 			getLogger().error("#startProcessing: Exception occured ", e);
 			//TODO: put message on error queue or reprocess?
 		}
 	}
-
-	protected abstract DomibusConnectorMessageDirection getDirection();
 
 	abstract Logger getLogger();
 	

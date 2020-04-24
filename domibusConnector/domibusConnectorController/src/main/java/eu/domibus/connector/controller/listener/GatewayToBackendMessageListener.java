@@ -46,11 +46,6 @@ public class GatewayToBackendMessageListener extends AbstractControllerMessageLi
 	}
 
 	@Override
-	protected DomibusConnectorMessageDirection getDirection() {
-		return DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
-	}
-
-	@Override
 	DomibusConnectorMessageProcessor getMessageProcessor() {
 		return messageProcessor;
 	}
