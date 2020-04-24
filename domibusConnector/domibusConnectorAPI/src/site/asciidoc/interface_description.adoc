@@ -50,6 +50,9 @@ link:https://ws.apache.org/wss4j/attachments.html
 TODO: add visualization of xsd and add some description....
 Describe Message Type
 
+The connector offers on both sides almost the same interface. This interface is very powerful,
+with the drawback, that
+
 == Flows
 
 TODO: describe some basic flows...

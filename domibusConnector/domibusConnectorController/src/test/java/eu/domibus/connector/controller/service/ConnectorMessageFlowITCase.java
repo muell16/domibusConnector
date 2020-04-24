@@ -803,6 +803,9 @@ public class ConnectorMessageFlowITCase {
                     .as("Generated evidence must be longer than 100 bytes - make sure this way a evidence has been generated")
                     .hasSizeGreaterThan(100);
 
+            assertThat(toBackendEvidenceMsgDetails.getDirection())
+                    .as("Direction must be set!")
+                    .isNotNull();
             assertThat(toBackendEvidenceMsgDetails.getRefToMessageId())
                     .as("To backend back transported evidence message must use backend message id for refToMessageId")
                     .isEqualTo(BACKEND_MESSAGE_ID);

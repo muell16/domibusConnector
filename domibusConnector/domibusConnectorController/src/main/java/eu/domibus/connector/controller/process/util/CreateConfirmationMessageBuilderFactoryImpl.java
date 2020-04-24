@@ -139,7 +139,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
         }
 
         public DomibusConnectorEvidenceType getEvidenceType() {
-            return this.getEvidenceMessage().getMessageConfirmations().get(0).getEvidenceType();
+            return this.evidenceMessage.getMessageConfirmations().get(0).getEvidenceType();
         }
 
         public DomibusConnectorMessage.DomibusConnectorMessageId getCausedByConnectorMessageId() {
@@ -147,7 +147,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
         }
 
         public DomibusConnectorMessage getOriginalMessage() {
-            return this.getOriginalMessage();
+            return this.originalMesssage;
         }
     }
 
