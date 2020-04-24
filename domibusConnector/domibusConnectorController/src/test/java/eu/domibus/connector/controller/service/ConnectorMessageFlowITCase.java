@@ -861,6 +861,8 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
             assertThat(relayReemdEvidenceMsg)
                     .isNotNull();
+            assertThat(relayReemdEvidenceMsg.getMessageDetails().getRefToBackendMessageId())
+                    .isEqualTo(BACKEND_MESSAGE_ID);
 
 
         });

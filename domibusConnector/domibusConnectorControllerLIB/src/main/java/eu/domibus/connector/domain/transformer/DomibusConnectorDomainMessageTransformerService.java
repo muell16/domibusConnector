@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.transformer;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
@@ -362,7 +363,12 @@ public class DomibusConnectorDomainMessageTransformerService {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("Message is an evidence message, setting backendMessageId to [{}] (from refToBackendMessageId)!", messageDetails.getRefToBackendMessageId());
             TODetailsType.setBackendMessageId(messageDetails.getRefToBackendMessageId());
+
+            if (message.getMessageDetails().getDirection().getTarget() == MessageTargetSource.BACKEND) {
+                TODetailsType.setRefToMessageId(messageDetails.getRefToBackendMessageId());
+            }
         }
+
 
         return TODetailsType;
     }

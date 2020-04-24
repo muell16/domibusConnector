@@ -90,7 +90,6 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         if (originalMessage.getMessageDetails().getBackendMessageId() != null) {
             confirmationMessage.getMessageDetails().setRefToBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
-            confirmationMessage.getMessageDetails().setBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
         }
         backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
