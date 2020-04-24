@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -42,6 +43,11 @@ public class GatewayToBackendMessageListener extends AbstractControllerMessageLi
 	@Override
 	String getQueueName() {
 		return QUEUE_NAME;
+	}
+
+	@Override
+	protected DomibusConnectorMessageDirection getDirection() {
+		return DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND;
 	}
 
 	@Override

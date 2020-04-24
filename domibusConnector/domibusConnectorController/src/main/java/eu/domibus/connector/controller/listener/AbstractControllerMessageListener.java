@@ -4,6 +4,7 @@ import javax.jms.Message;
 
 import eu.domibus.connector.controller.process.DomibusConnectorMessageProcessor;
 import eu.domibus.connector.controller.service.queue.GetDomibusConnectorMessageFromJmsMessage;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import org.slf4j.Logger;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -39,12 +40,17 @@ public abstract class AbstractControllerMessageListener {
 				getLogger().trace("#startProcessing: with message [{}] as confirmation", connectorMessage);
 				getConfirmationProcessor().processMessage(connectorMessage);
 			}
+			if (connectorMessage.getMessageDetails().getDirection() == null) {
+				connectorMessage.getMessageDetails().setDirection(getDirection());
+			}
 		} catch (Exception e) {
 			getLogger().error("#startProcessing: Exception occured ", e);
 			//TODO: put message on error queue or reprocess?
 		}
 	}
-	
+
+	protected abstract DomibusConnectorMessageDirection getDirection();
+
 	abstract Logger getLogger();
 	
 	abstract String getQueueName();
