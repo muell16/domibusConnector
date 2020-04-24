@@ -359,6 +359,8 @@ public class DomibusConnectorDomainMessageTransformerService {
         BeanUtils.copyProperties(messageDetails.getService(), serviceTO);
         TODetailsType.setService(serviceTO);
 
+        //map ref to message id
+        TODetailsType.setRefToMessageId(message.getMessageDetails().getRefToMessageId());
         //map backendMessageId
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("Message is an evidence message, setting backendMessageId to [{}] (from refToBackendMessageId)!", messageDetails.getRefToBackendMessageId());

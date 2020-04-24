@@ -1,6 +1,7 @@
 package eu.domibus.connector.domain.transformer;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.*;
@@ -238,7 +239,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
     }
 
     @Test
-    public void testTransformMessageDetailsDomainToTransition_asConfirmationMessage() {
+    public void testTransformMessageDetailsDomainToTransition_asConfirmationMessageToBackend() {
         DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createEvidenceNonDeliveryMessage();
         DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
         messageDetails.setRefToBackendMessageId("refToBackendId");
@@ -247,6 +248,26 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(confirmationMessage);
 
         assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped from refToBackendMessageId of messageDetails").isEqualTo("refToBackendId");
+
+    }
+
+    @Test
+    public void testTransformMessageDetailsDomainToTransition_asConfirmationToGw() {
+        DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createEvidenceNonDeliveryMessage();
+        DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
+        messageDetails.setRefToBackendMessageId("refToBackendId");
+        messageDetails.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+        confirmationMessage.setMessageDetails(messageDetails);
+
+
+        DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(confirmationMessage);
+
+        assertThat(messageDetailsType.getBackendMessageId())
+                .as("backendMessageId must be mapped from refToBackendMessageId of messageDetails")
+                .isEqualTo("refToBackendId");
+        assertThat(messageDetailsType.getRefToMessageId())
+                .as("refToMessageId must be mapped from refToBackendMessageId of messageDetails")
+                .isEqualTo("refToBackendId");
 
     }
 
