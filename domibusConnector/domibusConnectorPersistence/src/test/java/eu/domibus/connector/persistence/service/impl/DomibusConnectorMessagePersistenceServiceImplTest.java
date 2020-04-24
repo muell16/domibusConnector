@@ -24,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -225,7 +226,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
 
     @Test
     public void testConfirmMessage() {
-        Mockito.when(messageDao.confirmMessage(any(Long.class)))
+        Mockito.when(messageDao.confirmMessage(any(Long.class), any(ZonedDateTime.class)))
                 .thenReturn(1);
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         dbMessage.setId(78L);
@@ -234,7 +235,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(78L);
         messagePersistenceService.confirmMessage(message);
-        Mockito.verify(messageDao, Mockito.times(1)).confirmMessage(eq(78L));
+        Mockito.verify(messageDao, Mockito.times(1)).confirmMessage(eq(78L), any(ZonedDateTime.class));
     }
     
     @Test

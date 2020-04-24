@@ -1,10 +1,8 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageInfoDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
-import eu.domibus.connector.persistence.dao.DomibusConnectorServiceDao;
-import eu.domibus.connector.persistence.model.*;
+import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
+import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.junit.jupiter.api.Assertions;
@@ -12,13 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 
 @Disabled("Mocks must be repaired")
 public class InternalMessageInfoPersistenceServiceImplTest {
