@@ -25,6 +25,8 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jms.Message;
+
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 /**
@@ -158,6 +160,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private void sendAsEvidenceMessageBackToBackend(CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         DomibusConnectorMessage evidenceMessage = confirmationMessageBuilder
                 .switchFromToParty()
+                .withDirection(MessageTargetSource.BACKEND)
                 .build()
                 .getEvidenceMessage();
         backendDeliveryService.deliverMessageToBackend(evidenceMessage);
@@ -166,6 +169,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private void sendAsEvidenceMessageToGw(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmation = confirmationMessageBuilder
                 .switchFromToParty()
+                .withDirection(MessageTargetSource.GATEWAY)
                 .build();
 
         wrappedConfirmation.persistEvidenceToMessage();

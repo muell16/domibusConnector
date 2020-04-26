@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
@@ -107,6 +108,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
 //					.useNationalIdAsRefToMessageId()
 					.switchFromToParty()
+					.withDirection(MessageTargetSource.BACKEND)
 					.build();
 			confirmationMessage.persistEvidenceToMessage();
 

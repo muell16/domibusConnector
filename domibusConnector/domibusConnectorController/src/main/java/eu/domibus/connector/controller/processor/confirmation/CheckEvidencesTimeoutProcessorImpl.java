@@ -7,6 +7,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliverySe
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
@@ -168,15 +169,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder =
                 confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE);
-        confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
-
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper build = confirmationMessageBuilder.build();
-
-        build.persistEvidenceToMessage();
-        DomibusConnectorMessage evidenceMessage = build.getEvidenceMessage();
-        persistenceService.rejectMessage(originalMessage);
-
-        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+        createPersistAndSendConfirmation(originalMessage, confirmationMessageBuilder);
 
     }
 
@@ -190,7 +183,13 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 
 
         CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
+        createPersistAndSendConfirmation(originalMessage, confirmationMessageBuilder);
+
+    }
+
+    private void createPersistAndSendConfirmation(DomibusConnectorMessage originalMessage, CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder) {
         confirmationMessageBuilder.setRejectionReason(DomibusConnectorRejectionReason.OTHER);
+        confirmationMessageBuilder.withDirection(MessageTargetSource.BACKEND);
 
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedConfirmationMessage = confirmationMessageBuilder.build();
 
@@ -198,7 +197,6 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();
         persistenceService.rejectMessage(originalMessage);
         backendDeliveryService.deliverMessageToBackend(evidenceMessage);
-
     }
 
 

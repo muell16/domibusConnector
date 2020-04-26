@@ -4,6 +4,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.lib.logging.MDC;
@@ -133,6 +134,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
 				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
 				.switchFromToParty()
+				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
 		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
@@ -175,6 +177,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
 				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY)
 				.switchFromToParty()
+				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
 		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
@@ -237,6 +240,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedEvidenceMessage = wrappedMessageConfirmationBuilder
 					.switchFromToParty()
+					.withDirection(MessageTargetSource.GATEWAY)
 					.build();
 			LOGGER.trace("generated confirmation is [{}]", wrappedEvidenceMessage.getMessageConfirmation());
             sendEvidenceBackToGateway(wrappedEvidenceMessage);

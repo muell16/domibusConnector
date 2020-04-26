@@ -6,6 +6,7 @@ import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBui
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
@@ -53,6 +54,7 @@ public class CreateSubmissionRejectionAndReturnItService {
 //                    .useNationalIdAsRefToMessageId()
                     .switchFromToParty()
                     .setDetails(errorMessage)
+                    .withDirection(MessageTargetSource.BACKEND)
                     .build();
 
         } catch (Exception e) {

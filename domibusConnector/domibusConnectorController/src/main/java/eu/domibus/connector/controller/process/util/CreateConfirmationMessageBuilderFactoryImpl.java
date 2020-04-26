@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurat
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
@@ -159,6 +160,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
         String rejectionDetails;
         DomibusConnectorMessageDetails details;
         private DomibusConnectorAction action;
+        private MessageTargetSource messageTarget = null;
 
         private ConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
             this.originalMessage = message;
@@ -179,6 +181,10 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
             return this;
         }
 
+        public ConfirmationMessageBuilder withDirection(MessageTargetSource evidenceMessageTarget) {
+            this.messageTarget = evidenceMessageTarget;
+            return this;
+        }
 
 
         public ConfirmationMessageBuilder setDetails(String details) {
@@ -216,9 +222,17 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
 
                 details.setAction(action);
                 details.setCausedBy(originalMessage.getConnectorMessageId());
+                if (messageTarget == MessageTargetSource.BACKEND) {
+                    details.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+                } else if (messageTarget == MessageTargetSource.GATEWAY) {
+                    details.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY);
+                } else {
+                    throw new RuntimeException("The evidence message target MUST be set!, call withDirection of the builder!");
+                }
 
 
-                DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(details, messageConfirmation);
+                DomibusConnectorMessageDetails newDetails = DomibusConnectorMessageDetailsBuilder.create().copyPropertiesFrom(details).build();
+                DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(newDetails, messageConfirmation);
                 evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
 
                 DomibusConnectorMessageConfirmationWrapper wrapper = new DomibusConnectorMessageConfirmationWrapper();

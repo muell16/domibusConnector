@@ -7,6 +7,7 @@ import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBui
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
@@ -74,6 +75,7 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessage = confirmationMessageBuilder
                 .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
                 .switchFromToParty()
+                .withDirection(MessageTargetSource.GATEWAY)
                 .build();
 
 
