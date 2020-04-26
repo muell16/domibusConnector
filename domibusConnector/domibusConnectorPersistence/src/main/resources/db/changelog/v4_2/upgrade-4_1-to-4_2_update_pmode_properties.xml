@@ -10,7 +10,7 @@
     <property name="now" value="now()" dbms="postgresql,h2"/>
 
 
-    <changeSet id="SKS" author="create_default_message_lane">
+    <changeSet id="create_default_message_lane" author="SKS" >
         <preConditions onFail="MARK_RAN">
             <not>
                 <sqlCheck expectedResult="1">
@@ -38,7 +38,7 @@
         <addPrimaryKey tableName="DC_PMODE_SET" columnNames="ID" constraintName="PK_DC_PMODE_SET" />
     </changeSet>
 
-    <changeSet id="SKS" author="create_default_p_mode_set">
+    <changeSet id="create_default_p_mode_set" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT count(*) FROM DC_PMODE_SET WHERE ID = 1;
@@ -55,7 +55,7 @@
 
 
     <!-- add a technical key to party table, service table and action table -->
-    <changeSet id="SKS" author="drop_fk_on_message_info_table">
+    <changeSet id="drop_fk_on_message_info_table" author="SKS">
         <comment>Drop foreign keys, so we can change the referenced primary keys on the service, action and party table</comment>
         <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_FROM_PARTY" />
         <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_TO_PARTY" />
@@ -70,11 +70,11 @@
     </changeSet>
 
     <!-- party table add technical key -->
-    <changeSet id="SKS" author="modify_party_table_drop_primary_key">
+    <changeSet id="modify_party_table_drop_primary_key" author="SKS">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_PARTY" constraintName="PK_DOMIBUS_CONNECTOR_PARTY"/>
     </changeSet>
 
-    <changeSet id="SKS" author="modify_party_table_add_columns">
+    <changeSet id="modify_party_table_add_columns" author="SKS">
         <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
             <column name="ID" type="${id.type}">
                 <constraints nullable="true" />
@@ -136,11 +136,11 @@
 
 
     <!-- action table add technical key -->
-    <changeSet id="SKS" author="modify_action_table_drop_primary_key">
+    <changeSet id="modify_action_table_drop_primary_key" author="SKS">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_ACTION" constraintName="PK_DOMIBUS_CONNECTOR_ACTION"/>
     </changeSet>
 
-    <changeSet id="SKS" author="modify_action_table_add_columns">
+    <changeSet id="modify_action_table_add_columns" author="SKS">
         <addColumn tableName="DOMIBUS_CONNECTOR_ACTION">
             <column name="ID" type="${id.type}">
                 <constraints nullable="true" />
@@ -198,11 +198,11 @@
 
 
     <!-- service table add technical key -->
-    <changeSet id="SKS" author="modify_service_table_drop_primary_key">
+    <changeSet id="modify_service_table_drop_primary_key" author="SKS">
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE"/>
     </changeSet>
 
-    <changeSet id="SKS" author="modify_service_table_add_columns">
+    <changeSet id="modify_service_table_add_columns" author="SKS">
         <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
             <column name="ID" type="${id.type}">
                 <constraints nullable="false" unique="true"/>
@@ -301,7 +301,7 @@
     </changeSet>
 
 
-    <changeSet id="SKS" author="create_fk_for_party_on_message_info_table">
+    <changeSet id="create_fk_for_party_on_message_info_table" author="SKS">
         <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
                                  baseColumnNames="FK_FROM_PARTY_ID"
                                  constraintName="FK_MSGINFO_FROM_PARTY"

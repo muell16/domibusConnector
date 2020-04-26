@@ -20,7 +20,7 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateConfirmationMessageBuilderFactoryImpl implements ConfirmationMessageBuilderFactory {
+public class CreateConfirmationMessageBuilderFactoryImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateConfirmationMessageBuilderFactoryImpl.class);
 
@@ -49,7 +49,6 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
         this.messageIdGenerator = idGenerator;
     }
 
-    @Override
     public ConfirmationMessageBuilder createConfirmationMessageBuilder(DomibusConnectorMessage message, DomibusConnectorEvidenceType evidenceType) {
         ConfirmationMessageBuilder confirmationMessageBuilder = new ConfirmationMessageBuilder(message, evidenceType);
 
@@ -59,7 +58,6 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
         return confirmationMessageBuilder;
     }
 
-    @Override
     public DomibusConnectorAction createEvidenceAction(DomibusConnectorEvidenceType type) throws DomibusConnectorControllerException {
 
         EvidenceActionServiceConfigurationProperties evidenceActionServiceConfigurationProperties =
@@ -172,6 +170,8 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
             //by default ref to message id is the EBMSID of the related msg
             this.details.setRefToMessageId(originalDetails.getEbmsMessageId());
             this.details.setRefToBackendMessageId(originalDetails.getBackendMessageId());
+            this.details.setEbmsMessageId(null);
+            this.details.setBackendMessageId(null);
         }
 
         public ConfirmationMessageBuilder setRejectionReason(DomibusConnectorRejectionReason rejectionReason) {
@@ -179,34 +179,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
             return this;
         }
 
-        /**
-         * Sets the nationalMessageId as the refToMessageId
-         * within the MessageDetails, used when the message is just
-         * transported back only to the connectorClient system
-         *
-         */
-        private ConfirmationMessageBuilder useNationalIdAsRefToMessageId() {
-            String refToMsg = originalMessage.getMessageDetails().getBackendMessageId();
-            if (refToMsg == null) {
-                throw new IllegalArgumentException("Cannot use NationalID as refToMsgId because it is NULL!");
-            }
-            this.details.setRefToMessageId(refToMsg);
-            return this;
-        }
 
-        /**
-         * Sets the ebmsId as the refToMessageId
-         * within the MessageDetails, used when the message is
-         * transported to the Gateway
-         */
-        public ConfirmationMessageBuilder useEbmsIdAsRefToMessageId() {
-            String refToMsg = originalMessage.getMessageDetails().getEbmsMessageId();
-            if (refToMsg == null) {
-                throw new IllegalArgumentException("Cannot use EBMSID as refToMsgId because it is NULL!");
-            }
-            this.details.setRefToMessageId(refToMsg);
-            return this;
-        }
 
         public ConfirmationMessageBuilder setDetails(String details) {
             this.rejectionDetails = details;
@@ -241,9 +214,6 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
                 DomibusConnectorMessageConfirmation messageConfirmation = evidencesToolkit.createEvidence(evidenceType, originalMessage, rejectionReason, rejectionDetails);
                 originalMessage.addConfirmation(messageConfirmation);
 
-                if (details.getRefToMessageId() == null) {
-                    this.useNationalIdAsRefToMessageId();
-                }
                 details.setAction(action);
                 details.setCausedBy(originalMessage.getConnectorMessageId());
 

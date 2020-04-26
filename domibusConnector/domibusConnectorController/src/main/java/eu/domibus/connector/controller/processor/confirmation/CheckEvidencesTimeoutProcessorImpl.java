@@ -2,7 +2,6 @@ package eu.domibus.connector.controller.processor.confirmation;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
@@ -34,7 +33,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     private EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties;
     private DomibusConnectorMessagePersistenceService persistenceService;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
-    private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
+    private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
 
     //setter
     @Autowired
@@ -43,7 +42,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
     }
 
     @Autowired
-    public void setConfirmationMessageBuilderFactory(ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory) {
+    public void setConfirmationMessageBuilderFactory(CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory) {
         this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
     }
 

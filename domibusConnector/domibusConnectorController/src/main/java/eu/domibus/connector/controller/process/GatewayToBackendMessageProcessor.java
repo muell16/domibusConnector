@@ -1,15 +1,9 @@
 package eu.domibus.connector.controller.process;
 
 
-import javax.annotation.Nonnull;
-
-
-import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
-import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.lib.logging.MDC;
@@ -19,7 +13,6 @@ import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,10 +21,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
-import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
-import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
@@ -51,7 +41,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	public ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
 	private DomibusConnectorMessagePersistenceService messagePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
+	private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	private DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
@@ -72,7 +62,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 
 	@Autowired
-	public void setConfirmationMessageBuilderFactory(ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory) {
+	public void setConfirmationMessageBuilderFactory(CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory) {
 		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
 	}
 

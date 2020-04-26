@@ -7,6 +7,7 @@ import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
@@ -410,6 +411,8 @@ public class ConnectorMessageFlowITCase {
             assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getRefToBackendMessageId())
                     .as("The backend ref to message id must match the backend message id of the original message!")
                     .isEqualTo(businessMsg.getMessageDetails().getBackendMessageId());
+            assertThat(deliveryEvidenceToBackendMessage.getMessageDetails().getDirection().getTarget())
+                    .isEqualTo(MessageTargetSource.BACKEND);
 
             DomibusConnectorMessage messageByConnectorMessageId = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
             assertThat(messagePersistenceService.checkMessageConfirmed(messageByConnectorMessageId))

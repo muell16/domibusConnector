@@ -1,7 +1,6 @@
 package eu.domibus.connector.controller.processor.confirmation;
 
 import eu.domibus.connector.common.service.ConfigurationPropertyLoaderService;
-import eu.domibus.connector.controller.process.util.ConfirmationMessageBuilderFactory;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
@@ -11,7 +10,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
-import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.testutil.logger.ListAppender;
@@ -55,7 +53,7 @@ class CheckEvidencesTimeoutProcessorImplTest {
 
 
 
-    private ConfirmationMessageBuilderFactory confirmationMessageBuilderFactory;
+    private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
 
     public DomibusConnectorMessage createTestMsg1() {
         DomibusConnectorMessage message = DomainEntityCreator.createMessage();
