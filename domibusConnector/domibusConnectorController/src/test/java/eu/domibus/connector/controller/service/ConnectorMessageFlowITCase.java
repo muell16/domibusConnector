@@ -809,8 +809,8 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getDirection())
                     .as("Direction must be set!")
                     .isNotNull();
-            assertThat(toBackendEvidenceMsgDetails.getRefToMessageId())
-                    .as("To backend back transported evidence message must use backend message id for refToMessageId")
+            assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
+                    .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
                     .isEqualTo(BACKEND_MESSAGE_ID);
             assertThat(toBackendEvidenceMsgDetails.getFromParty())
                     .as("Parties must be switched")
@@ -1128,8 +1128,8 @@ public class ConnectorMessageFlowITCase {
 
 
             //check attribute refToMessageId
-            assertThat(toBackendEvidence.getMessageDetails().getRefToMessageId())
-                    .as("refToMessageId must match backend message id")
+            assertThat(toBackendEvidence.getMessageDetails().getRefToBackendMessageId())
+                    .as("backendRefToMessageId must match backend message id")
                     .isEqualTo(BACKEND_MESSAGE_ID);
 
             //parties, services, action..
