@@ -6,16 +6,6 @@
     <property name="varchar255.type" value="VARCHAR(255)"/>
     <property name="varchar255.type" value="VARCHAR2(255 CHAR)" dbms="oracle"/>
 
-    <changeSet id="up1_up1_changelog-domibus-4.1_001_pre_setup_tag" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
-        <createTable tableName="DC_DB_VERSION">
-            <column name="TAG" type="java.sql.Types.VARCHAR(255)" >
-                <constraints primaryKey="true" />
-            </column>
-        </createTable>
-    </changeSet>
-
-
-
 
     <changeSet author="domibusConnector" id="up1_changelog_4.1_rename_property_table">
         <preConditions onFail="MARK_RAN">

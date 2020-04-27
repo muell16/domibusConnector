@@ -3,13 +3,7 @@
 
 
 
-    <changeSet id="up1_changelog-domibus-4.0_002_pre_setup_tag" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
-        <createTable tableName="DC_DB_VERSION">
-            <column name="TAG" type="java.sql.Types.VARCHAR(255)" >
-                <constraints primaryKey="true" />
-            </column>
-        </createTable>
-    </changeSet>
+
 
 
 

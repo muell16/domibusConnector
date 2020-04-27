@@ -6,13 +6,6 @@
 
 
 
-    <changeSet id="up1_3to4_upgrade_001_pre_setup_db_table" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
-        <createTable tableName="DC_DB_VERSION">
-            <column name="TAG" type="java.sql.Types.VARCHAR(255)" >
-                <constraints primaryKey="true" />
-            </column>
-        </createTable>
-    </changeSet>
 
 
     <!--
