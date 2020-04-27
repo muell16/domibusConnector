@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-    <property name="id.type" value="BIGINT" dbms="postgresql"/>
-    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql"/>
-    <property name="id.type" value="NUMBER(10)" dbms="oracle"/>
+
+
     <changeSet id="add_gateway_name_to_message_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>add gateway name to support multiple gateways/gateway tenants</comment>
         <addColumn tableName="DOMIBUS_CONNECTOR_MESSAGE">
             <column name="GATEWAY_NAME" type="java.sql.Types.VARCHAR(255)"/>
         </addColumn>
     </changeSet>
     <changeSet id="create_message_lane_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create MessageLaneTable to support different settings for different messages</comment>
         <createTable tableName="DC_MESSAGE_LANE">
             <column name="ID" type="${id.type}">
@@ -24,6 +29,9 @@
         <addPrimaryKey tableName="DC_MESSAGE_LANE" columnNames="ID" constraintName="PK_DC_MESSAGE_LANE_ID"/>
     </changeSet>
     <changeSet id="create_message_lane_properties_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Properties for message lane</comment>
         <createTable tableName="DC_MESSAGE_LANE_PROPERTY">
             <column name="DC_MESSAGE_LANE_ID" type="${id.type}">
@@ -38,6 +46,9 @@
         <addForeignKeyConstraint baseTableName="DC_MESSAGE_LANE_PROPERTY" baseColumnNames="DC_MESSAGE_LANE_ID" constraintName="FK_msglaneproperty_msglane" referencedTableName="DC_MESSAGE_LANE" referencedColumnNames="ID"/>
     </changeSet>
     <changeSet id="create_link_config_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create Link Configuration Table, holds informations for the link impl</comment>
         <createTable tableName="DC_LINK_CONFIGURATION">
             <column name="ID" type="${id.type}">
@@ -52,6 +63,9 @@
         <addUniqueConstraint tableName="DC_LINK_CONFIGURATION" columnNames="CONFIG_NAME" constraintName="UNQ_DC_LINK_CONFIG_NMAE"/>
     </changeSet>
     <changeSet id="create_link_property_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create Property Table for connector links, so each implementation can store link informations within this properties</comment>
         <createTable tableName="DC_LINK_CONFIG_PROPERTY">
             <column name="DC_LINK_CONFIGURATION_ID" type="${id.type}">
@@ -66,6 +80,9 @@
         <addForeignKeyConstraint baseTableName="DC_LINK_CONFIG_PROPERTY" baseColumnNames="DC_LINK_CONFIGURATION_ID" constraintName="FK_linkproperty_linkconfig" referencedTableName="DC_LINK_CONFIGURATION" referencedColumnNames="ID"/>
     </changeSet>
     <changeSet id="create_link_partner_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create LinkTable to support different link implementations on gateway and backend side</comment>
         <createTable tableName="DC_LINK_PARTNER">
             <column name="ID" type="${id.type}">
@@ -75,7 +92,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="DESCRIPTION" type="java.sql.Types.CLOB"/>
-            <column name="ENABLED" type="java.sql.Types.BOOLEAN"/>
+            <column name="ENABLED" type="java.sql.Types.TINYINT"/>
             <column name="LINK_CONFIG_ID" type="${id.type}"/>
             <column name="LINK_TYPE" type="java.sql.Types.VARCHAR(20)"/>
             <column name="LINK_MODE" type="java.sql.Types.VARCHAR(20)"/>
@@ -85,6 +102,9 @@
         <addForeignKeyConstraint baseTableName="DC_LINK_PARTNER" baseColumnNames="LINK_CONFIG_ID" constraintName="FK_linkinfo_linkconfig" referencedTableName="DC_LINK_CONFIGURATION" referencedColumnNames="ID"/>
     </changeSet>
     <changeSet id="create_link_partner_property_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create Property Table for link partners, so each link partner can have his own property set</comment>
         <createTable tableName="DC_LINK_PARTNER_PROPERTY">
             <column name="DC_LINK_PARTNER_ID" type="${id.type}">
@@ -99,6 +119,9 @@
         <addForeignKeyConstraint baseTableName="DC_LINK_PARTNER_PROPERTY" baseColumnNames="DC_LINK_PARTNER_ID" constraintName="FK_linkproperty_linkpartner" referencedTableName="DC_LINK_PARTNER" referencedColumnNames="ID"/>
     </changeSet>
     <changeSet id="create_transport_step_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create the table which tracks the transport step of the message to the next component (gateway, backend)</comment>
         <createTable tableName="DC_TRANSPORT_STEP">
             <column name="ID" type="${id.type}">
@@ -119,7 +142,11 @@
             <column name="CREATED" type="TIMESTAMP"/>
         </createTable>
         <addPrimaryKey tableName="DC_TRANSPORT_STEP" columnNames="ID" constraintName="PK_DC_TRANSPORT_STEP"/>
-        <addForeignKeyConstraint baseTableName="DC_TRANSPORT_STEP" baseColumnNames="MESSAGE_ID" constraintName="FK_messagestep_message" referencedTableName="DOMIBUS_CONNECTOR_MESSAGE" referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="DC_TRANSPORT_STEP"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_messagestep_message"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID"/>
         <createTable tableName="DC_TRANSPORT_STEP_STATUS">
             <column name="TRANSPORT_STEP_ID" type="${id.type}">
                 <constraints nullable="false"/>
@@ -138,6 +165,9 @@
                                  referencedColumnNames="ID"/>
     </changeSet>
     <changeSet id="create_message_process_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Create MessageLaneTable to support different settings for different messages</comment>
         <createTable tableName="DC_MESSAGE_PROCESS">
             <column name="ID" type="${id.type}">

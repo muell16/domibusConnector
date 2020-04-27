@@ -2,22 +2,23 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-    <property name="id.type" value="BIGINT" dbms="postgresql"/>
-    <property name="id.type" value="NUMBER(10,0)" dbms="h2,mysql"/>
-    <property name="id.type" value="NUMBER(10)" dbms="oracle"/>
-    <property name="now" value="sysdate" dbms="oracle"/>
-    <property name="now" value="now()" dbms="mysql"/>
-    <property name="now" value="now()" dbms="postgresql,h2"/>
+
 
 
 
 
     <changeSet id="update_message_error_tables_datatypes" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Make sure that the datatypes of the columns of DomibusConnectorMessage error are correct</comment>
         <modifyDataType tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnName="ERROR_MESSAGE" newDataType="java.sql.Types.CLOB" />
     </changeSet>
 
     <changeSet id="add_deleted_column_to_msg_content" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
         <comment>Add a timestamp to mark if a msg content was deleted</comment>
         <addColumn tableName="DOMIBUS_CONNECTOR_MSG_CONT">
             <column name="DELETED" type="java.sql.Types.TIMESTAMP"></column>

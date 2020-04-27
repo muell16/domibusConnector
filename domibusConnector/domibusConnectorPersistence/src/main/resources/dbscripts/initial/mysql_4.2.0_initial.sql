@@ -3,6 +3,7 @@
 --  *********************************************************************
 
 
+
 -- quartz tables
 
 CREATE TABLE QRTZ_JOB_DETAILS
@@ -471,3 +472,6 @@ create table DC_MSG_CONTENT_DETACHED_SIGNATURE
         constraint PK_DETACHED_SIGNATURE
         primary key (ID)
 );
+
+CREATE TABLE DC_DB_VERSION (TAG VARCHAR(255) PRIMARY KEY);
+INSERT INTO DC_DB_VERSION (TAG) VALUES ('V4.2');

@@ -6,4 +6,10 @@
     -->
     <include file="/db/changelog/v4_1/upgrade-to-41.xml"/>
     <include file="/db/changelog/v4_1/upgrade-to-415.xml"/>
+    <changeSet id="tag-db-domibus-4.1" author="SKS">
+        <tagDatabase tag="DOMIBUS_DB_V4.1"/>
+    </changeSet>
+    <changeSet id="tag-db-domibus-version-4.1" author="SKS">
+        <tagDatabase tag="V4.1"/>
+    </changeSet>
 </databaseChangeLog>

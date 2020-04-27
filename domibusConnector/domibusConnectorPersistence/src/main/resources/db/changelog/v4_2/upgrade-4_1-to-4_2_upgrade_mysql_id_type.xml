@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <changeSet id="update_mysql_id_types_to_bigint" author="SKS" dbms="mysql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
+        <comment>upgrade id type on mysql tables to BIGINT if not</comment>
+
+        <sql>set foreign_key_checks=0;</sql>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_SEQ_STORE" columnName="SEQ_VALUE" newDataType="${id.type}"/>
+
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_MSGI_MSGID"/>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_EVIDENCE"
+                                  constraintName="FK_DOMIBUS_CONNECTOR_EVIDENCES"/>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR"
+                                  constraintName="FK_DOMIBUS_CONNECTOR_MSG_ERROR"/>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_CONT"
+                                  constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_04"/>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_BIGDATA"
+                                  constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA"/>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MESSAGE" columnName="ID" newDataType="${id.type}"/>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnName="ID" newDataType="${id.type}"/>
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" columnName="MESSAGE_ID" newDataType="${id.type}"/>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnName="ID" newDataType="${id.type}"/>
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MSG_CONT" columnName="MESSAGE_ID" newDataType="${id.type}"/>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnName="ID" newDataType="${id.type}"/>
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_EVIDENCE" columnName="MESSAGE_ID" newDataType="${id.type}"/>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnName="ID" newDataType="${id.type}"/>
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_MSG_ERROR" columnName="MESSAGE_ID" newDataType="${id.type}"/>
+
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_BIGDATA" columnName="ID" newDataType="${id.type}"/>
+        <modifyDataType tableName="DOMIBUS_CONNECTOR_BIGDATA" columnName="MESSAGE_ID" newDataType="${id.type}"/>
+
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_MSGI_MSGID"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_EVIDENCE"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_DOMIBUS_CONNECTOR_EVIDENCES"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_ERROR"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_DOMIBUS_CONNECTOR_MSG_ERROR"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_CONT"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_DOMIBUS_CONN_DOMIBUS_CON_04"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID"/>
+
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_BIGDATA"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID"
+        />
+
+
+        <!--        <modifyDataType tableName="DOMIBUS_CONNECTOR_BACKEND_INFO" columnName="ID" newDataType="${id.type}" />-->
+
+        <!--        <modifyDataType tableName="DOMIBUS_CONNECTOR_USER" columnName="ID" newDataType="${id.type}" />-->
+
+        <!--        <modifyDataType tableName="DOMIBUS_CONNECTOR_USER_PWD" columnName="ID" newDataType="${id.type}" />-->
+        <!--        <modifyDataType tableName="DOMIBUS_CONNECTOR_USER_PWD" columnName="USER_ID" newDataType="${id.type}" />-->
+
+        <sql>set foreign_key_checks=1;</sql>
+    </changeSet>
+
+</databaseChangeLog>

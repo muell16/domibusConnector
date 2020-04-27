@@ -1,5 +1,7 @@
 ----------------------- domibusConnector Tables ------------------------------
 
+CREATE TABLE DC_DB_VERSION (TAG VARCHAR(255) PRIMARY KEY);
+INSERT INTO DC_DB_VERSION (TAG) VALUES ('V3.5');
 
 CREATE TABLE DOMIBUS_CONNECTOR_MESSAGES (
 	ID NUMBER(10) NOT NULL,

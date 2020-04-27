@@ -43,12 +43,12 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
                     LOGGER.info("Processing TestDBFactory [{}]", f);
                     return f;
                 })
-                .map(tdbfactory -> Stream.of(annotationsByType)
+                .flatMap(tdbfactory -> Stream.of(annotationsByType)
                                 .map(fromVersion -> fromVersion.value())
                                 .map(s -> s.isEmpty() ? null : s)
                                 .filter(version -> tdbfactory.isAvailable(version))
                                 .map(version -> invocationContext(tdbfactory.createNewDatabase(version))
-                )).flatMap(i -> i);
+                ));
     }
 
 

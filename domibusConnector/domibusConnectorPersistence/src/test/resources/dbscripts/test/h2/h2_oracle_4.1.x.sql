@@ -1,4 +1,6 @@
 
+CREATE TABLE DC_DB_VERSION (TAG VARCHAR(255) PRIMARY KEY);
+INSERT INTO DC_DB_VERSION (TAG) VALUES ('V4.1');
 
 --------------------------------------------------------
 --  DDL for Table DOMIBUS_CONNECTOR_ACTION

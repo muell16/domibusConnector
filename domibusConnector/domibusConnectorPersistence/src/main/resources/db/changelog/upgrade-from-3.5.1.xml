@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-    <!--
-        First upgrade to connector 4.0 model, then run upgrade to latest db version...
-    -->
-    <include file="/db/changelog/v4_0/upgrade-3to4.xml"/>
-    <include file="/db/changelog/v4_0/upgrade_qrtz_tables.xml"/>
-    <include file="/db/changelog/install.xml"/>
-</databaseChangeLog>
