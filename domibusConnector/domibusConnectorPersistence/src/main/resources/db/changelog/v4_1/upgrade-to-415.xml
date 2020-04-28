@@ -9,7 +9,7 @@
 
     <changeSet id="addPropertyIdTechnicalKey" author="domibusConnector">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="V4.1">SELECT MAX(TAG) FROM DC_DB_VERSION;</sqlCheck>
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.1.5';]]></sqlCheck>
         </preConditions>
         <addColumn tableName="DOMIBUS_CONNECTOR_PROPERTY">
             <column name="ID" type="BIGINT">
@@ -20,8 +20,15 @@
     <!-- UNIQUE does not work on mysql, because key size is too big (2048bytes of column PROPERTY_NAME is too big) -->
     <changeSet id="createNewConstraints" author="domibusConnector" dbms="h2,postgresql,oracle">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="V4.1">SELECT MAX(TAG) FROM DC_DB_VERSION;</sqlCheck>
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.1.5';]]></sqlCheck>
         </preConditions>
         <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="PROPERTY_NAME" constraintName="unique_property_name_at_domconprop"/>
     </changeSet>
+
+    <changeSet id="up1_up1_changelog-domibus-4.1_002_pre_setup_tag" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
+        <insert tableName="DC_DB_VERSION">
+            <column name="TAG" value="V4.1.5" />
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
