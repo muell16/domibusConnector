@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import javax.activation.DataHandler;
 
@@ -365,9 +366,9 @@ public class DomibusConnectorDomainMessageTransformerService {
         if (DomainModelHelper.isEvidenceMessage(message)) {
             LOGGER.debug("Message is an evidence message, setting backendMessageId to [{}] (from refToBackendMessageId)!", messageDetails.getRefToBackendMessageId());
             TODetailsType.setBackendMessageId(messageDetails.getRefToBackendMessageId());
-
+            //only use refToBackendMessageId if is going to backend and it is not empty
             if (message.getMessageDetails().getDirection().getTarget() == MessageTargetSource.BACKEND &&
-                    messageDetails.getRefToBackendMessageId() != null) {
+                    !StringUtils.isEmpty(messageDetails.getRefToBackendMessageId())) {
                 TODetailsType.setRefToMessageId(messageDetails.getRefToBackendMessageId());
             }
         }
