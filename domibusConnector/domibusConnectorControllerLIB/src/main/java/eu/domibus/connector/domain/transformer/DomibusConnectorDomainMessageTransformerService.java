@@ -366,11 +366,11 @@ public class DomibusConnectorDomainMessageTransformerService {
             LOGGER.debug("Message is an evidence message, setting backendMessageId to [{}] (from refToBackendMessageId)!", messageDetails.getRefToBackendMessageId());
             TODetailsType.setBackendMessageId(messageDetails.getRefToBackendMessageId());
 
-            if (message.getMessageDetails().getDirection().getTarget() == MessageTargetSource.BACKEND) {
+            if (message.getMessageDetails().getDirection().getTarget() == MessageTargetSource.BACKEND &&
+                    messageDetails.getRefToBackendMessageId() != null) {
                 TODetailsType.setRefToMessageId(messageDetails.getRefToBackendMessageId());
             }
         }
-
 
         return TODetailsType;
     }

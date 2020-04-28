@@ -144,7 +144,7 @@ public class LiquibaseUpgradeInitITCase {
             args.add("--spring.datasource.password=" + p.getProperty("spring.datasource.password"));
         }
         args.add("--spring.datasource.driver-class-name=" + p.getProperty("spring.datasource.driver-class-name"));
-
+        args.add("--spring.liquibase.change-log=" + p.getProperty("spring.liquibase.change-log"));
 
         Assertions.assertTimeout(Duration.ofSeconds(90), () -> {
 

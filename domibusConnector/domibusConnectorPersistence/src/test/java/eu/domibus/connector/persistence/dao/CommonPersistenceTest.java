@@ -22,7 +22,7 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 @SpringBootTest(classes = SetupPersistenceContext.class)
 @TestPropertySource(properties = {
         "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
-        "spring.liquibase.change-log=db/changelog/test/testdata.xml",
+        "spring.liquibase.change-log=/db/changelog/test/testdata.xml",
         "spring.datasource.url=jdbc:h2:mem:t2",
         "spring.active.profiles=connector,db-storage"
 })

@@ -7,5 +7,5 @@
     <!--
         load testdata
     -->
-<!--    <include file="db/changelog/test/testdata.sql"/>-->
+    <include file="db/changelog/test/testdata.sql"/>
 </databaseChangeLog>
