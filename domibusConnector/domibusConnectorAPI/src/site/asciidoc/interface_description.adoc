@@ -218,3 +218,15 @@ with an message id to a new delivered message
 
 After the evidence was triggered the generated evidence message will not only submitted to the other party
 it will also be delivered to the backend system as an confirmation, that the trigger was successfully.
+
+
+=== Receiving an confirmation message
+
+When the backend receives a confirmation message, the refToMessageId field is filled in the following order:
+
+* If the connector is aware of a backendMessageId of the related message, then the refToMessageId will be
+set with the backendMessageId
+* In all other cases the refToMessageId will be set to the EBMS_ID
+
+This means if the backend always returns a backendMessageId for a received message, the EBMS ID will be
+completly transparent for the backend. The backendMessageId is mapped by the connector to the EBMS ID.

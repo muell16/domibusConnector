@@ -244,10 +244,34 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
         messageDetails.setRefToBackendMessageId("refToBackendId");
         confirmationMessage.setMessageDetails(messageDetails);
+        messageDetails.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
 
         DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(confirmationMessage);
 
-        assertThat(messageDetailsType.getBackendMessageId()).as("backendMessageId must be mapped from refToBackendMessageId of messageDetails").isEqualTo("refToBackendId");
+        assertThat(messageDetailsType.getBackendMessageId())
+                .as("backendMessageId must be mapped from refToBackendMessageId of messageDetails")
+                .isEqualTo("refToBackendId");
+
+        assertThat(messageDetailsType.getRefToMessageId())
+                .as("refToMessageId must be mapped from refToBackendMessageId of messageDetails if transport is to backend and it is not null")
+                .isEqualTo("refToBackendId");
+
+    }
+
+    @Test
+    public void testTransformMessageDetailsDomainToTransition_asConfirmationMessageToBackend_backendIdNull() {
+        DomibusConnectorMessage confirmationMessage = DomainEntityCreator.createEvidenceNonDeliveryMessage();
+        DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
+        messageDetails.setRefToBackendMessageId(null);
+        messageDetails.setRefToMessageId("refToId");
+        messageDetails.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+        confirmationMessage.setMessageDetails(messageDetails);
+
+        DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(confirmationMessage);
+
+        assertThat(messageDetailsType.getRefToMessageId())
+                .as("if backendMessageId of original message is null, then the ebms id must be used for refToMessageId")
+                .isEqualTo("refToId");
 
     }
 
