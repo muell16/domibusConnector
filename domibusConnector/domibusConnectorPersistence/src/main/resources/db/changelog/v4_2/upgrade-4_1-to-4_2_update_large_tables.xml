@@ -19,9 +19,12 @@
             <column name="SIGNATURE_TYPE" type="java.sql.Types.Varchar(255)" />
         </createTable>
     </changeSet>
-    <changeSet author="StephanSpindler" id="changelog-domibus-4.0_6_primary_key">
+    <changeSet author="StephanSpindler" id="changelog-largefiles_add_pk_for_dc_detached_signature">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+            <not>
+                <primaryKeyExists tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" />
+            </not>
         </preConditions>
         <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID" constraintName="PK_DETACHED_SIGNATURE"/>
     </changeSet>

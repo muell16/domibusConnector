@@ -6,7 +6,7 @@
 
 
 
-    <include file="db/changelog/v4_0/upgrade_qrtz_tables.xml"/>
+    <include file="/db/changelog/v4_0/upgrade_qrtz_tables.xml"/>
     <include file="upgrade-3to4_prepare.xml" relativeToChangelogFile="true" />
 
     <include file="initial-changelog-domibus.xml" relativeToChangelogFile="true" />
@@ -26,8 +26,6 @@
     <changeSet id="tag-db-domibus-version-4.0" author="SKS">
         <tagDatabase tag="V4.0"/>
     </changeSet>
-
-
 
 
 </databaseChangeLog>

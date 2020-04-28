@@ -127,9 +127,7 @@
             <column name="ID" type="${id.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="MESSAGE_ID" type="${id.type}">
-                <constraints nullable="false"/>
-            </column>
+            <column name="CONNECTOR_MESSAGE_ID" type="java.sql.Types.VARCHAR(255)" />
             <column name="LINK_PARTNER_NAME" type="java.sql.Types.VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -142,11 +140,7 @@
             <column name="CREATED" type="TIMESTAMP"/>
         </createTable>
         <addPrimaryKey tableName="DC_TRANSPORT_STEP" columnNames="ID" constraintName="PK_DC_TRANSPORT_STEP"/>
-        <addForeignKeyConstraint baseTableName="DC_TRANSPORT_STEP"
-                                 baseColumnNames="MESSAGE_ID"
-                                 constraintName="FK_messagestep_message"
-                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
-                                 referencedColumnNames="ID"/>
+
         <createTable tableName="DC_TRANSPORT_STEP_STATUS">
             <column name="TRANSPORT_STEP_ID" type="${id.type}">
                 <constraints nullable="false"/>

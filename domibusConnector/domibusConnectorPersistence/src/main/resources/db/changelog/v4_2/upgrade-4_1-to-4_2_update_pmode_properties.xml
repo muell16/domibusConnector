@@ -26,7 +26,7 @@
         </preConditions>
         <createTable tableName="DC_PMODE_SET">
             <column name="ID" type="${id.type}">
-                <constraints nullable="false"></constraints>
+                <constraints nullable="false" />
             </column>
             <column name="FK_MESSAGE_LANE" type="${id.type}" />
             <column name="CREATED" type="java.sql.Types.TIMESTAMP" />
@@ -98,6 +98,9 @@
     <changeSet id="modify_party_table_add_columns" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+            <not>
+                <columnExists tableName="DOMIBUS_CONNECTOR_PARTY" columnName="ID" />
+            </not>
         </preConditions>
         <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
             <column name="ID" type="${id.type}">
