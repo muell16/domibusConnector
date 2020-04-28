@@ -8,7 +8,9 @@
         OR upgrade from 4.0
     -->
 
+
     <include file="db/changelog/properties.xml" />
+    <include file="db/changelog/v4_0/create_dc_db_version_table.xml" />
 
     <include file="/db/changelog/install-4.0.xml"/>
     <include file="/db/changelog/v4_1/upgrade.xml"/>
