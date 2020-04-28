@@ -299,8 +299,8 @@
 
     <changeSet author="StephanSpindler" id="up1_changelog-domibus-4.0_9">
         <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.0';]]></sqlCheck>
             <not>
-                <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.0';]]></sqlCheck>
                 <tableExists tableName="DOMIBUS_CONNECTOR_EVIDENCE" />
             </not>
         </preConditions>
