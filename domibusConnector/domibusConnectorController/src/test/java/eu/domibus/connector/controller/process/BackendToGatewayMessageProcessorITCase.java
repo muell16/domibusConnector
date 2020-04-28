@@ -19,6 +19,7 @@ import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -43,13 +44,11 @@ import java.util.concurrent.BlockingQueue;
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {ITCaseTestContext.class})
-//@TestPropertySource("classpath:config/application-test.properties")
 @Commit
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test"})
-//@Sql(scripts = "/testdata.sql") //adds testdata to database like domibus-blue party
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Disabled
 public class BackendToGatewayMessageProcessorITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessorITCase.class);

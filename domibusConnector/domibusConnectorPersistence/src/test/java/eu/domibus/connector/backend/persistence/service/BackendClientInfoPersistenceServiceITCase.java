@@ -11,6 +11,7 @@ import eu.domibus.connector.persistence.testutil.RecreateDbByLiquibaseTestExecut
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
                 DBRiderTestExecutionListener.class, //activate @DBRider
         })
 @DataSet(value = "/database/testdata/dbunit/BackendClient.xml", strategy = SeedStrategy.CLEAN_INSERT)
+@Disabled
 public class BackendClientInfoPersistenceServiceITCase {
 
 //    private static ConfigurableApplicationContext APPLICATION_CONTEXT;
