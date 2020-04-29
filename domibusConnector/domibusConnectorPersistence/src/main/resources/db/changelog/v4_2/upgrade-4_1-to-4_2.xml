@@ -10,7 +10,7 @@
     <include file="upgrade-4_1-to-4_2_fix_evidence_step_problem.xml" relativeToChangelogFile="true" />
     <include file="upgrade-4_1-to-4_2_update_pmode_properties.xml" relativeToChangelogFile="true" />
     <include file="upgrade-4_1-to-4_2_multiple_fixes.xml" relativeToChangelogFile="true" />
-
+    <include file="upgrade-4_1-to-4_2-extend_origsender_finalrecipient_field_length.xml" relativeToChangelogFile="true" />
 
     <changeSet id="up1_up1_changelog-domibus-4.1_002_pre_setup_tag" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
         <insert tableName="DC_DB_VERSION">
