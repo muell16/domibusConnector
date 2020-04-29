@@ -76,6 +76,16 @@
                                   constraintName="FK_DOMIBUS_CONNECTOR_BIGDATA"/>
     </changeSet>
 
+    <changeSet id="update_mysql_table_drop_fk_on_DOMIBUS_CONNECTOR_USER_PWD" author="SKS" dbms="mysql"
+               onValidationFail="MARK_RAN" failOnError="false">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_USER_PWD"
+                                  constraintName="FK_DOMIBUS_CONNECTOR_USER_PWD_DOMIBUS_CONNECTOR_USER"/>
+    </changeSet>
+
 
     <changeSet id="update_mysql_table_drop_fk_on_DOMIBUS_CONNECTOR_BACK_2_S" author="SKS" dbms="mysql"
                onValidationFail="MARK_RAN" failOnError="false">
