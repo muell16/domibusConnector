@@ -32,8 +32,8 @@ public class HandWrittenDatabaseScriptsITCase {
     public static List<TestDatabaseFactory> TEST_DATABASE_FACTORIES_LIST = Stream
             .of(
                     H2TestDatabaseFactory.h2Oracle(),
-                    H2TestDatabaseFactory.h2Mysql(),
-//                    new MysqlTestDatabaseFactory(), //special mysql syntax does not work with H2
+//                    H2TestDatabaseFactory.h2Mysql(), //special mysql syntax does not work with H2
+                    new MysqlTestDatabaseFactory(),
                     new OracleTestDatabaseFactory(),
                     new MysqlContainerTestDatabaseFactory()
                     //new PostgresContainerTestDatabaseFactory() //not supported yet!

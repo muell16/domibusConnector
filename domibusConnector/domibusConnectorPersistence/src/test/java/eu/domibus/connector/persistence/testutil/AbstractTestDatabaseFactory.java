@@ -79,10 +79,10 @@ public abstract class AbstractTestDatabaseFactory implements TestDatabaseFactory
             Assumptions.assumeTrue(true, "Cannot provide db with data in version " + version);
         }
         Assumptions.assumeTrue("true".equalsIgnoreCase(System.getProperty("test.db.mysql.enabled")),
-                String.format("\nNative Mysql not available! Enable by setting following properties" +
+                String.format("\nNative Mysql not available! Enable by setting following system properties" +
                         "\ntest.db.%1$s.enabled=true" +
                         "\ntest.db.%1$s.driverclassname=<driverClassName>" +
-                        "\ntest.db.%1$s.url=<mysql driver url>" +
+                        "\ntest.db.%1$s.url=<driver url>" +
                         "\ntest.db.%1$s.username=<username>" +
                         "\ntest.db.%1$s.password=<password>", getDatabaseType())
         );
