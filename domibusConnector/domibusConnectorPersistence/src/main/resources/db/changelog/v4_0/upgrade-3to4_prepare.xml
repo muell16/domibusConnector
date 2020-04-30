@@ -33,7 +33,7 @@
             <tableExists tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"/>
         </preConditions>
         <comment>Create temp table of DOMIBUS_CONNECTOR_MESSAGE_INFO</comment>
-        <renameTable oldTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" newTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO_OLD"/>
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" newTableName="DC_MSG_INFO_OLD"/>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_004_pre_setup" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">
@@ -49,7 +49,7 @@
             <tableExists tableName="DOMIBUS_CONNECTOR_MSG_ERROR"/>
         </preConditions>
         <comment>Create temp table of DOMIBUS_CONNECTOR_MSG_ERROR</comment>
-        <renameTable oldTableName="DOMIBUS_CONNECTOR_MSG_ERROR" newTableName="DOMIBUS_CONNECTOR_MSG_ERROR_OLD"/>
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_MSG_ERROR" newTableName="MSG_ERROR_OLD"/>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_006_pre_setup" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">
@@ -65,7 +65,7 @@
             <tableExists tableName="DOMIBUS_CONNECTOR_SEQ_STORE"/>
         </preConditions>
         <comment>Create temp table of DOMIBUS_CONNECTOR_SEQ_STORE</comment>
-        <renameTable oldTableName="DOMIBUS_CONNECTOR_SEQ_STORE" newTableName="DOMIBUS_CONNECTOR_SEQ_STORE_OLD"/>
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_SEQ_STORE" newTableName="SEQ_STORE_OLD"/>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_008_pre_setup" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">

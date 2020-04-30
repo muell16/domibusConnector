@@ -40,9 +40,9 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.0';]]></sqlCheck>
             <tableExists tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" />
-            <tableExists tableName="DOMIBUS_CONNECTOR_MESSAGE_INFO_OLD" />
+            <tableExists tableName="DC_MSG_INFO_OLD" />
         </preConditions>
-        <sql>INSERT INTO DOMIBUS_CONNECTOR_MESSAGE_INFO (ID, MESSAGE_ID, FROM_PARTY_ID, FROM_PARTY_ROLE, TO_PARTY_ID, TO_PARTY_ROLE, ORIGINAL_SENDER, FINAL_RECIPIENT, SERVICE, ACTION, CREATED, UPDATED) SELECT ID, MESSAGE_ID, FROM_PARTY_ID, FROM_PARTY_ROLE, TO_PARTY_ID, TO_PARTY_ROLE, ORIGINAL_SENDER, FINAL_RECIPIENT, SERVICE, ACTION, CREATED, UPDATED FROM DOMIBUS_CONNECTOR_MESSAGE_INFO_OLD</sql>
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_MESSAGE_INFO (ID, MESSAGE_ID, FROM_PARTY_ID, FROM_PARTY_ROLE, TO_PARTY_ID, TO_PARTY_ROLE, ORIGINAL_SENDER, FINAL_RECIPIENT, SERVICE, ACTION, CREATED, UPDATED) SELECT ID, MESSAGE_ID, FROM_PARTY_ID, FROM_PARTY_ROLE, TO_PARTY_ID, TO_PARTY_ROLE, ORIGINAL_SENDER, FINAL_RECIPIENT, SERVICE, ACTION, CREATED, UPDATED FROM DC_MSG_INFO_OLD</sql>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_025_copy_evidences_table" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">
@@ -55,18 +55,18 @@
     <changeSet id="up1_3to4_upgrade_026_copy_msg_error_table" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.0';]]></sqlCheck>
-            <tableExists tableName="DOMIBUS_CONNECTOR_MSG_ERROR_OLD" />
+            <tableExists tableName="MSG_ERROR_OLD" />
             <tableExists tableName="DOMIBUS_CONNECTOR_MSG_ERROR" />
         </preConditions>
-        <sql>INSERT INTO DOMIBUS_CONNECTOR_MSG_ERROR (ID, MESSAGE_ID, ERROR_MESSAGE, DETAILED_TEXT, ERROR_SOURCE, CREATED) SELECT ID, MESSAGE_ID, ERROR_MESSAGE, DETAILED_TEXT, ERROR_SOURCE, CREATED FROM DOMIBUS_CONNECTOR_MSG_ERROR_OLD</sql>
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_MSG_ERROR (ID, MESSAGE_ID, ERROR_MESSAGE, DETAILED_TEXT, ERROR_SOURCE, CREATED) SELECT ID, MESSAGE_ID, ERROR_MESSAGE, DETAILED_TEXT, ERROR_SOURCE, CREATED FROM MSG_ERROR_OLD</sql>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_027_copy_seq_table" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.0';]]></sqlCheck>
-            <tableExists tableName="DOMIBUS_CONNECTOR_SEQ_STORE_OLD" />
+            <tableExists tableName="SEQ_STORE_OLD" />
             <tableExists tableName="DOMIBUS_CONNECTOR_SEQ_STORE" />
         </preConditions>
-        <sql>INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) SELECT SEQ_NAME, SEQ_VALUE FROM DOMIBUS_CONNECTOR_SEQ_STORE_OLD</sql>
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_SEQ_STORE (SEQ_NAME, SEQ_VALUE) SELECT SEQ_NAME, SEQ_VALUE FROM SEQ_STORE_OLD</sql>
     </changeSet>
 
 
