@@ -32,7 +32,7 @@ on every connector node, quartz must also be aware of running within a cluster.
 === Configuration
 
 
-== Configure Message Server
+==== Configure Message Server
 
 The JMS Server is configured by the spring-framework so the default spring-properties can be uses:
 
@@ -46,7 +46,7 @@ spring.activemq.user=
 Other JMS-providers are also supported as long as they have a spring-support and the required libraries
 are on the java-classpath.
 
-== Configure Quartz
+==== Configure Quartz
 
 ----
 spring.quartz.properties.org.quartz.jobStore.isClustered=true
@@ -54,5 +54,10 @@ spring.quartz.properties.org.quartz.scheduler.instanceName = DomibusConnectorClu
 spring.quartz.properties.org.quartz.scheduler.instanceId = AUTO
 ----
 
+
+=== Backend and Gateway Connection
+
+As the connector exposes webservices to gateway and the backends, this
+services should be made fault-tolerant with an load-balancer.
 
 

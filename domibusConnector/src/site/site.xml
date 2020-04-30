@@ -40,6 +40,7 @@
             <item name="Backend configuration" href="installation/backend_configuration.html"/>
             <item name="Message Routing" href="doc/backend_message_routing.html"/>
             <item name="Loopback message sending" href="doc/loopback_message_sending.html"/>
+            <item name="Notes on HA" href="doc/ha.html" />
         </menu>
 
         <menu ref="modules" />
