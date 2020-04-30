@@ -48,9 +48,9 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.0';]]></sqlCheck>
             <tableExists tableName="DOMIBUS_CONNECTOR_EVIDENCE" />
-            <tableExists tableName="DOMIBUS_CONNECTOR_EVIDENCES_OLD" />
+            <tableExists tableName="DC_EVIDENCES_OLD" />
         </preConditions>
-        <sql>INSERT INTO DOMIBUS_CONNECTOR_EVIDENCE (ID, MESSAGE_ID, TYPE, EVIDENCE, DELIVERED_NAT, DELIVERED_GW, UPDATED) SELECT ID, MESSAGE_ID, TYPE, EVIDENCE, DELIVERED_NAT, DELIVERED_GW, UPDATED FROM DOMIBUS_CONNECTOR_EVIDENCES_OLD</sql>
+        <sql>INSERT INTO DOMIBUS_CONNECTOR_EVIDENCE (ID, MESSAGE_ID, TYPE, EVIDENCE, DELIVERED_NAT, DELIVERED_GW, UPDATED) SELECT ID, MESSAGE_ID, TYPE, EVIDENCE, DELIVERED_NAT, DELIVERED_GW, UPDATED FROM DC_EVIDENCES_OLD</sql>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_026_copy_msg_error_table" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">

@@ -577,6 +577,13 @@
                 <artifactId>postgresql</artifactId>
                 <version>42.2.8.jre7</version>
             </dependency>
+            <!-- not part of any public maven repo -->
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>12.2.0.1</version>
+                <scope>runtime</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>

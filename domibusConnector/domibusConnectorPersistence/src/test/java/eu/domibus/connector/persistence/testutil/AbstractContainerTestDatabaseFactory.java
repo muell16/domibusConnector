@@ -68,11 +68,6 @@ public abstract class AbstractContainerTestDatabaseFactory implements TestDataba
         dbContainer.withPassword("test");
         dbContainer.start();
 
-//        try {
-//            dbContainer.createConnection();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
 
         testDatabase.jdbcDatabaseContainer = dbContainer;
         testDatabase.version = version;

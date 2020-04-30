@@ -22,7 +22,7 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.1.5';]]></sqlCheck>
         </preConditions>
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="PROPERTY_NAME" constraintName="unique_property_name_at_domconprop"/>
+        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_PROPERTY" columnNames="PROPERTY_NAME" constraintName="unq_con_property_name"/>
     </changeSet>
 
     <changeSet id="up1_up1_changelog-domibus-4.1_002_pre_setup_tag" author="SKS" onValidationFail="MARK_RAN" failOnError="false">

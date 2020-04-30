@@ -142,8 +142,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc7</artifactId>
-                    <version>12.1.0.1</version>
+                    <artifactId>ojdbc8</artifactId>
                 </dependency>
             </dependencies>
         </profile>

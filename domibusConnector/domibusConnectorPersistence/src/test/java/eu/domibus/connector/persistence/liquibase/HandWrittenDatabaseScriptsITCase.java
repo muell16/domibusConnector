@@ -31,12 +31,11 @@ public class HandWrittenDatabaseScriptsITCase {
 
     public static List<TestDatabaseFactory> TEST_DATABASE_FACTORIES_LIST = Stream
             .of(
+                    new OracleContainerTestDatabaseFactory(),
                     H2TestDatabaseFactory.h2Oracle(),
-//                    H2TestDatabaseFactory.h2Mysql(), //special mysql syntax does not work with H2
                     new MysqlTestDatabaseFactory(),
                     new OracleTestDatabaseFactory(),
                     new MysqlContainerTestDatabaseFactory()
-                    //new PostgresContainerTestDatabaseFactory() //not supported yet!
             ).collect(Collectors.toList());
 
 

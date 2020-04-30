@@ -25,7 +25,7 @@
             <tableExists tableName="DOMIBUS_CONNECTOR_EVIDENCES"/>
         </preConditions>
         <comment>Create temp table of DOMIBUS_CONNECTOR_EVIDENCES</comment>
-        <renameTable oldTableName="DOMIBUS_CONNECTOR_EVIDENCES" newTableName="DOMIBUS_CONNECTOR_EVIDENCES_OLD"/>
+        <renameTable oldTableName="DOMIBUS_CONNECTOR_EVIDENCES" newTableName="DC_EVIDENCES_OLD"/>
     </changeSet>
     <changeSet id="up1_3to4_upgrade_003_pre_setup" author="StephanSpindler">
         <preConditions onFail="MARK_RAN">

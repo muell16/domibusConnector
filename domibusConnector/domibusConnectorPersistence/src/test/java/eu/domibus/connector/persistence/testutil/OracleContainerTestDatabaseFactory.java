@@ -33,27 +33,35 @@ public class OracleContainerTestDatabaseFactory extends AbstractContainerTestDat
         return "Oracle within Docker";
     }
 
+
     protected JdbcDatabaseContainer getDatabaseContainer(String version) {
 
-        OracleContainer oracle = new OracleContainer("store/oracle/database-enterprices:12.2.0.1-slim");
-        oracle.withEnv("DB_SID", SID)
-                .withEnv("DB_PASSWD", DB_PASSWORD)
-                .withEnv("DB_DOMAIN", DB_DOMAIN)
-                .withEnv("DB_BUNDLE", "basic");
+        OracleContainer oracle = new OracleContainer("oracleinanutshell/oracle-xe-11g:1.0.0");
+
+        oracle
+            .withUsername("system")
+            .withPassword("oracle");
+
 
         return oracle;
     }
 
 
     public TestDatabase createNewDatabase(String version) {
-        TestDatabase newDatabase = super.createNewDatabase(version);
+        ContainerTestDatabase testDatabase = new ContainerTestDatabase();
+        JdbcDatabaseContainer dbContainer = getDatabaseContainer(version);
+        dbContainer.start();
+
+        testDatabase.jdbcDatabaseContainer = dbContainer;
+        testDatabase.version = version;
+
+        String driverClassName = dbContainer.getDriverClassName();
 
         if (version != null) {
-            String scriptFile = "/dbscripts/test/oracle/oracle" + version + ".sql";
+            String scriptFile = "/dbscripts/test/oracle/oracle_" + version + ".sql";
             LOGGER.info("Loading initial script from [{}]", scriptFile);
             try {
-//            Connection connection = newDatabase.getDataSource().getConnection("test", "test");
-                Connection connection = newDatabase.getDataSource().getConnection();
+                Connection connection = testDatabase.getDataSource().getConnection();
 
                 ScriptUtils.executeSqlScript(connection, new ClassPathResource(scriptFile));
             } catch (SQLException e) {
@@ -61,7 +69,7 @@ public class OracleContainerTestDatabaseFactory extends AbstractContainerTestDat
             }
         }
 
-        return newDatabase;
+        return testDatabase;
 
     }
 

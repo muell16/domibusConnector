@@ -3,14 +3,25 @@
 
 
 
-
-    <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_2">
+    <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_2.0">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+            <tableExists tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" />
+        </preConditions>
+        <renameTable oldTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" newTableName="DC_MSGCNT_DETSIG" />
+    </changeSet>
+
+
+    <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_2.1">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+            <not>
+                <tableExists tableName="DC_MSGCNT_DETSIG" />
+            </not>
         </preConditions>
         <comment>This changesets creates a table which is used for detached signatures, from
         message documents, attachments, ...</comment>
-        <createTable tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE">
+        <createTable tableName="DC_MSGCNT_DETSIG">
             <column name="ID" type="${id.type}" >
                 <constraints nullable="false" />
             </column>
@@ -23,10 +34,10 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
             <not>
-                <primaryKeyExists tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" />
+                <primaryKeyExists tableName="DC_MSGCNT_DETSIG" />
             </not>
         </preConditions>
-        <addPrimaryKey tableName="DC_MSG_CONTENT_DETACHED_SIGNATURE" columnNames="ID" constraintName="PK_DETACHED_SIGNATURE"/>
+        <addPrimaryKey tableName="DC_MSGCNT_DETSIG" columnNames="ID" constraintName="PK_DETACHED_SIGNATURE"/>
     </changeSet>
 
     <changeSet author="StephanSpindler" id="changelog-largefiles_remove_serialize-4.2_3">
@@ -52,8 +63,8 @@
         </preConditions>
         <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MSG_CONT"
                                  baseColumnNames="DETACHED_SIGNATURE_ID"
-                                 constraintName="FK_detached_sig_msg_cont"
-                                 referencedTableName="DC_MSG_CONTENT_DETACHED_SIGNATURE"
+                                 constraintName="FK_detsig_msgcont"
+                                 referencedTableName="DC_MSGCNT_DETSIG"
                                  referencedColumnNames="ID"/>
     </changeSet>
 

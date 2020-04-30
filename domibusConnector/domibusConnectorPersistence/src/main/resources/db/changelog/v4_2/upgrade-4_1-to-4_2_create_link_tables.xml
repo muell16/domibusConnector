@@ -154,7 +154,7 @@
         <addPrimaryKey tableName="DC_TRANSPORT_STEP_STATUS" columnNames="TRANSPORT_STEP_ID, STATE" constraintName="PK_DC_TRANSPORT_STEP_STATUS"/>
         <addForeignKeyConstraint baseTableName="DC_TRANSPORT_STEP_STATUS"
                                  baseColumnNames="TRANSPORT_STEP_ID"
-                                 constraintName="FK_transportstepstatus_transportstep"
+                                 constraintName="FK_trst_trstst"
                                  referencedTableName="DC_TRANSPORT_STEP"
                                  referencedColumnNames="ID"/>
     </changeSet>
