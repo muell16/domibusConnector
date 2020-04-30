@@ -19,11 +19,6 @@
             <column name="DIRECTION_TARGET" type="java.sql.Types.VARCHAR(20)"/>
         </addColumn>
     </changeSet>
-    <changeSet id="enable_loopback_messaging_support_in_db_create_unique_constraints" author="domibusConnector">
-        <comment>JUEUSW-75 create unique constraints on message direction_target</comment>
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="EBMS_MESSAGE_ID,DIRECTION_TARGET" constraintName="UQ_DC_MSG_EBMSID_TARGET"/>
-        <addUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" columnNames="BACKEND_MESSAGE_ID,DIRECTION_TARGET" constraintName="UQ_DC_MSG_NATID_TARGET"/>
-    </changeSet>
     <changeSet id="migrate_msg_direction_values" author="SKS">
         <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE SET DIRECTION_TARGET='GATEWAY' WHERE DIRECTION = 'NAT_TO_GW' OR DIRECTION='CON_TO_GW';</sql>
         <sql>UPDATE DOMIBUS_CONNECTOR_MESSAGE SET DIRECTION_TARGET='BACKEND' WHERE DIRECTION = 'GW_TO_NAT' OR DIRECTION='CON_TO_NAT';</sql>

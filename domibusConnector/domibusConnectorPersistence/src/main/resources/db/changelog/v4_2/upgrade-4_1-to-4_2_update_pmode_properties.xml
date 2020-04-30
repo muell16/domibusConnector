@@ -53,6 +53,21 @@
     </changeSet>
 
 
+
+    <!-- add a technical key to party table, service table and action table -->
+    <changeSet id="drop_fk_on_message_info_table_fk_naming_variant" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
+        <comment>Drop foreign keys, so we can change the referenced primary keys on the service, action and party table</comment>
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_1" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_2" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_3" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_4" />
+        <dropForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO" constraintName="FK_DOMIBUS_CONNECTOR_MESSAGE_I" />
+    </changeSet>
+
+
     <!-- add a technical key to party table, service table and action table -->
     <changeSet id="drop_fk_on_message_info_table" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
         <preConditions onFail="MARK_RAN">
@@ -134,21 +149,23 @@
         <addNotNullConstraint columnDataType="${id.type}" tableName="DOMIBUS_CONNECTOR_PARTY" columnName="ID_GEN" constraintName="party_notnull_idgen" />
     </changeSet>
 
-    <changeSet id="modify_party_table_create_autoincrement_id_column_other" author="SKS">
+    <changeSet id="modify_party_table_create_autoincrement_id_column_other_dbms" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
             <not>
                 <dbms type="mysql"/>
             </not>
         </preConditions>
+        <comment>Create and fill ID_GEN column with values from temporary sequence</comment>
         <createSequence sequenceName="temp_seq" />
         <addColumn tableName="DOMIBUS_CONNECTOR_PARTY">
             <column name="ID_GEN" type="${id.type}" />
         </addColumn>
 <!--        <addDefaultValue tableName="DOMIBUS_CONNECTOR_PARTY" columnName="ID_GEN" defaultValueSequenceNext="ID_GEN" />-->
-        <update tableName="DOMIBUS_CONNECTOR_PARTY" >
-            <column name="ID_GEN" defaultValueSequenceNext="temp_seq"></column>
-        </update>
+<!--        <update tableName="DOMIBUS_CONNECTOR_PARTY" >-->
+<!--            <column name="ID_GEN" defaultValueSequenceNext="temp_seq"></column>-->
+<!--        </update>-->
+        <sql>UPDATE DOMIBUS_CONNECTOR_PARTY SET ID_GEN=temp_seq.nextval;</sql>
 
         <dropSequence sequenceName="temp_seq" />
     </changeSet>
@@ -217,7 +234,7 @@
         <addNotNullConstraint columnDataType="${id.type}" tableName="DOMIBUS_CONNECTOR_ACTION" columnName="ID_GEN" constraintName="action_notnull_idgen" />
     </changeSet>
 
-    <changeSet id="modify_action_table_create_autoincrement_id_column_other" author="SKS">
+    <changeSet id="modify_action_table_create_autoincrement_id_column_other_dbms" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
             <not>
@@ -230,9 +247,10 @@
 <!--                <constraints nullable="false" />-->
             </column>
         </addColumn>
-        <update tableName="DOMIBUS_CONNECTOR_ACTION" >
-            <column name="ID_GEN" defaultValueSequenceNext="temp_seq"></column>
-        </update>
+<!--        <update tableName="DOMIBUS_CONNECTOR_ACTION" >-->
+<!--            <column name="ID_GEN" defaultValueSequenceNext="temp_seq"></column>-->
+<!--        </update>-->
+        <sql>UPDATE DOMIBUS_CONNECTOR_ACTION SET ID_GEN=temp_seq.nextval;</sql>
         <dropSequence sequenceName="temp_seq" />
     </changeSet>
 
@@ -267,14 +285,12 @@
         <dropPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE" constraintName="PK_DOMIBUS_CONNECTOR_SERVICE"/>
     </changeSet>
 
-    <changeSet id="modify_service_table_add_columns" author="SKS">
+    <changeSet id="modify_service_table_add_new_technical_pk_column" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
         </preConditions>
         <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
-            <column name="ID" type="${id.type}">
-                <constraints nullable="false" />
-            </column>
+            <column name="ID" type="${id.type}" />
         </addColumn>
         <addColumn tableName="DOMIBUS_CONNECTOR_SERVICE">
             <column name="FK_PMODE_SET" type="${id.type}" />
@@ -299,7 +315,7 @@
         <addNotNullConstraint columnDataType="${id.type}" tableName="DOMIBUS_CONNECTOR_SERVICE" columnName="ID_GEN" constraintName="service_notnull_idgen" />
     </changeSet>
 
-    <changeSet id="modify_service_table_create_autoincrement_id_column_other" author="SKS">
+    <changeSet id="modify_service_table_create_autoincrement_id_column_other_dbms" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
             <not>
@@ -312,9 +328,10 @@
 <!--                <constraints nullable="false" />-->
             </column>
         </addColumn>
-        <update tableName="DOMIBUS_CONNECTOR_SERVICE" >
-            <column name="ID_GEN" defaultValueSequenceNext="temp_seq"></column>
-        </update>
+<!--        <update tableName="DOMIBUS_CONNECTOR_SERVICE" >-->
+<!--            <column name="ID_GEN" defaultValueSequenceNext="temp_seq"></column>-->
+<!--        </update>-->
+        <sql>UPDATE DOMIBUS_CONNECTOR_SERVICE SET ID_GEN=temp_seq.nextval;</sql>
         <dropSequence sequenceName="temp_seq" />
     </changeSet>
 
@@ -329,7 +346,7 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
         </preConditions>
-<!--        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_SERVICE" columnName="ID" columnDataType="${id.type}" />-->
+        <addNotNullConstraint tableName="DOMIBUS_CONNECTOR_SERVICE" columnName="ID" columnDataType="${id.type}" />
         <addPrimaryKey tableName="DOMIBUS_CONNECTOR_SERVICE"
                        columnNames="ID"
                        constraintName="PK_DOMIBUS_CONNECTOR_SERVICE" />
@@ -429,6 +446,16 @@
                                  referencedColumnNames="ID" />
     </changeSet>
 
+    <changeSet id="create_fk_message_info_table" author="SKS">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_MESSAGE_INFO"
+                                 baseColumnNames="MESSAGE_ID"
+                                 constraintName="FK_MSGINFO_MSG"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID" />
+    </changeSet>
 
 
 </databaseChangeLog>
