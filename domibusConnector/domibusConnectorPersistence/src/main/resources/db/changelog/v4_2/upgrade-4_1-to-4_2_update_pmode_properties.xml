@@ -446,7 +446,7 @@
                                  referencedColumnNames="ID" />
     </changeSet>
 
-    <changeSet id="create_fk_message_info_table" author="SKS">
+    <changeSet id="create_fk_message_info_table_1" author="SKS" onValidationFail="MARK_RAN" failOnError="false">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>
         </preConditions>

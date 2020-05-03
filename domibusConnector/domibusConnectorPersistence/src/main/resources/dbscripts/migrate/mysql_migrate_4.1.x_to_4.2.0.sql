@@ -109,7 +109,7 @@ create table DC_TRANSPORT_STEP_STATUS
 );
 
 
-create table DC_MSG_CONTENT_DETACHED_SIGNATURE
+create table DC_MSGCNT_DETSIG
 (
     ID DECIMAL(10,0) not null,
     CONTENT DECIMAL(10,0) not null,

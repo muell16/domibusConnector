@@ -10,7 +10,7 @@ import static eu.domibus.connector.persistence.model.PDomibusConnectorPersistenc
 @Table(name = PDomibusConnectorDetachedSignature.TABLE_NAME)
 public class PDomibusConnectorDetachedSignature {
 
-    public static final String TABLE_NAME = "DC_MSG_CONTENT_DETACHED_SIGNATURE";
+    public static final String TABLE_NAME = "DC_MSGCNT_DETSIG";
 
     @Id
     @Column(name="ID")

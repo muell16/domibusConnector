@@ -8,6 +8,33 @@
 -- 
 
 
+
+
+-- drop all FKs
+-- they will be recreated at the end of the script
+-- note: if the FK cannot be found, just remove all FKs from your DB
+-- consult the oracle manual to do so:
+-- Get all Constraints within schema
+--
+-- SELECT A.TABLE_NAME,
+--       A.COLUMN_NAME,
+--       A.CONSTRAINT_NAME,
+--      C.OWNER
+-- FROM   ALL_CONS_COLUMNS A,
+--       ALL_CONSTRAINTS C
+-- WHERE  A.CONSTRAINT_NAME = C.CONSTRAINT_NAME
+-- AND    C.CONSTRAINT_TYPE = 'R'
+-- AND    C.OWNER = '<dbLoginName/schema>';
+
+ALTER TABLE DOMIBUS_CONNECTOR_EVIDENCES DROP CONSTRAINT dc_evidences_fk_message;
+ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO DROP CONSTRAINT dc_msg_info_fk_message;
+ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO DROP CONSTRAINT dc_msg_info_fk_to_party;
+ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO DROP CONSTRAINT dc_msg_info_fk_from_party;
+ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO DROP CONSTRAINT dc_msg_info_fk_service;
+ALTER TABLE DOMIBUS_CONNECTOR_MESSAGE_INFO DROP CONSTRAINT dc_msg_info_fk_action;
+ALTER TABLE DOMIBUS_CONNECTOR_MSG_ERROR DROP CONSTRAINT dc_msg_error_fk_message;
+
+
 -- drop quartz tables
 DROP TABLE DCON_QRTZ_BLOB_TRIGGERS;
 DROP TABLE DCON_QRTZ_CALENDARS;
