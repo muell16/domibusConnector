@@ -92,7 +92,7 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         bigDataReference.setStorageProviderName(this.getProviderName());
 
         String messageFolderName = connectorMessageId;
-        Path messageFolder = getStoragePath().resolve(messageFolderName); // //new File(f.getAbsolutePath() + File.separator + folder);
+        Path messageFolder = getStoragePath().resolve(messageFolderName);
         try {
             LOGGER.debug("Creating message folder [{}]", messageFolder);
             Files.createDirectory(messageFolder);
@@ -200,15 +200,6 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
         } catch (IOException e) {
             LOGGER.warn("#deleteFolderIfEmpty:: An IOException occured while trying to delete directory [" + messagePath + "]", e);
         }
-
-        try {
-            //call list to avoid strange behaviour on windows systems
-            Files.list(messagePath.getParent());
-        } catch (IOException e) {
-            //just ignore
-        }
-        messagePath = null;
-
     }
 
     @Override
