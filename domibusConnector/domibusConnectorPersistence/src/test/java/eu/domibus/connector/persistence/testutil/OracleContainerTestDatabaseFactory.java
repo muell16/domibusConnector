@@ -68,14 +68,13 @@ public class OracleContainerTestDatabaseFactory extends AbstractContainerTestDat
                 throw new RuntimeException(e);
             }
         }
-
         return testDatabase;
-
     }
 
     @Override
     public boolean isAvailable(String version) {
-        return availableVersions.contains(version) || version == null;
+
+        return (availableVersions.contains(version) || version == null) && super.isDockerAndDriverAvailable(version);
     }
 
 
