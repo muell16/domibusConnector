@@ -13,9 +13,23 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-@ConfigurationProperties(prefix = "connector.persistence")
+@ConfigurationProperties(prefix = DomibusConnectorPersistenceProperties.PREFIX)
 @PropertySource("classpath:eu/domibus/connector/persistence/config/default-persistence-config.properties")
 public class DomibusConnectorPersistenceProperties {
+
+
+    public static final String PREFIX = "connector.persistence";
+    /**
+     * Which big LargeFileImpl should be used by default
+     *  part of the connector are
+     *  <ul>
+     *      <li>FileBased ({@link LargeFilePersistenceServiceFilesystemImpl#getClass()}</li>
+     *      <li>DatabaseBased ({@link LargeFilePersistenceServiceJpaImpl#getClass()}</li>
+     *  </ul>
+     *
+     *
+     */
+    public Class<? extends LargeFilePersistenceProvider> defaultLargeFileProviderClass = LargeFilePersistenceServiceFilesystemImpl.class;
 
     /**
      * Which big LargeFileImpl should be used by default
@@ -27,7 +41,7 @@ public class DomibusConnectorPersistenceProperties {
      *
      *
      */
-    public Class<? extends LargeFilePersistenceProvider> defaultLargeFileProviderClass = LargeFilePersistenceServiceFilesystemImpl.class;
+    public String defaultLargeFileProviderName;
 
     public Class<? extends LargeFilePersistenceProvider> getDefaultLargeFileProviderClass() {
         return defaultLargeFileProviderClass;
@@ -35,5 +49,13 @@ public class DomibusConnectorPersistenceProperties {
 
     public void setDefaultLargeFileProviderClass(Class<? extends LargeFilePersistenceProvider> defaultLargeFileProviderClass) {
         this.defaultLargeFileProviderClass = defaultLargeFileProviderClass;
+    }
+
+    public String getDefaultLargeFileProviderName() {
+        return defaultLargeFileProviderName;
+    }
+
+    public void setDefaultLargeFileProviderName(String defaultLargeFileProviderName) {
+        this.defaultLargeFileProviderName = defaultLargeFileProviderName;
     }
 }

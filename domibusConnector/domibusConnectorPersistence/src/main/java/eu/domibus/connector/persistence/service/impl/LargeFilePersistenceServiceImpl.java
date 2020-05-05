@@ -6,11 +6,11 @@ import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistence
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorPersistenceProperties;
-import liquibase.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
@@ -36,16 +36,22 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     @PostConstruct
     public void init() {
         final Class<? extends LargeFilePersistenceProvider> defaultLargeFileProviderClass = domibusConnectorPersistenceProperties.getDefaultLargeFileProviderClass();
+        final String defaultProviderName = domibusConnectorPersistenceProperties.getDefaultLargeFileProviderName();
         LargeFilePersistenceProvider p = availableLargeFilePersistenceProvider
                 .stream()
-                .filter(largeFilePersistenceProvider -> defaultLargeFileProviderClass.isAssignableFrom(largeFilePersistenceProvider.getClass()))
+                //lookup for provider name first, and then for class name
+                .filter(largeFilePersistenceProvider ->
+                                (!StringUtils.isEmpty(defaultProviderName) && defaultProviderName.equals(largeFilePersistenceProvider.getProviderName()) ||
+                                (StringUtils.isEmpty(defaultProviderName) && defaultLargeFileProviderClass != null && defaultLargeFileProviderClass.isAssignableFrom(largeFilePersistenceProvider.getClass()))))
                 .findFirst()
                 .orElse(null);
         if (p == null) {
-            throw new RuntimeException(String.format("No LargeFilePersistenceProvider provider with Class [%s] is registered as spring bean!\n" +
-                    "The following LargeFilePersistenceProvider are available:\n[%s]",
+            throw new RuntimeException(String.format("No LargeFilePersistenceProvider provider with Class [%s] or Name [%s] is registered as spring bean!\n" +
+                    "The following LargeFilePersistenceProvider are available:\n[%s]\nPlease consider updating the configuration property [%s]",
                     defaultLargeFileProviderClass,
-                    getAvailableStorageProviderAsStringWithNewLine()
+                    defaultProviderName,
+                    getAvailableStorageProviderAsStringWithNewLine(),
+                    DomibusConnectorPersistenceProperties.PREFIX + "default-large-file-provider-name"
             ));
         } else {
             defaultLargeFilePersistenceProvider = p;
