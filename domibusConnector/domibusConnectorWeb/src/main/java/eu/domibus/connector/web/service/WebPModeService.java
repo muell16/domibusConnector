@@ -231,7 +231,8 @@ public class WebPModeService {
 					p.setPartyName(partyName);
 					p.setRole(role.getValue());
 					p.setPartyId(identifier.getPartyId());
-					p.setPartyIdType(partyIdTypes.get(identifier.getPartyIdType()).getValue());
+					String partyIdTypeValue = partyIdTypes.get(identifier.getPartyIdType()).getValue();
+					p.setPartyIdType(partyIdTypeValue);
 					return p;
 				});
 	}
