@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = { "spring.liquibase.change-log=classpath:/db/changelog/install.xml" }
 )
 @ActiveProfiles({PersistenceProfiles.STORAGE_DB_PROFILE_NAME, "test"})
+@Commit
 public class WebPModeServiceTest {
 
     @SpringBootApplication(

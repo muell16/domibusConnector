@@ -146,7 +146,6 @@
                 </executions>
                 <configuration>
                     <mainClass>eu.domibus.connector.web.VaadinWebConnectorStarter</mainClass>
-
                 </configuration>
             </plugin>
             <plugin>
