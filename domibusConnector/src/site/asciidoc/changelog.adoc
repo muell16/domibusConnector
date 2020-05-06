@@ -127,3 +127,14 @@ API changes!
 
 * The 4.2.x connector is compatible with all other 4.x connectors on e-Codex Message level.
 
+==== Testing:
+
+The Connector has been tested on
+
+* AIX, IBM JRE8, Tomcat 8.5.x, Oracle 18c
+* Windows 10, Adopt Open JDK, H2 Database/Oracle Express 11g
+
+
+Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
+
+
