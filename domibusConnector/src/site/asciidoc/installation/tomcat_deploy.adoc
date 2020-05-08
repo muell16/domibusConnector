@@ -1,23 +1,50 @@
 == DEPLOY ON TOMCAT
 
-The suggested way to deploy the application on an tomcat server is to define a new context which
+=== Quick Start
 
-* configures a datasource
-* loads the application
+ 1. Copy the properties file (connector.properties) and the logging configuration (log4j2.xml)
+    from (documentation/config/) into
+    ${CATALINA_BASE}/conf/connector/connector.properties
+ 2. Make your modifications to the connector.properties
+ 3. Put the domibusConnector.war into ${CATALINA_BASE}/webapps/connector.war
+    The connector will be served by tomcat under http://{HOST:PORT}/connector/
+
+
+
+=== War deployment
+
+The suggested way to deploy the application on tomcat is to drop the connector war into the
+webapps folder. It is also recommended that the connector is the only application which is deployed on
+the tomcat. With the default configuration tomcat will pick up that war and auto-deploy it.
+The connector will then look into the following places for the configuration:
+
+* ./config/connector.properties
+* ./conf/connector/connector.properties
+
+On tomcat this means the connector will look for the properties within
+
+* ${CATALINA_BASE}/config/connector.properties
+* ${CATALINA_BASE}/conf/connector/connector.properties
+
+==== Notes on CATALINA_BASE
+
+The variable CATALINA_BASE is set within the tomcat startup scripts, and points to
+the base directory of the tomcat instance. You can use this variable within
+connector.properties to reference paths/files.
+
+ eg. logging.config=${CATALINA_BASE}/conf/common/log4j2-common.xml
+
+
+=== Context Configuration Deployment
+
+If you want to pass more configuration or settings to the application. You can use the c
+ontext descriptors provided by tomcat. With the context descriptor you can:
+
+* configure a datasource
+* load the application
 * set some parameters for the application
 
-The delivered zip contains a example application context, which has been tested on windows 7 with tomcat 8.5.x
-
 For further information consult the tomcat documentation: https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context
-
-=== Tested Tomcat Version
-
-The deployment has been tested on following tomcat versions:
-
-* Apache Tomcat/8.5.x on Windows 7 with AdoptOpenJDK 1.8
-* Apache Tomcat/8.5.x on IBM AIX with IBM JRE 1.8
-
-=== Step-by-Step
 
 Copy the domibusConnectorTomcatStarter.war file to a location where the application server can read it. But *NOT* in the
 webapps folder (or any other folder where tomcat is auto deploying from). Because tomcat will automatically deploy it and you cannot
@@ -31,7 +58,7 @@ Restart your tomcat. During startup tomcat dedects the new context configuration
 and also deploys the domibusConnectorTomcatStarter.war from the specified path (docBase). Als the specified parameters are put into the servlet
 context and are available to the starting application.
 
-=== Description of the example context
+==== Description of the example context
 
 ----
 <Context docBase="<path to domibusConnectorWebAppModule.war>">  
