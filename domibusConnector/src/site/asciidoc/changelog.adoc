@@ -131,8 +131,25 @@ API changes!
 
 The Connector has been tested on
 
-* AIX, IBM JRE8, Tomcat 8.5.x, Oracle 18c
-* Windows 10, Adopt Open JDK, H2 Database/Oracle Express 11g
+|===
+| OS | Java | Application Server | Database
+
+| AIX
+| IBM JRE8
+| Tomcat 8.5.x
+| Oracle 18c
+
+| Windows 10
+| Adopt Open JDK 1.8.x
+| Tomcat 8.5.x
+| H2 Database 4.200 / Oracle Express 11g
+
+| Ubuntu 18.0.4 LTS
+| Open JDK 1.8.x
+| Tomcat 8.5.x
+| Mysql 5.7.x
+
+|===
 
 
 Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
