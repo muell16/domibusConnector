@@ -26,9 +26,7 @@
             <item name="Changelog" href="changelog.html"/>
             <item name="Architecture" href="architecture_overview.html"/>
             <item name="versioning" href="versioning.html"/>
-            <!-- <item name="Module" href="modules.html"/> -->
-            <!-- <item name="Use Cases" href="use_cases.html"/> -->
-            <!--<item name="Evidence" href="evidence.html" />-->
+            <item name="Database Structure" href="doc/database.html" />
         </menu>
         <menu name="Upgrade manuals">
             <item name="Upgrade to 4.2.0" href="upgrade/upgrade-4.2.0.html" />
