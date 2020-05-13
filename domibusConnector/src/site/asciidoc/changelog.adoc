@@ -152,8 +152,19 @@ The Connector has been tested on
 | Mysql Connector 8.0.x
 | Mysql 5.7.x
 
+| Ubuntu 20.04 LTS
+| Java 11.0.x
+| Tomcat 9
+| Mysql Connector 8.0.x
+| Mysql 8.0.x
+
 |===
 
 Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 
 
+=== 4.2.1
+
+==== Changes
+
+* Documentation updates

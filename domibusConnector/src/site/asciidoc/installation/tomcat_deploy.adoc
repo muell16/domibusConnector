@@ -5,9 +5,10 @@
  1. Copy the properties file (connector.properties) and the logging configuration (log4j2.xml)
     from (documentation/config/) into
     ${CATALINA_BASE}/conf/connector/connector.properties
- 2. Make your modifications to the connector.properties (GW-Address, eCodexSecurityLibSettings, ...)
- 3. Copy the database jdbc driver .jar into the tomcat lib folder
- 4. Put the domibusConnector.war into ${CATALINA_BASE}/webapps/connector.war
+ 2. Set the correct base path within log4j2.xml (must be writeable!)
+ 3. Make your modifications to the connector.properties (GW-Address, eCodexSecurityLibSettings, ...)
+ 4. Copy the database jdbc driver .jar into the tomcat lib folder
+ 5. Put the domibusConnector.war into ${CATALINA_BASE}/webapps/connector.war
     The connector will be served by tomcat under http://{HOST:PORT}/connector/
 
 
