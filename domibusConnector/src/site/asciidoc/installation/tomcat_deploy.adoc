@@ -39,8 +39,7 @@ connector.properties to reference paths/files.
 
 === Context Configuration Deployment
 
-If you want to pass more configuration or settings to the application. You can use the c
-ontext descriptors provided by tomcat. With the context descriptor you can:
+If you want to pass more configuration or settings to the application. You can use the context descriptors provided by tomcat. With the context descriptor you can:
 
 * configure a datasource
 * load the application

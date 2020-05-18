@@ -7,9 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.stream.Stream;
 
-import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -32,23 +30,37 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorStarter.class);
 
-    public static final String SPRING_CLOUD_BOOTSTRAP_NAME = "spring.cloud.bootstrap.name";
-    public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION = "spring.cloud.bootstrap.location";
-    public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
-    public static final String SPRING_CONFIG_NAME = "spring.config.name";
+    public static final String SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME = "spring.cloud.bootstrap.name";
+    public static final String SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME = "spring.cloud.bootstrap.location";
+    public static final String SPRING_CONFIG_LOCATION_PROPERTY_NAME = "spring.config.location";
+    public static final String SPRING_CONFIG_NAME_PROPERTY_NAME = "spring.config.name";
+
+    public static final String CONNECTOR_CONFIG_FILE_PROPERTY_NAME = "connector.config.file";
+    public static final String CONNECTOR_CONFIG_LOCATION_PROPERTY_NAME = "connector.config.location";
+
     public static final String DEFAULT_SPRING_CONFIG_NAME = "connector";
-
-    public static final String CONNECTOR_CONFIG_FILE = "connector.config.file";
-
-    public static final String CONNECTOR_CONFIG_LOCATION = "connector.config.location";
+    public static final String DEFAULT_SPRING_CONFIG_LOCATION = "classpath:/config/,file:./conf/,file:./conf/connector/,file:./config/,file:./config/connector/";
 
     private ServletContext servletContext;
+
+    String springConfigLocation = DEFAULT_SPRING_CONFIG_LOCATION;
+    String springConfigName = DEFAULT_SPRING_CONFIG_NAME;
+
+    String bootstrapConfigLocation = DEFAULT_SPRING_CONFIG_LOCATION;
+    String bootStrapConfigName = DEFAULT_SPRING_CONFIG_NAME;
+
+    Properties springApplicationProperties = new Properties();
 
     public static void main(String[] args) {
         runSpringApplication(args);
     }
 
     public static ConfigurableApplicationContext runSpringApplication(String[] args) {
+        DomibusConnectorStarter starter = new DomibusConnectorStarter();
+        return starter.run(args);
+    }
+
+    private ConfigurableApplicationContext run(String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         builder = configureApplicationContext(builder);
         SpringApplication springApplication = builder.build();
@@ -62,7 +74,7 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
         if (connectorConfigFile != null) {
             Path connectorConfigFilePath = Paths.get(connectorConfigFile);
             if (!Files.exists(connectorConfigFilePath)) {
-                String errorString = String.format("Cannot start because the via System Property [%s] provided config file [%s] mapped to path [%s] does not exist!", CONNECTOR_CONFIG_FILE, connectorConfigFile, connectorConfigFilePath);
+                String errorString = String.format("Cannot start because the via System Property [%s] provided config file [%s] mapped to path [%s] does not exist!", CONNECTOR_CONFIG_FILE_PROPERTY_NAME, connectorConfigFile, connectorConfigFilePath);
                 LOGGER.error(errorString);
                 throw new RuntimeException(errorString);
             }
@@ -77,8 +89,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
     public static @Nullable
-    String getConnectorConfigFile() {
-        String connectorConfigFile = System.getProperty(CONNECTOR_CONFIG_FILE);
+    String getConnectorConfigFilePropertyName() {
+        String connectorConfigFile = System.getProperty(CONNECTOR_CONFIG_FILE_PROPERTY_NAME);
         Properties springProperties = new Properties();
         if (connectorConfigFile != null) {
             connectorConfigFile = SystemPropertyUtils.resolvePlaceholders(connectorConfigFile);
@@ -88,15 +100,8 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
 
-//    public static Properties configureApplicationProperties() {
-//
-//        return springProperties;
-//    }
-
-
-    public static SpringApplicationBuilder configureApplicationContext(SpringApplicationBuilder application) {
-        String connectorConfigFile = getConnectorConfigFile();
-        Properties springProperties = new Properties();
+    public SpringApplicationBuilder configureApplicationContext(SpringApplicationBuilder application) {
+        String connectorConfigFile = getConnectorConfigFilePropertyName();
         if (connectorConfigFile != null) {
 
             int lastIndex = connectorConfigFile.contains(File.separator) ? connectorConfigFile.lastIndexOf(File.separatorChar) : connectorConfigFile.lastIndexOf("/");
@@ -105,32 +110,59 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
             String configName = connectorConfigFile.substring(lastIndex);
 
             LOGGER.info(String.format("Setting:\n%s=%s\n%s=%s\n%s=%s\n%s=%s",
-                    SPRING_CLOUD_BOOTSTRAP_NAME, configName,
-                    SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigLocation,
-                    SPRING_CONFIG_LOCATION, connectorConfigLocation,
-                    SPRING_CONFIG_NAME, configName));
+                    SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME, configName,
+                    SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, connectorConfigLocation,
+                    SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigLocation,
+                    SPRING_CONFIG_NAME_PROPERTY_NAME, configName));
 
-            springProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION, connectorConfigFile);
-            springProperties.setProperty(SPRING_CONFIG_LOCATION, connectorConfigLocation);
-            springProperties.setProperty(SPRING_CONFIG_NAME, configName);
+            springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, connectorConfigFile);
+            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, connectorConfigLocation);
+            springApplicationProperties.setProperty(SPRING_CONFIG_NAME_PROPERTY_NAME, configName);
 
         } else {
-            springProperties.setProperty(SPRING_CONFIG_LOCATION, "classpath:/config/,file:./conf/connector/,file:./config/");
-            springProperties.setProperty(SPRING_CONFIG_NAME, DEFAULT_SPRING_CONFIG_NAME);
-            LOGGER.warn("SystemProperty \"{}\" not given or not resolvable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE);
+            springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);
+            springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_NAME_PROPERTY_NAME, bootStrapConfigName);
+            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, springConfigLocation);
+            springApplicationProperties.setProperty(SPRING_CONFIG_NAME_PROPERTY_NAME, springConfigName);
+            LOGGER.warn("SystemProperty \"{}\" not given or not resolvable! Startup using default spring external configuration!", CONNECTOR_CONFIG_FILE_PROPERTY_NAME);
         }
-        application.properties(springProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...
+        application.properties(springApplicationProperties); //pass the mapped CONNECTOR_CONFIG_FILE to the spring properties...
         return application.sources(DomibusConnectorStarter.class);
     }
 
-
+    /**
+     * Will only be called if the Application is deployed within an web application server
+     * adds to the boostrap and spring config location search path a web application context
+     * dependent search path:
+     *  app deployed under context /connector will look also for config under [workingpath]/config/[webcontext]/,
+     *  [workingpath]/conf/[webcontext]/
+     *
+     * @param servletContext the servlet context
+     * @throws ServletException in case of an error @see {@link SpringBootServletInitializer#onStartup(ServletContext)} 
+     *
+     * {@inheritDoc}
+     *
+     */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         this.servletContext = servletContext;
+        if (servletContext != null) {
+
+            bootstrapConfigLocation = bootstrapConfigLocation +
+                    ",file:./config/" + servletContext + "/" +
+                    ",file:./conf/" + servletContext + "/";
+            springApplicationProperties.setProperty(SPRING_CLOUD_BOOTSTRAP_LOCATION_PROPERTY_NAME, bootstrapConfigLocation);
+
+            springConfigLocation = springConfigLocation +
+                    ",file:./config/" + servletContext + "/" +
+                    ",file:./conf/" + servletContext + "/";
+            springApplicationProperties.setProperty(SPRING_CONFIG_LOCATION_PROPERTY_NAME, springConfigLocation);
+
+        }
 
         //read logging.config from connector properties and set it before the application context ist started
         //so its already available for the spring logging servlet initializer to configure logging!
-        String connectorConfigFile = getConnectorConfigFile();
+        String connectorConfigFile = getConnectorConfigFilePropertyName();
         if (connectorConfigFile != null) {
             Properties p = loadConnectorConfigProperties(connectorConfigFile);
             String loggingConfig = p.getProperty("logging.config");
@@ -151,6 +183,10 @@ public class DomibusConnectorStarter extends SpringBootServletInitializer {
     }
 
 
+    /***
+     * {@inheritDoc}
+     *
+     */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return configureApplicationContext(application);
