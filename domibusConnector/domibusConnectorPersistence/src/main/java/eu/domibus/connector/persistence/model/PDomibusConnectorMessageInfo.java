@@ -41,11 +41,11 @@ public class PDomibusConnectorMessageInfo {
     private String finalRecipient;
 
     @ManyToOne
-    @JoinColumn(name = "SERVICE")
+    @JoinColumn(name = "FK_SERVICE")
     private PDomibusConnectorService service;
 
     @ManyToOne
-    @JoinColumn(name = "ACTION")
+    @JoinColumn(name = "FK_ACTION")
     private PDomibusConnectorAction action;
 
     @Column(name = "CREATED", nullable = false)
