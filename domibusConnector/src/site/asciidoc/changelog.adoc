@@ -168,3 +168,10 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 ==== Changes
 
 * Documentation updates
+
+
+=== 4.2.2
+
+==== Changes
+
+* Removed outdated pdfs from documentation

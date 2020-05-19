@@ -14,15 +14,15 @@
                 <include>*/**</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>
-            <outputDirectory>documentation/pdfs/</outputDirectory>
-            <includes>
-                <include>domibusConnector_AdministrationGuide.pdf</include>
-                <include>domibusConnector_InstallationGuide.pdf</include>
-                <include>e-Codex_key_trust_stores.pdf</include>
-            </includes>
-        </fileSet>
+<!--        <fileSet>-->
+<!--            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/docs/</directory>-->
+<!--            <outputDirectory>documentation/pdfs/</outputDirectory>-->
+<!--            <includes>-->
+<!--                <include>domibusConnector_AdministrationGuide.pdf</include>-->
+<!--                <include>domibusConnector_InstallationGuide.pdf</include>-->
+<!--                <include>e-Codex_key_trust_stores.pdf</include>-->
+<!--            </includes>-->
+<!--        </fileSet>-->
 <!--        <fileSet>-->
 <!--            <directory>${project.basedir}/../domibusConnectorDocumentation/src/main/resources/</directory>-->
 <!--            <outputDirectory>documentation/</outputDirectory>-->
