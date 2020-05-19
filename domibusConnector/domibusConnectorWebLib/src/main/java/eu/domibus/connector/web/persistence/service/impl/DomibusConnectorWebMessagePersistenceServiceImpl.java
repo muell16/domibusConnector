@@ -121,7 +121,8 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		message.setBackendClient(pMessage.getBackendName());
 		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
 		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
-//		message.setDirection(pMessage.getDirection().name());
+		DomibusConnectorMessageDirection domibusConnectorMessageDirection = DomibusConnectorMessageDirection.fromMessageTargetSource(pMessage.getDirectionSource(), pMessage.getDirectionTarget());
+		message.setDirection(domibusConnectorMessageDirection.toString());
 		message.setConfirmed(pMessage.getConfirmed());
 		message.setRejected(pMessage.getRejected());
 		message.setCreated(pMessage.getCreated());

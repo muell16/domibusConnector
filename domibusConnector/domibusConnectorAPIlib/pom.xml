@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.0-RC23</version>
+        <version>4.2.1</version>
     </parent>
     <artifactId>domibusConnectorAPIlib</artifactId>
     <packaging>jar</packaging>

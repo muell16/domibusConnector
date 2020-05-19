@@ -6,10 +6,10 @@
     </meta>
     <toc name="Table of Contents">
         <!-- <item name="Introduction" ref="installation/installation.md"/> -->
-        <item name="Deploy on Tomcat" ref="installation/tomcat_deploy.md"/>
+        <item name="Deploy on Tomcat" ref="installation/tomcat_deploy.adoc"/>
         <!-- <item name="Database Setup" ref="installation/database.md" /> -->
-        <item name="Key Stores, Trust Stores - Certificates" ref="installation/certificates.html"/>
-        <item name="Backend Configuration" ref="installation/backend_configuration.html"/>
+        <item name="Key Stores, Trust Stores - Certificates" ref="installation/certificates.adoc"/>
+        <item name="Backend Configuration" ref="installation/backend_configuration.adoc"/>
     </toc>
     <cover>
         <coverTitle>Domibus Connector Web App</coverTitle>
