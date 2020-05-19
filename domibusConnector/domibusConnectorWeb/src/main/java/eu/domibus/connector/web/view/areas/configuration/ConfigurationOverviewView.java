@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.configuration;
+package eu.domibus.connector.web.view.areas.configuration;
 
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
