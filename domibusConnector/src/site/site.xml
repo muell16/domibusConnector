@@ -40,6 +40,7 @@
             <item name="Loopback message sending" href="doc/loopback_message_sending.html"/>
             <item name="Notes on HA" href="doc/ha.html" />
             <item name="Testing Matrix" href="doc/testing_matrix.html" />
+            <item name="Startup Errors" href="installation/startup_errors.html" />
         </menu>
 
         <menu ref="modules" />
