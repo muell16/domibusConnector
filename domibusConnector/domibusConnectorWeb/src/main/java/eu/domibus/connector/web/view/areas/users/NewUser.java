@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.users;
+package eu.domibus.connector.web.view.areas.users;
 
 import java.util.EnumSet;
 

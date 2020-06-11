@@ -10,6 +10,7 @@ import java.security.cert.CertificateException;
 
 import javax.annotation.Resource;
 
+import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.domibus.connector.security.spring.SecurityToolkitConfigurationProperties;
 import eu.ecodex.dss.util.ECodexDataLoader;
 
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.europa.esig.dss.client.crl.OnlineCRLSource;
 import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.client.ocsp.OnlineOCSPSource;
@@ -52,7 +52,7 @@ public class DomibusConnectorCertificateVerifier extends CommonCertificateVerifi
 	@Value("${security.oj.url:null}")
 	String ojUrl;
 
-	@Resource(name="domibusConnectorProxyConfig")
+	@Autowired
 	DomibusConnectorProxyConfig proxyPreferenceManager;
 
 	public DomibusConnectorCertificateVerifier() {

@@ -36,6 +36,11 @@
         <addPrimaryKey tableName="DC_PMODE_SET" columnNames="ID" constraintName="PK_DC_PMODE_SET" />
     </changeSet>
 
+    <changeSet id="create_p_mode_set_table_default_values" author="SKS">
+        <addDefaultValue tableName="DC_PMODE_SET" columnName="ACTIVE" defaultValue="0" />
+        <addNotNullConstraint tableName="DC_PMODE_SET" columnName="ACTIVE" />
+    </changeSet>
+
     <changeSet id="create_default_p_mode_set" author="SKS">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0"><![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG >= 'V4.2.0';]]></sqlCheck>

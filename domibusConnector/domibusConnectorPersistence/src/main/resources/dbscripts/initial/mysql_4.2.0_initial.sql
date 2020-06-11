@@ -414,7 +414,7 @@ create table DC_MESSAGE_LANE_PROPERTY
 	constraint FK_MSGLANEPROPERTY_MSGLANE foreign key (DC_MESSAGE_LANE_ID) references DC_MESSAGE_LANE (ID)
 );
 
-
+INSERT INTO DC_MESSAGE_LANE (ID, NAME, DESCRIPTION) VALUES (1,'default_message_lane','default message lane');
 
 create table DC_LINK_PARTNER
 (

@@ -168,3 +168,17 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 ==== Changes
 
 * Documentation updates
+
+
+=== 4.2.2
+
+==== Changes
+
+* Removed outdated pdfs from documentation
+* Fix issue in update script for DC_PMODE_SET column active - added NOT NULL constraint + default value 0
+
+=== 4.2.3
+
+==== Changes
+
+* Fix a typo in sql scripts

@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.info;
+package eu.domibus.connector.web.view.areas.info;
 
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.view.MainLayout;

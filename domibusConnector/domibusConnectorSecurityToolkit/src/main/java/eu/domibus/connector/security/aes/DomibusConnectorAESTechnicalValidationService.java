@@ -3,12 +3,12 @@ package eu.domibus.connector.security.aes;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.ecodex.dss.model.EnvironmentConfiguration;
 import eu.ecodex.dss.model.ProxyData;
 import eu.ecodex.dss.model.token.OriginalValidationReportContainer;
@@ -148,8 +148,7 @@ public class DomibusConnectorAESTechnicalValidationService implements ECodexTech
         }
 
         final ProxyData proxyHttp = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTP();
-        final ProxyData proxyHttps = (environmentConfiguration == null) ? null
-                : environmentConfiguration.getProxyHTTPS();
+        final ProxyData proxyHttps = (environmentConfiguration == null) ? null : environmentConfiguration.getProxyHTTPS();
 
         if (proxyHttp != null) {
             LOGGER.info(

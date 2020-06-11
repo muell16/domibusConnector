@@ -62,9 +62,3 @@ it would be possible to put environment specific variables into a systemd enviro
 A possible example would be the gateway address:
 
 connector.gatewaylink.ws.submissionEndpointAddress will become: CONNECTOR_GATEWAYLINK_WS_SUBMISSIONENDPOINTADDRESS
-
-
-
-
-
-

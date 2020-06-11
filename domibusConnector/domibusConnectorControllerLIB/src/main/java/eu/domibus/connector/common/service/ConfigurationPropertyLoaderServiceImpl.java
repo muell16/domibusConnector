@@ -22,8 +22,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
 import org.springframework.core.env.StandardEnvironment;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,20 @@ public class ConfigurationPropertyLoaderServiceImpl implements ConfigurationProp
         ConfigurationProperties annotation = clazz.getAnnotation(ConfigurationProperties.class);
         String prefix = annotation.prefix();
 
+        return this.loadConfiguration(laneId, clazz, prefix);
+    }
+
+    @Cacheable //TODO: evict cache if message lane is updated!
+    public <T> T loadConfiguration(@Nullable DomibusConnectorMessageLane.MessageLaneId laneId, Class<T> clazz, String prefix) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("Clazz is not allowed to be null!");
+        }
+        if (StringUtils.isEmpty(prefix)) {
+            throw new IllegalArgumentException("Prefix is not allowed to be null!");
+        }
+        LOGGER.debug("Loading property class [{}]", clazz);
+
+        //todo: load message lane properties here, be carefull laneId can be null!
         MapConfigurationPropertySource messageLaneProperties = new MapConfigurationPropertySource(new Properties()) {
             public Object getUnderlyingSource() {
                 return String.format("MessageLane [%s] Properties", laneId);
