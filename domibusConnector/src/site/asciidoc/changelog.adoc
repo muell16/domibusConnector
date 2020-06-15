@@ -182,4 +182,9 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 ==== Changes
 
 * Fix a typo in sql scripts
+
+=== 4.2.4
+
+==== Changes
+
 * Fix a problem with mariadb/mysql in liquibase upgrade scripts in changeset with id 'create_p_mode_set_table_default_values'
