@@ -182,3 +182,4 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 ==== Changes
 
 * Fix a typo in sql scripts
+* Fix a problem with mariadb/mysql in liquibase upgrade scripts
