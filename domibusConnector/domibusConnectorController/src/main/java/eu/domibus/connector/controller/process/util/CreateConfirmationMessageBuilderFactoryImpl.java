@@ -124,7 +124,7 @@ public class CreateConfirmationMessageBuilderFactoryImpl implements Confirmation
     public class ConfirmationMessageBuilder {
         DomibusConnectorMessage originalMessage;
         DomibusConnectorEvidenceType evidenceType;
-        DomibusConnectorRejectionReason rejectionReason;
+        DomibusConnectorRejectionReason rejectionReason = DomibusConnectorRejectionReason.OTHER;
         String rejectionDetails;
         DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
         private DomibusConnectorAction action;

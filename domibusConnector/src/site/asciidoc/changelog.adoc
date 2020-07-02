@@ -99,3 +99,7 @@ Bugfix:
 * Fixes the with the connector distributed documentation artifacts
 * Fixes errors within the migration scripts and initial database scripts for pre 4.1.8 to upgrade to 4.1.8 database
 
+=== 4.1.10
+Bugfix:
+
+* Fix issue when generating an evidence and no Reason is set. Default reason is now 'OTHER'
