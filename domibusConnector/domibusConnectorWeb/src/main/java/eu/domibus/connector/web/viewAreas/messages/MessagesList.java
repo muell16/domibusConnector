@@ -1,9 +1,12 @@
 package eu.domibus.connector.web.viewAreas.messages;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +39,9 @@ import eu.domibus.connector.web.service.WebMessageService;
 @Component
 @UIScope
 public class MessagesList extends VerticalLayout {
-	
+
+	private static final Logger LOGGER = LogManager.getLogger(MessagesList.class);
+
 	private Grid<WebMessage> grid = new Grid<>();
 	private LinkedList<WebMessage> fullList = null;
 	private Messages messagesView;
@@ -54,9 +59,9 @@ public class MessagesList extends VerticalLayout {
 
 	public MessagesList(@Autowired WebMessageService messageService) {
 		this.messageService = messageService;
-		
-		fullList = messageService.getInitialList();
-		
+
+		fullList = new LinkedList<>();
+
 		grid.setItems(fullList);
 		grid.addComponentColumn(webMessage -> getDetailsLink(webMessage.getConnectorMessageId())).setHeader("Details").setWidth("30px");
 		grid.addColumn(WebMessage::getConnectorMessageId).setHeader("Connector Message ID").setWidth("450px");
@@ -87,7 +92,12 @@ public class MessagesList extends VerticalLayout {
 		add(main);
 		setHeight("100vh");
 		setWidth("100vw");
-		reloadList();
+
+		try {
+			reloadList();
+		} catch (Exception e) {
+			LOGGER.error("Exception occured during init UI component MessagesList", e);
+		}
 		
 	}
 	
