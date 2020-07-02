@@ -103,3 +103,4 @@ Bugfix:
 Bugfix:
 
 * Fix issue when generating an evidence and no Reason is set. Default reason is now 'OTHER'
+* Fix issue when UI is opened and an error occures in the WebMessagesService. The fix just logs the exception and the UI can still be opened
