@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>eu.domibus.connector</groupId>
   <artifactId>domibusConnector</artifactId>
-  <version>4.1.9-RELEASE</version>
+  <version>4.1.10-RELEASE</version>
   <packaging>pom</packaging>
   <licenses>
     <license>
