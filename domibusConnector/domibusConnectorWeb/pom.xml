@@ -125,7 +125,7 @@
             </executions>
             <configuration>
               <ignoreMavenProxies>false</ignoreMavenProxies>
-              <nodePath>${env.NODE_HOME}</nodePath>
+              <nodePath>${env.NODE_HOME}/node</nodePath>
             </configuration>
           </plugin>
         </plugins>
