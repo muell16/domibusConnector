@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
+import java.util.Optional;
 
 //@Service(DCGatewayDeliveryEndpointImpl.BEAN_NAME)
 public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDeliveryWebService {
@@ -45,7 +46,7 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
     @Override
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
-        ActiveLinkPartner activeLinkPartner = endpointAuthenticator.checkBackendClient(webServiceContext);
+        Optional<ActiveLinkPartner> activeLinkPartner = endpointAuthenticator.checkBackendClient(webServiceContext);
 
         DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest);
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());

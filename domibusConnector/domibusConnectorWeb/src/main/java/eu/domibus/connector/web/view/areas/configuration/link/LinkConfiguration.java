@@ -108,7 +108,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
     }
 
     private void startLinkButtonClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
-        Optional<ActiveLinkPartner> activeLinkPartner = this.linkManager.activateLinkPartner(linkPartner);
+        Optional<Optional<ActiveLinkPartner>> activeLinkPartner = this.linkManager.activateLinkPartner(linkPartner);
         if (activeLinkPartner.isPresent()) {
             Notification.show("Link " + linkPartner.getLinkPartnerName() + " started");
         } else {

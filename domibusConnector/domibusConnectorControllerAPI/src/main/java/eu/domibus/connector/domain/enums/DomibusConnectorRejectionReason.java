@@ -13,6 +13,7 @@ public enum DomibusConnectorRejectionReason {
     DUPLICATE_MSG_ID(""),
     OTHER(""),
     BACKEND_REJECTION("The connector backend or backend application rejected the message"),
+    GW_REJECTION("The gateway or gateway application rejected the message"),
     UNREACHABLE("");
 
     private final String reasonText;

@@ -31,7 +31,7 @@ public class GwJmsPluginActiveLink implements ActiveLink {
     private final GwJmsPlugin pluginManager;
     private final ConfigurableApplicationContext applicationContext;
 
-    private GwJmsPluginActiveLinkPartner activeLinkPartner;
+    private ActiveLinkPartner activeLinkPartner;
     private ConfigurableApplicationContext linkPartnerSpringContext;
 
 
@@ -55,21 +55,21 @@ public class GwJmsPluginActiveLink implements ActiveLink {
 
 
     @Override
-    public ActiveLinkPartner getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+    public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         if (activeLinkPartner != null && activeLinkPartner.getLinkPartnerName().equals(linkPartnerName)) {
-            return activeLinkPartner;
+            return Optional.of(activeLinkPartner);
         }
 //        LOGGER.error("No Link partner with name [{}] found", linkPartnerName);
-        return null;
+        return Optional.empty();
     }
 
 
     @Override
-    public synchronized ActiveLinkPartner activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+    public synchronized Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
         if (this.activeLinkPartner != null) {
             throw new LinkPluginException("A link partner is already active for this configuration! This link config only supports ONE active link partner at once!");
         }
-        ActiveLinkPartner activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
+        Optional<ActiveLinkPartner> activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
         if (activePartner != null) {
             throw new LinkPluginException("Link is already active! Use shutdown first!");
         }
@@ -85,11 +85,11 @@ public class GwJmsPluginActiveLink implements ActiveLink {
                 .run();
         this.linkPartnerSpringContext = springChildContext;
 
-        GwJmsPluginActiveLinkPartner activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
+        ActiveLinkPartner activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
 
         LOGGER.info("Activated LinkPartner [{}] to [{}]", linkPartner, activeLinkPartner);
         this.activeLinkPartner = activeLinkPartner;
-        return activeLinkPartner;
+        return Optional.of(activeLinkPartner);
 
 
     }

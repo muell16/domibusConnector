@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
+import java.util.Optional;
 
 /**
  * Handles transmitting messages (push/pull) from and to backendClients over webservice
@@ -99,7 +100,7 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
         DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
         try {
             LOGGER.debug("#submitMessage: message: [{}]", submitMessageRequest);
-            ActiveLinkPartner backendClientInfoByName = null;
+            Optional<ActiveLinkPartner> backendClientInfoByName = null;
             backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext);
 
             DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);

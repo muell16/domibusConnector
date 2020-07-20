@@ -3,6 +3,10 @@ package eu.domibus.connector.domain.model.builder;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.stream.Stream;
+
 /**
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
@@ -37,6 +41,15 @@ public final class DomibusConnectorMessageErrorBuilder {
         return this;
     }
 
+
+    public DomibusConnectorMessageErrorBuilder setDetails(Exception ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        this.details = sw.toString();
+        return this;
+    }
+
     /**
      * @param source Name of the component where the error occured
      * @return the builder
@@ -55,4 +68,8 @@ public final class DomibusConnectorMessageErrorBuilder {
     }
 
 
+    public DomibusConnectorMessageErrorBuilder setSource(Class aClass) {
+        this.source = aClass.getName();
+        return this;
+    }
 }

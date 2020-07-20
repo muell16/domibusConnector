@@ -42,9 +42,9 @@ public class DCActiveLinkHealthIndicator extends AbstractHealthIndicator {
     private void checkLink(Health.Builder builder, DomibusConnectorLinkPartner enabledLink) {
         DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = enabledLink.getLinkPartnerName();
 
-        Optional<ActiveLinkPartner> activeLinkPartnerOptional = dcActiveLinkManagerService.getActiveLinkPartner(linkPartnerName);
+        Optional<Optional<ActiveLinkPartner>> activeLinkPartnerOptional = dcActiveLinkManagerService.getActiveLinkPartner(linkPartnerName);
         if (activeLinkPartnerOptional.isPresent()) {
-            ActiveLinkPartner activeLinkPartner = activeLinkPartnerOptional.get();
+            Optional<ActiveLinkPartner> activeLinkPartner = activeLinkPartnerOptional.get();
             ActiveLink activeLink = activeLinkPartner.getActiveLink();
             if (activeLink.isUp()) {
                 builder.withDetail("linkpartner_" + linkPartnerName, Status.UP);

@@ -135,6 +135,7 @@ public final class DomibusConnectorMessageBuilder {
         message.getMessageConfirmations().addAll(this.messageConfirmations);
         message.getMessageErrors().addAll(this.messageErrors);
 
+        this.connectorMessageId = null;
         return message;
     }
 
@@ -160,6 +161,11 @@ public final class DomibusConnectorMessageBuilder {
                 .copyPropertiesFrom(c).build())
                 .collect(Collectors.toList());
 
+        return this;
+    }
+
+    public DomibusConnectorMessageBuilder setConnectorMessageId(DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId) {
+        this.connectorMessageId = dcMsgId.getConnectorMessageId();
         return this;
     }
 }

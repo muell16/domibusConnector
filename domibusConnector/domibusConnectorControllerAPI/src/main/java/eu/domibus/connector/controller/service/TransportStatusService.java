@@ -146,6 +146,10 @@ public interface TransportStatusService {
             this.messageErrorList = messageErrorList;
         }
 
+        public void addMessageError(DomibusConnectorMessageError error) {
+            this.messageErrorList.add(error);
+        }
+
 
         @Override
         public String toString() {

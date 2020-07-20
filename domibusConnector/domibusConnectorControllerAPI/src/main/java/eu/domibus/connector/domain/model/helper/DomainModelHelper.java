@@ -15,6 +15,8 @@ import org.springframework.lang.Nullable;
  */
 public class DomainModelHelper {
 
+    public static final String ASICS_CONTAINER_IDENTIFIER = "ASIC-S";
+
     /**
      * Checks if the message is an evidence message
      *  <ul>

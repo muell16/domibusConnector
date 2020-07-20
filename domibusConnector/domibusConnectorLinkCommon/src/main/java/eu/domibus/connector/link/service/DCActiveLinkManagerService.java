@@ -39,18 +39,18 @@ public class DCActiveLinkManagerService {
     ConfigurableApplicationContext applicationContext;
 
 
-    private Map<DomibusConnectorLinkPartner.LinkPartnerName, ActiveLinkPartner> activeLinkPartners = new ConcurrentHashMap<>();
+    private Map<DomibusConnectorLinkPartner.LinkPartnerName, Optional<ActiveLinkPartner>> activeLinkPartners = new ConcurrentHashMap<DomibusConnectorLinkPartner.LinkPartnerName, Optional<ActiveLinkPartner>>();
     private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLink> activeLinkConfigurations = new ConcurrentHashMap<>();
 
 
     SubmitToLink getSubmitToLinkPartner(String linkName) {
-        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
-        if (activeLinkPartner == null) {
+        Optional<ActiveLinkPartner> activeLinkPartner = activeLinkPartners.get(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
+        if (!activeLinkPartner.isPresent()) {
             String error = String.format("No linkPartner with name %s available", linkName);
             throw new LinkPluginException(error);
         }
 //        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
-        SubmitToLink submitToLinkBean = activeLinkPartner.getSubmitToLinkBean();
+        SubmitToLink submitToLinkBean = activeLinkPartner.get().getSubmitToLinkBean();
         return submitToLinkBean;
     }
 
@@ -66,10 +66,10 @@ public class DCActiveLinkManagerService {
     }
 
     public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        return Optional.ofNullable(activeLinkPartners.get(linkPartnerName));
+        return activeLinkPartners.get(linkPartnerName);
     }
 
-    public synchronized Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
+    public synchronized Optional<Optional<ActiveLinkPartner>> activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
         try (MDC.MDCCloseable li = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkInfo.getLinkPartnerName().toString())) {
             DomibusConnectorLinkConfiguration linkConfiguration = linkInfo.getLinkConfiguration();
             DomibusConnectorLinkConfiguration.LinkConfigName configName = linkConfiguration.getConfigName();
@@ -91,7 +91,7 @@ public class DCActiveLinkManagerService {
                 return Optional.empty();
             }
             try {
-                ActiveLinkPartner activeLinkPartner = activeLink.activateLinkPartner(linkInfo);
+                Optional<ActiveLinkPartner> activeLinkPartner = activeLink.activateLinkPartner(linkInfo);
                 activeLinkPartners.put(linkPartnerName, activeLinkPartner);
                 LOGGER.info("Activated Link partner [{}] ", activeLinkPartner);
                 return Optional.of(activeLinkPartner);
@@ -124,8 +124,8 @@ public class DCActiveLinkManagerService {
     }
 
     public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
-        if (activeLinkPartner == null) {
+        Optional<ActiveLinkPartner> activeLinkPartner = activeLinkPartners.get(linkPartnerName);
+        if (!activeLinkPartner.isPresent()) {
             throw new IllegalArgumentException(String.format("No active linkPartner with name %s found!", linkPartnerName.toString()));
         }
 //        if (activeLinkPartner() == null) {
@@ -134,7 +134,7 @@ public class DCActiveLinkManagerService {
 //        activeLinkPartner.getLinkManager().shutdownLinkPartner(linkPartnerName);
 
 
-        activeLinkPartner.shutdown();
+        activeLinkPartner.ifPresent(ActiveLinkPartner::shutdown);
         activeLinkPartners.remove(linkPartnerName);
 
     }

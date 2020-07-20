@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import java.security.Principal;
+import java.util.Optional;
 
 /**
  * Handles client authentication
@@ -25,7 +26,7 @@ public class DCWsEndpointAuthentication {
     DCActiveLinkManagerService activeLink;
 
 
-    public ActiveLinkPartner checkBackendClient(WebServiceContext webServiceContext) throws DomibusConnectorBackendDeliveryException {
+    public Optional<ActiveLinkPartner> checkBackendClient(WebServiceContext webServiceContext) throws DomibusConnectorBackendDeliveryException {
         if (webServiceContext == null) {
             throw new RuntimeException("No webServiceContext found");
         }
@@ -36,7 +37,7 @@ public class DCWsEndpointAuthentication {
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }
-        ActiveLinkPartner backendClientInfoByName = null;
+        Optional<ActiveLinkPartner> backendClientInfoByName = null;
 
         backendName = backendName.toLowerCase();
         backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)).orElse(null);

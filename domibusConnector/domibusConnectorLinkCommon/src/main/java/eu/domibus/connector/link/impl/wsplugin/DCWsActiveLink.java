@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 public class DCWsActiveLink implements ActiveLink {
@@ -40,14 +41,12 @@ public class DCWsActiveLink implements ActiveLink {
 
 
     @Override
-    public ActiveLinkPartner getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        return nameToActiveLink.get(linkPartnerName);
+    public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        return Optional.ofNullable(nameToActiveLink.get(linkPartnerName));
     }
 
     @Override
-    public ActiveLinkPartner activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
-
-
+    public Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
 
         DCWsActiveLinkPartner dcWsActiveLinkPartner = new DCWsActiveLinkPartner(
                 linkPartner,
@@ -58,7 +57,7 @@ public class DCWsActiveLink implements ActiveLink {
         this.nameToLinkPartner.put(linkPartner.getLinkPartnerName(), linkPartner);
         this.nameToActiveLink.put(linkPartner.getLinkPartnerName(), dcWsActiveLinkPartner);
 
-        return dcWsActiveLinkPartner;
+        return Optional.of(dcWsActiveLinkPartner);
     }
 
     @Override

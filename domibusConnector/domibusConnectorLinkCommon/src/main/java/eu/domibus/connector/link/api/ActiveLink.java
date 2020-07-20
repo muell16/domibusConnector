@@ -15,7 +15,7 @@ public interface ActiveLink {
      * the specific link partner
      * @return the active link partner or null if none found!
      */
-    ActiveLinkPartner getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+    Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
 
     /**
@@ -26,7 +26,7 @@ public interface ActiveLink {
      * @param linkPartner
      * @return
      */
-    ActiveLinkPartner activateLinkPartner(DomibusConnectorLinkPartner linkPartner);
+    Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkPartner);
 
     /**
      * shut down the link connection
