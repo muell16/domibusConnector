@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 @ConfigurationTab(title = "Gateway Configuration")
 @Route(value = GatewayLinkConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
+//@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class GatewayLinkConfiguration extends LinkConfiguration {
 
-    public static final String ROUTE = "gateway";
+    public static final String ROUTE = "gwlink";
 
     @Override
     protected LinkType getLinkType() {

@@ -53,7 +53,7 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {
 //            controllerService.deliverMessageFromGatewayToController(domainMessage);
-            submitToConnector.submitToConnector(domainMessage, activeLinkPartner.getLinkPartner());
+            submitToConnector.submitToConnector(domainMessage, activeLinkPartner.get().getLinkPartner());
         } catch (DomibusConnectorControllerException e) {
             LOGGER.warn("#deliverMessage: failed to process message in controller!", e);
             ack.setResult(false);

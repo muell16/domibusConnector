@@ -40,7 +40,7 @@ public class DCWsEndpointAuthentication {
         Optional<ActiveLinkPartner> backendClientInfoByName = null;
 
         backendName = backendName.toLowerCase();
-        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)).orElse(null);
+        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)); //.orElse(null);
 
 //        backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
 
@@ -53,7 +53,7 @@ public class DCWsEndpointAuthentication {
             //replace leading "cn=" with "" so common name cn=alice becomes alice
 
             LOGGER.warn("#checkBackendClient: {}, Looking for 4.0.x compatible connector backend naming [{}]", error, backendName);
-            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)).orElse(null);
+            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName));
         }
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No link partner with name [%s] configured on connector!\n" +

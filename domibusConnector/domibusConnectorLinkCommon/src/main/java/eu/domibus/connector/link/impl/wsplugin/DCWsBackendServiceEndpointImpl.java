@@ -100,8 +100,8 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
         DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
         try {
             LOGGER.debug("#submitMessage: message: [{}]", submitMessageRequest);
-            Optional<ActiveLinkPartner> backendClientInfoByName = null;
-            backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext);
+            ActiveLinkPartner backendClientInfoByName = null;
+            backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext).get();
 
             DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
             msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getLinkPartnerName().getLinkName());

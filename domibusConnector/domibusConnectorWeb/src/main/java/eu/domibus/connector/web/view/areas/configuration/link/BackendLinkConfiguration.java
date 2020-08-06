@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 @ConfigurationTab(title = "Backend Configuration")
 @Route(value = BackendLinkConfiguration.ROUTE, layout = ConfigurationLayout.class)
 @RoleRequired(role = "ADMIN")
-@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
+//@Profile(DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME)
 public class BackendLinkConfiguration extends LinkConfiguration {
 
-    public static final String ROUTE = "backend";
+    public static final String ROUTE = "backendlink";
 
     @Override
     protected LinkType getLinkType() {
