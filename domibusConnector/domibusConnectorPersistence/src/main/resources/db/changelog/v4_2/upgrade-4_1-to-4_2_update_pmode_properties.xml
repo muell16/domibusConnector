@@ -37,8 +37,10 @@
     </changeSet>
 
     <changeSet id="create_p_mode_set_table_default_values" author="SKS">
-        <addDefaultValue tableName="DC_PMODE_SET" columnName="ACTIVE" defaultValue="0" />
-        <addNotNullConstraint tableName="DC_PMODE_SET" columnName="ACTIVE" />
+        <validCheckSum>8:dbe4b1c88b3549493584d609fd34b848</validCheckSum>
+        <validCheckSum>8:d7f6f807ca2020f1583f8412527b6db6</validCheckSum>
+        <addDefaultValue tableName="DC_PMODE_SET" columnDataType="java.sql.Types.TINYINT" columnName="ACTIVE" defaultValue="0" />
+        <addNotNullConstraint tableName="DC_PMODE_SET" columnDataType="java.sql.Types.TINYINT" columnName="ACTIVE" />
     </changeSet>
 
     <changeSet id="create_default_p_mode_set" author="SKS">
