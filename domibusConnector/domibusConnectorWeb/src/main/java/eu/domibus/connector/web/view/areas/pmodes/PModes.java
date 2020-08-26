@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import com.vaadin.flow.router.Route;
 import eu.domibus.connector.web.utils.RoleRequired;
 import eu.domibus.connector.web.view.MainLayout;
-import eu.domibus.connector.web.areas.messages.Messages;
+import eu.domibus.connector.web.view.areas.messages.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.Component;

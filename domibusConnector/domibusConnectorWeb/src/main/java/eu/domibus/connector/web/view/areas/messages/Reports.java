@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.messages;
+package eu.domibus.connector.web.view.areas.messages;
 
 
 import java.io.InputStream;

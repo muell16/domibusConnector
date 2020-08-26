@@ -8,7 +8,7 @@
     <!--<changeSet author="domibusConnector" id="changelog_4.1_rename_property_table">-->
     <!--<renameTable oldTableName="DOMIBUS_WEBADMIN_PROPERTY" newTableName="DOMIBUS_CONNECTOR_PROPERTY" />-->
     <!--</changeSet>-->
-    <changeSet id="enable_loopback_messaging_support_in_db_drop_unique_constraints" author="domibusConnector">
+    <changeSet id="enable_loopback_messaging_support_in_db_drop_unique_constraints" author="domibusConnector" failOnError="false" onValidationFail="MARK_RAN">
         <comment>JUEUSW-75 disable unique constraints for ebms and national message id to enable loopback sending of messages</comment>
         <dropUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" uniqueColumns="EBMS_MESSAGE_ID" constraintName="UQ_DOMIBUS_CONNE_EBMS_MESSAGE"/>
         <dropUniqueConstraint tableName="DOMIBUS_CONNECTOR_MESSAGE" uniqueColumns="BACKEND_MESSAGE_ID" constraintName="UQ_DOMIBUS_CONNE_NAT_MESSAGE_"/>

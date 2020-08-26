@@ -3,24 +3,19 @@ package eu.domibus.connector.security.validation;
 import javax.annotation.Resource;
 
 import eu.domibus.connector.security.container.service.TokenIssuerFactoryProperties;
+import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.security.aes.DomibusConnectorAESTechnicalValidationService;
 import eu.domibus.connector.security.aes.DomibusConnectorAESTokenValidationCreator;
-import eu.domibus.connector.security.proxy.DomibusConnectorProxyConfig;
 import eu.ecodex.dss.model.EnvironmentConfiguration;
-import eu.ecodex.dss.model.token.AdvancedSystemType;
 import eu.ecodex.dss.service.ECodexTechnicalValidationService;
 import eu.ecodex.dss.service.impl.dss.DSSECodexTechnicalValidationService;
 
 @Service
 public class DomibusConnectorTechnicalValidationServiceFactory {
-	
-//	@Value("${token.issuer.aes.value:#{null}}")
-//    AdvancedSystemType advancedElectronicSystem;
 
 	@Autowired
 	TokenIssuerFactoryProperties tokenIssuerFactoryProperties;
@@ -31,7 +26,7 @@ public class DomibusConnectorTechnicalValidationServiceFactory {
 	@Resource(name="domibusConnectorCertificateVerifier")
 	DomibusConnectorCertificateVerifier certificateVerifier;
 	
-	@Resource(name="domibusConnectorProxyConfig")
+	@Autowired
 	DomibusConnectorProxyConfig proxyPreferenceManager;
 	
 	//@Resource(name="domibusConnectorAESTokenValidationCreator")

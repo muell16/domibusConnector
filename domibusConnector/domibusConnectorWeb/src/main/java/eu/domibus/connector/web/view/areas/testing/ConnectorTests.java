@@ -1,4 +1,4 @@
-package eu.domibus.connector.web.areas.testing;
+package eu.domibus.connector.web.view.areas.testing;
 
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
