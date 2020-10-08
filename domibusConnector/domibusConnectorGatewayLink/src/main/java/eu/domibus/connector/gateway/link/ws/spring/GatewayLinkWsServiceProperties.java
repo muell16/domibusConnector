@@ -30,7 +30,7 @@ import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.G
 @CheckKeyIsLoadableFromKeyStore
 @Component(GatewayLinkWsServiceProperties.BEAN_NAME)
 @Profile(GW_LINK_WS_PROFILE)
-@ConfigurationProperties(prefix = "connector.gatewaylink.ws")
+@ConfigurationProperties(prefix = GatewayLinkWsServiceProperties.PREFIX)
 @Validated
 @Valid
 @PropertySource("classpath:eu/domibus/connector/gateway/link/ws/spring/gatewaylinkws-default.properties")
@@ -38,6 +38,10 @@ import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.G
 public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfigurationProperties {
 
     public static final String BEAN_NAME = "GatewayLinkWsServiceProperties";
+    
+    public static final String PREFIX = "connector.gatewaylink.ws";
+    
+    public static final String PULL_ENABLED_PROPERTY_NAME = "pullEnabled";
 
     /**
      * Defines the URL for submitting messages to the Gateway
@@ -55,6 +59,8 @@ public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfiguratio
      */
     @NotBlank
     private String publishAddress = "/domibusConnectorDeliveryWebservice";
+    
+    private boolean pullEnabled=false;
     
 //    private String name = "DeliverMessage";
 
@@ -122,4 +128,12 @@ public class GatewayLinkWsServiceProperties extends CxfTrustKeyStoreConfiguratio
     public void setWsPolicy(Resource wsPolicy) {
         this.wsPolicy = wsPolicy;
     }
+
+	public boolean isPullEnabled() {
+		return pullEnabled;
+	}
+
+	public void setPullEnabled(boolean pullEnabled) {
+		this.pullEnabled = pullEnabled;
+	}
 }
