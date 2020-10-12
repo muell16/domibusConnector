@@ -157,3 +157,5 @@ sun-jaxb.episode
 /domibusConnector/domibusConnectorStarter/src/main/resources/log4j2-spring.xml
 /domibusConnector/domibusConnectorWeb/src/main/resources/connector.properties
 /domibusConnector/logs
+node_modules
+/domibusConnector/domibusConnectorWeb/package-lock.json
