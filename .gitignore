@@ -159,3 +159,4 @@ sun-jaxb.episode
 /domibusConnector/logs
 node_modules
 /domibusConnector/domibusConnectorWeb/package-lock.json
+/domibusConnector/domibusConnectorLauncher/domibusConnectorStandaloneLauncher/package-lock.json
