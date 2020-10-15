@@ -301,11 +301,13 @@ public class DomibusConnectorDomainMessageTransformerService {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(output));
             transformer.transform(xmlInput, xmlOutput);
-            return output.toByteArray();
-        } catch (IllegalArgumentException | TransformerException e) {
+            byte[] result = output.toByteArray();
+			return new String(result, "UTF-8").getBytes("UTF-8");
+        } catch (IllegalArgumentException | TransformerException | UnsupportedEncodingException e) {
             throw new RuntimeException("Exception occured during transforming xml into byte[]", e);
         }
     }
