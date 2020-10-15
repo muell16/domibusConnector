@@ -43,6 +43,10 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
 //                ObjectMessage msg = (ObjectMessage) message;
                 TextMessage msg = (TextMessage) message;
                 DomibusConnectorMessage domibusConnectorMessage = objectMapper.readValue(msg.getText(), DomibusConnectorMessage.class);
+                if(LOGGER.isDebugEnabled()) {
+                	if(domibusConnectorMessage.getMessageContent()!=null && domibusConnectorMessage.getMessageContent().getXmlContent()!=null)
+                		LOGGER.debug("Business content XML after queue: {}", new String(domibusConnectorMessage.getMessageContent().getXmlContent()));
+                }
 //                Object obj = msg.getObject();
 //                if (!(obj instanceof  DomibusConnectorMessage)) {
 //                    throw new IllegalArgumentException("Object message from queue must be of type DomibusConnectorMessage!");

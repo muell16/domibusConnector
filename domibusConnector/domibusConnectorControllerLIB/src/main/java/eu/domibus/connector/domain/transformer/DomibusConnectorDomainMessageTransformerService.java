@@ -199,9 +199,14 @@ public class DomibusConnectorDomainMessageTransformerService {
             throw new CannotBeMappedToTransitionException("xmlContent of content must be not null!");
         }
 
+        if(LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Business content XML before transformed to stream: {}", new String(messageContent.getXmlContent()));
+        }
         StreamSource streamSource = new StreamSource(new ByteArrayInputStream(
                 //byte[] is copied because domain model is not immutable
-                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)));
+//                Arrays.copyOf(messageContent.getXmlContent(), messageContent.getXmlContent().length)
+        		messageContent.getXmlContent()
+                ));
         messageContentTO.setXmlContent(streamSource);
 
         //maps Document of messageContent
@@ -302,12 +307,15 @@ public class DomibusConnectorDomainMessageTransformerService {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(output));
+//            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            StreamResult xmlOutput=new StreamResult(new ByteArrayOutputStream());
+//            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(output));
             transformer.transform(xmlInput, xmlOutput);
-            byte[] result = output.toByteArray();
-			return new String(result, "UTF-8").getBytes("UTF-8");
-        } catch (IllegalArgumentException | TransformerException | UnsupportedEncodingException e) {
+//            byte[] result = output.toByteArray();
+//            result = new String(result, "UTF-8").getBytes("UTF-8");
+           
+			return xmlOutput.getOutputStream().toString().getBytes();
+        } catch (IllegalArgumentException | TransformerException e) {
             throw new RuntimeException("Exception occured during transforming xml into byte[]", e);
         }
     }
@@ -482,8 +490,12 @@ public class DomibusConnectorDomainMessageTransformerService {
     DomibusConnectorMessageContent transformMessageContentTransitionToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
 
-        messageContent.setXmlContent(convertXmlSourceToByteArray(messageContentTO.getXmlContent()));
+        byte[] result = convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 
+        messageContent.setXmlContent(result);
+        if(LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Business content XML after transformed from stream: {}", new String(result));
+        }
 
         //maps Document of messageContent
         DomibusConnectorMessageDocumentType documentTO = messageContentTO.getDocument();
