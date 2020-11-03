@@ -7,6 +7,7 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocument
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.transformer.util.LargeFileHandlerBacked;
 import eu.domibus.connector.domain.transition.*;
+import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,14 +253,14 @@ public class DomibusConnectorDomainMessageTransformerService {
      *                 "application/octet-stream" mimeType will be set
      * @return the DataHandler
      */
-    @NotNull
-    DataHandler convertByteArrayToDataHandler(@NotNull byte[] array, @Nullable String mimeType) {
-        if (mimeType == null) {
-            mimeType = "application/octet-stream";
-        }
-        DataHandler dataHandler = new DataHandler(Arrays.copyOf(array, array.length), mimeType);
-        return dataHandler;
-    }
+//    @NotNull
+//    DataHandler convertByteArrayToDataHandler(@NotNull byte[] array, @Nullable String mimeType) {
+//        if (mimeType == null) {
+//            mimeType = "application/octet-stream";
+//        }
+//        DataHandler dataHandler = new DataHandler(Arrays.copyOf(array, array.length), mimeType);
+//        return dataHandler;
+//    }
 
     @NotNull
     DataHandler convertBigDataReferenceToDataHandler(@NotNull LargeFileReference largeFileReference, @Nullable String mimeType) {
@@ -271,54 +272,54 @@ public class DomibusConnectorDomainMessageTransformerService {
         return dataHandler;
     }
 
-    @NotNull
-    byte[] convertDataHandlerToByteArray(@NotNull DataHandler dataHandler) {
-        try {
-            //InputStream inputStream = dataHandler.getInputStream();
-            Object content = dataHandler.getContent();
-            if (content instanceof byte[]) {
-                byte[] byteArray = (byte[]) content;
-                return byteArray;
-            } else if (content instanceof InputStream) {
-                byte[] copyToByteArray = StreamUtils.copyToByteArray((InputStream) content);
-                return copyToByteArray;
-            } else {
-                LOGGER.error("Cannot map content [{}] to byte[]", content);
-                throw new RuntimeException("Cannot map content!");
-            }
-        } catch (IOException ex) {
-            LOGGER.error("IO Exception occured while reading InputStream provided over network", ex);
-            throw new RuntimeException("Cannot be mapped!", ex);
-        }
-    }
+//    @NotNull
+//    byte[] convertDataHandlerToByteArray(@NotNull DataHandler dataHandler) {
+//        try {
+//            //InputStream inputStream = dataHandler.getInputStream();
+//            Object content = dataHandler.getContent();
+//            if (content instanceof byte[]) {
+//                byte[] byteArray = (byte[]) content;
+//                return byteArray;
+//            } else if (content instanceof InputStream) {
+//                byte[] copyToByteArray = StreamUtils.copyToByteArray((InputStream) content);
+//                return copyToByteArray;
+//            } else {
+//                LOGGER.error("Cannot map content [{}] to byte[]", content);
+//                throw new RuntimeException("Cannot map content!");
+//            }
+//        } catch (IOException ex) {
+//            LOGGER.error("IO Exception occured while reading InputStream provided over network", ex);
+//            throw new RuntimeException("Cannot be mapped!", ex);
+//        }
+//    }
 
-    /**
-     * takes a source element and converts with
-     * Transformer to an byte[] backed by ByteArrayOutputStream
-     *
-     * @param xmlInput - the Source
-     * @return the byte[]
-     * @throws RuntimeException - in case of any error! //TODO: improve exceptions
-     */
-    @NotNull
-    byte[] convertXmlSourceToByteArray(@NotNull Source xmlInput) {
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            StreamResult xmlOutput=new StreamResult(new ByteArrayOutputStream());
-//            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(output));
-            transformer.transform(xmlInput, xmlOutput);
-//            byte[] result = output.toByteArray();
-//            result = new String(result, "UTF-8").getBytes("UTF-8");
-           
-			return xmlOutput.getOutputStream().toString().getBytes();
-        } catch (IllegalArgumentException | TransformerException e) {
-            throw new RuntimeException("Exception occured during transforming xml into byte[]", e);
-        }
-    }
+//    /**
+//     * takes a source element and converts with
+//     * Transformer to an byte[] backed by ByteArrayOutputStream
+//     *
+//     * @param xmlInput - the Source
+//     * @return the byte[]
+//     * @throws RuntimeException - in case of any error! //TODO: improve exceptions
+//     */
+//    @NotNull
+//    byte[] convertXmlSourceToByteArray(@NotNull Source xmlInput) {
+//        try {
+//            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+//            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+//            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+////            ByteArrayOutputStream output = new ByteArrayOutputStream();
+//            StreamResult xmlOutput=new StreamResult(new ByteArrayOutputStream());
+////            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(output));
+//            transformer.transform(xmlInput, xmlOutput);
+////            byte[] result = output.toByteArray();
+////            result = new String(result, "UTF-8").getBytes("UTF-8");
+//           
+//			return xmlOutput.getOutputStream().toString().getBytes();
+//        } catch (IllegalArgumentException | TransformerException e) {
+//            throw new RuntimeException("Exception occured during transforming xml into byte[]", e);
+//        }
+//    }
 
     @NotNull
     DomibusConnectorMessageDetailsType transformMessageDetailsDomainToTransition(final @NotNull DomibusConnectorMessage message) {
@@ -478,7 +479,7 @@ public class DomibusConnectorDomainMessageTransformerService {
 
         Source evidence = messageConfirmationTO.getConfirmation();
         if (evidence != null) {
-            confirmation.setEvidence(convertXmlSourceToByteArray(evidence));
+            confirmation.setEvidence(ConversionTools.convertXmlSourceToByteArray(evidence));
         }
         confirmation.setEvidenceType(DomibusConnectorEvidenceType.valueOf(messageConfirmationTO.getConfirmationType().name()));
 
@@ -490,7 +491,7 @@ public class DomibusConnectorDomainMessageTransformerService {
     DomibusConnectorMessageContent transformMessageContentTransitionToDomain(final @NotNull DomibusConnectorMessageContentType messageContentTO) {
         DomibusConnectorMessageContent messageContent = new DomibusConnectorMessageContent();
 
-        byte[] result = convertXmlSourceToByteArray(messageContentTO.getXmlContent());
+        byte[] result = ConversionTools.convertXmlSourceToByteArray(messageContentTO.getXmlContent());
 
         messageContent.setXmlContent(result);
         if(LOGGER.isDebugEnabled()) {
