@@ -351,6 +351,12 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                     msgCont.setContent(ref.getText().getBytes(StandardCharsets.UTF_8));
                 }
             }
+            try {
+				ref.getOutputStream().close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             return msgCont;
     }
 
@@ -358,8 +364,9 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         LargeFileReference newRef = this.largeFilePersistenceService.createDomibusConnectorBigDataReference(connectorMessageId, ref.getName(), ref.getContentType());
         try (InputStream is = ref.getInputStream(); OutputStream os = newRef.getOutputStream()) {
             StreamUtils.copy(is, os);
+            is.close();
         } catch (IOException e) {
-            throw new RuntimeException("Copying from unsupported LargeFileReference to default LargeFileReference failed due", e);
+        	throw new RuntimeException("Copying from unsupported LargeFileReference to default LargeFileReference failed due", e);
         }
         //also set storage name and provider for the "old" large file reference
         ref.setStorageProviderName(newRef.getStorageProviderName());

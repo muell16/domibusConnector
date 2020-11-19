@@ -256,6 +256,9 @@ public class DomibusSecurityContainer {
                     )
                 {
                 ECodexContainer container = containerService.receive(asicInputStream, tokenStream);
+                
+                asicInputStream.close();
+                tokenStream.close();
 
                 // KlarA: Added check of the container and the respective
                 // error-handling
@@ -273,6 +276,7 @@ public class DomibusSecurityContainer {
                                 byte[] docAsBytes = new byte[is.available()];
                                 is.read(docAsBytes);                                
                                 detachedSignatureBuilder.setSignature(docAsBytes);
+                                is.close();
                                 LOGGER.trace("recieveContainerContents: Writing detachedSignature [{}]", IOUtils.toString(docAsBytes, "UTF8"));
                             } catch (IOException e) {
                                 throw new DomibusConnectorSecurityException("Could not read detached signature!");
@@ -311,6 +315,7 @@ public class DomibusSecurityContainer {
                                 try (InputStream inputStream = container.getBusinessDocument().openStream();
                                 OutputStream outputStream = bigDataRef.getOutputStream() ) {
                                     StreamUtils.copy(inputStream, outputStream);
+                                    inputStream.close();
                                 } catch (IOException ioe) {
                                     throw new DomibusConnectorSecurityException("Could not read business document!", ioe);
                                 }
@@ -337,6 +342,7 @@ public class DomibusSecurityContainer {
                                     LOGGER.trace("recieveContainerContents: Writing byteContent into MessageContent.setXmlContent");
                                     try (InputStream businessContent = container.getBusinessDocument().openStream();) {
                                         message.getMessageContent().setXmlContent(IOUtils.toByteArray(businessContent));
+                                        businessContent.close();
                                     }
                                 }
                             } catch (IOException e) {
@@ -474,6 +480,7 @@ public class DomibusSecurityContainer {
         try (InputStream inputStream = document.openStream();
             OutputStream outputStream = bigDataRef.getOutputStream()) {
             int bytesCopied = StreamUtils.copy(inputStream, outputStream);
+            inputStream.close();
             if (bytesCopied == 0) {
                 throw new DomibusConnectorSecurityException("Cannot create attachment with empty content!");
                 //TODO: delete bigDataRef from database!
@@ -512,6 +519,7 @@ public class DomibusSecurityContainer {
         LargeFileReference readableDataSource = bigDataPersistenceService.getReadableDataSource(dataRef);
         try (InputStream inputStream = readableDataSource.getInputStream()){
             byte[] content = StreamUtils.copyToByteArray(inputStream);
+            inputStream.close();
             InMemoryDocument dssDocument = new InMemoryDocument(content, name, MimeType.PDF);
             return dssDocument;
         } catch (IOException ioe) {
