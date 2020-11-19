@@ -351,12 +351,12 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                     msgCont.setContent(ref.getText().getBytes(StandardCharsets.UTF_8));
                 }
             }
-            try {
-				ref.getOutputStream().close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//            try {
+//				ref.getOutputStream().close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
             return msgCont;
     }
 
