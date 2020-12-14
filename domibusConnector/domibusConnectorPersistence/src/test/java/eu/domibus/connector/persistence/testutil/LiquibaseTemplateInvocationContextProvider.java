@@ -23,6 +23,7 @@ public class LiquibaseTemplateInvocationContextProvider implements TestTemplateI
             H2TestDatabaseFactory.h2Mysql(),
             H2TestDatabaseFactory.h2Oracle(),
             new OracleContainerTestDatabaseFactory(),
+            new MariaDbContainerTestDatabaseFactory(),
             new MysqlContainerTestDatabaseFactory()
     ).collect(Collectors.toList());
 

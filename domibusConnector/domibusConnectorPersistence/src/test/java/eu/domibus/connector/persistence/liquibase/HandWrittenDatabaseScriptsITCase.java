@@ -35,7 +35,8 @@ public class HandWrittenDatabaseScriptsITCase {
                     H2TestDatabaseFactory.h2Oracle(),
                     new MysqlTestDatabaseFactory(),
                     new OracleTestDatabaseFactory(),
-                    new MysqlContainerTestDatabaseFactory()
+                    new MysqlContainerTestDatabaseFactory(),
+                    new MariaDbContainerTestDatabaseFactory()
             ).collect(Collectors.toList());
 
 
