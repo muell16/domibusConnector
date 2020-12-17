@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.5</version>
+        <version>4.2.7-SNAPSHOT</version>
     </parent>
     <artifactId>domibusConnectorTestData</artifactId>
     <name>${project.artifactId}</name>
@@ -55,6 +55,11 @@
         <dependency>
             <groupId>eu.domibus.connector</groupId>
             <artifactId>domibusConnectorAPI</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.domibus.connector</groupId>
+            <artifactId>domibusConnectorAPIlib</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -2,6 +2,8 @@ package eu.domibus.connector.testdata;
 
 
 import eu.domibus.connector.domain.transition.*;
+import eu.domibus.connector.domain.transition.tools.ConversionTools;
+
 import org.apache.cxf.helpers.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -296,18 +298,22 @@ public class LoadStoreTransitionMessage {
 
     private void writeXmlSourceToResource(Path r, Source xmlContent) throws IOException {
 //        File f = r.getFile();
-        try (FileOutputStream fout = new FileOutputStream(r.toFile())) {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(fout));
-            transformer.transform(xmlContent, xmlOutput);
-        } catch (TransformerConfigurationException e) {
-            LOGGER.error("Exception occured", e);
-            throw new RuntimeException(e);
-        } catch (TransformerException e) {
-            throw new RuntimeException(e);
-        }
+    	FileOutputStream out = new FileOutputStream(r.toFile());
+    	out.write(ConversionTools.convertXmlSourceToByteArray(xmlContent));
+    	out.flush();
+    	out.close();
+//        try (FileOutputStream fout = new FileOutputStream(r.toFile())) {
+//            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+//            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+//            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//            StreamResult xmlOutput = new StreamResult(new OutputStreamWriter(fout));
+//            transformer.transform(xmlContent, xmlOutput);
+//        } catch (TransformerConfigurationException e) {
+//            LOGGER.error("Exception occured", e);
+//            throw new RuntimeException(e);
+//        } catch (TransformerException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
 
