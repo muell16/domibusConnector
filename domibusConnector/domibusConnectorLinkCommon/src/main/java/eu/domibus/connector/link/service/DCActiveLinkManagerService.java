@@ -66,7 +66,7 @@ public class DCActiveLinkManagerService {
     }
 
     public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        return activeLinkPartners.get(linkPartnerName);
+        return activeLinkPartners.getOrDefault(linkPartnerName, Optional.empty());
     }
 
     public synchronized Optional<Optional<ActiveLinkPartner>> activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {

@@ -1,5 +1,6 @@
 package eu.domibus.connector.link.impl.wsplugin;
 
+import eu.domibus.connector.domain.enums.LinkMode;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,6 +24,7 @@ public class DCWsGatewayLinkConfigurationProperties extends DCWsPluginConfigurat
             "'/services/gateway'")
     private String gatewaySubmissionPublishAddress = "/gateway";
 
+    private LinkMode mode = LinkMode.PUSH;
 
     public String getGatewaySubmissionPublishAddress() {
         return gatewaySubmissionPublishAddress;
@@ -33,6 +35,13 @@ public class DCWsGatewayLinkConfigurationProperties extends DCWsPluginConfigurat
         this.gatewaySubmissionPublishAddress = gatewaySubmissionPublishAddress;
     }
 
+    public LinkMode getMode() {
+        return mode;
+    }
+
+    public void setMode(LinkMode mode) {
+        this.mode = mode;
+    }
 
     @Override
     protected String getPrefix() {

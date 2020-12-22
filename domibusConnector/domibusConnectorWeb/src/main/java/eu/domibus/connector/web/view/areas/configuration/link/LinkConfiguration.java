@@ -78,15 +78,20 @@ public abstract class LinkConfiguration extends VerticalLayout {
             @Override
             public Component apply(DomibusConnectorLinkPartner linkPartner) {
                 HorizontalLayout hl = new HorizontalLayout();
+                if (linkPartner == null) {
+                    return hl;
+                }
 
                 Button startLinkButton = new Button(new Icon(VaadinIcon.PLAY));
                 startLinkButton.addClickListener(event -> startLinkButtonClicked(event, linkPartner));
-                startLinkButton.setEnabled(!linkManager.getActiveLinkPartner(linkPartner.getLinkPartnerName()).isPresent());
+                Optional<ActiveLinkPartner> activeLinkPartner = linkManager.getActiveLinkPartner(linkPartner.getLinkPartnerName());
+                boolean linkPartnerPresent = activeLinkPartner.isPresent();
+                startLinkButton.setEnabled(!linkPartnerPresent);
                 hl.add(startLinkButton);
 
                 Button stopLinkButton = new Button(new Icon(VaadinIcon.STOP));
                 stopLinkButton.addClickListener(event -> stopLinkButtonClicked(event, linkPartner));
-                stopLinkButton.setEnabled(linkManager.getActiveLinkPartner(linkPartner.getLinkPartnerName()).isPresent());
+                stopLinkButton.setEnabled(linkPartnerPresent);
                 hl.add(stopLinkButton);
 
                 return hl;
