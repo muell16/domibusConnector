@@ -83,6 +83,10 @@
                                     <wsdlLocation>classpath:wsdl/DomibusConnectorGatewaySubmissionWebService.wsdl</wsdlLocation>
                                 </wsdlOption>
                                 <wsdlOption>
+                                    <wsdl>src/main/resources/wsdl/DomibusConnectorGatewayWebService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/DomibusConnectorGatewayWebService.wsdl</wsdlLocation>
+                                </wsdlOption>
+                                <wsdlOption>
                                     <wsdl>src/main/resources/wsdl/DomibusConnectorBackendDeliveryWebService.wsdl</wsdl>
                                     <wsdlLocation>classpath:wsdl/DomibusConnectorBackendDeliveryWebService.wsdl</wsdlLocation>
                                 </wsdlOption>

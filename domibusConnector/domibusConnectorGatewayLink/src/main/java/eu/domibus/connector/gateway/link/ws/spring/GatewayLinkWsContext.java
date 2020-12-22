@@ -9,6 +9,9 @@ import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatew
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWSService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
+import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWSService;
+import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
+
 import org.apache.cxf.Bus;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -18,6 +21,8 @@ import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -30,6 +35,7 @@ import static eu.domibus.connector.gateway.link.ws.spring.GatewayLinkWsContext.G
 
 @Configuration
 @Profile(GW_LINK_WS_PROFILE)
+@EnableConfigurationProperties(value=GatewayLinkWsServiceProperties.class)
 public class GatewayLinkWsContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GatewayLinkWsContext.class);
@@ -85,6 +91,36 @@ public class GatewayLinkWsContext {
 
 
     @Bean
+    @ConditionalOnProperty(prefix = GatewayLinkWsServiceProperties.PREFIX, value = GatewayLinkWsServiceProperties.PULL_ENABLED_PROPERTY_NAME, havingValue = "true")
+    public DomibusConnectorGatewayWebService gwWebserviceClient() {
+//        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
+        ClientProxyFactoryBean clientProxyFactory = new ClientProxyFactoryBean();
+        clientProxyFactory.setServiceClass(DomibusConnectorGatewayWebService.class);
+        clientProxyFactory.setBus(cxfBus);
+        LOGGER.debug("Setting address of gateway sumission service to [{}]", gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
+        clientProxyFactory.setAddress(gatewayLinkWsServiceProperties.getSubmissionEndpointAddress());
+        clientProxyFactory.setServiceName(DomibusConnectorGatewayWSService.SERVICE);
+        clientProxyFactory.setEndpointName(DomibusConnectorGatewayWSService.DomibusConnectorGatewayWebService);
+        clientProxyFactory.setWsdlURL(DomibusConnectorGatewayWSService.WSDL_LOCATION.toString());
+//        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
+//        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
+
+        clientProxyFactory.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
+
+        if (clientProxyFactory.getProperties() == null) {
+            clientProxyFactory.setProperties(new HashMap<>());
+        }
+        clientProxyFactory.getProperties().put("mtom-enabled", true);
+        clientProxyFactory.getProperties().put("security.encryption.properties", gwWsLinkEncryptProperties());
+        clientProxyFactory.getProperties().put("security.encryption.username", gatewayLinkWsServiceProperties.getEncryptAlias());
+        clientProxyFactory.getProperties().put("security.signature.properties", gwWsLinkEncryptProperties());
+        clientProxyFactory.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
+
+        return clientProxyFactory.create(DomibusConnectorGatewayWebService.class);
+    }
+    
+    @Bean
+    @ConditionalOnProperty(prefix = GatewayLinkWsServiceProperties.PREFIX, value = GatewayLinkWsServiceProperties.PULL_ENABLED_PROPERTY_NAME, havingValue = "false")
     public EndpointImpl domibusConnectorDeliveryServiceEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(cxfBus, domibusConnectorDeliveryService());
         endpoint.setAddress(gatewayLinkWsServiceProperties.getPublishAddress());
