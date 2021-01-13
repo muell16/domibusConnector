@@ -20,8 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +37,6 @@ import test.eu.domibus.connector.link.util.TestGW;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +64,7 @@ webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
         DCWsPluginConfiguration.DC_WS_PLUGIN_PROFILE_NAME,
         DCWsPluginConfiguration.DC_WS_GATEWAY_PLUGIN_PROFILE_NAME,
 })
+@Disabled
 public class DCWsGatewayPluginSendReceiveTest {
 
     private String gwSubmitAddress;
@@ -154,12 +154,12 @@ public class DCWsGatewayPluginSendReceiveTest {
         p.put("encryption-alias", "gw");
         linkPartner.setProperties(p);
 
-        Mockito.when(dcActiveLinkManagerService.getActiveLinkPartner(eq(new DomibusConnectorLinkPartner.LinkPartnerName("cn=gw"))))
-                .thenReturn(Optional.of(new DCWsActiveLinkPartner(
-                        linkPartner,
-                        dcWsSubmitTo,
-                        dcWsActiveLink
-                        )));
+//        Mockito.when(dcActiveLinkManagerService.getActiveLinkPartner(eq(new DomibusConnectorLinkPartner.LinkPartnerName("cn=gw"))))
+//                .thenReturn(Optional.of(new DCWsActiveLinkPartner(
+//                        linkPartner,
+//                        dcWsSubmitTo,
+//                        dcWsActiveLink
+//                        )));
 
     }
 

@@ -1,36 +1,38 @@
 package eu.domibus.connector.link.service;
 
+import eu.domibus.connector.controller.service.PullFromLink;
 import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
-import eu.domibus.connector.link.api.LinkPlugin;
+import eu.domibus.connector.link.api.*;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quartz.*;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PreDestroy;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 
 /**
  * This class manages the lifecycle of the connector links
  */
-@Service
-@Profile(LINK_PLUGIN_PROFILE_NAME)
+//@Service
+//@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class DCActiveLinkManagerService {
 
     private final static Logger LOGGER = LogManager.getLogger(DCActiveLinkManagerService.class);
+
+    public static final String DEFAULT_GW_LINK_NAME = "default_GW";
+
 
     @Autowired(required = false)
     List<LinkPlugin> linkPluginFactories = new ArrayList<>();
@@ -38,21 +40,39 @@ public class DCActiveLinkManagerService {
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    Scheduler scheduler;
 
-    private Map<DomibusConnectorLinkPartner.LinkPartnerName, Optional<ActiveLinkPartner>> activeLinkPartners = new ConcurrentHashMap<DomibusConnectorLinkPartner.LinkPartnerName, Optional<ActiveLinkPartner>>();
+
+    private Map<DomibusConnectorLinkPartner.LinkPartnerName, ActiveLinkPartner> activeLinkPartners = new ConcurrentHashMap<>();
     private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLink> activeLinkConfigurations = new ConcurrentHashMap<>();
+//    private Map<DomibusConnectorLinkPartner.LinkPartnerName, String> activeLinkPartnersToPlugin = new ConcurrentHashMap<>();
 
 
     SubmitToLink getSubmitToLinkPartner(String linkName) {
-        Optional<ActiveLinkPartner> activeLinkPartner = activeLinkPartners.get(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
-        if (!activeLinkPartner.isPresent()) {
+        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
+        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
+        if (activeLinkPartner == null) {
             String error = String.format("No linkPartner with name %s available", linkName);
             throw new LinkPluginException(error);
         }
 //        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
-        SubmitToLink submitToLinkBean = activeLinkPartner.get().getSubmitToLinkBean();
+        SubmitToLink submitToLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getSubmitToLink(activeLinkPartner);
         return submitToLinkBean;
     }
+
+    public Optional<PullFromLink> getPullFromLinkPartner(String linkName) {
+        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
+        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
+        if (activeLinkPartner == null) {
+            String error = String.format("No linkPartner with name %s available", linkName);
+            throw new LinkPluginException(error);
+        }
+//        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
+        Optional<PullFromLink> pullFromLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getPullFromLink(activeLinkPartner);
+        return pullFromLinkBean;
+    }
+
 
     public List<LinkPlugin> getAvailableLinkPlugins() {
         return this.linkPluginFactories;
@@ -65,11 +85,11 @@ public class DCActiveLinkManagerService {
                 .findFirst();
     }
 
-    public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        return activeLinkPartners.getOrDefault(linkPartnerName, Optional.empty());
-    }
+//    public Optional<ActiveLinkPartnerManager> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+//        return activeLinkPartners.getOrDefault(linkPartnerName, Optional.empty());
+//    }
 
-    public synchronized Optional<Optional<ActiveLinkPartner>> activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
+    public synchronized Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkInfo) {
         try (MDC.MDCCloseable li = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkInfo.getLinkPartnerName().toString())) {
             DomibusConnectorLinkConfiguration linkConfiguration = linkInfo.getLinkConfiguration();
             DomibusConnectorLinkConfiguration.LinkConfigName configName = linkConfiguration.getConfigName();
@@ -90,16 +110,64 @@ public class DCActiveLinkManagerService {
                 LOGGER.warn("No link configuration for link partner available [{}]!", linkInfo);
                 return Optional.empty();
             }
+            activeLinkConfigurations.put(configName, activeLink);
+
+
+            LinkPlugin linkPlugin = activeLink.getLinkPlugin();
+
+            ActiveLinkPartner activeLinkPartner = null;
             try {
-                Optional<ActiveLinkPartner> activeLinkPartner = activeLink.activateLinkPartner(linkInfo);
+                activeLinkPartner = linkPlugin.enableLinkPartner(linkInfo, activeLink);
                 activeLinkPartners.put(linkPartnerName, activeLinkPartner);
-                LOGGER.info("Activated Link partner [{}] ", activeLinkPartner);
-                return Optional.of(activeLinkPartner);
+                configurePull(linkInfo, activeLinkPartner);
             } catch (LinkPluginException e) {
                 LOGGER.warn("Link partner could not be activated", e);
             }
-            return Optional.empty();
+
+
+            return Optional.ofNullable(activeLinkPartner);
         }
+    }
+
+    /**
+     * configure scheduler for pull mode...
+     * @param linkInfo
+     * @param activeLinkPartner
+     */
+    private void configurePull(DomibusConnectorLinkPartner linkInfo, ActiveLinkPartner activeLinkPartner) {
+        if (linkInfo.getLinkMode() != LinkMode.PULL) {
+            return;
+        }
+        Optional<PullFromLink> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
+        if (!pullFromBean.isPresent()) {
+            LOGGER.warn("PULL MODE activated but NO pull bean found!");
+            return;
+        }
+        try {
+//            PullFromLink pullFromLink = pullFromBean.get();
+
+            String linkPartnerName = linkInfo.getLinkPartnerName().toString();
+            JobDetail link_pulls = JobBuilder.newJob(DCLinkPullJob.class)
+//                    .usingJobData(DCLinkPullJob.LINK_PARTNER_NAME_PROPERTY_NAME, linkInfo.getLinkPartnerName().toString())
+                    .withIdentity("pull_" + linkPartnerName, "LINK_PULL_JOBS")
+                    .build();
+
+            int pullIntervallSeconds = (int) linkInfo.getPullIntervall().get(ChronoUnit.SECONDS);
+
+            SimpleTrigger link_pull_trigger = TriggerBuilder.newTrigger().forJob(link_pulls)
+                    .withIdentity("pull_trigger_" + linkPartnerName, "LINK_PULL_TRIGGER")
+                    .usingJobData(DCLinkPullJob.LINK_PARTNER_NAME_PROPERTY_NAME, linkInfo.getLinkPartnerName().toString())
+                    .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(pullIntervallSeconds))
+                    .build();
+
+            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting up trigger with pull intervall [{}] to pull from [{}]", pullIntervallSeconds, linkPartnerName);
+
+            scheduler.scheduleJob(link_pulls, link_pull_trigger);
+
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private synchronized ActiveLink startLinkConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
@@ -117,24 +185,27 @@ public class DCActiveLinkManagerService {
             LinkPlugin linkPlugin = first.get();
 
             ActiveLink link = linkPlugin.startConfiguration(linkConfiguration);
+            if (link == null) {
+                throw new LinkPluginException(String.format("Failed to start configuration [%s]", linkConfiguration));
+            }
+            link.setLinkPlugin(linkPlugin);
 
-            activeLinkConfigurations.put(linkConfiguration.getConfigName(), link);
             return link;
         }
     }
 
     public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        Optional<ActiveLinkPartner> activeLinkPartner = activeLinkPartners.get(linkPartnerName);
-        if (!activeLinkPartner.isPresent()) {
+        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
+        if (activeLinkPartner == null) {
             throw new IllegalArgumentException(String.format("No active linkPartner with name %s found!", linkPartnerName.toString()));
         }
+
 //        if (activeLinkPartner() == null) {
 //            throw new RuntimeException(String.format("ActiveLinkConfiguration %s has no LinkPartner Manager!", activeLinkPartner));
 //        }
 //        activeLinkPartner.getLinkManager().shutdownLinkPartner(linkPartnerName);
 
-
-        activeLinkPartner.ifPresent(ActiveLinkPartner::shutdown);
+//        activeLinkPartner.ifPresent(ActiveLinkPartnerManager::shutdown);
         activeLinkPartners.remove(linkPartnerName);
 
     }
@@ -144,11 +215,26 @@ public class DCActiveLinkManagerService {
         this.activeLinkConfigurations.forEach((key, value) -> {
             try {
                 LOGGER.info("Invoking shutdown on LinkConfig [{}]", value);
-                value.shutdown();
+//                value.shutdown();
             } catch (Exception e) {
                 LOGGER.error("Exception occured during shutdown LinkConfig", e);
             }
         });
     }
+
+    public Collection<ActiveLinkPartner> getActiveLinkPartners() {
+        return activeLinkPartners.values();
+    }
+
+    public Optional<ActiveLinkPartner> getActiveLinkPartnerByName(String lp) {
+        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(lp);
+        return getActiveLinkPartnerByName(linkPartnerName);
+    }
+
+    public Optional<ActiveLinkPartner> getActiveLinkPartnerByName(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
+        return Optional.ofNullable(activeLinkPartner);
+    }
+
 
 }

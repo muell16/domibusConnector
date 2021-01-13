@@ -20,7 +20,7 @@ import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+//@Service
 public class DCLinkPersistenceService {
 
     private static final Logger LOGGER = LogManager.getLogger(DCLinkPersistenceService.class);
@@ -65,7 +65,7 @@ public class DCLinkPersistenceService {
 
         Properties p = new Properties();
         p.putAll(dbLinkConfig.getProperties());
-        configuration.setProperties(p);
+//        configuration.setProperties(p);
         configuration.setConfigName(new DomibusConnectorLinkConfiguration.LinkConfigName(dbLinkConfig.getConfigName()));
         configuration.setLinkImpl(dbLinkConfig.getLinkImpl());
         return configuration;
@@ -145,7 +145,7 @@ public class DCLinkPersistenceService {
         PDomibusConnectorLinkConfiguration dbLinkConfig = oneByConfigName.orElse(new PDomibusConnectorLinkConfiguration());
         dbLinkConfig.setConfigName(configName);
         dbLinkConfig.setLinkImpl(linkConfiguration.getLinkImpl());
-        dbLinkConfig.setProperties(mapProperties(linkConfiguration.getProperties()));
+        dbLinkConfig.setProperties(linkConfiguration.getProperties());
         return dbLinkConfig;
     }
 

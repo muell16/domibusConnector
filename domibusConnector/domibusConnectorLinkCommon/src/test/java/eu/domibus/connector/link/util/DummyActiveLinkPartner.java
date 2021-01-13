@@ -2,13 +2,13 @@ package eu.domibus.connector.link.util;
 
 import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkManager;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 
-public class DummyActiveLinkPartner implements ActiveLinkPartner {
+public class DummyActiveLinkPartner implements ActiveLinkPartnerManager {
 
     @Override
-    public ActiveLink getActiveLink() {
+    public ActiveLinkManager getActiveLink() {
         return null;
     }
 

@@ -2,17 +2,13 @@ package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
+import eu.domibus.connector.link.api.ActiveLinkManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 //@Component
 //@Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
-public class GwJmsPluginActiveLinkPartner implements ActiveLinkPartner {
+public class GwJmsPluginActiveLinkPartner implements ActiveLinkPartnerManager {
 
 
     @Autowired
@@ -25,9 +21,11 @@ public class GwJmsPluginActiveLinkPartner implements ActiveLinkPartner {
     private DomibusConnectorLinkPartner linkPartner;
 
     @Override
-    public ActiveLink getActiveLink() {
-        return activeLink;
+    public ActiveLinkManager getActiveLink() {
+//        return activeLink;
+        return null;
     }
+
 
     @Override
     public void shutdown() {

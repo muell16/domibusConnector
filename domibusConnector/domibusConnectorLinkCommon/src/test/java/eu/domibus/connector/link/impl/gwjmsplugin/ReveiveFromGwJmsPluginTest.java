@@ -8,6 +8,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import static org.mockito.ArgumentMatchers.refEq;
 
 )
 @ActiveProfiles({GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE, "test", "jms-test"})
+@Disabled
 class ReveiveFromGwJmsPluginTest {
 
     public static final String ATTACHMENT_LOCATION = "./target/testattachments";

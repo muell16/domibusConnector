@@ -11,7 +11,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
@@ -47,7 +47,7 @@ public class DCWsSubmitTo implements SubmitToLink {
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
         TransportStatusService.TransportId transportId = transportStatusService.createOrGetTransportFor(message, linkPartnerName);
-        Optional<ActiveLinkPartner> optionalActiveLinkPartner = activeLinkManagerService.getActiveLinkPartner(linkPartnerName);
+        Optional<ActiveLinkPartnerManager> optionalActiveLinkPartner = Optional.empty(); //activeLinkManagerService.getActiveLinkPartner(linkPartnerName);
         if (!optionalActiveLinkPartner.isPresent()) {
             throw new RuntimeException("No Link Partner found!");
         }

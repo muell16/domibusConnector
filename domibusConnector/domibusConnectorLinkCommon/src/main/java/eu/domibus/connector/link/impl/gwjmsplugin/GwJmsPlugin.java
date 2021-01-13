@@ -3,10 +3,8 @@ package eu.domibus.connector.link.impl.gwjmsplugin;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.link.api.*;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
-import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class GwJmsPlugin implements LinkPlugin {
+public class GwJmsPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(GwJmsPlugin.class);
 
@@ -34,14 +32,14 @@ public class GwJmsPlugin implements LinkPlugin {
      *
      * @param implementation
      **/
-    @Override
+//    @Override
     public boolean canHandle(String implementation) {
         return LINK_IMPL_NAME.equals(implementation);
     }
 
 
-    @Override
-    public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+//    @Override
+    public ActiveLinkManager startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
         DomibusConnectorLinkConfiguration.LinkConfigName linkConfigName = linkConfiguration.getConfigName();
 
 
@@ -54,12 +52,12 @@ public class GwJmsPlugin implements LinkPlugin {
         LOGGER.info("Activated LinkConfig [{}] to [{}]", linkConfiguration, activeLink);
         linkConfigNameToActiveLink.put(linkConfigName, activeLink);
         linkConfigNameToLinkConfig.put(linkConfigName, linkConfiguration);
-        return activeLink;
-
+//        return activeLink;
+        return null;
 
     }
 
-    @Override
+//    @Override
     public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
         GwJmsPluginActiveLink gwJmsPluginActiveLink = linkConfigNameToActiveLink.get(linkConfigurationName);
         if (gwJmsPluginActiveLink == null) {
@@ -70,28 +68,28 @@ public class GwJmsPlugin implements LinkPlugin {
         linkConfigNameToLinkConfig.remove(linkConfigurationName);
     }
 
-    @Override
+//    @Override
     public List<PluginFeature> getFeatures() {
         return Stream.<PluginFeature>of().collect(Collectors.toList());
     }
 
-    @Override
+//    @Override
     public List<Class> getPluginConfigurationProperties() {
         return Stream.of(GwJmsPluginConfigurationProperties.class)
                 .collect(Collectors.toList());
     }
 
-    @Override
+//    @Override
     public List<Class> getPartnerConfigurationProperties() {
         return new ArrayList<>(); //partner itself is not configureable...
     }
 
-    @Override
+//    @Override
     public String getPluginName() {
         return LINK_IMPL_NAME;
     }
 
-    @Override
+//    @Override
     public String getPluginDescription() {
         return "A plugin to establish connection to domibus gateway jms plugin";
     }

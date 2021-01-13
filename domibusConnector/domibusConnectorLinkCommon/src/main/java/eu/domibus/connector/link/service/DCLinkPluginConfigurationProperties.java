@@ -1,29 +1,51 @@
 package eu.domibus.connector.link.service;
 
 
+import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
+import java.util.ArrayList;
+import java.util.List;
 
-@Component
-@Profile(LINK_PLUGIN_PROFILE_NAME)
-@ConfigurationProperties(prefix = "connector.link")
+
+@ConfigurationProperties(prefix = DCLinkPluginConfigurationProperties.PREFIX)
+@Data
 public class DCLinkPluginConfigurationProperties {
+
+    public static final String PREFIX = "connector.link";
 
     @ConfigurationLabel("Link Autostart")
     @ConfigurationDescription("Should the links be autostarted on connector start?, default is true")
     private boolean autostart = true;
 
-    public boolean isAutostart() {
-        return autostart;
+    /**
+     * switch if link config should be read from database
+     */
+    private boolean loadDbConfig = false;
+
+    private boolean failOnLinkPluginError = true;
+
+
+    /**
+     * If set the gateway link configuration is loaded from here
+     */
+    @NestedConfigurationProperty
+    private DCLnkPropertyConfig gateway = null;
+
+    @NestedConfigurationProperty
+    private List<DCLnkPropertyConfig> backend = new ArrayList<>();
+
+    @Data
+    public static class DCLnkPropertyConfig {
+        @NestedConfigurationProperty
+        private DomibusConnectorLinkConfiguration linkConfig;
+        @NestedConfigurationProperty
+        private List<DomibusConnectorLinkPartner> linkPartners = new ArrayList<>();
     }
 
-    public void setAutostart(boolean autostart) {
-        this.autostart = autostart;
-    }
 }

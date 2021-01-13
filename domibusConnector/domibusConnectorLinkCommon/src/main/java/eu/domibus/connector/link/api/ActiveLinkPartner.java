@@ -1,22 +1,19 @@
 package eu.domibus.connector.link.api;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import lombok.Data;
+import org.springframework.context.ConfigurableApplicationContext;
 
-public interface ActiveLinkPartner {
+import javax.annotation.CheckForNull;
 
-    ActiveLink getActiveLink();
+@Data
+public class ActiveLinkPartner {
 
-    default void shutdown() {
-        getActiveLink().shutdownLinkPartner(getLinkPartnerName());
-    }
+    private DomibusConnectorLinkPartner linkPartner;
 
-    default DomibusConnectorLinkPartner.LinkPartnerName getLinkPartnerName() {
-        return getLinkPartner().getLinkPartnerName();
-    }
+    private ActiveLink parentLink;
 
-    DomibusConnectorLinkPartner getLinkPartner();
-
-    SubmitToLink getSubmitToLinkBean();
+    @CheckForNull
+    private ConfigurableApplicationContext childContext;
 
 }

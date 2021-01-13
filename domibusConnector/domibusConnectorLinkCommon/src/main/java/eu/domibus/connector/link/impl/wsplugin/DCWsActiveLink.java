@@ -2,24 +2,21 @@ package eu.domibus.connector.link.impl.wsplugin;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkManager;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.LinkPluginQualifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 
-public class DCWsActiveLink implements ActiveLink {
+public class DCWsActiveLink { //implements ActiveLinkManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DCWsActiveLink.class);
 
@@ -32,21 +29,21 @@ public class DCWsActiveLink implements ActiveLink {
     @Autowired
     DCWsSubmitTo submitTo;
 
-    @Autowired
-    DomibusConnectorLinkConfiguration linkConfiguration;
+//    @Autowired
+//    DomibusConnectorLinkConfiguration linkConfiguration;
 
-    @Autowired
-    @LinkPluginQualifier
-    LinkPlugin pluginManager;
+//    @Autowired
+//    @LinkPluginQualifier
+//    LinkPlugin pluginManager;
 
 
-    @Override
-    public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+//    @Override
+    public Optional<ActiveLinkPartnerManager> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         return Optional.ofNullable(nameToActiveLink.get(linkPartnerName));
     }
 
-    @Override
-    public Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+//    @Override
+    public Optional<ActiveLinkPartnerManager> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
 
         DCWsActiveLinkPartner dcWsActiveLinkPartner = new DCWsActiveLinkPartner(
                 linkPartner,
@@ -60,30 +57,26 @@ public class DCWsActiveLink implements ActiveLink {
         return Optional.of(dcWsActiveLinkPartner);
     }
 
-    @Override
+//    @Override
     public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
         this.nameToLinkPartner.remove(linkPartner);
         this.nameToActiveLink.remove(linkPartner);
     }
 
-    @Override
+//    @Override
     public void shutdown() {
         ctx.close();
     }
 
-    @Override
-    public LinkPlugin getPluginManager() {
-        return pluginManager;
-    }
+//    @Override
+//    public LinkPlugin getPluginManager() {
+//        return pluginManager;
+//    }
 
-    @Override
-    public DomibusConnectorLinkConfiguration getConfiguration() {
-        return linkConfiguration;
-    }
+//    @Override
+//    public DomibusConnectorLinkConfiguration getConfiguration() {
+//        return linkConfiguration;
+//    }
 
-    @Override
-    public boolean isUp() {
-        return ctx.isActive();
-    }
 }
 

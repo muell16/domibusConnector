@@ -46,7 +46,7 @@ public class LinkPluginUtils {
         }
 
         public ChildContextBuilder withDomibusConnectorLinkConfiguration(DomibusConnectorLinkConfiguration linkConfig) {
-            builder.properties(linkConfig.getProperties());
+            builder.properties(new HashMap<>(linkConfig.getProperties()));
             return this.addSingelton("linkConfig", linkConfig);
         }
 
@@ -77,8 +77,8 @@ public class LinkPluginUtils {
             builder.properties(props);
             builder.profiles(profiles.toArray(new String[]{}));
             LOGGER.trace("Running child context with " +
-                    "\nproperties [{}]" +
-                    "\nprofiles [{}]", props, profiles
+                    "\n\tproperties [{}]" +
+                    "\n\tprofiles [{}]", props, profiles
             );
 
             return builder.run(args);
@@ -89,5 +89,8 @@ public class LinkPluginUtils {
     public static ChildContextBuilder getChildContextBuilder(ConfigurableApplicationContext ctx) {
         return new ChildContextBuilder(ctx);
     }
+
+
+
 
 }

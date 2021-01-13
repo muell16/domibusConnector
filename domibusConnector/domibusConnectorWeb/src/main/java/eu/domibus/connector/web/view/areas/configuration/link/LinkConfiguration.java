@@ -16,7 +16,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.ValueProvider;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.DCLinkPersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +53,7 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
         addAndExpand(addLinkButton);
         addLinkButton.addClickListener(this::addLinkButtonClicked);
+        addLinkButton.setEnabled(false);
 
         linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
             @Override
@@ -65,14 +66,14 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
         linkGrid.addColumn(DomibusConnectorLinkPartner::getLinkPartnerName).setHeader("Link Partner Name");
         linkGrid.addColumn(DomibusConnectorLinkPartner::isEnabled).setHeader("run on startup");
-        linkGrid.addColumn((ValueProvider) o -> {
-            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
-            return d.getLinkConfiguration().getConfigName();
-        }).setHeader("Config Name");
-        linkGrid.addColumn((ValueProvider) o -> {
-            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
-            return linkManager.getActiveLinkPartner(d.getLinkPartnerName()).isPresent() ? "running" : "stopped";
-        }).setHeader("Current Link State");
+//        linkGrid.addColumn((ValueProvider) o -> {
+//            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
+//            return d.getLinkConfiguration().getConfigName();
+//        }).setHeader("Config Name");
+//        linkGrid.addColumn((ValueProvider) o -> {
+//            DomibusConnectorLinkPartner d = (DomibusConnectorLinkPartner) o;
+//            return linkManager.getActiveLinkPartner(d.getLinkPartnerName()).isPresent() ? "running" : "stopped";
+//        }).setHeader("Current Link State");
 
         linkGrid.addComponentColumn(new ValueProvider<DomibusConnectorLinkPartner, Component>() {
             @Override
@@ -84,14 +85,14 @@ public abstract class LinkConfiguration extends VerticalLayout {
 
                 Button startLinkButton = new Button(new Icon(VaadinIcon.PLAY));
                 startLinkButton.addClickListener(event -> startLinkButtonClicked(event, linkPartner));
-                Optional<ActiveLinkPartner> activeLinkPartner = linkManager.getActiveLinkPartner(linkPartner.getLinkPartnerName());
-                boolean linkPartnerPresent = activeLinkPartner.isPresent();
-                startLinkButton.setEnabled(!linkPartnerPresent);
+//                Optional<ActiveLinkPartnerManager> activeLinkPartner = linkManager.getActiveLinkPartner(linkPartner.getLinkPartnerName());
+//                boolean linkPartnerPresent = activeLinkPartner.isPresent();
+//                startLinkButton.setEnabled(!linkPartnerPresent);
                 hl.add(startLinkButton);
 
                 Button stopLinkButton = new Button(new Icon(VaadinIcon.STOP));
                 stopLinkButton.addClickListener(event -> stopLinkButtonClicked(event, linkPartner));
-                stopLinkButton.setEnabled(linkPartnerPresent);
+//                stopLinkButton.setEnabled(linkPartnerPresent);
                 hl.add(stopLinkButton);
 
                 return hl;
@@ -113,12 +114,12 @@ public abstract class LinkConfiguration extends VerticalLayout {
     }
 
     private void startLinkButtonClicked(ClickEvent<Button> event, DomibusConnectorLinkPartner linkPartner) {
-        Optional<Optional<ActiveLinkPartner>> activeLinkPartner = this.linkManager.activateLinkPartner(linkPartner);
-        if (activeLinkPartner.isPresent()) {
-            Notification.show("Link " + linkPartner.getLinkPartnerName() + " started");
-        } else {
-            Notification.show("Link " + linkPartner.getLinkPartnerName() + " start failed!");
-        }
+//        Optional<Optional<ActiveLinkPartnerManager>> activeLinkPartner = this.linkManager.activateLinkPartner(linkPartner);
+//        if (activeLinkPartner.isPresent()) {
+//            Notification.show("Link " + linkPartner.getLinkPartnerName() + " started");
+//        } else {
+//            Notification.show("Link " + linkPartner.getLinkPartnerName() + " start failed!");
+//        }
         refreshList();
     }
 

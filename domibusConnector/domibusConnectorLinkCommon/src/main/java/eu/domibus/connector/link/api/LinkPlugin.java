@@ -1,8 +1,12 @@
 package eu.domibus.connector.link.api;
 
+import eu.domibus.connector.controller.service.PullFromLink;
+import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Must be implemented by a link plugin
@@ -10,7 +14,7 @@ import java.util.List;
 public interface LinkPlugin {
 
     default String getPluginName() {
-        return this.toString();
+        return this.getClass().getSimpleName().toLowerCase();
     }
 
     default String getPluginDescription() {
@@ -22,7 +26,9 @@ public interface LinkPlugin {
      * @param implementation - the implementation name
      * @return true if the PluginFactory can handle provide the implementation
      */
-    boolean canHandle(String implementation);
+    default boolean canHandle(String implementation) {
+        return getPluginName().equals(implementation);
+    }
 
     /**
      *
@@ -32,7 +38,14 @@ public interface LinkPlugin {
     ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration);
 
 
-    void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName);
+    void shutdownConfiguration(ActiveLink activeLink);
+
+
+    public ActiveLinkPartner enableLinkPartner(DomibusConnectorLinkPartner linkPartner, ActiveLink activeLink);
+
+    void shutdownActiveLinkPartner(ActiveLinkPartner linkPartner);
+
+    SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner);
 
     /**
      *
@@ -52,4 +65,5 @@ public interface LinkPlugin {
     List<Class> getPartnerConfigurationProperties();
 
 
+    default Optional<PullFromLink> getPullFromLink(ActiveLinkPartner activeLinkPartner) { return Optional.empty();}
 }

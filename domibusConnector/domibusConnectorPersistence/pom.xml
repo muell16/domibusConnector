@@ -147,7 +147,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>spring-boot-property-converter</artifactId>
         </dependency>
         <dependency>

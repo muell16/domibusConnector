@@ -2,6 +2,7 @@
 <wsdl:definitions
 	xmlns:tns="http://connector.domibus.eu/ws/gateway/webservice"
 	xmlns:dct="transition.domain.connector.domibus.eu"
+	xmlns:wp="http://connector.domibus.eu/ws/gateway/webservice"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:xmime="http://www.w3.org/2005/05/xmlmime" name="DomibusConnectorGatewayWebService"
@@ -12,44 +13,53 @@
 
 	<wsdl:types>
 		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://connector.domibus.eu/ws/gateway/webservice">
-			<xsd:element name="messageIds">
-				<xsd:complexType>
+			<xsd:complexType name="ListPendingMessageIdsRequest">
+				<!-- empty type -->
+			</xsd:complexType>
+			<xsd:complexType name="ListPendingMessageIdsResponse">
 					<xsd:sequence>
-						<xsd:element name="messageId" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element name="messageIds" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+			</xsd:complexType>
+			<xsd:complexType name="GetMessageByIdRequest">
+				<xsd:sequence>
+					<xsd:element name="messageId" type="xsd:string" minOccurs="1" maxOccurs="1" />
+				</xsd:sequence>
+			</xsd:complexType>
 		</xsd:schema>
     </wsdl:types>
 	
 	<wsdl:message name="submitMessageRequest">
-		<wsdl:part name="submitMessageRequest" type="dct:DomibusConnectorMessageType"></wsdl:part>
+		<wsdl:part name="submitMessageRequest" type="dct:DomibusConnectorMessageType"/>
 	</wsdl:message>
 	<wsdl:message name="submitMessageResponse">
-		<wsdl:part name="submitMessageResponse" type="dct:DomibsConnectorAcknowledgementType"></wsdl:part>
+		<wsdl:part name="submitMessageResponse" type="dct:DomibsConnectorAcknowledgementType"/>
+	</wsdl:message>
+	<wsdl:message name="listPendingMessageIdsRequest">
+		<wsdl:part name="listPendingMessageIdsRequest" type="wp:ListPendingMessageIdsRequest"/>
 	</wsdl:message>
 	<wsdl:message name="listPendingMessageIdsResponse">
-		<wsdl:part name="listPendingMessageIdsResponse" element="tns:messageIds"></wsdl:part>
+		<wsdl:part name="listPendingMessageIdsResponse" type="wp:ListPendingMessageIdsResponse"/>
 	</wsdl:message>
 	<wsdl:message name="getMessageByIdRequest">
-		<wsdl:part name="getMessageByIdRequest" type="xsd:string"></wsdl:part>
+		<wsdl:part name="getMessageByIdRequest" type="wp:GetMessageByIdRequest"/>
 	</wsdl:message>
 	<wsdl:message name="getMessageByIdResponse">
-		<wsdl:part name="getMessageByIdResponse" type="dct:DomibusConnectorMessageType"></wsdl:part>
+		<wsdl:part name="getMessageByIdResponse" type="dct:DomibusConnectorMessageType"/>
 	</wsdl:message>
 	
 	<wsdl:portType name="DomibusConnectorGatewayWebService">
 		<wsdl:operation name="submitMessage">
-			<wsdl:input message="tns:submitMessageRequest"></wsdl:input>
-			<wsdl:output message="tns:submitMessageResponse"></wsdl:output>
+			<wsdl:input message="tns:submitMessageRequest"/>
+			<wsdl:output message="tns:submitMessageResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="listPendingMessageIds">
-			<wsdl:input message=""></wsdl:input>
-			<wsdl:output message="tns:listPendingMessageIdsResponse"></wsdl:output>
+			<wsdl:input message="tns:listPendingMessageIdsRequest"/>
+			<wsdl:output message="tns:listPendingMessageIdsResponse"/>
 		</wsdl:operation>
 		<wsdl:operation name="getMessageById">
-			<wsdl:input message="tns:getMessageByIdRequest"></wsdl:input>
-			<wsdl:output message="tns:getMessageByIdResponse"></wsdl:output>
+			<wsdl:input message="tns:getMessageByIdRequest"/>
+			<wsdl:output message="tns:getMessageByIdResponse"/>
 		</wsdl:operation>
 	</wsdl:portType>
 

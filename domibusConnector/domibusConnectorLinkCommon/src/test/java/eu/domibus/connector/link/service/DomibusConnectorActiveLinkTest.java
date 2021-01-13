@@ -20,7 +20,7 @@ import test.eu.domibus.connector.link.LinkTestContext;
 
 import javax.jms.MapMessage;
 import java.time.Duration;
-import java.util.Properties;
+import java.util.HashMap;
 
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +66,7 @@ class DomibusConnectorActiveLinkTest {
             linkPartner.setDescription("A description for this link...");
             linkPartner.setEnabled(true);
             linkPartner.setLinkType(LinkType.GATEWAY);
-            Properties props = new Properties();
+            HashMap<String, String> props = new HashMap<>();
             props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
 //            props.put("link.gwjmsplugin.put-attachment-in-queue", "true");
 

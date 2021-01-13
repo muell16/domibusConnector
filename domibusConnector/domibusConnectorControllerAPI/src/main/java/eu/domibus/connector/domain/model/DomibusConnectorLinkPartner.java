@@ -4,6 +4,7 @@ import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import org.springframework.core.style.ToStringCreator;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -18,6 +19,8 @@ public class DomibusConnectorLinkPartner {
     private LinkMode linkMode;
 
     private LinkType linkType;
+
+    private Duration pullIntervall = Duration.ofMinutes(5l);
 
     private Properties properties = new Properties();
 
@@ -121,5 +124,19 @@ public class DomibusConnectorLinkPartner {
         public String toString() {
             return this.linkName;
         }
+    }
+
+    public Duration getPullIntervall() {
+        return pullIntervall;
+    }
+
+    public void setPullIntervall(Duration pullIntervall) {
+        this.pullIntervall = pullIntervall;
+    }
+
+    public String toString() {
+        return new ToStringCreator(this)
+                .append("linkName", this.linkPartnerName)
+                .toString();
     }
 }

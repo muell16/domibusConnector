@@ -2,24 +2,24 @@ package eu.domibus.connector.link.impl.wsplugin;
 
 import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkManager;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
+import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.core.env.PropertiesPropertySource;
 
-public class DCWsActiveLinkPartner implements ActiveLinkPartner {
+public class DCWsActiveLinkPartner implements ActiveLinkPartnerManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DCWsActiveLinkPartner.class);
 
     private final DomibusConnectorLinkPartner linkPartner;
     private final DCWsSubmitTo submitTo;
     private final DCWsActiveLink activeLink;
-    private DCWsLinkPartnerConfigurationProperties configurationProperties;
+    private WsBackendPluginLinkPartnerConfigurationProperties configurationProperties;
 
     public DCWsActiveLinkPartner(DomibusConnectorLinkPartner linkPartner,
                                  DCWsSubmitTo submitTo,
@@ -38,19 +38,19 @@ public class DCWsActiveLinkPartner implements ActiveLinkPartner {
         MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
         propertySource.putAll(linkPartner.getProperties());
 
-        Bindable<DCWsLinkPartnerConfigurationProperties> bindable = Bindable.of(DCWsLinkPartnerConfigurationProperties.class);
+        Bindable<WsBackendPluginLinkPartnerConfigurationProperties> bindable = Bindable.of(WsBackendPluginLinkPartnerConfigurationProperties.class);
 
         Binder binder = new Binder(propertySource);
-        BindResult<DCWsLinkPartnerConfigurationProperties> name = binder.bind("", bindable);
-        DCWsLinkPartnerConfigurationProperties dcWsLinkPartnerConfigurationProperties = name.get();
+        BindResult<WsBackendPluginLinkPartnerConfigurationProperties> name = binder.bind("", bindable);
+        WsBackendPluginLinkPartnerConfigurationProperties wsBackendPluginLinkPartnerConfigurationProperties = name.get();
 
-        this.configurationProperties = dcWsLinkPartnerConfigurationProperties;
+        this.configurationProperties = wsBackendPluginLinkPartnerConfigurationProperties;
     }
 
 
     @Override
-    public ActiveLink getActiveLink() {
-        return activeLink;
+    public ActiveLinkManager getActiveLink() {
+        return null;
     }
 
     @Override

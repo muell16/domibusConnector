@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
-import java.util.Optional;
 
 /**
  * Handles transmitting messages (push/pull) from and to backendClients over webservice
@@ -100,7 +99,7 @@ public class DCWsBackendServiceEndpointImpl implements DomibusConnectorBackendWe
         DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
         try {
             LOGGER.debug("#submitMessage: message: [{}]", submitMessageRequest);
-            ActiveLinkPartner backendClientInfoByName = null;
+            ActiveLinkPartnerManager backendClientInfoByName = null;
             backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext).get();
 
             DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);

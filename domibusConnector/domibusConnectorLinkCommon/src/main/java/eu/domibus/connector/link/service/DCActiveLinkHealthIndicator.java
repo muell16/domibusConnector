@@ -1,16 +1,11 @@
 package eu.domibus.connector.link.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.Status;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 
@@ -21,8 +16,8 @@ import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_P
  *
  *
  */
-@Component
-@Profile(LINK_PLUGIN_PROFILE_NAME)
+//@Component
+//@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class DCActiveLinkHealthIndicator extends AbstractHealthIndicator {
 
     @Autowired
@@ -42,18 +37,18 @@ public class DCActiveLinkHealthIndicator extends AbstractHealthIndicator {
     private void checkLink(Health.Builder builder, DomibusConnectorLinkPartner enabledLink) {
         DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = enabledLink.getLinkPartnerName();
 
-        Optional<ActiveLinkPartner> activeLinkPartnerOptional = dcActiveLinkManagerService.getActiveLinkPartner(linkPartnerName);
-        if (activeLinkPartnerOptional.isPresent()) {
-            ActiveLinkPartner activeLinkPartner = activeLinkPartnerOptional.get();
-            ActiveLink activeLink = activeLinkPartner.getActiveLink();
-            if (activeLink.isUp()) {
-                builder.withDetail("linkpartner_" + linkPartnerName, Status.UP);
-            } else {
-                builder.withDetail("linkpartner_" + linkPartnerName, Status.DOWN);
-            }
-        } else {
-            builder.down();
-            builder.withDetail("linkpartner_" + linkPartnerName, Status.DOWN);
-        }
+//        Object activeLinkPartner = dcActiveLinkManagerService.getActiveLinkPartner(linkPartnerName);
+//        if (activeLinkPartnerOptional.isPresent()) {
+//            ActiveLinkPartnerManager activeLinkPartner = activeLinkPartnerOptional.get();
+//            ActiveLinkManager activeLink = activeLinkPartner.getActiveLink();
+//            if (activeLink.getLinkState()) {
+//                builder.withDetail("linkpartner_" + linkPartnerName, Status.UP);
+//            } else {
+//                builder.withDetail("linkpartner_" + linkPartnerName, Status.DOWN);
+//            }
+//        } else {
+//            builder.down();
+//            builder.withDetail("linkpartner_" + linkPartnerName, Status.DOWN);
+//        }
     }
 }

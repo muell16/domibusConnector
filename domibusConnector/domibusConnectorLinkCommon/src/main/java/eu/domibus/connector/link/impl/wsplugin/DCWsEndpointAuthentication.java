@@ -2,14 +2,12 @@ package eu.domibus.connector.link.impl.wsplugin;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorBackendDeliveryException;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import java.security.Principal;
 import java.util.Optional;
@@ -26,7 +24,7 @@ public class DCWsEndpointAuthentication {
     DCActiveLinkManagerService activeLink;
 
 
-    public Optional<ActiveLinkPartner> checkBackendClient(WebServiceContext webServiceContext) throws DomibusConnectorBackendDeliveryException {
+    public Optional<ActiveLinkPartnerManager> checkBackendClient(WebServiceContext webServiceContext) throws DomibusConnectorBackendDeliveryException {
         if (webServiceContext == null) {
             throw new RuntimeException("No webServiceContext found");
         }
@@ -37,10 +35,10 @@ public class DCWsEndpointAuthentication {
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }
-        Optional<ActiveLinkPartner> backendClientInfoByName = null;
+        Optional<ActiveLinkPartnerManager> backendClientInfoByName = null;
 
         backendName = backendName.toLowerCase();
-        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)); //.orElse(null);
+//        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)); //.orElse(null);
 
 //        backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
 
@@ -53,7 +51,7 @@ public class DCWsEndpointAuthentication {
             //replace leading "cn=" with "" so common name cn=alice becomes alice
 
             LOGGER.warn("#checkBackendClient: {}, Looking for 4.0.x compatible connector backend naming [{}]", error, backendName);
-            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName));
+//            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName));
         }
         if (backendClientInfoByName == null) {
             String error = String.format("#checkBackendClient: No link partner with name [%s] configured on connector!\n" +

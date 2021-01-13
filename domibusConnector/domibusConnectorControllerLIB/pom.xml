@@ -32,7 +32,7 @@
             <artifactId>spring-aspects</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.ecodex.connector.utils</groupId>
+            <groupId>eu.ecodex.utils</groupId>
             <artifactId>spring-property-configuration-manager-api</artifactId>
         </dependency>
         <dependency>

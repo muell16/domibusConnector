@@ -1,0 +1,103 @@
+package eu.domibus.connector.link.impl.gwwspullplugin.childctx;
+
+import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.controller.service.PullFromLink;
+import eu.domibus.connector.controller.service.SubmitToConnector;
+import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
+import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
+import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.service.DCActiveLinkManagerService;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.domibus.connector.tools.logging.MDCHelper;
+import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
+import eu.domibus.connector.ws.gateway.webservice.GetMessageByIdRequest;
+import eu.domibus.connector.ws.gateway.webservice.ListPendingMessageIdsRequest;
+import eu.domibus.connector.ws.gateway.webservice.ListPendingMessageIdsResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+
+
+public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
+
+    private static final Logger LOGGER = LogManager.getLogger(DCGatewayWebServiceClient.class);
+
+    @Autowired
+    DomibusConnectorGatewayWebService gatewayWebService;
+
+    @Autowired
+    DomibusConnectorDomainMessageTransformerService transformerService;
+
+    @Autowired
+    TransportStatusService transportStatusService;
+
+    @Autowired
+    SubmitToConnector submitToConnector;
+
+    @Autowired
+    DCActiveLinkManagerService dcActiveLinkManagerService;
+
+
+    @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+        TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
+        transportState.setStatus(TransportState.PENDING);
+        TransportStatusService.TransportId transportId = transportStatusService.createTransportFor(message, linkPartnerName);
+        transportStatusService.updateTransportToGatewayStatus(transportId, transportState);
+
+        DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
+        DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
+
+        transportState = new TransportStatusService.DomibusConnectorTransportState();
+        transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
+        transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
+        if (domibsConnectorAcknowledgementType.isResult()) {
+            transportState.setStatus(TransportState.FAILED);
+        } else {
+            transportState.setStatus(TransportState.ACCEPTED);
+        }
+        transportStatusService.updateTransportToGatewayStatus(transportId, transportState);
+
+    }
+
+
+    public void pullMessagesFrom(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
+        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_LINK_PARTNER_NAME, linkPartner.getLinkName())) {
+            ListPendingMessageIdsRequest req = new ListPendingMessageIdsRequest();
+            ListPendingMessageIdsResponse listPendingMessageIdsResponse = gatewayWebService.listPendingMessageIds(req);
+
+            List<String> messageIds = listPendingMessageIdsResponse.getMessageIds();
+            messageIds.stream().forEach(id -> this.pullMessage(linkPartner, id));
+        }
+    }
+
+    private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, String remoteMessageId) {
+
+        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_REMOTE_MSG_ID, remoteMessageId)) {
+            LOGGER.trace("Pulling message with id [{}] from [{}]", remoteMessageId, linkPartnerName);
+            GetMessageByIdRequest getMessageByIdRequest = new GetMessageByIdRequest();
+            getMessageByIdRequest.setMessageId(remoteMessageId);
+            DomibusConnectorMessageType messageById = gatewayWebService.getMessageById(getMessageByIdRequest);
+
+            DomibusConnectorMessage message = transformerService.transformTransitionToDomain(messageById);
+
+            Optional<ActiveLinkPartner> activeLinkPartnerByName = dcActiveLinkManagerService.getActiveLinkPartnerByName(linkPartnerName);
+            submitToConnector.submitToConnector(message, activeLinkPartnerByName.get().getLinkPartner());
+
+        }
+    }
+
+
+}

@@ -2,6 +2,8 @@ package eu.domibus.connector.domain.model;
 
 import org.springframework.core.style.ToStringCreator;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -11,7 +13,7 @@ public class DomibusConnectorLinkConfiguration {
 
     private String linkImpl;
 
-    private Properties properties = new Properties();
+    private Map<String,String> properties = new HashMap<>();
 
     private String configurationSource;
 
@@ -39,11 +41,20 @@ public class DomibusConnectorLinkConfiguration {
         this.linkImpl = linkImpl;
     }
 
-    public Properties getProperties() {
+//    public Properties getProperties() {
+//        return properties;
+//    }
+//
+//    public void setProperties(Properties properties) {
+//        this.properties = properties;
+//    }
+
+
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
@@ -92,5 +103,12 @@ public class DomibusConnectorLinkConfiguration {
     @Override
     public int hashCode() {
         return Objects.hash(configName);
+    }
+
+    public String toString() {
+        return new ToStringCreator(this)
+                .append("ConfigName", this.configName)
+                .append("Plugin", this.linkImpl)
+                .toString();
     }
 }

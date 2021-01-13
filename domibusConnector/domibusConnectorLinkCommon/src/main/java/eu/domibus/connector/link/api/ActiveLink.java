@@ -1,65 +1,23 @@
 package eu.domibus.connector.link.api;
 
+import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import lombok.Data;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Optional;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
-/**
- * Must be implemented by an link plugin
- */
-public interface ActiveLink {
+@Data
+public class ActiveLink {
 
-    /**
-     * concrete bean to submit a message to
-     * the specific link partner
-     * @return the active link partner or null if none found!
-     */
-    Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+    private LinkPlugin linkPlugin;
 
+    private DomibusConnectorLinkConfiguration linkConfiguration;
 
-    /**
-     * activates the link partner
-     *  - timer jobs are created and started
-     *  - start listening on queues, accepts web requests on web interface, ...
-     *  - push requests are accepted
-     * @param linkPartner
-     * @return
-     */
-    Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkPartner);
+    @CheckForNull
+    private ConfigurableApplicationContext childContext;
 
-    /**
-     * shut down the link connection
-     *  - if timer job based timer jobs are disabled
-     *  - if listens on queue, webservice - this also gets shutdown
-     *  - if push based push interface is closed - further pushes are denied
-     * @param linkPartner
-     */
-    void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner);
+    private SubmitToLink submitToLink;
 
-    /**
-     * closes the current linkConfiguration
-     *  - by shutdown of all active link partners on this link configuration
-     *  - closing all allocated resources, contexts, ...
-     */
-//    default void shutdown() {
-//        getPluginManager().shutdownConfiguration(getConfigurationName());
-//    }
-    void shutdown();
-
-
-    LinkPlugin getPluginManager();
-
-    default DomibusConnectorLinkConfiguration.LinkConfigName getConfigurationName() {
-        return this.getConfiguration().getConfigName();
-    }
-
-    DomibusConnectorLinkConfiguration getConfiguration();
-
-    /**
-     *
-     * @return the current link state
-     *  eg. for JMS connected to queue
-     */
-    boolean isUp();
 }

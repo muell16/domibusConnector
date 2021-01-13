@@ -4,25 +4,16 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.*;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
-import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 //@Scope("prototype")
 //@Component
 //@Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
-public class GwJmsPluginActiveLink implements ActiveLink {
+public class GwJmsPluginActiveLink { //implements ActiveLinkManager {
 
     private static final Logger LOGGER = LogManager.getLogger(GwJmsPluginActiveLink.class);
 
@@ -31,7 +22,7 @@ public class GwJmsPluginActiveLink implements ActiveLink {
     private final GwJmsPlugin pluginManager;
     private final ConfigurableApplicationContext applicationContext;
 
-    private ActiveLinkPartner activeLinkPartner;
+    private ActiveLinkPartnerManager activeLinkPartner;
     private ConfigurableApplicationContext linkPartnerSpringContext;
 
 
@@ -54,8 +45,8 @@ public class GwJmsPluginActiveLink implements ActiveLink {
     }
 
 
-    @Override
-    public Optional<ActiveLinkPartner> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+//    @Override
+    public Optional<ActiveLinkPartnerManager> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         if (activeLinkPartner != null && activeLinkPartner.getLinkPartnerName().equals(linkPartnerName)) {
             return Optional.of(activeLinkPartner);
         }
@@ -64,12 +55,12 @@ public class GwJmsPluginActiveLink implements ActiveLink {
     }
 
 
-    @Override
-    public synchronized Optional<ActiveLinkPartner> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+//    @Override
+    public synchronized Optional<ActiveLinkPartnerManager> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
         if (this.activeLinkPartner != null) {
             throw new LinkPluginException("A link partner is already active for this configuration! This link config only supports ONE active link partner at once!");
         }
-        Optional<ActiveLinkPartner> activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
+        Optional<ActiveLinkPartnerManager> activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
         if (activePartner != null) {
             throw new LinkPluginException("Link is already active! Use shutdown first!");
         }
@@ -85,7 +76,7 @@ public class GwJmsPluginActiveLink implements ActiveLink {
                 .run();
         this.linkPartnerSpringContext = springChildContext;
 
-        ActiveLinkPartner activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
+        ActiveLinkPartnerManager activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
 
         LOGGER.info("Activated LinkPartner [{}] to [{}]", linkPartner, activeLinkPartner);
         this.activeLinkPartner = activeLinkPartner;
@@ -94,7 +85,7 @@ public class GwJmsPluginActiveLink implements ActiveLink {
 
     }
 
-    @Override
+//    @Override
     public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
         if (this.activeLinkPartner.getLinkPartnerName().equals(linkPartner)) {
             linkPartnerSpringContext.close();
@@ -103,7 +94,7 @@ public class GwJmsPluginActiveLink implements ActiveLink {
         this.linkPartnerSpringContext = null;
     }
 
-    @Override
+//    @Override
     public void shutdown() {
         if (this.activeLinkPartner != null) {
             this.shutdownLinkPartner(this.activeLinkPartner.getLinkPartnerName());
@@ -112,21 +103,15 @@ public class GwJmsPluginActiveLink implements ActiveLink {
         }
     }
 
-    @Override
-    public LinkPlugin getPluginManager() {
-        return this.pluginManager;
-    }
+//    @Override
+//    public LinkPlugin getPluginManager() {
+//        return this.pluginManager;
+//    }
 
 
-    @Override
+//    @Override
     public DomibusConnectorLinkConfiguration getConfiguration() {
         return this.linkConfiguration;
     }
-
-    @Override
-    public boolean isUp() {
-        return linkPartnerSpringContext.isActive();
-    }
-
 
 }

@@ -6,7 +6,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
-import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class DCGatewayDeliveryEndpointImpl implements DomibusConnectorGatewayDel
     @Override
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
-        Optional<ActiveLinkPartner> activeLinkPartner = endpointAuthenticator.checkBackendClient(webServiceContext);
+        Optional<ActiveLinkPartnerManager> activeLinkPartner = endpointAuthenticator.checkBackendClient(webServiceContext);
 
         DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest);
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());

@@ -14,11 +14,21 @@ public class CxfTrustKeyStoreConfigurationProperties extends KeyAndKeyStoreAndTr
     @NotNull
     private String encryptAlias;
 
+    private boolean loadCaCerts = true;
+
     public String getEncryptAlias() {
         return encryptAlias;
     }
 
     public void setEncryptAlias(String encryptAlias) {
         this.encryptAlias = encryptAlias;
+    }
+
+    public boolean isLoadCaCerts() {
+        return loadCaCerts;
+    }
+
+    public void setLoadCaCerts(boolean loadCaCerts) {
+        this.loadCaCerts = loadCaCerts;
     }
 }

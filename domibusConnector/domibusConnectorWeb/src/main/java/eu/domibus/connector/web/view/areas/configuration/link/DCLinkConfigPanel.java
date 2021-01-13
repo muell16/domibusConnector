@@ -1,15 +1,12 @@
 package eu.domibus.connector.web.view.areas.configuration.link;
 
-import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.HasValidation;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
-import com.vaadin.flow.data.binder.Setter;
-import com.vaadin.flow.data.binder.ValidationResult;
+import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
@@ -26,18 +23,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import javax.annotation.PostConstruct;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DomibusConnectorLinkConfigPanel extends VerticalLayout implements HasValue<HasValue.ValueChangeEvent<DomibusConnectorLinkConfiguration>, DomibusConnectorLinkConfiguration> {
+public class DCLinkConfigPanel extends VerticalLayout
+        implements HasValue<HasValue.ValueChangeEvent<DomibusConnectorLinkConfiguration>, DomibusConnectorLinkConfiguration>,
+        HasValidator<DomibusConnectorLinkConfiguration>
+{
 
-    private static final Logger LOGGER = LogManager.getLogger(DomibusConnectorLinkConfigPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(DCLinkConfigPanel.class);
 
     @Autowired
     ApplicationContext applicationContext;
@@ -49,32 +47,33 @@ public class DomibusConnectorLinkConfigPanel extends VerticalLayout implements H
     ConfigurationPropertyCollector configurationPropertyCollector;
 
     private ComboBox<LinkPlugin> implChooser = new ComboBox<>();
-    private DCListConfigurationPropertiesComponent configPropsList;
-    //        private ComboBox<DomibusConnectorLinkConfiguration> linkConfigurationChooser = new ComboBox<>();
+    private DCConfigurationPropertiesListField configPropsList;
     private TextField linkConfigName = new TextField();
     private Binder<DomibusConnectorLinkConfiguration> linkConfigurationBinder = new Binder<>();
-
     private DomibusConnectorLinkConfiguration newLinkConfiguration = new DomibusConnectorLinkConfiguration();
     private boolean readOnly = false;
 
-    public DomibusConnectorLinkConfigPanel() {
-        initUI();
+    public DCLinkConfigPanel() {
     }
 
-
-
+    @PostConstruct
     private void initUI() {
 
-        this.configPropsList = applicationContext.getBean(DCListConfigurationPropertiesComponent.class);
-//            configPropsList.setSizeFull();
+        this.configPropsList = applicationContext.getBean(DCConfigurationPropertiesListField.class);
 
         implChooser.setItems(linkManagerService.getAvailableLinkPlugins());
-
         implChooser.setLabel("Link Implementation");
         implChooser.setItemLabelGenerator((ItemLabelGenerator<LinkPlugin>) LinkPlugin::getPluginName);
         implChooser.addValueChangeListener(this::choosenLinkImplChanged);
         implChooser.setMinWidth("10em");
         update();
+
+        linkConfigurationBinder
+                .forField(linkConfigName)
+                .bind(
+                        (ValueProvider<DomibusConnectorLinkConfiguration, String>) linkConfiguration -> linkConfiguration.getConfigName() == null ? "" : linkConfiguration.getConfigName().toString(),
+                        (Setter<DomibusConnectorLinkConfiguration, String>) (linkConfiguration, configName) -> linkConfiguration.setConfigName(configName == null ? new DomibusConnectorLinkConfiguration.LinkConfigName("") : new DomibusConnectorLinkConfiguration.LinkConfigName(configName))
+                );
 
         linkConfigurationBinder
                 .forField(implChooser)
@@ -84,18 +83,21 @@ public class DomibusConnectorLinkConfigPanel extends VerticalLayout implements H
                             if (linkPlugin.isPresent()) {
                                 return linkPlugin.get();
                             } else {
-                                LOGGER.warn("No Implemntation found for [{}]", linkConfiguration.getLinkImpl());
+                                LOGGER.warn("No Implementation found for [{}]", linkConfiguration.getLinkImpl());
                                 return null;
                             }
                         },
                         (Setter<DomibusConnectorLinkConfiguration, LinkPlugin>) (linkConfiguration, linkPlugin) -> linkConfiguration.setLinkImpl(linkPlugin == null ? null : linkPlugin.getPluginName())
                 );
 
-//                .forField(configPropsList)
-//                .bind()
+        linkConfigurationBinder
+                .forField(configPropsList)
+                .bind(
+                        (ValueProvider<DomibusConnectorLinkConfiguration, Properties>) linkConfiguration -> linkConfiguration.getProperties(),
+                        (Setter<DomibusConnectorLinkConfiguration, Properties>) (linkConfiguration, linkProps) -> linkConfiguration.setProperties(linkProps)
+                );
 
-
-
+        add(linkConfigName);
         add(implChooser);
         add(configPropsList);
 
@@ -138,7 +140,7 @@ public class DomibusConnectorLinkConfigPanel extends VerticalLayout implements H
 
     public List<ValidationResult> validate() {
         List<ValidationResult> validate = configPropsList.validate();
-        Properties bean = configPropsList.getBinder().getBean();
+
 
         BinderValidationStatus<DomibusConnectorLinkConfiguration> linkConfigurationValidation = linkConfigurationBinder.validate();
 
@@ -147,6 +149,17 @@ public class DomibusConnectorLinkConfigPanel extends VerticalLayout implements H
         return validate;
 
     }
+
+    public void writeBean() {
+        List<ValidationResult> validate = validate();
+        if (validate.isEmpty()) {
+            Properties properties = configPropsList.getBinder().getBean();
+            newLinkConfiguration.setProperties(properties);
+        }
+
+    }
+
+
 
     @Override
     public void setValue(DomibusConnectorLinkConfiguration value) {

@@ -5,8 +5,8 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.binder.*;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
@@ -35,10 +35,11 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class DCListConfigurationPropertiesComponent extends VerticalLayout
-        implements HasValue<HasValue.ValueChangeEvent<Collection<ConfigurationProperty>>,Collection<ConfigurationProperty>> {
+public class DCConfigurationPropertiesListField extends VerticalLayout
+        implements HasValue<HasValue.ValueChangeEvent<Properties>, Properties> {
 
-    private static final Logger LOGGER = LogManager.getLogger(ListConfigurationPropertiesComponent.class);
+
+    private static final Logger LOGGER = LogManager.getLogger(eu.ecodex.utils.configuration.ui.vaadin.tools.views.ListConfigurationPropertiesComponent.class);
 
     Grid<ConfigurationProperty> grid = new Grid<>(ConfigurationProperty.class, false);
 
@@ -61,7 +62,7 @@ public class DCListConfigurationPropertiesComponent extends VerticalLayout
     private Collection<AbstractField> propertyFields = new ArrayList<>();
     private boolean readOnly = false;
 
-    public DCListConfigurationPropertiesComponent() {
+    public DCConfigurationPropertiesListField() {
     }
 
     @PostConstruct
@@ -158,29 +159,29 @@ public class DCListConfigurationPropertiesComponent extends VerticalLayout
         return beanValidationErrors;
     }
 
-
-    public Validator<Collection<ConfigurationProperty>> getDefaultValidator() {
-
-        return Validator.
-    }
-
-
     @Override
-    public void setValue(Collection<ConfigurationProperty> value) {
-        this.setConfigurationProperties(value);
+    public void setValue(Properties value) {
+        this.binder.setBean(value);
+        this.properties = value;
     }
 
     @Override
-    public Collection<ConfigurationProperty> getValue() {
-        return this.getConfigurationProperties();
+    public Properties getValue() {
+        return this.properties;
     }
 
     @Override
-    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Collection<ConfigurationProperty>>> listener) {
-        return null;
+    public Registration addValueChangeListener(ValueChangeListener<? super ValueChangeEvent<Properties>> listener) {
+        Registration registration = this.binder.addValueChangeListener(new ValueChangeListener<ValueChangeEvent<?>>() {
+            @Override
+            public void valueChanged(ValueChangeEvent event) {
+                listener.valueChanged((ValueChangeEvent<Properties>) event);
+            }
+        });
+        return registration;
     }
 
-    @Override
+
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         propertyFields.stream().forEach(f -> f.setReadOnly(readOnly));
@@ -188,16 +189,19 @@ public class DCListConfigurationPropertiesComponent extends VerticalLayout
 
     @Override
     public boolean isReadOnly() {
-        return readOnly;
+        return this.readOnly;
     }
 
     @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
-        //not supported...
+        //no support yet...
     }
 
     @Override
     public boolean isRequiredIndicatorVisible() {
         return false;
     }
+
 }
+
+

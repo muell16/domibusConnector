@@ -1,10 +1,10 @@
 package eu.domibus.connector.link.impl.wsplugin;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.link.api.ActiveLink;
-import eu.domibus.connector.link.api.LinkPlugin;
+import eu.domibus.connector.link.api.ActiveLinkManager;
 import eu.domibus.connector.link.api.LinkPluginUtils;
 import eu.domibus.connector.link.api.PluginFeature;
+import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
 import eu.domibus.connector.link.service.LinkPluginQualifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractDCWsPlugin implements LinkPlugin {
+public abstract class AbstractDCWsPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(AbstractDCWsPlugin.class);
 
@@ -23,22 +23,23 @@ public abstract class AbstractDCWsPlugin implements LinkPlugin {
     ConfigurableApplicationContext applicationContext;
 
 
-    @Override
-    public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+//    @Override
+    public ActiveLinkManager startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
         ConfigurableApplicationContext springChildContext = LinkPluginUtils.getChildContextBuilder(
                 applicationContext
         ).withProfiles(getProfiles())
-                .withProperties(linkConfiguration.getProperties())
+//                .withProperties(linkConfiguration.getProperties())
                 .addSingelton(LinkPluginQualifier.LINK_QUALIFIER_NAME, this)
                 .withSources(getSources())
                 .run();
 
         DCWsActiveLink activeLink = springChildContext.getBean(DCWsActiveLink.class);
         LOGGER.info("Activated Link Configuration [{}] with activeLink [{}]", linkConfiguration, activeLink);
-        return activeLink;
+//        return activeLink;
+        return null;
     }
 
-    @Override
+//    @Override
     public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
 
     }
@@ -54,7 +55,7 @@ public abstract class AbstractDCWsPlugin implements LinkPlugin {
         return applicationContext;
     }
 
-    @Override
+//    @Override
     public List<PluginFeature> getFeatures() {
         return Stream.<PluginFeature>of(
                 PluginFeature.SUPPORTS_MULTIPLE_PARTNERS,
@@ -63,17 +64,17 @@ public abstract class AbstractDCWsPlugin implements LinkPlugin {
         ).collect(Collectors.toList());
     }
 
-    @Override
+//    @Override
     public List<Class> getPluginConfigurationProperties() {
         return Stream.of(
                 DCWsPluginConfigurationProperties.class
         ).collect(Collectors.toList());
     }
 
-    @Override
+//    @Override
     public List<Class> getPartnerConfigurationProperties() {
         return Stream.of(
-                DCWsLinkPartnerConfigurationProperties.class
+                WsBackendPluginLinkPartnerConfigurationProperties.class
         ).collect(Collectors.toList());
     }
 

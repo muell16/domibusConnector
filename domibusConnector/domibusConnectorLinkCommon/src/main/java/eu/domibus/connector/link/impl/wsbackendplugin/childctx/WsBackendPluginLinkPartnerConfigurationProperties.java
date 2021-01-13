@@ -1,11 +1,16 @@
-package eu.domibus.connector.link.impl.wsplugin;
+package eu.domibus.connector.link.impl.wsbackendplugin.childctx;
 
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 
-public class DCWsLinkPartnerConfigurationProperties {
+@ConfigurationProperties(prefix = "")
+@Validated
+@Data
+public class WsBackendPluginLinkPartnerConfigurationProperties {
 
     @ConfigurationLabel("The address where the link partner is available")
     @ConfigurationDescription("Configure here the address where the remote soap service is listening")
@@ -16,19 +21,5 @@ public class DCWsLinkPartnerConfigurationProperties {
             "the correct certificate and us this public key to encrpyt the message")
     private String encryptionAlias = "";
 
-    public String getPushAddress() {
-        return pushAddress;
-    }
-
-    public void setPushAddress(String pushAddress) {
-        this.pushAddress = pushAddress;
-    }
-
-    public String getEncryptionAlias() {
-        return encryptionAlias;
-    }
-
-    public void setEncryptionAlias(String encryptionAlias) {
-        this.encryptionAlias = encryptionAlias;
-    }
+    private String certificateDn = "";
 }
