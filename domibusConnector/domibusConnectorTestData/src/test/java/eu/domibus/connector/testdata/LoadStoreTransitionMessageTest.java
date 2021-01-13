@@ -1,6 +1,7 @@
 package eu.domibus.connector.testdata;
 
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Log4j2
 public class LoadStoreTransitionMessageTest {
 
 
@@ -21,7 +23,6 @@ public class LoadStoreTransitionMessageTest {
 
     @BeforeAll
     public static void beforeAll() throws IOException {
-        System.out.println("running beforeAll");
         Path p = Paths.get(TEST_DIR);
         FileSystemUtils.deleteRecursively(p);
         Files.createDirectory(p);

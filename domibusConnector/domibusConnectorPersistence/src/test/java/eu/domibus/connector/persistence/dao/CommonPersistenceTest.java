@@ -5,6 +5,7 @@ import com.github.database.rider.spring.DBRiderTestExecutionListener;
 import com.github.database.rider.spring.api.DBRider;
 import eu.domibus.connector.persistence.testutil.RecreateDbByLiquibaseTestExecutionListener;
 import eu.domibus.connector.persistence.testutil.SetupPersistenceContext;
+import eu.domibus.connector.testutil.junit5.SetMdcContextExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -34,6 +35,6 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 @ActiveProfiles({"test", "db_h2", STORAGE_DB_PROFILE_NAME})
 @DBUnit(allowEmptyFields = true)
 @Inherited
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, SetMdcContextExtension.class})
 public @interface CommonPersistenceTest {
 }

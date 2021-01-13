@@ -6,6 +6,7 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.spring.DBRiderTestExecutionListener;
 import eu.domibus.connector.backend.persistence.model.BackendClientInfo;
 import eu.domibus.connector.persistence.testutil.RecreateDbByLiquibaseTestExecutionListener;
+import eu.domibus.connector.testutil.junit5.SetMdcContextExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  *
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, SetMdcContextExtension.class})
 @SpringBootTest(classes = BackendClientDaoDBUnit.TestConfiguration.class)
 @TestPropertySource(properties = {
         "spring.liquibase.change-log=classpath:/db/changelog/test/testdata.xml",

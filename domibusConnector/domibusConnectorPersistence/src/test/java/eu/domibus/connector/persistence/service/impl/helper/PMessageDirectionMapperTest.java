@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.service.impl.helper;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 public class PMessageDirectionMapperTest {
 

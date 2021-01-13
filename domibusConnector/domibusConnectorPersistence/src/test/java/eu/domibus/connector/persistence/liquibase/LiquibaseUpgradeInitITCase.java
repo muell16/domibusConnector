@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.liquibase;
 
 import eu.domibus.connector.persistence.testutil.FromVersion;
 import eu.domibus.connector.persistence.testutil.LiquibaseTemplateInvocationContextProvider;
+import eu.domibus.connector.testutil.junit5.SetMdcContextExtension;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -50,7 +51,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.*;
 
-@ExtendWith(LiquibaseTemplateInvocationContextProvider.class)
+@ExtendWith({LiquibaseTemplateInvocationContextProvider.class, SetMdcContextExtension.class})
 public class LiquibaseUpgradeInitITCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LiquibaseUpgradeInitITCase.class);

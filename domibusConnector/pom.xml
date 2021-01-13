@@ -198,6 +198,7 @@
                 <artifactId>dss-utils-apache-commons</artifactId>
                 <version>${dss.tools.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
@@ -396,7 +397,7 @@
             <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
-                <version>2.1.4</version>
+                <version>2.1.5</version>
             </dependency>
             <!-- handle not matching dependencies in apache cxf package -->
             <!--            <dependency>-->
@@ -436,11 +437,6 @@
                 <artifactId>validation-api</artifactId>
                 <version>2.0.1.Final</version>
             </dependency>
-            <dependency>
-                <groupId>org.hibernate.validator</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>6.1.1.Final</version>
-            </dependency>
             <!-- Other dependencies -->
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -459,11 +455,6 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.5</version>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>org.quartz-scheduler</groupId>-->
-            <!--                <artifactId>quartz</artifactId>-->
-            <!--                <version>2.3.2</version>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
@@ -699,6 +690,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
+                    <configuration>
+                        <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
@@ -711,6 +705,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.22.2</version>
+                    <configuration>
+                        <argLine>-Djunit.jupiter.extensions.autodetection.enabled=true</argLine>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
@@ -722,7 +719,7 @@
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
                     <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>0.12.0</version>
+                    <version>0.14.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.cxf</groupId>
@@ -882,7 +879,7 @@
                 </executions>
                 <configuration>
                     <rules>
-                        <dependencyConvergence></dependencyConvergence>
+                        <dependencyConvergence/>
                         <bannedDependencies>
                             <searchTransitive>true</searchTransitive>
                             <excludes>

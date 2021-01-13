@@ -90,12 +90,12 @@ public class DCLinkConfigPanel extends VerticalLayout
                         (Setter<DomibusConnectorLinkConfiguration, LinkPlugin>) (linkConfiguration, linkPlugin) -> linkConfiguration.setLinkImpl(linkPlugin == null ? null : linkPlugin.getPluginName())
                 );
 
-        linkConfigurationBinder
-                .forField(configPropsList)
-                .bind(
-                        (ValueProvider<DomibusConnectorLinkConfiguration, Properties>) linkConfiguration -> linkConfiguration.getProperties(),
-                        (Setter<DomibusConnectorLinkConfiguration, Properties>) (linkConfiguration, linkProps) -> linkConfiguration.setProperties(linkProps)
-                );
+//        linkConfigurationBinder
+//                .forField(configPropsList)
+//                .bind(
+//                        (ValueProvider<DomibusConnectorLinkConfiguration, Properties>) linkConfiguration -> linkConfiguration.getProperties(),
+//                        (Setter<DomibusConnectorLinkConfiguration, Properties>) (linkConfiguration, linkProps) -> linkConfiguration.setProperties(linkProps)
+//                );
 
         add(linkConfigName);
         add(implChooser);
@@ -154,7 +154,7 @@ public class DCLinkConfigPanel extends VerticalLayout
         List<ValidationResult> validate = validate();
         if (validate.isEmpty()) {
             Properties properties = configPropsList.getBinder().getBean();
-            newLinkConfiguration.setProperties(properties);
+//            newLinkConfiguration.setProperties(properties);
         }
 
     }

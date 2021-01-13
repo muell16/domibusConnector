@@ -143,6 +143,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         }
 
         backendName = backendName.toLowerCase();
+        return null;
 //        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)); //.orElse(null);
 
 //        backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);

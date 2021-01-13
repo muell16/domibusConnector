@@ -4,7 +4,6 @@ package eu.domibus.connector.persistence.service.impl.helper;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import org.omg.CORBA.OBJECT_NOT_EXIST;
 
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;

@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.dao;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import eu.domibus.connector.persistence.model.PDomibusConnectorLinkConfiguration;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,6 +13,7 @@ import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSE
 
 @CommonPersistenceTest
 @DataSet(value = "/database/testdata/dbunit/DomibusConnectorLinkConfiguration.xml", strategy = CLEAN_INSERT)
+@Disabled
 class DomibusConnectorLinkConfigurationDaoTest {
 
     @Autowired

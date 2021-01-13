@@ -8,6 +8,7 @@ import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientIn
 import eu.domibus.connector.backend.persistence.dao.BackendClientDaoDBUnit;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.persistence.testutil.RecreateDbByLiquibaseTestExecutionListener;
+import eu.domibus.connector.testutil.junit5.SetMdcContextExtension;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
@@ -30,7 +31,7 @@ import java.sql.SQLException;
 import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAGE_DB_PROFILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, SetMdcContextExtension.class})
 @SpringBootTest(classes = BackendClientInfoPersistenceServiceITCase.TestConfiguration.class)
 @TestPropertySource(properties = {
         "connector.persistence.big-data-impl-class=eu.domibus.connector.persistence.service.impl.DomibusConnectorBigDataPersistenceServiceJpaImpl",
