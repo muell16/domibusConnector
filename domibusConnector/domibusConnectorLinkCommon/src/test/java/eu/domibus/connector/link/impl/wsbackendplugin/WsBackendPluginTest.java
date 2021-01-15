@@ -119,7 +119,7 @@ public class WsBackendPluginTest {
     public void testPassiveBackend() {
 
         String clientName = "bob";
-        DomibusConnectorLinkPartner.LinkPartnerName backendName = new DomibusConnectorLinkPartner.LinkPartnerName("backend_bob"););
+        DomibusConnectorLinkPartner.LinkPartnerName backendName = new DomibusConnectorLinkPartner.LinkPartnerName("backend_bob");
         String connectorAddress = getServerAddress();
 
         DomibusConnectorMessage epoMessage1 = DomainEntityCreator.createEpoMessage();

@@ -20,4 +20,4 @@ documentation only for testing purposes. The domibus gateway also
 is appending on an loop backed message (sender=receiver) a _1 to the EBMS id.
 This behaviour does break the EBMS standard so the connector is removing this
 _1 from any EBMS id. In future implementations this workaround will be moved
-into the domibusConnectorPlugin to make the connector more AS4-gateway independent.
+into the domibusConnectorPlugin.

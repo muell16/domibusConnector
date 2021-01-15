@@ -5,6 +5,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliverySe
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
 import eu.domibus.connector.persistence.testutils.LargeFileProviderMemoryImpl;
@@ -125,6 +126,11 @@ public class StartupGwLinkOnly {
             @Override
             public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
                 return new TransportId(linkPartnerName + "_" + message);
+            }
+
+            @Override
+            public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+                return new ArrayList<>();
             }
         };
     }

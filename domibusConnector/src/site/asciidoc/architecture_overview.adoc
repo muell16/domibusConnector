@@ -2,7 +2,7 @@ Architectural Overview
 ======================
 
 
-:description: The connector architecture overview
+:description: The architecture overview
 :library: Asciidoctor
 :stylesheet: asciidoc.css
 :imagesdir: images/
@@ -59,4 +59,6 @@ Part of this package is also a export of the connector architecture created with
 enterprise architect. You can access the documentation if you open the
 documentation folder within the domibusConnectorDistribution package
 or here link:../architecture/index.html[architecture].
+
+Additional written connector documentation is link:doc/connector_architecture.html[here] available.
 

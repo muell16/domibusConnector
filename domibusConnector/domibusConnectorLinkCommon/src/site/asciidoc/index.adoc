@@ -1,0 +1,55 @@
+Connector Link Plugins Manual
+=============================
+
+
+ifndef::imagesdir[:imagesdir: ../../../target/site/images]
+
+Since 4.3.0 the connector comes with different link plugins
+
+== The available plugins
+
+* WS Gateway Push Plugins
+* WS Gateway Pull Plugin
+* WS Backend Plugin
+
+
+// == The architecture
+
+// Bild: image:target/plantuml/src/plantuml/link_architecture.png[Ein Bild]
+
+
+=== Configuration
+
+The Links are known to the connectorController only by
+DomibusConnectorLinkPartner. Only the LinkPartner name is stored
+to the message processing. So how/who the LinkPartner is is completly
+transparent to the message processing flow.
+
+The configuration itself is read into the DomibusConnectorLink and
+DomibusConnectorLinkPartner classes. Afterwards when the LinkPartner and Link is
+activated during startup the ActiveLinkConfiguration and ActiveLInkPartner
+is created.
+
+image::plantuml/link_architecture.png[ClassDiagram]
+
+
+==== Setting up example for Gateway Pull Link:
+
+The gateway link is configured under the properties prefix 'connector.link.gateway'
+
+[source,properties]
+----
+include::../../test/resources/application-gwwspullplugin-test.properties[]
+----
+
+==== Setting up example for backend Ws Link:
+
+The backend link(s) are configured under the properties prefix 'connector.link.backend[0-99]'.
+On the backend side the connector supports multiple backends and backend partners.
+
+
+[source,properties]
+----
+include::../../test/resources/application-wsbackendplugin-test.properties[]
+----
+
