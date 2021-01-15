@@ -15,6 +15,7 @@ public class PDomibusConnectorMessageError {
     private static final Logger LOGGER = LoggerFactory.getLogger(PDomibusConnectorMessageError.class);
 
     @Id
+    @Column(name = "ID")
     @TableGenerator(name = "seqStoreMsgError", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_ERROR.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgError")
     private Long id;

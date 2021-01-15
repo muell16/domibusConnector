@@ -26,6 +26,7 @@ import eu.domibus.connector.persistence.model.enums.UserRole;
 public class PDomibusConnectorUser {
 
     @Id
+	@Column(name = "ID")
     @TableGenerator(name = "seqStoreUser", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_USER.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreUser")
     private Long id;
