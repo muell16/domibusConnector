@@ -28,6 +28,7 @@ public class PDomibusConnectorUser {
     @Id
     @TableGenerator(name = "seqStoreUser", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_USER.ID", valueColumnName = "SEQ_VALUE", initialValue = 100, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreUser")
+	@Column(name = "ID")
     private Long id;
     
     @Column(name = "USERNAME", nullable=false)

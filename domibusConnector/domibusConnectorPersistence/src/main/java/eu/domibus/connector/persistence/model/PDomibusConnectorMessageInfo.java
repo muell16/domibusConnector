@@ -13,6 +13,7 @@ public class PDomibusConnectorMessageInfo {
     @Id
     @TableGenerator(name = "seqStoreMsgInfo", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MESSAGE_INFO.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgInfo")
+    @Column(name = "ID")
     private Long id;
 
     @OneToOne

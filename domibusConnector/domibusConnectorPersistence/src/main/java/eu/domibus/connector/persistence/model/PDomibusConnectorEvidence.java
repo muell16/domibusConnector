@@ -30,6 +30,7 @@ public class PDomibusConnectorEvidence {
     @Id
     @TableGenerator(name = "evidencesSeqStore", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_EVIDENCE.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "evidencesSeqStore")
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "CONNECTOR_MESSAGE_ID")

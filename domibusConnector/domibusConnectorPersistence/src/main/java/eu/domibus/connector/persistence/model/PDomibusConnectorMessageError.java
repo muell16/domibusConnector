@@ -17,6 +17,7 @@ public class PDomibusConnectorMessageError {
     @Id
     @TableGenerator(name = "seqStoreMsgError", table = "DOMIBUS_CONNECTOR_SEQ_STORE", pkColumnName = "SEQ_NAME", pkColumnValue = "DOMIBUS_CONNECTOR_MSG_ERROR.ID", valueColumnName = "SEQ_VALUE", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "seqStoreMsgError")
+    @Column(name = "ID")
     private Long id;
 
     @OneToOne

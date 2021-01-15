@@ -26,7 +26,7 @@ import static eu.domibus.connector.persistence.spring.PersistenceProfiles.STORAG
 @EntityScan(basePackageClasses={PDomibusConnectorPersistenceModel.class})
 @EnableJpaRepositories(basePackageClasses = {PackageDomibusConnectorRepositories.class} )
 @EnableTransactionManagement
-@PropertySource("classpath:eu/domibus/connector/persistence/config/default-persistence-config.properties")
+@PropertySource("classpath:/eu/domibus/connector/persistence/config/default-persistence-config.properties")
 public class DomibusConnectorPersistenceContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPersistenceContext.class);
