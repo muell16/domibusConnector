@@ -2,6 +2,7 @@ package eu.domibus.connector.link.service;
 
 
 import eu.domibus.connector.link.impl.gwwspullplugin.DCGatewayPullPlugin;
+import eu.domibus.connector.link.impl.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPlugin;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,12 @@ public class DCLinkPluginConfiguration {
     @Profile("plugin-" + WsBackendPlugin.IMPL_NAME)
     public WsBackendPlugin DCWsBackendPlugin() {
         return new WsBackendPlugin();
+    }
+
+    @Bean
+    @Profile("plugin-" + WsGatewayPlugin.IMPL_NAME)
+    public WsGatewayPlugin wsGatewayPlugin() {
+        return new WsGatewayPlugin();
     }
 
 }

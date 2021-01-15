@@ -1,10 +1,7 @@
 package eu.domibus.connector.link.impl.gwwspullplugin.childctx;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.PullFromLink;
-import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.controller.service.SubmitToLink;
-import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.controller.service.*;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -47,6 +44,9 @@ public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
     @Autowired
     DCActiveLinkManagerService dcActiveLinkManagerService;
 
+    @Autowired
+    DomibusConnectorMessageIdGenerator messageIdGenerator;
+
 
     @Override
     @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -84,13 +84,17 @@ public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
 
     private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, String remoteMessageId) {
 
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_REMOTE_MSG_ID, remoteMessageId)) {
+        String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_REMOTE_MSG_ID, remoteMessageId);
+            MDC.MDCCloseable conMsgId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId);
+        ) {
             LOGGER.trace("Pulling message with id [{}] from [{}]", remoteMessageId, linkPartnerName);
             GetMessageByIdRequest getMessageByIdRequest = new GetMessageByIdRequest();
             getMessageByIdRequest.setMessageId(remoteMessageId);
             DomibusConnectorMessageType messageById = gatewayWebService.getMessageById(getMessageByIdRequest);
 
             DomibusConnectorMessage message = transformerService.transformTransitionToDomain(messageById);
+            message.setConnectorMessageId(connectorMessageId);
 
             Optional<ActiveLinkPartner> activeLinkPartnerByName = dcActiveLinkManagerService.getActiveLinkPartnerByName(linkPartnerName);
             submitToConnector.submitToConnector(message, activeLinkPartnerByName.get().getLinkPartner());

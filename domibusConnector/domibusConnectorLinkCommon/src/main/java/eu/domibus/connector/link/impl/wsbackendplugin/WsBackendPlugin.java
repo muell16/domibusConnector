@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
 
-@Component
-@Profile(LINK_PLUGIN_PROFILE_NAME)
+//@Component
+//@Profile(LINK_PLUGIN_PROFILE_NAME)
 public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlugin implements LinkPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(WsBackendPlugin.class);

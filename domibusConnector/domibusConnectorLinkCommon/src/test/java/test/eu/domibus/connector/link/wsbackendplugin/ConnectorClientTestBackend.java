@@ -1,14 +1,9 @@
 package test.eu.domibus.connector.link.wsbackendplugin;
 
-import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmissionService;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -17,14 +12,11 @@ import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.SocketUtils;
-import test.eu.domibus.connector.link.testgwpullservice.TestGwWebService;
 import test.eu.domibus.connector.link.util.GetServerAddress;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -5,7 +5,12 @@
     <!--            <p:policies/>-->
     <!--        </cxf:features>-->
     <!--    </cxf:bus>-->
-    <jaxws:client xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice" id="connectorDeliveryClient" serviceClass="eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService" address="${connector.address}" serviceName="s:DomibusConnectorGatewayDeliveryWebService" wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl">
+    <jaxws:client xmlns:s="http://connector.domibus.eu/ws/gateway/delivery/webservice"
+                  id="connectorDeliveryClient"
+                  serviceClass="eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService"
+                  address="${connector.address}"
+                  serviceName="s:DomibusConnectorGatewayDeliveryWebService"
+                  wsdlLocation="wsdl/DomibusConnectorGatewayDeliveryWebService.wsdl">
         <jaxws:properties>
             <entry key="security.signature.properties" value-ref="encryptProperties"/>
             <entry key="security.signature.user" value="gw"/>

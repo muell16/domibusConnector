@@ -18,6 +18,7 @@ public class ActiveLink {
     @CheckForNull
     private ConfigurableApplicationContext childContext;
 
+    @CheckForNull
     private SubmitToLink submitToLink;
 
 }

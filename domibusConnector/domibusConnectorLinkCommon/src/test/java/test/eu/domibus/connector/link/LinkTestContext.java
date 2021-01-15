@@ -1,6 +1,7 @@
 package test.eu.domibus.connector.link;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.*;
 
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -39,6 +41,12 @@ public class LinkTestContext {
     @ComponentScan(basePackageClasses = DCLinkPluginConfiguration.class)
     public static class LinkServiceContext {
 
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    DomibusConnectorMessageIdGenerator DomibusConnectorMessageIdGenerator() {
+        return () -> "testcon_" + UUID.randomUUID().toString();
     }
 
     @Bean

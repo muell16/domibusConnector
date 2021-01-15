@@ -1,10 +1,11 @@
-package test.eu.domibus.connector.link.util;
+package test.eu.domibus.connector.link.wsgatewayplugin;
 
 
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWebService;
 import eu.domibus.connector.ws.gateway.submission.webservice.DomibusConnectorGatewaySubmissionWebService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -24,46 +26,44 @@ import java.util.concurrent.LinkedBlockingQueue;
  * FOR TESTING PURPOSE
  */
 @SpringBootApplication(scanBasePackageClasses = {TestGW.class}, exclude = {DataSourceAutoConfiguration.class})
-@ImportResource("classpath:/eu/domibus/connector/link/testgw/TestGatewayContext.xml")
+@ImportResource("classpath:/test/eu/domibus/connector/link/wsgatewayplugin/TestGatewayContext.xml")
 @Profile("testgw")
 public class TestGW {
 
     public static final String TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME = "toGwSubmittedMessagesBlockingQueue";
 
 
-    public static ConfigurableApplicationContext startContext(String[] properties) {
-        SpringApplicationBuilder builder = new SpringApplicationBuilder();
-        SpringApplication springApp = builder.sources(TestGW.class)
-                .web(WebApplicationType.SERVLET)
-                .properties(properties)
-                .bannerMode(Banner.Mode.OFF)
-                .profiles("testgw")
-                .build();
-        return springApp.run();
-    }
+    public static TestGW startTestGw(String connectorAddress, int serverPort) {
+        Properties props = new Properties();
+        props.put("server.port", serverPort);
+        props.put("connector.address", connectorAddress);
 
-    public static ConfigurableApplicationContext startContextWithArgs(String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder();
         SpringApplication springApp = builder.sources(TestGW.class)
                 .web(WebApplicationType.SERVLET)
                 .bannerMode(Banner.Mode.OFF)
                 .profiles("testgw")
+                .properties(props)
                 .build();
-        return springApp.run(args);
+        ConfigurableApplicationContext ctx =  springApp.run();
+        return ctx.getBean(TestGW.class);
     }
 
     public static LinkedBlockingQueue<DomibusConnectorMessageType> getToGwSubmittedMessages(ConfigurableApplicationContext context) {
         return (LinkedBlockingQueue<DomibusConnectorMessageType>) context.getBean(TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME);
     }
 
-    public static DomibusConnectorGatewayDeliveryWebService getConnectorDeliveryClient(ConfigurableApplicationContext ctx) {
-        return (DomibusConnectorGatewayDeliveryWebService) ctx.getBean("connectorDeliveryClient");
+    public DomibusConnectorGatewayDeliveryWebService getConnectorDeliveryClient() {
+        return (DomibusConnectorGatewayDeliveryWebService) applicationContext.getBean("connectorDeliveryClient");
     }
 
     public static String getSubmitAddress(ConfigurableApplicationContext ctx) {
         String port = ctx.getEnvironment().getRequiredProperty("local.server.port");
         return "http://localhost:" + port + "/services/submission";
     }
+
+    @Autowired
+    ConfigurableApplicationContext applicationContext;
 
     @Bean(TO_GW_SUBMITTED_MESSAGES_BLOCKING_QUEUE_BEAN_NAME)
     public LinkedBlockingQueue<DomibusConnectorMessageType> deliveredMessagesList() {

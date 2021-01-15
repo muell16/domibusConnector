@@ -1,4 +1,4 @@
-package test.eu.domibus.connector.link.testgwpullservice;
+package test.eu.domibus.connector.link.impl.gwwspullplugin;
 
 
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -29,7 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * FOR TESTING PURPOSE
  */
 @SpringBootApplication(scanBasePackageClasses = {TestGwWebService.class}, exclude = {DataSourceAutoConfiguration.class})
-@ImportResource("classpath:/eu/domibus/connector/link/testgwpullservice/TestPullGatewayContext.xml")
+@ImportResource("classpath:/test/eu/domibus/connector/link/gwwspullplugin/TestPullGatewayContext.xml")
 @Profile("testgwpull")
 public class TestGwWebService {
 

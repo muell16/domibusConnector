@@ -31,7 +31,6 @@ import org.springframework.core.io.ClassPathResource;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @CommonPersistenceTest
 public class DomibusConnectorEvidenceDaoDBUnit {
 
@@ -43,18 +42,7 @@ public class DomibusConnectorEvidenceDaoDBUnit {
 
     @Autowired
     private DatabaseDataSourceConnection ddsc;
-    
-//    @BeforeEach
-//    public void setUp() throws Exception {
-//        //Load testdata
-//        IDataSet dataSet = new FlatXmlDataSetBuilder()
-//                .setColumnSensing(true)
-//                .build((new ClassPathResource("database/testdata/dbunit/DomibusConnectorEvidence.xml").getInputStream()));
-//
-//        DatabaseDataSourceConnection conn = ddsc;
-//        DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet);
-//
-//    }
+
 
     @Test
     @DataSet(value = "/database/testdata/dbunit/DomibusConnectorEvidence.xml", cleanAfter = true, cleanBefore = true, disableConstraints = true)
