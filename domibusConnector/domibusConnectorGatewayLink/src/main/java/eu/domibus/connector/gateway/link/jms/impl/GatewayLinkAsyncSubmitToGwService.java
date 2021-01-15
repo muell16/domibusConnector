@@ -2,7 +2,7 @@ package eu.domibus.connector.gateway.link.jms.impl;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
@@ -23,7 +23,7 @@ public class GatewayLinkAsyncSubmitToGwService implements DomibusConnectorGatewa
 //    private DomibusConnectorAsyncSubmitToGatewayService submitToGatewayService;
 
     @Autowired
-    private TransportStatusService transportStatusService;
+    private TransportStateService transportStateService;
 
     @Autowired
     private DomibusConnectorDomainMessageTransformerService transformerService;
@@ -38,12 +38,12 @@ public class GatewayLinkAsyncSubmitToGwService implements DomibusConnectorGatewa
 //        submitToGatewayService.submitMessage(messageType);
         LOGGER.info("Message [{}] put on queue to gateway - new message state is pending", message.getConnectorMessageId());
 
-        TransportStatusService.DomibusConnectorTransportState transportState =
-                new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState transportState =
+                new TransportStateService.DomibusConnectorTransportState();
 
         transportState.setStatus(TransportState.PENDING);
 
-        transportStatusService.updateTransportToGatewayStatus(new TransportStatusService.TransportId(message.getConnectorMessageId()), transportState);
+        transportStateService.updateTransportToGatewayStatus(new TransportStateService.TransportId(message.getConnectorMessageId()), transportState);
     }
 
 

@@ -1,14 +1,13 @@
 package eu.domibus.connector.persistence.dao;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,6 +26,10 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
     Optional<PDomibusConnectorTransportStep> findbyMsgLinkPartnerAndAttempt(String msgId, String partnerName, int attempt);
 
     @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.transportId = ?1")
-    Optional<PDomibusConnectorTransportStep> findByTransportId(TransportStatusService.TransportId transportId);
+    Optional<PDomibusConnectorTransportStep> findByTransportId(TransportStateService.TransportId transportId);
+
+
+    @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.linkPartnerName = ?1")
+    List<PDomibusConnectorTransportStep> findByMsgLinkPartnerAndState(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
 }

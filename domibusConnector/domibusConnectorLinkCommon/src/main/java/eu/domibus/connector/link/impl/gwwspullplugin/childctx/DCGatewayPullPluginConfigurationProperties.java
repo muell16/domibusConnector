@@ -1,9 +1,7 @@
 package eu.domibus.connector.link.impl.gwwspullplugin.childctx;
 
-import eu.domibus.connector.lib.spring.DomibusConnectorDuration;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
-import eu.domibus.connector.link.api.CommonPluginConfigurationProperties;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,11 +12,10 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.Duration;
 
 @ConfigurationProperties(prefix = "")
 @Validated
-public class DCGatewayPullPluginConfigurationProperties extends CommonPluginConfigurationProperties {
+public class DCGatewayPullPluginConfigurationProperties {
 
     @NotNull
     @ConfigurationDescription("The URL of the domibus connector pull gateway plugin webservice eg. <domibus url>/services/pull-gw")

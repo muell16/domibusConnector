@@ -1,5 +1,5 @@
 
-package eu.domibus.connector.backend.ws.link.policy;
+package eu.domibus.connector.link.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

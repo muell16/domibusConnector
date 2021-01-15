@@ -1,17 +1,16 @@
 package eu.domibus.connector.domain.model;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class DomibusConnectorTransportStep {
 
-    private TransportStatusService.TransportId transportId;
+    private TransportStateService.TransportId transportId;
     private DomibusConnectorMessage.DomibusConnectorMessageId messageId;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
@@ -20,11 +19,11 @@ public class DomibusConnectorTransportStep {
     private LocalDateTime created;
     private List<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
 
-    public TransportStatusService.TransportId getTransportId() {
+    public TransportStateService.TransportId getTransportId() {
         return transportId;
     }
 
-    public void setTransportId(TransportStatusService.TransportId transportId) {
+    public void setTransportId(TransportStateService.TransportId transportId) {
         this.transportId = transportId;
     }
 

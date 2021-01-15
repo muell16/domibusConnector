@@ -38,35 +38,35 @@ public class GwJmsPlugin {
     }
 
 
-//    @Override
-    public ActiveLinkManager startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
-        DomibusConnectorLinkConfiguration.LinkConfigName linkConfigName = linkConfiguration.getConfigName();
-
-
-        GwJmsPluginActiveLink activeLink = linkConfigNameToActiveLink.get(linkConfigName);
-        if (activeLink != null) {
-            throw new LinkPluginException("LinkConfig is already active! Use shutdown first!");
-        }
-        activeLink = new GwJmsPluginActiveLink(linkConfiguration, this, applicationContext);
-
-        LOGGER.info("Activated LinkConfig [{}] to [{}]", linkConfiguration, activeLink);
-        linkConfigNameToActiveLink.put(linkConfigName, activeLink);
-        linkConfigNameToLinkConfig.put(linkConfigName, linkConfiguration);
-//        return activeLink;
-        return null;
-
-    }
-
-//    @Override
-    public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
-        GwJmsPluginActiveLink gwJmsPluginActiveLink = linkConfigNameToActiveLink.get(linkConfigurationName);
-        if (gwJmsPluginActiveLink == null) {
-            throw new LinkPluginException("No active link found with name " + linkConfigurationName);
-        }
-        gwJmsPluginActiveLink.shutdown();
-        linkConfigNameToActiveLink.remove(linkConfigurationName);
-        linkConfigNameToLinkConfig.remove(linkConfigurationName);
-    }
+////    @Override
+//    public ActiveLinkManager startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+//        DomibusConnectorLinkConfiguration.LinkConfigName linkConfigName = linkConfiguration.getConfigName();
+//
+//
+//        GwJmsPluginActiveLink activeLink = linkConfigNameToActiveLink.get(linkConfigName);
+//        if (activeLink != null) {
+//            throw new LinkPluginException("LinkConfig is already active! Use shutdown first!");
+//        }
+//        activeLink = new GwJmsPluginActiveLink(linkConfiguration, this, applicationContext);
+//
+//        LOGGER.info("Activated LinkConfig [{}] to [{}]", linkConfiguration, activeLink);
+//        linkConfigNameToActiveLink.put(linkConfigName, activeLink);
+//        linkConfigNameToLinkConfig.put(linkConfigName, linkConfiguration);
+////        return activeLink;
+//        return null;
+//
+//    }
+//
+////    @Override
+//    public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
+//        GwJmsPluginActiveLink gwJmsPluginActiveLink = linkConfigNameToActiveLink.get(linkConfigurationName);
+//        if (gwJmsPluginActiveLink == null) {
+//            throw new LinkPluginException("No active link found with name " + linkConfigurationName);
+//        }
+//        gwJmsPluginActiveLink.shutdown();
+//        linkConfigNameToActiveLink.remove(linkConfigurationName);
+//        linkConfigNameToLinkConfig.remove(linkConfigurationName);
+//    }
 
 //    @Override
     public List<PluginFeature> getFeatures() {

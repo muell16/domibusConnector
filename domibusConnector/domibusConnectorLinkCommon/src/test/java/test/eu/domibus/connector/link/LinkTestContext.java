@@ -2,13 +2,14 @@ package test.eu.domibus.connector.link;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,12 @@ public class LinkTestContext {
 
     @Bean
     @ConditionalOnMissingBean
+    public DomibusConnectorMessagePersistenceService domibusConnectorMessagePersistenceService() {
+        return Mockito.mock(DomibusConnectorMessagePersistenceService.class);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public LargeFilePersistenceServiceMemoryImpl largeFilePersistenceServiceMemoryImpl() {
         return new LargeFilePersistenceServiceMemoryImpl();
     }
@@ -54,8 +61,8 @@ public class LinkTestContext {
 
     @Bean
     @ConditionalOnMissingBean
-    public TransportStatusService transportStatusService() {
-        TransportStatusService mock = Mockito.mock(TransportStatusService.class);
+    public TransportStateService transportStatusService() {
+        TransportStateService mock = Mockito.mock(TransportStateService.class);
 
         return mock;
     }

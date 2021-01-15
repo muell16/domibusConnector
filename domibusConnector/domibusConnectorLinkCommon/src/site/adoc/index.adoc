@@ -10,3 +10,7 @@ Since 4.3.0 the connector comes with different link plugins
 * WS Backend Plugin
 
 
+== The architecture
+
+
+

@@ -1,7 +1,7 @@
 package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -47,7 +47,7 @@ class ReveiveFromGwJmsPluginTest {
     SubmitToConnector submitToConnector;
 
     @MockBean
-    TransportStatusService transportStatusService;
+    TransportStateService transportStateService;
 
     @MockBean
     DomibusConnectorLinkPartner linkPartner;
@@ -193,14 +193,14 @@ class ReveiveFromGwJmsPluginTest {
 
         reveiveFromGwJmsPlugin.onMessage(msg);
 
-        TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
         state.setStatus(FAILED);
-        state.setConnectorTransportId(new TransportStatusService.TransportId("jms1"));
+        state.setConnectorTransportId(new TransportStateService.TransportId("jms1"));
         state.setRemoteMessageId(null);
         state.setTransportImplId(null);
 
 
-        Mockito.verify(transportStatusService, Mockito.times(1))
+        Mockito.verify(transportStateService, Mockito.times(1))
                 .updateTransportStatus(refEq(state, "messageErrorList"));
 
 
@@ -217,14 +217,14 @@ class ReveiveFromGwJmsPluginTest {
 
         reveiveFromGwJmsPlugin.onMessage(msg);
 
-        TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
         state.setStatus(ACCEPTED);
-        state.setConnectorTransportId(new TransportStatusService.TransportId("jms1"));
+        state.setConnectorTransportId(new TransportStateService.TransportId("jms1"));
         state.setRemoteMessageId("ebms1234");
         state.setTransportImplId(null);
 
 
-        Mockito.verify(transportStatusService, Mockito.times(1))
+        Mockito.verify(transportStateService, Mockito.times(1))
                 .updateTransportStatus(refEq(state, "messageErrorList"));
 
 

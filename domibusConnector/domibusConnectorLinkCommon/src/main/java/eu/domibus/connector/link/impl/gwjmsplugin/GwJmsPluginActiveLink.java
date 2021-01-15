@@ -22,7 +22,7 @@ public class GwJmsPluginActiveLink { //implements ActiveLinkManager {
     private final GwJmsPlugin pluginManager;
     private final ConfigurableApplicationContext applicationContext;
 
-    private ActiveLinkPartnerManager activeLinkPartner;
+//    private ActiveLinkPartnerManager activeLinkPartner;
     private ConfigurableApplicationContext linkPartnerSpringContext;
 
 
@@ -45,63 +45,63 @@ public class GwJmsPluginActiveLink { //implements ActiveLinkManager {
     }
 
 
-//    @Override
-    public Optional<ActiveLinkPartnerManager> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        if (activeLinkPartner != null && activeLinkPartner.getLinkPartnerName().equals(linkPartnerName)) {
-            return Optional.of(activeLinkPartner);
-        }
-//        LOGGER.error("No Link partner with name [{}] found", linkPartnerName);
-        return Optional.empty();
-    }
+////    @Override
+//    public Optional<ActiveLinkPartnerManager> getActiveLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+//        if (activeLinkPartner != null && activeLinkPartner.getLinkPartnerName().equals(linkPartnerName)) {
+//            return Optional.of(activeLinkPartner);
+//        }
+////        LOGGER.error("No Link partner with name [{}] found", linkPartnerName);
+//        return Optional.empty();
+//    }
 
-
-//    @Override
-    public synchronized Optional<ActiveLinkPartnerManager> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
-        if (this.activeLinkPartner != null) {
-            throw new LinkPluginException("A link partner is already active for this configuration! This link config only supports ONE active link partner at once!");
-        }
-        Optional<ActiveLinkPartnerManager> activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
-        if (activePartner != null) {
-            throw new LinkPluginException("Link is already active! Use shutdown first!");
-        }
-
-
-        ConfigurableApplicationContext springChildContext = LinkPluginUtils
-                .getChildContextBuilder(applicationContext)
-                .withDomibusConnectorLinkConfiguration(linkConfiguration)
-                .withDomibusConnectorLinkPartner(linkPartner)
-                .addSingelton("gwJmsActiveLink", this)
-                .withProfiles(getProfiles())
-                .withSources(getSources())
-                .run();
-        this.linkPartnerSpringContext = springChildContext;
-
-        ActiveLinkPartnerManager activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
-
-        LOGGER.info("Activated LinkPartner [{}] to [{}]", linkPartner, activeLinkPartner);
-        this.activeLinkPartner = activeLinkPartner;
-        return Optional.of(activeLinkPartner);
-
-
-    }
-
-//    @Override
-    public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
-        if (this.activeLinkPartner.getLinkPartnerName().equals(linkPartner)) {
-            linkPartnerSpringContext.close();
-        }
-        this.activeLinkPartner = null;
-        this.linkPartnerSpringContext = null;
-    }
-
-//    @Override
-    public void shutdown() {
-        if (this.activeLinkPartner != null) {
-            this.shutdownLinkPartner(this.activeLinkPartner.getLinkPartnerName());
-        } else {
-            LOGGER.warn("Cannot shutdown link, because link is not active!");
-        }
-    }
+//
+////    @Override
+//    public synchronized Optional<ActiveLinkPartnerManager> activateLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+//        if (this.activeLinkPartner != null) {
+//            throw new LinkPluginException("A link partner is already active for this configuration! This link config only supports ONE active link partner at once!");
+//        }
+//        Optional<ActiveLinkPartnerManager> activePartner = getActiveLinkPartner(linkPartner.getLinkPartnerName());
+//        if (activePartner != null) {
+//            throw new LinkPluginException("Link is already active! Use shutdown first!");
+//        }
+//
+//
+//        ConfigurableApplicationContext springChildContext = LinkPluginUtils
+//                .getChildContextBuilder(applicationContext)
+//                .withDomibusConnectorLinkConfiguration(linkConfiguration)
+//                .withDomibusConnectorLinkPartner(linkPartner)
+//                .addSingelton("gwJmsActiveLink", this)
+//                .withProfiles(getProfiles())
+//                .withSources(getSources())
+//                .run();
+//        this.linkPartnerSpringContext = springChildContext;
+//
+//        ActiveLinkPartnerManager activeLinkPartner = springChildContext.getBean(GwJmsPluginActiveLinkPartner.class);
+//
+//        LOGGER.info("Activated LinkPartner [{}] to [{}]", linkPartner, activeLinkPartner);
+//        this.activeLinkPartner = activeLinkPartner;
+//        return Optional.of(activeLinkPartner);
+//
+//
+//    }
+//
+////    @Override
+//    public void shutdownLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartner) {
+//        if (this.activeLinkPartner.getLinkPartnerName().equals(linkPartner)) {
+//            linkPartnerSpringContext.close();
+//        }
+//        this.activeLinkPartner = null;
+//        this.linkPartnerSpringContext = null;
+//    }
+//
+////    @Override
+//    public void shutdown() {
+//        if (this.activeLinkPartner != null) {
+//            this.shutdownLinkPartner(this.activeLinkPartner.getLinkPartnerName());
+//        } else {
+//            LOGGER.warn("Cannot shutdown link, because link is not active!");
+//        }
+//    }
 
 //    @Override
 //    public LinkPlugin getPluginManager() {

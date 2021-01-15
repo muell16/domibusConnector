@@ -92,7 +92,7 @@ public class DCGatewayPullPluginConfiguration {
         StoreConfigurationProperties cxfKeyStore = cxf.getKeyStore();
 
         props.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
-        props.put("org.apache.wss4j.crypto.merlin.keystore.type", cxf.getKeyStore().getType());
+        props.put("org.apache.wss4j.crypto.merlin.keystore.type", cxfKeyStore.getType());
         props.put("org.apache.wss4j.crypto.merlin.keystore.file", cxfKeyStore.getPathUrlAsString());
         props.put("org.apache.wss4j.crypto.merlin.keystore.password", cxfKeyStore.getPassword());
         props.put("org.apache.wss4j.crypto.merlin.keystore.alias", cxf.getPrivateKey().getAlias());

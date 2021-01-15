@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorControllerExcep
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -113,7 +113,7 @@ public class ITCaseTestContext {
     public static class QueueBasedDomibusConnectorBackendDeliveryService implements DomibusConnectorBackendDeliveryService {
 
         @Autowired
-        TransportStatusService transportStatusService;
+        TransportStateService transportStateService;
 
         @Autowired
         DomibusConnectorBackendDeliveryServiceInterceptor interceptor;
@@ -129,15 +129,15 @@ public class ITCaseTestContext {
             LOGGER.info("Delivered Message [{}] to Backend");
 
 
-            TransportStatusService.TransportId dummyBackend = transportStatusService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
-            TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+            TransportStateService.TransportId dummyBackend = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_backend"));
+            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
             state.setConnectorTransportId(dummyBackend);
             state.setStatus(TransportState.ACCEPTED);
 
             String backendId = "BACKEND_" + UUID.randomUUID().toString();
             state.setRemoteMessageId(backendId); //assigned backend message id
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStatusService.updateTransportToBackendClientStatus(dummyBackend, state);
+            transportStateService.updateTransportToBackendClientStatus(dummyBackend, state);
 
             DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)
@@ -160,7 +160,7 @@ public class ITCaseTestContext {
     public static class QueueBasedDomibusConnectorGatewaySubmissionService implements DomibusConnectorGatewaySubmissionService {
 
         @Autowired
-        TransportStatusService transportStatusService;
+        TransportStateService transportStateService;
 
         @Autowired
         DomibusConnectorGatewaySubmissionServiceInterceptor interceptor;
@@ -174,15 +174,15 @@ public class ITCaseTestContext {
             interceptor.submitToGateway(message);
             LOGGER.info("Delivered Message [{}] to Gateway", message);
 
-            TransportStatusService.TransportId dummyGW = transportStatusService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_gw"));
-            TransportStatusService.DomibusConnectorTransportState state = new TransportStatusService.DomibusConnectorTransportState();
+            TransportStateService.TransportId dummyGW = transportStateService.createTransportFor(message, new DomibusConnectorLinkPartner.LinkPartnerName("dummy_gw"));
+            TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
             state.setConnectorTransportId(dummyGW);
 //            state.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
             state.setStatus(TransportState.ACCEPTED);
             String ebmsId = "EBMS_" + UUID.randomUUID().toString();
             state.setRemoteMessageId(ebmsId); //assigned EBMS ID
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
-            transportStatusService.updateTransportToGatewayStatus(dummyGW , state);
+            transportStateService.updateTransportToGatewayStatus(dummyGW , state);
 
             DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                     .copyPropertiesFrom(message)

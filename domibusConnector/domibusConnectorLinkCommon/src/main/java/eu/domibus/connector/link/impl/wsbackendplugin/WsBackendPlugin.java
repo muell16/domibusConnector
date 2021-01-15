@@ -3,15 +3,17 @@ package eu.domibus.connector.link.impl.wsbackendplugin;
 import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.*;
+import eu.domibus.connector.link.api.ActiveLink;
+import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.LinkPlugin;
+import eu.domibus.connector.link.api.PluginFeature;
 import eu.domibus.connector.link.api.exception.LinkPluginException;
-import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPluginConfiguration;
+import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsActiveLinkPartnerManager;
 import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginConfiguration;
 import eu.domibus.connector.link.impl.wsbackendplugin.childctx.WsBackendPluginLinkPartnerConfigurationProperties;
+import eu.domibus.connector.link.utils.LinkPluginUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -21,8 +23,6 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.DataBinder;
 import org.springframework.validation.Validator;
 
 import java.util.List;
@@ -30,9 +30,8 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.domibus.connector.link.impl.wsplugin.DCWsPluginConfiguration.DC_WS_BACKEND_PLUGIN_PROFILE_NAME;
-import static eu.domibus.connector.link.impl.wsplugin.DCWsPluginConfiguration.DC_WS_PLUGIN_PROFILE_NAME;
 import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
+import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
 
 @Component
 @Profile(LINK_PLUGIN_PROFILE_NAME)
@@ -74,7 +73,7 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
     @Override
     public void shutdownConfiguration(ActiveLink activeLink) {
-
+        throw new RuntimeException("Not supported!");
     }
 
     @Autowired
@@ -82,24 +81,11 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
     @Override
     public ActiveLinkPartner enableLinkPartner(DomibusConnectorLinkPartner linkPartner, ActiveLink activeLink) {
+        LOGGER.debug("Enabling LinkPartner [{}]", linkPartner);
         Properties properties = linkPartner.getProperties();
 
         LOGGER.debug("Binding properties [{}] to linkPartnerConfig [{}]", properties, WsBackendPluginLinkPartnerConfigurationProperties.class);
 
-//        WsBackendPluginLinkPartnerConfigurationProperties linkPartnerConfig = new WsBackendPluginLinkPartnerConfigurationProperties();
-//
-//        DataBinder dataBinder = new DataBinder(linkPartnerConfig);
-//        PropertyValues pv = new MutablePropertyValues(properties);
-//        dataBinder.addValidators(validator);
-//        dataBinder.bind(pv);
-//        BindingResult bindingResult = dataBinder.getBindingResult();
-//        dataBinder.
-//        if (bindingResult.hasFieldErrors() || bindingResult.hasGlobalErrors()) {
-//            LOGGER.error("Binding properties [{}] to linkPartnerConfig [{}] failed", properties, WsBackendPluginLinkPartnerConfigurationProperties.class);
-//            LOGGER.error("Binding errors: [{}]", bindingResult.getAllErrors());
-//            //TODO: print errors
-//            return null;
-//        }
         ValidationBindHandler validationBindHandler = new ValidationBindHandler(validator);
 
 
@@ -107,8 +93,6 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
         BindResult<WsBackendPluginLinkPartnerConfigurationProperties> bindingResult = binder.bind("", Bindable.of(WsBackendPluginLinkPartnerConfigurationProperties.class), validationBindHandler);
         if (!bindingResult.isBound()) {
             String error = String.format("Binding properties [%s] to linkPartnerConfig [%s] failed", properties, WsBackendPluginLinkPartnerConfigurationProperties.class);
-//            LOGGER.error("Binding properties [{}] to linkPartnerConfig [{}] failed", properties, WsBackendPluginLinkPartnerConfigurationProperties.class);
-
             throw new LinkPluginException(error);
         }
 
@@ -117,11 +101,15 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
         WsBackendPluginActiveLinkPartner activeLinkPartner = new WsBackendPluginActiveLinkPartner();
         activeLinkPartner.setLinkPartner(linkPartner);
-        activeLinkPartner.setChildContext(activeLinkPartner.getChildContext());
+        activeLinkPartner.setChildContext(activeLink.getChildContext());
         activeLinkPartner.setParentLink(activeLink);
         activeLinkPartner.setConfig(linkPartnerConfig);
 
+        //register certificate DN for authentication
+        WsActiveLinkPartnerManager bean = activeLink.getChildContext().getBean(WsActiveLinkPartnerManager.class);
+        bean.registerDn(activeLinkPartner);
 
+        LOGGER.info(CONFIG, "Successfully enabled LinkPartner [{}]", linkPartner);
         return activeLinkPartner;
     }
 
@@ -144,12 +132,14 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
 
     @Override
     public List<Class> getPluginConfigurationProperties() {
-        return null;
+        //TODO: implement
+        throw new RuntimeException("Not supported yet!");
     }
 
     @Override
     public List<Class> getPartnerConfigurationProperties() {
-        return null;
+        //TODO: implement
+        throw new RuntimeException("Not supported yet!");
     }
 
 

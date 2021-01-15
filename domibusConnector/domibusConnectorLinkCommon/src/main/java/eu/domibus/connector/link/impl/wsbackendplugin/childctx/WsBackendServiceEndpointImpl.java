@@ -3,13 +3,17 @@ package eu.domibus.connector.link.impl.wsbackendplugin.childctx;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorBackendDeliveryException;
 import eu.domibus.connector.controller.service.SubmitToConnector;
+import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
-import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
-import eu.domibus.connector.link.impl.wsplugin.DCWsEndpointAuthentication;
+import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPluginActiveLinkPartner;
+import eu.domibus.connector.link.service.DCActiveLinkManagerService;
+import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
 import org.slf4j.Logger;
@@ -19,24 +23,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Handles transmitting messages (push/pull) from and to backendClients over webservice
  * pushing messages to backendClients are handled in different service
  */
-//@Profile(WS_BACKEND_LINK_PROFILE)
-//@Service(BEAN_NAME)
-//@Qualifier(BEAN_NAME)
 public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsBackendServiceEndpointImpl.class);
 
     private WebServiceContext webServiceContext;
-
-
-//    @Autowired
-//    DCWsEndpointAuthentication endpointAuthenticator;
 
     @Autowired
     SubmitToConnector submitToConnector;
@@ -45,7 +44,13 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
     DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Autowired
-    WsActiveLinkPartnerManager WsActiveLinkPartnerManager;
+    DomibusConnectorMessagePersistenceService messagePersistenceService;
+
+    @Autowired
+    DCActiveLinkManagerService linkManager;
+
+    @Autowired
+    TransportStateService transportStateService;
 
     @Resource
     public void setWsContext(WebServiceContext webServiceContext) {
@@ -54,51 +59,26 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     @Override
     public DomibusConnectorMessagesType requestMessages(EmptyRequestType requestMessagesRequest) {
-//        DomibusConnectorBackendClientInfo backendClientInfoByName = null;
-//        try {
-//            backendClientInfoByName = checkBackendClient();
-//            DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue = retrieveWaitingMessagesFromQueue(backendClientInfoByName);
-//            return retrieveWaitingMessagesFromQueue;
-//        } catch (DomibusConnectorBackendDeliveryException e) {
-//            LOGGER.error("Exception caught retrieving Messages from the backend queue!", e);
-//            return null;
-//        }
-        //TODO: return all pending messages...
-        return new DomibusConnectorMessagesType();
-    }
+        DomibusConnectorMessagesType getMessagesResponse = new DomibusConnectorMessagesType();
+        try {
+            Optional<DomibusConnectorLinkPartner> backendClientInfoByName = checkBackendClient();
+            if (backendClientInfoByName.isPresent()) {
+                List<DomibusConnectorTransportStep> pendingTransportsForLinkPartner = transportStateService.getPendingTransportsForLinkPartner(backendClientInfoByName.get().getLinkPartnerName());
+                List<DomibusConnectorMessageType> collect = pendingTransportsForLinkPartner.stream()
+                        .map(step -> step.getMessageId())
+                        .map(msgId -> messagePersistenceService.findMessageByConnectorMessageId(msgId.getConnectorMessageId()))
+                        .map(msg -> transformerService.transformDomainToTransition(msg))
+                        .collect(Collectors.toList());
+                getMessagesResponse.getMessages().addAll(collect);
 
-//    @Transactional
-//    public DomibusConnectorMessagesType retrieveWaitingMessagesFromQueue(DomibusConnectorBackendClientInfo backendInfo) throws DomibusConnectorBackendDeliveryException {
-//        DomibusConnectorMessagesType messagesType = new DomibusConnectorMessagesType();
-//        MessageContext mContext = webServiceContext.getMessageContext();
-//        if (mContext == null) {
-//            throw new RuntimeException("Retrieved MessageContext mContext from WebServiceContext is null!");
-//        }
-//        WrappedMessageContext wmc = (WrappedMessageContext)mContext;
-//        Message m = wmc.getWrappedMessage();
-//        if (m == null) {
-//            throw new RuntimeException("Retrieved Message m from WrappedMessageContext is null!");
-//        }
-//
-////        //TODO: put interceptor for message deletion in here!
-////        try {
-////            List<DomibusConnectorMessage> messageIds = messageToBackendClientWaitQueue.getConnectorMessageIdForBackend(backendInfo.getBackendName());
-////            messageIds.stream()
-////                    .forEach((message) -> {
-////                        messagesType.getMessages().add(transformDomibusConnectorMessageToTransitionMessage(message));
-////                        m.getInterceptorChain().add(new ProcessMessageAfterDeliveredToBackendInterceptor(message));
-////
-////                    });
-////        } catch (Exception e) {
-////            throw new DomibusConnectorBackendDeliveryException("Exception caught retrieving messages from backend queue!", e);
-////        }
-//        return messagesType;
-//    }
-//
-//    private DomibusConnectorMessageType transformDomibusConnectorMessageToTransitionMessage(DomibusConnectorMessage message) {
-////        DomibusConnectorMessage processedMessage = backendSubmissionService.processMessageBeforeDeliverToBackend(message);
-//        return DomibusConnectorDomainMessageTransformer.transformDomainToTransition(message);
-//    }
+            } else {
+                LOGGER.warn("No backend found!");
+            }
+        } catch (Exception e) {
+
+        }
+        return getMessagesResponse;
+    }
 
 
     @Override
@@ -106,19 +86,22 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
         try {
             LOGGER.debug("#submitMessage: message: [{}]", submitMessageRequest);
-            ActiveLinkPartnerManager backendClientInfoByName = null;
-//            backendClientInfoByName = endpointAuthenticator.checkBackendClient(webServiceContext).get();
 
-            DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
-            msg.getMessageDetails().setConnectorBackendClientName(backendClientInfoByName.getLinkPartnerName().getLinkName());
-            LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", backendClientInfoByName.getLinkPartnerName().getLinkName());
+            Optional<DomibusConnectorLinkPartner> backendClientInfoByName = checkBackendClient();
+            if (backendClientInfoByName.isPresent()) {
+                DomibusConnectorLinkPartner linkPartner = backendClientInfoByName.get();
+                DomibusConnectorMessage msg = transformerService.transformTransitionToDomain(submitMessageRequest);
+                msg.getMessageDetails().setConnectorBackendClientName(linkPartner.getLinkPartnerName().getLinkName());
+                LOGGER.debug("#submitMessage: setConnectorBackendClientName to [{}]", linkPartner);
 
+                submitToConnector.submitToConnector(msg, linkPartner);
+                answer.setResult(true);
+                answer.setMessageId(msg.getConnectorMessageId());
 
-            submitToConnector.submitToConnector(msg, backendClientInfoByName.getLinkPartner());
-
-
-            answer.setResult(true);
-            answer.setMessageId(msg.getConnectorMessageId());
+            } else {
+                String error = String.format("The requested backend user is not available on connector!\nCheck server logs for details!");
+                throw new RuntimeException(error);
+            }
 
         } catch (Exception e) {
             LOGGER.error("Exception occured during submitMessage from backend", e);
@@ -129,45 +112,27 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
         return answer;
     }
 
+    @Autowired
+    WsActiveLinkPartnerManager wsActiveLinkPartnerManager;
 
-    private Optional<ActiveLinkPartnerManager> checkBackendClient() throws DomibusConnectorBackendDeliveryException {
+    private Optional<DomibusConnectorLinkPartner> checkBackendClient() throws DomibusConnectorBackendDeliveryException {
         if (this.webServiceContext == null) {
             throw new RuntimeException("No webServiceContext found");
         }
         Principal userPrincipal = webServiceContext.getUserPrincipal();
-        String backendName = userPrincipal == null ? null : userPrincipal.getName();
-        if (userPrincipal == null || backendName == null) {
-            String error = String.format("checkBackendClient: Cannot handle request because userPrincipal is [%s] the userName is [%s]. Cannot identify backend!", userPrincipal, backendName);
+        String certificateDn = userPrincipal == null ? null : userPrincipal.getName();
+        if (userPrincipal == null || certificateDn == null) {
+            String error = String.format("checkBackendClient: Cannot handle request because userPrincipal is [%s] the userName is [%s]. Cannot identify backend!", userPrincipal, certificateDn);
             LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
             throw new DomibusConnectorBackendDeliveryException(error);
         }
+        Optional<WsBackendPluginActiveLinkPartner> linkPartner =  wsActiveLinkPartnerManager.getDomibusConnectorLinkPartnerByDn(certificateDn);
+        if (!linkPartner.isPresent()) {
+            LOGGER.warn("No backend with certificate dn [{}] found!", certificateDn);
+        }
+//        certificateDn = certificateDn.toLowerCase();
+        return linkPartner.map(WsBackendPluginActiveLinkPartner::getLinkPartner);
 
-        backendName = backendName.toLowerCase();
-        return null;
-//        backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName)); //.orElse(null);
-
-//        backendClientInfoByName = backendClientInfoPersistenceService.getEnabledBackendClientInfoByName(backendName);
-
-//        if (backendClientInfoByName == null) {
-//
-//            String error = String.format("#checkBackendClient: No backend with name [%s] configured on connector!", backendName);
-//            //should be marked deprecated the removal of leading cn=
-//            backendName = backendName.toLowerCase();
-//            backendName = "cn=".equals(backendName.substring(0, 3)) ? backendName.replaceFirst("cn=", "") : backendName;
-//            //replace leading "cn=" with "" so common name cn=alice becomes alice
-//
-//            LOGGER.warn("#checkBackendClient: {}, Looking for 4.0.x compatible connector backend naming [{}]", error, backendName);
-////            backendClientInfoByName = activeLink.getActiveLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(backendName));
-//        }
-//        if (backendClientInfoByName == null) {
-//            String error = String.format("#checkBackendClient: No link partner with name [%s] configured on connector!\n" +
-//                    "Connector takes the FQDN of the certificate and starts looking if a active link partner with this name is found\n" +
-//                    "Connector always converts the fqdn of the certificate to lower case letters!", backendName);
-//            LOGGER.error("#checkBackendClient: Throwing Exception: {}", error);
-//            throw new DomibusConnectorBackendDeliveryException(error);
-//        }
-//
-//        return backendClientInfoByName;
     }
 
 

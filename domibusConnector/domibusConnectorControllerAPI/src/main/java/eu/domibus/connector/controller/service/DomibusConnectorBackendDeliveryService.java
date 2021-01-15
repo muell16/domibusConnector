@@ -1,6 +1,7 @@
 
 package eu.domibus.connector.controller.service;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
@@ -22,6 +23,6 @@ public interface DomibusConnectorBackendDeliveryService {
      * @param message the message
      * @throws DomibusConnectorControllerException in case of exceptions
      */
-    public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException;
+    public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorBackendException;
 
 }

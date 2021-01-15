@@ -16,7 +16,6 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.function.ValueProvider;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.link.api.ActiveLinkPartnerManager;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.link.service.DCLinkPersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Optional;
 
 
 public abstract class LinkConfiguration extends VerticalLayout {

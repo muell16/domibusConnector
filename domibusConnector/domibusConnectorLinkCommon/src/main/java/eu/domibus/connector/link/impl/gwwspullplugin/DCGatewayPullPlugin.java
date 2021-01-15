@@ -8,6 +8,7 @@ import eu.domibus.connector.link.api.*;
 
 import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPluginConfiguration;
 import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPluginConfigurationProperties;
+import eu.domibus.connector.link.utils.LinkPluginUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Scheduler;

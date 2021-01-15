@@ -1,6 +1,6 @@
 package eu.domibus.connector.gateway.link.jms.impl;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 //import eu.domibus.connector.jms.gateway.DomibusConnectorAsyncSubmitToGatewayReceiveResponseService;
@@ -17,15 +17,15 @@ public class HandleFromGwToConnectorSentResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandleFromGwToConnectorSentResponse.class);
 
     @Autowired
-    public TransportStatusService transportStatusService;
+    public TransportStateService transportStateService;
 
 //    @Override
     public void submitResponse(DomibusConnectorMessageResponseType response) {
         LOGGER.debug("Received SubmitResponse");
 
-        TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
 
-        transportState.setConnectorTransportId(new TransportStatusService.TransportId(response.getResponseForMessageId()));
+        transportState.setConnectorTransportId(new TransportStateService.TransportId(response.getResponseForMessageId()));
         transportState.setRemoteMessageId(response.getAssignedMessageId());
 
         if (response.isResult()) {
@@ -37,7 +37,7 @@ public class HandleFromGwToConnectorSentResponse {
             //TODO: map error list
             //transportState.setMessageErrorList();
         }
-        transportStatusService.updateTransportToGatewayStatus(new TransportStatusService.TransportId(response.getResponseForMessageId()), transportState);
+        transportStateService.updateTransportToGatewayStatus(new TransportStateService.TransportId(response.getResponseForMessageId()), transportState);
     }
 
 }

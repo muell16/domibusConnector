@@ -2,13 +2,11 @@ package eu.domibus.connector.link.common;
 
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
-import eu.domibus.connector.link.impl.wsplugin.DCWsPluginConfigurationProperties;
+import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 @Service
@@ -26,34 +24,37 @@ public class MerlinPropertiesFactory {
      *
      * @return the wss Properties
      */
-    public Map<String, Object> mapCertAndStoreConfigPropertiesToMerlinProperties(KeyAndKeyStoreAndTrustStoreConfigurationProperties config, String prefix) {
+    public Properties mapCertAndStoreConfigPropertiesToMerlinProperties(KeyAndKeyStoreAndTrustStoreConfigurationProperties config, String prefix) {
         if (config == null) {
             throw new IllegalArgumentException(prefix + ".config.* properties are missing!");
         }
-        if (config.getKeyStore() == null) {
-            throw new IllegalArgumentException(prefix + ".config.key-store.* properties are missing!");
+        StoreConfigurationProperties keyStore = config.getKeyStore();
+        if (keyStore == null) {
+            throw new IllegalArgumentException(prefix + ".config.key-store.* properties are missing or wrong!");
         }
 
-        HashMap<String, Object> p = new HashMap<>();
+//        HashMap<String, Object> p = new HashMap<>();
+        Properties p = new Properties();
         p.put("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
-        p.put("org.apache.wss4j.crypto.merlin.keystore.type", config.getKeyStore().getType());
-        p.put("org.apache.wss4j.crypto.merlin.keystore.password", config.getKeyStore().getPassword());
-        LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", config.getKeyStore().getPath());
+        p.put("org.apache.wss4j.crypto.merlin.keystore.type", keyStore.getType());
+        p.put("org.apache.wss4j.crypto.merlin.keystore.password", keyStore.getPassword());
+        LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.keystore.file={}]", keyStore.getPath());
         try {
-            p.put("org.apache.wss4j.crypto.merlin.keystore.file", config.getKeyStore().getPathUrlAsString());
+            p.put("org.apache.wss4j.crypto.merlin.keystore.file", keyStore.getPathUrlAsString());
         } catch (Exception e) {
             throw new RuntimeException("Error with property: [" + prefix + ".config.key-store.path]\n" +
-                    "value is [" + config.getKeyStore().getPath() + "]");
+                    "value is [" + keyStore.getPath() + "]");
         }
         p.put("org.apache.wss4j.crypto.merlin.keystore.alias", config.getPrivateKey().getAlias());
         p.put("org.apache.wss4j.crypto.merlin.keystore.private.password", config.getPrivateKey().getPassword());
 
 
-        p.put("org.apache.wss4j.crypto.merlin.truststore.type", config.getTrustStore().getType());
-        p.put("org.apache.wss4j.crypto.merlin.truststore.password", config.getTrustStore().getPassword());
+        StoreConfigurationProperties trustStore = config.getTrustStore();
+        p.put("org.apache.wss4j.crypto.merlin.truststore.type", trustStore.getType());
+        p.put("org.apache.wss4j.crypto.merlin.truststore.password", trustStore.getPassword());
         try {
-            LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", config.getTrustStore().getPath());
-            p.put("org.apache.wss4j.crypto.merlin.truststore.file", config.getTrustStore().getPathUrlAsString());
+            LOGGER.debug("setting [org.apache.wss4j.crypto.merlin.truststore.file={}]", trustStore.getPath());
+            p.put("org.apache.wss4j.crypto.merlin.truststore.file", trustStore.getPathUrlAsString());
         } catch (Exception e) {
             LOGGER.info("Trust Store Property: [" + prefix + ".config.trust-store.path]" +
                             "\n cannot be processed. Using the configured key store [{}] as trust store",

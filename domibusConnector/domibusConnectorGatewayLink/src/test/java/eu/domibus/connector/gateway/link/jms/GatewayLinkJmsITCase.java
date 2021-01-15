@@ -1,6 +1,6 @@
 package eu.domibus.connector.gateway.link.jms;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageResponseType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
@@ -35,7 +35,7 @@ public class GatewayLinkJmsITCase {
 
     private ActiveMQConnectionFactory connectionFactory;
     private List<DomibusConnectorMessage> fromGwReceivedMessagesList;
-    private LinkedBlockingQueue<TransportStatusService.DomibusConnectorTransportState> setTransportState;
+    private LinkedBlockingQueue<TransportStateService.DomibusConnectorTransportState> setTransportState;
 
 
     @BeforeAll
@@ -117,7 +117,7 @@ public class GatewayLinkJmsITCase {
 //        testClient.deliverResponse(response);
 
 
-        TransportStatusService.DomibusConnectorTransportState state = setTransportState.take();
+        TransportStateService.DomibusConnectorTransportState state = setTransportState.take();
         assertThat(state).isNotNull();
 
 

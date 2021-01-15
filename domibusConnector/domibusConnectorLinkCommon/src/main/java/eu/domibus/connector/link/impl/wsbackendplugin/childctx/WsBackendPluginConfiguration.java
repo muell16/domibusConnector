@@ -1,19 +1,11 @@
 package eu.domibus.connector.link.impl.wsbackendplugin.childctx;
 
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
-import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.common.WsPolicyLoader;
-import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayWebServiceClient;
-import eu.domibus.connector.link.impl.wsplugin.DCWsBackendLinkConfigurationProperties;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
-import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWSService;
-import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.EndpointImpl;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,9 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import java.security.Policy;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 
@@ -56,7 +45,7 @@ public class WsBackendPluginConfiguration {
     @Autowired
     MerlinPropertiesFactory merlinPropertiesFactory;
 
-    @Autowired
+    @Bean
     WsBackendServiceEndpointImpl wsBackendServiceEndpoint() {
         return new WsBackendServiceEndpointImpl();
     }
@@ -65,6 +54,16 @@ public class WsBackendPluginConfiguration {
     @Bean
     WsBackendPluginWebServiceClientFactory wsBackendPluginWebServiceClientFactory() {
         return new WsBackendPluginWebServiceClientFactory();
+    }
+
+    @Bean
+    WsActiveLinkPartnerManager wsActiveLinkPartnerManager() {
+        return new WsActiveLinkPartnerManager();
+    }
+
+    @Bean
+    WsBackendSubmitTo wsBackendSubmitTo() {
+        return new WsBackendSubmitTo();
     }
 
     @Bean
@@ -83,9 +82,11 @@ public class WsBackendPluginConfiguration {
         endpoint.getProperties().put("security.store.bytes.in.attachment", true);
         endpoint.getProperties().put("security.enable.streaming", true);
         endpoint.getProperties().put("mtom-enabled", true);
-        Map<String, Object> stringObjectMap = merlinPropertiesFactory.mapCertAndStoreConfigPropertiesToMerlinProperties(configurationProperties.getSoap(), "");
-        endpoint.getProperties().put("security.encryption.properties", stringObjectMap);
-        endpoint.getProperties().put("security.signature.properties", stringObjectMap);
+
+        Properties encSigProperties = merlinPropertiesFactory.mapCertAndStoreConfigPropertiesToMerlinProperties(configurationProperties.getSoap(), "");
+
+        endpoint.getProperties().put("security.encryption.properties", encSigProperties);
+        endpoint.getProperties().put("security.signature.properties", encSigProperties);
         endpoint.getProperties().put("security.encryption.username", "useReqSigCert");
 
         endpoint.publish();

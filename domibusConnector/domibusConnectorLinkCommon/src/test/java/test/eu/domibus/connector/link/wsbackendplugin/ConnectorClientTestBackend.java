@@ -55,12 +55,13 @@ public class ConnectorClientTestBackend {
     //client alice...
     public static void main(String[] args) {
         Map<String, Object> props = new HashMap<>();
-        startContext("alice", "http://localhost:8021/services/backend", SocketUtils.findAvailableTcpPort(), true);
+        startContext("alice", "http://localhost:8021/services/backend", SocketUtils.findAvailableTcpPort());
     }
 
-    public static ConnectorClientTestBackend startContext(String clientName, String connectorAddress, int serverPort, boolean pushClient) {
+    public static ConnectorClientTestBackend startContext(String clientName, String connectorAddress, int serverPort) {
+        boolean pushClient = serverPort > 0;
         Map<String, Object> props = new HashMap<>();
-        props.put("ws.backendclient.name", "alice");
+        props.put("ws.backendclient.name", clientName);
         props.put("ws.backendclient.connector-address", connectorAddress);
         props.put("spring.main.allow-bean-definition-overriding", true);
         props.put("server.port", serverPort);
@@ -86,7 +87,7 @@ public class ConnectorClientTestBackend {
     }
 
     @Autowired
-    ApplicationContext applicationContext;
+    ConfigurableApplicationContext applicationContext;
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -120,5 +121,8 @@ public class ConnectorClientTestBackend {
     }
 
 
+    public void shutdown() {
+        applicationContext.close();
+    }
 
 }

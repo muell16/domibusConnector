@@ -4,7 +4,7 @@ import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkExc
 import eu.domibus.connector.controller.service.PullFromLink;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.SubmitToLink;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -14,7 +14,6 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.tools.logging.MDCHelper;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
 import eu.domibus.connector.ws.gateway.webservice.GetMessageByIdRequest;
 import eu.domibus.connector.ws.gateway.webservice.ListPendingMessageIdsRequest;
@@ -40,7 +39,7 @@ public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
     DomibusConnectorDomainMessageTransformerService transformerService;
 
     @Autowired
-    TransportStatusService transportStatusService;
+    TransportStateService transportStateService;
 
     @Autowired
     SubmitToConnector submitToConnector;
@@ -52,15 +51,15 @@ public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
     @Override
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setStatus(TransportState.PENDING);
-        TransportStatusService.TransportId transportId = transportStatusService.createTransportFor(message, linkPartnerName);
-        transportStatusService.updateTransportToGatewayStatus(transportId, transportState);
+        TransportStateService.TransportId transportId = transportStateService.createTransportFor(message, linkPartnerName);
+        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 
         DomibusConnectorMessageType domibusConnectorMessageType = transformerService.transformDomainToTransition(message);
         DomibsConnectorAcknowledgementType domibsConnectorAcknowledgementType = gatewayWebService.submitMessage(domibusConnectorMessageType);
 
-        transportState = new TransportStatusService.DomibusConnectorTransportState();
+        transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setRemoteMessageId(domibsConnectorAcknowledgementType.getMessageId());
         transportState.setText(domibsConnectorAcknowledgementType.getResultMessage());
         if (domibsConnectorAcknowledgementType.isResult()) {
@@ -68,7 +67,7 @@ public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
         } else {
             transportState.setStatus(TransportState.ACCEPTED);
         }
-        transportStatusService.updateTransportToGatewayStatus(transportId, transportState);
+        transportStateService.updateTransportToGatewayStatus(transportId, transportState);
 
     }
 

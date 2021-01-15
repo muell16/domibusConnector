@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.service.impl;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -18,14 +18,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isEvidenceMessage;
 
 @Service
 @Transactional
-public class DomibusConnectorTransportStatusService implements TransportStatusService {
+public class DomibusConnectorTransportStateService implements TransportStateService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStatusService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStateService.class);
 
     private DomibusConnectorMessagePersistenceService messagePersistenceService;
     private DomibusConnectorMessageContentManager contentStorageService;
@@ -172,6 +173,11 @@ public class DomibusConnectorTransportStatusService implements TransportStatusSe
     public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         //TODO: check for active transport...
         return createTransportFor(message, linkPartnerName);
+    }
+
+    @Override
+    public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        return transportStepPersistenceService.findPendingStepBy(linkPartnerName);
     }
 
 }

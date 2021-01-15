@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -9,7 +9,6 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorTransportStepDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
@@ -55,7 +54,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         int nextAttempt = nAttempt.orElse(0) + 1;
         transportStep.setAttempt(nextAttempt);
 
-        transportStep.setTransportId(new TransportStatusService.TransportId(msgId + "_" + linkPartnerName + "_" + nextAttempt));
+        transportStep.setTransportId(new TransportStateService.TransportId(msgId + "_" + linkPartnerName + "_" + nextAttempt));
 
         PDomibusConnectorTransportStep dbStep = mapTransportStepToDb(transportStep);
         PDomibusConnectorTransportStep savedDbStep = transportStepDao.save(dbStep);
@@ -64,7 +63,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     }
 
     @Override
-    public DomibusConnectorTransportStep getTransportStepByTransportId(TransportStatusService.TransportId transportId) {
+    public DomibusConnectorTransportStep getTransportStepByTransportId(TransportStateService.TransportId transportId) {
         Optional<PDomibusConnectorTransportStep> foundTransport = transportStepDao.findByTransportId(transportId);
         if (foundTransport.isPresent()) {
             return mapTransportStepToDomain(foundTransport.get());
@@ -79,6 +78,14 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         dbTransportStep = transportStepDao.save(dbTransportStep);
         transportStep = mapTransportStepToDomain(dbTransportStep);
         return transportStep;
+    }
+
+    @Override
+    public List<DomibusConnectorTransportStep> findPendingStepBy(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        return transportStepDao.findByMsgLinkPartnerAndState(linkPartnerName)
+                .stream()
+                .map(this::mapTransportStepToDomain)
+                .collect(Collectors.toList());
     }
 
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {

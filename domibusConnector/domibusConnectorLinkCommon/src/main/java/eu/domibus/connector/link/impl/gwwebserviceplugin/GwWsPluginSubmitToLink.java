@@ -3,8 +3,7 @@ package eu.domibus.connector.link.impl.gwwebserviceplugin;
 import eu.domibus.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.*;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.SubmitToLink;
-import eu.domibus.connector.controller.service.TransportStatusService;
-import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
@@ -15,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 
 import javax.activation.DataHandler;
@@ -31,11 +29,11 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
     BackendInterface backendInterface;
 
     @Autowired
-    TransportStatusService transportStatusService;
+    TransportStateService transportStateService;
 
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        TransportStatusService.TransportId transportId = transportStatusService.createOrGetTransportFor(message, linkPartnerName);
+        TransportStateService.TransportId transportId = transportStateService.createOrGetTransportFor(message, linkPartnerName);
 
         SubmitRequest submitRequest = new SubmitRequest();
         LargePayloadType largePayloadType = new LargePayloadType();
@@ -105,7 +103,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
         mapAttachments(message, submitRequest);
         mapMessageConfirmations(message, submitRequest);
 
-        TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setConnectorTransportId(transportId);
         transportState.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
 
@@ -124,7 +122,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
                     .build()
             );
         }
-        transportStatusService.updateTransportStatus(transportState);
+        transportStateService.updateTransportStatus(transportState);
 
     }
 

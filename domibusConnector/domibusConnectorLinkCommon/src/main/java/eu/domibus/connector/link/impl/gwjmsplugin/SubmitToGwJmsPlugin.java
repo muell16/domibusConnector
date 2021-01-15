@@ -2,7 +2,7 @@ package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.SubmitToLink;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +42,7 @@ public class SubmitToGwJmsPlugin implements SubmitToLink {
     private GwJmsPluginConfigurationProperties configurationProperties;
 
     @Autowired
-    private TransportStatusService transportStatusService;
+    private TransportStateService transportStateService;
 
     @Autowired
     private GwJmsPluginActiveLinkPartner linkPartner;
@@ -50,9 +50,9 @@ public class SubmitToGwJmsPlugin implements SubmitToLink {
 
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
-        if (linkPartner.getLinkPartnerName() != linkPartnerName) {
-            throw new RuntimeException("No LinkPartner with name " + linkPartnerName);
-        }
+//        if (linkPartner.getLinkPartnerName() != linkPartnerName) {
+//            throw new RuntimeException("No LinkPartner with name " + linkPartnerName);
+//        }
 
         final DomibusConnectorMessageDetails msgDetails = message.getMessageDetails();
 

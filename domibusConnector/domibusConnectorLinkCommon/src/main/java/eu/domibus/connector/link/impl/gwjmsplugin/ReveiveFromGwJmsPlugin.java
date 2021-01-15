@@ -2,7 +2,7 @@ package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.*;
@@ -41,7 +41,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
     GwJmsPluginConfigurationProperties configurationProperties;
 
     @Autowired
-    TransportStatusService transportStatusService;
+    TransportStateService transportStateService;
 
     @Autowired
     SubmitToConnector submitToConnector;
@@ -108,8 +108,8 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         String messageId = message.getStringProperty(EBMS_MESSAGE_ID_PROPERTY_NAME);
         String errorDetail = message.getStringProperty(ERROR_DETAIL_PROPERTY_NAME);
 
-        TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
-        transportState.setConnectorTransportId(new TransportStatusService.TransportId(jmsCorrelationID));
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+        transportState.setConnectorTransportId(new TransportStateService.TransportId(jmsCorrelationID));
         transportState.setRemoteMessageId(messageId);
 
         if (errorDetail != null) {
@@ -121,7 +121,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
             transportState.setStatus(ACCEPTED);
         }
 
-        transportStatusService.updateTransportStatus(transportState);
+        transportStateService.updateTransportStatus(transportState);
     }
 
     private void handleIncomingMessage(MapMessage message) throws JMSException {

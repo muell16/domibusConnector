@@ -1,4 +1,4 @@
-package eu.domibus.connector.link.api;
+package eu.domibus.connector.link.utils;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;

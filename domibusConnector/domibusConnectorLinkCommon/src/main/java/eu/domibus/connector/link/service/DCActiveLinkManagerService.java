@@ -48,12 +48,17 @@ public class DCActiveLinkManagerService {
     private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLink> activeLinkConfigurations = new ConcurrentHashMap<>();
 //    private Map<DomibusConnectorLinkPartner.LinkPartnerName, String> activeLinkPartnersToPlugin = new ConcurrentHashMap<>();
 
-
     SubmitToLink getSubmitToLinkPartner(String linkName) {
-        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
+        if (StringUtils.isEmpty(linkName)) {
+            throw new IllegalArgumentException("Provided link name is empty!");
+        }
+        return getSubmitToLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
+    }
+
+    SubmitToLink getSubmitToLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
         if (activeLinkPartner == null) {
-            String error = String.format("No linkPartner with name %s available", linkName);
+            String error = String.format("No linkPartner with name %s available", linkPartnerName);
             throw new LinkPluginException(error);
         }
 //        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);

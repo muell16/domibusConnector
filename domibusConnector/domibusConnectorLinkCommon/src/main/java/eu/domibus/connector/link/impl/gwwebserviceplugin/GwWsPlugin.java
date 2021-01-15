@@ -1,7 +1,6 @@
 package eu.domibus.connector.link.impl.gwwebserviceplugin;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.link.api.ActiveLinkManager;
 import eu.domibus.connector.link.api.PluginFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +23,7 @@ public class GwWsPlugin {
     private static final Logger LOGGER = LogManager.getLogger(GwWsPlugin.class);
     public static final String IMPL_NAME = "domibusgatewayplugin";
 
-    private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLinkManager> activeLinkMap = new HashMap<>();
+//    private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLinkManager> activeLinkMap = new HashMap<>();
 
 //    @Override
     public String getPluginName() {
@@ -42,20 +41,20 @@ public class GwWsPlugin {
     }
 
 
-//    @Override
-    public ActiveLinkManager startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
-        GwWsPluginActiveLink activeLink = new GwWsPluginActiveLink(this);
-//        activeLinkMap.put(linkConfiguration.getConfigName(), activeLink);
-//        return activeLink;
-        return null;
-    }
-
-//    @Override
-    public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
-        ActiveLinkManager activeLink = this.activeLinkMap.get(linkConfigurationName);
-//        activeLink.shutdown();
-        activeLinkMap.remove(activeLink);
-    }
+////    @Override
+//    public ActiveLinkManager startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+//        GwWsPluginActiveLink activeLink = new GwWsPluginActiveLink(this);
+////        activeLinkMap.put(linkConfiguration.getConfigName(), activeLink);
+////        return activeLink;
+//        return null;
+//    }
+//
+////    @Override
+//    public void shutdownConfiguration(DomibusConnectorLinkConfiguration.LinkConfigName linkConfigurationName) {
+//        ActiveLinkManager activeLink = this.activeLinkMap.get(linkConfigurationName);
+////        activeLink.shutdown();
+//        activeLinkMap.remove(activeLink);
+//    }
 
 //    @Override
     public List<PluginFeature> getFeatures() {

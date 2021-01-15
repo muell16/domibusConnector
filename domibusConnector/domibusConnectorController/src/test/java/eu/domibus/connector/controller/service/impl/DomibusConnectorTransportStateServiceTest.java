@@ -1,7 +1,7 @@
 package eu.domibus.connector.controller.service.impl;
 
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
@@ -16,9 +16,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class DomibusConnectorTransportStatusServiceTest {
+public class DomibusConnectorTransportStateServiceTest {
 
-    DomibusConnectorTransportStatusService transportStatusService;
+    DomibusConnectorTransportStateService transportStatusService;
 
     @Mock
     DomibusConnectorMessagePersistenceService messagePersistenceService;
@@ -49,7 +49,7 @@ public class DomibusConnectorTransportStatusServiceTest {
         Mockito.when(messagePersistenceService.findMessageByConnectorMessageId(Mockito.eq("MSG1")))
                 .thenReturn(testMessage);
 
-        transportStatusService = new DomibusConnectorTransportStatusService();
+        transportStatusService = new DomibusConnectorTransportStateService();
         transportStatusService.setMessagePersistenceService(messagePersistenceService);
         transportStatusService.setErrorPersistenceService(errorPersistenceService);
         transportStatusService.setContentStorageService(contentStorageService);
@@ -59,10 +59,10 @@ public class DomibusConnectorTransportStatusServiceTest {
 
     @Test
     public void testSetTransportToGwStatus() {
-        TransportStatusService.DomibusConnectorTransportState transportState = new TransportStatusService.DomibusConnectorTransportState();
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setRemoteMessageId("REMOTE1");
         transportState.setStatus(TransportState.ACCEPTED);
-        transportState.setConnectorTransportId(new TransportStatusService.TransportId("MSG1"));
+        transportState.setConnectorTransportId(new TransportStateService.TransportId("MSG1"));
 
         transportStatusService.updateTransportToGatewayStatus(transportState.getConnectorTransportId(), transportState);
 

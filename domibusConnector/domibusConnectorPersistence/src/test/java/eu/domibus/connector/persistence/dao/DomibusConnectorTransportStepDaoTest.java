@@ -1,9 +1,8 @@
 package eu.domibus.connector.persistence.dao;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import org.junit.jupiter.api.Disabled;
@@ -46,7 +45,7 @@ class DomibusConnectorTransportStepDaoTest {
         transportStep.setAttempt(1);
         transportStep.setConnectorMessageId("msg1");
         transportStep.setLinkPartnerName("l1");
-        transportStep.setTransportId(new TransportStatusService.TransportId("msg1_1"));
+        transportStep.setTransportId(new TransportStateService.TransportId("msg1_1"));
 
         PDomibusConnectorTransportStepStatusUpdate u = new PDomibusConnectorTransportStepStatusUpdate();
         u.setCreated(LocalDateTime.now());

@@ -1,10 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
-import eu.domibus.connector.controller.service.TransportStatusService;
 import eu.domibus.connector.domain.enums.TransportState;
 
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import java.io.Serializable;
 
 

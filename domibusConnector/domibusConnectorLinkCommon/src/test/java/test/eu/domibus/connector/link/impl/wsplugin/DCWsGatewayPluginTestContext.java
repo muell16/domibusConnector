@@ -3,7 +3,6 @@ package test.eu.domibus.connector.link.impl.wsplugin;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
-import eu.domibus.connector.link.impl.wsplugin.DCWsGatewayPlugin;
 import eu.domibus.connector.link.service.DCLinkPersistenceService;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@Import({LinkTestContext.class, CxfAutoConfiguration.class, DCWsGatewayPlugin.class})
+//@Import({LinkTestContext.class, CxfAutoConfiguration.class, DCWsGatewayPlugin.class})
 @Profile(DCWsGatewayPluginTestContext.WS_TEST_PROFILE)
 public class DCWsGatewayPluginTestContext {
 
@@ -71,7 +70,7 @@ public class DCWsGatewayPluginTestContext {
 
     public static PDomibusConnectorLinkConfiguration getWsGatewayLinkConfig() {
         PDomibusConnectorLinkConfiguration linkConfig = new PDomibusConnectorLinkConfiguration();
-        linkConfig.setLinkImpl(DCWsGatewayPlugin.IMPL_NAME);
+//        linkConfig.setLinkImpl(DCWsGatewayPlugin.IMPL_NAME);
         linkConfig.setConfigName("wsgateway");
 
         HashMap<String, String> props = new HashMap<>();

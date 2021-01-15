@@ -2,7 +2,7 @@ package eu.domibus.connector.gateway.link;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
@@ -15,14 +15,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -65,8 +63,8 @@ public class StartupGwLinkOnly {
         return ctx.getBean("gwSubmissionClient", DomibusConnectorGatewaySubmissionWebService.class);
     }
 
-    public static LinkedBlockingQueue<TransportStatusService.DomibusConnectorTransportState> getSetTransportStates(ConfigurableApplicationContext ctx) {
-        return (LinkedBlockingQueue<TransportStatusService.DomibusConnectorTransportState>) ctx.getBean(TRANSPORT_STATE_BLOCKING_QUEUE_NAME);
+    public static LinkedBlockingQueue<TransportStateService.DomibusConnectorTransportState> getSetTransportStates(ConfigurableApplicationContext ctx) {
+        return (LinkedBlockingQueue<TransportStateService.DomibusConnectorTransportState>) ctx.getBean(TRANSPORT_STATE_BLOCKING_QUEUE_NAME);
     }
 
     @Bean(FROM_GW_RCV_MESSAGES_LIST_NAME)
@@ -75,7 +73,7 @@ public class StartupGwLinkOnly {
     }
 
     @Bean(TRANSPORT_STATE_BLOCKING_QUEUE_NAME)
-    public LinkedBlockingQueue<TransportStatusService.DomibusConnectorTransportState> transportStatesQueue() {
+    public LinkedBlockingQueue<TransportStateService.DomibusConnectorTransportState> transportStatesQueue() {
         return new LinkedBlockingQueue<>();
     }
 
@@ -99,8 +97,8 @@ public class StartupGwLinkOnly {
 
     @Bean
     @ConditionalOnMissingBean
-    public TransportStatusService mockedTransportStatusService() {
-        return new TransportStatusService() {
+    public TransportStateService mockedTransportStatusService() {
+        return new TransportStateService() {
 
             @Override
             public void updateTransportToGatewayStatus(TransportId id, DomibusConnectorTransportState transportState) {

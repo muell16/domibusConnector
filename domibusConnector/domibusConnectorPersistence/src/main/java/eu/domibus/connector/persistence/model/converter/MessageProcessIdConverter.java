@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.controller.service.TransportStatusService.TransportId;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageProcessId;
 
 import javax.persistence.AttributeConverter;

@@ -7,17 +7,15 @@ import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPluginActiveLinkP
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWSService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.Properties;
 
-import static eu.domibus.connector.link.impl.wsplugin.DCWsPluginConfiguration.POLICY_LOADER_NAME;
 import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
 
 /**
@@ -79,11 +77,17 @@ public class WsBackendPluginWebServiceClientFactory {
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorBackendDeliveryWSService.WSDL_LOCATION.toString());
 //        jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl"); //maybe load own wsdl instead of remote one?
 
-        Map<String, Object> properties = merlinPropertiesFactory.mapCertAndStoreConfigPropertiesToMerlinProperties(this.config.getSoap(), ".");
-        properties.put("security.encryption.username", linkPartnerConfig.getEncryptionAlias());
-        LOGGER.debug(CONFIG, "#createWsClient: Configuring WsClient with following properties: [{}]", properties);
+        Properties properties = merlinPropertiesFactory.mapCertAndStoreConfigPropertiesToMerlinProperties(this.config.getSoap(), ".");
 
-        jaxWsProxyFactoryBean.setProperties(properties);
+        HashMap<String, Object> jaxWsFactoryBeanProperties = new HashMap<>();
+        jaxWsFactoryBeanProperties.put("security.encryption.username", linkPartnerConfig.getEncryptionAlias());
+        jaxWsFactoryBeanProperties.put("mtom-enabled", true);
+        jaxWsFactoryBeanProperties.put("security.encryption.properties", properties);
+        jaxWsFactoryBeanProperties.put("security.signature.properties", properties);
+
+        LOGGER.debug(CONFIG, "#createWsClient: Configuring WsClient with following properties: [{}]", jaxWsFactoryBeanProperties);
+
+        jaxWsProxyFactoryBean.setProperties(jaxWsFactoryBeanProperties);
 
         return (DomibusConnectorBackendDeliveryWebService) jaxWsProxyFactoryBean.create();
     }

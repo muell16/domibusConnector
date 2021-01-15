@@ -5,6 +5,7 @@ import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.util.StringUtils;
 
@@ -17,7 +18,7 @@ import java.util.Objects;
  *  between the connector and a link partner (gw, client)
  *
  */
-public interface TransportStatusService {
+public interface TransportStateService {
 
     /**
      * Sets the transport status for transports to GW
@@ -49,6 +50,8 @@ public interface TransportStatusService {
      * @param message
      */
     public TransportId createOrGetTransportFor(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+
+    public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     public static class TransportId {
         private String transportId;

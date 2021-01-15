@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.model;
 
 
-import eu.domibus.connector.controller.service.TransportStatusService;
+import eu.domibus.connector.controller.service.TransportStateService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ public class PDomibusConnectorTransportStep {
     private int attempt = 1;
 
     @Column(name = "TRANSPORT_ID")
-    private TransportStatusService.TransportId transportId;
+    private TransportStateService.TransportId transportId;
 
     /**
      * The message id of the system used to transport the message
@@ -63,11 +63,11 @@ public class PDomibusConnectorTransportStep {
         created = LocalDateTime.now();
     }
 
-    public TransportStatusService.TransportId getTransportId() {
+    public TransportStateService.TransportId getTransportId() {
         return transportId;
     }
 
-    public void setTransportId(TransportStatusService.TransportId transportId) {
+    public void setTransportId(TransportStateService.TransportId transportId) {
         this.transportId = transportId;
     }
 
