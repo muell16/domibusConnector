@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.7-SNAPSHOT</version>
+        <version>4.2.7-RELEASE</version>
     </parent>
     <artifactId>domibusConnectorAPIlib</artifactId>
     <packaging>jar</packaging>
@@ -36,8 +36,8 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-api</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
