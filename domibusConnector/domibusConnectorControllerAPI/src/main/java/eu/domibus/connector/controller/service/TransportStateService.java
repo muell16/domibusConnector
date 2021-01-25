@@ -54,20 +54,20 @@ public interface TransportStateService {
     public List<DomibusConnectorTransportStep> getPendingTransportsForLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
     public static class TransportId {
-        private String transportId;
+        private java.lang.String transportId;
 
-        public TransportId(String transportId) {
+        public TransportId(java.lang.String transportId) {
             if (StringUtils.isEmpty(transportId)) {
                 throw new IllegalArgumentException("TransportId is not allowed to be null or empty!");
             }
             this.transportId = transportId;
         }
 
-        public String getTransportId() {
+        public java.lang.String getTransportId() {
             return transportId;
         }
 
-        public void setTransportId(String transportId) {
+        public void setTransportId(java.lang.String transportId) {
             this.transportId = transportId;
         }
 
@@ -85,7 +85,7 @@ public interface TransportStateService {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "TransportId{" +
                     "transportId='" + transportId + '\'' +
                     '}';
@@ -95,11 +95,11 @@ public interface TransportStateService {
     public static class DomibusConnectorTransportState {
         private TransportId connectorTransportId; //may be the same as the connectorMessageId but must not...
         private DomibusConnectorMessage.DomibusConnectorMessageId connectorMessageId;
-        private String transportImplId; // the id of the transport attempt itself, can be null, eg. a jms id
-        private String remoteMessageId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
+        private java.lang.String transportImplId; // the id of the transport attempt itself, can be null, eg. a jms id
+        private java.lang.String remoteMessageId; //in case of GW ebms id, in case of backend national id/backend id, only filled if
         private TransportState status;
         private List<DomibusConnectorMessageError> messageErrorList = new ArrayList<>();
-        private String text;
+        private java.lang.String text;
 
         public TransportState getStatus() {
             return status;
@@ -125,11 +125,11 @@ public interface TransportStateService {
             this.connectorMessageId = connectorMessageId;
         }
 
-        public String getRemoteMessageId() {
+        public java.lang.String getRemoteMessageId() {
             return remoteMessageId;
         }
 
-        public void setRemoteMessageId(String remoteMessageId) {
+        public void setRemoteMessageId(java.lang.String remoteMessageId) {
             this.remoteMessageId = remoteMessageId;
         }
 
@@ -137,11 +137,11 @@ public interface TransportStateService {
             return messageErrorList;
         }
 
-        public String getTransportImplId() {
+        public java.lang.String getTransportImplId() {
             return transportImplId;
         }
 
-        public void setTransportImplId(String transportImplId) {
+        public void setTransportImplId(java.lang.String transportImplId) {
             this.transportImplId = transportImplId;
         }
 
@@ -155,7 +155,7 @@ public interface TransportStateService {
 
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return new ToStringCreator(this)
                     .append("msgId", this.connectorTransportId)
                     .append("remote id", this.remoteMessageId)
@@ -163,11 +163,11 @@ public interface TransportStateService {
                     .toString();
         }
 
-        public void setText(String text) {
+        public void setText(java.lang.String text) {
             this.text = text;
         }
 
-        public String getText() {
+        public java.lang.String getText() {
             return text;
         }
     }

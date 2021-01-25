@@ -12,7 +12,7 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.impl.BigDataWithMessagePersistenceContentManagerImpl;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
@@ -54,7 +54,7 @@ public class  DomibusConnectorWsBackendImplTest {
     @Mock
     MessageToBackendClientWaitQueue messageToBackendClientWaitQueue;
     @Mock
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    DCMessagePersistenceService messagePersistenceService;
     @Mock
     DomibusConnectorMessageContentManager domibusConnectorMessageContentManager;
     @Mock

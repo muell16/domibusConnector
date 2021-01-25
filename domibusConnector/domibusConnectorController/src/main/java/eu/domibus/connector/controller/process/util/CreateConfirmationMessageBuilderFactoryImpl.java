@@ -12,6 +12,7 @@ import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
     private ConfigurationPropertyLoaderService configurationPropertyLoaderService;
+
+    @Autowired
+    private DCMessagePersistenceService messagePersistenceService;
 
     @Autowired
     public void setEvidencesToolkit(DomibusConnectorEvidencesToolkit evidencesToolkit) {
@@ -130,11 +134,28 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
             return this.messageConfirmation;
         }
 
-        public void persistEvidenceToMessage() {
-            LOGGER.trace("#persistEvidenceToMessage: persist evidence [{}] to message [{}]", messageConfirmation, originalMesssage);
-            evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMesssage,
-                    messageConfirmation,
-                    new DomibusConnectorMessage.DomibusConnectorMessageId(evidenceMessage.getConnectorMessageId()));
+        /**
+         * Message must already be persisted!
+         * Call persistMessage first
+         *
+         */
+        public void persistEvidenceToBusinessMessage() {
+            LOGGER.trace("#persistEvidenceToMessage: persist evidence [{}] to businessMessage [{}]", messageConfirmation, originalMesssage);
+            evidencePersistenceService.persistEvidenceMessageForBusinessMessage(evidenceMessage, originalMesssage);
+        }
+
+        public void persistMessage() {
+            LOGGER.trace("#persistMessage: persisting message");
+            messagePersistenceService.persistMessageIntoDatabase(this.evidenceMessage, this.evidenceMessage.getMessageDetails().getDirection());
+        }
+
+        /**
+         * Persists the current evidence message into the DB
+         * and persists the evidence to the related business message
+         */
+        public void persistEvidenceMessageAndPersistEvidenceToBusinessMessage() {
+            this.persistMessage();
+            this.persistEvidenceToBusinessMessage();
         }
 
         public DomibusConnectorEvidenceType getEvidenceType() {
@@ -234,6 +255,9 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
                 DomibusConnectorMessageDetails newDetails = DomibusConnectorMessageDetailsBuilder.create().copyPropertiesFrom(details).build();
                 DomibusConnectorMessage evidenceMessage = new DomibusConnectorMessage(newDetails, messageConfirmation);
                 evidenceMessage.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+
+
+
 
                 DomibusConnectorMessageConfirmationWrapper wrapper = new DomibusConnectorMessageConfirmationWrapper();
                 wrapper.setEvidenceMessage(evidenceMessage);

@@ -1,7 +1,6 @@
 package eu.domibus.connector.persistence.model.converter;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageProcessId;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

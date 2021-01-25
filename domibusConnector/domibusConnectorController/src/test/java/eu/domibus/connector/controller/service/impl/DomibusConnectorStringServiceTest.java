@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,12 +16,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class DomibusConnectorTransportStateServiceTest {
+public class DomibusConnectorStringServiceTest {
 
     DomibusConnectorTransportStateService transportStatusService;
 
     @Mock
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    DCMessagePersistenceService messagePersistenceService;
 
     @Mock
     DomibusConnectorMessageErrorPersistenceService errorPersistenceService;

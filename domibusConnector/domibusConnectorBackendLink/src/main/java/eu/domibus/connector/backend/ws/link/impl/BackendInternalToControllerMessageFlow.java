@@ -12,7 +12,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendInternalToControllerMessageFlow.class);
 
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     private DomibusConnectorMessageContentManager bigDataPersistence;
 
@@ -51,7 +51,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
 
     //setter
     @Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -93,7 +93,7 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         DomibusConnectorMessage message = backendMessage.getDomibusConnectorMessage();
         message.getMessageDetails().setConnectorBackendClientName(backendMessage.getBackendClientInfo().getBackendName());
 
-        String msgId = messageIdGenerator.generateDomibusConnectorMessageId();
+        String msgId = messageIdGenerator.generateDomibusConnectorMessageId().getConnectorMessageId();
 //        if (StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())) {
 //            LOGGER.debug("No ebmsId was passed from the client, setting ebmsId to [{}]", msgId);
 //            message.getMessageDetails().setEbmsMessageId(msgId);

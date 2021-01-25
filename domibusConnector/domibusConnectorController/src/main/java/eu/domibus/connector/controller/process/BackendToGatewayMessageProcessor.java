@@ -35,7 +35,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessor.class);
 
-	private DomibusConnectorMessagePersistenceService messagePersistenceService;
+	private DCMessagePersistenceService messagePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 	private DomibusConnectorSecurityToolkit securityToolkit;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
@@ -56,7 +56,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 	}
 
 	@Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -110,7 +110,7 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
 					.switchFromToParty()
 					.withDirection(MessageTargetSource.BACKEND)
 					.build();
-			confirmationMessage.persistEvidenceToMessage();
+			confirmationMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
 
 			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
 		} catch (DomibusConnectorEvidencesToolkitException ete) {

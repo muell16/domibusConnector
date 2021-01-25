@@ -6,28 +6,26 @@ import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProcessor {
+public class CheckContentDeletedProcessorImpl {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessorImpl.class);
 
     LargeFilePersistenceService largeFilePersistenceService;
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    DCMessagePersistenceService messagePersistenceService;
     ContentDeletionTimeoutConfigurationProperties contentDeletionTimeoutConfigurationProperties;
 
     @Autowired
@@ -36,12 +34,12 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
     }
 
     @Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
-    @Override
-    @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
+
+//    @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
         Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
 

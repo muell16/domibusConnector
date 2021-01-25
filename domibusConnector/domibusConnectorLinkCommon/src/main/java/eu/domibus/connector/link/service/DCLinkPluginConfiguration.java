@@ -1,6 +1,7 @@
 package eu.domibus.connector.link.service;
 
 
+import eu.domibus.connector.link.impl.domibusgwwsplugin.DomibusGwWsPlugin;
 import eu.domibus.connector.link.impl.gwwspullplugin.DCGatewayPullPlugin;
 import eu.domibus.connector.link.impl.gwwspushplugin.WsGatewayPlugin;
 import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPlugin;
@@ -51,6 +52,12 @@ public class DCLinkPluginConfiguration {
     @Profile("plugin-" + WsGatewayPlugin.IMPL_NAME)
     public WsGatewayPlugin wsGatewayPlugin() {
         return new WsGatewayPlugin();
+    }
+
+    @Bean
+    @Profile("plugin-" + DomibusGwWsPlugin.IMPL_NAME)
+    public DomibusGwWsPlugin domibusGwWsPlugin() {
+        return new DomibusGwWsPlugin();
     }
 
 }

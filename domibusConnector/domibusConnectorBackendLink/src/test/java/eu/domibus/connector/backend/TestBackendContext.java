@@ -68,7 +68,7 @@ public class TestBackendContext {
     @Bean
     @ConditionalOnMissingBean
     public DomibusConnectorMessageIdGenerator domibusConnectorMessageIdGenerator() {
-        return () -> UUID.randomUUID().toString();
+        return () -> new DomibusConnectorMessage.DomibusConnectorMessageId(UUID.randomUUID().toString());
     }
 
     

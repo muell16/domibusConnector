@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.model;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.persistence.model.converter.TransportStateJpaConverter;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @IdClass(PDomibusConnectorTransportStepStatusUpdateIdClass.class)
 public class PDomibusConnectorTransportStepStatusUpdate {
 
-    public static final String TABLE_NAME = "DC_TRANSPORT_STEP_STATUS";
+    public static final java.lang.String TABLE_NAME = "DC_TRANSPORT_STEP_STATUS";
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @Id
@@ -22,19 +23,33 @@ public class PDomibusConnectorTransportStepStatusUpdate {
 
     @Id
     @Column(name = "STATE")
+    //does not work becaus it is part of ID!
+    //instead @PrePersist is used
     @Convert(converter = TransportStateJpaConverter.class)
-    private TransportState transportState;
+    private String transportStateString;
+
+    private transient TransportState transportState = TransportState.PENDING;
 
     @Column(name = "CREATED")
     private LocalDateTime created;
 
     @Lob
     @Column(name = "TEXT")
-    private String text;
+    private java.lang.String text;
 
     @PrePersist
+    @PreUpdate
     public void beforePersist() {
         created = LocalDateTime.now();
+        this.transportStateString = TransportStateJpaConverter.converter
+                .convertToDatabaseColumn(this.transportState);
+    }
+
+    @PostLoad
+    @PostConstruct
+    public void postConstructLoad() {
+        this.transportState = TransportStateJpaConverter.converter
+                .convertToEntityAttribute(this.transportStateString);
     }
 
     public PDomibusConnectorTransportStep getTransportStep() {
@@ -61,11 +76,11 @@ public class PDomibusConnectorTransportStepStatusUpdate {
         this.created = created;
     }
 
-    public String getText() {
+    public java.lang.String getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(java.lang.String text) {
         this.text = text;
     }
 }

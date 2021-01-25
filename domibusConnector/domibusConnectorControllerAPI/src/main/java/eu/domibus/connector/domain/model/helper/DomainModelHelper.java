@@ -11,7 +11,7 @@ import org.springframework.lang.Nullable;
 /**
  * This class contains static helper methods
  * for the domain model
- * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ * @author {@literal Stephan Spindler <stephan.spindler@brz.gv.at> }
  */
 public class DomainModelHelper {
 
@@ -33,6 +33,17 @@ public class DomainModelHelper {
         }
     	return message.getMessageContent() == null && message.getMessageConfirmations().size() > 0;
     }
+
+    /**
+     * The message is a businesss message if it is not an evidence message
+     * see also {@link #isEvidenceMessage(DomibusConnectorMessage)}
+     * @param message - the message to check
+     * @return true if it is a business message
+     */
+    public static boolean isBusinessMessage(DomibusConnectorMessage message) {
+        return !isEvidenceMessage(message);
+    }
+
 
     /**
      * @param message the message
@@ -73,4 +84,6 @@ public class DomainModelHelper {
                 && message.getMessageConfirmations().get(0).getEvidence() == null
                 || message.getMessageConfirmations().get(0).getEvidence().length == 0;
     }
+
+
 }

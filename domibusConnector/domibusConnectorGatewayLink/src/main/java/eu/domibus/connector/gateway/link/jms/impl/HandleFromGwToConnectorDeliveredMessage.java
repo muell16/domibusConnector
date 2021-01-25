@@ -43,7 +43,7 @@ public class HandleFromGwToConnectorDeliveredMessage implements DomibusConnector
     public void deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("Deliver Message....");
 
-        DomibusConnectorMessage message = transformerService.transformTransitionToDomain(deliverMessageRequest);
+        DomibusConnectorMessage message = transformerService.transformTransitionToDomain(deliverMessageRequest, null);
 
         DomibusConnectorMessageResponseType response = new DomibusConnectorMessageResponseType();
         response.setResponseForMessageId(deliverMessageRequest.getMessageDetails().getEbmsMessageId());

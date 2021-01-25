@@ -18,7 +18,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
-import eu.domibus.connector.persistence.service.impl.DomibusConnectorMessagePersistenceServiceImpl;
+import eu.domibus.connector.persistence.service.impl.DCMessagePersistenceServiceImpl;
 
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
@@ -27,7 +27,7 @@ import eu.domibus.connector.web.dto.WebMessageEvidence;
 @Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceServiceImpl implements DomibusConnectorWebMessagePersistenceService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessagePersistenceServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DCMessagePersistenceServiceImpl.class);
 
     private DomibusConnectorMessageDao messageDao;
     
@@ -135,8 +135,8 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
 		message.setToPartyId(pMessageInfo.getTo().getPartyId());
 		
-		if(!CollectionUtils.isEmpty(pMessage.getEvidences())) {
-			for(PDomibusConnectorEvidence dbEvidence:pMessage.getEvidences()) {
+		if(!CollectionUtils.isEmpty(pMessage.getRelatedEvidences())) {
+			for(PDomibusConnectorEvidence dbEvidence:pMessage.getRelatedEvidences()) {
 				WebMessageEvidence evidence = new WebMessageEvidence();
 				evidence.setEvidenceType(dbEvidence.getType().name());
 				evidence.setDeliveredToGateway(dbEvidence.getDeliveredToGateway());

@@ -46,7 +46,7 @@ public class WsBackendSubmitTo implements SubmitToLink {
             }
 
         } else {
-            throw new RuntimeException(String.format("No LinkPartner found with name [%s]", linkPartnerName));
+            throw new RuntimeException(java.lang.String.format("No LinkPartner found with name [%s]", linkPartnerName));
         }
     }
 

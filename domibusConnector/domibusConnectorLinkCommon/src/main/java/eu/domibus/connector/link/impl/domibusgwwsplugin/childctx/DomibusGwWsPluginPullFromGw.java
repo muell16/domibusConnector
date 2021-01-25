@@ -1,18 +1,19 @@
-package eu.domibus.connector.link.impl.gwwebserviceplugin;
+package eu.domibus.connector.link.impl.domibusgwwsplugin.childctx;
 
 
 import eu.domibus.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.*;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.controller.service.PullFromLink;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.builder.*;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.domain.transformer.util.LargeFileHandlerBacked;
 import eu.domibus.connector.domain.transition.DomibusConnectorConfirmationType;
+import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.common.DomibusGwConstants;
+import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.plugin.webService.generated.*;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 
 import javax.activation.DataHandler;
-import javax.validation.constraints.NotNull;
-import javax.xml.crypto.Data;
 import javax.xml.ws.Holder;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,12 +32,15 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class GwWsPluginPullFromGw {
+public class DomibusGwWsPluginPullFromGw implements PullFromLink {
 
-    private static final Logger LOGGER = LogManager.getLogger(GwWsPluginPullFromGw.class);
+    private static final Logger LOGGER = LogManager.getLogger(DomibusGwWsPluginPullFromGw.class);
 
     @Autowired
-    BackendInterface backendInterface;
+    DomibusGwWsPluginBackendInterfaceFactory backendInterfaceFactory;
+
+    @Autowired
+    DCActiveLinkManagerService linkManagerService;
 
     @Autowired
     private LargeFilePersistenceProvider largeFilePersistenceProvider;
@@ -46,21 +48,28 @@ public class GwWsPluginPullFromGw {
     @Autowired
     private DomibusConnectorMessageIdGenerator idGenerator;
 
-    private void pullMessages() {
+
+    @Override
+    public void pullMessagesFrom(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+        Optional<ActiveLinkPartner> activeLinkPartnerByName = linkManagerService.getActiveLinkPartnerByName(linkPartnerName);
+        DomibusGwWsPluginActiveLinkPartner activeLinkPartner = (DomibusGwWsPluginActiveLinkPartner) activeLinkPartnerByName.get();
+        BackendInterface backendInterface = backendInterfaceFactory.getWebserviceProxyClient(activeLinkPartner);
+
+
         ListPendingMessagesResponse listPendingMessagesResponse = backendInterface.listPendingMessages(new Object());
 
-        listPendingMessagesResponse.getMessageID().forEach(id -> this.pullMessage(id));
-
+        listPendingMessagesResponse.getMessageID().forEach(id -> this.pullMessage(backendInterface, id));
     }
 
-    private void pullMessage(String messageId) {
+
+    private void pullMessage(BackendInterface backendInterface, String messageId) {
         RetrieveMessageRequest retrieveMessageRequest = new RetrieveMessageRequest();
         retrieveMessageRequest.setMessageID(messageId);
 
         Holder<RetrieveMessageResponse> retrieveMessageResponseHolder = new Holder<>();
         Holder<Messaging> messagingHolder = new Holder<Messaging>();
 
-        DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId = new DomibusConnectorMessage.DomibusConnectorMessageId(idGenerator.generateDomibusConnectorMessageId());
+        DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId = idGenerator.generateDomibusConnectorMessageId();
 
         try {
             backendInterface.retrieveMessage(retrieveMessageRequest, retrieveMessageResponseHolder, messagingHolder);
@@ -103,9 +112,9 @@ public class GwWsPluginPullFromGw {
         if (partInfo == null) {
             throw new IllegalArgumentException(String.format("No payload found with ID [%s]", payloadId));
         }
-        Optional<String> description = getPropertyValueByName(partInfo, GwWsPluginConstants.PART_PROPERTY_DESCRIPTION);
-        Optional<String> name = getPropertyValueByName(partInfo, GwWsPluginConstants.PART_PROPERTY_NAME);
-        Optional<String> mimeType = getPropertyValueByName(partInfo, GwWsPluginConstants.PART_PROPERTY_MIME_TYPE);
+        Optional<String> description = getPropertyValueByName(partInfo, DomibusGwWsPluginConstants.PART_PROPERTY_DESCRIPTION);
+        Optional<String> name = getPropertyValueByName(partInfo, DomibusGwWsPluginConstants.PART_PROPERTY_NAME);
+        Optional<String> mimeType = getPropertyValueByName(partInfo, DomibusGwWsPluginConstants.PART_PROPERTY_MIME_TYPE);
         if (!(description.isPresent() || name.isPresent())) {
             LOGGER.warn("Payload without description OR name found! Ignoring this payload!");
             return;
@@ -185,13 +194,13 @@ public class GwWsPluginPullFromGw {
         To toParty = msgPayloads.getUserMessage().getPartyInfo().getTo();
 
         String finalRecipient = msgPayloads.getUserMessage().getMessageProperties().getProperty().stream()
-                .filter(p -> GwWsPluginConstants.FINAL_RECIPIENT_PROPERTY_NAME.equals(p.getName()))
+                .filter(p -> DomibusGwWsPluginConstants.FINAL_RECIPIENT_PROPERTY_NAME.equals(p.getName()))
                 .map(Property::getValue)
                 .findFirst()
                 .get();
 
         String originalSender = msgPayloads.getUserMessage().getMessageProperties().getProperty().stream()
-                .filter(p -> GwWsPluginConstants.ORIGINAL_SENDER_PROPERTY_NAME.equals(p.getName()))
+                .filter(p -> DomibusGwWsPluginConstants.ORIGINAL_SENDER_PROPERTY_NAME.equals(p.getName()))
                 .map(Property::getValue)
                 .findFirst()
                 .get();

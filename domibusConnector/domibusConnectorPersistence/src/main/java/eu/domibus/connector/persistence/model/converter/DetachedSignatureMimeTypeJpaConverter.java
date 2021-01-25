@@ -1,6 +1,5 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DetachedSignatureMimeType;
 
 import javax.persistence.AttributeConverter;

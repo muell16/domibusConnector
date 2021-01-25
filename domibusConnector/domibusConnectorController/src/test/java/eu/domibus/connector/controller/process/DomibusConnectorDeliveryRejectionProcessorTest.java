@@ -3,7 +3,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -21,7 +21,7 @@ public class DomibusConnectorDeliveryRejectionProcessorTest {
     @Mock
     private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
     @Mock
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
     @Mock
     private DomibusConnectorGatewaySubmissionService gatewaySubmissionService;
 

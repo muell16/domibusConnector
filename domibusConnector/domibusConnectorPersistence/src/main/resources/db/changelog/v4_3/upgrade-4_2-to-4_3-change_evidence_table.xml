@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <changeSet id="extend_evidence_table" author="SKS" onValidationFail="MARK_RAN"
+               failOnError="false">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[SELECT COUNT(TAG) FROM DC_DB_VERSION WHERE TAG > 'V4.3.0';]]></sqlCheck>
+        </preConditions>
+        <comment>Adds a ForeignKey reference to DomibusConnectorMessage Table, so the evidence
+            has 2 references to this table
+                MESSAGE_ID reflects the relation which Message this evidence is related to
+                FK_TRANSPORT_MESSAGE_ID reflects the relation within Message this evidence was transported
+        </comment>
+        <addColumn tableName="DOMIBUS_CONNECTOR_EVIDENCE">
+            <column name="FK_TRANSPORT_MESSAGE_ID" type="${id.type}">
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="DOMIBUS_CONNECTOR_EVIDENCE"
+                                 baseColumnNames="FK_TRANSPORT_MESSAGE_ID"
+                                 constraintName="FK_TRANSPORT_MESSAGE_ID"
+                                 referencedTableName="DOMIBUS_CONNECTOR_MESSAGE"
+                                 referencedColumnNames="ID" />
+    </changeSet>
+
+
+</databaseChangeLog>

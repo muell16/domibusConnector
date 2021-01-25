@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
@@ -24,7 +24,7 @@ public class GatewayToBackendConfirmationProcessorTest {
 
 
     @Mock
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     @Mock
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;

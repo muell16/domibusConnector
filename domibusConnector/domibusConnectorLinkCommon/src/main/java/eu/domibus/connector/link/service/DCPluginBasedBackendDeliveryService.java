@@ -34,7 +34,7 @@ public class DCPluginBasedBackendDeliveryService implements DomibusConnectorBack
 
         SubmitToLink submitToLinkPartner = linkManager.getSubmitToLinkPartner(backendName);
         if (submitToLinkPartner == null) {
-            throw new DomibusConnectorControllerException("No Gateway Link available or configured!");
+            throw new DomibusConnectorControllerException("No Link available or configured!");
         }
         try {
             submitToLinkPartner.submitToLink(message, backendLinkPartnerName);

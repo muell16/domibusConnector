@@ -10,7 +10,7 @@ import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTran
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkConfigurationDao;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.testutil.LargeFilePersistenceServiceMemoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,13 +46,13 @@ public class LinkTestContext {
     @Bean
     @ConditionalOnMissingBean
     DomibusConnectorMessageIdGenerator DomibusConnectorMessageIdGenerator() {
-        return () -> "testcon_" + UUID.randomUUID().toString();
+        return () -> new DomibusConnectorMessage.DomibusConnectorMessageId("testcon_" + UUID.randomUUID().toString());
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public DomibusConnectorMessagePersistenceService domibusConnectorMessagePersistenceService() {
-        return Mockito.mock(DomibusConnectorMessagePersistenceService.class);
+    public DCMessagePersistenceService domibusConnectorMessagePersistenceService() {
+        return Mockito.mock(DCMessagePersistenceService.class);
     }
 
     @Bean

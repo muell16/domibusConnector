@@ -13,10 +13,8 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorActionBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
-import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +26,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,7 +37,7 @@ public class GatewayToBackendMessageProcessorTest {
 
 
     @Mock
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     @Mock
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;

@@ -1,4 +1,4 @@
-package eu.domibus.connector.link.impl.gwwebserviceplugin;
+package eu.domibus.connector.link.impl.domibusgwwsplugin.childctx;
 
 import eu.domibus.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.*;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
@@ -8,7 +8,9 @@ import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageErrorBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
+import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.common.DomibusGwConstants;
+import eu.domibus.connector.link.service.DCActiveLinkManagerService;
 import eu.domibus.plugin.webService.generated.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,26 +21,67 @@ import org.springframework.util.MimeTypeUtils;
 import javax.activation.DataHandler;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
-public class GwWsPluginSubmitToLink implements SubmitToLink {
+public class DomibusGwWsPluginSubmitToLink implements SubmitToLink {
 
-    private static final Logger LOGGER = LogManager.getLogger(GwWsPluginSubmitToLink.class);
+    private static final Logger LOGGER = LogManager.getLogger(DomibusGwWsPluginSubmitToLink.class);
 
     @Autowired
-    BackendInterface backendInterface;
+    DomibusGwWsPluginBackendInterfaceFactory backendInterfaceFactory;
 
     @Autowired
     TransportStateService transportStateService;
 
+    @Autowired
+    DCActiveLinkManagerService linkManagerService;
+
     @Override
     public void submitToLink(DomibusConnectorMessage message, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) throws DomibusConnectorSubmitToLinkException {
+        Optional<ActiveLinkPartner> activeLinkPartnerByName = linkManagerService.getActiveLinkPartnerByName(linkPartnerName);
+        DomibusGwWsPluginActiveLinkPartner activeLinkPartner = (DomibusGwWsPluginActiveLinkPartner) activeLinkPartnerByName.get();
+        BackendInterface backendInterface = backendInterfaceFactory.getWebserviceProxyClient(activeLinkPartner);
+
         TransportStateService.TransportId transportId = transportStateService.createOrGetTransportFor(message, linkPartnerName);
 
         SubmitRequest submitRequest = new SubmitRequest();
-        LargePayloadType largePayloadType = new LargePayloadType();
+//        LargePayloadType largePayloadType = new LargePayloadType();
+
+        Messaging msg = createMessage(message);
+
+        if (DomainModelHelper.isEvidenceMessage(message)) {
+            //nothing todo...
+        } else {
+            mapBusinessMsg(message, submitRequest);
+        }
+        mapAttachments(message, submitRequest);
+        mapMessageConfirmations(message, submitRequest);
+
+        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
+        transportState.setConnectorTransportId(transportId);
+        transportState.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
 
 
+        try {
+            SubmitResponse submitResponse = backendInterface.submitMessage(submitRequest, msg);
+            java.lang.String gatewayMessageId = submitResponse.getMessageID().get(0);
+            transportState.setStatus(TransportState.ACCEPTED);
+            transportState.setRemoteMessageId(gatewayMessageId);
+        } catch (SubmitMessageFault submitMessageFault) {
+            transportState.setStatus(TransportState.FAILED);
+            transportState.addMessageError(DomibusConnectorMessageErrorBuilder.createBuilder()
+                    .setDetails(submitMessageFault)
+                    .setSource(this.getClass())
+                    .setText("Failed to submit Message to DomibusGW")
+                    .build()
+            );
+        }
+        transportStateService.updateTransportStatus(transportState);
+
+    }
+
+    private Messaging createMessage(DomibusConnectorMessage message) {
         Messaging msg = new Messaging();
         UserMessage userMessage = new UserMessage();
 
@@ -92,38 +135,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
 
         PayloadInfo payloadInfo = new PayloadInfo();
         userMessage.setPayloadInfo(payloadInfo);
-
-
-
-        if (DomainModelHelper.isEvidenceMessage(message)) {
-            //nothing todo...
-        } else {
-            mapBusinessMsg(message, submitRequest);
-        }
-        mapAttachments(message, submitRequest);
-        mapMessageConfirmations(message, submitRequest);
-
-        TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
-        transportState.setConnectorTransportId(transportId);
-        transportState.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
-
-
-        try {
-            SubmitResponse submitResponse = backendInterface.submitMessage(submitRequest, msg);
-            String gatewayMessageId = submitResponse.getMessageID().get(0);
-            transportState.setStatus(TransportState.ACCEPTED);
-            transportState.setRemoteMessageId(gatewayMessageId);
-        } catch (SubmitMessageFault submitMessageFault) {
-            transportState.setStatus(TransportState.FAILED);
-            transportState.addMessageError(DomibusConnectorMessageErrorBuilder.createBuilder()
-                    .setDetails(submitMessageFault)
-                    .setSource(this.getClass())
-                    .setText("Failed to submit Message to DomibusGW")
-                    .build()
-            );
-        }
-        transportStateService.updateTransportStatus(transportState);
-
+        return msg;
     }
 
     private void mapMessageConfirmations(DomibusConnectorMessage message, SubmitRequest submitRequest) {
@@ -131,7 +143,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
     }
 
     private void mapConfirmation(DomibusConnectorMessageConfirmation c, SubmitRequest submitRequest) {
-        String confirmationPayloadId = generateCID();
+        java.lang.String confirmationPayloadId = generateCID();
         LargePayloadType confirmationPayload = new LargePayloadType();
         confirmationPayload.setContentType(MimeTypeUtils.TEXT_XML_VALUE);
         confirmationPayload.setPayloadId(confirmationPayloadId);
@@ -141,9 +153,9 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
         PartInfo xmlPartInfo = new PartInfo();
         xmlPartInfo.setHref(confirmationPayloadId);
         xmlPartInfo.setPartProperties(new PartPropertiesBuilder()
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_NAME, c.getEvidenceType().name())
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_DESCRIPTION, c.getEvidenceType().name())
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_MIME_TYPE, MimeTypeUtils.TEXT_XML_VALUE)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_NAME, c.getEvidenceType().name())
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_DESCRIPTION, c.getEvidenceType().name())
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_MIME_TYPE, MimeTypeUtils.TEXT_XML_VALUE)
                 .build()
         );
     }
@@ -153,7 +165,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
     }
 
     private void mapAttachment(DomibusConnectorMessageAttachment a, SubmitRequest submitRequest) {
-        String attachmentPayloadId = generateCID();
+        java.lang.String attachmentPayloadId = generateCID();
         LargePayloadType attachmentPayload = new LargePayloadType();
         attachmentPayload.setContentType(a.getMimeType());
         attachmentPayload.setPayloadId(attachmentPayloadId);
@@ -163,15 +175,15 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
         PartInfo xmlPartInfo = new PartInfo();
         xmlPartInfo.setHref(attachmentPayloadId);
         xmlPartInfo.setPartProperties(new PartPropertiesBuilder()
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_NAME, a.getName())
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_DESCRIPTION, a.getDescription())
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_MIME_TYPE, a.getMimeType())
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_NAME, a.getName())
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_DESCRIPTION, a.getDescription())
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_MIME_TYPE, a.getMimeType())
                 .build()
         );
     }
 
     private void mapBusinessMsg(DomibusConnectorMessage message, SubmitRequest submitRequest) {
-        String asicsPayloadId = generateCID();
+        java.lang.String asicsPayloadId = generateCID();
         DataHandler dh = new DataHandler(message.getMessageContent().getDocument().getDocument());
         LargePayloadType asicsPayload = new LargePayloadType();
         asicsPayload.setContentType(DomibusGwConstants.ASIC_S_MIMETYPE);
@@ -183,13 +195,13 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
         PartInfo asicsPartInfo = new PartInfo();
         asicsPartInfo.setHref(asicsPayloadId);
         asicsPartInfo.setPartProperties(new PartPropertiesBuilder()
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_DESCRIPTION, DomibusGwConstants.ASIC_S_DESCRIPTION_NAME)
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_NAME, DomibusGwConstants.ASIC_S_DESCRIPTION_NAME)
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_MIME_TYPE, DomibusGwConstants.ASIC_S_MIMETYPE)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_DESCRIPTION, DomibusGwConstants.ASIC_S_DESCRIPTION_NAME)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_NAME, DomibusGwConstants.ASIC_S_DESCRIPTION_NAME)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_MIME_TYPE, DomibusGwConstants.ASIC_S_MIMETYPE)
                 .build()
         );
 
-        String xmlPayloadId = generateCID();
+        java.lang.String xmlPayloadId = generateCID();
         LargePayloadType xmlPayload = new LargePayloadType();
         xmlPayload.setContentType(MimeTypeUtils.APPLICATION_XML_VALUE);
         xmlPayload.setPayloadId(xmlPayloadId);
@@ -199,9 +211,9 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
         PartInfo xmlPartInfo = new PartInfo();
         xmlPartInfo.setHref(xmlPayloadId);
         xmlPartInfo.setPartProperties(new PartPropertiesBuilder()
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_DESCRIPTION, DomibusGwConstants.MESSAGE_CONTENT_DESCRIPTION_NAME)
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_NAME, DomibusGwConstants.MESSAGE_CONTENT_DESCRIPTION_NAME)
-                .addProperty(GwWsPluginConstants.PART_PROPERTY_MIME_TYPE, MimeTypeUtils.TEXT_XML_VALUE)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_DESCRIPTION, DomibusGwConstants.MESSAGE_CONTENT_DESCRIPTION_NAME)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_NAME, DomibusGwConstants.MESSAGE_CONTENT_DESCRIPTION_NAME)
+                .addProperty(DomibusGwWsPluginConstants.PART_PROPERTY_MIME_TYPE, MimeTypeUtils.TEXT_XML_VALUE)
                 .build()
         );
 
@@ -218,7 +230,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
      * @return the DataHandler
      */
     @NotNull
-    DataHandler convertByteArrayToDataHandler(@NotNull byte[] array, @Nullable String mimeType) {
+    DataHandler convertByteArrayToDataHandler(@NotNull byte[] array, @Nullable java.lang.String mimeType) {
         if (mimeType == null) {
             mimeType = "application/octet-stream";
         }
@@ -229,7 +241,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
     private class PartPropertiesBuilder {
         private PartProperties partProperties = new PartProperties();
 
-        PartPropertiesBuilder addProperty(String name, String value) {
+        PartPropertiesBuilder addProperty(java.lang.String name, java.lang.String value) {
             Property p = new Property();
             p.setName(name);
             p.setValue(value);
@@ -237,7 +249,7 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
             return this;
         }
 
-        PartPropertiesBuilder addProperty(String name, String value, String type) {
+        PartPropertiesBuilder addProperty(java.lang.String name, java.lang.String value, java.lang.String type) {
             Property p = new Property();
             p.setName(name);
             p.setValue(value);
@@ -251,8 +263,8 @@ public class GwWsPluginSubmitToLink implements SubmitToLink {
         }
     }
 
-    private String generateCID() {
-        String cid = "cid:payload_" + UUID.randomUUID().toString();
+    private java.lang.String generateCID() {
+        java.lang.String cid = "cid:payload_" + UUID.randomUUID().toString();
         return cid;
     }
 

@@ -1,15 +1,20 @@
-package eu.domibus.connector.link.impl.gwwebserviceplugin;
+package eu.domibus.connector.link.impl.domibusgwwsplugin;
 
+import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
+import eu.domibus.connector.link.api.ActiveLink;
+import eu.domibus.connector.link.api.ActiveLinkPartner;
+import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
+import eu.domibus.connector.link.impl.domibusgwwsplugin.childctx.DomibusGwWsPluginConfigurationProperties;
+import eu.domibus.connector.link.impl.domibusgwwsplugin.childctx.DomibusGwWsPluginPartnerConfigurationProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,27 +22,51 @@ import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_P
 
 @Component
 @Profile(LINK_PLUGIN_PROFILE_NAME)
-public class GwWsPlugin {
+public class DomibusGwWsPlugin implements LinkPlugin {
 
-    public static final String DC_DOMIBUSGW_WS_PLUGIN_PROFILE_NAME = "link.domibusgwwsplugin";
-    private static final Logger LOGGER = LogManager.getLogger(GwWsPlugin.class);
-    public static final String IMPL_NAME = "domibusgatewayplugin";
+    private static final Logger LOGGER = LogManager.getLogger(DomibusGwWsPlugin.class);
 
-//    private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLinkManager> activeLinkMap = new HashMap<>();
+    public static final String IMPL_NAME = "domibusgwwsplugin";
 
-//    @Override
+
+    @Override
     public String getPluginName() {
-        return "DefaultDomibusGatewayWebservicePlugin";
+        return IMPL_NAME;
     }
 
-//    @Override
+    @Override
     public String getPluginDescription() {
         return "Domibus AS4 Gateway Webservice-Plugin-Connector";
     }
 
 //    @Override
-    public boolean canHandle(String implementation) {
-        return IMPL_NAME.equals(implementation);
+//    public boolean canHandle(String implementation) {
+//        return IMPL_NAME.equals(implementation);
+//    }
+
+    @Override
+    public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
+        return null;
+    }
+
+    @Override
+    public void shutdownConfiguration(ActiveLink activeLink) {
+
+    }
+
+    @Override
+    public ActiveLinkPartner enableLinkPartner(DomibusConnectorLinkPartner linkPartner, ActiveLink activeLink) {
+        return null;
+    }
+
+    @Override
+    public void shutdownActiveLinkPartner(ActiveLinkPartner linkPartner) {
+
+    }
+
+    @Override
+    public SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner) {
+        return null;
     }
 
 
@@ -66,11 +95,11 @@ public class GwWsPlugin {
 
 //    @Override
     public List<Class> getPluginConfigurationProperties() {
-        return Stream.of(GwWsPluginConfigurationProperties.class).collect(Collectors.toList());
+        return Stream.of(DomibusGwWsPluginConfigurationProperties.class).collect(Collectors.toList());
     }
 
 //    @Override
     public List<Class> getPartnerConfigurationProperties() {
-        return Stream.of(GwWsPluginPartnerConfigurationProperties.class).collect(Collectors.toList());
+        return Stream.of(DomibusGwWsPluginPartnerConfigurationProperties.class).collect(Collectors.toList());
     }
 }

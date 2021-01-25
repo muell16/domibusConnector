@@ -63,7 +63,7 @@ public class DomibusConnectorGatewaySubmissionServiceClient implements DomibusCo
 		LOGGER.debug("#submitToGateway: received [{}] from gw", ack);
 
         if (ack != null && ack.isResult()) {
-            String ebmsId = ack.getMessageId();
+            java.lang.String ebmsId = ack.getMessageId();
             LOGGER.info(LoggingMarker.BUSINESS_LOG,"GW accepted message and sent id [{}] back", ebmsId);
 //            message.getMessageDetails().setEbmsMessageId(ebmsId);
 

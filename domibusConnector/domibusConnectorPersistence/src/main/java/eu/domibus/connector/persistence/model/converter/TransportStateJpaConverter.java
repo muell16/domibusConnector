@@ -1,17 +1,15 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.Convert;
-import javax.persistence.Converter;
 
-@Converter(autoApply = true)
-public class TransportStateJpaConverter implements AttributeConverter<TransportState, String> {
+public class TransportStateJpaConverter implements AttributeConverter<TransportState, java.lang.String> {
+
+    public static TransportStateJpaConverter converter = new TransportStateJpaConverter();
 
     @Override
-    public String convertToDatabaseColumn(TransportState attribute) {
+    public java.lang.String convertToDatabaseColumn(TransportState attribute) {
         if (attribute == null) {
             return null;
         }
@@ -19,7 +17,7 @@ public class TransportStateJpaConverter implements AttributeConverter<TransportS
     }
 
     @Override
-    public TransportState convertToEntityAttribute(String dbData) {
+    public TransportState convertToEntityAttribute(java.lang.String dbData) {
         if (dbData == null) {
             return null;
         }

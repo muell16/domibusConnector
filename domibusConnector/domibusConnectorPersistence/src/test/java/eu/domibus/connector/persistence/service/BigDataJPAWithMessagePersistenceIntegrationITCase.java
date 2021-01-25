@@ -36,7 +36,7 @@ public class BigDataJPAWithMessagePersistenceIntegrationITCase {
 //    private static ConfigurableApplicationContext APPLICATION_CONTEXT;
 
     @Autowired
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
 //    @Autowired
 //    private DomibusConnectorPersistAllBigDataOfMessageService bigDataPersistenceService;

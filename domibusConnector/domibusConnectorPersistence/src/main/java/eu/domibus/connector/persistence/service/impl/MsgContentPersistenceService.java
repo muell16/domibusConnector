@@ -36,9 +36,7 @@ import java.util.stream.Collectors;
  *  <li>message confirmations</li>
  * </ul>
  * <p>
- * For persisting the java objects are serialized and stored into database,
- * bigDataReference fields are replaced by plain BigDataReference objects
- * to make sure that the BigDataReferenceObject can be persisted
+ *
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
@@ -112,14 +110,6 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                     );
 
                 });
-
-        //legacy mapping
-        findByMessage.stream()
-                .filter(s -> StoreType.MESSAGE_CONFIRMATION.equals(s.getContentType()))
-                .forEach(c -> {
-                    DomibusConnectorMessageConfirmation msgConfirmation = mapFromMsgCont(c, DomibusConnectorMessageConfirmation.class);
-                    messageBuilder.addConfirmation(msgConfirmation);
-                });
     }
 
     private void loadAttachments(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
@@ -134,15 +124,6 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                             .withName(c.getPayloadName())
                             .build());
                 });
-
-        //legacy mapping
-        findByMessage.stream()
-                .filter(s -> StoreType.MESSAGE_ATTACHMENT.equals(s.getContentType()))
-                .forEach(c -> {
-                    DomibusConnectorMessageAttachment msgAttachment = mapFromMsgCont(c, DomibusConnectorMessageAttachment.class);
-                    messageBuilder.addAttachment(msgAttachment);
-                });
-
     }
 
     private void loadMsgDocs(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
@@ -165,8 +146,7 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
             }
             messageBuilder.setMessageContent(messageContentBuilder.build());
         } else {
-            //if nothing found call deprecated content loader
-            loadMsgContent_legacy(messageBuilder, findByMessage);
+            LOGGER.debug("#loadMsgDocs: No message content!");
         }
 
     }
@@ -205,27 +185,27 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         return largeFileReference;
     }
 
-    private byte[] largeFileReferenceToByte(LargeFileReference largeFileReference) {
-        LOGGER.debug("Loadin byte from largeFileReference [{}]", largeFileReference);
-        try (InputStream is = largeFileReference.getInputStream()) {
-            return StreamUtils.copyToByteArray(is);
-        } catch (IOException e) {
-            throw new RuntimeException(String.format("Error while reading from LargeFile Reference [%s]", largeFileReference), e);
-        }
-    }
+//    private byte[] largeFileReferenceToByte(LargeFileReference largeFileReference) {
+//        LOGGER.debug("Loadin byte from largeFileReference [{}]", largeFileReference);
+//        try (InputStream is = largeFileReference.getInputStream()) {
+//            return StreamUtils.copyToByteArray(is);
+//        } catch (IOException e) {
+//            throw new RuntimeException(String.format("Error while reading from LargeFile Reference [%s]", largeFileReference), e);
+//        }
+//    }
 
-    @Deprecated
-    private void loadMsgContent_legacy(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
-
-        //deprecated mapper: mapFromDbToDomain content back
-        Optional<PDomibusConnectorMsgCont> findFirst = findByMessage.stream()
-                .filter(StoreType.MESSAGE_CONTENT::equals)
-                .findFirst();
-        if (findFirst.isPresent()) {
-            DomibusConnectorMessageContent messageContent = mapFromMsgCont(findFirst.get(), DomibusConnectorMessageContent.class);
-            messageBuilder.setMessageContent(messageContent);
-        }
-    }
+//    @Deprecated
+//    private void loadMsgContent_legacy(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
+//
+//        //deprecated mapper: mapFromDbToDomain content back
+//        Optional<PDomibusConnectorMsgCont> findFirst = findByMessage.stream()
+//                .filter(StoreType.MESSAGE_CONTENT::equals)
+//                .findFirst();
+//        if (findFirst.isPresent()) {
+//            DomibusConnectorMessageContent messageContent = mapFromMsgCont(findFirst.get(), DomibusConnectorMessageContent.class);
+//            messageBuilder.setMessageContent(messageContent);
+//        }
+//    }
 
     /**
      * takes a message and stores all content into the database

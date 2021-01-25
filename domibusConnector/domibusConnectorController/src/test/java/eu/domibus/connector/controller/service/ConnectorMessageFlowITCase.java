@@ -15,19 +15,17 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirma
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
@@ -98,7 +96,7 @@ public class ConnectorMessageFlowITCase {
     DomibusConnectorBackendSubmissionService fromBackendToConnectorSubmissionService;
 
     @Autowired
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    DCMessagePersistenceService messagePersistenceService;
 
     @Autowired
     ITCaseTestContext.QueueBasedDomibusConnectorGatewaySubmissionService fromConnectorToGwSubmissionService;

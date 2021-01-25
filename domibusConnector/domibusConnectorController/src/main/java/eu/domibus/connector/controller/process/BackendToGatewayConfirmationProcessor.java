@@ -7,9 +7,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.*;
-import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +22,6 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.jms.Message;
 
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
@@ -42,7 +38,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     public static final String BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME = "BackendToGatewayConfirmationProcessor";
 
     private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
     private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
@@ -53,7 +49,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -172,7 +168,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                 .withDirection(MessageTargetSource.GATEWAY)
                 .build();
 
-        wrappedConfirmation.persistEvidenceToMessage();
+        wrappedConfirmation.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
         DomibusConnectorMessageConfirmation confirmation = wrappedConfirmation.getMessageConfirmation();
         originalMessage.addConfirmation(confirmation);
 

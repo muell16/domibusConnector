@@ -13,7 +13,7 @@ import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.testdata.TransitionCreator;
 import org.junit.jupiter.api.*;
@@ -231,7 +231,7 @@ public class BackendLinkWsTestMessageFlowITCase {
         epoMessage.getMessageDetails().setService(new DomibusConnectorService("ALICE", "service_type"));
 
         BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
-        DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
+        DCMessagePersistenceService persistenceService = backendApplicationContext.getBean(DCMessagePersistenceService.class);
         DomibusConnectorMessageContentManager bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorMessageContentManager.class);
 
         persistenceService.persistMessageIntoDatabase(epoMessage, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
@@ -265,7 +265,7 @@ public class BackendLinkWsTestMessageFlowITCase {
             message.getMessageDetails().setConversationId(null);
 
             BackendClientInfoPersistenceService backendClientInfoPersistenceService = backendApplicationContext.getBean(BackendClientInfoPersistenceService.class);
-            DomibusConnectorMessagePersistenceService persistenceService = backendApplicationContext.getBean(DomibusConnectorMessagePersistenceService.class);
+            DCMessagePersistenceService persistenceService = backendApplicationContext.getBean(DCMessagePersistenceService.class);
             DomibusConnectorMessageContentManager bigDataPersistence = backendApplicationContext.getBean(DomibusConnectorMessageContentManager.class);
 
             persistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);

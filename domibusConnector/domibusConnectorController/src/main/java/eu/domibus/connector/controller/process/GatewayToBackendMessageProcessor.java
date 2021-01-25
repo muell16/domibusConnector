@@ -40,7 +40,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 
 	public ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
-	private DomibusConnectorMessagePersistenceService messagePersistenceService;
+	private DCMessagePersistenceService messagePersistenceService;
 	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 	private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
 	private DomibusConnectorSecurityToolkit securityToolkit;
@@ -53,7 +53,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 
 	@Autowired
-	public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+	public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
 	}
 
@@ -137,7 +137,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
-		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
+		wrappedDeliveryEvidenceMsg.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
 
 		DomibusConnectorMessage evidenceMessage = wrappedDeliveryEvidenceMsg.getEvidenceMessage();
 		try {
@@ -180,7 +180,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
-		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
+		wrappedDeliveryEvidenceMsg.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
 
 		sendEvidenceBackToGateway(wrappedDeliveryEvidenceMsg);
 
@@ -191,7 +191,7 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	private void sendEvidenceBackToGateway(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg) {
 
 
-		wrappedDeliveryEvidenceMsg.persistEvidenceToMessage();
+		wrappedDeliveryEvidenceMsg.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
 
 		DomibusConnectorMessage evidenceMessage = wrappedDeliveryEvidenceMsg.getEvidenceMessage();
 

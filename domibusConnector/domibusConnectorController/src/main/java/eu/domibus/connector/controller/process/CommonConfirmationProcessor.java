@@ -3,12 +3,11 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.util.Comparator;
-import java.util.Optional;
 
 import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
 import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.RELAY_REMMD_FAILURE;
@@ -18,9 +17,9 @@ public class CommonConfirmationProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonConfirmationProcessor.class);
 
-    private final DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private final DCMessagePersistenceService messagePersistenceService;
 
-    public CommonConfirmationProcessor(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public CommonConfirmationProcessor(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 

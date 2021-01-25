@@ -33,11 +33,20 @@ public class LargeFileDeserializer extends StdDeserializer<LargeFileReference> {
         TreeNode treeNode = p.getCodec().readTree(p);
         largeFileReference.setStorageIdReference(((TextNode)treeNode.get(LargeFileReferenceSerializer.STORAGE_ID_REFERENCE_FIELD_NAME)).asText());
         largeFileReference.setStorageProviderName(((TextNode)treeNode.get(LargeFileReferenceSerializer.STORAGE_PROVIDER_FIELD_NAME)).asText());
-        largeFileReference.setMimetype(((TextNode)treeNode.get(LargeFileReferenceSerializer.MIME_TYPE_FIELD_NAME)).asText());
-        largeFileReference.setName(((TextNode)treeNode.get(LargeFileReferenceSerializer.NAME_FIELD_NAME)).asText());
-        largeFileReference.setText(((TextNode)treeNode.get(LargeFileReferenceSerializer.TEXT_FIELD_NAME)).asText());
+        largeFileReference.setMimetype(getStringOrNull(LargeFileReferenceSerializer.MIME_TYPE_FIELD_NAME, treeNode));
+        largeFileReference.setName(getStringOrNull(LargeFileReferenceSerializer.NAME_FIELD_NAME, treeNode));
+        largeFileReference.setText(getStringOrNull(LargeFileReferenceSerializer.TEXT_FIELD_NAME, treeNode));
         largeFileReference.setSize(((IntNode)treeNode.get(LargeFileReferenceSerializer.SIZE_FIELD_NAME)).asLong());
         return largeFileReference;
+    }
+
+    private String getStringOrNull(String fieldName, TreeNode treeNode) {
+        String val = null;
+        TreeNode treeNode1 = treeNode.get(fieldName);
+        if (treeNode1 instanceof TextNode) {
+            val = ((TextNode)treeNode1).asText();
+        }
+        return val;
     }
 
 }

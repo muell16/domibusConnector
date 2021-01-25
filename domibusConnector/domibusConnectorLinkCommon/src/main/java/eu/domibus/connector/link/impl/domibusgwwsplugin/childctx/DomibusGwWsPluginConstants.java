@@ -1,6 +1,6 @@
-package eu.domibus.connector.link.impl.gwwebserviceplugin;
+package eu.domibus.connector.link.impl.domibusgwwsplugin.childctx;
 
-public class GwWsPluginConstants {
+public class DomibusGwWsPluginConstants {
 
     public static final String PART_PROPERTY_NAME = "name";
     public static final String PART_PROPERTY_MIME_TYPE = "MimeType";

@@ -5,9 +5,8 @@ import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionI
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
-import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 
-import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
-import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.NON_RETRIEVAL;
-import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
-
 @Component(GatewayToBackendConfirmationProcessor.GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
 public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMessageProcessor {
 	
@@ -30,14 +25,14 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
 	public static final String GW_TO_BACKEND_CONFIRMATION_PROCESSOR = "GatewayToBackendConfirmationProcessor";
 
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
 
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
 	@Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 

@@ -7,7 +7,12 @@ import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWSService;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
+import org.apache.cxf.feature.Feature;
+
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -29,6 +34,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
+import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
+
 /**
  * Configuration for the spring childContext for
  * the pullGatewayPlugin
@@ -38,6 +45,8 @@ import java.util.Properties;
 @EnableConfigurationProperties(DCGatewayPullPluginConfigurationProperties.class)
 @ComponentScan(basePackageClasses = DCGatewayPullPluginConfiguration.class)
 public class DCGatewayPullPluginConfiguration {
+
+    private static final Logger LOGGER = LogManager.getLogger(DCGatewayPullPluginConfiguration.class);
 
     public static final String DC_GATEWAY_PULL_PLUGIN_PROFILE = "link.gwwspullplugin";
 
@@ -53,13 +62,16 @@ public class DCGatewayPullPluginConfiguration {
     }
 
     @Bean
-    DomibusConnectorGatewayWebService testGwWebServiceProxy() {
+    DomibusConnectorGatewayWebService pullGwWebServiceProxy() {
 //        JaxWsClientProxy jaxWsClientProxy = new JaxWsClientProxy();
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorGatewayWebService.class);
 
         WsPolicyLoader wsPolicyLoader = new WsPolicyLoader(configurationProperties.getWsPolicy());
         jaxWsProxyFactoryBean.getFeatures().add(wsPolicyLoader.loadPolicyFeature());
+        if (loggingFeature() != null) {
+            jaxWsProxyFactoryBean.getFeatures().add(loggingFeature());
+        }
 
         jaxWsProxyFactoryBean.setAddress(configurationProperties.getGwAddress());
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorGatewayWSService.WSDL_LOCATION.toString());
@@ -77,13 +89,21 @@ public class DCGatewayPullPluginConfiguration {
         props.put("security.signature.properties", gwWsLinkEncryptProperties());
         props.put("security.callback-handler", new DefaultWsCallbackHandler());
 
+        LOGGER.debug(CONFIG, "Creating pullGwWebServiceProxy with properties [{}]", props);
         jaxWsProxyFactoryBean.setProperties(props);
-
 
         return (DomibusConnectorGatewayWebService) jaxWsProxyFactoryBean.create();
 
     }
 
+    private Feature loggingFeature() {
+        if (configurationProperties.isCxfLoggingEnabled()) {
+            LoggingFeature loggingFeature = new LoggingFeature();
+            loggingFeature.setPrettyLogging(true);
+            return loggingFeature;
+        }
+        return null;
+    }
 
     public Properties gwWsLinkEncryptProperties() {
         Properties props = new Properties();
@@ -102,6 +122,7 @@ public class DCGatewayPullPluginConfiguration {
         props.put("org.apache.wss4j.crypto.merlin.truststore.file", cxf.getTrustStore().getPathUrlAsString());
         props.put("org.apache.wss4j.crypto.merlin.truststore.password", cxf.getTrustStore().getPassword());
 
+        LOGGER.debug(CONFIG, "Creating gwWsLinkEncryptProperties with properties [{}]", props);
         return props;
     }
 

@@ -158,6 +158,11 @@ public class DomibusConnectorMessage implements Serializable {
         return connectorMessageId;
     }
 
+	public void setConnectorMessageId(DomibusConnectorMessageId messageId) {
+		this.setConnectorMessageId(messageId.getConnectorMessageId());
+	}
+
+	@Deprecated
     public void setConnectorMessageId(String connectorMessageId) {
         this.connectorMessageId = connectorMessageId;
     }

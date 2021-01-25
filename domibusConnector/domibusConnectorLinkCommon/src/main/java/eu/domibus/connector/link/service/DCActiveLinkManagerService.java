@@ -152,20 +152,28 @@ public class DCActiveLinkManagerService {
 //            PullFromLink pullFromLink = pullFromBean.get();
 
             String linkPartnerName = linkInfo.getLinkPartnerName().toString();
+
+            //Delete Job and recreate it...
+            JobKey jobKey = new JobKey("pull_from_" + linkPartnerName, "LINK_PULL_JOBS");
+            scheduler.deleteJob(jobKey);
             JobDetail link_pulls = JobBuilder.newJob(DCLinkPullJob.class)
-//                    .usingJobData(DCLinkPullJob.LINK_PARTNER_NAME_PROPERTY_NAME, linkInfo.getLinkPartnerName().toString())
-                    .withIdentity("pull_" + linkPartnerName, "LINK_PULL_JOBS")
+                    .storeDurably(true)
+                    .withIdentity(jobKey)
                     .build();
 
-            int pullIntervallSeconds = (int) linkInfo.getPullIntervall().get(ChronoUnit.SECONDS);
+            int pullIntervalSeconds = (int) linkInfo.getPullInterval().get(ChronoUnit.SECONDS);
 
+            //same for the trigger...
+            TriggerKey triggerKey = new TriggerKey("pull_trigger_" + linkPartnerName, "LINK_PULL_TRIGGER");
+            scheduler.unscheduleJob(triggerKey);
             SimpleTrigger link_pull_trigger = TriggerBuilder.newTrigger().forJob(link_pulls)
-                    .withIdentity("pull_trigger_" + linkPartnerName, "LINK_PULL_TRIGGER")
+
+                    .withIdentity(triggerKey)
                     .usingJobData(DCLinkPullJob.LINK_PARTNER_NAME_PROPERTY_NAME, linkInfo.getLinkPartnerName().toString())
-                    .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(pullIntervallSeconds))
+                    .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(pullIntervalSeconds))
                     .build();
 
-            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting up trigger with pull intervall [{}] to pull from [{}]", pullIntervallSeconds, linkPartnerName);
+            LOGGER.info(LoggingMarker.Log4jMarker.CONFIG, "Setting up trigger with pull intervall [{} seconds] to pull from [{}]", pullIntervalSeconds, linkPartnerName);
 
             scheduler.scheduleJob(link_pulls, link_pull_trigger);
 

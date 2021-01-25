@@ -77,24 +77,24 @@ public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
             ListPendingMessageIdsRequest req = new ListPendingMessageIdsRequest();
             ListPendingMessageIdsResponse listPendingMessageIdsResponse = gatewayWebService.listPendingMessageIds(req);
 
-            List<String> messageIds = listPendingMessageIdsResponse.getMessageIds();
+            List<java.lang.String> messageIds = listPendingMessageIdsResponse.getMessageIds();
             messageIds.stream().forEach(id -> this.pullMessage(linkPartner, id));
         }
     }
 
-    private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, String remoteMessageId) {
+    private void pullMessage(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, java.lang.String remoteMessageId) {
 
-        String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+        DomibusConnectorMessage.DomibusConnectorMessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_REMOTE_MSG_ID, remoteMessageId);
-            MDC.MDCCloseable conMsgId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId);
+            MDC.MDCCloseable conMsgId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, connectorMessageId.getConnectorMessageId());
         ) {
             LOGGER.trace("Pulling message with id [{}] from [{}]", remoteMessageId, linkPartnerName);
             GetMessageByIdRequest getMessageByIdRequest = new GetMessageByIdRequest();
             getMessageByIdRequest.setMessageId(remoteMessageId);
             DomibusConnectorMessageType messageById = gatewayWebService.getMessageById(getMessageByIdRequest);
 
-            DomibusConnectorMessage message = transformerService.transformTransitionToDomain(messageById);
-            message.setConnectorMessageId(connectorMessageId);
+            DomibusConnectorMessage message = transformerService.transformTransitionToDomain(messageById, connectorMessageId);
+
 
             Optional<ActiveLinkPartner> activeLinkPartnerByName = dcActiveLinkManagerService.getActiveLinkPartnerByName(linkPartnerName);
             submitToConnector.submitToConnector(message, activeLinkPartnerByName.get().getLinkPartner());

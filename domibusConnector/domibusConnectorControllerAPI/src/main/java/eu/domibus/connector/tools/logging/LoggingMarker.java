@@ -28,6 +28,7 @@ public class LoggingMarker {
     public static class Log4jMarker {
         public static final org.apache.logging.log4j.Marker UI_SEC_LOG = MarkerManager.getMarker(UI_LOG_MARKER_TEXT);
         public static final org.apache.logging.log4j.Marker CONFIG = MarkerManager.getMarker(CONFIG_MARKER_TEXT);
+        public static final org.apache.logging.log4j.Marker BUSINESS_LOG = MarkerManager.getMarker(BUSINESS_LOG_MARKER_TEXT);
     }
 
     static {

@@ -6,10 +6,9 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
-import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -20,15 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static eu.domibus.connector.domain.model.helper.DomainModelHelper.isEvidenceMessage;
-
 @Service
 @Transactional
 public class DomibusConnectorTransportStateService implements TransportStateService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStateService.class);
 
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
     private DomibusConnectorMessageContentManager contentStorageService;
     private DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
     private TransportStepPersistenceService transportStepPersistenceService;
@@ -39,7 +36,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     }
 
     @Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -130,21 +127,21 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
             }
         }
 
-        //TODO: async call!
-        try {
-            if (!isEvidenceMessage(message)) {
-                try {
-                    contentStorageService.cleanForMessage(message);
-                    LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
-                } catch (Exception e) {
-                    LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
-                }
-            } else {
-                LOGGER.debug("#updateTransportToBackendStatus:: Message is an evidence message, no content deletion will be triggered!");
-            }
-        } catch (Exception e) {
-            LOGGER.error(String.format("Exception occured while cleaning up after message successfully handed over with transport id [%s]", transportId), e);
-        }
+        //TODO: put this into seperate method - delete only if state FAILED or FINISHED...
+//        try {
+//            if (!isEvidenceMessage(message)) {
+//                try {
+//                    contentStorageService.cleanForMessage(message);
+//                    LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully deleted message content of message [{}]", message.getConnectorMessageId());
+//                } catch (Exception e) {
+//                    LOGGER.warn(LoggingMarker.BUSINESS_LOG, "Was not able to delete message content of message", e);
+//                }
+//            } else {
+//                LOGGER.debug("#updateTransportToBackendStatus:: Message is an evidence message, no content deletion will be triggered!");
+//            }
+//        } catch (Exception e) {
+//            LOGGER.error(String.format("Exception occured while cleaning up after message successfully handed over with transport id [%s]", transportId), e);
+//        }
     }
 
 

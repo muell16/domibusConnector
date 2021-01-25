@@ -20,7 +20,7 @@ public class DomibusConnectorLinkPartner {
 
     private LinkType linkType;
 
-    private Duration pullIntervall = Duration.ofMinutes(5l);
+    private Duration pullInterval = Duration.ofMinutes(5l);
 
     private Properties properties = new Properties();
 
@@ -126,12 +126,12 @@ public class DomibusConnectorLinkPartner {
         }
     }
 
-    public Duration getPullIntervall() {
-        return pullIntervall;
+    public Duration getPullInterval() {
+        return pullInterval;
     }
 
-    public void setPullIntervall(Duration pullIntervall) {
-        this.pullIntervall = pullIntervall;
+    public void setPullInterval(Duration pullInterval) {
+        this.pullInterval = pullInterval;
     }
 
     public String toString() {

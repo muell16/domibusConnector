@@ -42,11 +42,11 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     public List<PDomibusConnectorMessage> findOutgoingUnconfirmedMessages();
         
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
-        + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
+        + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.businessMessage = m AND (e.type='DELIVERY' or e.type='NON_DELIVERY'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedAndWithoutDelivery();
     
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null "
-        + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.message = m AND (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
+        + "AND not exists (SELECT 1 FROM PDomibusConnectorEvidence e WHERE e.businessMessage = m AND (e.type='RELAY_REMMD_ACCEPTANCE' or e.type='RELAY_REMMD_REJECTION'))")
     public List<PDomibusConnectorMessage> findOutgoingMessagesNotRejectedNorConfirmedAndWithoutRelayREMMD();
         
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'BACKEND' AND m.deliveredToGateway is not null")

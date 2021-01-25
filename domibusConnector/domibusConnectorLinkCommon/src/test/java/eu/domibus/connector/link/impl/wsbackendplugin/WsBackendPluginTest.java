@@ -13,7 +13,7 @@ import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.testdata.TransitionCreator;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWebService;
 import eu.domibus.connector.ws.backend.webservice.EmptyRequestType;
@@ -63,7 +63,7 @@ public class WsBackendPluginTest {
     DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     @Autowired
-    DomibusConnectorMessagePersistenceService messagePersistenceServiceMock;
+    DCMessagePersistenceService messagePersistenceServiceMock;
 
     @Autowired
     TransportStateService transportStateServiceMock;

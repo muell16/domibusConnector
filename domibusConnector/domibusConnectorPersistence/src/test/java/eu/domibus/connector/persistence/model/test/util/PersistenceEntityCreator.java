@@ -3,14 +3,10 @@ package eu.domibus.connector.persistence.model.test.util;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.model.enums.EvidenceType;
-import eu.domibus.connector.persistence.model.enums.PMessageDirection;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -93,7 +89,7 @@ public class PersistenceEntityCreator {
     
     public static PDomibusConnectorEvidence createDeliveryEvidence() {
         PDomibusConnectorEvidence evidence = new PDomibusConnectorEvidence();
-        evidence.setMessage(createSimpleDomibusConnectorMessage());
+        evidence.setBusinessMessage(createSimpleDomibusConnectorMessage());
         evidence.setType(EvidenceType.DELIVERY);
         evidence.setId(13L);
         return evidence;
@@ -102,7 +98,7 @@ public class PersistenceEntityCreator {
     
     public static PDomibusConnectorEvidence createNonDeliveryEvidence() {
         PDomibusConnectorEvidence evidence = new PDomibusConnectorEvidence();
-        evidence.setMessage(createSimpleDomibusConnectorMessage());
+        evidence.setBusinessMessage(createSimpleDomibusConnectorMessage());
         evidence.setType(EvidenceType.NON_DELIVERY);
         evidence.setId(14L);
         return evidence;
@@ -139,7 +135,7 @@ public class PersistenceEntityCreator {
         msg.setHashValue("hashvalue");
         msg.setConnectorMessageId("messagestamp");
         msg.setId(47L);
-        msg.setEvidences(new HashSet<>());
+        msg.setRelatedEvidences(new HashSet<>());
         msg.setDirectionSource(MessageTargetSource.BACKEND);
         msg.setDirectionTarget(MessageTargetSource.GATEWAY);
         return msg;

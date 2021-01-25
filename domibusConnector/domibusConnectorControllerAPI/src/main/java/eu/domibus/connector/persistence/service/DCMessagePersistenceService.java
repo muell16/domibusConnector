@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
  *
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
-public interface DomibusConnectorMessagePersistenceService {
+public interface DCMessagePersistenceService {
 
     boolean checkMessageConfirmed(DomibusConnectorMessage message);
 

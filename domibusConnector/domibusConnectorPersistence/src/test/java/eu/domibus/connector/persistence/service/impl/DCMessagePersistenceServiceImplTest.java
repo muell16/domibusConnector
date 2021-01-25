@@ -13,7 +13,7 @@ import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
 import eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.eq;
  *
  *
  */
-public class DomibusConnectorMessagePersistenceServiceImplTest {
+public class DCMessagePersistenceServiceImplTest {
 
     
     @Mock
@@ -52,26 +52,24 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
     MsgContentPersistenceService msgContService;
 
     @Mock
-    InternalEvidencePersistenceService internalEvidencePersistenceService;
+    DomibusConnectorEvidencePersistenceServiceImpl evidencePersistenceService;
 
     @Mock
     InternalMessageInfoPersistenceServiceImpl messageInfoPersistenceService;
 
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    DCMessagePersistenceService messagePersistenceService;
     
-    public DomibusConnectorMessagePersistenceServiceImplTest() {
+    public DCMessagePersistenceServiceImplTest() {
     }
     
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DomibusConnectorMessagePersistenceServiceImpl impl = new DomibusConnectorMessagePersistenceServiceImpl();
-        impl.setEvidenceDao(evidenceDao);
+        DCMessagePersistenceServiceImpl impl = new DCMessagePersistenceServiceImpl();
         impl.setMessageDao(messageDao);
         impl.setInternalMessageInfoPersistenceService(messageInfoPersistenceService);
 
         impl.setMsgContentService(msgContService);
-        impl.setEvidencePersistenceService(internalEvidencePersistenceService);
 
         this.messagePersistenceService = impl;
         
@@ -355,8 +353,8 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
 
         messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 
-        Mockito.verify(internalEvidencePersistenceService, Mockito.times(1)).persistAsEvidence(eq(message));
-        Mockito.verifyZeroInteractions(messageDao);
+//        Mockito.verify(internalEvidencePersistenceService, Mockito.times(1)).persistAsEvidence(eq(message));
+//        Mockito.verifyZeroInteractions(messageDao);
 
     }
 
@@ -445,7 +443,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         Mockito.verify(messageDao, Mockito.times(1)).setMessageDeliveredToGateway(eq(dbMessage));
 
         //confirmation 1 should be set delivered!
-        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(connectorMessageId));
+//        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(connectorMessageId));
 //        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(dbMessage), eq(EvidenceType.SUBMISSION_ACCEPTANCE));
     }
 
@@ -467,7 +465,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
 
         messagePersistenceService.setDeliveredToGateway(message);
 
-        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(connectorMesssageId));
+//        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToGateway(eq(connectorMesssageId));
     }
 
     @Test
@@ -494,7 +492,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
 
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
 
-        Mockito.verify(this.evidenceDao).setDeliveredToBackend(eq("msg47"));
+//        Mockito.verify(this.evidenceDao).setDeliveredToBackend(eq("msg47"));
     }
 
     /*
@@ -517,7 +515,7 @@ public class DomibusConnectorMessagePersistenceServiceImplTest {
         Mockito.verify(messageDao, Mockito.times(1)).setMessageDeliveredToBackend(dbMessage);
 
         //confirmations should be set as delivered!
-        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(msgId));
+//        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(msgId));
 //        Mockito.verify(evidenceDao, Mockito.times(1)).setDeliveredToBackend(eq(dbMessage), eq(EvidenceType.SUBMISSION_ACCEPTANCE));
     }
 

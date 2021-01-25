@@ -86,8 +86,17 @@ public class PDomibusConnectorMessage implements Serializable {
     @OneToOne(mappedBy = "message", fetch = FetchType.EAGER)
     private PDomibusConnectorMessageInfo messageInfo;
 
-    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
-    private Set<PDomibusConnectorEvidence> evidences = new HashSet<>();
+    /**
+     * This messages here are related to the BusinessMessage
+     */
+    @OneToMany(mappedBy = "businessMessage", fetch = FetchType.LAZY)
+    private Set<PDomibusConnectorEvidence> relatedEvidences = new HashSet<>();
+
+    /**
+     * This evidences here are transported with the message
+     */
+    @OneToMany(mappedBy = "transportMessage", fetch = FetchType.EAGER)
+    private Set<PDomibusConnectorEvidence> transportedEvidences = new HashSet<>();
 
     @PrePersist    
     public void prePersist() {
@@ -134,13 +143,13 @@ public class PDomibusConnectorMessage implements Serializable {
         this.conversationId = conversationId;
     }
 
-//    public PMessageDirection getDirection() {
-//        return direction;
-//    }
-//
-//    public void setDirection(PMessageDirection direction) {
-//        this.direction = direction;
-//    }
+    public Set<PDomibusConnectorEvidence> getTransportedEvidences() {
+        return transportedEvidences;
+    }
+
+    public void setTransportedEvidences(Set<PDomibusConnectorEvidence> transportedEvidences) {
+        this.transportedEvidences = transportedEvidences;
+    }
 
     public String getHashValue() {
         return hashValue;
@@ -198,12 +207,12 @@ public class PDomibusConnectorMessage implements Serializable {
         this.messageInfo = messageInfo;
     }
 
-    public @Nonnull Set<PDomibusConnectorEvidence> getEvidences() {
-        return evidences;
+    public @Nonnull Set<PDomibusConnectorEvidence> getRelatedEvidences() {
+        return relatedEvidences;
     }
 
-    public void setEvidences(Set<PDomibusConnectorEvidence> evidences) {
-        this.evidences = evidences;
+    public void setRelatedEvidences(Set<PDomibusConnectorEvidence> evidences) {
+        this.relatedEvidences = evidences;
     }
 
     public String getConnectorMessageId() {

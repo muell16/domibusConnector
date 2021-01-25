@@ -14,8 +14,8 @@ public class DomibusConnectorTransportStep {
     private DomibusConnectorMessage.DomibusConnectorMessageId messageId;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
-    private String transportSystemMessageId;
-    private String remoteMessageId;
+    private java.lang.String transportSystemMessageId;
+    private java.lang.String remoteMessageId;
     private LocalDateTime created;
     private List<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
 
@@ -51,19 +51,19 @@ public class DomibusConnectorTransportStep {
         this.attempt = attempt;
     }
 
-    public String getTransportSystemMessageId() {
+    public java.lang.String getTransportSystemMessageId() {
         return transportSystemMessageId;
     }
 
-    public void setTransportSystemMessageId(String transportSystemMessageId) {
+    public void setTransportSystemMessageId(java.lang.String transportSystemMessageId) {
         this.transportSystemMessageId = transportSystemMessageId;
     }
 
-    public String getRemoteMessageId() {
+    public java.lang.String getRemoteMessageId() {
         return remoteMessageId;
     }
 
-    public void setRemoteMessageId(String remoteMessageId) {
+    public void setRemoteMessageId(java.lang.String remoteMessageId) {
         this.remoteMessageId = remoteMessageId;
     }
 
@@ -93,7 +93,7 @@ public class DomibusConnectorTransportStep {
         if (stepStatusUpdate.getTransportState().getPriority() > max) {
             this.statusUpdates.add(stepStatusUpdate);
         } else {
-            String error = String.format("Cannot add stepStatusUpdate with state [%s] because there is already a state with higher priority of [%s]!", stepStatusUpdate.getTransportState(), max);
+            java.lang.String error = java.lang.String.format("Cannot add stepStatusUpdate with state [%s] because there is already a state with higher or equal priority of [%s]!", stepStatusUpdate.getTransportState(), max);
             throw new IllegalArgumentException(error);
         }
 
@@ -106,7 +106,7 @@ public class DomibusConnectorTransportStep {
 
         private LocalDateTime created;
 
-        private String text;
+        private java.lang.String text;
 
         public TransportState getTransportState() {
             return transportState;
@@ -124,11 +124,11 @@ public class DomibusConnectorTransportStep {
             this.created = created;
         }
 
-        public String getText() {
+        public java.lang.String getText() {
             return text;
         }
 
-        public void setText(String text) {
+        public void setText(java.lang.String text) {
             this.text = text;
         }
     }

@@ -4,6 +4,7 @@ import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurati
 import eu.domibus.connector.lib.spring.configuration.KeyAndKeyStoreAndTrustStoreConfigurationProperties;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationDescription;
 import eu.ecodex.utils.configuration.api.annotation.ConfigurationLabel;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties(prefix = "")
 @Validated
+@Data
 public class DCGatewayPullPluginConfigurationProperties {
 
     @NotNull
@@ -44,36 +46,40 @@ public class DCGatewayPullPluginConfigurationProperties {
     @ConfigurationDescription("This Property is used to define the location of the ws policy which is used for communication with the gateway")
     private Resource wsPolicy = new ClassPathResource("/wsdl/backend.policy.xml");
 
-    public String getGwAddress() {
-        return gwAddress;
-    }
 
-    public void setGwAddress(String gwAddress) {
-        this.gwAddress = gwAddress;
-    }
+    private boolean cxfLoggingEnabled = false;
 
-    public KeyAndKeyStoreAndTrustStoreConfigurationProperties getTls() {
-        return tls;
-    }
 
-    public void setTls(KeyAndKeyStoreAndTrustStoreConfigurationProperties tls) {
-        this.tls = tls;
-    }
-
-    public CxfTrustKeyStoreConfigurationProperties getSoap() {
-        return soap;
-    }
-
-    public void setSoap(CxfTrustKeyStoreConfigurationProperties soap) {
-        this.soap = soap;
-    }
-
-    public Resource getWsPolicy() {
-        return wsPolicy;
-    }
-
-    public void setWsPolicy(Resource wsPolicy) {
-        this.wsPolicy = wsPolicy;
-    }
+//    public String getGwAddress() {
+//        return gwAddress;
+//    }
+//
+//    public void setGwAddress(String gwAddress) {
+//        this.gwAddress = gwAddress;
+//    }
+//
+//    public KeyAndKeyStoreAndTrustStoreConfigurationProperties getTls() {
+//        return tls;
+//    }
+//
+//    public void setTls(KeyAndKeyStoreAndTrustStoreConfigurationProperties tls) {
+//        this.tls = tls;
+//    }
+//
+//    public CxfTrustKeyStoreConfigurationProperties getSoap() {
+//        return soap;
+//    }
+//
+//    public void setSoap(CxfTrustKeyStoreConfigurationProperties soap) {
+//        this.soap = soap;
+//    }
+//
+//    public Resource getWsPolicy() {
+//        return wsPolicy;
+//    }
+//
+//    public void setWsPolicy(Resource wsPolicy) {
+//        this.wsPolicy = wsPolicy;
+//    }
 
 }

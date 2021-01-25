@@ -7,7 +7,7 @@ import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.*;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import org.slf4j.Logger;
@@ -20,21 +20,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 @org.springframework.stereotype.Service("persistenceService")
-public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusConnectorMessagePersistenceService {
+public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorMessagePersistenceServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DCMessagePersistenceServiceImpl.class);
 
     private DomibusConnectorMessageDao messageDao;
-    private DomibusConnectorEvidenceDao evidenceDao;
+//    private DomibusConnectorEvidenceDao evidenceDao;
     private MsgContentPersistenceService msgContentService;
-    private InternalEvidencePersistenceService evidencePersistenceService;
 
     private InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService;
 
@@ -46,10 +44,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         this.messageDao = messageDao;
     }
 
-    @Autowired
-    public void setEvidenceDao(DomibusConnectorEvidenceDao evidenceDao) {
-        this.evidenceDao = evidenceDao;
-    }
+//    @Autowired
+//    public void setEvidenceDao(DomibusConnectorEvidenceDao evidenceDao) {
+//        this.evidenceDao = evidenceDao;
+//    }
 
     @Autowired
     public void setInternalMessageInfoPersistenceService(InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService) {
@@ -61,10 +59,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         this.msgContentService = msgContService;
     }
 
-    @Autowired
-    public void setEvidencePersistenceService(InternalEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
-    }
+//    @Autowired
+//    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceServiceImpl evidencePersistenceService) {
+//        this.evidencePersistenceService = evidencePersistenceService;
+//    }
 
 
     /*
@@ -123,12 +121,7 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         if (message.getConnectorMessageId() == null) {
             throw new IllegalArgumentException("connectorMessageId (getConnectorMessageId()) must be set!");
         }
-        if (DomainModelHelper.isEvidenceMessage(message)) {
-            LOGGER.debug("#persistMessageIntoDatabase: messge is an evidence message, persisting as evidence!");
-            message.getMessageDetails().setDirection(direction);
-            message = evidencePersistenceService.persistAsEvidence(message);
-            return message;
-        }
+
         message.getMessageDetails().setDirection(direction);
 
         LOGGER.trace("#persistMessageIntoDatabase: Persist message [{}] with direction [{}] into storage", message, direction);
@@ -154,21 +147,12 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         }
 
         this.msgContentService.storeMsgContent(message);
+
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
-
-        //TODO: store errors!
-
-        this.persistMessageConfirmationsOfMessage(dbMessage, message.getMessageConfirmations());
 
         return message;
     }
 
-
-    void persistMessageConfirmationsOfMessage(final PDomibusConnectorMessage dbMessage, final List<DomibusConnectorMessageConfirmation> confirmations) {
-        confirmations.stream().forEach(
-                c -> this.evidencePersistenceService.persistToMessage(dbMessage, c)
-        );
-    }
 
 
     /**
@@ -244,14 +228,10 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     public void setDeliveredToGateway(DomibusConnectorMessage message) {
         LOGGER.trace("#setDeliveredToGateway: with message [{}]", message);
         PDomibusConnectorMessage dbMessage;
-        if (DomainModelHelper.isEvidenceMessage(message)) {
-            evidenceDao.setDeliveredToGateway(message.getConnectorMessageId());
-        } else {
-            dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-            LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
-            messageDao.setMessageDeliveredToGateway(dbMessage);
-            evidenceDao.setDeliveredToGateway(message.getConnectorMessageId()); //also set the evidences transported with this message as delivered!
-        }
+
+        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
+        messageDao.setMessageDeliveredToGateway(dbMessage);
 
     }
 
@@ -262,19 +242,11 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
     @Transactional
     public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
         PDomibusConnectorMessage dbMessage;
-        LOGGER.trace("#setMessageDeliveredToNationalSystem: with message [{}]", message);
-        if (DomainModelHelper.isEvidenceMessage(message)) {
-//            DomibusConnectorMessageConfirmation confirmation = message.getMessageConfirmations().get(0);
-//            dbMessage = findByRefToMsg(message);
-//            LOGGER.trace("#setMessageDeliveredToNationalSystem: set evidence with type [{}] of message db id [{}] as delivered to national system",
-//                    confirmation.getEvidenceType(), dbMessage.getId());
-            evidenceDao.setDeliveredToBackend(message.getConnectorMessageId());
-        } else {
-            LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
-            dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-            messageDao.setMessageDeliveredToBackend(dbMessage);
-            evidenceDao.setDeliveredToBackend(message.getConnectorMessageId()); //also set the evidences transported with this message as delivered!
-        }
+
+        LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
+        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        messageDao.setMessageDeliveredToBackend(dbMessage);
+
     }
 
     @Override
@@ -285,35 +257,6 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         return message;
     }
 
-//    private void updateMessageDetailsIntoDb(PDomibusConnectorMessage dbMessage, DomibusConnectorMessage message) {
-//
-//    }
-
-
-//    PDomibusConnectorMessage findByRefToMsg(@Nonnull DomibusConnectorMessage msg) {
-//        String refToMessageId = msg.getMessageDetails().getRefToMessageId();
-//        DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
-//
-////        PMessageDirection pMessageDirection = MessageDirectionMapper.mapFromDomainToPersistence(direction);
-//
-//        LOGGER.trace("#findByRefToMsg: find message by reference [{}] for directionTarget [{}] (should be ebmsId or NationalId)", refToMessageId, direction);
-//        return messageDao.findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(refToMessageId, direction.getTarget()).get();
-//    }
-
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public DomibusConnectorMessage findMessageByNationalId(String nationalMessageId) {
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageId(nationalMessageId);
-//        return mapMessageToDomain(dbMessage);
-//    }
-//
-//    @Override
-//    @Transactional(readOnly = true)
-//    public DomibusConnectorMessage findMessageByEbmsId(String ebmsMessageId) {
-//        PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageId(ebmsMessageId);
-//        return mapMessageToDomain(dbMessage);
-//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -443,11 +386,6 @@ public class DomibusConnectorMessagePersistenceServiceImpl implements DomibusCon
         messageBuilder.setConnectorMessageId(dbMessage.getConnectorMessageId());
 
         this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
-
-        List<DomibusConnectorMessageConfirmation> confirmations = dbMessage.getEvidences().stream()
-                .map(MessageConfirmationMapper::mapFromDbToDomain)
-                .collect(Collectors.toList());
-        messageBuilder.addConfirmations(confirmations);
 
         return messageBuilder.build();
     }

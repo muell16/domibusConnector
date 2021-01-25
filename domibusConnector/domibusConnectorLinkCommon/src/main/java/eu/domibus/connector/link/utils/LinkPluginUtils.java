@@ -25,9 +25,14 @@ public class LinkPluginUtils {
         private List<String> profiles = new ArrayList<>();
 
         private ChildContextBuilder(ConfigurableApplicationContext parent) {
+//            props.put("org.springframework.boot.logging.LoggingSystem", "none");
+            //make sure child context loads same logging config
+            props.put("logging.config", parent.getEnvironment().getProperty("logging.config"));
+
             builder.parent(parent);
             builder.bannerMode(Banner.Mode.OFF);
             builder.web(WebApplicationType.NONE);
+
         }
 
         public ChildContextBuilder addSingelton(Object bean) {
@@ -74,6 +79,8 @@ public class LinkPluginUtils {
                 LOGGER.trace("Adding singelton with name [{}] as bean [{}]", entry.getKey(), entry.getValue());
                 applicationContext.getBeanFactory().registerSingleton(entry.getKey(), entry.getValue());
             }));
+
+
             builder.properties(props);
             builder.profiles(profiles.toArray(new String[]{}));
             LOGGER.trace("Running child context with " +

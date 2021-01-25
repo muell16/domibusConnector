@@ -49,7 +49,7 @@ public class MessagePersistenceServiceITCase {
     private DataSource ds;
 
     @Autowired
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
 
 //    @BeforeAll

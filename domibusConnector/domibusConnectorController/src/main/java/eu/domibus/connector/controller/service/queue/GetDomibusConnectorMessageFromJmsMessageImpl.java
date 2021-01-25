@@ -1,13 +1,11 @@
 package eu.domibus.connector.controller.service.queue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactory;
-import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
-import javax.xml.soap.Text;
 
 @Component
 public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusConnectorMessageFromJmsMessage {
@@ -26,7 +22,7 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
     private static final Logger LOGGER  = LoggerFactory.getLogger(GetDomibusConnectorMessageFromJmsMessageImpl.class);
 
     @Autowired
-    private DomibusConnectorMessagePersistenceService persistenceService;
+    private DCMessagePersistenceService persistenceService;
     private ObjectMapper objectMapper;
 
     @PostConstruct

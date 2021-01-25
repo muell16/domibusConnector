@@ -16,7 +16,7 @@ import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.persistence.service.DomibusConnectorActionPersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.times;
 public class BackendToGatewayMessageProcessorTest {
 
     @Mock
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
     @Mock
     private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
     @Mock
@@ -76,7 +76,7 @@ public class BackendToGatewayMessageProcessorTest {
 //        createConfirmationMessageBuilderFactory.setActionPersistenceService(actionPersistenceService);
         createConfirmationMessageBuilderFactory.setEvidencePersistenceService(evidencePersistenceService);
         createConfirmationMessageBuilderFactory.setEvidencesToolkit(evidencesToolkit);
-        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> UUID.randomUUID().toString());
+        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> new DomibusConnectorMessage.DomibusConnectorMessageId(UUID.randomUUID().toString()));
 
         CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService = new CreateSubmissionRejectionAndReturnItService();
         createSubmissionRejectionAndReturnItService.setBackendDeliveryService(backendDeliveryService);

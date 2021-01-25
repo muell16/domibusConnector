@@ -60,7 +60,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                         assertThat(evidence.getDeliveredToGateway()).isNull();
                         assertThat(evidence.getDeliveredToNationalSystem()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
-                        assertThat(evidence.getMessage()).isNotNull();
+                        assertThat(evidence.getBusinessMessage()).isNotNull();
                         assertThat(evidence.getEvidence()).isNull();
                         return evidence;
                     }
@@ -91,7 +91,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
                         assertThat(evidence.getDeliveredToGateway()).isNull();
                         assertThat(evidence.getDeliveredToNationalSystem()).isNull();
                         assertThat(evidence.getType()).isEqualTo(eu.domibus.connector.persistence.model.enums.EvidenceType.DELIVERY);
-                        assertThat(evidence.getMessage()).isNotNull();
+                        assertThat(evidence.getBusinessMessage()).isNotNull();
                         assertThat(evidence.getEvidence()).isEqualTo("EVIDENCE1");
                         return evidence;
                     }

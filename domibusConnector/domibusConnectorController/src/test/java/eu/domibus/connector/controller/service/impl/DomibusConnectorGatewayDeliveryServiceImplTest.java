@@ -8,7 +8,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
     private PutMessageOnQueue putMessageOnQueue;
 
     @Mock
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     @Mock
     private DomibusConnectorMessageContentManager bigDataOfMessagePersistenceService;
@@ -55,7 +55,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
         deliveryService.setPutMessageOnQueue(putMessageOnQueue);
         deliveryService.setDomibusGatewayLoopbackReceiveProcessor(domibusGatewayLoopbackReceiveProcessor);
 
-        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn("id1");
+        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessage.DomibusConnectorMessageId("id1"));
         Mockito.when(messagePersistenceService.persistMessageIntoDatabase(any(DomibusConnectorMessage.class), any(DomibusConnectorMessageDirection.class)))
                 .then((invoc) -> invoc.getArgument(0));
 

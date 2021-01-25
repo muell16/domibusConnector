@@ -297,7 +297,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
 
     @Test
     public void testTransformTransitionToDomain() {
-        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(TransitionCreator.createMessage());
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(TransitionCreator.createMessage(), new DomibusConnectorMessage.DomibusConnectorMessageId("id1"));
 
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
@@ -327,7 +327,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
 
         msg.getMessageConfirmations().add(confirmation);
 
-        transformerService.transformTransitionToDomain(msg);
+        transformerService.transformTransitionToDomain(msg, new DomibusConnectorMessage.DomibusConnectorMessageId("id2"));
     }
 
     @Test
@@ -335,7 +335,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageType transitionMessage = TransitionCreator.createMessage();
         transitionMessage.setMessageContent(null);
 
-        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(transitionMessage);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(transitionMessage, new DomibusConnectorMessage.DomibusConnectorMessageId("id3"));
 
         assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
         assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();

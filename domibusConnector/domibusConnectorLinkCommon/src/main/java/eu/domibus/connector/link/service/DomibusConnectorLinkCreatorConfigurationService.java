@@ -56,6 +56,11 @@ public class DomibusConnectorLinkCreatorConfigurationService {
     private void loadConfigFromSpringEnvironment() {
         configureGatewayLinks();
 
+        configureBackendLinks();
+
+    }
+
+    private void configureBackendLinks() {
         List<DCLinkPluginConfigurationProperties.DCLnkPropertyConfig> backends = config.getBackend();
         if (backends.isEmpty() && !config.isFailOnLinkPluginError()) {
             LOGGER.warn("No backends are configured!");
@@ -80,6 +85,7 @@ public class DomibusConnectorLinkCreatorConfigurationService {
             for (DomibusConnectorLinkPartner linkPartner : backend.getLinkPartners()) {
                 linkPartner.setLinkConfiguration(linkConfig);
                 try {
+                    linkPartner.setLinkType(LinkType.BACKEND);
                     this.activateLink(linkPartner);
                 } catch (Exception e) {
                     String error = String.format("Exception thrown while activating link partner under: [%s.*]", linkPartnerConfigPrefix);
@@ -92,9 +98,6 @@ public class DomibusConnectorLinkCreatorConfigurationService {
             }
             i++;
         }
-
-
-
     }
 
     private void configureGatewayLinks() {

@@ -33,12 +33,24 @@ public class PDomibusConnectorEvidence {
     @Column(name = "ID")
     private Long id;
 
+    @Deprecated // CONNECTOR_MESSAGE_ID can be accessed over transportMessage reference
     @Column(name = "CONNECTOR_MESSAGE_ID")
     private String connectorMessageId;
 
+    /**
+     * the message this evidence is referencing
+     */
     @ManyToOne
     @JoinColumn(name = "MESSAGE_ID", nullable = false)
-    private PDomibusConnectorMessage message;
+    private PDomibusConnectorMessage businessMessage;
+
+    /**
+     * the message this evidence is transported within
+     */
+    @ManyToOne
+    @JoinColumn(name = "FK_TRANSPORT_MESSAGE_ID", nullable = false)
+    private PDomibusConnectorMessage transportMessage;
+
 
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
@@ -47,10 +59,12 @@ public class PDomibusConnectorEvidence {
     @Column(name = "EVIDENCE")
     private String evidence;
 
+    @Deprecated //delivered to Backend is realised by referencing transportMessage
     @Column(name = "DELIVERED_NAT")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredToNationalSystem;
 
+    @Deprecated //delivered to GW is realised by referencing transportMessage
     @Column(name = "DELIVERED_GW")
     @Temporal(TemporalType.TIMESTAMP)
     private Date deliveredToGateway;
@@ -76,14 +90,14 @@ public class PDomibusConnectorEvidence {
         this.id = id;
     }
 
-    public PDomibusConnectorMessage getMessage() {
-        return message;
+    public PDomibusConnectorMessage getBusinessMessage() {
+        return businessMessage;
     }
 
-    public void setMessage(PDomibusConnectorMessage message) {
-        this.message = message;
-        if (this.message != null && null != this.message.getEvidences() && !this.message.getEvidences().contains(this)) {
-            this.message.getEvidences().add(this);
+    public void setBusinessMessage(PDomibusConnectorMessage message) {
+        this.businessMessage = message;
+        if (this.businessMessage != null && null != this.businessMessage.getRelatedEvidences() && !this.businessMessage.getRelatedEvidences().contains(this)) {
+            this.businessMessage.getRelatedEvidences().add(this);
         }
     }
 
@@ -103,18 +117,30 @@ public class PDomibusConnectorEvidence {
         this.evidence = evidence;
     }
 
+    @Deprecated
     public Date getDeliveredToNationalSystem() {
         return deliveredToNationalSystem;
     }
 
+    @Deprecated
     public void setDeliveredToNationalSystem(Date deliveredToNationalSystem) {
         this.deliveredToNationalSystem = deliveredToNationalSystem;
     }
 
+    public PDomibusConnectorMessage getTransportMessage() {
+        return transportMessage;
+    }
+
+    public void setTransportMessage(PDomibusConnectorMessage transportMessage) {
+        this.transportMessage = transportMessage;
+    }
+
+    @Deprecated
     public Date getDeliveredToGateway() {
         return deliveredToGateway;
     }
 
+    @Deprecated
     public void setDeliveredToGateway(Date deliveredToGateway) {
         this.deliveredToGateway = deliveredToGateway;
     }
@@ -127,10 +153,12 @@ public class PDomibusConnectorEvidence {
         this.updated = updated;
     }
 
+    @Deprecated
     public String getConnectorMessageId() {
         return connectorMessageId;
     }
 
+    @Deprecated
     public void setConnectorMessageId(String connectorMessageId) {
         this.connectorMessageId = connectorMessageId;
     }

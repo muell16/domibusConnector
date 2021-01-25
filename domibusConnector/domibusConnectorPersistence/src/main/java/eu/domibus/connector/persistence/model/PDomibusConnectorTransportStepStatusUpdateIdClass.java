@@ -9,7 +9,7 @@ public class PDomibusConnectorTransportStepStatusUpdateIdClass implements Serial
 
     Long transportStep;
 
-    TransportState transportState;
+    TransportState transportStateTransportState;
 
     public Long getTransportStep() {
         return transportStep;
@@ -19,12 +19,12 @@ public class PDomibusConnectorTransportStepStatusUpdateIdClass implements Serial
         this.transportStep = transportStep;
     }
 
-    public TransportState getTransportState() {
-        return transportState;
+    public TransportState getTransportStateString() {
+        return transportStateTransportState;
     }
 
-    public void setTransportState(TransportState transportState) {
-        this.transportState = transportState;
+    public void setTransportStateString(TransportState transportStateTransportState) {
+        this.transportStateTransportState = transportStateTransportState;
     }
 
     @Override
@@ -36,13 +36,15 @@ public class PDomibusConnectorTransportStepStatusUpdateIdClass implements Serial
 
         if (transportStep != null ? !transportStep.equals(that.transportStep) : that.transportStep != null)
             return false;
-        return transportState == that.transportState;
+        if (transportStateTransportState != that.transportStateTransportState) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = transportStep != null ? transportStep.hashCode() : 0;
-        result = 31 * result + (transportState != null ? transportState.hashCode() : 0);
+        result = 31 * result + (transportStateTransportState != null ? transportStateTransportState.hashCode() : 0);
         return result;
     }
 }

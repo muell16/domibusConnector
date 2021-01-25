@@ -16,7 +16,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliverySe
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
@@ -27,7 +27,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorGatewayDeliveryServiceImpl.class);
 
     private PutMessageOnQueue putMessageOnQueue;
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
     private DomibusConnectorMessageContentManager bigDataOfMessagePersistenceService;
     private DomibusConnectorMessageIdGenerator messageIdGenerator;
     private DomibusGatewayLoopbackReceiveProcessor domibusGatewayLoopbackReceiveProcessor;
@@ -40,7 +40,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
     }
 
     @Autowired
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -66,7 +66,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
         }
 
         if (StringUtils.isEmpty(message.getConnectorMessageId())) {
-            String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+            String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId().getConnectorMessageId();
             if (StringUtils.isEmpty(connectorMessageId))
                 throw new DomibusConnectorControllerException("domibus connector message ID not generated!");
             message.setConnectorMessageId(connectorMessageId);

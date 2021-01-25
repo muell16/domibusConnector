@@ -16,14 +16,14 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
     @Query("SELECT MAX(step.attempt) FROM PDomibusConnectorTransportStep step " +
             "WHERE step.connectorMessageId = ?1 AND step.linkPartnerName = ?2"
             )
-    Optional<Integer> getHighestAttemptBy(String messageId, String linkPartnerName);
+    Optional<Integer> getHighestAttemptBy(String messageId, DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 
 
 //    @Query("SELECT PDomibusConnectorTransportStep FROM PDomibusConnectorTransportStep step " +
 //            "WHERE step.message.connectorMessageId = ?1 AND step.linkPartnerName = ?2 AND step.attempt = ?3"
 //    )
-    @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.connectorMessageId = ?1")
-    Optional<PDomibusConnectorTransportStep> findbyMsgLinkPartnerAndAttempt(String msgId, String partnerName, int attempt);
+    @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.connectorMessageId = ?1 AND step.linkPartnerName = ?2 AND step.attempt = ?3")
+    Optional<PDomibusConnectorTransportStep> findbyMsgLinkPartnerAndAttempt(String msgId, DomibusConnectorLinkPartner.LinkPartnerName partnerName, int attempt);
 
     @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.transportId = ?1")
     Optional<PDomibusConnectorTransportStep> findByTransportId(TransportStateService.TransportId transportId);

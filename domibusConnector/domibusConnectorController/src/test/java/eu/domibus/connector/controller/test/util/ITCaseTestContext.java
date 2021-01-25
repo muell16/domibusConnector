@@ -9,7 +9,7 @@ import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +42,8 @@ public class ITCaseTestContext {
     private final static Logger LOGGER = LoggerFactory.getLogger(ITCaseTestContext.class);
 
 
-    public static final String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
-    public static final String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
+    public static final java.lang.String TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME = "togwdeliveredmessages";
+    public static final java.lang.String TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME = "tobackenddeliveredmessages";
 
     /**
      * Use this interface to tamper with the test...
@@ -66,7 +66,7 @@ public class ITCaseTestContext {
 
 
     @Autowired
-    DomibusConnectorMessagePersistenceService messagePersistenceService;
+    DCMessagePersistenceService messagePersistenceService;
 
     @Bean
     public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -134,7 +134,7 @@ public class ITCaseTestContext {
             state.setConnectorTransportId(dummyBackend);
             state.setStatus(TransportState.ACCEPTED);
 
-            String backendId = "BACKEND_" + UUID.randomUUID().toString();
+            java.lang.String backendId = "BACKEND_" + UUID.randomUUID().toString();
             state.setRemoteMessageId(backendId); //assigned backend message id
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStateService.updateTransportToBackendClientStatus(dummyBackend, state);
@@ -179,7 +179,7 @@ public class ITCaseTestContext {
             state.setConnectorTransportId(dummyGW);
 //            state.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
             state.setStatus(TransportState.ACCEPTED);
-            String ebmsId = "EBMS_" + UUID.randomUUID().toString();
+            java.lang.String ebmsId = "EBMS_" + UUID.randomUUID().toString();
             state.setRemoteMessageId(ebmsId); //assigned EBMS ID
             state.setTransportImplId("mem_" + UUID.randomUUID().toString()); //set a transport id
             transportStateService.updateTransportToGatewayStatus(dummyGW , state);

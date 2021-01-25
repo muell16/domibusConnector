@@ -14,4 +14,6 @@
         <tagDatabase tag="DOMIBUS_DB_V4.3"/>
     </changeSet>
 
+    <include file="upgrade-4_2-to-4_3-change_evidence_table.xml" relativeToChangelogFile="true" />
+
 </databaseChangeLog>

@@ -3,6 +3,7 @@ package eu.domibus.connector.persistence.dao;
 import com.github.database.rider.core.api.dataset.DataSet;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStepStatusUpdate;
 import org.junit.jupiter.api.Disabled;
@@ -28,13 +29,13 @@ class DomibusConnectorTransportStepDaoTest {
 
     @Test
     void getHighestAttemptBy() {
-        Optional<Integer> highestAttemptBy = dao.getHighestAttemptBy("msg1", "partner1");
+        Optional<Integer> highestAttemptBy = dao.getHighestAttemptBy("msg1", new DomibusConnectorLinkPartner.LinkPartnerName("partner1"));
         assertThat(highestAttemptBy.get()).isEqualTo(4);
     }
 
     @Test
     void getHighestAttemptBy_noPartner() {
-        Optional<Integer> highestAttemptBy = dao.getHighestAttemptBy("msg1", "notexistant");
+        Optional<Integer> highestAttemptBy = dao.getHighestAttemptBy("msg1", new DomibusConnectorLinkPartner.LinkPartnerName("notexistant"));
         assertThat(highestAttemptBy).isEmpty();
     }
 
@@ -44,7 +45,7 @@ class DomibusConnectorTransportStepDaoTest {
         PDomibusConnectorTransportStep transportStep = new PDomibusConnectorTransportStep();
         transportStep.setAttempt(1);
         transportStep.setConnectorMessageId("msg1");
-        transportStep.setLinkPartnerName("l1");
+        transportStep.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("l1"));
         transportStep.setTransportId(new TransportStateService.TransportId("msg1_1"));
 
         PDomibusConnectorTransportStepStatusUpdate u = new PDomibusConnectorTransportStepStatusUpdate();

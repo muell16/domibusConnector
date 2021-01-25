@@ -47,8 +47,8 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
             throw new IllegalArgumentException("ConnectorMessageId must be set!");
         }
 
-        String msgId = transportStep.getMessageId().toString();
-        String linkPartnerName = transportStep.getLinkPartnerName().toString();
+        java.lang.String msgId = transportStep.getMessageId().toString();
+        DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = transportStep.getLinkPartnerName();
 
         Optional<Integer> nAttempt = transportStepDao.getHighestAttemptBy(msgId, linkPartnerName);
         int nextAttempt = nAttempt.orElse(0) + 1;
@@ -68,7 +68,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         if (foundTransport.isPresent()) {
             return mapTransportStepToDomain(foundTransport.get());
         } else {
-            throw new RuntimeException(String.format("No Transport found with transport id [%s]", transportId));
+            throw new RuntimeException(java.lang.String.format("No Transport found with transport id [%s]", transportId));
         }
     }
 
@@ -92,7 +92,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 //        BeanUtils.copyProperties(dbTransportStep, step);
         step.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
-        step.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName(dbTransportStep.getLinkPartnerName()));
+        step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
         step.setTransportId(dbTransportStep.getTransportId());
         step.setAttempt(dbTransportStep.getAttempt());
         step.setCreated(dbTransportStep.getCreated());
@@ -122,8 +122,8 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     private PDomibusConnectorTransportStep mapTransportStepToDb(DomibusConnectorTransportStep transportStep) {
 
-        String msgId = transportStep.getMessageId().getConnectorMessageId();
-        String partnerName = transportStep.getLinkPartnerName().getLinkName();
+        java.lang.String msgId = transportStep.getMessageId().getConnectorMessageId();
+        DomibusConnectorLinkPartner.LinkPartnerName partnerName= transportStep.getLinkPartnerName();
 
         Optional<PDomibusConnectorTransportStep> foundStep = transportStepDao.findbyMsgLinkPartnerAndAttempt(msgId, partnerName, transportStep.getAttempt());
         PDomibusConnectorTransportStep dbStep = foundStep.orElseGet(  () -> {

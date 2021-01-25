@@ -11,7 +11,7 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
 
 
     @Autowired
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     @Autowired
     CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
@@ -47,7 +47,7 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
     private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 
     //setter
-    public void setMessagePersistenceService(DomibusConnectorMessagePersistenceService messagePersistenceService) {
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
         this.messagePersistenceService = messagePersistenceService;
     }
 
@@ -81,7 +81,7 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
 
         //persist evidence
         try {
-            evidenceMessage.persistEvidenceToMessage();
+            evidenceMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
         } catch (Exception e) {
             //ignore evidence persisting errors...
             LOGGER.warn("An error occured while saving NON_DELIVERY to business message");

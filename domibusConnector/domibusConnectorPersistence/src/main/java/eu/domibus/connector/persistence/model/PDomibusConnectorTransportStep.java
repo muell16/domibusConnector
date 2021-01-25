@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.model;
 
 
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class PDomibusConnectorTransportStep {
     private String connectorMessageId;
 
     @Column(name = "LINK_PARTNER_NAME")
-    private String linkPartnerName;
+    private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
 
     @Column(name = "ATTEMPT")
     private int attempt = 1;
@@ -87,11 +88,11 @@ public class PDomibusConnectorTransportStep {
         this.connectorMessageId = message;
     }
 
-    public String getLinkPartnerName() {
+    public DomibusConnectorLinkPartner.LinkPartnerName getLinkPartnerName() {
         return linkPartnerName;
     }
 
-    public void setLinkPartnerName(String linkPartnerName) {
+    public void setLinkPartnerName(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         this.linkPartnerName = linkPartnerName;
     }
 

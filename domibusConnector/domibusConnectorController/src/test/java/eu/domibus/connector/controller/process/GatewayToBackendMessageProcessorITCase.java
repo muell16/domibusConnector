@@ -5,7 +5,7 @@ import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
+import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
 import eu.domibus.connector.security.container.service.TokenIssuerFactory;
 import org.junit.jupiter.api.Assertions;
@@ -53,7 +53,7 @@ public class GatewayToBackendMessageProcessorITCase {
     private BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
-    private DomibusConnectorMessagePersistenceService messagePersistenceService;
+    private DCMessagePersistenceService messagePersistenceService;
 
     @Autowired
     private DomibusConnectorMessageContentManager bigDataWithMessagePersistenceService;
