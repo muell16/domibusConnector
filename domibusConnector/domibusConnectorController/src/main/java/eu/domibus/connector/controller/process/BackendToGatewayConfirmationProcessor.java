@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionI
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.*;
@@ -18,6 +19,10 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
@@ -137,7 +142,11 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
                     .switchFromToAttributes()
                     .buildFromEvidenceTriggerMessage(triggerMessage);
 
-        messageConfirmationProcessor.processConfirmationMessageForMessage(originalMessage, triggeredEvidenceMessage.getMessageConfirmation());
+        List<DomibusConnectorMessageId> collect = Stream.of(triggerMessage, triggeredEvidenceMessage.getEvidenceMessage(), backtravelEvidenceMessage.getEvidenceMessage())
+                .map(DomibusConnectorMessage::getConnectorMessageId)
+                .collect(Collectors.toList());
+
+        messageConfirmationProcessor.processConfirmationMessageForMessage(originalMessage, collect, triggeredEvidenceMessage.getMessageConfirmation());
 
         triggeredEvidenceMessage.persistMessage();
         submitMessageToLinkModuleService.submitMessage(triggeredEvidenceMessage.getEvidenceMessage());

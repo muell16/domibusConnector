@@ -4,18 +4,27 @@ import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptio
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
+import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
+import eu.domibus.connector.persistence.model.enums.EvidenceType;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorEvidencePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
+import eu.domibus.connector.tools.logging.LoggingMarker;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+
+import static eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType.*;
+import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 /**
  * This service is responsible for
@@ -44,15 +53,15 @@ public class MessageConfirmationProcessor {
     @Autowired
     DCMessagePersistenceService messagePersistenceService;
 
-    public void processConfirmationMessageForMessage(DomibusConnectorMessage originalMessage, DomibusConnectorMessageConfirmation confirmation) {
+    public void processConfirmationMessageForMessage(DomibusConnectorMessage originalMessage, List<DomibusConnectorMessageId> transportId, DomibusConnectorMessageConfirmation confirmation) {
         if (!DomainModelHelper.isBusinessMessage(originalMessage)) {
             throw new IllegalArgumentException("message must be a business message!");
         }
 
-        evidencePersistenceService.persistEvidenceMessageToBusinessMessage(originalMessage, originalMessage.getConnectorMessageId(), confirmation);
+        //TODO: write all transport ids for the evidence into the persistence layer
+        evidencePersistenceService.persistEvidenceMessageToBusinessMessage(originalMessage, transportId.stream().findAny().orElse(null), confirmation);
 
-        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        commonConfirmationProcessor.confirmRejectMessage(confirmation.getEvidenceType(), originalMessage);
+        this.confirmRejectMessage(confirmation.getEvidenceType(), originalMessage);
     }
 
     public void processConfirmationForMessage(DomibusConnectorMessage message, DomibusConnectorMessageConfirmation confirmation) {
@@ -62,11 +71,7 @@ public class MessageConfirmationProcessor {
 
         evidencePersistenceService.persistEvidenceMessageToBusinessMessage(message, message.getConnectorMessageId(), confirmation);
 
-//        message.addTransportedMessageConfirmation(confirmation);
-//        sendConfirmationBack(message, confirmation);
-
-        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        commonConfirmationProcessor.confirmRejectMessage(confirmation.getEvidenceType(), message);
+        this.confirmRejectMessage(confirmation.getEvidenceType(), message);
 
     }
 
@@ -116,6 +121,41 @@ public class MessageConfirmationProcessor {
         }
     }
 
+
+    /**
+     * Sets the correct message state within the database according to the following rules:
+     *      a already rejected message cannot become a confirmed message!
+     *      all evidences of lower priority are ignored
+     *      (this means a RELAY_REMMD_REJECTION cannot overwrite a already processed DELIVERY evidence)
+     *      also see {@link EvidenceType#getPriority()}
+     * @param evidenceType - the evidence Type
+     * @param originalMessage  - the original Message
+     */
+    public void confirmRejectMessage(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage) {
+        Integer highestEvidencePriority = originalMessage.getRelatedMessageConfirmations()
+                .stream()
+                .map(e -> e.getEvidenceType().getPriority())
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+
+        if (evidenceType.getPriority() < highestEvidencePriority) {
+            LOGGER.info("Evidence of type [{}] will not influence the rejected or confirmed state of message [{}]\n because the evidence has lower priority then the already received evidences", evidenceType, originalMessage);
+            return;
+        }
+
+        if (SUBMISSION_REJECTION == evidenceType || NON_DELIVERY == evidenceType || NON_RETRIEVAL == evidenceType || RELAY_REMMD_REJECTION == evidenceType || RELAY_REMMD_FAILURE == evidenceType) {
+            LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] has been rejected by evidence [{}]", originalMessage, evidenceType);
+            messagePersistenceService.rejectMessage(originalMessage);
+        }
+        if (DELIVERY == evidenceType || RETRIEVAL == evidenceType) { //TODO: make a configuration switch to configure which evidence is sufficient to set mesg. into confirmed state!
+            if (messagePersistenceService.checkMessageRejected(originalMessage)) {
+                LOGGER.warn(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] has already been rejected by an negative evidence!\nThe positive evidence of type [{}] will be ignored!", originalMessage, evidenceType);
+            } else {
+                messagePersistenceService.confirmMessage(originalMessage);
+                LOGGER.info(LoggingMarker.Log4jMarker.BUSINESS_LOG, "Message [{}] has been confirmed by evidence [{}]", originalMessage, evidenceType);
+            }
+        }
+    }
 
 
 }
