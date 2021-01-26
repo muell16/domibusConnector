@@ -22,6 +22,7 @@ import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.spy;
  *
  *
  */
+@Disabled
 public class  DomibusConnectorWsBackendImplTest {
 
     DomibusConnectorWsBackendImpl backendWebService;

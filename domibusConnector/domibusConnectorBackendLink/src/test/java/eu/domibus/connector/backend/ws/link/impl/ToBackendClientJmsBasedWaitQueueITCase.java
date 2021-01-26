@@ -27,7 +27,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.jms.Message;
 import javax.jms.Session;
@@ -161,7 +160,7 @@ public class ToBackendClientJmsBasedWaitQueueITCase {
         final List<String> messageIds = new ArrayList<>();
         Mockito.doAnswer((Answer<Void>) (InvocationOnMock invocation) -> {
             DomibusConnectorBackendMessage msg = invocation.getArgument(0);
-            String msgId = msg.getDomibusConnectorMessage().getConnectorMessageId();
+            String msgId = msg.getDomibusConnectorMessage().getConnectorMessageIdAsString();
             messageIds.add(msgId);
             return null;
         }).when(pushMessageToBackend).push(any(DomibusConnectorBackendMessage.class));

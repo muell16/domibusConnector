@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.process.DomibusGatewayLoopbackReceiveProcessor;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import org.slf4j.Logger;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.service.DomibusConnectorGatewayDeliveryService;
@@ -65,10 +65,8 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
             throw new DomibusConnectorControllerException("Message must not be null!");
         }
 
-        if (StringUtils.isEmpty(message.getConnectorMessageId())) {
-            String connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId().getConnectorMessageId();
-            if (StringUtils.isEmpty(connectorMessageId))
-                throw new DomibusConnectorControllerException("domibus connector message ID not generated!");
+        if (message.getConnectorMessageId() == null) {
+            DomibusConnectorMessageId connectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
             message.setConnectorMessageId(connectorMessageId);
         }
         SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message);
@@ -101,7 +99,7 @@ public class DomibusConnectorGatewayDeliveryServiceImpl implements DomibusConnec
         if (message.getMessageContent() != null)
             return true;
 
-        if (!CollectionUtils.isEmpty(message.getMessageConfirmations()))
+        if (!CollectionUtils.isEmpty(message.getTransportedMessageConfirmations()))
             return true;
 
         return false;

@@ -230,7 +230,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
             confirmationBuilder
                     .setEvidence(getBytes(message, counter))
                     .setEvidenceType(DomibusConnectorEvidenceType.valueOf(payDescription));
-            messageBuilder.addConfirmation(confirmationBuilder.build());
+            messageBuilder.addTransportedConfirmations(confirmationBuilder.build());
         }
 
         if (MimeTypeUtils.TEXT_XML_VALUE.equals(payMimeTypeProp) && TOKEN_XML_DESCRIPTION_NAME.equals(payDescription)) {

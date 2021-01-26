@@ -3,10 +3,7 @@ package eu.domibus.connector.link.impl.wsbackendplugin;
 
 import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.controller.service.TransportStateService;
-import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.domain.transition.DomibusConnectorMessagesType;
@@ -127,7 +124,7 @@ public class WsBackendPluginTest {
         epoMessage1.setConnectorMessageId("con1");
         epoMessage1.getMessageDetails().setEbmsMessageId("ebms1");
         DomibusConnectorTransportStep step1 = new DomibusConnectorTransportStep();
-        step1.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(epoMessage1.getConnectorMessageId()));
+        step1.setMessageId(new DomibusConnectorMessageId(epoMessage1.getConnectorMessageIdAsString()));
 
         //return message 1 when plugin asks for it
         Mockito.when(messagePersistenceServiceMock.findMessageByConnectorMessageId(Mockito.eq("con1")))
@@ -139,7 +136,7 @@ public class WsBackendPluginTest {
         epoMessage2.setConnectorMessageId("con2");
         epoMessage2.getMessageDetails().setEbmsMessageId("ebms2");
         DomibusConnectorTransportStep step2 = new DomibusConnectorTransportStep();
-        step2.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(epoMessage2.getConnectorMessageId()));
+        step2.setMessageId(new DomibusConnectorMessageId(epoMessage2.getConnectorMessageIdAsString()));
 
         //return message 2 when plugin asks for it
         Mockito.when(messagePersistenceServiceMock.findMessageByConnectorMessageId(Mockito.eq("con2")))

@@ -62,7 +62,7 @@ public class DeliverMessageFromControllerToBackendService implements DomibusConn
 
     @Override
     public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
-        if (message.getConnectorMessageId() == null) {
+        if (message.getConnectorMessageIdAsString() == null) {
             throw new DomibusConnectorControllerException("cannot handle message without message id");
         }
 

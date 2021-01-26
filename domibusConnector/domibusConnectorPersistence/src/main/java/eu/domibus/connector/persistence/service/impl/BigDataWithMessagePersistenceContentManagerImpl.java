@@ -1,10 +1,7 @@
 
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
@@ -54,8 +51,8 @@ public class BigDataWithMessagePersistenceContentManagerImpl implements DomibusC
 
 
 
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
-        List<LargeFileReference> largeFileReferences = allAvailableReferences.getOrDefault(message.getConnectorMessageId(), new ArrayList<>());
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
+        List<LargeFileReference> largeFileReferences = allAvailableReferences.getOrDefault(message.getConnectorMessageIdAsString(), new ArrayList<>());
         largeFileReferences
                 .stream()
                 .forEach(ref ->  {

@@ -6,6 +6,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.domibus.connector.controller.service.queue.PutMessageOnQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -55,7 +56,7 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
         deliveryService.setPutMessageOnQueue(putMessageOnQueue);
         deliveryService.setDomibusGatewayLoopbackReceiveProcessor(domibusGatewayLoopbackReceiveProcessor);
 
-        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessage.DomibusConnectorMessageId("id1"));
+        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessageId("id1"));
         Mockito.when(messagePersistenceService.persistMessageIntoDatabase(any(DomibusConnectorMessage.class), any(DomibusConnectorMessageDirection.class)))
                 .then((invoc) -> invoc.getArgument(0));
 
@@ -106,9 +107,9 @@ public class DomibusConnectorGatewayDeliveryServiceImplTest {
         Assertions.assertThrows(DomibusConnectorControllerException.class, () -> {
             DomibusConnectorMessage message = DomibusConnectorMessageBuilder.createBuilder()
                     .setMessageDetails(DomainEntityCreator.createDomibusConnectorMessageDetails())
-                    .addConfirmation(DomainEntityCreator.createMessageDeliveryConfirmation())
+                    .addTransportedConfirmations(DomainEntityCreator.createMessageDeliveryConfirmation())
                     .build();
-            message.getMessageConfirmations().clear();
+            message.getTransportedMessageConfirmations().clear();
 
             deliveryService.deliverMessageFromGatewayToController(message);
         });

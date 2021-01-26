@@ -12,20 +12,18 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.dao.DomibusConnectorBigDataDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorBigData;
@@ -228,9 +226,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
+    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
 
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
 
         Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
         all.forEach(bigData -> {
@@ -238,8 +236,8 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
             Optional<PDomibusConnectorMessage> byId = messageDao.findById(messageId);
 
             if (byId.isPresent()) {
-                DomibusConnectorMessage.DomibusConnectorMessageId connectorMessageId =
-                        new DomibusConnectorMessage.DomibusConnectorMessageId(byId.get().getConnectorMessageId());
+                DomibusConnectorMessageId connectorMessageId =
+                        new DomibusConnectorMessageId(byId.get().getConnectorMessageId());
 
                 if (!map.containsKey(connectorMessageId)) {
                     map.put(connectorMessageId, new ArrayList<>());

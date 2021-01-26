@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -158,7 +159,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
         DomibusConnectorTransportStep transportStep = new DomibusConnectorTransportStep();
         transportStep.setLinkPartnerName(linkPartnerName);
         transportStep.setCreated(LocalDateTime.now());
-        transportStep.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
+        transportStep.setMessageId(new DomibusConnectorMessageId(message.getConnectorMessageIdAsString()));
 
         transportStep = transportStepPersistenceService.createNewTransportStep(transportStep);
         LOGGER.debug("#createTransportFor:: created new transport step within database with id [{}]", transportStep.getTransportId());

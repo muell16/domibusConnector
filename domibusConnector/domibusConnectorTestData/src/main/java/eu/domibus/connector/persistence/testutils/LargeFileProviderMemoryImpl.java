@@ -1,6 +1,6 @@
 package eu.domibus.connector.persistence.testutils;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.testutil.LargeFileReferenceGetSetBased;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
@@ -60,7 +60,7 @@ public class LargeFileProviderMemoryImpl implements LargeFilePersistenceProvider
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
+    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
         //just return empty map
         return new HashMap<>();
     }

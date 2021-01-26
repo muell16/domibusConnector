@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendMessage;
 import eu.domibus.connector.backend.ws.link.spring.BackendLinkInternalWaitQueueProperties;
+import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,6 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.jms.*;
 
-import eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactory;
-import eu.domibus.connector.tools.logging.LoggingMarker;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -59,6 +58,8 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
 
     private long receiveTimeout;
     private String waitQueueName;
+
+    @DomainModelJsonObjectMapper
     private ObjectMapper mapper;
 
 
@@ -67,7 +68,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         this.waitQueueName = backendLinkInternalWaitQueueProperties.getName();
         this.receiveTimeout = backendLinkInternalWaitQueueProperties.getReceiveTimeout();
 
-        this.mapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
+//        this.mapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
 
     }
 
@@ -86,7 +87,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
         }
 
         final String backendClientName = message.getMessageDetails().getConnectorBackendClientName();
-        final String connectorMessageId = message.getConnectorMessageId();
+        final String connectorMessageId = message.getConnectorMessageIdAsString();
         LOGGER.debug("#putMessageInWaitingQueue: put message id [{}] for backendClientName [{}] in waiting queue [{}]",
                 connectorMessageId, backendClientName, waitQueueName);
         jmsTemplate.send(waitQueueName, (Session session) -> {
@@ -116,7 +117,7 @@ public class ToBackendClientJmsBasedWaitQueue implements MessageToBackendClientW
             LOGGER.trace("#pushToBackend: jms listener received jms message [{}]", msg);
             DomibusConnectorBackendMessage backendMessage = mapper.readValue(msg.getText(), DomibusConnectorBackendMessage.class);
 //        DomibusConnectorBackendMessage backendMessage = (DomibusConnectorBackendMessage) msg.getObject();
-            SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(backendMessage.getDomibusConnectorMessage().getConnectorMessageId());
+            SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(backendMessage.getDomibusConnectorMessage().getConnectorMessageIdAsString());
             pushMessageToBackendCallback.push(backendMessage);
             SetMessageOnLoggingContext.putConnectorMessageIdOnMDC((String)null);
         } catch (JsonProcessingException e) {

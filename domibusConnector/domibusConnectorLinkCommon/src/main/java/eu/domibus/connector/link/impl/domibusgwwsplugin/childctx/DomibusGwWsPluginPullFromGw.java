@@ -6,7 +6,7 @@ import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerato
 import eu.domibus.connector.controller.service.PullFromLink;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.builder.*;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
@@ -69,7 +69,7 @@ public class DomibusGwWsPluginPullFromGw implements PullFromLink {
         Holder<RetrieveMessageResponse> retrieveMessageResponseHolder = new Holder<>();
         Holder<Messaging> messagingHolder = new Holder<Messaging>();
 
-        DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId = idGenerator.generateDomibusConnectorMessageId();
+        DomibusConnectorMessageId dcMsgId = idGenerator.generateDomibusConnectorMessageId();
 
         try {
             backendInterface.retrieveMessage(retrieveMessageRequest, retrieveMessageResponseHolder, messagingHolder);
@@ -92,7 +92,7 @@ public class DomibusGwWsPluginPullFromGw implements PullFromLink {
         }
     }
 
-    private void mapPayloads(DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId, DomibusConnectorMessageBuilder msgBuilder, RetrieveMessageResponse response, Messaging messaging) {
+    private void mapPayloads(DomibusConnectorMessageId dcMsgId, DomibusConnectorMessageBuilder msgBuilder, RetrieveMessageResponse response, Messaging messaging) {
         Map<String, PartInfo> partInfoMap = messaging
                 .getUserMessage()
                 .getPayloadInfo()
@@ -106,7 +106,7 @@ public class DomibusGwWsPluginPullFromGw implements PullFromLink {
 
     private static final Set<String> ConfirmationNames = Arrays.stream(DomibusConnectorConfirmationType.values()).map(c -> c.value()).collect(Collectors.toSet());
 
-    private void mapPayload(DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId, DomibusConnectorMessageContentBuilder contentBuilder, DomibusConnectorMessageBuilder msgBuilder, Map<String, PartInfo> partInfoMap, LargePayloadType largePayloadType) {
+    private void mapPayload(DomibusConnectorMessageId dcMsgId, DomibusConnectorMessageContentBuilder contentBuilder, DomibusConnectorMessageBuilder msgBuilder, Map<String, PartInfo> partInfoMap, LargePayloadType largePayloadType) {
         String payloadId = largePayloadType.getPayloadId();
         PartInfo partInfo = partInfoMap.get(payloadId);
         if (partInfo == null) {
@@ -135,7 +135,7 @@ public class DomibusGwWsPluginPullFromGw implements PullFromLink {
     }
 
     private void mapConfirmationXml(String name, DomibusConnectorMessageBuilder msgBuilder, PartInfo partInfo, LargePayloadType largePayloadType) {
-        msgBuilder.addConfirmation(DomibusConnectorMessageConfirmationBuilder.createBuilder()
+        msgBuilder.addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()
                 .setEvidence(convertDataHandlerToByteArray(largePayloadType.getValue()))
                 .setEvidenceType(DomibusConnectorEvidenceType.valueOf(name))
         .build());
@@ -154,7 +154,7 @@ public class DomibusGwWsPluginPullFromGw implements PullFromLink {
         }
     }
 
-    private void mapAsics(DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId, DomibusConnectorMessageContentBuilder contentBuilder, DomibusConnectorMessageBuilder msgBuilder, PartInfo partInfo, LargePayloadType largePayloadType) {
+    private void mapAsics(DomibusConnectorMessageId dcMsgId, DomibusConnectorMessageContentBuilder contentBuilder, DomibusConnectorMessageBuilder msgBuilder, PartInfo partInfo, LargePayloadType largePayloadType) {
         LargeFileReference docRef  =
                 largeFilePersistenceProvider.createDomibusConnectorBigDataReference(dcMsgId.getConnectorMessageId(), DomainModelHelper.ASICS_CONTAINER_IDENTIFIER, DomibusGwConstants.ASIC_S_MIMETYPE);
 

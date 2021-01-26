@@ -11,13 +11,14 @@ import java.util.List;
 public class DomibusConnectorTransportStep {
 
     private TransportStateService.TransportId transportId;
-    private DomibusConnectorMessage.DomibusConnectorMessageId messageId;
+    private DomibusConnectorMessageId messageId;
     private DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName;
     private int attempt = -1;
     private java.lang.String transportSystemMessageId;
     private java.lang.String remoteMessageId;
     private LocalDateTime created;
     private List<DomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
+    private LocalDateTime finalStateReached;
 
     public TransportStateService.TransportId getTransportId() {
         return transportId;
@@ -27,11 +28,11 @@ public class DomibusConnectorTransportStep {
         this.transportId = transportId;
     }
 
-    public DomibusConnectorMessage.DomibusConnectorMessageId getMessageId() {
+    public DomibusConnectorMessageId getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(DomibusConnectorMessage.DomibusConnectorMessageId messageId) {
+    public void setMessageId(DomibusConnectorMessageId messageId) {
         this.messageId = messageId;
     }
 
@@ -84,6 +85,10 @@ public class DomibusConnectorTransportStep {
     }
 
     public void addTransportStatus(DomibusConnectorTransportStepStatusUpdate stepStatusUpdate) {
+        if (stepStatusUpdate.getTransportState().getPriority() >= 10) {
+            this.finalStateReached = LocalDateTime.now();
+        }
+
         int max = this.statusUpdates.stream()
                 .map(DomibusConnectorTransportStepStatusUpdate::getTransportState)
                 .map(TransportState::getPriority)
@@ -98,6 +103,14 @@ public class DomibusConnectorTransportStep {
         }
 
 
+    }
+
+    public LocalDateTime getFinalStateReached() {
+        return finalStateReached;
+    }
+
+    public void setFinalStateReached(LocalDateTime setFinalStateReached) {
+        this.finalStateReached = setFinalStateReached;
     }
 
     public static class DomibusConnectorTransportStepStatusUpdate {

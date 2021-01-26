@@ -69,26 +69,25 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
             LOGGER.debug("message transport exception is ignored for evidence message!");
             return;
         }
+        try {
 
-        CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
+            CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
 
-        CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessage = confirmationMessageBuilder
+            CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper evidenceMessage = confirmationMessageBuilder
                 .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
-                .switchFromToParty()
+                .switchFromToAttributes()
                 .withDirection(MessageTargetSource.GATEWAY)
                 .build();
 
 
-        //persist evidence
-        try {
-            evidenceMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
-        } catch (Exception e) {
-            //ignore evidence persisting errors...
-            LOGGER.warn("An error occured while saving NON_DELIVERY to business message");
-        }
+            //persist evidence
 
-        try {
+            //TODO: append message to business message...
+
+            LOGGER.warn("An error occured while saving NON_DELIVERY to business message");
+
             //send evidence to GW
+            evidenceMessage.persistMessage();
             gwSubmissionService.submitToGateway(evidenceMessage.getEvidenceMessage());
         } catch (DomibusConnectorGatewaySubmissionException e) {
             //TODO: only log...no further processing...
@@ -97,7 +96,7 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
 
         //set message to rejected!
         messagePersistenceService.rejectMessage(originalMessage);
-        LOGGER.info(LoggingMarker.BUSINESS_LOG, "Message with connector id [{}] has been marked as rejected in db!", originalMessage.getConnectorMessageId());
+        LOGGER.info(LoggingMarker.BUSINESS_LOG, "Message with connector id [{}] has been marked as rejected in db!", originalMessage.getConnectorMessageIdAsString());
     }
 
 }

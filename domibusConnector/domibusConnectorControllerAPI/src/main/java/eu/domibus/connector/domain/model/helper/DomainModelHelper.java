@@ -5,7 +5,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 
-import eu.domibus.connector.domain.model.LargeFileReference;
 import org.springframework.lang.Nullable;
 
 /**
@@ -21,7 +20,7 @@ public class DomainModelHelper {
      * Checks if the message is an evidence message
      *  <ul>
      *      <li>message content of the message must be null {@link DomibusConnectorMessage#getMessageContent()}</li>
-     *      <li>the message must have at least one confirmation {@link DomibusConnectorMessage#getMessageConfirmations()}</li>
+     *      <li>the message must have at least one confirmation {@link DomibusConnectorMessage#getTransportedMessageConfirmations()}</li>
      *  </ul>
      *
      * @param message - the message to check
@@ -31,7 +30,7 @@ public class DomainModelHelper {
         if (message == null) {
             throw new IllegalArgumentException("Message is not allowed to be null!");
         }
-    	return message.getMessageContent() == null && message.getMessageConfirmations().size() > 0;
+    	return message.getMessageContent() == null && message.getTransportedMessageConfirmations().size() > 0;
     }
 
     /**
@@ -51,10 +50,10 @@ public class DomainModelHelper {
      */
     public static @Nullable
     DomibusConnectorEvidenceType getEvidenceTypeOfEvidenceMessage(DomibusConnectorMessage message) {
-        if (message == null || message.getMessageConfirmations() == null || message.getMessageConfirmations().size() == 0) {
+        if (message == null || message.getTransportedMessageConfirmations() == null || message.getTransportedMessageConfirmations().size() == 0) {
             return null;
         }
-        return message.getMessageConfirmations().get(0).getEvidenceType();
+        return message.getTransportedMessageConfirmations().get(0).getEvidenceType();
     }
 
     /**
@@ -79,10 +78,10 @@ public class DomainModelHelper {
 
         return message.getMessageDetails().getDirection() == DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY &&
                 isEvidenceMessage(message)
-                && message.getMessageConfirmations() != null
-                && message.getMessageConfirmations().size() == 1
-                && message.getMessageConfirmations().get(0).getEvidence() == null
-                || message.getMessageConfirmations().get(0).getEvidence().length == 0;
+                && message.getTransportedMessageConfirmations() != null
+                && message.getTransportedMessageConfirmations().size() == 1
+                && message.getTransportedMessageConfirmations().get(0).getEvidence() == null
+                || message.getTransportedMessageConfirmations().get(0).getEvidence().length == 0;
     }
 
 

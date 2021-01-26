@@ -1,8 +1,7 @@
 package eu.domibus.connector.persistence.largefiles.provider;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
@@ -10,7 +9,6 @@ import liquibase.util.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StreamUtils;
 
@@ -203,12 +201,12 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
+    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
         Path storagePath = getStoragePath();
         try {
             return Files.list(storagePath)
                     .collect(Collectors.toMap(
-                            path -> new DomibusConnectorMessage.DomibusConnectorMessageId(path.getFileName().toString()),
+                            path -> new DomibusConnectorMessageId(path.getFileName().toString()),
                             this::listReferences
                     ));
         } catch (IOException e) {

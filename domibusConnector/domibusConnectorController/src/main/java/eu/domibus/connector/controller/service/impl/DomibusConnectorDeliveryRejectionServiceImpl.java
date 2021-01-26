@@ -26,7 +26,7 @@ public class DomibusConnectorDeliveryRejectionServiceImpl implements DomibusConn
      */
     @Override
     public void rejectDelivery(DomibusConnectorRejectDeliveryException cause) {
-        LOGGER.info(LoggingMarker.BUSINESS_LOG, "Message [{}] has been rejected by the backend! Because of [{}]", cause.getConnectorMessage().getConnectorMessageId(), cause.getMessage());
+        LOGGER.info(LoggingMarker.BUSINESS_LOG, "Message [{}] has been rejected by the backend! Because of [{}]", cause.getConnectorMessage().getConnectorMessageIdAsString(), cause.getMessage());
         domibusConnectorDeliveryRejectionProcessor.processMessageTransportException(cause);
     }
 

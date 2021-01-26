@@ -81,9 +81,9 @@ public class GatewayToBackendMessageProcessorTest {
 //        gatewayToBackendMessageProcessor.setActionPersistenceService(actionPersistenceService);
 //        gatewayToBackendMessageProcessor.setEvidencePersistenceService(evidencePersistenceService);
 //        gatewayToBackendMessageProcessor.setEvidencesToolkit(evidencesToolkit);
-        gatewayToBackendMessageProcessor.setGwSubmissionService(gwSubmissionService);
+//        gatewayToBackendMessageProcessor.setGwSubmissionService(gwSubmissionService);
         gatewayToBackendMessageProcessor.setMessagePersistenceService(messagePersistenceService);
-        gatewayToBackendMessageProcessor.setBackendDeliveryService(backendDeliveryService);
+//        gatewayToBackendMessageProcessor.setBackendDeliveryService(backendDeliveryService);
         gatewayToBackendMessageProcessor.setSecurityToolkit(securityToolkit);
 //        gatewayToBackendMessageProcessor.setMessageIdGenerator(() -> UUID.randomUUID().toString());
         gatewayToBackendMessageProcessor.setMessageErrorPersistenceService(messageErrorPersistenceService);
@@ -125,8 +125,8 @@ public class GatewayToBackendMessageProcessorTest {
         message.getMessageDetails().setConnectorBackendClientName(null);
         message.getMessageDetails().setBackendMessageId(null);
 
-        message.getMessageConfirmations().clear();
-        message.addConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
+        message.getTransportedMessageConfirmations().clear();
+        message.addTransportedMessageConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
 
         gatewayToBackendMessageProcessor.processMessage(message);
 
@@ -155,8 +155,8 @@ public class GatewayToBackendMessageProcessorTest {
                 .build());
         message.getMessageDetails().setService(new DomibusConnectorService(CONNECTOR_TEST_SERVICE_STRING, ""));
 
-        message.getMessageConfirmations().clear();
-        message.addConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
+        message.getTransportedMessageConfirmations().clear();
+        message.addTransportedMessageConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
 
         gatewayToBackendMessageProcessor.processMessage(message);
 
@@ -227,7 +227,7 @@ public class GatewayToBackendMessageProcessorTest {
         assertThat(exceptionThrown).isTrue();
         assertThat(toBackendDeliveredMessages).hasSize(0);
         assertThat(toGwDeliveredMessages).hasSize(2);
-        assertThat(toGwDeliveredMessages.get(1).getMessageConfirmations().get(0).getEvidenceType())
+        assertThat(toGwDeliveredMessages.get(1).getTransportedMessageConfirmations().get(0).getEvidenceType())
                 .isEqualTo(DomibusConnectorEvidenceType.NON_DELIVERY);
 
 

@@ -4,6 +4,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.dao.CommonPersistenceTest;
@@ -57,7 +58,7 @@ class TransportStepPersistenceServiceImplITCase {
 
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 
-        step.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId("msg2"));
+        step.setMessageId(new DomibusConnectorMessageId("msg2"));
         step.setTransportId(new TransportStateService.TransportId("msg2_link2_1"));
         step.setAttempt(1);
         step.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("link2"));

@@ -1,8 +1,7 @@
 package eu.domibus.connector.persistence.largefiles.provider;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceServiceFilesystemImpl.FileBasedLargeFileReference;
 import eu.domibus.connector.persistence.spring.DomibusConnectorFilesystemPersistenceProperties;
 import eu.domibus.connector.testutil.assertj.DomibusByteArrayAssert;
@@ -188,11 +187,11 @@ public class LargeFilePersistenceServiceFilesystemImplTest {
 
     @Test
     public void testGetAllAvailableReferences() {
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences =
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences =
                 filesystemImpl.getAllAvailableReferences();
 
         assertThat(allAvailableReferences).hasSize(2);
-        assertThat(allAvailableReferences.get(new DomibusConnectorMessage.DomibusConnectorMessageId("testmsg2"))).hasSize(2);
+        assertThat(allAvailableReferences.get(new DomibusConnectorMessageId("testmsg2"))).hasSize(2);
     }
 
 }

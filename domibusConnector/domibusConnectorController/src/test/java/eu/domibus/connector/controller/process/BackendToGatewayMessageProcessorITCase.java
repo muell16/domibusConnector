@@ -98,13 +98,13 @@ public class BackendToGatewayMessageProcessorITCase {
             assertThat(toBackendDeliveredMessages).hasSize(1);
 
             DomibusConnectorMessage toGwMsg = toGatewayDeliveredMessages.take();
-            assertThat(toGwMsg.getMessageConfirmations()).hasSize(1); //should contain submission acceptance evidence!
-            assertThat(toGwMsg.getMessageConfirmations().get(0).getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+            assertThat(toGwMsg.getTransportedMessageConfirmations()).hasSize(1); //should contain submission acceptance evidence!
+            assertThat(toGwMsg.getTransportedMessageConfirmations().get(0).getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 
 
             DomibusConnectorMessage evidence = toBackendDeliveredMessages.take();
-            assertThat(evidence.getMessageConfirmations()).hasSize(1);
-            assertThat(evidence.getMessageConfirmations().get(0).getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+            assertThat(evidence.getTransportedMessageConfirmations()).hasSize(1);
+            assertThat(evidence.getTransportedMessageConfirmations().get(0).getEvidenceType()).isEqualTo(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
 
             //TODO: verify DB
             DatabaseDataSourceConnection conn = new DatabaseDataSourceConnection(dataSource);
@@ -179,7 +179,7 @@ public class BackendToGatewayMessageProcessorITCase {
 
 
             DomibusConnectorMessage message = prepareMessage("msg3");
-            String connectorMessageid = message.getConnectorMessageId();
+            String connectorMessageid = message.getConnectorMessageIdAsString();
             try {
                 backendToGatewayMessageProcessor.processMessage(message);
             } catch (Exception e) {
@@ -220,7 +220,7 @@ public class BackendToGatewayMessageProcessorITCase {
         message.getMessageDetails().setBackendMessageId("backend_" + idsuffix);
         message.getMessageDetails().setConnectorBackendClientName("bob");
         message.setConnectorMessageId("msg_" + idsuffix);
-        message.getMessageConfirmations().clear();
+        message.getTransportedMessageConfirmations().clear();
 
 
         LargeFileReference bigDataReference = LoadStoreMessageFromPath.loadResourceAsBigDataRef(new ClassPathResource("testmessages/testdata/ExamplePdfSigned.pdf"));

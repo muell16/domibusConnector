@@ -4,7 +4,6 @@ import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
 import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -44,11 +43,6 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         this.messageDao = messageDao;
     }
 
-//    @Autowired
-//    public void setEvidenceDao(DomibusConnectorEvidenceDao evidenceDao) {
-//        this.evidenceDao = evidenceDao;
-//    }
-
     @Autowired
     public void setInternalMessageInfoPersistenceService(InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService) {
         this.internalMessageInfoPersistenceService = internalMessageInfoPersistenceService;
@@ -58,11 +52,6 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
     public void setMsgContentService(MsgContentPersistenceService msgContService) {
         this.msgContentService = msgContService;
     }
-
-//    @Autowired
-//    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceServiceImpl evidencePersistenceService) {
-//        this.evidencePersistenceService = evidencePersistenceService;
-//    }
 
 
     /*
@@ -118,7 +107,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
-        if (message.getConnectorMessageId() == null) {
+        if (message.getConnectorMessageIdAsString() == null) {
             throw new IllegalArgumentException("connectorMessageId (getConnectorMessageId()) must be set!");
         }
 
@@ -133,7 +122,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
-        dbMessage.setConnectorMessageId(message.getConnectorMessageId());
+        dbMessage.setConnectorMessageId(message.getConnectorMessageIdAsString());
         dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
 
         try {
@@ -163,7 +152,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
      * @return the found message or null
      */
     PDomibusConnectorMessage findMessageByMessage(@Nonnull DomibusConnectorMessage message) {
-        String connectorMessageId = message.getConnectorMessageId();
+        String connectorMessageId = message.getConnectorMessageIdAsString();
         PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
         if (dbMessage == null) {
             LOGGER.warn("No message found with connector message id [{}] ", connectorMessageId);
@@ -193,7 +182,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
-        dbMessage.setConnectorMessageId(message.getConnectorMessageId());
+        dbMessage.setConnectorMessageId(message.getConnectorMessageIdAsString());
         dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
 
 
@@ -213,11 +202,21 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
         this.msgContentService.storeMsgContent(message);
 
+        mapRelatedConfirmations(dbMessage, message);        
+        
         this.messageDao.save(dbMessage);
 
-        //mapMessageInfoIntoMessageDetails(dbMessage, messageDetails);
+
 
         return message;
+    }
+
+    private void mapRelatedConfirmations(PDomibusConnectorMessage dbMessage, DomibusConnectorMessage message) {
+        List<PDomibusConnectorEvidence> collect = message.getRelatedMessageConfirmations()
+                .stream()
+                .map(MessageConfirmationMapper::mapFromDomainToDb)
+                .collect(Collectors.toList());
+
     }
 
     /**
@@ -229,8 +228,8 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         LOGGER.trace("#setDeliveredToGateway: with message [{}]", message);
         PDomibusConnectorMessage dbMessage;
 
-        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
-        LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
+        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
+        LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageIdAsString());
         messageDao.setMessageDeliveredToGateway(dbMessage);
 
     }
@@ -243,8 +242,8 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
     public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
         PDomibusConnectorMessage dbMessage;
 
-        LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageId());
-        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageIdAsString());
+        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
         messageDao.setMessageDeliveredToBackend(dbMessage);
 
     }
@@ -387,9 +386,21 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
         this.msgContentService.loadMessagePayloads(messageBuilder, dbMessage);
 
-        return messageBuilder.build();
+        loadRelatedMessages(messageBuilder, dbMessage);
+
+        DomibusConnectorMessage message =  messageBuilder.build();
+
+
+        return message;
     }
 
+
+    private void loadRelatedMessages(DomibusConnectorMessageBuilder messageBuilder, PDomibusConnectorMessage dbMessage) {
+        List<DomibusConnectorMessageConfirmation> collect = dbMessage.getRelatedEvidences().stream()
+                .map(MessageConfirmationMapper::mapFromDbToDomain)
+                .collect(Collectors.toList());
+        messageBuilder.addRelatedConfirmations(collect);
+    }
 
 
 }

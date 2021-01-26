@@ -61,7 +61,7 @@ public class SubmitToGwJmsPlugin implements SubmitToLink {
                 MapMessage jmsMsg = session.createMapMessage();
 
                 jmsMsg.setStringProperty(MESSAGE_TYPE_PROPERTY_NAME, MESSAGE_TYPE_VALUE_SUBMIT_MESSAGE);
-                jmsMsg.setJMSCorrelationID(message.getConnectorMessageId());
+                jmsMsg.setJMSCorrelationID(message.getConnectorMessageIdAsString());
 
                 jmsMsg.setStringProperty(PROTOCOL_PROPERTY_NAME, PROTOCOL_VALUE_DEFAULT);
 
@@ -103,7 +103,7 @@ public class SubmitToGwJmsPlugin implements SubmitToLink {
                     payloadCounter++;
                 }
 
-                Iterator<DomibusConnectorMessageConfirmation> confirmationIterator = message.getMessageConfirmations().iterator();
+                Iterator<DomibusConnectorMessageConfirmation> confirmationIterator = message.getTransportedMessageConfirmations().iterator();
                 while (iterator.hasNext()) {
                     DomibusConnectorMessageConfirmation c = confirmationIterator.next();
                     addPayload(message, jmsMsg, payloadCounter, c.getEvidence(), c.getEvidenceType().toString(), MimeTypeUtils.TEXT_XML_VALUE);

@@ -33,12 +33,14 @@ public class StoreMessageExceptionIntoDatabaseAspect {
             argNames="annot")
     public void handleException(ProceedingJoinPoint pjp, StoreMessageExceptionIntoDatabase annot) throws Throwable {
         boolean passException = annot.passException();
+        String text = annot.infoText();
         LOGGER.trace("executing Aspect StoreMessageExceptionIntoDatabaseAspect");
+
         try {
             pjp.proceed();
         } catch (DomibusConnectorMessageException exception) {
 
-            storeExceptionToDb(exception);
+            storeExceptionToDb(exception, text);
             
             if (passException) {
                 LOGGER.debug("pass exception is [{}] so passing exception on", passException);
@@ -49,7 +51,7 @@ public class StoreMessageExceptionIntoDatabaseAspect {
         }         
     }
         
-    private void storeExceptionToDb(DomibusConnectorMessageException exception) {
+    private void storeExceptionToDb(DomibusConnectorMessageException exception, String text) {
         LOGGER.trace("storeExceptionIntoDatabase with exception [{}]", exception);
         if (exception == null) {
             throw new IllegalArgumentException("Cannot take null as exception here!");
@@ -57,11 +59,14 @@ public class StoreMessageExceptionIntoDatabaseAspect {
         
       
         DomibusConnectorMessage message = exception.getDomibusConnectorMessage();        
-        if (message != null && message.getConnectorMessageId() != null) {      
+        if (message != null && message.getConnectorMessageIdAsString() != null) {
             
             DomibusConnectorMessageErrorBuilder messageErrorBuilder = DomibusConnectorMessageErrorBuilder.createBuilder()
                     .setText(exception.getMessage())
                     .setDetails(getStackTraceAsString(exception));
+            if (exception.getMessage() == null) {
+                messageErrorBuilder.setText("");
+            }
             
             if (exception.getCause() != null) {
                 messageErrorBuilder.setSource(exception.getCause().getClass().getName());
@@ -69,11 +74,11 @@ public class StoreMessageExceptionIntoDatabaseAspect {
                                         
             DomibusConnectorMessageError messageError = messageErrorBuilder.build();
                     
-            messageErrorPersistenceService.persistMessageError(message.getConnectorMessageId(), messageError);
+            messageErrorPersistenceService.persistMessageError(message.getConnectorMessageId().getConnectorMessageId(), messageError);
 
             
         } else {
-            String connectorId = message == null ? null : message.getConnectorMessageId();
+            String connectorId = message == null ? null : message.getConnectorMessageIdAsString();
             LOGGER.error("Cannot store exception into database either message [{}] or connectoMessageId [{}] is null!", 
                     message, connectorId);
         } 
@@ -90,11 +95,11 @@ public class StoreMessageExceptionIntoDatabaseAspect {
     }
     
     
-    @Before("bean(mybean)")
-    public void doAccessCheck() {
-        // ...
-        System.out.println("ACCESS CHECK PERFORMED");
-        LOGGER.error("access check running!");
-    }
+//    @Before("bean(mybean)")
+//    public void doAccessCheck() {
+//        // ...
+//        System.out.println("ACCESS CHECK PERFORMED");
+//        LOGGER.error("access check running!");
+//    }
     
 }

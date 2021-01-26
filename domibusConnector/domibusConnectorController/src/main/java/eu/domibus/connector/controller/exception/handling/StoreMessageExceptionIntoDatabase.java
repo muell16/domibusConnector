@@ -20,5 +20,7 @@ public @interface StoreMessageExceptionIntoDatabase {
      * into the database?
      */
     public boolean passException() default false;
+
+    public String infoText() default "";
     
 }

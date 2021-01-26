@@ -305,7 +305,7 @@ public class DCMessagePersistenceServiceImplTest {
         messageConfirmation.setEvidence("MYEVIDENCE".getBytes());
         messageConfirmation.setEvidenceType(DomibusConnectorEvidenceType.DELIVERY);
         
-        message.addConfirmation(messageConfirmation);
+        message.addTransportedMessageConfirmation(messageConfirmation);
         
         message.getMessageDetails().setEbmsMessageId("ebmsid");
         message.getMessageDetails().setConversationId("conversation1");
@@ -429,8 +429,8 @@ public class DCMessagePersistenceServiceImplTest {
         String connectorMessageId = "msgid";
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         message.setConnectorMessageId(connectorMessageId);
-        message.addConfirmation(DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation()); //add DELIVERY evidence
-        message.addConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
+        message.addTransportedMessageConfirmation(DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation()); //add DELIVERY evidence
+        message.addTransportedMessageConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         //Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
@@ -503,8 +503,8 @@ public class DCMessagePersistenceServiceImplTest {
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         String msgId = "msgid";
         message.setConnectorMessageId(msgId);
-        message.addConfirmation(DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation());
-        message.addConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
+        message.addTransportedMessageConfirmation(DomainEntityCreatorForPersistenceTests.createMessageDeliveryConfirmation());
+        message.addTransportedMessageConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);

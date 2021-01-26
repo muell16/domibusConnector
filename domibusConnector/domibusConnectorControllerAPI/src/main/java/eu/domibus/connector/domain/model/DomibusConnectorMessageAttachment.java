@@ -27,7 +27,7 @@ public class DomibusConnectorMessageAttachment implements Serializable {
 	/**
 	 * Constructor filling the two mandatory attributes
 	 * 
-	 * @param attachment    The data itself in byte[]
+	 * @param attachment    The data
 	 * @param identifier    Identifies the attachment for transformation and
 	 * transportation
 	 */

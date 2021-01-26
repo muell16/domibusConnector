@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 
@@ -68,7 +68,7 @@ public interface LargeFilePersistenceService {
     /**
      * Returns a map of ALL currently not deleted bigDataReferences
      */
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
+    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
 
     boolean isStorageProviderAvailable(LargeFileReference toCopy);
 

@@ -218,7 +218,7 @@ public class MessagePersistenceServiceITCase {
             message.addAttachment(attach1);
 
             DomibusConnectorMessageConfirmation confirmation = new DomibusConnectorMessageConfirmation(DomibusConnectorEvidenceType.DELIVERY, "hallowelt".getBytes());
-            message.addConfirmation(confirmation);
+            message.addTransportedMessageConfirmation(confirmation);
 
 
             messagePersistenceService.persistMessageIntoDatabase(message, messageDirection);

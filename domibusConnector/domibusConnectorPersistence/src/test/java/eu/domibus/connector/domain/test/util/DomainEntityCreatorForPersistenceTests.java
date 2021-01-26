@@ -123,7 +123,7 @@ public class DomainEntityCreatorForPersistenceTests {
         messageContent.setDocument(messageDocument);
         
         DomibusConnectorMessage msg = new DomibusConnectorMessage(msgId, messageDetails, messageContent);
-        msg.addConfirmation(createMessageDeliveryConfirmation());
+        msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
         msg.addAttachment(createSimpleMessageAttachment());
         msg.addError(createMessageError());
         return msg;

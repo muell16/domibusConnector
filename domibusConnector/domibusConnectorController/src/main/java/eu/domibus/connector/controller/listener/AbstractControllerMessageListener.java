@@ -33,7 +33,7 @@ public abstract class AbstractControllerMessageListener {
 				// as there is a message content, it cannot only be a confirmation message
 				getLogger().trace("#startProcessing: with message [{}] as message", connectorMessage);
 				getMessageProcessor().processMessage(connectorMessage);
-			} else if (!CollectionUtils.isEmpty(connectorMessage.getMessageConfirmations())) {
+			} else if (!CollectionUtils.isEmpty(connectorMessage.getTransportedMessageConfirmations())) {
 				// as there is no message content, but at least one message confirmation,
 				// it is a confirmation message
 				getLogger().trace("#startProcessing: with message [{}] as confirmation", connectorMessage);

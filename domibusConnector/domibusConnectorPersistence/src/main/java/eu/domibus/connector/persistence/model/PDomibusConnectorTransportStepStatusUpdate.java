@@ -23,12 +23,10 @@ public class PDomibusConnectorTransportStepStatusUpdate {
 
     @Id
     @Column(name = "STATE")
-    //does not work becaus it is part of ID!
-    //instead @PrePersist is used
-    @Convert(converter = TransportStateJpaConverter.class)
+    //@Convert(converter = TransportStateJpaConverter.class)
+    //does not work because it is part of ID!
+    //instead convert within setter/getter!
     private String transportStateString;
-
-    private transient TransportState transportState = TransportState.PENDING;
 
     @Column(name = "CREATED")
     private LocalDateTime created;
@@ -38,18 +36,8 @@ public class PDomibusConnectorTransportStepStatusUpdate {
     private java.lang.String text;
 
     @PrePersist
-    @PreUpdate
     public void beforePersist() {
         created = LocalDateTime.now();
-        this.transportStateString = TransportStateJpaConverter.converter
-                .convertToDatabaseColumn(this.transportState);
-    }
-
-    @PostLoad
-    @PostConstruct
-    public void postConstructLoad() {
-        this.transportState = TransportStateJpaConverter.converter
-                .convertToEntityAttribute(this.transportStateString);
     }
 
     public PDomibusConnectorTransportStep getTransportStep() {
@@ -61,11 +49,13 @@ public class PDomibusConnectorTransportStepStatusUpdate {
     }
 
     public TransportState getTransportState() {
-        return transportState;
+        return TransportStateJpaConverter.converter
+                .convertToEntityAttribute(this.transportStateString);
     }
 
     public void setTransportState(TransportState transportState) {
-        this.transportState = transportState;
+        this.transportStateString = TransportStateJpaConverter.converter
+                .convertToDatabaseColumn(transportState);
     }
 
     public LocalDateTime getCreated() {

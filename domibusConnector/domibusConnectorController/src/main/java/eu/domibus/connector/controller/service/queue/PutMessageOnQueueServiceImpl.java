@@ -2,31 +2,22 @@ package eu.domibus.connector.controller.service.queue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import static eu.domibus.connector.controller.service.queue.MessageOnQueueConstants.CONFIRMATION_TYPE_PROPERTY_NAME;
 
 public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
 
@@ -38,6 +29,7 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
     @NotEmpty
     private String queueName;
 
+    @DomainModelJsonObjectMapper
     private ObjectMapper objectMapper;
 
     @NotNull
@@ -61,13 +53,13 @@ public class PutMessageOnQueueServiceImpl implements PutMessageOnQueue {
         if (this.messageDirection == null) {
             throw new IllegalArgumentException("Message direction cannot be null!");
         }
-        this.objectMapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
+//        this.objectMapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
 
     }
 
     @Override
     public void putMessageOnMessageQueue(@Nonnull DomibusConnectorMessage message) {
-        String connectorMessageId = message.getConnectorMessageId();
+        String connectorMessageId = message.getConnectorMessageIdAsString();
         //TODO: make sure message is persisted!
 
         if (message.getMessageDetails().getDirection() == null) {

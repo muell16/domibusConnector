@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.test.util;
 
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.persistence.dao.DomibusConnectorActionDao;
@@ -73,7 +73,7 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
         createConfirmationMessageBuilderFactory.setMessageIdGenerator(this.messageIdGenerator);
 
 
-        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessage.DomibusConnectorMessageId(UUID.randomUUID().toString() + "@mockedid"));
+        Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessageId(UUID.randomUUID().toString() + "@mockedid"));
 
     }
 

@@ -56,7 +56,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
                 .findMessageByEbmsIdAndDirection(refToMessageID, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY)
                 .get();
 
-        DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getMessageConfirmations().get(0);
+        DomibusConnectorMessageConfirmation confirmation = confirmationMessage.getTransportedMessageConfirmations().get(0);
 
         if (isMessageAlreadyRejected(originalMessage)) {
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
@@ -72,11 +72,11 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 //            messagePersistenceService.rejectMessage(originalMessage);
 //        }
 
-        originalMessage.addConfirmation(confirmation);
+        originalMessage.addTransportedMessageConfirmation(confirmation);
 
-        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage,
-                confirmation,
-                new DomibusConnectorMessage.DomibusConnectorMessageId(confirmationMessage.getConnectorMessageId()));
+//        evidencePersistenceService.persistEvidenceForMessageIntoDatabase(originalMessage,
+//                confirmation,
+//                new DomibusConnectorMessageId(confirmationMessage.getConnectorMessageIdAsString()));
 
 
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
@@ -90,7 +90,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),
-                originalMessage.getConnectorMessageId());
+                originalMessage.getConnectorMessageIdAsString());
 
 	}
 	
@@ -113,8 +113,8 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
      * </ul>
      */
     private boolean containsRejectionConfirmation(DomibusConnectorMessage message) {
-        if (message.getMessageConfirmations() != null) {
-            for (DomibusConnectorMessageConfirmation confirmation : message.getMessageConfirmations()) {
+        if (message.getTransportedMessageConfirmations() != null) {
+            for (DomibusConnectorMessageConfirmation confirmation : message.getTransportedMessageConfirmations()) {
                 if (confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION)
                         || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_DELIVERY)
                         || confirmation.getEvidenceType().equals(DomibusConnectorEvidenceType.NON_RETRIEVAL)) {

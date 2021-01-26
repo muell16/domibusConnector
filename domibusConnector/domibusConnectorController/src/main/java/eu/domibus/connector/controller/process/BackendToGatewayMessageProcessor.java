@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
@@ -31,43 +28,42 @@ import org.springframework.transaction.annotation.Transactional;
 @Component(BackendToGatewayMessageProcessor.BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
 public class BackendToGatewayMessageProcessor implements DomibusConnectorMessageProcessor {
 
-	public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "BackendToGatewayMessageProcessor";
+    public static final String BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME = "BackendToGatewayMessageProcessor";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BackendToGatewayMessageProcessor.class);
 
-	private DCMessagePersistenceService messagePersistenceService;
-	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	private DomibusConnectorSecurityToolkit securityToolkit;
-	private DomibusConnectorBackendDeliveryService backendDeliveryService;
-	private DomibusConnectorMessageContentManager bigDataPersistenceService;
-
-	@Autowired
-	private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
-
-	@Autowired
-	private CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService;
-
-	public void setCreateConfirmationMessageBuilderFactoryImpl(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl) {
-		this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
-	}
-
-	public void setCreateSubmissionRejectionAndReturnItService(CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService) {
-		this.createSubmissionRejectionAndReturnItService = createSubmissionRejectionAndReturnItService;
-	}
-
-	@Autowired
-    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
-        this.messagePersistenceService = messagePersistenceService;
-    }
-
-	@Autowired
-	public void setBigDataPersistenceService(DomibusConnectorMessageContentManager bigDataPersistenceService) {
-		this.bigDataPersistenceService = bigDataPersistenceService;
-	}
+    private DCMessagePersistenceService messagePersistenceService;
+    private DomibusConnectorSecurityToolkit securityToolkit;
+    private MessageConfirmationProcessor messageConfirmationProcessor;
+    private SubmitMessageToLinkModuleService submitMessageService;
 
     @Autowired
-    public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
-        this.gwSubmissionService = gwSubmissionService;
+    private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
+
+    @Autowired
+    private CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService;
+
+    @Autowired
+    public void setMessageConfirmationProcessor(MessageConfirmationProcessor messageConfirmationProcessor) {
+        this.messageConfirmationProcessor = messageConfirmationProcessor;
+    }
+
+    @Autowired
+    public void setSubmitMessageService(SubmitMessageToLinkModuleService submitMessageService) {
+        this.submitMessageService = submitMessageService;
+    }
+
+    public void setCreateConfirmationMessageBuilderFactoryImpl(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl) {
+        this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
+    }
+
+    public void setCreateSubmissionRejectionAndReturnItService(CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService) {
+        this.createSubmissionRejectionAndReturnItService = createSubmissionRejectionAndReturnItService;
+    }
+
+    @Autowired
+    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
+        this.messagePersistenceService = messagePersistenceService;
     }
 
     @Autowired
@@ -75,82 +71,74 @@ public class BackendToGatewayMessageProcessor implements DomibusConnectorMessage
         this.securityToolkit = securityToolkit;
     }
 
-    @Autowired
-    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
-        this.backendDeliveryService = backendDeliveryService;
-    }
 
     @Override
-    @Transactional(propagation=Propagation.NEVER)
+    @Transactional(propagation = Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
     @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
-	public void processMessage(DomibusConnectorMessage message) {
+    public void processMessage(DomibusConnectorMessage message) {
 
         try {
-			securityToolkit.buildContainer(message);
-		} catch (DomibusConnectorSecurityException se) {
-        	LOGGER.warn("security toolkit build container failed. The exception will be logged to database", se);
-        	messagePersistenceService.rejectMessage(message);
-			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, se.getMessage());
-            DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText(se.getMessage())
-                    .setSource(this.getClass())
-                    .setCause(se)
-                    .buildAndThrow();
-		}
+            securityToolkit.buildContainer(message);
 
-		DomibusConnectorMessage submissionAcceptanceConfirmationMessage = null;
-		try {
+            DomibusConnectorMessage submissionAcceptanceConfirmationMessage = null;
+
+            //process every transported confirmation
+            message.getTransportedMessageConfirmations().stream()
+                    .forEach(c -> messageConfirmationProcessor.processConfirmationForMessage(message, c));
 
 
-			CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
-			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessage = submissionAcceptanceConfirmationMessageBuilder
-//					.useNationalIdAsRefToMessageId()
-					.switchFromToParty()
-					.withDirection(MessageTargetSource.BACKEND)
-					.build();
-			confirmationMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
+            CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder submissionAcceptanceConfirmationMessageBuilder = this.createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilderFromBusinessMessage(message, DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE);
+            CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessageWrapper = submissionAcceptanceConfirmationMessageBuilder
+                    .switchFromToAttributes()
+                    .withDirection(MessageTargetSource.BACKEND)
+                    .build();
+//            submissionAcceptanceConfirmationMessage = confirmationMessageWrapper.getEvidenceMessage();
 
-			submissionAcceptanceConfirmationMessage = confirmationMessage.getEvidenceMessage();
-		} catch (DomibusConnectorEvidencesToolkitException ete) {
-		    LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
-			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, ete.getMessage());
-			messagePersistenceService.rejectMessage(message);
+            //process created confirmation for message and send it backwards
+            messageConfirmationProcessor.processConfirmationForMessageAndSendBack(message, confirmationMessageWrapper.getMessageConfirmation());
+
+            submitMessageService.submitMessage(message);
+//
+//            LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", submissionAcceptanceConfirmationMessage);
+
+            LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
+
+
+        } catch (DomibusConnectorEvidencesToolkitException ete) {
+            LOGGER.error("Could not generate evidence [{}] for originalMessage [{}]!", DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message);
+            createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, ete.getMessage());
+            messagePersistenceService.rejectMessage(message);
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText("Could not generate evidence submission acceptance! ")
                     .setSource(this.getClass())
                     .setCause(ete)
                     .buildAndThrow();
-		}
 
-		try {
-//			message = bigDataPersistenceService.setAllLargeFilesReadable(message);
-			gwSubmissionService.submitToGateway(message);
-		} catch (DomibusConnectorGatewaySubmissionException e) {
-		    LOGGER.warn("Cannot submit message to gateway", e);
-			createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, e.getMessage());
-			messagePersistenceService.rejectMessage(message);
+        } catch (DomibusConnectorSecurityException se) {
+            LOGGER.warn("security toolkit build container failed. The exception will be logged to database", se);
+            messagePersistenceService.rejectMessage(message);
+            createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, se.getMessage());
+            DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText(se.getMessage())
+                    .setSource(this.getClass())
+                    .setCause(se)
+                    .buildAndThrow();
+
+        } catch (SubmitMessageToLinkModuleService.DCSubmitMessageToLinkException e) {
+            LOGGER.warn("Cannot submit message to gateway", e);
+            createSubmissionRejectionAndReturnItService.createSubmissionRejectionAndReturnIt(message, e.getMessage());
+            messagePersistenceService.rejectMessage(message);
             DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText("Could not submit originalMessage to gateway! ")
                     .setSource(this.getClass())
                     .setCause(e)
                     .buildAndThrow();
-		}
+        }
 
-
-        //also send evidence back to backend client:
-
-		LOGGER.trace("#processMessage: persist evidence originalMessage [{}] into database", submissionAcceptanceConfirmationMessage);
-//        messagePersistenceService.persistMessageIntoDatabase(submissionAcceptanceConfirmationMessage, DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
-		backendDeliveryService.deliverMessageToBackend(submissionAcceptanceConfirmationMessage);
-
-		LOGGER.info("Successfully sent originalMessage {} to gateway.", message);
-
-	}
-
-
+    }
 
 }

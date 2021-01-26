@@ -6,6 +6,7 @@ import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.service.DCLinkPluginConfiguration;
@@ -46,7 +47,7 @@ public class LinkTestContext {
     @Bean
     @ConditionalOnMissingBean
     DomibusConnectorMessageIdGenerator DomibusConnectorMessageIdGenerator() {
-        return () -> new DomibusConnectorMessage.DomibusConnectorMessageId("testcon_" + UUID.randomUUID().toString());
+        return () -> new DomibusConnectorMessageId("testcon_" + UUID.randomUUID().toString());
     }
 
     @Bean

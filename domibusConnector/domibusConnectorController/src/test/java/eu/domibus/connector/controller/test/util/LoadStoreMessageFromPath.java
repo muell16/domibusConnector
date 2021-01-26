@@ -117,7 +117,7 @@ public class LoadStoreMessageFromPath {
 
 
         //store confirmations
-        storeMessageConfirmations(message.getMessageConfirmations());
+        storeMessageConfirmations(message.getTransportedMessageConfirmations());
 
         File file = propertiesResource.getFile();
         System.out.println(file.getAbsolutePath());
@@ -254,7 +254,7 @@ public class LoadStoreMessageFromPath {
         }
 
         messageBuilder.addAttachments(loadAttachments());
-        messageBuilder.addConfirmations(loadConfirmations());
+        messageBuilder.addTransportedConfirmations(loadConfirmations());
 
         String connid = messageProperties.getProperty("message.connector-id", null);
         if (connid != null) {

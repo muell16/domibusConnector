@@ -2,7 +2,7 @@ package eu.domibus.connector.controller.service.queue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.domibus.connector.domain.model.json.DomainModeJsonObjectMapperFactory;
+import eu.domibus.connector.common.annotations.DomainModelJsonObjectMapper;
 import eu.domibus.connector.tools.logging.SetMessageOnLoggingContext;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
@@ -23,12 +22,13 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
 
     @Autowired
     private DCMessagePersistenceService persistenceService;
+    @DomainModelJsonObjectMapper
     private ObjectMapper objectMapper;
 
-    @PostConstruct
-    public void init() {
-        this.objectMapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
-    }
+//    @PostConstruct
+//    public void init() {
+//        this.objectMapper = DomainModeJsonObjectMapperFactory.getObjectMapper();
+//    }
 
     @Override
     public DomibusConnectorMessage getMessage(Message message) {
@@ -38,10 +38,11 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
                 jmsDestination = message.getJMSDestination().toString();
 //                ObjectMessage msg = (ObjectMessage) message;
                 TextMessage msg = (TextMessage) message;
+                LOGGER.trace("JMS Text Message Content is: [{}]", msg.getText());
                 DomibusConnectorMessage domibusConnectorMessage = objectMapper.readValue(msg.getText(), DomibusConnectorMessage.class);
-                if(LOGGER.isDebugEnabled()) {
+                if(LOGGER.isTraceEnabled()) {
                 	if(domibusConnectorMessage.getMessageContent()!=null && domibusConnectorMessage.getMessageContent().getXmlContent()!=null)
-                		LOGGER.debug("Business content XML after queue: {}", new String(domibusConnectorMessage.getMessageContent().getXmlContent()));
+                		LOGGER.trace("Business content XML after queue: {}", new String(domibusConnectorMessage.getMessageContent().getXmlContent()));
                 }
 //                Object obj = msg.getObject();
 //                if (!(obj instanceof  DomibusConnectorMessage)) {
@@ -49,7 +50,7 @@ public class GetDomibusConnectorMessageFromJmsMessageImpl implements GetDomibusC
 //                }
 //                DomibusConnectorMessage domibusConnectorMessage = (DomibusConnectorMessage) obj;
 
-                String connectorMessageId = domibusConnectorMessage.getConnectorMessageId();
+                String connectorMessageId = domibusConnectorMessage.getConnectorMessageIdAsString();
                 SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(connectorMessageId);
                 LOGGER.info("received messageID [{}] from queue [{}].", connectorMessageId, jmsDestination);
 //                DomibusConnectorMessage connectorMessage = null;

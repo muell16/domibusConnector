@@ -60,7 +60,7 @@ public class DomibusGwWsPluginSubmitToLink implements SubmitToLink {
 
         TransportStateService.DomibusConnectorTransportState transportState = new TransportStateService.DomibusConnectorTransportState();
         transportState.setConnectorTransportId(transportId);
-        transportState.setConnectorMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(message.getConnectorMessageId()));
+        transportState.setConnectorMessageId(new DomibusConnectorMessageId(message.getConnectorMessageIdAsString()));
 
 
         try {
@@ -139,7 +139,7 @@ public class DomibusGwWsPluginSubmitToLink implements SubmitToLink {
     }
 
     private void mapMessageConfirmations(DomibusConnectorMessage message, SubmitRequest submitRequest) {
-        message.getMessageConfirmations().forEach(c -> this.mapConfirmation(c, submitRequest));
+        message.getTransportedMessageConfirmations().forEach(c -> this.mapConfirmation(c, submitRequest));
     }
 
     private void mapConfirmation(DomibusConnectorMessageConfirmation c, SubmitRequest submitRequest) {

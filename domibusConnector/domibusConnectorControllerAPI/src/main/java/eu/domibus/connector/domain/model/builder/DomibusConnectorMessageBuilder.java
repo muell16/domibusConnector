@@ -1,11 +1,7 @@
 package eu.domibus.connector.domain.model.builder;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +17,11 @@ public final class DomibusConnectorMessageBuilder {
     private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
 	private List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<>();
-	private List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<>();
+	private List<DomibusConnectorMessageConfirmation> transportedConfirmations = new ArrayList<>();
 	private List<DomibusConnectorMessageError> messageErrors = new ArrayList<>();
-    private String connectorMessageId;
-    
+    private DomibusConnectorMessageId connectorMessageId;
+    private List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<>();
+
     public static DomibusConnectorMessageBuilder createBuilder() {
         return new DomibusConnectorMessageBuilder();
     }
@@ -38,7 +35,7 @@ public final class DomibusConnectorMessageBuilder {
      * @return the builder
      */
     public DomibusConnectorMessageBuilder setConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
         return this;
     }
     
@@ -86,13 +83,13 @@ public final class DomibusConnectorMessageBuilder {
      * @param confirmation the confirmation
      * @return the builder
      */
-    public DomibusConnectorMessageBuilder addConfirmation(DomibusConnectorMessageConfirmation confirmation) {
-        this.messageConfirmations.add(confirmation);
+    public DomibusConnectorMessageBuilder addTransportedConfirmations(DomibusConnectorMessageConfirmation confirmation) {
+        this.transportedConfirmations.add(confirmation);
         return this;
     }
 
-    public DomibusConnectorMessageBuilder addConfirmations(List<DomibusConnectorMessageConfirmation> confirmations) {
-        this.messageConfirmations.addAll(confirmations);
+    public DomibusConnectorMessageBuilder addTransportedConfirmations(List<DomibusConnectorMessageConfirmation> confirmations) {
+        this.transportedConfirmations.addAll(confirmations);
         return this;
     }
     
@@ -124,16 +121,19 @@ public final class DomibusConnectorMessageBuilder {
             throw new IllegalArgumentException("Setting message details is required!");
         }        
         if (this.messageContent != null) {
-            message = new DomibusConnectorMessage(this.connectorMessageId, this.messageDetails, this.messageContent);
-        } else if (this.messageConfirmations.size() > 0) {
-            DomibusConnectorMessageConfirmation confirmation = this.messageConfirmations.remove(0);
-            message = new DomibusConnectorMessage(this.connectorMessageId, this.messageDetails, confirmation);
+            message = new DomibusConnectorMessage("", this.messageDetails, this.messageContent);
+        } else if (this.transportedConfirmations.size() > 0) {
+            DomibusConnectorMessageConfirmation confirmation = this.transportedConfirmations.remove(0);
+            message = new DomibusConnectorMessage("", this.messageDetails, confirmation);
         } else {
             throw new IllegalArgumentException("Either messageContent or a messageConfirmation must be set!");
         }
+        message.setConnectorMessageId(this.connectorMessageId);
+
         message.getMessageAttachments().addAll(this.messageAttachments);
-        message.getMessageConfirmations().addAll(this.messageConfirmations);
+        message.getTransportedMessageConfirmations().addAll(this.transportedConfirmations);
         message.getMessageErrors().addAll(this.messageErrors);
+        message.getRelatedMessageConfirmations().addAll(this.relatedMessageConfirmations);
 
         this.connectorMessageId = null;
         return message;
@@ -155,17 +155,36 @@ public final class DomibusConnectorMessageBuilder {
                         .copyPropertiesFrom(a).build())
                 .collect(Collectors.toList());
 
-        this.messageConfirmations = message.getMessageConfirmations()
+        this.transportedConfirmations = message.getTransportedMessageConfirmations()
                 .stream()
                 .map(c -> DomibusConnectorMessageConfirmationBuilder.createBuilder()
                 .copyPropertiesFrom(c).build())
                 .collect(Collectors.toList());
 
+
+        this.relatedMessageConfirmations = message.getRelatedMessageConfirmations()
+                .stream()
+                .map(c -> DomibusConnectorMessageConfirmationBuilder.createBuilder()
+                        .copyPropertiesFrom(c).build())
+                .collect(Collectors.toList());
+
         return this;
     }
 
-    public DomibusConnectorMessageBuilder setConnectorMessageId(DomibusConnectorMessage.DomibusConnectorMessageId dcMsgId) {
-        this.connectorMessageId = dcMsgId.getConnectorMessageId();
+    public DomibusConnectorMessageBuilder setConnectorMessageId(DomibusConnectorMessageId dcMsgId) {
+        this.connectorMessageId = dcMsgId;
         return this;
     }
+
+    public DomibusConnectorMessageBuilder addRelatedConfirmations(List<DomibusConnectorMessageConfirmation> collect) {
+        this.relatedMessageConfirmations = collect;
+        return this;
+    }
+
+    public DomibusConnectorMessageBuilder addRelatedConfirmation(DomibusConnectorMessageConfirmation c) {
+        this.relatedMessageConfirmations.add(c);
+        return this;
+    }
+
+
 }

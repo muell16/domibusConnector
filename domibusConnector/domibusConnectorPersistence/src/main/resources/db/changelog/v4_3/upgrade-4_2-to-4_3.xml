@@ -15,5 +15,6 @@
     </changeSet>
 
     <include file="upgrade-4_2-to-4_3-change_evidence_table.xml" relativeToChangelogFile="true" />
+    <include file="upgrade-4_2-to-4_3-change_transport_table.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

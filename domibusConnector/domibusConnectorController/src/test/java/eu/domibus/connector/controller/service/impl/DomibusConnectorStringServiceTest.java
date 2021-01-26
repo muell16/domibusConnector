@@ -4,6 +4,7 @@ package eu.domibus.connector.controller.service.impl;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
@@ -39,7 +40,7 @@ public class DomibusConnectorStringServiceTest {
         MockitoAnnotations.initMocks(this);
 
         DomibusConnectorTransportStep domibusConnectorTransportStep = new DomibusConnectorTransportStep();
-        domibusConnectorTransportStep.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId("MSG1"));
+        domibusConnectorTransportStep.setMessageId(new DomibusConnectorMessageId("MSG1"));
 
         Mockito.when(transportStepPersistenceService.getTransportStepByTransportId(Mockito.any()))
                 .thenReturn(domibusConnectorTransportStep);

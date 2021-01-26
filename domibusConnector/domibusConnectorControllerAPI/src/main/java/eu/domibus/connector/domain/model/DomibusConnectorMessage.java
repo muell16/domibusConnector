@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
 
 /**
@@ -18,12 +20,16 @@ import org.springframework.core.style.ToStringCreator;
  */
 public class DomibusConnectorMessage implements Serializable {
 
+	private DomibusConnectorMessageId connectorMessageId;
 	private DomibusConnectorMessageDetails messageDetails;
 	private DomibusConnectorMessageContent messageContent;
 	private final List<DomibusConnectorMessageAttachment> messageAttachments = new ArrayList<DomibusConnectorMessageAttachment>();
-	private final List<DomibusConnectorMessageConfirmation> messageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
+	//holds all message confirmations which are transported with this message
+	private final List<DomibusConnectorMessageConfirmation> transportedMessageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
+	//holds all message confirmations which are related to this business message
+	private final List<DomibusConnectorMessageConfirmation> relatedMessageConfirmations = new ArrayList<DomibusConnectorMessageConfirmation>();
 	private final List<DomibusConnectorMessageError> messageErrors = new ArrayList<DomibusConnectorMessageError>();
-    private String connectorMessageId;
+
 
 	/**
 	 * Default constructor, needed for frameworks
@@ -59,7 +65,7 @@ public class DomibusConnectorMessage implements Serializable {
             final String connectorMessageId,
             final DomibusConnectorMessageDetails messageDetails, 
             final DomibusConnectorMessageContent messageContent){
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
         this.messageDetails = messageDetails;
         this.messageContent = messageContent;
 	}
@@ -76,7 +82,7 @@ public class DomibusConnectorMessage implements Serializable {
 	 */
 	public DomibusConnectorMessage(final DomibusConnectorMessageDetails messageDetails, final DomibusConnectorMessageConfirmation messageConfirmation){
 	   this.messageDetails = messageDetails;
-	   addConfirmation(messageConfirmation);
+	   addTransportedMessageConfirmation(messageConfirmation);
 	}
     
     /**
@@ -92,11 +98,20 @@ public class DomibusConnectorMessage implements Serializable {
             final String connectorMessageId, 
             final DomibusConnectorMessageDetails messageDetails, 
             final DomibusConnectorMessageConfirmation messageConfirmation) {
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
         this.messageDetails = messageDetails;
-        addConfirmation(messageConfirmation);
+        addTransportedMessageConfirmation(messageConfirmation);
     }
-            
+
+    @JsonProperty
+	public DomibusConnectorMessageId getConnectorMessageId() {
+		return connectorMessageId;
+	}
+
+	@JsonProperty
+	public void setConnectorMessageId(DomibusConnectorMessageId messageId) {
+		this.connectorMessageId = messageId;
+	}
 
 	public DomibusConnectorMessageDetails getMessageDetails(){
 		return this.messageDetails;
@@ -114,8 +129,28 @@ public class DomibusConnectorMessage implements Serializable {
 		return this.messageAttachments;
 	}
 
-	public List<DomibusConnectorMessageConfirmation> getMessageConfirmations(){
-		return this.messageConfirmations;
+	public List<DomibusConnectorMessageConfirmation> getTransportedMessageConfirmations(){
+		return this.transportedMessageConfirmations;
+	}
+
+	public List<DomibusConnectorMessageConfirmation> getRelatedMessageConfirmations() {
+		return relatedMessageConfirmations;
+	}
+
+	/**
+	 * Method to add a new {@link DomibusConnectorMessageConfirmation} to the
+	 * collection.
+	 *
+	 * The confirmations here are related to the message document/content
+	 *
+	 * The collection is initialized, so no new collection needs to be
+	 * created or set.
+	 *
+	 * @param confirmation    confirmation
+	 * @return for return see: {@link List#add(Object)}
+	 */
+	public boolean addRelatedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
+		return this.relatedMessageConfirmations.add(confirmation);
 	}
 
 	/**
@@ -130,13 +165,16 @@ public class DomibusConnectorMessage implements Serializable {
 
 	/**
 	 * Method to add a new {@link DomibusConnectorMessageConfirmation} to the
-	 * collection. The collection is initialized, so no new collection needs to be
+	 * collection. This collection holds only Confirmations which are transported
+	 * with this message. In case of a business message they are also related
+	 * to it.
+	 * The collection is initialized, so no new collection needs to be
 	 * created or set.
 	 * 
 	 * @param confirmation    confirmation
 	 */
-	public void addConfirmation(final DomibusConnectorMessageConfirmation confirmation){
-	   	this.messageConfirmations.add(confirmation);
+	public boolean addTransportedMessageConfirmation(final DomibusConnectorMessageConfirmation confirmation){
+	   	return this.transportedMessageConfirmations.add(confirmation);
 	}
 
 	public List<DomibusConnectorMessageError> getMessageErrors(){
@@ -154,17 +192,19 @@ public class DomibusConnectorMessage implements Serializable {
 	   	this.messageErrors.add(error);
 	}
 
-    public String getConnectorMessageId() {
-        return connectorMessageId;
+	@Deprecated
+	@JsonIgnore
+    public String getConnectorMessageIdAsString() {
+		if (connectorMessageId == null) {
+			return null;
+		}
+        return connectorMessageId.getConnectorMessageId();
     }
 
-	public void setConnectorMessageId(DomibusConnectorMessageId messageId) {
-		this.setConnectorMessageId(messageId.getConnectorMessageId());
-	}
-
 	@Deprecated
+	@JsonIgnore
     public void setConnectorMessageId(String connectorMessageId) {
-        this.connectorMessageId = connectorMessageId;
+        this.connectorMessageId = new DomibusConnectorMessageId(connectorMessageId);
     }
 
     @Override
@@ -175,41 +215,4 @@ public class DomibusConnectorMessage implements Serializable {
         return builder.toString();
 	}
 
-	public static class DomibusConnectorMessageId {
-		String connectorMessageId;
-
-		public DomibusConnectorMessageId() {}
-
-		public DomibusConnectorMessageId(String connectorMessageId) {
-			this.connectorMessageId = connectorMessageId;
-		}
-
-		public String getConnectorMessageId() {
-			return connectorMessageId;
-		}
-
-		public void setConnectorMessageId(String connectorMessageId) {
-			this.connectorMessageId = connectorMessageId;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof DomibusConnectorMessageId)) return false;
-
-			DomibusConnectorMessageId that = (DomibusConnectorMessageId) o;
-
-			return connectorMessageId != null ? connectorMessageId.equals(that.connectorMessageId) : that.connectorMessageId == null;
-		}
-
-		@Override
-		public int hashCode() {
-			return connectorMessageId != null ? connectorMessageId.hashCode() : 0;
-		}
-
-		public String toString() {
-			return this.connectorMessageId;
-		}
-	}
-    
 }

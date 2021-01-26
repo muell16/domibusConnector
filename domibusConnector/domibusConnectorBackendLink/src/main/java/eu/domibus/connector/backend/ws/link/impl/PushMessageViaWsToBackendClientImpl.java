@@ -94,7 +94,7 @@ public class PushMessageViaWsToBackendClientImpl implements PushMessageToBackend
             if (messageResponse.isResult()) {
                 String backendMessageId = messageResponse.getMessageId();
                 LOGGER.debug("#push: message with id [{}] sucessfully delivered to client [{}], client return id [{}]",
-                        message.getConnectorMessageId(), backendClientInfoByName.getBackendName(), backendMessageId);
+                        message.getConnectorMessageIdAsString(), backendClientInfoByName.getBackendName(), backendMessageId);
 
                 backendSubmissionService.processMessageAfterDeliveredToBackend(message);
             } else {

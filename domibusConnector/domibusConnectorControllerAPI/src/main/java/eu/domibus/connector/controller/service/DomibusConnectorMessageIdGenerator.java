@@ -1,7 +1,7 @@
 
 package eu.domibus.connector.controller.service;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 
 /**
  * Service for generating a for the connector unique message id
@@ -16,6 +16,6 @@ public interface DomibusConnectorMessageIdGenerator {
      * the maximum string length for this id is 255
      * @return the message id 
      */
-    public DomibusConnectorMessage.DomibusConnectorMessageId generateDomibusConnectorMessageId();
+    public DomibusConnectorMessageId generateDomibusConnectorMessageId();
 
 }

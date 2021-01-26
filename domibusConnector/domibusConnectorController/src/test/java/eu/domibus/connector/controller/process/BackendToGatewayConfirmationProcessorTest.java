@@ -62,8 +62,8 @@ public class BackendToGatewayConfirmationProcessorTest {
         backendToGatewayConfirmationProcessor.setMessagePersistenceService(messagePersistenceService);
         backendToGatewayConfirmationProcessor.setConfirmationMessageService(mockingProvider.getCreateConfirmationMessageBuilderFactory());
 
-        backendToGatewayConfirmationProcessor.setGwSubmissionService(gwSubmissionService);
-        backendToGatewayConfirmationProcessor.setBackendDeliveryService(backendDeliveryService);
+//        backendToGatewayConfirmationProcessor.setGwSubmissionService(gwSubmissionService);
+//        backendToGatewayConfirmationProcessor.setBackendDeliveryService(backendDeliveryService);
 
         Mockito.doAnswer( (invoc) -> toGwSubmittedMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));

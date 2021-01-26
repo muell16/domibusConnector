@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * <p>
  *
  *
- * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
+ * @author {@literal Stephan Spindler <stephan.spindler@brz.gv.at> }
  */
 @Component
 @Transactional
@@ -103,7 +103,7 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                 .filter(s -> StoreType.MESSAGE_CONFIRMATION_XML.equals(s.getContentType()))
                 .forEach(c -> {
 
-                    messageBuilder.addConfirmation(DomibusConnectorMessageConfirmationBuilder.createBuilder()
+                    messageBuilder.addTransportedConfirmations(DomibusConnectorMessageConfirmationBuilder.createBuilder()
                             .setEvidence(c.getContent())
                             .setEvidenceType(DomibusConnectorEvidenceType.valueOf(c.getPayloadIdentifier()))
                             .build()
@@ -180,32 +180,9 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         largeFileReference.setName(pDomibusConnectorMsgCont.getPayloadName());
         largeFileReference.setMimetype(pDomibusConnectorMsgCont.getPayloadMimeType());
         largeFileReference.setSize(pDomibusConnectorMsgCont.getSize());
-//        LargeFileReference readableDataSource = largeFilePersistenceService.getReadableDataSource(largeFileReference);
-//        LargeFileReference largeFileReference = largeFilePersistenceService.getLargeFileReference(largeFileReference);
         return largeFileReference;
     }
 
-//    private byte[] largeFileReferenceToByte(LargeFileReference largeFileReference) {
-//        LOGGER.debug("Loadin byte from largeFileReference [{}]", largeFileReference);
-//        try (InputStream is = largeFileReference.getInputStream()) {
-//            return StreamUtils.copyToByteArray(is);
-//        } catch (IOException e) {
-//            throw new RuntimeException(String.format("Error while reading from LargeFile Reference [%s]", largeFileReference), e);
-//        }
-//    }
-
-//    @Deprecated
-//    private void loadMsgContent_legacy(DomibusConnectorMessageBuilder messageBuilder, List<PDomibusConnectorMsgCont> findByMessage) {
-//
-//        //deprecated mapper: mapFromDbToDomain content back
-//        Optional<PDomibusConnectorMsgCont> findFirst = findByMessage.stream()
-//                .filter(StoreType.MESSAGE_CONTENT::equals)
-//                .findFirst();
-//        if (findFirst.isPresent()) {
-//            DomibusConnectorMessageContent messageContent = mapFromMsgCont(findFirst.get(), DomibusConnectorMessageContent.class);
-//            messageBuilder.setMessageContent(messageContent);
-//        }
-//    }
 
     /**
      * takes a message and stores all content into the database
@@ -217,19 +194,19 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         //handle document
         List<PDomibusConnectorMsgCont> toStoreList = new ArrayList<>();
         DomibusConnectorMessageContent messageContent = message.getMessageContent();
-        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
         if (messageContent != null && messageContent.getDocument() != null) {
             toStoreList.add(mapDocumentToDb(dbMessage, messageContent.getDocument()));
         }
         if (messageContent != null) {
-            toStoreList.add(mapXmlContentToDB(message.getConnectorMessageId(), dbMessage, messageContent.getXmlContent()));
+            toStoreList.add(mapXmlContentToDB(message.getConnectorMessageIdAsString(), dbMessage, messageContent.getXmlContent()));
         }
         //handle attachments
         for (DomibusConnectorMessageAttachment attachment : message.getMessageAttachments()) {
             toStoreList.add(mapAttachment(dbMessage, attachment));
         }
         //handle confirmations
-        for (DomibusConnectorMessageConfirmation c : message.getMessageConfirmations()) {
+        for (DomibusConnectorMessageConfirmation c : message.getTransportedMessageConfirmations()) {
             toStoreList.add(mapConfirmation(dbMessage, c));
         }
         this.msgContDao.deleteByMessage(dbMessage);   //delete old contents
@@ -331,12 +308,6 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
                     msgCont.setContent(ref.getText().getBytes(StandardCharsets.UTF_8));
                 }
             }
-//            try {
-//				ref.getOutputStream().close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
             return msgCont;
     }
 
@@ -352,43 +323,6 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
         ref.setStorageProviderName(newRef.getStorageProviderName());
         ref.setStorageIdReference(newRef.getStorageIdReference());
         return newRef;
-    }
-
-    /**
-     *
-     * This method is deprecated, because the use of
-     * java serialization is an immanent security problem,
-     * but the code is still there for migration purposes
-     * and will be removed with next connector minor release
-     *
-     * @param msgContent - the Entity object
-     * @param clazz - the class of the domain object
-     * @param <T> - the type of the domain object
-     * @return the domain object, mapped from DB
-     */
-    @Deprecated
-    <T> T mapFromMsgCont(@Nonnull PDomibusConnectorMsgCont msgContent, Class<T> clazz) {
-        ObjectInputStream inputStream;
-        try {
-            byte[] byteContent = msgContent.getContent();
-            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteContent);
-            inputStream = new ObjectInputStream(byteInputStream);
-            T readObject = (T) inputStream.readObject();
-            if (!clazz.isAssignableFrom(readObject.getClass())) {
-                LOGGER.error("read unknown object from database!");
-                throw new PersistenceException("read unknown object from database!");
-            }
-            return readObject;
-        } catch (IOException ex) {
-            String error = String.format("mapFromMsgCont: IOException occured during reading object out of message content [%s]", msgContent);
-            LOGGER.error(error);
-            throw new PersistenceException(error, ex);
-        } catch (ClassNotFoundException ex) {
-            String error = String.format("mapFromMsgCont: Class not found exception occured during reading object out of message content [%s], "
-                    + "maybe incompatible updates or corruped database", msgContent);
-            LOGGER.error(error);
-            throw new PersistenceException(error, ex);
-        }
     }
 
 
@@ -443,7 +377,7 @@ public class MsgContentPersistenceService implements DomibusConnectorMessageCont
      * @return a list of message content
      */
     public List<PDomibusConnectorMsgCont> findByMessage(DomibusConnectorMessage message) {
-        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageId());
+        PDomibusConnectorMessage dbMessage = this.msgDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
         return this.msgContDao.findByMessage(dbMessage);
     }
 }

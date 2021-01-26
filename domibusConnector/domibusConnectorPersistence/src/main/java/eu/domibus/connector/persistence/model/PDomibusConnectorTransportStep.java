@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep.TABLE_NAME;
 
@@ -55,6 +56,14 @@ public class PDomibusConnectorTransportStep {
     @Column(name = "CREATED")
     private LocalDateTime created;
 
+    /**
+     * will be set to the date
+     * when the final state has been reached
+     *
+     */
+    @Column(name = "FINAL_STATE_REACHED")
+    private LocalDateTime finalStateReached;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transportStep", fetch = FetchType.EAGER)
     private List<PDomibusConnectorTransportStepStatusUpdate> statusUpdates = new ArrayList<>();
 
@@ -94,6 +103,14 @@ public class PDomibusConnectorTransportStep {
 
     public void setLinkPartnerName(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         this.linkPartnerName = linkPartnerName;
+    }
+
+    public LocalDateTime getFinalStateReached() {
+        return finalStateReached;
+    }
+
+    public void setFinalStateReached(LocalDateTime finalStateReached) {
+        this.finalStateReached = finalStateReached;
     }
 
     public int getAttempt() {

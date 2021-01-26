@@ -30,7 +30,7 @@ public class DomibusConnectorDeliveryWSImpl implements DomibusConnectorGatewayDe
     public DomibsConnectorAcknowledgementType deliverMessage(DomibusConnectorMessageType deliverMessageRequest) {
         LOGGER.debug("#deliverMessage: deliverRequest [{}] from gw received", deliverMessageRequest);
         DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(deliverMessageRequest, null);
-        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageId());
+        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(domainMessage.getConnectorMessageIdAsString());
         DomibsConnectorAcknowledgementType ack = new DomibsConnectorAcknowledgementType();
         try {
             controllerService.deliverMessageFromGatewayToController(domainMessage);

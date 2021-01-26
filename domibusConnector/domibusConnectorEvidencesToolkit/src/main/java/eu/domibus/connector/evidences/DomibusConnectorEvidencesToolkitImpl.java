@@ -1,7 +1,5 @@
 package eu.domibus.connector.evidences;
 
-import javax.annotation.Resource;
-
 import eu.domibus.connector.evidences.spring.PostalAdressConfigurationProperties;
 import org.bouncycastle.util.encoders.Hex;
 import org.etsi.uri._02640.v2.EventReasonType;
@@ -59,7 +57,7 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     @Override
     public DomibusConnectorMessageConfirmation createEvidence(DomibusConnectorEvidenceType type, DomibusConnectorMessage message, DomibusConnectorRejectionReason rejectionReason, String details) throws DomibusConnectorEvidencesToolkitException {
         LOGGER.debug("#createEvidence: [{}] for message [{}]", type, message);
-        LOGGER.trace("#createEvidence: message contains following evidences: [{}]", message.getMessageConfirmations());
+        LOGGER.trace("#createEvidence: message contains following evidences: [{}]", message.getRelatedMessageConfirmations());
     	byte[] evidence = null;
     	switch(type) {
     	case SUBMISSION_ACCEPTANCE:
@@ -292,8 +290,8 @@ public class DomibusConnectorEvidencesToolkitImpl implements DomibusConnectorEvi
     }
 
     private DomibusConnectorMessageConfirmation findConfirmation(DomibusConnectorEvidenceType evidenctType, DomibusConnectorMessage message) {
-        if (message.getMessageConfirmations() != null) {
-            for (DomibusConnectorMessageConfirmation confirmation : message.getMessageConfirmations()) {
+        if (message.getRelatedMessageConfirmations() != null) {
+            for (DomibusConnectorMessageConfirmation confirmation : message.getRelatedMessageConfirmations()) {
                 if (confirmation.getEvidenceType().equals(evidenctType)) {
                     return confirmation;
                 }

@@ -17,7 +17,7 @@ public class SetMessageOnLoggingContext {
      */
     public static void putConnectorMessageIdOnMDC(@Nullable DomibusConnectorMessage domibusConnectorMessage) {
         if (domibusConnectorMessage != null) {
-            String connectorMessageId = domibusConnectorMessage.getConnectorMessageId();
+            String connectorMessageId = domibusConnectorMessage.getConnectorMessageIdAsString();
             putConnectorMessageIdOnMDC(connectorMessageId);
         } else {
             putConnectorMessageIdOnMDC((String)null);

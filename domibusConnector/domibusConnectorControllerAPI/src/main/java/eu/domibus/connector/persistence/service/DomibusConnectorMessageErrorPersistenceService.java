@@ -2,6 +2,7 @@ package eu.domibus.connector.persistence.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageError;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface DomibusConnectorMessageErrorPersistenceService {
      */
     void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError);
 
-    default void persistMessageError(DomibusConnectorMessage.DomibusConnectorMessageId id, DomibusConnectorMessageError messageError) {
+    default void persistMessageError(DomibusConnectorMessageId id, DomibusConnectorMessageError messageError) {
         this.persistMessageError(id.getConnectorMessageId(), messageError);
     }
 

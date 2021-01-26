@@ -106,7 +106,7 @@ public class ConnectorControllerTestDomainCreator {
         messageContent.setDocument(messageDocument);
         
         DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
-        msg.addConfirmation(createMessageDeliveryConfirmation());
+        msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
         msg.addAttachment(createSimpleMessageAttachment());
         msg.addError(createMessageError());
         return msg;

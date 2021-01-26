@@ -34,7 +34,7 @@ public class CommonConfirmationProcessor {
      * @param originalMessage  - the original Message
      */
     public void confirmRejectMessage(DomibusConnectorEvidenceType evidenceType, DomibusConnectorMessage originalMessage) {
-        Integer highestEvidencePriority = originalMessage.getMessageConfirmations()
+        Integer highestEvidencePriority = originalMessage.getRelatedMessageConfirmations()
                 .stream()
                 .map(e -> e.getEvidenceType().getPriority())
                 .max(Comparator.naturalOrder())

@@ -89,14 +89,14 @@ public class PDomibusConnectorMessage implements Serializable {
     /**
      * This messages here are related to the BusinessMessage
      */
-    @OneToMany(mappedBy = "businessMessage", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "businessMessage", fetch = FetchType.EAGER)
     private Set<PDomibusConnectorEvidence> relatedEvidences = new HashSet<>();
 
     /**
      * This evidences here are transported with the message
      */
-    @OneToMany(mappedBy = "transportMessage", fetch = FetchType.EAGER)
-    private Set<PDomibusConnectorEvidence> transportedEvidences = new HashSet<>();
+//    @OneToMany(mappedBy = "transportMessage", fetch = FetchType.EAGER)
+//    private Set<PDomibusConnectorEvidence> transportedEvidences = new HashSet<>();
 
     @PrePersist    
     public void prePersist() {
@@ -143,13 +143,13 @@ public class PDomibusConnectorMessage implements Serializable {
         this.conversationId = conversationId;
     }
 
-    public Set<PDomibusConnectorEvidence> getTransportedEvidences() {
-        return transportedEvidences;
-    }
+//    public Set<PDomibusConnectorEvidence> getTransportedEvidences() {
+//        return transportedEvidences;
+//    }
 
-    public void setTransportedEvidences(Set<PDomibusConnectorEvidence> transportedEvidences) {
-        this.transportedEvidences = transportedEvidences;
-    }
+//    public void setTransportedEvidences(Set<PDomibusConnectorEvidence> transportedEvidences) {
+//        this.transportedEvidences = transportedEvidences;
+//    }
 
     public String getHashValue() {
         return hashValue;
@@ -269,8 +269,7 @@ public class PDomibusConnectorMessage implements Serializable {
                 .append("dbId", this.id)
                 .append("connectorMessageid", this.connectorMessageId)
                 .append("ebmsId", this.ebmsMessageId)
-                .append("backendMessageId", this.backendMessageId)
-                .append("deliveredToGw", this.deliveredToGateway);                
+                .append("backendMessageId", this.backendMessageId);
         return builder.toString();        
     }
     

@@ -6,21 +6,18 @@ import eu.domibus.connector.controller.service.DomibusConnectorBackendSubmission
 import eu.domibus.connector.controller.service.DomibusConnectorDeliveryRejectionService;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.jms.annotation.JmsListener;
 
 /**
  *
@@ -68,7 +65,7 @@ public class TestBackendContext {
     @Bean
     @ConditionalOnMissingBean
     public DomibusConnectorMessageIdGenerator domibusConnectorMessageIdGenerator() {
-        return () -> new DomibusConnectorMessage.DomibusConnectorMessageId(UUID.randomUUID().toString());
+        return () -> new DomibusConnectorMessageId(UUID.randomUUID().toString());
     }
 
     

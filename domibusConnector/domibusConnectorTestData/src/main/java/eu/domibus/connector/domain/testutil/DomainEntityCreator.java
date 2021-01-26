@@ -128,7 +128,7 @@ public class DomainEntityCreator {
         DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setConnectorMessageId("id1")
                 .setMessageDetails(messageDetails)
-                .addConfirmation(nonDeliveryConfirmation)
+                .addTransportedConfirmations(nonDeliveryConfirmation)
                 .build();
         
         return msg;
@@ -161,7 +161,7 @@ public class DomainEntityCreator {
         messageContent.setDocument(messageDocument);
         
         DomibusConnectorMessage msg = new DomibusConnectorMessage(messageDetails, messageContent);
-        msg.addConfirmation(createMessageDeliveryConfirmation());
+        msg.addTransportedMessageConfirmation(createMessageDeliveryConfirmation());
         msg.addAttachment(createSimpleMessageAttachment());
         msg.addError(createMessageError());
         return msg;
@@ -205,7 +205,7 @@ public class DomainEntityCreator {
                 .setMessageContent(messageContent)
                 .build();
 
-        message.addConfirmation(createMessageSubmissionAcceptanceConfirmation());
+        message.addTransportedMessageConfirmation(createMessageSubmissionAcceptanceConfirmation());
 
 
         return message;
@@ -234,7 +234,7 @@ public class DomainEntityCreator {
 
         DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setMessageDetails(messageDetails)
-                .addConfirmation(messageDeliveryConfirmation)
+                .addTransportedConfirmations(messageDeliveryConfirmation)
                 .build();
 
         return msg;
@@ -262,7 +262,7 @@ public class DomainEntityCreator {
 
         DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setMessageDetails(messageDetails)
-                .addConfirmation(confirmation)
+                .addTransportedConfirmations(confirmation)
                 .build();
 
         return msg;
@@ -290,7 +290,7 @@ public class DomainEntityCreator {
 
         DomibusConnectorMessage msg = DomibusConnectorMessageBuilder.createBuilder()
                 .setMessageDetails(messageDetails)
-                .addConfirmation(messageDeliveryConfirmation)
+                .addTransportedConfirmations(messageDeliveryConfirmation)
                 .build();
 
         return msg;

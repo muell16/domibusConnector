@@ -16,7 +16,7 @@ import java.util.Date;
  * @author riederb
  * @version 1.0
  *
- * This class should only hold/contain AS4 related message details / properties
+ *
  *
  */
 public class DomibusConnectorMessageDetails implements Serializable {
@@ -64,7 +64,7 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	private ZonedDateTime rejected;
 
 	@Nullable
-	private String causedBy;
+	private DomibusConnectorMessageId causedBy;
 
 	@Nullable
 	private Date failed;
@@ -224,11 +224,11 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	}
 
 	@Nullable
-	public String getCausedBy() {
+	public DomibusConnectorMessageId getCausedBy() {
 		return causedBy;
 	}
 
-	public void setCausedBy(@Nullable String causedBy) {
+	public void setCausedBy(@Nullable DomibusConnectorMessageId causedBy) {
 		this.causedBy = causedBy;
 	}
 

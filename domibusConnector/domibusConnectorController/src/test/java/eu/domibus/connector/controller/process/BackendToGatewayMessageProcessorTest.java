@@ -11,6 +11,7 @@ import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.evidences.DomibusConnectorEvidencesToolkit;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
@@ -76,7 +77,7 @@ public class BackendToGatewayMessageProcessorTest {
 //        createConfirmationMessageBuilderFactory.setActionPersistenceService(actionPersistenceService);
         createConfirmationMessageBuilderFactory.setEvidencePersistenceService(evidencePersistenceService);
         createConfirmationMessageBuilderFactory.setEvidencesToolkit(evidencesToolkit);
-        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> new DomibusConnectorMessage.DomibusConnectorMessageId(UUID.randomUUID().toString()));
+        createConfirmationMessageBuilderFactory.setMessageIdGenerator(() -> new DomibusConnectorMessageId(UUID.randomUUID().toString()));
 
         CreateSubmissionRejectionAndReturnItService createSubmissionRejectionAndReturnItService = new CreateSubmissionRejectionAndReturnItService();
         createSubmissionRejectionAndReturnItService.setBackendDeliveryService(backendDeliveryService);
@@ -87,11 +88,11 @@ public class BackendToGatewayMessageProcessorTest {
         backendToGatewayMessageProcessor = new BackendToGatewayMessageProcessor();
         backendToGatewayMessageProcessor.setCreateSubmissionRejectionAndReturnItService(createSubmissionRejectionAndReturnItService);
         backendToGatewayMessageProcessor.setCreateConfirmationMessageBuilderFactoryImpl(createConfirmationMessageBuilderFactory);
-        backendToGatewayMessageProcessor.setGwSubmissionService(gwSubmissionService);
+//        backendToGatewayMessageProcessor.setGwSubmissionService(gwSubmissionService);
         backendToGatewayMessageProcessor.setMessagePersistenceService(messagePersistenceService);
-        backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);
+//        backendToGatewayMessageProcessor.setBackendDeliveryService(backendDeliveryService);
         backendToGatewayMessageProcessor.setSecurityToolkit(securityToolkit);
-        backendToGatewayMessageProcessor.setBigDataPersistenceService(bigDataPersistenceService);
+//        backendToGatewayMessageProcessor.setBigDataPersistenceService(bigDataPersistenceService);
         
         Mockito.doAnswer( invoc -> toGwDeliveredMessages.add(invoc.getArgument(0)))
                 .when(gwSubmissionService).submitToGateway(any(DomibusConnectorMessage.class));
@@ -139,7 +140,7 @@ public class BackendToGatewayMessageProcessorTest {
         //verify submission acceptance is delivered to gw
         assertThat(toGwDeliveredMessages).hasSize(1);
         DomibusConnectorMessage toGwMsg = toGwDeliveredMessages.get(0);
-        assertThat(toGwMsg.getMessageConfirmations()).as("Message should have only one SubmissionAcceptance Evidence").hasSize(1); //should contain one SUBMISSION_ACCEPTANCE evidence
+        assertThat(toGwMsg.getTransportedMessageConfirmations()).as("Message should have only one SubmissionAcceptance Evidence").hasSize(1); //should contain one SUBMISSION_ACCEPTANCE evidence
 
 
         //verify originalMessage is handed over to backend for delivery

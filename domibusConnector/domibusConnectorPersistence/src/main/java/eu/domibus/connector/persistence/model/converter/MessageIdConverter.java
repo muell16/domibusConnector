@@ -1,15 +1,15 @@
 package eu.domibus.connector.persistence.model.converter;
 
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
-public class MessageIdConverter implements AttributeConverter<DomibusConnectorMessage.DomibusConnectorMessageId, String> {
+public class MessageIdConverter implements AttributeConverter<DomibusConnectorMessageId, String> {
 
     @Override
-    public String convertToDatabaseColumn(DomibusConnectorMessage.DomibusConnectorMessageId attribute) {
+    public String convertToDatabaseColumn(DomibusConnectorMessageId attribute) {
         if (attribute == null) {
             return null;
         }
@@ -17,10 +17,10 @@ public class MessageIdConverter implements AttributeConverter<DomibusConnectorMe
     }
 
     @Override
-    public DomibusConnectorMessage.DomibusConnectorMessageId convertToEntityAttribute(String dbData) {
+    public DomibusConnectorMessageId convertToEntityAttribute(String dbData) {
         if (dbData == null) {
             return null;
         }
-        return new DomibusConnectorMessage.DomibusConnectorMessageId(dbData);
+        return new DomibusConnectorMessageId(dbData);
     }
 }

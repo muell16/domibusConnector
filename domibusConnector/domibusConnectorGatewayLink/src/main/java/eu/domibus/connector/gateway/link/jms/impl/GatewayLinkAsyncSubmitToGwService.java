@@ -36,14 +36,14 @@ public class GatewayLinkAsyncSubmitToGwService implements DomibusConnectorGatewa
 
         //TODO: try catch ...?
 //        submitToGatewayService.submitMessage(messageType);
-        LOGGER.info("Message [{}] put on queue to gateway - new message state is pending", message.getConnectorMessageId());
+        LOGGER.info("Message [{}] put on queue to gateway - new message state is pending", message.getConnectorMessageIdAsString());
 
         TransportStateService.DomibusConnectorTransportState transportState =
                 new TransportStateService.DomibusConnectorTransportState();
 
         transportState.setStatus(TransportState.PENDING);
 
-        transportStateService.updateTransportToGatewayStatus(new TransportStateService.TransportId(message.getConnectorMessageId()), transportState);
+        transportStateService.updateTransportToGatewayStatus(new TransportStateService.TransportId(message.getConnectorMessageIdAsString()), transportState);
     }
 
 

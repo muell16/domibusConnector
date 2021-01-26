@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.processor.content;
 
 import eu.domibus.connector.controller.test.util.LargeFileReferenceInMemory;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -57,9 +58,9 @@ public class CheckContentDeletedProcessorImplTest {
         ref2.setStorageIdReference("storageid2");
         bigDataReferenceList.add(ref2);
 
-        DomibusConnectorMessage.DomibusConnectorMessageId msgId = new DomibusConnectorMessage.DomibusConnectorMessageId("msg1");
+        DomibusConnectorMessageId msgId = new DomibusConnectorMessageId("msg1");
 
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> map = new HashMap<>();
         map.put(msgId, bigDataReferenceList);
 
         Mockito.when(bigDataPersistenceService.getAllAvailableReferences()).thenReturn(map);

@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.service.impl;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
 import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
@@ -83,8 +83,8 @@ public class LargeFilePersistenceServiceImpl implements LargeFilePersistenceServ
     }
 
     @Override
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
-        Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> collect = availableLargeFilePersistenceProvider
+    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
+        Map<DomibusConnectorMessageId, List<LargeFileReference>> collect = availableLargeFilePersistenceProvider
                 .stream()
                 .map(provider -> provider.getAllAvailableReferences())
                 .flatMap(refmap -> refmap.entrySet().stream())

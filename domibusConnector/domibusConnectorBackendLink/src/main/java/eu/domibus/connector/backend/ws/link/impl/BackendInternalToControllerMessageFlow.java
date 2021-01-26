@@ -103,8 +103,8 @@ public class BackendInternalToControllerMessageFlow implements DomibusConnectorB
         }
 
         message.setConnectorMessageId(msgId);
-        LOGGER.debug("#submitToController: start to process message with message id [{}]", message.getConnectorMessageId());
-        MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, message.getConnectorMessageId());
+        LOGGER.debug("#submitToController: start to process message with message id [{}]", message.getConnectorMessageIdAsString());
+        MDC.put(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, message.getConnectorMessageIdAsString());
         message = messagePersistenceService.persistMessageIntoDatabase(message, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         LOGGER.debug("#submitToController: message persisted");
 //        message = bigDataPersistence.persistAllBigFilesFromMessage(message);

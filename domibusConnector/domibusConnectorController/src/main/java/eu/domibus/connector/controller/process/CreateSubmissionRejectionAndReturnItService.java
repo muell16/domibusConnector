@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.process;
 
+import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
@@ -40,46 +41,32 @@ public class CreateSubmissionRejectionAndReturnItService {
         CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper rejectionMessage = null;
         try {
             CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder =
-                    createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilder(message, DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
+                    createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilderFromBusinessMessage(message, DomibusConnectorEvidenceType.SUBMISSION_REJECTION);
 
             rejectionMessage = confirmationMessageBuilder
                     .setRejectionReason(DomibusConnectorRejectionReason.OTHER)
-//                    .useNationalIdAsRefToMessageId()
-                    .switchFromToParty()
+                    .switchFromToAttributes()
                     .setDetails(errorMessage)
                     .withDirection(MessageTargetSource.BACKEND)
                     .build();
 
-        } catch (Exception e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not build evidence of type SUBMISSION_REJECTION! ")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-        }
-        try {
             rejectionMessage.persistMessage();
-            rejectionMessage.persistEvidenceToBusinessMessage();
-        } catch (Exception e) {
-            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
-                    .setMessage(message)
-                    .setText("Could not persist evidence of type SUBMISSION_REJECTION to original message!")
-                    .setSource(this.getClass())
-                    .setCause(e)
-                    .build();
-        }
 
-
-        try {
             backendDeliveryService.deliverMessageToBackend(rejectionMessage.getEvidenceMessage());
             LOGGER.info("Setting originalMessage status to rejected");
 
-        } catch (Exception e) {
+        } catch (DomibusConnectorBackendException e) {
             LOGGER.error("Exception occured while deliver evidence of of type SUBMISSION_REJECTION to backend!", e);
             throw DomibusConnectorMessageExceptionBuilder.createBuilder()
                     .setMessage(message)
                     .setText("Could not send evidence of type SUBMISSION_REJECTION to backend!")
+                    .setSource(this.getClass())
+                    .setCause(e)
+                    .build();
+        } catch (Exception e) {
+            throw DomibusConnectorMessageExceptionBuilder.createBuilder()
+                    .setMessage(message)
+                    .setText("Could not build evidence of type SUBMISSION_REJECTION! ")
                     .setSource(this.getClass())
                     .setCause(e)
                     .build();

@@ -33,7 +33,7 @@ public enum DomibusConnectorEvidenceType {
 	DomibusConnectorEvidenceType(int priority, boolean positive, int maxOccurence){
 		this.positive = positive;
 		this.maxOccurence = maxOccurence;
-		this.priority=priority;
+		this.priority = priority;
 	}
 
 	public boolean isPositive() {

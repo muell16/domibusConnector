@@ -8,6 +8,7 @@ import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.transformer.DomibusConnectorDomainMessageTransformerService;
 import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType;
@@ -121,7 +122,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
     @Override
     public DomibsConnectorAcknowledgementType submitMessage(DomibusConnectorMessageType submitMessageRequest) {
-        DomibusConnectorMessage.DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
+        DomibusConnectorMessageId domibusConnectorMessageId = messageIdGenerator.generateDomibusConnectorMessageId();
         try (MDC.MDCCloseable conId = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, domibusConnectorMessageId.getConnectorMessageId())
         ) {
             DomibsConnectorAcknowledgementType answer = new DomibsConnectorAcknowledgementType();
@@ -140,7 +141,7 @@ public class WsBackendServiceEndpointImpl implements DomibusConnectorBackendWebS
 
                         submitToConnector.submitToConnector(msg, linkPartner);
                         answer.setResult(true);
-                        answer.setMessageId(msg.getConnectorMessageId());
+                        answer.setMessageId(msg.getConnectorMessageIdAsString());
                     }
                 } else {
                     java.lang.String error = java.lang.String.format("The requested backend user is not available on connector!\nCheck server logs for details!");

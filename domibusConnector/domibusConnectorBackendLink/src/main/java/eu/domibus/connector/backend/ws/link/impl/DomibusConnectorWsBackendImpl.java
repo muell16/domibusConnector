@@ -149,7 +149,7 @@ public class DomibusConnectorWsBackendImpl implements DomibusConnectorBackendWeb
             backendSubmissionService.submitToController(backendMessage);
 
             answer.setResult(true);
-            answer.setMessageId(msg.getConnectorMessageId());
+            answer.setMessageId(msg.getConnectorMessageIdAsString());
 
         } catch (Exception e) {
             LOGGER.error("Exception occured during submitMessage from backend", e);

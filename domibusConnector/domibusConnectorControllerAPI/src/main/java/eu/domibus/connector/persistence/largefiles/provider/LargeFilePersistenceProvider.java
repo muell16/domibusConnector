@@ -1,7 +1,7 @@
 package eu.domibus.connector.persistence.largefiles.provider;
 
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 
 import java.io.InputStream;
@@ -52,6 +52,18 @@ public interface LargeFilePersistenceProvider {
      *      but closed INPUT stream
      *
      */
+    default LargeFileReference createDomibusConnectorBigDataReference(DomibusConnectorMessageId connectorMessageId, String documentName, String documentContentType) {
+        if (connectorMessageId == null) {
+            throw new IllegalArgumentException("ConnectorMessageId is not allowed to be null!");
+        }
+        return createDomibusConnectorBigDataReference(connectorMessageId.getConnectorMessageId(),
+                documentName, documentContentType);
+    }
+
+    /**
+     * @Deprecated use {@link #createDomibusConnectorBigDataReference(DomibusConnectorMessageId, String, String)} instead!
+     */
+    @Deprecated
     LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType);
 
 
@@ -65,6 +77,6 @@ public interface LargeFilePersistenceProvider {
     /**
      * Returns a map of ALL currently not deleted bigDataReferences
      */
-    public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
+    public Map<DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences();
 
 }

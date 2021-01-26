@@ -28,7 +28,7 @@ public class LoadStoreMessageFromPathTest {
         assertThat(message).isNotNull();
 
         assertThat(message.getMessageAttachments()).hasSize(2);
-        assertThat(message.getMessageConfirmations()).hasSize(1);
+        assertThat(message.getTransportedMessageConfirmations()).hasSize(1);
 
     }
 

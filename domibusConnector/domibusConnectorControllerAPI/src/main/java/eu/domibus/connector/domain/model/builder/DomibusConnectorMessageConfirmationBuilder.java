@@ -35,6 +35,9 @@ public final class DomibusConnectorMessageConfirmationBuilder {
     }
 
     public DomibusConnectorMessageConfirmationBuilder copyPropertiesFrom(DomibusConnectorMessageConfirmation c) {
+        if (c == null) {
+            throw new IllegalArgumentException("Cannot copy properties from null object!");
+        }
         this.evidence = ArrayUtils.clone(c.getEvidence());
         this.evidenceType = c.getEvidenceType();
         return this;

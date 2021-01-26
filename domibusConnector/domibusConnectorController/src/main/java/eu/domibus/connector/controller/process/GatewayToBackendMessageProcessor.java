@@ -20,14 +20,11 @@ import org.springframework.stereotype.Component;
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.evidences.exception.DomibusConnectorEvidencesToolkitException;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
 import eu.domibus.connector.security.exception.DomibusConnectorSecurityException;
 
-import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_EVIDENCE_LOG;
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 @Component(GatewayToBackendMessageProcessor.GW_TO_BACKEND_MESSAGE_PROCESSOR)
@@ -41,11 +38,23 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 	public ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
 	private DCMessagePersistenceService messagePersistenceService;
-	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
+//	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 	private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
 	private DomibusConnectorSecurityToolkit securityToolkit;
-	private DomibusConnectorBackendDeliveryService backendDeliveryService;
+//	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 	private DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
+	private MessageConfirmationProcessor messageConfirmationProcessor;
+	private SubmitMessageToLinkModuleService submitMessageToLinkModuleService;
+
+	@Autowired
+	public void setSubmitMessageToLinkModuleService(SubmitMessageToLinkModuleService submitMessageToLinkModuleService) {
+		this.submitMessageToLinkModuleService = submitMessageToLinkModuleService;
+	}
+
+	@Autowired
+	public void setMessageConfirmationProcessor(MessageConfirmationProcessor messageConfirmationProcessor) {
+		this.messageConfirmationProcessor = messageConfirmationProcessor;
+	}
 
 	@Autowired
 	public void setConnectorTestConfigurationProperties(ConnectorTestConfigurationProperties connectorTestConfigurationProperties) {
@@ -58,24 +67,13 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 	}
 
 	@Autowired
-	public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
-		this.gwSubmissionService = gwSubmissionService;
-	}
-
-	@Autowired
 	public void setConfirmationMessageBuilderFactory(CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory) {
 		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
 	}
 
-
 	@Autowired
 	public void setSecurityToolkit(DomibusConnectorSecurityToolkit securityToolkit) {
 		this.securityToolkit = securityToolkit;
-	}
-
-	@Autowired
-	public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
-		this.backendDeliveryService = backendDeliveryService;
 	}
 
 	@Autowired
@@ -86,38 +84,43 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
     @Override
 	@StoreMessageExceptionIntoDatabase
 	@MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_MESSAGE_PROCESSOR)
-	public void processMessage(DomibusConnectorMessage message) {
-        SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(message); //set message on logging context
-		LOGGER.trace("#processMessage: start processing originalMessage [{}] with confirmations [{}]", message, message.getMessageConfirmations());
-		
-		createRelayREMMDEvidenceAndSendIt(message, true);
-		
-		
+	public void processMessage(final DomibusConnectorMessage incomingMessage) {
 		try {
+        	SetMessageOnLoggingContext.putConnectorMessageIdOnMDC(incomingMessage); //set message on logging context
+			LOGGER.trace("#processMessage: start processing originalMessage [{}] with confirmations [{}]", incomingMessage, incomingMessage.getTransportedMessageConfirmations());
+
+			//process every transported confirmation
+			incomingMessage.getTransportedMessageConfirmations().stream()
+					.forEach(c -> messageConfirmationProcessor.processConfirmationForMessage(incomingMessage, c));
+
+			createRelayREMMDEvidenceAndSendIt(incomingMessage, true);
+		
+
 		    LOGGER.debug("#processMessage: call validateContainer");
-			message = securityToolkit.validateContainer(message);
+			DomibusConnectorMessage validatedMessage = securityToolkit.validateContainer(incomingMessage);
 			//update originalMessage in database
-			message = messagePersistenceService.mergeMessageWithDatabase(message);
+			validatedMessage = messagePersistenceService.mergeMessageWithDatabase(validatedMessage);
+
+		
+			if(isConnector2ConnectorTest(validatedMessage)){
+				// if it is a connector to connector test originalMessage defined by service and action, do NOT deliver originalMessage to the backend, but
+				// only send a DELIVERY evidence back.
+				LOGGER.info("#processMessage: Message [{}] is a connector to connector test originalMessage. \nIt will NOT be delivered to the backend!", validatedMessage);
+				createDeliveryEvidenceAndSendIt(validatedMessage);
+				LOGGER.info("#processMessage: Connector to Connector Test originalMessage [{}] is confirmed!", validatedMessage);
+			} else {
+				try {
+					submitMessageToLinkModuleService.submitMessage(validatedMessage);
+				} catch (Exception e) {
+					createNonDeliveryEvidenceAndSendIt(validatedMessage);
+				}
+			}
+
+			LOGGER.info(BUSINESS_LOG, "Successfully processed originalMessage {} from GW to backend.", validatedMessage.getConnectorMessageIdAsString());
 		} catch (DomibusConnectorSecurityException e) {
-			createNonDeliveryEvidenceAndSendIt(message);
+			createNonDeliveryEvidenceAndSendIt(incomingMessage);
 			throw e;
 		}
-		
-		if(isConnector2ConnectorTest(message)){
-			// if it is a connector to connector test originalMessage defined by service and action, do NOT deliver originalMessage to the backend, but
-			// only send a DELIVERY evidence back.
-			LOGGER.info("#processMessage: Message [{}] is a connector to connector test originalMessage. \nIt will NOT be delivered to the backend!", message);
-			createDeliveryEvidenceAndSendIt(message);
-			LOGGER.info("#processMessage: Connector to Connector Test originalMessage [{}] is confirmed!", message);
-		} else {
-			try {
-				backendDeliveryService.deliverMessageToBackend(message);
-			} catch (Exception e) {
-				createNonDeliveryEvidenceAndSendIt(message);
-			}
-		}
-
-		LOGGER.info(BUSINESS_LOG, "Successfully processed originalMessage {} from GW to backend.", message.getConnectorMessageId());
 	}
 	
 	private boolean isConnector2ConnectorTest(DomibusConnectorMessage message) {
@@ -132,41 +135,13 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 			throws DomibusConnectorControllerException, DomibusConnectorMessageException {
 
 		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
-				.switchFromToParty()
+				.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.DELIVERY)
+				.switchFromToAttributes()
 				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
 
-		wrappedDeliveryEvidenceMsg.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
-
-		DomibusConnectorMessage evidenceMessage = wrappedDeliveryEvidenceMsg.getEvidenceMessage();
-		try {
-			LOGGER.debug("Submitting messageConfirmation [{}] back to GW", evidenceMessage);
-			gwSubmissionService.submitToGateway(evidenceMessage);
-			LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] confirmation for message [{}] successfully sent to gw", wrappedDeliveryEvidenceMsg.getEvidenceType(), originalMessage.getConnectorMessageId());
-//			LOGGER.trace("Confirmation [{}] with sent successfully to gw, the content is:\n\n{}\n\n", messageConfirmation, new String(messageConfirmation.getEvidence(), "UTF-8"));
-
-		} catch (Exception e) {
-			//TODO: improve that!
-			String error = String.format("Exception sending evidenceMessage [%s] of originalMessage with connectorMessageId [%s] back to gateway ",
-					evidenceMessage,
-					originalMessage.getConnectorMessageId());
-			DomibusConnectorMessageException exception = DomibusConnectorMessageExceptionBuilder.createBuilder()
-					.setMessage(originalMessage)
-					.setText(error)
-					.setSource(this.getClass())
-					.setCause(e)
-					.build();
-			LOGGER.error("Exception occured while sending evidence msg back to GW", exception);
-			DomibusConnectorMessageError messageError =
-					DomibusConnectorMessageErrorBuilder.createBuilder()
-							.setSource(this.getClass().getName())
-							.setDetails(e.getStackTrace().toString())
-							.setText(error)
-							.build();
-			messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
-		}
-		messagePersistenceService.confirmMessage(originalMessage);
+		wrappedDeliveryEvidenceMsg.persistMessage();
+		messageConfirmationProcessor.processConfirmationForMessageAndSendBack(originalMessage, wrappedDeliveryEvidenceMsg.getMessageConfirmation());
 
 	}
 	
@@ -175,53 +150,12 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 
 		CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg = confirmationMessageBuilderFactory
-				.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY)
-				.switchFromToParty()
+				.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY)
+				.switchFromToAttributes()
 				.withDirection(MessageTargetSource.GATEWAY)
 				.build();
-
-		wrappedDeliveryEvidenceMsg.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
-
-		sendEvidenceBackToGateway(wrappedDeliveryEvidenceMsg);
-
-
-		messagePersistenceService.rejectMessage(originalMessage);
-	}
-
-	private void sendEvidenceBackToGateway(CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedDeliveryEvidenceMsg) {
-
-
-		wrappedDeliveryEvidenceMsg.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
-
-		DomibusConnectorMessage evidenceMessage = wrappedDeliveryEvidenceMsg.getEvidenceMessage();
-
-
-		try {
-			LOGGER.debug("Submitting messageConfirmation [{}] back to GW", wrappedDeliveryEvidenceMsg.getMessageConfirmation());
-			gwSubmissionService.submitToGateway(evidenceMessage);
-			LOGGER.info(BUSINESS_EVIDENCE_LOG, "[{}] confirmation for message [{}] successfully sent to gw", wrappedDeliveryEvidenceMsg.getEvidenceType(), wrappedDeliveryEvidenceMsg.getCausedByConnectorMessageId());
-//			LOGGER.trace("Confirmation [{}] with sent successfully to gw, the content is:\n\n{}\n\n", messageConfirmation, new String(messageConfirmation.getEvidence(), "UTF-8"));
-
-		} catch (Exception e) {
-			//TODO: improve that!
-			String error = String.format("Exception sending evidenceMessage [%s] of originalMessage with connectorMessageId [%s] back to gateway ",
-					evidenceMessage,
-					wrappedDeliveryEvidenceMsg.getCausedByConnectorMessageId());
-			DomibusConnectorMessageException exception = DomibusConnectorMessageExceptionBuilder.createBuilder()
-					.setMessage(wrappedDeliveryEvidenceMsg.getOriginalMessage())
-					.setText(error)
-					.setSource(this.getClass())
-					.setCause(e)
-					.build();
-			LOGGER.error("Exception occured", exception);
-			DomibusConnectorMessageError messageError =
-					DomibusConnectorMessageErrorBuilder.createBuilder()
-							.setSource(this.getClass().getName())
-							.setDetails(e.getStackTrace().toString())
-							.setText(error)
-							.build();
-			messageErrorPersistenceService.persistMessageError(wrappedDeliveryEvidenceMsg.getCausedByConnectorMessageId(), messageError);
-		}
+		originalMessage.addTransportedMessageConfirmation(wrappedDeliveryEvidenceMsg.getMessageConfirmation());
+		messageConfirmationProcessor.processConfirmationForMessageAndSendBack(originalMessage, wrappedDeliveryEvidenceMsg.getMessageConfirmation());
 	}
 
 	private void createRelayREMMDEvidenceAndSendIt(DomibusConnectorMessage originalMessage, boolean isAcceptance)
@@ -232,18 +166,19 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 		try {
 			if(isAcceptance) {
 			    LOGGER.trace("relay is acceptance, generating RELAY_REMMD_ACCEPTANCE");
-                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
+                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_ACCEPTANCE);
             } else {
                 LOGGER.trace("relay is denied, generating RELAY_REMMD_REJECTION");
-                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilder(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION);
+                wrappedMessageConfirmationBuilder = confirmationMessageBuilderFactory.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.RELAY_REMMD_REJECTION);
             }
 
 			CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper wrappedEvidenceMessage = wrappedMessageConfirmationBuilder
-					.switchFromToParty()
+					.switchFromToAttributes()
 					.withDirection(MessageTargetSource.GATEWAY)
 					.build();
 			LOGGER.trace("generated confirmation is [{}]", wrappedEvidenceMessage.getMessageConfirmation());
-            sendEvidenceBackToGateway(wrappedEvidenceMessage);
+
+			messageConfirmationProcessor.processConfirmationForMessageAndSendBack(originalMessage, wrappedEvidenceMessage.getMessageConfirmation());
 
 		} catch (DomibusConnectorEvidencesToolkitException e) {
 			DomibusConnectorMessageException evidenceBuildFailed = DomibusConnectorMessageExceptionBuilder.createBuilder()
@@ -262,11 +197,6 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
             messageErrorPersistenceService.persistMessageError(originalMessage.getConnectorMessageId(), messageError);
 		}
 
-
-		if (!isAcceptance) {
-			LOGGER.warn(BUSINESS_LOG, "Message is not accepted!");
-			messagePersistenceService.rejectMessage(originalMessage);
-		}
 	}
 
 }

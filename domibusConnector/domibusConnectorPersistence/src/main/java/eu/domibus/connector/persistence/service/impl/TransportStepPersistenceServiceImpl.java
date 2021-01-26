@@ -3,7 +3,7 @@ package eu.domibus.connector.persistence.service.impl;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.dao.DomibusConnectorEvidenceDao;
 import eu.domibus.connector.persistence.dao.DomibusConnectorLinkPartnerDao;
@@ -82,7 +82,8 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
 
     @Override
     public List<DomibusConnectorTransportStep> findPendingStepBy(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
-        return transportStepDao.findByMsgLinkPartnerAndState(linkPartnerName)
+        String stateDbName = TransportState.PENDING.getDbName();
+        return transportStepDao.findByMsgLinkPartnerAndLastStateIs(linkPartnerName, stateDbName)
                 .stream()
                 .map(this::mapTransportStepToDomain)
                 .collect(Collectors.toList());
@@ -91,12 +92,13 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
     private DomibusConnectorTransportStep mapTransportStepToDomain(PDomibusConnectorTransportStep dbTransportStep) {
         DomibusConnectorTransportStep step = new DomibusConnectorTransportStep();
 //        BeanUtils.copyProperties(dbTransportStep, step);
-        step.setMessageId(new DomibusConnectorMessage.DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
+        step.setMessageId(new DomibusConnectorMessageId(dbTransportStep.getConnectorMessageId()));
         step.setLinkPartnerName(dbTransportStep.getLinkPartnerName());
         step.setTransportId(dbTransportStep.getTransportId());
         step.setAttempt(dbTransportStep.getAttempt());
         step.setCreated(dbTransportStep.getCreated());
         step.setRemoteMessageId(dbTransportStep.getRemoteMessageId());
+        step.setFinalStateReached(dbTransportStep.getFinalStateReached());
         step.setTransportSystemMessageId(dbTransportStep.getTransportSystemMessageId());
 
         List<DomibusConnectorTransportStep.DomibusConnectorTransportStepStatusUpdate> statusUpdates = dbTransportStep
@@ -134,6 +136,7 @@ public class TransportStepPersistenceServiceImpl implements TransportStepPersist
             return s;
         });
 
+        dbStep.setFinalStateReached(transportStep.getFinalStateReached());
         dbStep.setAttempt(transportStep.getAttempt());
         dbStep.setRemoteMessageId(transportStep.getRemoteMessageId());
         dbStep.setTransportSystemMessageId(transportStep.getTransportSystemMessageId());

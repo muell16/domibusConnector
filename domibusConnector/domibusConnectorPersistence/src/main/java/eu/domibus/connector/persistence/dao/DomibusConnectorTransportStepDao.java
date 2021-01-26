@@ -1,6 +1,7 @@
 package eu.domibus.connector.persistence.dao;
 
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.persistence.model.PDomibusConnectorTransportStep;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,7 +30,10 @@ public interface DomibusConnectorTransportStepDao extends JpaRepository<PDomibus
     Optional<PDomibusConnectorTransportStep> findByTransportId(TransportStateService.TransportId transportId);
 
 
-    @Query("SELECT step FROM PDomibusConnectorTransportStep step WHERE step.linkPartnerName = ?1")
-    List<PDomibusConnectorTransportStep> findByMsgLinkPartnerAndState(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
+    @Query("SELECT status.transportStep " +
+            "FROM PDomibusConnectorTransportStepStatusUpdate status " +
+            "WHERE status.transportStep.finalStateReached IS NULL AND status.transportStep.linkPartnerName = ?1 AND status.transportStateString = ?2 "
+    )
+    List<PDomibusConnectorTransportStep> findByMsgLinkPartnerAndLastStateIs(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName, String stateDbName);
 
 }

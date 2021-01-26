@@ -5,7 +5,6 @@ import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
-import eu.domibus.connector.domain.transformer.util.LargeFileHandlerBacked;
 import eu.domibus.connector.domain.transition.*;
 import eu.domibus.connector.domain.transition.tools.ConversionTools;
 import eu.domibus.connector.persistence.largefiles.provider.LargeFilePersistenceProvider;
@@ -17,13 +16,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-import sun.nio.ch.IOUtil;
 
 import javax.activation.DataHandler;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.Arrays;
@@ -62,6 +59,12 @@ public class DomibusConnectorDomainMessageTransformerService {
         this.largeFilePersistenceProvider = largeFilePersistenceProvider;
     }
 
+    /**
+     * Holds the current domibus connector message id / message processing id
+     * is package private so can be access by Test
+     */
+    ThreadLocal<DomibusConnectorMessageId> messageIdThreadLocal = new ThreadLocal<>();
+
 
     /**
      * transforms a message from domain model to
@@ -92,7 +95,7 @@ public class DomibusConnectorDomainMessageTransformerService {
         //map messageContent
         TOMessageType.setMessageContent(transformMessageContentDomainToTransition(domainMessage.getMessageContent()));
         //map message confirmations
-        List<DomibusConnectorMessageConfirmation> messageConfirmations = domainMessage.getMessageConfirmations();
+        List<DomibusConnectorMessageConfirmation> messageConfirmations = domainMessage.getTransportedMessageConfirmations();
         LOGGER.trace("#transformDomainToTransition: transform messageConfirmations [{}] to transition", messageConfirmations);
         for (DomibusConnectorMessageConfirmation msgConfirm : messageConfirmations) {
             TOMessageType.getMessageConfirmations()
@@ -322,17 +325,14 @@ public class DomibusConnectorDomainMessageTransformerService {
         return TODetailsType;
     }
 
-    /**
-     * Holds the current domibus connector message id / message processing id
-     */
-    private ThreadLocal<DomibusConnectorMessage.DomibusConnectorMessageId> messageIdThreadLocal = new ThreadLocal<>();
+
 
     /**
      * @param transitionMessage - the TransitionMessage
      * @return the domainModel message
      */
     public  @NotNull
-    DomibusConnectorMessage transformTransitionToDomain(final @NotNull DomibusConnectorMessageType transitionMessage, final @NotNull DomibusConnectorMessage.DomibusConnectorMessageId messageId) {
+    DomibusConnectorMessage transformTransitionToDomain(final @NotNull DomibusConnectorMessageType transitionMessage, final @NotNull DomibusConnectorMessageId messageId) {
         messageIdThreadLocal.set(messageId);
         try {
             LOGGER.trace("#transformTransitionToDomain: transforming transition message object [{}] to domain message object", transitionMessage);
@@ -352,7 +352,7 @@ public class DomibusConnectorDomainMessageTransformerService {
                 domibusConnectorMessage = new DomibusConnectorMessage(messageDetails, confirmation);
                 LOGGER.trace("#transformTransitionToDomain: added [{}] additional confirmations to confirmation message", confirmations);
                 for (DomibusConnectorMessageConfirmation c : confirmations) {
-                    domibusConnectorMessage.addConfirmation(c);
+                    domibusConnectorMessage.addTransportedMessageConfirmation(c);
                 }
 
 
@@ -363,7 +363,7 @@ public class DomibusConnectorDomainMessageTransformerService {
                 domibusConnectorMessage = new DomibusConnectorMessage(messageDetails, messageContent);
                 LOGGER.trace("#transformTransitionToDomain: added [{}] confirmations to message", confirmations);
                 for (DomibusConnectorMessageConfirmation c : confirmations) {
-                    domibusConnectorMessage.addConfirmation(c);
+                    domibusConnectorMessage.addTransportedMessageConfirmation(c);
                 }
 
             } else {
@@ -478,8 +478,8 @@ public class DomibusConnectorDomainMessageTransformerService {
 //        LargeFileHandlerBacked bigDataReference = new LargeFileHandlerBacked();
 //        bigDataReference.setDataHandler(dataHandler);
 //        return bigDataReference;
-        DomibusConnectorMessage.DomibusConnectorMessageId domibusConnectorMessageId = messageIdThreadLocal.get();
-        LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceProvider.createDomibusConnectorBigDataReference(domibusConnectorMessageId.getConnectorMessageId(), dataHandler.getName(), dataHandler.getContentType());
+        DomibusConnectorMessageId domibusConnectorMessageId = messageIdThreadLocal.get();
+        LargeFileReference domibusConnectorBigDataReference = largeFilePersistenceProvider.createDomibusConnectorBigDataReference(domibusConnectorMessageId, dataHandler.getName(), dataHandler.getContentType());
         try (InputStream is = dataHandler.getInputStream();
             OutputStream os = domibusConnectorBigDataReference.getOutputStream() ) {
             StreamUtils.copy(is, os);
