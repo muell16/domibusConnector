@@ -36,7 +36,6 @@ import eu.domibus.connector.web.service.WebBackendClientService;
 
 import javax.annotation.PostConstruct;
 
-import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
 
 /**
  * This class should handle the following:
