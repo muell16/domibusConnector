@@ -86,9 +86,7 @@ public class MessageConfirmationProcessor {
         message.addTransportedMessageConfirmation(confirmation);
         this.sendConfirmationBack(message, confirmation);
 
-        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        commonConfirmationProcessor.confirmRejectMessage(confirmation.getEvidenceType(), message);
-
+        this.confirmRejectMessage(confirmation.getEvidenceType(), message);
     }
 
     @StoreMessageExceptionIntoDatabase //catches DomibusConnectorMessageException and stores it into db, ex will not be thrown again

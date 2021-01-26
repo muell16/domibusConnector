@@ -26,9 +26,7 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 	public static final String GW_TO_BACKEND_CONFIRMATION_PROCESSOR = "GatewayToBackendConfirmationProcessor";
 
     private DCMessagePersistenceService messagePersistenceService;
-
-    private DomibusConnectorEvidencePersistenceService evidencePersistenceService;
-
+    private MessageConfirmationProcessor messageConfirmationProcessor;
 	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
 	@Autowired
@@ -37,8 +35,8 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Autowired
-    public void setEvidencePersistenceService(DomibusConnectorEvidencePersistenceService evidencePersistenceService) {
-        this.evidencePersistenceService = evidencePersistenceService;
+    public void setMessageConfirmationProcessor(MessageConfirmationProcessor messageConfirmationProcessor) {
+        this.messageConfirmationProcessor = messageConfirmationProcessor;
     }
 
     @Autowired
@@ -80,8 +78,8 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
 
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
-        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        commonConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
+//        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
+        messageConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
 
         if (originalMessage.getMessageDetails().getBackendMessageId() != null) {
             confirmationMessage.getMessageDetails().setRefToBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
