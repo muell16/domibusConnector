@@ -55,7 +55,7 @@ public interface LargeFilePersistenceProvider {
     default LargeFileReference createDomibusConnectorBigDataReference(DomibusConnectorMessageId connectorMessageId, String documentName, String documentContentType) {
         if (connectorMessageId == null) {
             throw new IllegalArgumentException("ConnectorMessageId is not allowed to be null!");
-        }ServiceResultXMLHelperTest
+        }
         return createDomibusConnectorBigDataReference(connectorMessageId.getConnectorMessageId(),
                 documentName, documentContentType);
     }
