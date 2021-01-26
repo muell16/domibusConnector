@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.3.0-DEV-SNAPSHOT</version>
+        <version>4.3.0-alpha1</version>
     </parent>
     <artifactId>domibusConnectorController</artifactId>
     <name>${project.artifactId}</name>
@@ -64,23 +64,22 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-spring</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-autoconfigure</artifactId>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>com.sun.xml.bind</groupId>-->
-<!--            <artifactId>jaxb-impl</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>javax.xml.bind</groupId>-->
-<!--            <artifactId>jaxb-api</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.sun.xml.bind</groupId>-->
-<!--            <artifactId>jaxb-core</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-autoconfigure</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.sun.xml.bind</groupId>-->
+        <!--            <artifactId>jaxb-impl</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>javax.xml.bind</groupId>-->
+        <!--            <artifactId>jaxb-api</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.sun.xml.bind</groupId>-->
+        <!--            <artifactId>jaxb-core</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.3.0-DEV-SNAPSHOT</version>
+        <version>4.3.0-alpha1</version>
     </parent>
     <artifactId>domibusConnectorLinkCommon</artifactId>
     <dependencies>
@@ -17,8 +17,8 @@
             <artifactId>cxf-rt-ws-security</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>com.fasterxml.woodstox</groupId>
                     <artifactId>woodstox-core</artifactId>
+                    <groupId>com.fasterxml.woodstox</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -147,18 +147,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>uk.org.webcompere</groupId>-->
-<!--            <artifactId>system-stubs-jupiter</artifactId>-->
-<!--            <version>1.2.0</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>uk.org.webcompere</groupId>-->
-<!--            <artifactId>system-stubs-core</artifactId>-->
-<!--            <version>1.2.0</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>uk.org.webcompere</groupId>-->
+        <!--            <artifactId>system-stubs-jupiter</artifactId>-->
+        <!--            <version>1.2.0</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>uk.org.webcompere</groupId>-->
+        <!--            <artifactId>system-stubs-core</artifactId>-->
+        <!--            <version>1.2.0</version>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
     </dependencies>
     <build>
         <testResources>
