@@ -61,7 +61,7 @@ public interface LargeFilePersistenceProvider {
     }
 
     /**
-     * @Deprecated use {@link #createDomibusConnectorBigDataReference(DomibusConnectorMessageId, String, String)} instead!
+     * Deprecated use {@link #createDomibusConnectorBigDataReference(DomibusConnectorMessageId, String, String)} instead!
      */
     @Deprecated
     LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType);
