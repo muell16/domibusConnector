@@ -19,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@Disabled
 public class GatewayLinkWsITCase {
 
 
