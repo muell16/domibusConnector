@@ -54,7 +54,7 @@ public class GatewayToBackendConfirmationProcessorTest {
 
         gatewayToBackendConfirmationProcessor = new GatewayToBackendConfirmationProcessor();
         gatewayToBackendConfirmationProcessor.setBackendDeliveryService(backendDeliveryService);
-        gatewayToBackendConfirmationProcessor.setEvidencePersistenceService(evidencePersistenceService);
+//        gatewayToBackendConfirmationProcessor.setEvidencePersistenceService(evidencePersistenceService);
         gatewayToBackendConfirmationProcessor.setMessagePersistenceService(messagePersistenceService);
 
         Mockito.when(messagePersistenceService.findMessageByEbmsIdAndDirection(any(), any()))
