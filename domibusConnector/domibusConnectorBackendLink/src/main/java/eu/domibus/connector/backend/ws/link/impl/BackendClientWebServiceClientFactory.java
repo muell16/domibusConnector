@@ -3,6 +3,7 @@ package eu.domibus.connector.backend.ws.link.impl;
 
 import eu.domibus.connector.backend.domain.model.DomibusConnectorBackendClientInfo;
 
+import eu.domibus.connector.link.common.CloseAttachmentInputStreamsInterceptor;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.backend.ws.link.spring.WSBackendLinkConfigurationProperties;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
@@ -12,14 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.BACKEND_POLICY_LOADER;
-import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.WS_BACKEND_LINK_PROFILE;
+import static eu.domibus.connector.backend.ws.link.spring.WSBackendLinkContextConfiguration.*;
 
 /**
  * Creates a web service client for pushing messages to backend client
@@ -37,6 +38,11 @@ public class BackendClientWebServiceClientFactory {
 
     @Autowired
     private WSBackendLinkConfigurationProperties backendLinkConfigurationProperties;
+
+    @Autowired
+    @Qualifier(BACKEND_DELIVERY_CLOSE_INPUT_STREAM_INTERCEPTOR_BEAN)
+    CloseAttachmentInputStreamsInterceptor closeInputStreamInterceptor;
+
 
     //setter
     public void setPolicyUtil(WsPolicyLoader policyUtil) {
@@ -56,6 +62,9 @@ public class BackendClientWebServiceClientFactory {
         jaxWsProxyFactoryBean.setFeatures(Arrays.asList(new Feature[]{policyUtil.loadPolicyFeature()}));
         jaxWsProxyFactoryBean.setAddress(pushAddress);
         jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl"); //maybe load own wsdl instead of remote one?
+
+        jaxWsProxyFactoryBean.getOutInterceptors().add(closeInputStreamInterceptor);
+        jaxWsProxyFactoryBean.getOutFaultInterceptors().add(closeInputStreamInterceptor);
 
         HashMap<String, Object> props = new HashMap<>();
         props.put("security.encryption.properties", backendLinkConfigurationProperties.getWssProperties());

@@ -2,6 +2,7 @@
 package eu.domibus.connector.backend.ws.link.spring;
 
 import eu.domibus.connector.backend.ws.link.impl.DomibusConnectorWsBackendImpl;
+import eu.domibus.connector.link.common.CloseAttachmentInputStreamsInterceptor;
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
@@ -33,9 +34,14 @@ public class WSBackendLinkContextConfiguration {
     public static final String WS_BACKEND_LINK_PROFILE = "backendlink-ws";
 
     public static final String BACKEND_POLICY_LOADER = "backendPolicyLoader";
+    public static final String BACKEND_DELIVERY_CLOSE_INPUT_STREAM_INTERCEPTOR_BEAN = "backendDeliveryCloseInputStreamsInterceptor";
 
     @Autowired
     WSBackendLinkConfigurationProperties configurationProperties;
+
+    @Autowired
+    @Qualifier(DomibusConnectorWsBackendImpl.BEAN_NAME)
+    DomibusConnectorWsBackendImpl domibusConnectorWsBackendImpl;
 
     @Bean
     @Qualifier(BACKEND_POLICY_LOADER)
@@ -44,15 +50,16 @@ public class WSBackendLinkContextConfiguration {
         return wsPolicyLoader;
     }
 
+    @Bean(BACKEND_DELIVERY_CLOSE_INPUT_STREAM_INTERCEPTOR_BEAN)
+    public CloseAttachmentInputStreamsInterceptor closeAttachmentInputStreamsInterceptor() {
+        return new CloseAttachmentInputStreamsInterceptor();
+    }
+
     @ConditionalOnMissingBean(name = "defaultCallbackHandler")
     @Bean("defaultCallbackHandler")
     public DefaultWsCallbackHandler defaultCallbackHandler() {
         return new DefaultWsCallbackHandler();
     }
-
-    @Autowired
-    @Qualifier(DomibusConnectorWsBackendImpl.BEAN_NAME)
-    DomibusConnectorWsBackendImpl domibusConnectorWsBackendImpl;
 
     @Bean
     EndpointImpl connectorBackendWS() {

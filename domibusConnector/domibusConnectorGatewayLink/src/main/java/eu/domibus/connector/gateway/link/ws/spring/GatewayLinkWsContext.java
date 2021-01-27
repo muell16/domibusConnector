@@ -3,6 +3,7 @@ package eu.domibus.connector.gateway.link.ws.spring;
 import eu.domibus.connector.gateway.link.ws.impl.DomibusConnectorDeliveryWSImpl;
 import eu.domibus.connector.lib.spring.configuration.CxfTrustKeyStoreConfigurationProperties;
 import eu.domibus.connector.lib.spring.configuration.StoreConfigurationProperties;
+import eu.domibus.connector.link.common.CloseAttachmentInputStreamsInterceptor;
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.gateway.delivery.webservice.DomibusConnectorGatewayDeliveryWSService;
@@ -18,6 +19,7 @@ import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -54,9 +56,14 @@ public class GatewayLinkWsContext {
         return wsPolicyLoader;
     }
 
+    @Bean("gwSubmissionCloseInputStreamsInterceptor")
+    public CloseAttachmentInputStreamsInterceptor gwSubmissionCloseInputStreamsInterceptor() {
+        return new CloseAttachmentInputStreamsInterceptor();
+    }
 
     @Bean
-    public DomibusConnectorGatewaySubmissionWebService gwSubmissionClient() {
+    public DomibusConnectorGatewaySubmissionWebService gwSubmissionClient(
+            @Qualifier("gwSubmissionCloseInputStreamsInterceptor") CloseAttachmentInputStreamsInterceptor interceptor) {
 //        JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         ClientProxyFactoryBean clientProxyFactory = new ClientProxyFactoryBean();
         clientProxyFactory.setServiceClass(DomibusConnectorGatewaySubmissionWebService.class);
@@ -68,6 +75,9 @@ public class GatewayLinkWsContext {
         clientProxyFactory.setWsdlURL(DomibusConnectorGatewaySubmissionWSService.WSDL_LOCATION.toString());
 //        jaxWsProxyFactoryBean.setBindingId(SOAPBinding.SOAP12HTTP_MTOM_BINDING);
 //        jaxWsProxyFactoryBean.getOutInterceptors().add(new WSS4JOutInterceptor());
+
+        clientProxyFactory.getOutInterceptors().add(interceptor);
+        clientProxyFactory.getOutFaultInterceptors().add(interceptor);
 
         clientProxyFactory.getFeatures().add(gwWsLinkPolicyLoader().loadPolicyFeature());
 
