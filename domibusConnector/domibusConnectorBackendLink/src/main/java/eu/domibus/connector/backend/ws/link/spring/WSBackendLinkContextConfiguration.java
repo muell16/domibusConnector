@@ -3,6 +3,7 @@ package eu.domibus.connector.backend.ws.link.spring;
 
 import eu.domibus.connector.backend.ws.link.impl.DomibusConnectorWsBackendImpl;
 import eu.domibus.connector.link.common.CloseAttachmentInputStreamsInterceptor;
+import eu.domibus.connector.link.common.CxfAttachmentCleanupService;
 import eu.domibus.connector.link.common.DefaultWsCallbackHandler;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
@@ -42,6 +43,12 @@ public class WSBackendLinkContextConfiguration {
     @Autowired
     @Qualifier(DomibusConnectorWsBackendImpl.BEAN_NAME)
     DomibusConnectorWsBackendImpl domibusConnectorWsBackendImpl;
+
+    @ConditionalOnMissingBean
+    @Bean
+    public CxfAttachmentCleanupService CxfAttachmentCleanupService() {
+        return new CxfAttachmentCleanupService();
+    }
 
     @Bean
     @Qualifier(BACKEND_POLICY_LOADER)
