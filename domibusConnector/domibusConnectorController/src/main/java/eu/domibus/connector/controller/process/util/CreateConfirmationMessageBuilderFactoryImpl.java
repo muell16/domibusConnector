@@ -202,6 +202,20 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
          *  neccessary if the evidence goes in the other direction as the original message
          * @return the builder object
          */
+        public ConfirmationMessageBuilder swithOriginalSenderFinalRecipient() {
+            LOGGER.debug("[{}]: switching originalSender with finalRecipient in messageDetails", this);
+            String finalRecipient = details.getFinalRecipient();
+            String originalSender = details.getOriginalSender();
+            details.setFinalRecipient(originalSender);
+            details.setOriginalSender(finalRecipient);
+            return this;
+        }
+
+        /**
+         * switches the toParty with fromParty
+         *  neccessary if the evidence goes in the other direction as the original message
+         * @return the builder object
+         */
         public ConfirmationMessageBuilder switchFromToParty() {
             LOGGER.debug("[{}]: switching fromParty with toParty in messageDetails", this);
             DomibusConnectorParty fromParty = details.getFromParty();
