@@ -34,52 +34,30 @@ public class GatewayToBackendMessageProcessor implements DomibusConnectorMessage
 
 	public static final String GW_TO_BACKEND_MESSAGE_PROCESSOR = "GatewayToBackendMessageProcessor";
 
+	private final ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
+	private final DCMessagePersistenceService messagePersistenceService;
+	private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
+	private final DomibusConnectorSecurityToolkit securityToolkit;
+	private final DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
+	private final MessageConfirmationProcessor messageConfirmationProcessor;
+	private final SubmitMessageToLinkModuleService submitMessageToLinkModuleService;
 
-
-	public ConnectorTestConfigurationProperties connectorTestConfigurationProperties;
-	private DCMessagePersistenceService messagePersistenceService;
-//	private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-	private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
-	private DomibusConnectorSecurityToolkit securityToolkit;
-//	private DomibusConnectorBackendDeliveryService backendDeliveryService;
-	private DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService;
-	private MessageConfirmationProcessor messageConfirmationProcessor;
-	private SubmitMessageToLinkModuleService submitMessageToLinkModuleService;
-
-	@Autowired
-	public void setSubmitMessageToLinkModuleService(SubmitMessageToLinkModuleService submitMessageToLinkModuleService) {
+	public GatewayToBackendMessageProcessor(ConnectorTestConfigurationProperties connectorTestConfigurationProperties,
+											DCMessagePersistenceService messagePersistenceService,
+											CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory,
+											DomibusConnectorSecurityToolkit securityToolkit,
+											DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService,
+											MessageConfirmationProcessor messageConfirmationProcessor,
+											SubmitMessageToLinkModuleService submitMessageToLinkModuleService) {
+		this.connectorTestConfigurationProperties = connectorTestConfigurationProperties;
+		this.messagePersistenceService = messagePersistenceService;
+		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
+		this.securityToolkit = securityToolkit;
+		this.messageErrorPersistenceService = messageErrorPersistenceService;
+		this.messageConfirmationProcessor = messageConfirmationProcessor;
 		this.submitMessageToLinkModuleService = submitMessageToLinkModuleService;
 	}
 
-	@Autowired
-	public void setMessageConfirmationProcessor(MessageConfirmationProcessor messageConfirmationProcessor) {
-		this.messageConfirmationProcessor = messageConfirmationProcessor;
-	}
-
-	@Autowired
-	public void setConnectorTestConfigurationProperties(ConnectorTestConfigurationProperties connectorTestConfigurationProperties) {
-		this.connectorTestConfigurationProperties = connectorTestConfigurationProperties;
-	}
-
-	@Autowired
-	public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
-		this.messagePersistenceService = messagePersistenceService;
-	}
-
-	@Autowired
-	public void setConfirmationMessageBuilderFactory(CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory) {
-		this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
-	}
-
-	@Autowired
-	public void setSecurityToolkit(DomibusConnectorSecurityToolkit securityToolkit) {
-		this.securityToolkit = securityToolkit;
-	}
-
-	@Autowired
-    public void setMessageErrorPersistenceService(DomibusConnectorMessageErrorPersistenceService messageErrorPersistenceService) {
-        this.messageErrorPersistenceService = messageErrorPersistenceService;
-    }
 
     @Override
 	@StoreMessageExceptionIntoDatabase

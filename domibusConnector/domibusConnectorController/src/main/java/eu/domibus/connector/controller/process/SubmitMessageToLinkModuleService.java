@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class SubmitMessageToLinkModuleService {
@@ -49,9 +50,13 @@ public class SubmitMessageToLinkModuleService {
             MessageTargetSource target = message.getMessageDetails().getDirection().getTarget();
             if (target == MessageTargetSource.GATEWAY) {
                 LOGGER.debug("Message target is BACKEND, calling backend delivery service");
+                if (StringUtils.isEmpty(message.getMessageDetails().getGatewayName()))
                 gatewaySubmissionService.submitToGateway(message);
             } else if (target == MessageTargetSource.BACKEND) {
                 LOGGER.debug("Message target is BACKEND, calling backend delivery service");
+                if (StringUtils.isEmpty(message.getMessageDetails().getConnectorBackendClientName())) {
+                    //No backend name is set!
+                }
                 backendDeliveryService.deliverMessageToBackend(message);
             }
         } catch (DomibusConnectorGatewaySubmissionException e) {

@@ -18,23 +18,23 @@ import javax.validation.constraints.NotBlank;
 public class EvidenceActionServiceConfigurationProperties {
 
     @NestedConfigurationProperty
-    private EvidenceServiceAction relayREEMDAcceptance = new EvidenceServiceAction(new EvidenceAction("RelayREMMDAcceptanceRejection"), null);
+    private EvidenceServiceAction relayREEMDAcceptance = new EvidenceServiceAction(new AS4Action("RelayREMMDAcceptanceRejection"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction relayREEMDRejection = new EvidenceServiceAction(new EvidenceAction("RelayREMMDAcceptanceRejection"), null);
+    private EvidenceServiceAction relayREEMDRejection = new EvidenceServiceAction(new AS4Action("RelayREMMDAcceptanceRejection"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction relayREMMDFailure = new EvidenceServiceAction(new EvidenceAction("RelayREMMDFailure"), null);
+    private EvidenceServiceAction relayREMMDFailure = new EvidenceServiceAction(new AS4Action("RelayREMMDFailure"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction delivery = new EvidenceServiceAction(new EvidenceAction("DeliveryNonDeliveryToRecipient"), null);
+    private EvidenceServiceAction delivery = new EvidenceServiceAction(new AS4Action("DeliveryNonDeliveryToRecipient"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction nonDelivery = new EvidenceServiceAction(new EvidenceAction("DeliveryNonDeliveryToRecipient"), null);
+    private EvidenceServiceAction nonDelivery = new EvidenceServiceAction(new AS4Action("DeliveryNonDeliveryToRecipient"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction nonRetrieval = new EvidenceServiceAction(new EvidenceAction("RetrievalNonRetrievalToRecipient"), null);
+    private EvidenceServiceAction nonRetrieval = new EvidenceServiceAction(new AS4Action("RetrievalNonRetrievalToRecipient"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction retrieval = new EvidenceServiceAction(new EvidenceAction("RetrievalNonRetrievalToRecipient"), null);
+    private EvidenceServiceAction retrieval = new EvidenceServiceAction(new AS4Action("RetrievalNonRetrievalToRecipient"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction submissionAcceptance = new EvidenceServiceAction(new EvidenceAction("SubmissionAcceptanceRejection"), null);
+    private EvidenceServiceAction submissionAcceptance = new EvidenceServiceAction(new AS4Action("SubmissionAcceptanceRejection"), null);
     @NestedConfigurationProperty
-    private EvidenceServiceAction submissionRejection = new EvidenceServiceAction(new EvidenceAction("SubmissionAcceptanceRejection"), null);
+    private EvidenceServiceAction submissionRejection = new EvidenceServiceAction(new AS4Action("SubmissionAcceptanceRejection"), null);
 
     public EvidenceServiceAction getSubmissionAcceptance() {
         return submissionAcceptance;
@@ -110,31 +110,31 @@ public class EvidenceActionServiceConfigurationProperties {
 
     public static class EvidenceServiceAction {
         @Valid
-        private EvidenceAction action;
+        private EvidenceActionServiceConfigurationProperties.AS4Action action;
         @Valid
         @NestedConfigurationProperty
-        private EvidenceService service;
+        private EvidenceActionServiceConfigurationProperties.AS4Service service;
 
         public EvidenceServiceAction() {}
 
-        public EvidenceServiceAction(EvidenceAction action, EvidenceService service) {
+        public EvidenceServiceAction(AS4Action action, AS4Service service) {
             this.action = action;
             this.service = service;
         }
 
-        public EvidenceAction getAction() {
+        public AS4Action getAction() {
             return action;
         }
 
-        public void setAction(EvidenceAction action) {
+        public void setAction(AS4Action action) {
             this.action = action;
         }
 
-        public EvidenceService getService() {
+        public AS4Service getService() {
             return service;
         }
 
-        public void setService(EvidenceService service) {
+        public void setService(AS4Service service) {
             this.service = service;
         }
 
@@ -156,13 +156,13 @@ public class EvidenceActionServiceConfigurationProperties {
 
     }
 
-    public static class EvidenceAction {
+    public static class AS4Action {
         @NotBlank
         private String action;
 
-        public EvidenceAction() {}
+        public AS4Action() {}
 
-        public EvidenceAction(String action) {
+        public AS4Action(String action) {
             this.action = action;
         }
 
@@ -179,17 +179,17 @@ public class EvidenceActionServiceConfigurationProperties {
         }
     }
 
-    public static class EvidenceService {
+    public static class AS4Service {
         @NotBlank
         private String name;
-        @NotBlank
+
         private String serviceType;
 
-        public EvidenceService() {
+        public AS4Service() {
 
         }
 
-        public EvidenceService(String name, String serviceType) {
+        public AS4Service(String name, String serviceType) {
             this.name = name;
             this.serviceType = serviceType;
         }

@@ -23,7 +23,9 @@ public class DomibusConnectorMessageDetailsBuilder {
     private DomibusConnectorParty fromParty;
     private DomibusConnectorParty toParty;
     private DomibusConnectorMessageDirection messageDirection;
+
     private String connectorBackendClientName;
+    private String gatewayName;
 
     private DomibusConnectorMessageDetailsBuilder() {}
 
@@ -48,6 +50,11 @@ public class DomibusConnectorMessageDetailsBuilder {
 
     public DomibusConnectorMessageDetailsBuilder withConnectorBackendClientName(String connectorBackendClientName) {
         this.connectorBackendClientName = connectorBackendClientName;
+        return this;
+    }
+
+    public DomibusConnectorMessageDetailsBuilder withGatewayName(String gatewayName) {
+        this.gatewayName = gatewayName;
         return this;
     }
 
@@ -111,6 +118,7 @@ public class DomibusConnectorMessageDetailsBuilder {
         details.setRefToBackendMessageId(this.refToBackendMessageId);
         details.setDirection(this.messageDirection);
         details.setConnectorBackendClientName(this.connectorBackendClientName);
+        details.setGatewayName(this.gatewayName);
         return details;
     }
 
@@ -135,6 +143,7 @@ public class DomibusConnectorMessageDetailsBuilder {
         this.refToBackendMessageId = messageDetails.getRefToBackendMessageId();
         this.messageDirection = messageDetails.getDirection();
         this.connectorBackendClientName = messageDetails.getConnectorBackendClientName();
+        this.gatewayName = messageDetails.getGatewayName();
 
         return this;
     }

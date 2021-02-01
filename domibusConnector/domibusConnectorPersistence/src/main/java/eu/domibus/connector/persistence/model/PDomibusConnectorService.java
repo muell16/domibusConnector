@@ -25,7 +25,7 @@ public class PDomibusConnectorService {
     @Column(name = "SERVICE")
     private String service;
 
-    @Column(name = "SERVICE_TYPE", nullable = false)
+    @Column(name = "SERVICE_TYPE")
     private String serviceType;
 
     @ManyToOne

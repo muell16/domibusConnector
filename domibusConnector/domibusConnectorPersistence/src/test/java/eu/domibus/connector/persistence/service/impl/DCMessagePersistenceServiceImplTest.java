@@ -65,11 +65,9 @@ public class DCMessagePersistenceServiceImplTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DCMessagePersistenceServiceImpl impl = new DCMessagePersistenceServiceImpl();
-        impl.setMessageDao(messageDao);
-        impl.setInternalMessageInfoPersistenceService(messageInfoPersistenceService);
+        DCMessagePersistenceServiceImpl impl =
+                new DCMessagePersistenceServiceImpl(messageDao, msgContService, messageInfoPersistenceService);
 
-        impl.setMsgContentService(msgContService);
 
         this.messagePersistenceService = impl;
         

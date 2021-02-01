@@ -22,8 +22,6 @@ import java.util.Date;
 public class DomibusConnectorMessageDetails implements Serializable {
 
 	@Nullable
-	//will become deprecated when the backend messages are tracked by
-	//the transportStateService
 	private String backendMessageId;
 
 	@Nullable
@@ -45,9 +43,12 @@ public class DomibusConnectorMessageDetails implements Serializable {
 	//end of AS4 properties
 
 	//the backend client name the message is received from or should be delivered to
-	//should be moved to the transportStateService
 	@Nullable
 	private String connectorBackendClientName;
+
+	//the gateway name the message is received from or should be submitted to
+	@Nullable
+	private String gatewayName;
 
 	//should be moved to the transportStateService
 	@Nullable
@@ -276,6 +277,15 @@ public class DomibusConnectorMessageDetails implements Serializable {
 		this.failed = failed;
 	}
 
+	@Nullable
+	public String getGatewayName() {
+		return gatewayName;
+	}
+
+	public void setGatewayName(@Nullable String gatewayName) {
+		this.gatewayName = gatewayName;
+	}
+
 	@Override
     public String toString() {
         ToStringCreator builder = new ToStringCreator(this);
@@ -287,5 +297,6 @@ public class DomibusConnectorMessageDetails implements Serializable {
         builder.append("conversationId", this.conversationId);
         return builder.toString();        
     }
+
 
 }

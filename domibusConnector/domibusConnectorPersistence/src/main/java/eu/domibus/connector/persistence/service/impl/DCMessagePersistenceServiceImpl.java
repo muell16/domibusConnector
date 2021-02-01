@@ -29,30 +29,17 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DCMessagePersistenceServiceImpl.class);
 
-    private DomibusConnectorMessageDao messageDao;
-//    private DomibusConnectorEvidenceDao evidenceDao;
-    private MsgContentPersistenceService msgContentService;
+    private final DomibusConnectorMessageDao messageDao;
+    private final MsgContentPersistenceService msgContentService;
+    private final InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService;
 
-    private InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService;
-
-    /*
-     * DAO SETTER  
-     */
-    @Autowired
-    public void setMessageDao(DomibusConnectorMessageDao messageDao) {
+    public DCMessagePersistenceServiceImpl(DomibusConnectorMessageDao messageDao,
+                                           MsgContentPersistenceService msgContentService,
+                                           InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService) {
         this.messageDao = messageDao;
-    }
-
-    @Autowired
-    public void setInternalMessageInfoPersistenceService(InternalMessageInfoPersistenceServiceImpl internalMessageInfoPersistenceService) {
+        this.msgContentService = msgContentService;
         this.internalMessageInfoPersistenceService = internalMessageInfoPersistenceService;
     }
-
-    @Autowired
-    public void setMsgContentService(MsgContentPersistenceService msgContService) {
-        this.msgContentService = msgContService;
-    }
-
 
     /*
     * END DAO SETTER
@@ -107,7 +94,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         if (message.getMessageDetails() == null) {
             throw new IllegalArgumentException("MessageDetails (getMessageDetails()) are not allowed to be null in message!");
         }
-        if (message.getConnectorMessageIdAsString() == null) {
+        if (message.getConnectorMessageId() == null) {
             throw new IllegalArgumentException("connectorMessageId (getConnectorMessageId()) must be set!");
         }
 
@@ -122,8 +109,9 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         dbMessage.setConversationId(message.getMessageDetails().getConversationId());
         dbMessage.setEbmsMessageId(message.getMessageDetails().getEbmsMessageId());
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
-        dbMessage.setConnectorMessageId(message.getConnectorMessageIdAsString());
+        dbMessage.setConnectorMessageId(message.getConnectorMessageId().getConnectorMessageId());
         dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
+        dbMessage.setGatewayName(message.getMessageDetails().getGatewayName());
 
         try {
             LOGGER.trace("#persistMessageIntoDatabase: Saving message [{}] into storage", dbMessage);
@@ -184,7 +172,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         dbMessage.setBackendMessageId(message.getMessageDetails().getBackendMessageId());
         dbMessage.setConnectorMessageId(message.getConnectorMessageIdAsString());
         dbMessage.setBackendName(message.getMessageDetails().getConnectorBackendClientName());
-
+        dbMessage.setGatewayName(message.getMessageDetails().getGatewayName());
 
         PDomibusConnectorMessageInfo messageInfo = dbMessage.getMessageInfo();
         if (messageInfo == null) {
@@ -366,19 +354,18 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         details.setEbmsMessageId(dbMessage.getEbmsMessageId());
         details.setBackendMessageId(dbMessage.getBackendMessageId());
         details.setConversationId(dbMessage.getConversationId());
+
         details.setConnectorBackendClientName(dbMessage.getBackendName());
+        details.setGatewayName(dbMessage.getGatewayName());
+
         details.setDeliveredToBackend(dbMessage.getDeliveredToNationalSystem());
         details.setDeliveredToGateway(dbMessage.getDeliveredToGateway());
 
         details.setDirection(MessageDirectionMapper.mapFromPersistenceToDomain(dbMessage.getDirectionSource(), dbMessage.getDirectionTarget()));
 
-
         details.setRejected(dbMessage.getRejected());
         details.setConfirmed(dbMessage.getConfirmed());
 
-//        details.setFailed(dbMessage.getRejected());
-
-        //mapMessageInfoIntoMessageDetails(dbMessage, details);
         this.internalMessageInfoPersistenceService.mapMessageInfoIntoMessageDetails(dbMessage, details);
 
         messageBuilder.setMessageDetails(details);

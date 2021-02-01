@@ -4,7 +4,6 @@ import eu.domibus.connector.domain.configuration.EvidenceActionServiceConfigurat
 import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -32,10 +31,10 @@ class ConfigurationPropertyLoaderServiceImplTest {
 
         assertThat(evidenceActionServiceConfigurationProperties).isNotNull();
 
-        EvidenceActionServiceConfigurationProperties.EvidenceAction action = evidenceActionServiceConfigurationProperties.getRetrieval().getAction();
+        EvidenceActionServiceConfigurationProperties.AS4Action action = evidenceActionServiceConfigurationProperties.getRetrieval().getAction();
         assertThat(action.getAction()).isEqualTo("retrievalAction");
 
-        EvidenceActionServiceConfigurationProperties.EvidenceService service = evidenceActionServiceConfigurationProperties.getRetrieval().getService();
+        EvidenceActionServiceConfigurationProperties.AS4Service service = evidenceActionServiceConfigurationProperties.getRetrieval().getService();
         assertThat(service).isNotNull();
         assertThat(service.getName()).as("service is aService").isEqualTo("aService");
         assertThat(service.getConnectorService().getService()).as("Connector Service must be").isEqualTo("aService");

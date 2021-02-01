@@ -185,6 +185,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <!-- activate resource filtering to provide the tests with correct properties for the environment
