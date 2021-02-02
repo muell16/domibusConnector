@@ -6,6 +6,7 @@ import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.link.impl.wsbackendplugin.WsBackendPluginActiveLinkPartner;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWSService;
 import eu.domibus.connector.ws.backend.delivery.webservice.DomibusConnectorBackendDeliveryWebService;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.logging.log4j.LogManager;
@@ -70,9 +71,12 @@ public class WsBackendPluginWebServiceClientFactory {
         JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
         jaxWsProxyFactoryBean.setServiceClass(DomibusConnectorBackendDeliveryWebService.class);
 
+        if (config.isCxfLoggingEnabled()) {
+            jaxWsProxyFactoryBean.getFeatures().add(new LoggingFeature());
+        }
 
         WSPolicyFeature wsPolicyFeature = new WsPolicyLoader(config.getWsPolicy()).loadPolicyFeature();
-        jaxWsProxyFactoryBean.setFeatures(Arrays.asList(wsPolicyFeature));
+        jaxWsProxyFactoryBean.getFeatures().add(wsPolicyFeature);
         jaxWsProxyFactoryBean.setAddress(pushAddress);
         jaxWsProxyFactoryBean.setWsdlURL(DomibusConnectorBackendDeliveryWSService.WSDL_LOCATION.toString());
 //        jaxWsProxyFactoryBean.setWsdlURL(pushAddress + "?wsdl"); //maybe load own wsdl instead of remote one?

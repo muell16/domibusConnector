@@ -5,6 +5,7 @@ import eu.domibus.connector.link.common.MerlinPropertiesFactory;
 import eu.domibus.connector.link.common.WsPolicyLoader;
 import eu.domibus.connector.ws.backend.webservice.DomibusConnectorBackendWSService;
 import org.apache.cxf.bus.spring.SpringBus;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.ws.policy.WSPolicyFeature;
 import org.apache.logging.log4j.LogManager;
@@ -77,6 +78,10 @@ public class WsBackendPluginConfiguration {
 
         WSPolicyFeature wsPolicyFeature = new WsPolicyLoader(config.getWsPolicy()).loadPolicyFeature();
         endpoint.getFeatures().add(wsPolicyFeature);
+
+        if (configurationProperties.isCxfLoggingEnabled()) {
+            endpoint.getFeatures().add(new LoggingFeature());
+        }
 
         endpoint.getProperties().put("security.callback-handler", new DefaultWsCallbackHandler());
         endpoint.getProperties().put("security.store.bytes.in.attachment", true);

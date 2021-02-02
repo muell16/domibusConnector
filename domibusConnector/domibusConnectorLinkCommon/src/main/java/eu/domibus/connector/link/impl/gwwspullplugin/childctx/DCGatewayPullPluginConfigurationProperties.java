@@ -50,36 +50,4 @@ public class DCGatewayPullPluginConfigurationProperties {
     private boolean cxfLoggingEnabled = false;
 
 
-//    public String getGwAddress() {
-//        return gwAddress;
-//    }
-//
-//    public void setGwAddress(String gwAddress) {
-//        this.gwAddress = gwAddress;
-//    }
-//
-//    public KeyAndKeyStoreAndTrustStoreConfigurationProperties getTls() {
-//        return tls;
-//    }
-//
-//    public void setTls(KeyAndKeyStoreAndTrustStoreConfigurationProperties tls) {
-//        this.tls = tls;
-//    }
-//
-//    public CxfTrustKeyStoreConfigurationProperties getSoap() {
-//        return soap;
-//    }
-//
-//    public void setSoap(CxfTrustKeyStoreConfigurationProperties soap) {
-//        this.soap = soap;
-//    }
-//
-//    public Resource getWsPolicy() {
-//        return wsPolicy;
-//    }
-//
-//    public void setWsPolicy(Resource wsPolicy) {
-//        this.wsPolicy = wsPolicy;
-//    }
-
 }
