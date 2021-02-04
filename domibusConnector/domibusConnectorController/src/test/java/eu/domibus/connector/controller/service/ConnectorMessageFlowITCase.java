@@ -63,7 +63,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootTest(classes = {ITCaseTestContext.class},
-        properties = { "connector.controller.evidence.timeoutActive=false" } //deactivate the evidence timeout checking timer job during this test
+        properties = { "connector.controller.evidence.timeoutActive=false",
+                "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED"
+
+} //deactivate the evidence timeout checking timer job during this test
 )
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
