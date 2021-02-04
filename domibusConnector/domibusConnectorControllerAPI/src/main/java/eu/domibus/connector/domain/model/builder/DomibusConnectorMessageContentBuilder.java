@@ -43,9 +43,11 @@ public final class DomibusConnectorMessageContentBuilder {
     }
 
     public DomibusConnectorMessageContentBuilder copyPropertiesFrom(DomibusConnectorMessageContent content) {
-        this.document = DomibusConnectorMessageDocumentBuilder.createBuilder()
-                .copyPropertiesFrom(content.getDocument())
-                .build();
+        if (content.getDocument() != null) {
+            this.document = DomibusConnectorMessageDocumentBuilder.createBuilder()
+                    .copyPropertiesFrom(content.getDocument())
+                    .build();
+        }
         this.xmlContent = Arrays.copyOf(content.getXmlContent(), content.getXmlContent().length);
         return this;
     }
