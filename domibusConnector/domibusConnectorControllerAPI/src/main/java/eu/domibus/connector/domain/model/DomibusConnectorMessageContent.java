@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.Null;
 
 
 /**
@@ -18,6 +21,7 @@ import org.springframework.core.style.ToStringCreator;
 public class DomibusConnectorMessageContent implements Serializable {
 
 	private byte xmlContent[];
+	@Nullable
 	private DomibusConnectorMessageDocument document;
 
 	public DomibusConnectorMessageContent(){
