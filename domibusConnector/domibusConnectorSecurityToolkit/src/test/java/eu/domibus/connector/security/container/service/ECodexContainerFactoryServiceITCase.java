@@ -14,16 +14,16 @@ import eu.ecodex.dss.service.ECodexException;
 import eu.europa.esig.dss.DSSDocument;
 import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.MimeType;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes={
+@SpringBootTest(classes={
         DomibusConnectorEnvironmentConfiguration.class,
         DomibusConnectorCertificateVerifier.class,
         DomibusConnectorProxyConfig.class,
@@ -49,6 +49,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 @EnableConfigurationProperties
 @TestPropertySource({"classpath:test.properties", "classpath:test-sig.properties"})
+//@ActiveProfiles({"test", "test-sig"})
+@Disabled("Is used as template") //there is currently no other smoth way to run a
+// spring test with different environments/settings via junit5 test-templates, extension,...
+// so inheritance is used
 public class ECodexContainerFactoryServiceITCase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ECodexContainerFactoryServiceITCase.class);
@@ -67,9 +71,9 @@ public class ECodexContainerFactoryServiceITCase {
 
 
     @BeforeAll
-    public static void initClass() {
+    public static void initClass(TestInfo testInfo) {
         String dir = System.getenv().getOrDefault(TEST_FILE_RESULTS_DIR_PROPERTY_NAME, "./target/testfileresults/");
-        dir = dir + "/" + ECodexContainerFactoryServiceITCase.class.getSimpleName();
+        dir = dir + "/" + testInfo.getTestClass().get().getSimpleName();
         TEST_RESULTS_FOLDER = new File(dir);
         TEST_RESULTS_FOLDER.mkdirs();
 
@@ -80,6 +84,119 @@ public class ECodexContainerFactoryServiceITCase {
     public void setUp() {
 
     }
+
+    @Test
+    @DisplayName("Build ASIC-S container with XML as business doc")
+    public void createContainerFromXML(TestInfo testInfo) throws ECodexException, IOException {
+
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+
+        BusinessContent businessContent = new BusinessContent();
+
+        //bytes name mimetype
+        DSSDocument businessDoc = loadDocumentFromResource("examples/ExampleXmlSigned.xml", "ExampleXmlSigned.xml", MimeType.XML);
+        businessContent.setDocument(businessDoc);
+
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+
+        DSSDocument asicDocument = eCodexContainer.getAsicDocument();
+        assertThat(asicDocument).isNotNull();
+//
+        asicDocument.setName("asic-s.asics.zip");
+        writeDssDocToDisk(testInfo, asicDocument);
+
+        DSSDocument tokenXML = eCodexContainer.getTokenXML();
+        assertThat(tokenXML).isNotNull();
+        tokenXML.setName("asic-s_trustoktoken.xml");
+        writeDssDocToDisk(testInfo, tokenXML);
+
+        //check if produced container and token can also be resolved again
+        byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
+        byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
+
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
+
+    }
+
+
+    @Test
+    @DisplayName("Build ASIC-S container with ASIC-S as business doc")
+    public void createContainerFromAsicS(TestInfo testInfo) throws ECodexException, IOException {
+
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+
+        BusinessContent businessContent = new BusinessContent();
+
+        //bytes name mimetype
+        DSSDocument businessDoc = loadDocumentFromResource("examples/ExampleAsics.asics", "ExampleAsics.asics", MimeType.ASICS);
+        businessContent.setDocument(businessDoc);
+
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+
+        DSSDocument asicDocument = eCodexContainer.getAsicDocument();
+        assertThat(asicDocument).isNotNull();
+//
+        asicDocument.setName("asic-s.asics.zip");
+        writeDssDocToDisk(testInfo, asicDocument);
+
+        DSSDocument tokenXML = eCodexContainer.getTokenXML();
+        assertThat(tokenXML).isNotNull();
+        tokenXML.setName("asic-s_trustoktoken.xml");
+        writeDssDocToDisk(testInfo, tokenXML);
+
+        //check if produced container and token can also be resolved again
+        byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
+        byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
+
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
+
+        //there must be a token XML
+        assertThat(eCodexContainer.getTokenXML()).isNotNull();
+
+        //there must be a pdf token!
+        assertThat(eCodexContainer.getTokenPDF()).isNotNull();
+
+        //there must also be a business document!
+        assertThat(eCodexContainer.getBusinessContent().getDocument()).isNotNull();
+    }
+
+
+    @Test
+    @DisplayName("Build ASIC-S container with unsigned doc.txt")
+    public void createContainerFromTextDocument(TestInfo testInfo) throws ECodexException, IOException {
+
+        ECodexContainerService eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+
+        BusinessContent businessContent = new BusinessContent();
+
+        //bytes name mimetype
+        DSSDocument businessDoc = loadDocumentFromResource("examples/text.txt", "text.txt", MimeType.TEXT);
+        businessContent.setDocument(businessDoc);
+
+        ECodexContainer eCodexContainer = eCodexContainerService.create(businessContent, tokenIssuerFactory.getTokenIssuer(null));
+
+        DSSDocument asicDocument = eCodexContainer.getAsicDocument();
+        assertThat(asicDocument).isNotNull();
+//
+        asicDocument.setName("asic-s.asics.zip");
+        writeDssDocToDisk(testInfo, asicDocument);
+
+        DSSDocument tokenXML = eCodexContainer.getTokenXML();
+        assertThat(tokenXML).isNotNull();
+        tokenXML.setName("asic-s_trustoktoken.xml");
+        writeDssDocToDisk(testInfo, tokenXML);
+
+        //check if produced container and token can also be resolved again
+        byte[] asics = StreamUtils.copyToByteArray(asicDocument.openStream());
+        byte[] tokenXml = StreamUtils.copyToByteArray(tokenXML.openStream());
+
+        eCodexContainerService = eCodexContainerFactoryService.createECodexContainerService(null);
+        eCodexContainer = eCodexContainerService.receive(new ByteArrayInputStream(asics), new ByteArrayInputStream(tokenXml));
+
+    }
+
 
     @Test
     public void simpleTestCreateContainerServiceAndBuildAsicContainer() throws ECodexException, IOException {
@@ -166,9 +283,11 @@ public class ECodexContainerFactoryServiceITCase {
 //    }
 
 
-    private void writeDssDocToDisk(String prefix, DSSDocument document) throws IOException {
+    private void writeDssDocToDisk(TestInfo testInfo, DSSDocument document) throws IOException {
 
-        File f = new File(TEST_RESULTS_FOLDER + File.separator + prefix);
+        String testMethodName = testInfo.getTestMethod().get().getName();
+
+        File f = new File(TEST_RESULTS_FOLDER + File.separator + testMethodName);
         f.mkdirs();
 
         String docName = document.getName();
