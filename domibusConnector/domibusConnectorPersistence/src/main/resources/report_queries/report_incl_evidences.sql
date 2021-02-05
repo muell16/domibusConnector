@@ -40,7 +40,7 @@ from
        serviceTable.SERVICE,
      (extract(YEAR FROM case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end)),
      (extract(MONTH from  case when m.DELIVERED_BACKEND is null then m.DELIVERED_GW else DELIVERED_BACKEND end)),
-     (case when m.DELIVERED_BACKEND is null then i.to_party_id else i.from_party_id end)
+     (case when m.DELIVERED_BACKEND is null then toParty.PARTY_ID else fromParty.PARTY_ID end)
    ) x
 order by 
   myear,

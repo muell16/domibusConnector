@@ -1,6 +1,9 @@
 package eu.domibus.connector.web.view.areas.messages;
 
+import com.vaadin.flow.component.notification.Notification;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,11 +24,15 @@ import eu.domibus.connector.web.dto.WebMessageEvidence;
 import eu.domibus.connector.web.forms.ConnectorMessageForm;
 import eu.domibus.connector.web.service.WebMessageService;
 
+import java.util.Optional;
+
 //@HtmlImport("styles/shared-styles.html")
 //@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class MessageDetails extends VerticalLayout {
+
+	private final static Logger LOGGER = LogManager.getLogger(MessageDetails.class);
 
 	private WebMessageService messageService;
 	private ConnectorMessageForm messageForm = new ConnectorMessageForm();
@@ -65,50 +72,57 @@ public class MessageDetails extends VerticalLayout {
 
 
 	public void loadMessageDetails(String connectorMessageId) {
-		WebMessageDetail messageByConnectorId = messageService.getMessageByConnectorId(connectorMessageId);
-		messageForm.setConnectorMessage(messageByConnectorId);
+		Optional<WebMessageDetail> optionalMessage = messageService.getMessageByConnectorId(connectorMessageId);
 
-		if(!messageByConnectorId.getEvidences().isEmpty()) {
-			messageEvidencesArea.removeAll();
+		if (optionalMessage.isPresent()) {
+			WebMessageDetail messageByConnectorId = optionalMessage.get();
+			messageForm.setConnectorMessage(messageByConnectorId);
 
-			Div evidences = new Div();
-			evidences.setWidth("100vw");
-			LumoLabel evidencesLabel = new LumoLabel();
-			evidencesLabel.setText("Evidences:");
-			evidencesLabel.getStyle().set("font-size", "20px");
-			evidences.add(evidencesLabel);
+			if (!messageByConnectorId.getEvidences().isEmpty()) {
+				messageEvidencesArea.removeAll();
 
-			messageEvidencesArea.add(evidences);
+				Div evidences = new Div();
+				evidences.setWidth("100vw");
+				LumoLabel evidencesLabel = new LumoLabel();
+				evidencesLabel.setText("Evidences:");
+				evidencesLabel.getStyle().set("font-size", "20px");
+				evidences.add(evidencesLabel);
 
-			Div details = new Div();
-			details.setWidth("100vw");
+				messageEvidencesArea.add(evidences);
 
-			Grid<WebMessageEvidence> grid = new Grid<>();
+				Div details = new Div();
+				details.setWidth("100vw");
 
-			grid.setItems(messageByConnectorId.getEvidences());
+				Grid<WebMessageEvidence> grid = new Grid<>();
 
-			grid.addColumn(WebMessageEvidence::getEvidenceType).setHeader("Evidence Type").setWidth("300px");
-			grid.addColumn(WebMessageEvidence::getDeliveredToGatewayString).setHeader("Delivered to Gateway").setWidth("300px");
-			grid.addColumn(WebMessageEvidence::getDeliveredToBackendString).setHeader("Delivered to Backend").setWidth("300px");
+				grid.setItems(messageByConnectorId.getEvidences());
 
-			grid.setWidth("1000px");
-			grid.setHeight("210px");
-			grid.setMultiSort(true);
+				grid.addColumn(WebMessageEvidence::getEvidenceType).setHeader("Evidence Type").setWidth("300px");
+				grid.addColumn(WebMessageEvidence::getDeliveredToGatewayString).setHeader("Delivered to Gateway").setWidth("300px");
+				grid.addColumn(WebMessageEvidence::getDeliveredToBackendString).setHeader("Delivered to Backend").setWidth("300px");
 
-			for(Column<WebMessageEvidence> col : grid.getColumns()) {
-				col.setSortable(true);
-				col.setResizable(true);
+				grid.setWidth("1000px");
+				grid.setHeight("210px");
+				grid.setMultiSort(true);
+
+				for (Column<WebMessageEvidence> col : grid.getColumns()) {
+					col.setSortable(true);
+					col.setResizable(true);
+				}
+
+				details.add(grid);
+
+
+				messageEvidencesArea.add(details);
+
+				messageEvidencesArea.setWidth("100vw");
+				//			add(messageEvidencesArea);
+				messageEvidencesArea.setVisible(true);
 			}
-
-			details.add(grid);
-
-
-
-			messageEvidencesArea.add(details);
-
-			messageEvidencesArea.setWidth("100vw");
-//			add(messageEvidencesArea);
-			messageEvidencesArea.setVisible(true);
+		} else {
+			String errorMessage = String.format("No message found within database with id [%s]", connectorMessageId);
+			LOGGER.warn(errorMessage);
+			Notification.show(errorMessage);
 		}
 	}
 

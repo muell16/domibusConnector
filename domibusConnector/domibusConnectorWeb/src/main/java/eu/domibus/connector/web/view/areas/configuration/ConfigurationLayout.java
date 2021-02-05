@@ -118,7 +118,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
             confirmDialog.open();
         });
         reset.add(resetConfiguration);
-        configurationButtonBar.add(reset);
+//        configurationButtonBar.add(reset);
 
         Div save = new Div();
         String saveActionText = "Save Changes";
@@ -142,7 +142,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
             confirmDialog.open();
         });
         save.add(saveConfiguration);
-        configurationButtonBar.add(save);
+//        configurationButtonBar.add(save);
 
         Div reload = new Div();
         String reloadActionText = "Reload Configuration";
@@ -167,7 +167,7 @@ public class ConfigurationLayout extends VerticalLayout implements BeforeEnterOb
         });
         reload.add(reloadConfiguration);
         reload.getStyle().set("align", "right");
-        configurationButtonBar.add(reload);
+//        configurationButtonBar.add(reload);
 
         configurationButtonBar.setWidth("900px");
         configurationButtonBar.expand(save);

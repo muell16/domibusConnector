@@ -1,28 +1,30 @@
 package eu.domibus.connector.web.persistence.service.impl;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.persistence.model.*;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import eu.domibus.connector.persistence.dao.DomibusConnectorMessageDao;
-import eu.domibus.connector.persistence.model.PDomibusConnectorEvidence;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessage;
-import eu.domibus.connector.persistence.model.PDomibusConnectorMessageInfo;
 import eu.domibus.connector.persistence.service.impl.DomibusConnectorMessagePersistenceServiceImpl;
 
 import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.dto.WebMessageEvidence;
+import org.springframework.util.StringUtils;
 
 @Service("webMessagePersistenceService")
 public class DomibusConnectorWebMessagePersistenceServiceImpl implements DomibusConnectorWebMessagePersistenceService {
@@ -52,21 +54,21 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 	}
 	
 	@Override
-	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
+	public Optional<WebMessageDetail> getMessageByConnectorId(String connectorMessageId) {
 		PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 		return mapDbMessageToWebMessageDetail(dbMessage);
 	}
 	
 	@Override
     @Transactional(readOnly = true)
-    public WebMessageDetail findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction) {
+    public Optional<WebMessageDetail>  findMessageByNationalId(String nationalMessageId, DomibusConnectorMessageDirection direction) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByBackendMessageIdAndDirectionTarget(nationalMessageId, direction.getTarget()).get();
         return mapDbMessageToWebMessageDetail(dbMessage);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public WebMessageDetail findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction) {
+    public Optional<WebMessageDetail>  findMessageByEbmsId(String ebmsMessageId, DomibusConnectorMessageDirection direction) {
         PDomibusConnectorMessage dbMessage = messageDao.findOneByEbmsMessageIdAndDirectionTarget(ebmsMessageId, direction.getTarget()).get();
         return mapDbMessageToWebMessageDetail(dbMessage);
     }
@@ -77,41 +79,122 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
         List<PDomibusConnectorMessage> dbMessages = messageDao.findByConversationId(conversationId);
         return mapDbMessagesToWebMessages(dbMessages);
     }
-	
+
+	@Override
+	public Page<WebMessage> findAll(Example<WebMessage> example, Pageable pageable) {
+		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
+
+
+		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
+
+		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
+
+	}
+
+//	@Override
+//	public long count(Example<WebMessage> example, Pageable pageable) {
+//		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
+//
+//
+////		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
+////
+////		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
+//
+//	}
+
+
+	private Example<PDomibusConnectorMessage> getpDomibusConnectorMessageExample(Example<WebMessage> example) {
+    	if (example == null) {
+    		throw new IllegalArgumentException("Example cannot be null!");
+		}
+		WebMessage probe = example.getProbe();
+
+		PDomibusConnectorMessage dbMsg = new PDomibusConnectorMessage();
+		PDomibusConnectorMessageInfo dbMsgInfo = new PDomibusConnectorMessageInfo();
+
+		dbMsg.setBackendName(probe.getBackendClient());
+
+		if (!StringUtils.isEmpty(probe.getAction())) {
+			PDomibusConnectorAction dbAction = new PDomibusConnectorAction();
+			dbAction.setAction(probe.getAction());
+			dbMsgInfo.setAction(dbAction);
+			dbMsg.setMessageInfo(dbMsgInfo);
+		}
+		if (!StringUtils.isEmpty(probe.getService())) {
+			PDomibusConnectorService dbService = new PDomibusConnectorService();
+			dbService.setService(probe.getService());
+			dbMsgInfo.setService(dbService);
+			dbMsg.setMessageInfo(dbMsgInfo);
+		}
+		if (!StringUtils.isEmpty(probe.getToPartyId())) {
+			PDomibusConnectorParty dbParty = new PDomibusConnectorParty();
+			dbParty.setPartyId(probe.getToPartyId());
+			dbMsgInfo.setTo(dbParty);
+			dbMsg.setMessageInfo(dbMsgInfo);
+		}
+		if (!StringUtils.isEmpty(probe.getFromPartyId())) {
+			PDomibusConnectorParty dbParty = new PDomibusConnectorParty();
+			dbParty.setPartyId(probe.getFromPartyId());
+			dbMsgInfo.setFrom(dbParty);
+			dbMsg.setMessageInfo(dbMsgInfo);
+		}
+
+		Example<PDomibusConnectorMessage> exampleDbMsg = Example.of(dbMsg, example.getMatcher());
+		return exampleDbMsg;
+	}
+
+
+	private static class DBMessageToWebMessageConverter implements Converter<PDomibusConnectorMessage, WebMessage> {
+
+		@Nullable
+		@Override
+		public WebMessage convert(PDomibusConnectorMessage pMessage) {
+			WebMessage message = new WebMessage();
+
+			message.setConnectorMessageId(pMessage.getConnectorMessageId());
+			message.setBackendClient(pMessage.getBackendName());
+			message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
+			message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
+			message.setCreated(pMessage.getCreated());
+
+			PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
+			message.setAction(pMessageInfo.getAction().getAction());
+			message.setService(pMessageInfo.getService().getService());
+			message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
+			message.setToPartyId(pMessageInfo.getTo().getPartyId());
+
+
+			return message;
+		}
+	}
+
+	@Override
+	public long count(Example<WebMessage> example) {
+		Example<PDomibusConnectorMessage> pDomibusConnectorMessageExample = getpDomibusConnectorMessageExample(example);
+		return messageDao.count(pDomibusConnectorMessageExample);
+	}
+
 	private LinkedList<WebMessage> mapDbMessagesToWebMessages(Iterable<PDomibusConnectorMessage> messages){
 		LinkedList<WebMessage> webMessages = new LinkedList<WebMessage>();
 		Iterator<PDomibusConnectorMessage> msgIt = messages.iterator();
 		while(msgIt.hasNext()) {
 			PDomibusConnectorMessage pMessage = msgIt.next();
-			
-			WebMessage message = mapDbMessageToWebMessage(pMessage);
-			
+
+			WebMessage message = new DBMessageToWebMessageConverter().convert(pMessage);
 			webMessages.addLast(message);
 		}
 		
 		return webMessages;
 	}
 
-	private WebMessage mapDbMessageToWebMessage(PDomibusConnectorMessage pMessage) {
-		WebMessage message = new WebMessage();
-		
-		message.setConnectorMessageId(pMessage.getConnectorMessageId());
-		message.setBackendClient(pMessage.getBackendName());
-		message.setDeliveredToBackend(pMessage.getDeliveredToNationalSystem());
-		message.setDeliveredToGateway(pMessage.getDeliveredToGateway());
-		message.setCreated(pMessage.getCreated());
-		
-		PDomibusConnectorMessageInfo pMessageInfo = pMessage.getMessageInfo();
-		message.setAction(pMessageInfo.getAction().getAction());
-		message.setService(pMessageInfo.getService().getService());
-		message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
-		message.setToPartyId(pMessageInfo.getTo().getPartyId());
-		
-		
-		return message;
-	}
+//	private WebMessage mapDbMessageToWebMessage(PDomibusConnectorMessage pMessage) {
+//
+//	}
 	
-	private WebMessageDetail mapDbMessageToWebMessageDetail(PDomibusConnectorMessage pMessage) {
+	private Optional<WebMessageDetail> mapDbMessageToWebMessageDetail(PDomibusConnectorMessage pMessage) {
+    	if (pMessage == null) {
+    		return Optional.empty();
+		}
 		WebMessageDetail message = new WebMessageDetail();
 		
 		message.setConnectorMessageId(pMessage.getConnectorMessageId());
@@ -145,7 +228,7 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			}
 		}
 		
-		return message;
+		return Optional.of(message);
 	}
 
 

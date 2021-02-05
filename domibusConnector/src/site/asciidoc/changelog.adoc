@@ -214,3 +214,6 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 
 * Added Fix which resolves a problem with an empty Business-Document wich lead to a NPE within DocumentBuilder.copyFromProperties
 * Added Fix for database reporting scripts - now they are UPPER_CASE
+* Add Pagination Support for MessagesList in UI to prevent Connector UI from starvation
+because its loading ALL messages from DB
+* Deactivated config change/save/reload support due unclear semantics/preconditions
