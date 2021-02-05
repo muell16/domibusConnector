@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,6 @@ import eu.domibus.connector.web.dto.WebMessage;
 import eu.domibus.connector.web.dto.WebMessageDetail;
 import eu.domibus.connector.web.service.WebMessageService;
 
-//@HtmlImport("styles/shared-styles.html")
-//@StyleSheet("styles/grid.css")
 @Component
 @UIScope
 public class Search extends VerticalLayout {
@@ -217,15 +216,16 @@ public class Search extends VerticalLayout {
 	}
 
 	private void searchByBackendMessageId(String backendMessageId) {
-		WebMessageDetail messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);
+		Optional<WebMessageDetail> messageByBackendMessageId = messageService.getMessageByBackendMessageId(backendMessageId);
 		searchBackendMessageIdText.setValue("");
-		showConnectorMessage(messageByBackendMessageId.getConnectorMessageId());
+		messageByBackendMessageId.ifPresent(m -> showConnectorMessage(m.getConnectorMessageId()));
 	}
 
 	private void searchByEbmsId(String ebmsId) {
-		WebMessageDetail messageByEbmsId = messageService.getMessageByEbmsId(ebmsId);
+		Optional<WebMessageDetail>  messageByEbmsId = messageService.getMessageByEbmsId(ebmsId);
 		searchEbmsIdText.setValue("");
-		showConnectorMessage(messageByEbmsId.getConnectorMessageId());
+		messageByEbmsId.ifPresent((m) -> showConnectorMessage(m.getConnectorMessageId()));
+
 	}
 
 	private void searchByPeriod(Date fromDate, Date toDate) {

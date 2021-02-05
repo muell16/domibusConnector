@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 
+import com.vaadin.flow.data.provider.DataProvider;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.web.persistence.service.DomibusConnectorWebMessagePersistenceService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -21,10 +23,9 @@ import eu.domibus.connector.web.dto.WebMessageDetail;
 @Service("webMessageService")
 public class WebMessageService {
 	
-	private DomibusConnectorWebMessagePersistenceService messagePersistenceService;
+	private final DomibusConnectorWebMessagePersistenceService messagePersistenceService;
 
-	@Autowired
-	public void setMessagePersistenceService(DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
+	public WebMessageService(DomibusConnectorWebMessagePersistenceService messagePersistenceService) {
 		this.messagePersistenceService = messagePersistenceService;
 	}
 
@@ -32,15 +33,15 @@ public class WebMessageService {
 		return messagePersistenceService.getAllMessages();
 	}
 
-	public WebMessageDetail getMessageByConnectorId(String connectorMessageId) {
+	public Optional<WebMessageDetail> getMessageByConnectorId(String connectorMessageId) {
 		return messagePersistenceService.getMessageByConnectorId(connectorMessageId);
 	}
 
-	public WebMessageDetail getMessageByEbmsId(String ebmsId) {
+	public Optional<WebMessageDetail>  getMessageByEbmsId(String ebmsId) {
 		return messagePersistenceService.findMessageByEbmsId(ebmsId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 	}
 
-	public WebMessageDetail getMessageByBackendMessageId(String backendMessageId) {
+	public Optional<WebMessageDetail>  getMessageByBackendMessageId(String backendMessageId) {
 		return messagePersistenceService.findMessageByNationalId(backendMessageId, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
 	}
 

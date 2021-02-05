@@ -32,46 +32,24 @@
         <dependency>
             <groupId>eu.ecodex.connector.utils</groupId>
             <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
-            <!--<version>${vaadin.version}</version>-->
             <exclusions>
-                <!--                <exclusion>-->
-                <!--                    <groupId>org.webjars.bowergithub.vaadin</groupId>-->
-                <!--                    <artifactId>vaadin-lumo-styles</artifactId>-->
-                <!--                </exclusion>-->
-                <!--                <exclusion>-->
-                <!--                    <groupId>com.vaadin</groupId>-->
-                <!--                    <artifactId>vaadin-testbench-bom</artifactId>-->
-                <!--                </exclusion>-->
-                <!--                <exclusion>-->
-                <!--                    &lt;!&ndash; exclude due different dep versions in vaadin itself &ndash;&gt;-->
-                <!--                    <groupId>org.webjars.bowergithub.vaadin</groupId>-->
-                <!--                    <artifactId>vaadin-control-state-mixin</artifactId>-->
-                <!--                </exclusion>-->
-                <!--                <exclusion>-->
-                <!--                    <groupId>org.webjars.bowergithub.vaadin</groupId>-->
-                <!--                    <artifactId>vaadin-themable-mixin</artifactId>-->
-                <!--                </exclusion>-->
             </exclusions>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.webjars.bowergithub.vaadin</groupId>-->
-        <!--            <artifactId>vaadin-control-state-mixin</artifactId>-->
-        <!--            <version>2.1.3</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.webjars.bowergithub.vaadin</groupId>-->
-        <!--            <artifactId>vaadin-lumo-styles</artifactId>-->
-        <!--            <version>1.5.0</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.webjars.bowergithub.vaadin</groupId>-->
-        <!--            <artifactId>vaadin-themable-mixin</artifactId>-->
-        <!--            <version>1.5.2</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.vaadin.klaudeta</groupId>
+            <artifactId>grid-pagination</artifactId>
+            <version>2.0.10</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
