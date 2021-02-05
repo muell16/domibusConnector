@@ -196,3 +196,9 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 
 * Fix an issue within the initial mysql script: The column 'CONTENT_TYPE' within table 'DOMIBUS_CONNECTOR_MSG_CONT' should be of type VARCHAR(255) instead of BIGINT!
 
+=== 4.2.8
+
+==== Changes
+
+* Added Fix which resolves a problem with an empty Business-Document wich lead to a NPE within DocumentBuilder.copyFromProperties
+* Added Fix for database reporting scripts - now they are UPPER_CASE
