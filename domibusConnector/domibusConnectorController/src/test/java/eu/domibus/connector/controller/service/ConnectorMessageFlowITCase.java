@@ -63,7 +63,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author {@literal Stephan Spindler <stephan.spindler@extern.brz.gv.at> }
  */
 @SpringBootTest(classes = {ITCaseTestContext.class},
-        properties = { "connector.controller.evidence.timeoutActive=false" } //deactivate the evidence timeout checking timer job during this test
+        properties = { "connector.controller.evidence.timeoutActive=false",
+                "token.issuer.advanced-electronic-system-type=SIGNATURE_BASED"
+
+} //deactivate the evidence timeout checking timer job during this test
 )
 @ActiveProfiles({"ITCaseTestContext", STORAGE_DB_PROFILE_NAME, "test", "flow-test"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -821,6 +824,190 @@ public class ConnectorMessageFlowITCase {
             assertThat(toBackendEvidenceMsgDetails.getToParty())
                     .as("Parties must be switched")
                     .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+
+
+
+
+
+        });
+    }
+
+
+    /**
+     * Send message from Backend to GW
+     *
+     *   -) Backend must have received SUBMISSION_ACCEPTANCE
+     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     *
+     */
+    @Test
+    public void sendMessageFromBackend_noBusinessDoc(TestInfo testInfo) {
+        String EBMS_ID = null;
+        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        String BACKEND_MESSAGE_ID = "n1";
+        Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
+//            DomibusConnectorMessage submittedMessage = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
+
+            DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
+            DomibusConnectorMessage msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
+                    .setConnectorMessageId(CONNECTOR_MESSAGE_ID)
+                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
+                            .create()
+                            .withEbmsMessageId(EBMS_ID)
+                            .withAction("action1")
+                            .withService("service1", "servicetype")
+                            .withConversationId("conv1")
+                            .withBackendMessageId(BACKEND_MESSAGE_ID)
+                            .withFromParty(DomainEntityCreator.createPartyAT())
+                            .withToParty(DomainEntityCreator.createPartyDE())
+                            .withFinalRecipient("final")
+                            .withOriginalSender("original")
+                            .build()
+                    ).build();
+            msg.getMessageContent().setDocument(null);
+
+            msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+            DomibusConnectorMessage submittedMessage = msg;
+
+
+            fromBackendToConnectorSubmissionService.submitToController(msg);
+
+
+            DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
+
+            assertThat(take).as("Gw must RCV message").isNotNull();
+
+            assertThat(take.getMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
+            assertThat(take.getMessageConfirmations().get(0).getEvidenceType())
+                    .as("evidence must be of type submission acceptance")
+                    .isEqualTo(SUBMISSION_ACCEPTANCE);
+
+            //ASIC-S + token XML
+            assertThat(take.getMessageAttachments()).hasSize(2);
+            assertThat(take.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
+            assertThat(take.getMessageContent().getXmlContent()).isNotNull(); //business XML
+
+
+            //check sent message in DB
+            DomibusConnectorMessage loadedMsg = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+            assertThat(loadedMsg.getMessageDetails().getEbmsMessageId()).isNotBlank();
+
+
+            DomibusConnectorMessage toBackendEvidence = toBackendDeliveredMessages.take();
+            assertThat(toBackendEvidence).isNotNull();
+            DomibusConnectorMessageDetails toBackendEvidenceMsgDetails = toBackendEvidence.getMessageDetails();
+            assertThat(toBackendEvidence.getMessageConfirmations().get(0).getEvidenceType())
+                    .isEqualTo(SUBMISSION_ACCEPTANCE);
+            assertThat(toBackendEvidence.getMessageConfirmations().get(0).getEvidence())
+                    .as("Generated evidence must be longer than 100 bytes - make sure this way a evidence has been generated")
+                    .hasSizeGreaterThan(100);
+
+            assertThat(toBackendEvidenceMsgDetails.getDirection())
+                    .as("Direction must be set!")
+                    .isNotNull();
+            assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
+                    .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
+                    .isEqualTo(BACKEND_MESSAGE_ID);
+            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+                    .as("Parties must be switched")
+                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+
+            assertThat(toBackendEvidenceMsgDetails.getToParty())
+                    .as("Parties must be switched")
+                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+
+
+
+
+
+
+        });
+    }
+
+
+    /**
+     * Send message from Backend to GW
+     *
+     *   -) Backend must have received SUBMISSION_ACCEPTANCE
+     *   -) GW must have received Business MSG with SUBMISSION_ACCEPTANCE and 2 attachments ASICS-S, tokenXml
+     *
+     */
+    @Test
+    public void sendMessageFromBackend_noBusinessDoc(TestInfo testInfo) {
+        String EBMS_ID = null;
+        String CONNECTOR_MESSAGE_ID = testInfo.getDisplayName();
+        String BACKEND_MESSAGE_ID = "n1";
+        Assertions.assertTimeoutPreemptively(TEST_TIMEOUT, () -> {
+//            DomibusConnectorMessage submittedMessage = submitMessage(EBMS_ID, CONNECTOR_MESSAGE_ID, BACKEND_MESSAGE_ID);
+
+            DomibusConnectorMessageBuilder msgBuilder = DomibusConnectorMessageBuilder.createBuilder();
+            DomibusConnectorMessage msg = msgBuilder.setMessageContent(DomainEntityCreator.createMessageContentWithDocumentWithNoSignature())
+                    .setConnectorMessageId(CONNECTOR_MESSAGE_ID)
+                    .setMessageDetails(DomibusConnectorMessageDetailsBuilder
+                            .create()
+                            .withEbmsMessageId(EBMS_ID)
+                            .withAction("action1")
+                            .withService("service1", "servicetype")
+                            .withConversationId("conv1")
+                            .withBackendMessageId(BACKEND_MESSAGE_ID)
+                            .withFromParty(DomainEntityCreator.createPartyAT())
+                            .withToParty(DomainEntityCreator.createPartyDE())
+                            .withFinalRecipient("final")
+                            .withOriginalSender("original")
+                            .build()
+                    ).build();
+            msg.getMessageContent().setDocument(null);
+
+            msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
+            DomibusConnectorMessage submittedMessage = msg;
+
+
+            fromBackendToConnectorSubmissionService.submitToController(msg);
+
+
+            DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
+
+            assertThat(take).as("Gw must RCV message").isNotNull();
+
+            assertThat(take.getMessageConfirmations()).as("submission acceptance evidence must be a part of message").hasSize(1); //SUBMISSION_ACCEPTANCE
+            assertThat(take.getMessageConfirmations().get(0).getEvidenceType())
+                    .as("evidence must be of type submission acceptance")
+                    .isEqualTo(SUBMISSION_ACCEPTANCE);
+
+            //ASIC-S + token XML
+            assertThat(take.getMessageAttachments()).hasSize(2);
+            assertThat(take.getMessageAttachments()).extracting(a -> a.getIdentifier()).containsOnly("ASIC-S", "tokenXML");
+            assertThat(take.getMessageContent().getXmlContent()).isNotNull(); //business XML
+
+
+            //check sent message in DB
+            DomibusConnectorMessage loadedMsg = messagePersistenceService.findMessageByConnectorMessageId(CONNECTOR_MESSAGE_ID);
+            assertThat(loadedMsg.getMessageDetails().getEbmsMessageId()).isNotBlank();
+
+
+            DomibusConnectorMessage toBackendEvidence = toBackendDeliveredMessages.take();
+            assertThat(toBackendEvidence).isNotNull();
+            DomibusConnectorMessageDetails toBackendEvidenceMsgDetails = toBackendEvidence.getMessageDetails();
+            assertThat(toBackendEvidence.getMessageConfirmations().get(0).getEvidenceType())
+                    .isEqualTo(SUBMISSION_ACCEPTANCE);
+            assertThat(toBackendEvidence.getMessageConfirmations().get(0).getEvidence())
+                    .as("Generated evidence must be longer than 100 bytes - make sure this way a evidence has been generated")
+                    .hasSizeGreaterThan(100);
+
+            assertThat(toBackendEvidenceMsgDetails.getDirection())
+                    .as("Direction must be set!")
+                    .isNotNull();
+            assertThat(toBackendEvidenceMsgDetails.getRefToBackendMessageId())
+                    .as("To backend back transported evidence message must use refToBackendMessageId to ref original backend msg id!")
+                    .isEqualTo(BACKEND_MESSAGE_ID);
+            assertThat(toBackendEvidenceMsgDetails.getFromParty())
+                    .as("Parties must be switched")
+                    .isEqualTo(submittedMessage.getMessageDetails().getToParty());
+
+            assertThat(toBackendEvidenceMsgDetails.getToParty())
+                    .as("Parties must be switched")
+                    .isEqualTo(submittedMessage.getMessageDetails().getFromParty());
+
 
 
 

@@ -65,6 +65,22 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
     }
 
 
+    @Test
+    public void testTransformDomainToTransition_noBusinessDoc() {
+        DomibusConnectorMessage domainMessage = DomainEntityCreator.createMessage();
+        domainMessage.getMessageContent().setDocument(null);
+
+        DomibusConnectorMessageType messageType = transformerService.transformDomainToTransition(domainMessage);
+
+        assertThat(messageType).as("transformed object is not allowed to be null").isNotNull();
+
+        assertThat(messageType.getMessageDetails()).as("message details are not allowed to be null!").isNotNull();
+        assertThat(messageType.getMessageContent()).as("message content is set in test entity!").isNotNull();
+        assertThat(messageType.getMessageConfirmations()).as("must have 1 confirmation").hasSize(1);
+        assertThat(messageType.getMessageAttachments()).as("must have 1 message attachment").hasSize(1);
+        assertThat(messageType.getMessageErrors()).as("must have 1 message error!").hasSize(1);
+    }
+
 
     @Test
     public void testTransformDomainToTransition_finalRecipientIsNull_shouldThrowException() {
@@ -310,6 +326,34 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
         assertThat(domainMessage.getMessageContent()).as("message content must not be null!").isNotNull();
         assertThat(domainMessage.getTransportedMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);
+        assertThat(domainMessage.getMessageErrors()).as("message errors contains 1!").hasSize(1);
+        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);
+    }
+
+    @Test
+    public void testTransformTransitionToDomain_NoBusinessDoc() {
+        DomibusConnectorMessageType message = TransitionCreator.createMessage();
+        message.getMessageContent().setDocument(null);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(message);
+
+        assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageContent()).as("message content must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);
+        assertThat(domainMessage.getMessageErrors()).as("message errors contains 1!").hasSize(1);
+        assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);
+    }
+
+    @Test
+    public void testTransformTransitionToDomain_NoBusinessDoc() {
+        DomibusConnectorMessageType message = TransitionCreator.createMessage();
+        message.getMessageContent().setDocument(null);
+        DomibusConnectorMessage domainMessage = transformerService.transformTransitionToDomain(message);
+
+        assertThat(domainMessage).as("converted domainMessage must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageDetails()).as("message details must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageContent()).as("message content must not be null!").isNotNull();
+        assertThat(domainMessage.getMessageConfirmations()).as("message confirmations contains 1!").hasSize(1);
         assertThat(domainMessage.getMessageErrors()).as("message errors contains 1!").hasSize(1);
         assertThat(domainMessage.getMessageAttachments()).as("message attachments contains 1!").hasSize(1);
     }

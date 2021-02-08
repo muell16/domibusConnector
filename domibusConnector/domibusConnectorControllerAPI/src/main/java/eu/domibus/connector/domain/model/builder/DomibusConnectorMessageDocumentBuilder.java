@@ -43,6 +43,9 @@ public final class DomibusConnectorMessageDocumentBuilder {
     }
     
     public DomibusConnectorMessageDocumentBuilder copyPropertiesFrom(DomibusConnectorMessageDocument doc) {
+        if (doc == null) {
+            throw new IllegalArgumentException("Document cannot be null here!");
+        }
         this.detachedSignature = doc.getDetachedSignature();
         this.documentContent = doc.getDocument();
         this.documentName = doc.getDocumentName();
