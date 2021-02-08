@@ -97,13 +97,13 @@ public class InternalMessageInfoPersistenceServiceImpl {
         PDomibusConnectorAction dbAction = messageInfo.getAction();
         Optional<PDomibusConnectorAction> dbActionFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbAction);
         checkNull(dbAction, dbActionFound,
-                String.format("No action [%s] is configured at the connector!", dbAction.getId()));
+                String.format("No action [%s] is configured at the connector!", dbAction));
         messageInfo.setAction(dbActionFound.get());
 
         PDomibusConnectorService dbService = messageInfo.getService();
         Optional<PDomibusConnectorService> dbServiceFound = pModeService.getConfiguredSingleDB(defaultMessageLaneId, dbService);
         checkNull(dbService, dbServiceFound,
-                String.format("No service [%s] is configured at the connector!", dbService.getId()));
+                String.format("No service [%s] is configured at the connector!", dbService));
         messageInfo.setService(dbServiceFound.get());
 
         PDomibusConnectorParty dbFromParty = messageInfo.getFrom();
@@ -123,10 +123,9 @@ public class InternalMessageInfoPersistenceServiceImpl {
 
     private void checkNull(Object provided, Optional foundInDb, String errorMessage) throws PersistenceException {
         if (! foundInDb.isPresent()) {
-            String error = String.format("%s [%s] is not configured in database!", provided.getClass().getSimpleName(), provided);
-
-            LOGGER.error(LoggingMarker.BUSINESS_LOG, "{} Check your p-modes or reimport them into the connector.", errorMessage);
-            throw new PersistenceException(error);
+            String businessErrorMessage = String.format("%s Check your p-modes or reimport them into the connector.", errorMessage);
+            LOGGER.error(LoggingMarker.BUSINESS_LOG, businessErrorMessage);
+            throw new PersistenceException(errorMessage);
         }
     }
 

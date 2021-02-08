@@ -26,6 +26,8 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorPModePersistenceService.class);
 
+    public static final String CACHE_NAME = "pmodeset";
+
     @Autowired
     DomibusConnectorPModeSetDao domibusConnectorPModeSetDao;
 
@@ -34,12 +36,35 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
 
     @Override
-    @Cacheable
+    @Cacheable(CACHE_NAME)
     public Optional<DomibusConnectorAction> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorAction searchAction) {
         return getConfiguredSingleDB(lane, ActionMapper.mapActionToPersistence(searchAction))
                 .map(ActionMapper::mapActionToDomain);
     }
 
+
+    /**
+     *
+     *  Searches all action definitions in the active P-Mode set of
+     *  the messageLane
+     *
+     *  The search is done by example, null values of action
+     *  are not compared. If a value is provided it has to match the corresponding
+     *  value of the party within the p-Mode set.
+     *  The result is returned as Optional and if more than 1 is found
+     *  an exception will be thrown
+     *
+     *  Note:
+     *  So providing an Action with an null action name would return all Actions.
+     *  So this would only be useful if only ONE action is defined in the p-Mode
+     *  set.
+     *
+     *
+     * @param lane - the message lane
+     * @param searchAction - the action to search for
+     * @return an Optional
+     * @throws IncorrectResultSizeException - if more than one service has been found
+     */
     public Optional<PDomibusConnectorAction> getConfiguredSingleDB(DomibusConnectorMessageLane.MessageLaneId lane, PDomibusConnectorAction searchAction) {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
@@ -68,13 +93,29 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    @Cacheable
+    @Cacheable(CACHE_NAME)
     public Optional<DomibusConnectorService> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorService searchService) {
         return getConfiguredSingleDB(lane, ServiceMapper.mapServiceToPersistence(searchService))
                 .map(ServiceMapper::mapServiceToDomain);
     }
 
 
+    /**
+     *
+     *  Searches all service definition in the active P-Mode set of
+     *  the messageLane
+     *
+     *  The search is done by example, null values of service, serviceType
+     *  are not compared. If a value is provided it has to match the corresponding
+     *  value of the party within the p-Mode set.
+     *  The result is returned as Optional and if more than 1 is found
+     *  an exception will be thrown
+     *
+     * @param lane - the message lane
+     * @param searchService - the service to search for
+     * @return an Optional
+     * @throws IncorrectResultSizeException - if more than one service has been found
+     */
     public Optional<PDomibusConnectorService> getConfiguredSingleDB(DomibusConnectorMessageLane.MessageLaneId lane, PDomibusConnectorService searchService) {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
@@ -85,6 +126,10 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
                 .getServices()
                 .stream()
                 .filter(service -> {
+                    //exclude only if provided value is not null and does not match DB value
+                    //this helps the client, which only has to know parts of the service definition
+                    //mostly only the serviceId (serviceType may be null, and are filled out
+                    //by the connector if it is unique)
                     boolean result = true;
                     if (result && searchService.getService() != null) {
                         result = result && searchService.getService().equals(service.getService());
@@ -106,12 +151,28 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    @Cacheable
+    @Cacheable(CACHE_NAME)
     public Optional<DomibusConnectorParty> getConfiguredSingle(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorParty searchParty) throws IncorrectResultSizeException {
         return getConfiguredSingleDB(lane, PartyMapper.mapPartyToPersistence(searchParty))
                 .map(PartyMapper::mapPartyToDomain);
     }
 
+    /**
+     *
+     *  Searches all party definition in the active P-Mode set of
+     *  the messageLane
+     *
+     *  The search is done by example, null values of PartyId, PartyRole, PartyIdType
+     *  are not compared. If a value is provided it has to match the corresponding
+     *  value of the party within the p-Mode set.
+     *  The result is returned as Optional and if more than 1 is found
+     *  an exception will be thrown
+     *
+     * @param lane - the message lane
+     * @param searchParty - the party to search for
+     * @return an Optional
+     * @throws IncorrectResultSizeException - if more than one party has been found
+     */
     public Optional<PDomibusConnectorParty> getConfiguredSingleDB(DomibusConnectorMessageLane.MessageLaneId lane, PDomibusConnectorParty searchParty) throws IncorrectResultSizeException {
         Optional<PDomibusConnectorPModeSet> currentPModeSetOptional = getCurrentDBPModeSet(lane);
         if (!currentPModeSetOptional.isPresent()) {
@@ -146,7 +207,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
     }
 
     @Override
-    @CacheEvict
+    @CacheEvict(CACHE_NAME)
     @Transactional
     public void updatePModeConfigurationSet(DomibusConnectorMessageLane.MessageLaneId lane, DomibusConnectorPModeSet connectorPModeSet) {
         if (lane == null) {
@@ -199,7 +260,7 @@ public class DomibusConnectorPModePersistenceService implements DomibusConnector
 
 
     @Override
-    @Cacheable
+    @Cacheable(CACHE_NAME)
     @Transactional(readOnly = true)
     public Optional<DomibusConnectorPModeSet> getCurrentPModeSet(DomibusConnectorMessageLane.MessageLaneId lane) {
         return getCurrentDBPModeSet(lane).map(this::mapToDomain);
