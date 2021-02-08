@@ -76,6 +76,23 @@ public class DomibusConnectorEvidencesToolkitTest {
     }
 
     @Test
+    public void testCreateSubmissionAcceptance_businessDocIsNull() throws DomibusConnectorEvidencesToolkitException, TransformerException {
+        LOG.info("Started testCreateSubmissionAcceptance");
+
+        DomibusConnectorMessage message = buildTestMessage_businessDocIsNull();
+
+        assertThat(evidencesToolkit).as("evidences toolkit must be init!").isNotNull();
+        assertThat(message).as("message must not be null!").isNotNull();
+
+        DomibusConnectorMessageConfirmation confirmation = evidencesToolkit.createEvidence(DomibusConnectorEvidenceType.SUBMISSION_ACCEPTANCE, message, null, null);
+        Assertions.assertNotNull(confirmation);
+        String evidencePretty = prettyPrint(confirmation.getEvidence());
+        LOG.info(evidencePretty);
+
+        LOG.info("Finished testCreateSubmissionAcceptance");
+    }
+
+    @Test
     public void testCreateSubmissionRejection() {
         LOG.info("Started testCreateSubmissionRejection");
 
@@ -114,6 +131,27 @@ public class DomibusConnectorEvidencesToolkitTest {
 
         DomibusConnectorMessageDocument document =
                 new DomibusConnectorMessageDocument(ref, "documentName", null);
+
+        content.setXmlContent("originalMessage".getBytes());
+        content.setDocument(document);
+
+        DomibusConnectorMessage message = new DomibusConnectorMessage(details, content);
+
+        return message;
+    }
+
+    private DomibusConnectorMessage buildTestMessage_businessDocIsNull() {
+        DomibusConnectorMessageDetails details = new DomibusConnectorMessageDetails();
+        details.setBackendMessageId("nationalMessageId1");
+        details.setOriginalSender("someSenderAddress");
+        details.setFinalRecipient("someRecipientAddress");
+
+        DomibusConnectorMessageContent content = new DomibusConnectorMessageContent();
+
+//        LargeFileReferenceMemoryBacked ref = new LargeFileReferenceMemoryBacked("originalMessage".getBytes());
+
+        DomibusConnectorMessageDocument document =
+                new DomibusConnectorMessageDocument(null, "documentName", null);
 
         content.setXmlContent("originalMessage".getBytes());
         content.setDocument(document);
