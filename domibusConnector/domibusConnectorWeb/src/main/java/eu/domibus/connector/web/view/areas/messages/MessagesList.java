@@ -274,8 +274,8 @@ public class MessagesList extends VerticalLayout implements AfterNavigationObser
 		HorizontalLayout filtering = new HorizontalLayout(
 				fromPartyIdFilterText,
 				toPartyIdFilterText,
-//				serviceFilterText, //TODO: currently not working!
-				actionFilterText,
+				serviceFilterText,
+//				actionFilterText, //TODO: currently not working!
 				backendClientFilterText,
 				clearAllFilterTextBtn,
 				refreshListBtn

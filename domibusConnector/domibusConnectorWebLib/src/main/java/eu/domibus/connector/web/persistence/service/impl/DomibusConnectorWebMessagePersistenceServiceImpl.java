@@ -91,17 +91,6 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 
 	}
 
-//	@Override
-//	public long count(Example<WebMessage> example, Pageable pageable) {
-//		Example<PDomibusConnectorMessage> exampleDbMsg = getpDomibusConnectorMessageExample(example);
-//
-//
-////		Page<PDomibusConnectorMessage> all = messageDao.findAll(exampleDbMsg, pageable);
-////
-////		return all.map(c -> new DBMessageToWebMessageConverter().convert(c));
-//
-//	}
-
 
 	private Example<PDomibusConnectorMessage> getpDomibusConnectorMessageExample(Example<WebMessage> example) {
     	if (example == null) {
@@ -163,7 +152,6 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 			message.setFromPartyId(pMessageInfo.getFrom().getPartyId());
 			message.setToPartyId(pMessageInfo.getTo().getPartyId());
 
-
 			return message;
 		}
 	}
@@ -187,9 +175,6 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		return webMessages;
 	}
 
-//	private WebMessage mapDbMessageToWebMessage(PDomibusConnectorMessage pMessage) {
-//
-//	}
 	
 	private Optional<WebMessageDetail> mapDbMessageToWebMessageDetail(PDomibusConnectorMessage pMessage) {
     	if (pMessage == null) {
@@ -230,7 +215,6 @@ public class DomibusConnectorWebMessagePersistenceServiceImpl implements Domibus
 		
 		return Optional.of(message);
 	}
-
 
 
 }
