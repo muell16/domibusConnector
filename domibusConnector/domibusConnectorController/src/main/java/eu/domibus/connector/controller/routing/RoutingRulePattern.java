@@ -42,11 +42,16 @@ public class RoutingRulePattern {
         this.pattern = pattern;
 
         String parsing = pattern.trim();
+        parse(parsing);
+    }
+
+    BooleanExpression parse(String parsing) {
         for (String o : operands) {
             if (parsing.startsWith(o)) {
-
+                parsing = parsing.substring(o.length());
             }
         }
+        return null;
     }
 
     public boolean matches(DomibusConnectorMessage message) {
@@ -55,6 +60,30 @@ public class RoutingRulePattern {
 
     private static abstract class BooleanExpression {
         abstract boolean evaluate(DomibusConnectorMessage message);
+        abstract List<String> canHandle();
+    }
+
+    private static class AndOrExpression extends BooleanExpression {
+
+        private final String operand;
+        private final BooleanExpression exp1;
+        private final BooleanExpression exp2;
+
+        public AndOrExpression(String operand, BooleanExpression exp1, BooleanExpression exp2) {
+            this.operand = operand;
+            this.exp1 = exp1;
+            this.exp2 = exp2;
+        }
+
+        @Override
+        boolean evaluate(DomibusConnectorMessage message) {
+            return false;
+        }
+
+        @Override
+        List<String> canHandle() {
+            return Stream.of("&", "|").collect(Collectors.toList());
+        }
     }
 
     private static class EqualsExpression extends BooleanExpression {
@@ -62,6 +91,11 @@ public class RoutingRulePattern {
         @Override
         boolean evaluate(DomibusConnectorMessage message) {
             return false;
+        }
+
+        @Override
+        List<String> canHandle() {
+            return Stream.of("equals").collect(Collectors.toList());
         }
     }
 
