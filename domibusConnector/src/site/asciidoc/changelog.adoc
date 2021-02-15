@@ -206,7 +206,8 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 
 ==== Changes
 
-* Add stream closing interceptors to CXF Sending Proxies => see
+* Add stream closing interceptors to CXF Sending Proxies
+* Fix an issue with missing UPPERCASE id column definition (@Column(name = "ID") is missing)
 
 === 4.2.8
 
@@ -218,3 +219,6 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 because its loading ALL messages from DB
 * Deactivated config change/save/reload support due unclear semantics/preconditions
 * Fix typo within migration script at table: DC_TRANSPORT_STEP CONNECTOR_MESSSAGE_ID => should be CONNECTOR_MESSAGE_ID
+
+
+

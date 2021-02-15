@@ -51,7 +51,7 @@ import static org.mockito.ArgumentMatchers.eq;
         properties = {
 //            "debug=true",
             "connector.link.autostart=false",
-                "logging.level.eu.domibus.connector=debug",
+//                "logging.level.eu.domibus.connector=debug",
                 "link.wsgatewayplugin.soap.key-store.path=classpath:/keystores/connector-gwlink-keystore.jks",
                 "link.wsgatewayplugin.soap.key-store.password=12345",
                 "link.wsgatewayplugin.soap.private-key.alias=connector",
