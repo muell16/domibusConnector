@@ -206,7 +206,7 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 
 ==== Changes
 
-* Add stream closing interceptors to CXF Sending Proxies
+* Add stream closing interceptors to CXF Sending Proxies => see
 
 === 4.2.8
 
@@ -217,3 +217,4 @@ Also special thanks to Maris (Latvia) for testing with Ubuntu and Mysql.
 * Add Pagination Support for MessagesList in UI to prevent Connector UI from starvation
 because its loading ALL messages from DB
 * Deactivated config change/save/reload support due unclear semantics/preconditions
+* Fix typo within migration script at table: DC_TRANSPORT_STEP CONNECTOR_MESSSAGE_ID => should be CONNECTOR_MESSAGE_ID
