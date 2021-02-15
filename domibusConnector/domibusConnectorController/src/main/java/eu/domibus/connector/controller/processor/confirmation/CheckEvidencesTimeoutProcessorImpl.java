@@ -14,6 +14,7 @@ import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersisten
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,6 +28,7 @@ import java.util.List;
 import static eu.domibus.connector.tools.logging.LoggingMarker.BUSINESS_LOG;
 
 @Service
+@ConditionalOnProperty(name = "connector.controller.evidence.timeoutActive", havingValue = "true")
 public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
 
     static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);

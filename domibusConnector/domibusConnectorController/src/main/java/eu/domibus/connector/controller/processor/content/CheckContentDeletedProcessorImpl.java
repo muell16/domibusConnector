@@ -9,9 +9,12 @@ import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessagePersistenceService;
 import eu.domibus.connector.persistence.service.exceptions.LargeFileDeletionException;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import eu.domibus.connector.tools.logging.MDCHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@ConditionalOnBean(ContentDeletionTimeoutConfigurationProperties.class)
 public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckContentDeletedProcessor.class);
@@ -43,24 +47,31 @@ public class CheckContentDeletedProcessorImpl implements CheckContentDeletedProc
     @Override
     @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
-        Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
+        MDCHelper.setProcessor("CheckContentDeleted");
+
+        try {
+            LOGGER.info("Running checkContentDeletedProcessor");
+            Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
 
 
-        List<LargeFileReference> referencesToDelete = allAvailableReferences
-                .entrySet()
-                .stream()
-                .flatMap(e -> getDeleteableReferences(e.getKey(), e.getValue()).stream())
-                .collect(Collectors.toList());
+            List<LargeFileReference> referencesToDelete = allAvailableReferences
+                    .entrySet()
+                    .stream()
+                    .flatMap(e -> getDeleteableReferences(e.getKey(), e.getValue()).stream())
+                    .collect(Collectors.toList());
 
-        referencesToDelete.forEach(ref -> {
-            LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting reference with id [{}]", ref.getStorageIdReference());
-            try {
-                largeFilePersistenceService.deleteDomibusConnectorBigDataReference(ref);
-            } catch (LargeFileDeletionException delException) {
-                LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
-                LOGGER.error("Was unable to delete due exception: ", delException);
-            }
-        });
+            referencesToDelete.forEach(ref -> {
+                LOGGER.debug(LoggingMarker.BUSINESS_CONTENT_LOG, "Deleting reference with id [{}]", ref.getStorageIdReference());
+                try {
+                    largeFilePersistenceService.deleteDomibusConnectorBigDataReference(ref);
+                } catch (LargeFileDeletionException delException) {
+                    LOGGER.error(LoggingMarker.BUSINESS_CONTENT_LOG, "Was unable to delete the reference [{}] in the timer job. The data must be manually deleted by the administrator!", ref);
+                    LOGGER.error("Was unable to delete due exception: ", delException);
+                }
+            });
+        } finally {
+            MDCHelper.clearProcessor();
+        }
     }
 
     List<LargeFileReference> getDeleteableReferences(DomibusConnectorMessageId id, List<LargeFileReference> references) {
