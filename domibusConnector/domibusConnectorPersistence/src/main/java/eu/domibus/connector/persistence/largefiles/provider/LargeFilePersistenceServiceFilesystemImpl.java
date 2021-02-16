@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //initialized by DomibusConnectorPersistenceContext.class
 public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersistenceProvider {
@@ -205,9 +206,8 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
     @Override
     public Map<DomibusConnectorMessage.DomibusConnectorMessageId, List<LargeFileReference>> getAllAvailableReferences() {
         Path storagePath = getStoragePath();
-        try {
-            return Files.list(storagePath)
-                    .collect(Collectors.toMap(
+        try (Stream<Path> files = Files.list(storagePath)){
+            return files.collect(Collectors.toMap(
                             path -> new DomibusConnectorMessage.DomibusConnectorMessageId(path.getFileName().toString()),
                             this::listReferences
                     ));
@@ -218,8 +218,8 @@ public class LargeFilePersistenceServiceFilesystemImpl implements LargeFilePersi
 
     private List<LargeFileReference> listReferences(Path messageFolder) {
         String messageFolderName = messageFolder.getFileName().toString();
-        try {
-            return Files.list(messageFolder)
+        try (Stream<Path> files = Files.list(messageFolder)){
+            return files
                     .map(p -> p.getFileName().toString())
                     .map(s -> mapMessageFolderAndFileNameToReference(messageFolderName, s))
                     .collect(Collectors.toList());
