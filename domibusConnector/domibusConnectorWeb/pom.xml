@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.domibus.connector</groupId>
         <artifactId>domibusConnector</artifactId>
-        <version>4.2.8-SNAPSHOT</version>
+        <version>4.2.8</version>
     </parent>
     <artifactId>domibusConnectorWeb</artifactId>
     <packaging>war</packaging>
@@ -34,16 +34,15 @@
             <artifactId>spring-property-configuration-manager-vaadin-ui</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>com.vaadin</groupId>
                     <artifactId>vaadin</artifactId>
+                    <groupId>com.vaadin</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
-            <exclusions>
-            </exclusions>
+            <exclusions></exclusions>
         </dependency>
         <dependency>
             <groupId>org.vaadin.klaudeta</groupId>
