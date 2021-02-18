@@ -39,7 +39,6 @@ public class CheckContentDeletedProcessorImpl {
     }
 
 
-//    @Scheduled(fixedDelayString = "#{ContentDeletionTimeoutConfigurationProperties.checkTimeout.milliseconds}")
     public void checkContentDeletedProcessor() {
         Map<DomibusConnectorMessageId, List<LargeFileReference>> allAvailableReferences = largeFilePersistenceService.getAllAvailableReferences();
 
