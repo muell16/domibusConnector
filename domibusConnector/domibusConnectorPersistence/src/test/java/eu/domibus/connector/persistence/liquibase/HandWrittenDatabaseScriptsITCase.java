@@ -1,6 +1,8 @@
 package eu.domibus.connector.persistence.liquibase;
 
 import eu.domibus.connector.persistence.testutil.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -21,6 +23,8 @@ import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class HandWrittenDatabaseScriptsITCase {
+
+    private static final Logger LOGGER = LogManager.getLogger(HandWrittenDatabaseScriptsITCase.class);
 
     public static final String INITIAL_SCRIPTS_CLASSPATH = "/dbscripts/initial/";
     public static final String MIGRATE_SCRIPTS_CLASSPATH = "/dbscripts/migrate/";
@@ -74,6 +78,7 @@ public class HandWrittenDatabaseScriptsITCase {
     }
 
     public void migrateToScriptTest(String fromVersion, String toVersion, TestDatabaseFactory dataSourceFactory) throws SQLException {
+        LOGGER.info("Running migrateToScriptTest fromVersion [{}] to Version [{}]", fromVersion, toVersion);
         String migrateScriptLocation = MIGRATE_SCRIPTS_CLASSPATH + dataSourceFactory.getDatabaseType() + "_migrate_" + fromVersion + "_to_" + toVersion + ".sql";
         Resource migrateScriptResource = new ClassPathResource(migrateScriptLocation);
 
@@ -83,6 +88,7 @@ public class HandWrittenDatabaseScriptsITCase {
             DataSource dataSource = newDatabase.getDataSource();
             Connection connection = dataSource.getConnection();
             ScriptUtils.executeSqlScript(connection, migrateScriptResource);
+            LOGGER.info("Successfully run migrateToScript [{}] fromVersion [{}] to Version [{}]", migrateScriptLocation, fromVersion, toVersion);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -117,6 +123,7 @@ public class HandWrittenDatabaseScriptsITCase {
             DataSource dataSource = db.getDataSource();
             Connection connection = dataSource.getConnection();
             ScriptUtils.executeSqlScript(connection, initialScriptResource);
+            LOGGER.info("Successfully run initialScript [{}]", initialScriptLocation);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
