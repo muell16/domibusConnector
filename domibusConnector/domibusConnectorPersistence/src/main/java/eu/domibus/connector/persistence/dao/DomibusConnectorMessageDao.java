@@ -34,8 +34,8 @@ public interface DomibusConnectorMessageDao extends CrudRepository<PDomibusConne
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE (m.ebmsMessageId = ?1 OR m.backendMessageId = ?1) AND m.directionTarget = ?2 ")
     public Optional<PDomibusConnectorMessage> findOneByEbmsMessageIdOrBackendMessageIdAndDirectionTarget(String id, MessageTargetSource directionTarget);
     
-    public PDomibusConnectorMessage findOneByConnectorMessageId(String messageConnectorId);
-    
+    public Optional<PDomibusConnectorMessage> findOneByConnectorMessageId(String messageConnectorId);
+
     public List<PDomibusConnectorMessage> findByConversationId(String conversationId);
     
     @Query("SELECT m FROM PDomibusConnectorMessage m WHERE m.confirmed is null AND m.rejected is null AND m.directionTarget = 'GATEWAY' AND m.deliveredToGateway is not null ")

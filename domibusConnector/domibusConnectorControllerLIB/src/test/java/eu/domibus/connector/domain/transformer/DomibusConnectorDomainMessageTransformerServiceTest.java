@@ -265,7 +265,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
         messageDetails.setRefToBackendMessageId("refToBackendId");
         confirmationMessage.setMessageDetails(messageDetails);
-        messageDetails.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+        messageDetails.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
 
         DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(confirmationMessage);
 
@@ -285,7 +285,7 @@ public class DomibusConnectorDomainMessageTransformerServiceTest {
         DomibusConnectorMessageDetails messageDetails = DomainEntityCreator.createDomibusConnectorMessageDetails();
         messageDetails.setRefToBackendMessageId(null);
         messageDetails.setRefToMessageId("refToId");
-        messageDetails.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+        messageDetails.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
         confirmationMessage.setMessageDetails(messageDetails);
 
         DomibusConnectorMessageDetailsType messageDetailsType = transformerService.transformMessageDetailsDomainToTransition(confirmationMessage);

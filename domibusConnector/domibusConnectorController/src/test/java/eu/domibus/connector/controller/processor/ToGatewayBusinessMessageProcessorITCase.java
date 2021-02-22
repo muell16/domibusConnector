@@ -11,7 +11,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageDocument;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
+import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -73,7 +73,7 @@ public class ToGatewayBusinessMessageProcessorITCase {
     private DCMessagePersistenceService messagePersistenceService;
 
     @Autowired
-    private DomibusConnectorMessageContentManager bigDataWithMessagePersistenceService;
+    private DCMessageContentManager bigDataWithMessagePersistenceService;
 
     @Autowired
     private DataSource dataSource;

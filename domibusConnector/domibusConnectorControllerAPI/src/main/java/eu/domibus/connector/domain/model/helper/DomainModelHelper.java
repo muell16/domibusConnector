@@ -117,7 +117,7 @@ public class DomainModelHelper {
      * </ul>
      *
      *
-     * @param message
+     * @param messageDetails
      * @return
      */
     public static DomibusConnectorMessageDetails switchMessageDirection(DomibusConnectorMessageDetails messageDetails) {

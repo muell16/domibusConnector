@@ -1,7 +1,7 @@
 package eu.domibus.connector.link.impl.wsbackendplugin.childctx;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.enums.TransportState;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-public class WsBackendSubmitTo implements SubmitToLink {
+public class WsBackendSubmitTo implements SubmitToLinkPartner {
 
     @Autowired
     DCActiveLinkManagerService linkManagerService;
@@ -55,6 +55,8 @@ public class WsBackendSubmitTo implements SubmitToLink {
         DomibusConnectorBackendDeliveryWebService backendWsClient = webServiceClientFactory.createBackendWsClient(activeLinkPartner);
 
         TransportStateService.TransportId transportId = transportStateService.createOrGetTransportFor(message, activeLinkPartner.getLinkPartner().getLinkPartnerName());
+
+        //TODO: save message for pull...in own db? or queue?
 
         TransportStateService.DomibusConnectorTransportState state = new TransportStateService.DomibusConnectorTransportState();
         state.setStatus(TransportState.PENDING);

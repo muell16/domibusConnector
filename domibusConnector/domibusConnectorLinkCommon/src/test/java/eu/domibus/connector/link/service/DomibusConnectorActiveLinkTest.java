@@ -1,6 +1,5 @@
 package eu.domibus.connector.link.service;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -50,7 +49,7 @@ class DomibusConnectorActiveLinkTest {
     @Test
     @Order(1)
     void testLinkSetup() {
-        SubmitToLink firstLINK = linkManager.getSubmitToLinkPartner("firstLINK");
+        SubmitToLinkPartner firstLINK = linkManager.getSubmitToLinkPartner("firstLINK");
         assertThat(firstLINK).isNotNull();
     }
 
@@ -89,7 +88,7 @@ class DomibusConnectorActiveLinkTest {
 
             linkManager.activateLinkPartner(linkPartner);
 
-            SubmitToLink link = linkManager.getSubmitToLinkPartner(linkName);
+            SubmitToLinkPartner link = linkManager.getSubmitToLinkPartner(linkName);
 
             DomibusConnectorMessage sentMessage = DomainEntityCreator.createMessage();
             assertThat(link).isNotNull();
@@ -113,7 +112,7 @@ class DomibusConnectorActiveLinkTest {
     @Order(20)
     void getLink() {
         String linkName = "JMS-GW-PLUGIN";
-        SubmitToLink link = linkManager.getSubmitToLinkPartner(linkName);
+        SubmitToLinkPartner link = linkManager.getSubmitToLinkPartner(linkName);
 
         assertThat(link).isNotNull();
     }

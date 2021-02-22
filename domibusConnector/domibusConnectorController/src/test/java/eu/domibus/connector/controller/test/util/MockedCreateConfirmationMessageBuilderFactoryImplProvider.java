@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.test.util;
 
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
 
-    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
+    private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactory;
 
     @Mock
     private DomibusConnectorEvidencesToolkit evidencesToolkit;
@@ -66,12 +66,11 @@ public class MockedCreateConfirmationMessageBuilderFactoryImplProvider {
 
         Mockito.when(evidencesToolkit.createEvidence(any(), any(), any(), any())).thenReturn(DomainEntityCreator.createMessageDeliveryConfirmation());
 
-        this.createConfirmationMessageBuilderFactory = new CreateConfirmationMessageBuilderFactoryImpl();
+//        this.createConfirmationMessageBuilderFactory = new CreateConfirmationMessageBuilderFactoryImpl();
 //        createConfirmationMessageBuilderFactory.setActionPersistenceService(this.actionPersistenceService);
-        createConfirmationMessageBuilderFactory.setEvidencePersistenceService(this.evidencePersistenceService);
-        createConfirmationMessageBuilderFactory.setEvidencesToolkit(this.evidencesToolkit);
-        createConfirmationMessageBuilderFactory.setMessageIdGenerator(this.messageIdGenerator);
-
+//        createConfirmationMessageBuilderFactory.setEvidencePersistenceService(this.evidencePersistenceService);
+//        createConfirmationMessageBuilderFactory.setEvidencesToolkit(this.evidencesToolkit);
+//        createConfirmationMessageBuilderFactory.setMessageIdGenerator(this.messageIdGenerator);
 
         Mockito.when(messageIdGenerator.generateDomibusConnectorMessageId()).thenReturn(new DomibusConnectorMessageId(UUID.randomUUID().toString() + "@mockedid"));
 

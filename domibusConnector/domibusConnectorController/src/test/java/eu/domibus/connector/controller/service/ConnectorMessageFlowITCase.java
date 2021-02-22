@@ -7,7 +7,9 @@ import eu.domibus.connector.controller.test.util.ITCaseTestContext;
 import eu.domibus.connector.controller.test.util.LoadStoreMessageFromPath;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
+import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
@@ -16,7 +18,9 @@ import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageConfirma
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDetailsBuilder;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
+import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
+import eu.domibus.connector.persistence.service.LargeFilePersistenceService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -36,6 +40,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -84,6 +89,12 @@ public class ConnectorMessageFlowITCase {
     DataSource ds;
 
     @Autowired
+    DomibusConnectorMessageIdGenerator messageIdGenerator;
+
+    @Autowired
+    DCMessageContentManager dcMessageContentManager;
+
+    @Autowired
     ITCaseTestContext.DomibusConnectorGatewaySubmissionServiceInterceptor domibusConnectorGatewaySubmissionServiceInterceptor;
 
     @Autowired
@@ -94,10 +105,7 @@ public class ConnectorMessageFlowITCase {
     BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages;
 
     @Autowired
-    DomibusConnectorGatewayDeliveryService fromGwToConnectorDelivery;
-
-    @Autowired
-    DomibusConnectorBackendSubmissionService fromBackendToConnectorSubmissionService;
+    SubmitToConnector submitToConnector;
 
     @Autowired
     DCMessagePersistenceService messagePersistenceService;
@@ -255,7 +263,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage);
+            submitFromBackendToController(deliveryTriggerMessage);
 
 
             DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
@@ -296,6 +304,7 @@ public class ConnectorMessageFlowITCase {
 
         });
     }
+
 
 
     /**
@@ -356,7 +365,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage);
+            submitFromBackendToController(deliveryTriggerMessage);
 
             DomibusConnectorMessage deliveryTriggerMessage2 = DomibusConnectorMessageBuilder
                     .createBuilder()
@@ -381,7 +390,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage2);
+            submitFromBackendToController(deliveryTriggerMessage2);
 
 
             DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.poll(10, TimeUnit.SECONDS);
@@ -495,7 +504,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            fromBackendToConnectorSubmissionService.submitToController(nonDeliveryTriggerMessage);
+            submitFromBackendToController(nonDeliveryTriggerMessage);
 
 
             DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.take();
@@ -588,7 +597,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            fromBackendToConnectorSubmissionService.submitToController(deliveryTriggerMessage);
+            submitFromBackendToController(deliveryTriggerMessage);
             //take delivery from queue
             DomibusConnectorMessage deliveryEvidenceMessage = toGwDeliveredMessages.take();
 
@@ -617,7 +626,7 @@ public class ConnectorMessageFlowITCase {
                             .withOriginalSender("")
                             .build())
                     .build();
-            fromBackendToConnectorSubmissionService.submitToController(retrievalTriggerMessage);
+            submitFromBackendToController(retrievalTriggerMessage);
 
 
             //check retrieval msg.
@@ -759,7 +768,7 @@ public class ConnectorMessageFlowITCase {
         testMessage.getMessageDetails().setEbmsMessageId(EBMS_ID);
         testMessage.getMessageDetails().setBackendMessageId(null);
         testMessage.setConnectorMessageId(new DomibusConnectorMessageId(CONNECTOR_MESSAGE_ID));
-        fromGwToConnectorDelivery.deliverMessageFromGatewayToController(testMessage);
+        submitFromGatewayToController(testMessage);
         return testMessage;
     }
 
@@ -866,11 +875,10 @@ public class ConnectorMessageFlowITCase {
                     ).build();
             msg.getMessageContent().setDocument(null);
 
-            msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
             DomibusConnectorMessage submittedMessage = msg;
 
 
-            fromBackendToConnectorSubmissionService.submitToController(msg);
+            submitFromBackendToController(msg);
 
 
             DomibusConnectorMessage take = toGwDeliveredMessages.take(); //wait until a message is put into queue
@@ -955,7 +963,7 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(domibusConnectorMessage);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
+            this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             //ASSERT
             DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
@@ -1006,14 +1014,12 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(domibusConnectorMessage);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
+            this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             //ASSERT
             DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
             assertThat(relayReemdEvidenceMsg)
                     .isNotNull();
-
-
         });
     }
 
@@ -1054,19 +1060,19 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(domibusConnectorMessage);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_2");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
+            this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
             DomibusConnectorMessage deliveryEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(domibusConnectorMessage,
                     DomainEntityCreator.createMessageDeliveryConfirmation());
             deliveryEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             deliveryEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_3");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(deliveryEvidenceForMessage);
+            this.submitFromGatewayToController(deliveryEvidenceForMessage);
 
             DomibusConnectorMessage retrievalEvidenceForMessage = DomainEntityCreator.creatEvidenceMsgForMessage(domibusConnectorMessage,
                     DomainEntityCreator.createRetrievalEvidenceMessage());
             retrievalEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             retrievalEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_remote_4");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(retrievalEvidenceForMessage);
+            this.submitFromGatewayToController(retrievalEvidenceForMessage);
 
             //ASSERT
             DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
@@ -1142,7 +1148,7 @@ public class ConnectorMessageFlowITCase {
             DomibusConnectorMessage relayRemmdAcceptanceEvidenceForMessage = DomainEntityCreator.createRelayRemmdAcceptanceEvidenceForMessage(domibusConnectorMessage);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             relayRemmdAcceptanceEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_r_2");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
+            this.submitFromGatewayToController(relayRemmdAcceptanceEvidenceForMessage);
 
 
             DomibusConnectorMessage relayReemdEvidenceMsg = toBackendDeliveredMessages.take();
@@ -1157,7 +1163,7 @@ public class ConnectorMessageFlowITCase {
                     DomainEntityCreator.createMessageNonDeliveryConfirmation());
             nonDeliveryEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             nonDeliveryEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_r_3");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(nonDeliveryEvidenceForMessage);
+            this.submitFromGatewayToController(nonDeliveryEvidenceForMessage);
 
 
             DomibusConnectorMessage deliveryEvidenceMsg = toBackendDeliveredMessages.take();
@@ -1171,7 +1177,7 @@ public class ConnectorMessageFlowITCase {
                     DomainEntityCreator.createRetrievalEvidenceMessage());
             retrievalEvidenceForMessage.getMessageDetails().setRefToMessageId(newEbmsId);
             retrievalEvidenceForMessage.getMessageDetails().setEbmsMessageId(testInfo.getDisplayName() + "_r_4");
-            this.fromGwToConnectorDelivery.deliverMessageFromGatewayToController(retrievalEvidenceForMessage);
+            this.submitFromGatewayToController(retrievalEvidenceForMessage);
 
 
             //wait for any more messages for 5s
@@ -1255,10 +1261,32 @@ public class ConnectorMessageFlowITCase {
                         .build()
                 ).build();
 
-        msg = messagePersistenceService.persistMessageIntoDatabase(msg, DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
-
-        fromBackendToConnectorSubmissionService.submitToController(msg);
+        submitFromBackendToController(msg);
         LOGGER.info("Message with id [{}] submitted", connectorMessageId);
         return msg;
+    }
+
+
+    private void submitFromBackendToController(DomibusConnectorMessage message) {
+        if (message.getConnectorMessageId() == null) {
+            message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+        }
+        dcMessageContentManager.saveMessagePayloads(message);
+        DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
+        testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_backend"));
+        testLink.setLinkType(LinkType.BACKEND);
+        submitToConnector.submitToConnector(message, testLink);
+    }
+
+
+    private void submitFromGatewayToController(DomibusConnectorMessage message) {
+        if (message.getConnectorMessageId() == null) {
+            message.setConnectorMessageId(messageIdGenerator.generateDomibusConnectorMessageId());
+        }
+        dcMessageContentManager.saveMessagePayloads(message);
+        DomibusConnectorLinkPartner testLink = new DomibusConnectorLinkPartner();
+        testLink.setLinkPartnerName(new DomibusConnectorLinkPartner.LinkPartnerName("test_gw"));
+        testLink.setLinkType(LinkType.GATEWAY);
+        submitToConnector.submitToConnector(message, testLink);
     }
 }

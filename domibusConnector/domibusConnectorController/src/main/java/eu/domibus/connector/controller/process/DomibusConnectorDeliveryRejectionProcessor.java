@@ -1,10 +1,8 @@
 package eu.domibus.connector.controller.process;
 
-import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageTransportException;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
-import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
@@ -14,9 +12,9 @@ import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,46 +28,28 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Component(DomibusConnectorDeliveryRejectionProcessor.DELIVERY_REJECTION_PROCESSOR_BEAN_NAME)
+@RequiredArgsConstructor
 public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnectorMessageTransportExceptionProcessor {
 
     public static final String DELIVERY_REJECTION_PROCESSOR_BEAN_NAME = "DeliveryRejectionProcessor";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorDeliveryRejectionProcessor.class);
 
-
-    @Autowired
-    private DCMessagePersistenceService messagePersistenceService;
-
-    @Autowired
-    CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
-
-    @Autowired
-    private DomibusConnectorGatewaySubmissionService gwSubmissionService;
-
-    //setter
-    public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
-        this.messagePersistenceService = messagePersistenceService;
-    }
-
-    public void setCreateConfirmationMessageBuilderFactoryImpl(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl) {
-        this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
-    }
-
-    public void setGwSubmissionService(DomibusConnectorGatewaySubmissionService gwSubmissionService) {
-        this.gwSubmissionService = gwSubmissionService;
-    }
+    private final DCMessagePersistenceService messagePersistenceService;
+    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
+//    private final DomibusConnectorGatewaySubmissionService gwSubmissionService;
 
     @Override
     @StoreMessageExceptionIntoDatabase
     @Transactional
-    @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = DELIVERY_REJECTION_PROCESSOR_BEAN_NAME)
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = DELIVERY_REJECTION_PROCESSOR_BEAN_NAME)
     public void processMessageTransportException(DomibusConnectorMessageTransportException messageTransportException) {
         DomibusConnectorMessage originalMessage = messageTransportException.getConnectorMessage();
         if (DomainModelHelper.isEvidenceMessage(originalMessage)) {
             LOGGER.debug("message transport exception is ignored for evidence message!");
             return;
         }
-        try {
+//        try {
 
             CreateConfirmationMessageBuilderFactoryImpl.ConfirmationMessageBuilder confirmationMessageBuilder = createConfirmationMessageBuilderFactoryImpl.createConfirmationMessageBuilderFromBusinessMessage(originalMessage, DomibusConnectorEvidenceType.NON_DELIVERY);
 
@@ -88,11 +68,11 @@ public class DomibusConnectorDeliveryRejectionProcessor implements DomibusConnec
 
             //send evidence to GW
             evidenceMessage.persistMessage();
-            gwSubmissionService.submitToGateway(evidenceMessage.getEvidenceMessage());
-        } catch (DomibusConnectorGatewaySubmissionException e) {
-            //TODO: only log...no further processing...
-            LOGGER.error("An error occured while sending NON_DELIVERY evidence back to GW", e);
-        }
+//            gwSubmissionService.submitToGateway(evidenceMessage.getEvidenceMessage());
+//        } catch (DomibusConnectorGatewaySubmissionException e) {
+//            //TODO: only log...no further processing...
+//            LOGGER.error("An error occured while sending NON_DELIVERY evidence back to GW", e);
+//        }
 
         //set message to rejected!
         messagePersistenceService.rejectMessage(originalMessage);

@@ -11,6 +11,8 @@ import eu.domibus.connector.domain.transition.DomibsConnectorAcknowledgementType
 import eu.domibus.connector.domain.transition.DomibusConnectorMessageType;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.service.DCActiveLinkManagerService;
+import eu.domibus.connector.link.service.PullFromLinkPartner;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.ws.gateway.webservice.DomibusConnectorGatewayWebService;
 import eu.domibus.connector.ws.gateway.webservice.GetMessageByIdRequest;
@@ -26,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class DCGatewayWebServiceClient implements SubmitToLink, PullFromLink {
+public class DCGatewayWebServiceClient implements SubmitToLinkPartner, PullFromLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(DCGatewayWebServiceClient.class);
 

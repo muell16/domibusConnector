@@ -71,9 +71,9 @@ public class CheckContentDeletedProcessorImpl {
         DomibusConnectorMessageDirection direction = msg.getMessageDetails().getDirection();
         Date transportFinishedDate = null;
         boolean failed = false;
-        if (direction == DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY) {
+        if (direction == DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY) {
             transportFinishedDate = msg.getMessageDetails().getDeliveredToGateway();
-        } else if (direction == DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND || direction == DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND){
+        } else if (direction == DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND){
             transportFinishedDate = msg.getMessageDetails().getDeliveredToBackend();
         } else {
             //should never end up here!

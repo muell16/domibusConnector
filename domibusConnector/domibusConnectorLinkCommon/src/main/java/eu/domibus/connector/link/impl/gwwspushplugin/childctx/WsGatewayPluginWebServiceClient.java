@@ -2,7 +2,7 @@ package eu.domibus.connector.link.impl.gwwspushplugin.childctx;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
 import eu.domibus.connector.controller.service.SubmitToConnector;
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 
 
-public class WsGatewayPluginWebServiceClient implements SubmitToLink {
+public class WsGatewayPluginWebServiceClient implements SubmitToLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(WsGatewayPluginWebServiceClient.class);
 

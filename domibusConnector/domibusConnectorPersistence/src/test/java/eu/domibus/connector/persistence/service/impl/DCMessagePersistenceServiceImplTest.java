@@ -110,7 +110,7 @@ public class DCMessagePersistenceServiceImplTest {
     @Test
     public void testFindMessageByConnectorMessageId() {
         Mockito.when(messageDao.findOneByConnectorMessageId(eq("msg72")))
-                .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage());
+                .thenReturn(Optional.of(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()));
         
         DomibusConnectorMessage msg72 = messagePersistenceService.findMessageByConnectorMessageId("msg72");
         assertThat(msg72).isNotNull();
@@ -226,7 +226,7 @@ public class DCMessagePersistenceServiceImplTest {
                 .thenReturn(1);
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         dbMessage.setId(78L);
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
         
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         //message.setDbMessageId(78L);
@@ -262,7 +262,7 @@ public class DCMessagePersistenceServiceImplTest {
     public void testRejectMessage() {
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         dbMessage.setId(78L);
-        Mockito.when(this.messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(this.messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
         Mockito.when(messageDao.rejectMessage(any(Long.class)))
                 .thenReturn(1);
                 
@@ -334,7 +334,7 @@ public class DCMessagePersistenceServiceImplTest {
         Mockito.verify(messageDao, Mockito.times(1)).save(any(PDomibusConnectorMessage.class));
         
         //make sure message content is also saved to db
-        Mockito.verify(msgContService, Mockito.times(1)).storeMsgContent(eq(message));
+        Mockito.verify(msgContService, Mockito.times(1)).saveMessagePayloads(eq(message));
     }
 
     /*
@@ -374,7 +374,7 @@ public class DCMessagePersistenceServiceImplTest {
         
         PDomibusConnectorMessage pMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         pMessage.setId(47L);        
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(pMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(pMessage));
 
         Mockito.when(messageDao.findById(47L)).thenReturn(Optional.of(pMessage));
 
@@ -384,7 +384,7 @@ public class DCMessagePersistenceServiceImplTest {
                 .mergeMessageInfo(any(DomibusConnectorMessage.class), any(PDomibusConnectorMessage.class));
         
         //make sure message content is also saved to db
-        Mockito.verify(this.msgContService, Mockito.times(1)).storeMsgContent(eq(message));
+        Mockito.verify(this.msgContService, Mockito.times(1)).saveMessagePayloads(eq(message));
     }
     
     @Test
@@ -412,7 +412,7 @@ public class DCMessagePersistenceServiceImplTest {
         eu.domibus.connector.domain.model.DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
 
         messagePersistenceService.setDeliveredToGateway(message);
         
@@ -432,7 +432,7 @@ public class DCMessagePersistenceServiceImplTest {
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         //Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq(connectorMessageId))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq(connectorMessageId))).thenReturn(Optional.of(dbMessage));
 
         messagePersistenceService.setDeliveredToGateway(message);
 
@@ -470,7 +470,7 @@ public class DCMessagePersistenceServiceImplTest {
     public void testSetMessageDeliveredToNationalSystem() {
         DomibusConnectorMessage message = DomainEntityCreatorForPersistenceTests.createSimpleTestMessage();
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();        
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
 
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
         
@@ -505,7 +505,7 @@ public class DCMessagePersistenceServiceImplTest {
         message.addTransportedMessageConfirmation(DomainEntityCreator.createMessageSubmissionAcceptanceConfirmation());
 
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(messageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
 
         messagePersistenceService.setMessageDeliveredToNationalSystem(message);
 
@@ -548,7 +548,7 @@ public class DCMessagePersistenceServiceImplTest {
 
     private void mockFindMessageByConnectorMessageId(String messageId) {
         Mockito.when(this.messageDao.findOneByConnectorMessageId(eq(messageId)))
-                .thenReturn(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()); 
+                .thenReturn(Optional.of(PersistenceEntityCreator.createSimpleDomibusConnectorMessage()));
     }
 
 

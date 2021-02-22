@@ -2,6 +2,7 @@ package eu.domibus.connector.controller.service.impl;
 
 
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.controller.transport.DomibusConnectorTransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
@@ -9,7 +10,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.domain.testutil.DomainEntityCreator;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
+import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ public class DomibusConnectorStringServiceTest {
     TransportStepPersistenceService transportStepPersistenceService;
 
     @Mock
-    DomibusConnectorMessageContentManager contentStorageService;
+    DCMessageContentManager contentStorageService;
 
     DomibusConnectorMessage testMessage;
 

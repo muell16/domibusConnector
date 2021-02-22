@@ -1,8 +1,9 @@
 package eu.domibus.connector.controller.spring;
 
-import eu.domibus.connector.controller.process.ToBackendBusinessMessageProcessor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * This configuration properties are for defining the connector to connector
@@ -11,15 +12,17 @@ import org.springframework.stereotype.Component;
  * If the connector receives a message with the configured service and action
  * the message will not be delivered to the gateway
  *
- * see {@link ToBackendBusinessMessageProcessor}
+ *
  */
 @ConfigurationProperties(prefix="connector.test")
 @Component
 public class ConnectorTestConfigurationProperties {
 
-    private String service = "";
+    @NotBlank
+    private String service = "testService";
 
-    private String action = "";
+    @NotBlank
+    private String action = "testAction";
 
     public String getService() {
         return service;

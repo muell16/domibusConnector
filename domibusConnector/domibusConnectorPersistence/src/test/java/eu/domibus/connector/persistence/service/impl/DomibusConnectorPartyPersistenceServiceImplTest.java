@@ -4,17 +4,12 @@ import eu.domibus.connector.domain.model.DomibusConnectorParty;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorPartyBuilder;
 import eu.domibus.connector.persistence.dao.DomibusConnectorPartyDao;
 import eu.domibus.connector.persistence.model.PDomibusConnectorParty;
-import eu.domibus.connector.persistence.service.DomibusConnectorPartyPersistenceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Optional;
-
-import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyAT;
 //import static eu.domibus.connector.persistence.model.test.util.PersistenceEntityCreator.createPartyPKforPartyAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -90,7 +85,7 @@ public class DomibusConnectorPartyPersistenceServiceImplTest {
         DomibusConnectorParty domainParty = DomibusConnectorPartyBuilder.createBuilder()
                 .setPartyId("partyId")
                 .setRole("role")
-                .withPartyIdType("partyIdType")
+                .setPartyIdType("partyIdType")
                 .build();
 
         PDomibusConnectorParty dbParty = partyPersistenceService.mapPartyToPersistence(domainParty);

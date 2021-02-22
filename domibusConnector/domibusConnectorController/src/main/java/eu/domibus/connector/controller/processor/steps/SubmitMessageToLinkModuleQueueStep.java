@@ -1,5 +1,6 @@
 package eu.domibus.connector.controller.processor.steps;
 
+import eu.domibus.connector.controller.queues.ToLinkQueue;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.domain.model.helper.DomainModelHelper;
@@ -20,10 +21,7 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitMessageToLinkModuleQueueStep.class);
 
-
-    @Qualifier(TO_LINK_QUEUE_BEAN)
-    private final Queue queue;
-    private final JmsTemplate jmsTemplate;
+    private final ToLinkQueue toLinkQueue;
 
     @Override
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
@@ -32,7 +30,7 @@ public class SubmitMessageToLinkModuleQueueStep implements MessageProcessStep {
     }
 
     public void submitMessage(DomibusConnectorMessage message) {
-        jmsTemplate.convertAndSend(queue, message);
+        toLinkQueue.putOnQueue(message);
     }
 
     /**

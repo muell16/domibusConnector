@@ -302,9 +302,9 @@ public class CreateConfirmationMessageBuilderFactoryImpl {
                 details.setAction(action);
                 details.setCausedBy(originalMessage.getConnectorMessageId());
                 if (messageTarget == MessageTargetSource.BACKEND) {
-                    details.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_BACKEND);
+                    details.setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
                 } else if (messageTarget == MessageTargetSource.GATEWAY) {
-                    details.setDirection(DomibusConnectorMessageDirection.CONNECTOR_TO_GATEWAY);
+                    details.setDirection(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
                 } else {
                     throw new ConfirmationMessageBuilderException("The evidence message target MUST be set!, call withDirection of the builder!");
                 }

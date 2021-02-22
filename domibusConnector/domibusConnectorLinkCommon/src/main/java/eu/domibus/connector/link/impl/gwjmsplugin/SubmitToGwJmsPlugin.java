@@ -1,7 +1,7 @@
 package eu.domibus.connector.link.impl.gwjmsplugin;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.model.*;
@@ -31,7 +31,7 @@ import static eu.domibus.connector.link.impl.gwjmsplugin.GwJmsPluginConstants.*;
 
 @Profile(GwJmsPluginConfiguration.GW_JMS_PLUGIN_PROFILE)
 @Service
-public class SubmitToGwJmsPlugin implements SubmitToLink {
+public class SubmitToGwJmsPlugin implements SubmitToLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitToGwJmsPlugin.class);
 

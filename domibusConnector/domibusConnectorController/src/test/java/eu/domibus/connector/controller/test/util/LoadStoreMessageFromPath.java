@@ -424,12 +424,14 @@ public class LoadStoreMessageFromPath {
 
         messageDetails.setFromParty(DomibusConnectorPartyBuilder.createBuilder()
                 .setPartyId(messageProperties.getProperty(LoadStoreTransitionMessage.FROM_PARTY_ID_PROP_NAME))
+                .setPartyIdType(messageProperties.getProperty(LoadStoreTransitionMessage.FROM_PARTY_ID_TYPE_PROP_NAME))
                 .setRole(messageProperties.getProperty(LoadStoreTransitionMessage.FROM_PARTY_ROLE_PROP_NAME))
                 .build()
         );
 
         messageDetails.setToParty(DomibusConnectorPartyBuilder.createBuilder()
                 .setPartyId(messageProperties.getProperty(LoadStoreTransitionMessage.TO_PARTY_ID_PROP_NAME))
+                .setPartyIdType(messageProperties.getProperty(LoadStoreTransitionMessage.TO_PARTY_ID_TYPE_PROP_NAME))
                 .setRole(messageProperties.getProperty(LoadStoreTransitionMessage.TO_PARTY_ROLE_PROP_NAME))
                 .build()
         );

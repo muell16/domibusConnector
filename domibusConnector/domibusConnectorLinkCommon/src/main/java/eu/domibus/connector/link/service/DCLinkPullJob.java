@@ -1,6 +1,5 @@
 package eu.domibus.connector.link.service;
 
-import eu.domibus.connector.controller.service.PullFromLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import org.apache.logging.log4j.LogManager;
@@ -31,11 +30,11 @@ public class DCLinkPullJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, DCLinkPullJob.class.getSimpleName())) {
+        try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, DCLinkPullJob.class.getSimpleName())) {
             String linkPartnerName = context.getMergedJobDataMap().getString(LINK_PARTNER_NAME_PROPERTY_NAME);
             LOGGER.debug("Running pull messages job for linkPartner [{}]", linkPartnerName);
 
-            Optional<PullFromLink> pullFromLinkPartner = dcActiveLinkManagerService.getPullFromLinkPartner(linkPartnerName);
+            Optional<PullFromLinkPartner> pullFromLinkPartner = dcActiveLinkManagerService.getPullFromLinkPartner(linkPartnerName);
 
             pullFromLinkPartner.ifPresent((p) -> p.pullMessagesFrom(new DomibusConnectorLinkPartner.LinkPartnerName(linkPartnerName)));
 

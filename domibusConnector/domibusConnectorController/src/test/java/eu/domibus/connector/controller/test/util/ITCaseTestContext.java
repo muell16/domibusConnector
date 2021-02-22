@@ -2,13 +2,17 @@ package eu.domibus.connector.controller.test.util;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorGatewaySubmissionException;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
-import eu.domibus.connector.controller.service.DomibusConnectorGatewaySubmissionService;
+import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
+import eu.domibus.connector.controller.service.SubmitToLinkService;
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
+import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
+import eu.domibus.connector.lib.logging.aspects.MDCSetterAspect;
+import eu.domibus.connector.lib.logging.aspects.MDCSetterAspectConfiguration;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -17,18 +21,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.*;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 @SpringBootApplication(scanBasePackages = {
         "eu.domibus.connector.controller",
+//        "eu.domibus.connector.lib",
         "eu.domibus.connector.common",      //load common
         "eu.domibus.connector.persistence", //load persistence
         "eu.domibus.connector.evidences",   //load evidences toolkit
@@ -36,6 +43,8 @@ import java.util.concurrent.BlockingQueue;
 },
     excludeName = {"org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration"}
 )
+@EnableAspectJAutoProxy
+@Import(MDCSetterAspectConfiguration.class)
 @Profile("ITCaseTestContext")
 public class ITCaseTestContext {
 
@@ -62,8 +71,6 @@ public class ITCaseTestContext {
 
     @Autowired
     PlatformTransactionManager txManager;
-
-
 
     @Autowired
     DCMessagePersistenceService messagePersistenceService;
@@ -110,7 +117,36 @@ public class ITCaseTestContext {
         return new ConcurrentTaskScheduler();
     }
 
-    public static class QueueBasedDomibusConnectorBackendDeliveryService implements DomibusConnectorBackendDeliveryService {
+    @Bean
+    public SubmitToLinkService submitToLinkService() {
+        return new QueueBasedSubmitToLinkService();
+    }
+
+    public static class QueueBasedSubmitToLinkService implements SubmitToLinkService {
+
+        @Autowired
+        QueueBasedDomibusConnectorBackendDeliveryService queueBasedDomibusConnectorBackendDeliveryService;
+        @Autowired
+        QueueBasedDomibusConnectorGatewaySubmissionService queueBasedDomibusConnectorGatewaySubmissionService;
+
+        @Override
+        public void submitToLink(DomibusConnectorMessage message) throws DomibusConnectorSubmitToLinkException {
+            try {
+                MessageTargetSource target = message.getMessageDetails().getDirection().getTarget();
+                if (target == MessageTargetSource.GATEWAY) {
+                    queueBasedDomibusConnectorGatewaySubmissionService.submitToGateway(message);
+                } else if (target == MessageTargetSource.BACKEND) {
+                    queueBasedDomibusConnectorBackendDeliveryService.deliverMessageToBackend(message);
+                }
+            } catch (Exception e) {
+                throw new DomibusConnectorSubmitToLinkException(message, DomibusConnectorRejectionReason.OTHER, e);
+            }
+        }
+
+    }
+
+
+    public static class QueueBasedDomibusConnectorBackendDeliveryService {
 
         @Autowired
         TransportStateService transportStateService;
@@ -122,7 +158,6 @@ public class ITCaseTestContext {
         @Qualifier(TO_BACKEND_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         public BlockingQueue<DomibusConnectorMessage> toBackendDeliveredMessages; // = new ArrayBlockingQueue<>(100);;
 
-        @Override
         public void deliverMessageToBackend(DomibusConnectorMessage message) throws DomibusConnectorControllerException {
             interceptor.deliveryToBackend(message);
 
@@ -157,7 +192,7 @@ public class ITCaseTestContext {
         }
     }
 
-    public static class QueueBasedDomibusConnectorGatewaySubmissionService implements DomibusConnectorGatewaySubmissionService {
+    public static class QueueBasedDomibusConnectorGatewaySubmissionService {
 
         @Autowired
         TransportStateService transportStateService;
@@ -169,7 +204,6 @@ public class ITCaseTestContext {
         @Qualifier(TO_GW_DELIVERD_MESSAGES_LIST_BEAN_NAME)
         public BlockingQueue<DomibusConnectorMessage> toGatewayDeliveredMessages; // = new ArrayBlockingQueue<>(100);
 
-        @Override
         synchronized public void submitToGateway(DomibusConnectorMessage message) throws DomibusConnectorGatewaySubmissionException {
             interceptor.submitToGateway(message);
             LOGGER.info("Delivered Message [{}] to Gateway", message);

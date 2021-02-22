@@ -123,12 +123,12 @@ public class DomibusConnectorMessageDetailsBuilder {
     }
 
     public DomibusConnectorMessageDetailsBuilder copyPropertiesFrom(DomibusConnectorMessageDetails messageDetails) {
-        if (this.action != null) {
+        if (messageDetails.getAction() != null) {
             this.action = DomibusConnectorActionBuilder.createBuilder()
                     .copyPropertiesFrom(messageDetails.getAction())
                     .build();
         }
-        if (this.service != null) {
+        if (messageDetails.getService() != null) {
             this.service = DomibusConnectorServiceBuilder.createBuilder()
                     .copyPropertiesFrom(messageDetails.getService())
                     .build();
@@ -137,12 +137,12 @@ public class DomibusConnectorMessageDetailsBuilder {
         this.ebmsMessageId = messageDetails.getEbmsMessageId();
         this.finalRecipient = messageDetails.getFinalRecipient();
         this.originalSender = messageDetails.getOriginalSender();
-        if (this.fromParty != null) {
+        if (messageDetails.getFromParty() != null) {
             this.fromParty = DomibusConnectorPartyBuilder.createBuilder()
                     .copyPropertiesFrom(messageDetails.getFromParty())
                     .build();
         }
-        if (this.toParty != null) {
+        if (messageDetails.getToParty() != null) {
             this.toParty = DomibusConnectorPartyBuilder.createBuilder()
                     .copyPropertiesFrom(messageDetails.getToParty())
                     .build();

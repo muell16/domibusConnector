@@ -3,6 +3,8 @@ package eu.domibus.connector.controller.processor.steps;
 import eu.domibus.connector.controller.service.SubmitToConnector;
 import eu.domibus.connector.controller.spring.ConnectorTestConfigurationProperties;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import eu.domibus.connector.lib.logging.MDC;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +32,7 @@ public class Connector2ConnectorTestStep implements MessageProcessStep {
     }
 
     @Override
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "Connector2ConnectorTestStep")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
         //TODO: do work for con2con test here..
 			if(isConnector2ConnectorTest(domibusConnectorMessage)){

@@ -1,4 +1,4 @@
-package eu.domibus.connector.controller.service;
+package eu.domibus.connector.link.service;
 
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
@@ -6,7 +6,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
  * Generic interface to trigger message
  * pull from LinkPartner
  */
-public interface PullFromLink {
+public interface PullFromLinkPartner {
 
     void pullMessagesFrom(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName);
 

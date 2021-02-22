@@ -65,11 +65,11 @@ public class PDomibusConnectorBigDataDBUnit {
     @Test
     public void testSave() throws SQLException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
-            long msgId = 72L;
-            PDomibusConnectorMessage msg = messageDao.findById(msgId).get();
+            String msgId = "72";
+            PDomibusConnectorMessage msg = messageDao.findOneByConnectorMessageId(msgId).get();
 
             PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-            bigData.setMessage(msgId);
+            bigData.setConnectorMessageId(msgId);
 
             transactionTemplate.execute(status -> {
                 Session hibernateSession = entityManager.unwrap(Session.class);

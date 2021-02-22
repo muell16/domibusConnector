@@ -24,7 +24,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="DOMIBUS_CONNECTOR_MSG_CONT")
-public class PDomibusConnectorMsgCont implements Serializable {
+public class PDomibusConnectorMsgCont {
 
     @Id
     @Column(name="ID")
@@ -69,12 +69,7 @@ public class PDomibusConnectorMsgCont implements Serializable {
     private long size = -1;
 
     @Column(name = "CONNECTOR_MESSAGE_ID")
-    private DomibusConnectorMessageId messageId;
-
-//    @ManyToOne
-//    @JoinColumn(name="MESSAGE_ID")
-    @Transient
-    private PDomibusConnectorMessage message;
+    private String connectorMessageId;
 
     @OneToOne(optional = true, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "DETACHED_SIGNATURE_ID", referencedColumnName = "ID")
@@ -156,14 +151,6 @@ public class PDomibusConnectorMsgCont implements Serializable {
         this.contentType = contentType;
     }
 
-    public PDomibusConnectorMessage getMessage() {
-        return message;
-    }
-
-    public void setMessage(PDomibusConnectorMessage message) {
-        this.message = message;
-    }
-
     public String getDigest() {
         return digest;
     }
@@ -204,19 +191,19 @@ public class PDomibusConnectorMsgCont implements Serializable {
         this.deleted = deleted;
     }
 
-    public DomibusConnectorMessageId getMessageId() {
-        return messageId;
+    public String getConnectorMessageId() {
+        return connectorMessageId;
     }
 
-    public void setMessageId(DomibusConnectorMessageId messageId) {
-        this.messageId = messageId;
+    public void setConnectorMessageId(String messageId) {
+        this.connectorMessageId = messageId;
     }
 
     @Override
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", this.id);
-        toString.append("messageId", this.getMessage().getId());
+        toString.append("messageId", this.getConnectorMessageId());
         return toString.build();
     }
 

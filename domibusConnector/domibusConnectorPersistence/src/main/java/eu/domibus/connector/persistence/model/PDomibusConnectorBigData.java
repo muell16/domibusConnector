@@ -36,11 +36,8 @@ public class PDomibusConnectorBigData {
     @Column(name="CREATED")
     private Date created;
 
-//    @ManyToOne(fetch=FetchType.LAZY)
-//    @JoinColumn(name="MESSAGE_ID", referencedColumnName="ID")
-//    private PDomibusConnectorMessage message;
-    @Column(name="MESSAGE_ID")
-    private Long message;
+    @Column(name="CONNECTOR_MESSAGE_ID")
+    private String connectorMessageId;
     
     @PrePersist
     public void prePersist() {
@@ -102,19 +99,19 @@ public class PDomibusConnectorBigData {
 		this.checksum = checksum;
 	}
 
-	public Long getMessage() {
-        return message;
+    public String getConnectorMessageId() {
+        return connectorMessageId;
     }
 
-    public void setMessage(Long message) {
-        this.message = message;
+    public void setConnectorMessageId(String connectorMessageId) {
+        this.connectorMessageId = connectorMessageId;
     }
 
     @Override
     public String toString() {
         ToStringBuilder toString = new ToStringBuilder(this);
         toString.append("id", this.id);
-        toString.append("referencedMessage", this.message);
+        toString.append("referencedMessage", this.connectorMessageId);
         return toString.build();
     }
 }

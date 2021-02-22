@@ -5,9 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.lang.annotation.*;
 
-@Autowired
 @Qualifier(DomainModelJsonObjectMapper.VALUE)
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DomainModelJsonObjectMapper {

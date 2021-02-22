@@ -19,6 +19,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,7 +55,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
 
         byte[] evidence = null;
 
-        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
 
         Mockito.when(this.domibusConnectorEvidenceDao.save(any(PDomibusConnectorEvidence.class)))
                 .thenAnswer(new Answer<PDomibusConnectorEvidence>() {
@@ -84,7 +86,7 @@ public class DomibusConnectorEvidencePersistenceServiceImplTest {
 
         byte[] evidence = "EVIDENCE1".getBytes();
 
-        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(this.domibusConnectorMessageDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
 
         Mockito.when(this.domibusConnectorEvidenceDao.save(any(PDomibusConnectorEvidence.class)))
                 .thenAnswer(new Answer<PDomibusConnectorEvidence>() {

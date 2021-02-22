@@ -1,6 +1,5 @@
 package eu.domibus.connector.link.impl.gwjmsplugin;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import org.springframework.beans.factory.annotation.Autowired;
 

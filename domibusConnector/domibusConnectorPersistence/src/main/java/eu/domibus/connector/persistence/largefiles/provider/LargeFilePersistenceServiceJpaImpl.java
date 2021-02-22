@@ -121,7 +121,7 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     @Transactional
     public LargeFileReference createDomibusConnectorBigDataReference(String connectorMessageId, String documentName, String documentContentType) {
         LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+//        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
         JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
         reference.setStorageProviderName(this.getProviderName());
@@ -129,7 +129,8 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
         reference.setWriteable(true);
 
         PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-        bigData.setMessage(dbMessage.getId());
+
+        bigData.setConnectorMessageId(connectorMessageId);
 
         bigData.setName(documentName);
         bigData.setMimeType(documentContentType);
@@ -167,15 +168,15 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
     public LargeFileReference createDomibusConnectorBigDataReference(InputStream in, String connectorMessageId, String documentName, String documentContentType) {
 
             LOGGER.trace("#createDomibusConnectorBigDataReference: called for message {} and document {}", connectorMessageId, documentName);
-            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+//            PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
 
             JpaBasedLargeFileReference reference = new JpaBasedLargeFileReference(this);
             reference.setReadable(false);
             reference.setWriteable(false);
 
             PDomibusConnectorBigData bigData = new PDomibusConnectorBigData();
-            bigData.setMessage(dbMessage.getId());
-            
+
+            bigData.setConnectorMessageId(connectorMessageId);
             bigData.setName(documentName);
             bigData.setMimeType(documentContentType);
             bigData.setLastAccess(new Date());
@@ -208,7 +209,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 
     }
 
-
+    private long convertConnectorMessageIdToLong(String connectorMessageId) {
+        return connectorMessageId.hashCode();
+    }
 
     @Override
     @Transactional(readOnly = false)
@@ -232,9 +235,9 @@ public class LargeFilePersistenceServiceJpaImpl implements LargeFilePersistenceP
 
         Iterable<PDomibusConnectorBigData> all = bigDataDao.findAll();
         all.forEach(bigData -> {
-            Long messageId = bigData.getMessage();
-            Optional<PDomibusConnectorMessage> byId = messageDao.findById(messageId);
-
+            String messageId = bigData.getConnectorMessageId();
+            Optional<PDomibusConnectorMessage> byId = messageDao.findOneByConnectorMessageId(messageId);
+            //TODO: update this...
             if (byId.isPresent()) {
                 DomibusConnectorMessageId connectorMessageId =
                         new DomibusConnectorMessageId(byId.get().getConnectorMessageId());

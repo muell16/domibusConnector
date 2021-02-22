@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.process;
 
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
+import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
@@ -26,8 +26,8 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 	public static final String GW_TO_BACKEND_CONFIRMATION_PROCESSOR = "GatewayToBackendConfirmationProcessor";
 
     private DCMessagePersistenceService messagePersistenceService;
-    private MessageConfirmationProcessor messageConfirmationProcessor;
-	private DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private MessageConfirmationStep messageConfirmationStep;
+//	private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
 	@Autowired
     public void setMessagePersistenceService(DCMessagePersistenceService messagePersistenceService) {
@@ -35,18 +35,18 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
     }
 
     @Autowired
-    public void setMessageConfirmationProcessor(MessageConfirmationProcessor messageConfirmationProcessor) {
-        this.messageConfirmationProcessor = messageConfirmationProcessor;
+    public void setMessageConfirmationProcessor(MessageConfirmationStep messageConfirmationStep) {
+        this.messageConfirmationStep = messageConfirmationStep;
     }
 
-    @Autowired
-    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
-        this.backendDeliveryService = backendDeliveryService;
-    }
+//    @Autowired
+//    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
+//        this.backendDeliveryService = backendDeliveryService;
+//    }
 
     @Override
     @StoreMessageExceptionIntoDatabase
-    @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = GW_TO_BACKEND_CONFIRMATION_PROCESSOR)
 	public void processMessage(DomibusConnectorMessage confirmationMessage) {
 		String refToMessageID = confirmationMessage.getMessageDetails().getRefToMessageId();
 
@@ -79,12 +79,12 @@ public class GatewayToBackendConfirmationProcessor implements DomibusConnectorMe
 
         DomibusConnectorEvidenceType evidenceType = confirmation.getEvidenceType();
 //        CommonConfirmationProcessor commonConfirmationProcessor = new CommonConfirmationProcessor(messagePersistenceService);
-        messageConfirmationProcessor.confirmRejectMessage(evidenceType, originalMessage);
+        messageConfirmationStep.confirmRejectMessage(evidenceType, originalMessage);
 
         if (originalMessage.getMessageDetails().getBackendMessageId() != null) {
             confirmationMessage.getMessageDetails().setRefToBackendMessageId(originalMessage.getMessageDetails().getBackendMessageId());
         }
-        backendDeliveryService.deliverMessageToBackend(confirmationMessage);
+//        backendDeliveryService.deliverMessageToBackend(confirmationMessage);
 
 
         LOGGER.info("Successfully processed evidence of type {} to originalMessage {}", confirmation.getEvidenceType(),

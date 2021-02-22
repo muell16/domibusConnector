@@ -97,6 +97,15 @@ public interface TransportStateService {
         private TransportState status;
         private List<DomibusConnectorMessageError> messageErrorList = new ArrayList<>();
         private java.lang.String text;
+        private DomibusConnectorLinkPartner linkPartner;
+
+        public DomibusConnectorLinkPartner getLinkPartner() {
+            return linkPartner;
+        }
+
+        public void setLinkPartner(DomibusConnectorLinkPartner linkPartner) {
+            this.linkPartner = linkPartner;
+        }
 
         public TransportState getStatus() {
             return status;

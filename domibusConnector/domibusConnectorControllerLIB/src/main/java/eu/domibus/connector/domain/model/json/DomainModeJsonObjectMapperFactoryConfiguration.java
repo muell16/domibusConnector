@@ -10,14 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DomainModeJsonObjectMapperFactoryConfiguration {
 
-//    private static ObjectMapper OBJECT_MAPPER;
-//
-//    public static ObjectMapper getObjectMapper() {
-//        if (OBJECT_MAPPER == null) {
-//            OBJECT_MAPPER = new DomainModeJsonObjectMapperFactory().getMapper();
-//        }
-//        return OBJECT_MAPPER;
-//    }
 
     @Bean(name = DomainModelJsonObjectMapper.VALUE)
     public ObjectMapper getMapper() {

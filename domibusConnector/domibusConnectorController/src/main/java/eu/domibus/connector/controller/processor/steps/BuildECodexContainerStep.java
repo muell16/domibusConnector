@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.processor.steps;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.security.DomibusConnectorSecurityToolkit;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.LoggingMarker;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class BuildECodexContainerStep implements MessageProcessStep {
     private final DomibusConnectorSecurityToolkit securityToolkit;
 
     @Override
-    @MDC(name = "step", value = "BuildECodexContainerStep")
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "BuildECodexContainerStep")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
         securityToolkit.buildContainer(domibusConnectorMessage);
         LOGGER.info(LoggingMarker.BUSINESS_LOG, "Successfully crated e-Codex Container");

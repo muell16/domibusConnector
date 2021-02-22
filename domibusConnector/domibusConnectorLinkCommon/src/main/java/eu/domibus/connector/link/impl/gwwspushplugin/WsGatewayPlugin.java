@@ -1,16 +1,14 @@
 package eu.domibus.connector.link.impl.gwwspushplugin;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.ActiveLink;
 import eu.domibus.connector.link.api.ActiveLinkPartner;
 import eu.domibus.connector.link.api.LinkPlugin;
 import eu.domibus.connector.link.api.PluginFeature;
-import eu.domibus.connector.link.impl.gwwspullplugin.childctx.DCGatewayPullPluginConfiguration;
 import eu.domibus.connector.link.impl.gwwspushplugin.childctx.WsGatewayPluginConfiguration;
 import eu.domibus.connector.link.utils.LinkPluginUtils;
-import org.apache.cxf.feature.Feature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -26,7 +24,7 @@ public class WsGatewayPlugin implements LinkPlugin {
     @Autowired
     ConfigurableApplicationContext applicationContext;
 
-    private SubmitToLink submitToLink;
+    private SubmitToLinkPartner submitToLink;
 
     @Override
     public ActiveLink startConfiguration(DomibusConnectorLinkConfiguration linkConfiguration) {
@@ -61,7 +59,7 @@ public class WsGatewayPlugin implements LinkPlugin {
 
         activeLinkPartner.setChildContext(childCtx);
 
-        submitToLink = childCtx.getBean(SubmitToLink.class);
+        submitToLink = childCtx.getBean(SubmitToLinkPartner.class);
         activeLinkPartner.setSubmitToLink(submitToLink);
 
         return activeLinkPartner;
@@ -73,7 +71,7 @@ public class WsGatewayPlugin implements LinkPlugin {
     }
 
     @Override
-    public SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner) {
+    public SubmitToLinkPartner getSubmitToLink(ActiveLinkPartner linkPartner) {
         return submitToLink;
     }
 

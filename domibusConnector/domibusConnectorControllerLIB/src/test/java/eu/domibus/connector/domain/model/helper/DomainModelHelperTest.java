@@ -52,15 +52,18 @@ public class DomainModelHelperTest {
 
     @Test
     void switchMessageDirection() {
-        DomibusConnectorMessage origMsg = DomainEntityCreator.createSimpleTestMessage();
-        DomibusConnectorMessageDetails swMsgDetails = DomainModelHelper.switchMessageDirection(DomainEntityCreator.createSimpleTestMessage().getMessageDetails());
+        DomibusConnectorMessage origMsg = DomainEntityCreator.createEpoMessage();
+        origMsg.getMessageDetails().setDirection(DomibusConnectorMessageDirection.GATEWAY_TO_BACKEND);
+        DomibusConnectorMessageDetails swMsgDetails = DomainModelHelper.switchMessageDirection(origMsg.getMessageDetails());
 
         DomibusConnectorMessageDetails origMsgDetails = origMsg.getMessageDetails();
 
         //assert direction is switched
         assertThat(swMsgDetails.getDirection()).isEqualTo(DomibusConnectorMessageDirection.BACKEND_TO_GATEWAY);
         //assert that party is switched
+        assertThat(swMsgDetails.getFromParty()).isNotNull();
         assertThat(swMsgDetails.getFromParty()).isEqualTo(origMsgDetails.getToParty());
+        assertThat(swMsgDetails.getToParty()).isNotNull();
         assertThat(swMsgDetails.getToParty()).isEqualTo(origMsgDetails.getFromParty());
         //assertThat final recipient/original sender is switched
         assertThat(swMsgDetails.getFinalRecipient()).isEqualTo(origMsgDetails.getOriginalSender());

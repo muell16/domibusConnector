@@ -1,6 +1,7 @@
 package eu.domibus.connector.controller.service.impl;
 
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.controller.transport.DomibusConnectorTransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import org.springframework.beans.factory.annotation.Autowired;
 

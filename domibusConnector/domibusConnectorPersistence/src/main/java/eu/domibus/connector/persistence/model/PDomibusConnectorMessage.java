@@ -44,10 +44,6 @@ public class PDomibusConnectorMessage implements Serializable {
     @Column(name = "CONVERSATION_ID", length = 255)
     private String conversationId;
 
-//    @Column(name = "DIRECTION", length = 10)
-//    @Enumerated(EnumType.STRING)
-//    private PMessageDirection direction;
-
     @Column(name = "DIRECTION_SOURCE", length = 10)
     private MessageTargetSource directionSource;
 

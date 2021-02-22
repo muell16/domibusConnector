@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -43,9 +44,9 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
     public void persistMessageError(String connectorMessageId, DomibusConnectorMessageError messageError) {
         PDomibusConnectorMessageError dbError = new PDomibusConnectorMessageError();
 
-        PDomibusConnectorMessage msg = messageDao.findOneByConnectorMessageId(connectorMessageId);
-        if (msg != null) {
-            dbError.setMessage(msg);
+        Optional<PDomibusConnectorMessage> msg = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        if (msg.isPresent()) {
+            dbError.setMessage(msg.get());
             dbError.setErrorMessage(messageError.getText());
             dbError.setDetailedText(messageError.getDetails());
             dbError.setErrorSource(messageError.getSource());
@@ -90,12 +91,12 @@ public class DomibusConnectorMessageErrorPersistenceServiceImpl implements Domib
 
     @Override
     public List<DomibusConnectorMessageError> getMessageErrors(DomibusConnectorMessage message) throws PersistenceException {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
-        if (dbMessage == null) {
+        Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
+        if (!dbMessage.isPresent()) {
             //no message reference
             return new ArrayList<>();
         }
-        List<PDomibusConnectorMessageError> dbErrorsForMessage = this.messageErrorDao.findByMessage(dbMessage.getId());
+        List<PDomibusConnectorMessageError> dbErrorsForMessage = this.messageErrorDao.findByMessage(dbMessage.get().getId());
         if (!CollectionUtils.isEmpty(dbErrorsForMessage)) {
             List<DomibusConnectorMessageError> messageErrors = new ArrayList<>(dbErrorsForMessage.size());
 

@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.api;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import lombok.Data;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -18,6 +18,6 @@ public class ActiveLinkPartner {
     private ConfigurableApplicationContext childContext;
 
     @CheckForNull
-    private SubmitToLink submitToLink;
+    private SubmitToLinkPartner submitToLink;
 
 }

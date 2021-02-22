@@ -1,6 +1,6 @@
 package eu.domibus.connector.controller.processor;
 
-import eu.domibus.connector.controller.process.MessageConfirmationProcessor;
+import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
 import eu.domibus.connector.controller.processor.steps.BuildECodexContainerStep;
 import eu.domibus.connector.controller.processor.steps.CreateNewBusinessMessageInDBStep;
 import eu.domibus.connector.controller.processor.steps.SubmitMessageToLinkModuleQueueStep;
@@ -37,10 +37,10 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
     private final BuildECodexContainerStep buildECodexContainerStep;
     private final SubmitMessageToLinkModuleQueueStep submitMessageToLinkStep;
 
-    private final MessageConfirmationProcessor messageConfirmationProcessor;
+    private final MessageConfirmationStep messageConfirmationStep;
     private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
 
-    @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_MESSAGE_PROCESSOR_BEAN_NAME)
     public void processMessage(DomibusConnectorMessage message) {
         try (org.slf4j.MDC.MDCCloseable var = org.slf4j.MDC.putCloseable(LoggingMDCPropertyNames.MDC_BACKEND_MESSAGE_ID_PROPERTY_NAME, message.getMessageDetails().getBackendMessageId())){
 
@@ -52,10 +52,8 @@ public class ToGatewayBusinessMessageProcessor implements DomibusConnectorMessag
 
             //create confirmation
             CreateConfirmationMessageBuilderFactoryImpl.DomibusConnectorMessageConfirmationWrapper confirmationMessageWrapper = createSubmissionAcceptanceEvidence(message);
-
             //process created confirmation for message
-            messageConfirmationProcessor.processConfirmationForMessage(message, confirmationMessageWrapper.getMessageConfirmation());
-
+            messageConfirmationStep.processConfirmationForMessage(message, confirmationMessageWrapper.getMessageConfirmation());
             //append confirmation to message
             message.getTransportedMessageConfirmations().add(confirmationMessageWrapper.getMessageConfirmation());
 

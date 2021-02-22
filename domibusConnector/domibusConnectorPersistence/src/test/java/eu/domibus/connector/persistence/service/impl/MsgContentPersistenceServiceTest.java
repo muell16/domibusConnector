@@ -1,11 +1,6 @@
 package eu.domibus.connector.persistence.service.impl;
 
-import eu.domibus.connector.domain.model.LargeFileReference;
-import eu.domibus.connector.domain.model.DomibusConnectorMessage;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageAttachment;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageConfirmation;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageContent;
-import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
+import eu.domibus.connector.domain.model.*;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
@@ -24,6 +19,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,7 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -75,7 +70,7 @@ public class MsgContentPersistenceServiceTest {
         list.add(createTestMsgContWithMessageAttachment());
         list.add(createTestMsgContWithMessageAttachment());
         list.add(createTestMsgContWithMessageConfirmation());
-        Mockito.when(msgContDao.findByMessage(any(PDomibusConnectorMessage.class))).thenReturn(list);
+//        Mockito.when(msgContDao.findByMessage(any(PDomibusConnectorMessage.class))).thenReturn(list);
         
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
         
@@ -102,7 +97,7 @@ public class MsgContentPersistenceServiceTest {
         final List<PDomibusConnectorMsgCont> savedMsgCont = new ArrayList<>();
         
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(msgDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(msgDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
 
 
         Mockito.doAnswer(new Answer<Void>() {
@@ -114,7 +109,7 @@ public class MsgContentPersistenceServiceTest {
             }
         }).when(this.msgContDao).saveAll(any());
 
-        this.msgContService.storeMsgContent(message);
+        this.msgContService.saveMessagePayloads(message);
 
 //        Mockito.verify(msgContDao, times(1)).save(any(PDomibusConnectorMsgCont.class));
 
@@ -122,7 +117,7 @@ public class MsgContentPersistenceServiceTest {
                 .filter(c -> StoreType.MESSAGE_CONTENT.equals(c.getContentType()))
                 .count()).as("There should be one MessageContent").isEqualTo(1);
         
-        Mockito.verify(msgContDao, times(1)).deleteByMessage(eq(dbMessage));
+//        Mockito.verify(msgContDao, times(1)).deleteByMessage(eq(dbMessage));
     }
     
    @Test
@@ -134,7 +129,7 @@ public class MsgContentPersistenceServiceTest {
         final List<PDomibusConnectorMsgCont> savedMsgCont = new ArrayList<>();
         
         PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
-        Mockito.when(msgDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(dbMessage);
+        Mockito.when(msgDao.findOneByConnectorMessageId(eq("msgid"))).thenReturn(Optional.of(dbMessage));
         
         Mockito.doAnswer(new Answer<Void>() {
             @Override
@@ -145,16 +140,15 @@ public class MsgContentPersistenceServiceTest {
             }
         }).when(this.msgContDao).saveAll(any());
         
-        this.msgContService.storeMsgContent(message);
+        this.msgContService.saveMessagePayloads(message);
         
         assertThat(savedMsgCont.stream()
                 .filter(c -> StoreType.MESSAGE_CONTENT.equals(c.getContentType()))
                 .count()).as("There should be one MessageContent").isEqualTo(1);
         
-        Mockito.verify(msgContDao, times(1)).deleteByMessage(eq(dbMessage));
+//        Mockito.verify(msgContDao, times(1)).deleteByMessage(eq(dbMessage));
     }
-    
-    
+
 //    @Test
 //    public void testMapToMsgCont_withMessageContent() {
 //        PDomibusConnectorMessage dbMessage = PersistenceEntityCreator.createSimpleDomibusConnectorMessage();
@@ -230,7 +224,7 @@ public class MsgContentPersistenceServiceTest {
     
     @Test
     public void testMapContentMessageAttachment_withNotSerializeableDataReference(){
-        PDomibusConnectorMessage dbMessage = new PDomibusConnectorMessage();
+        DomibusConnectorMessageId messageId = new DomibusConnectorMessageId("abc21");
         
         NotSerializableBigDataReference dataRef = new NotSerializableBigDataReference();
         dataRef.setInputStream(new ByteArrayInputStream("documentContent".getBytes()));        
@@ -241,7 +235,7 @@ public class MsgContentPersistenceServiceTest {
                 .setIdentifier("ASIC-S")
                 .build();
                 
-        this.msgContService.mapAttachment(dbMessage, attachment);
+        this.msgContService.mapAttachment(messageId, attachment);
     }
     
     

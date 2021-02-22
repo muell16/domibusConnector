@@ -153,7 +153,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         details.setFromParty(DomibusConnectorPartyBuilder
                 .createBuilder()
                 .setPartyId(message.getStringProperty(EBMS_FROM_PARTY_ID_PROPERTY_NAME))
-                .withPartyIdType(EBMS_FROM_PARTY_ID_TYPE_PROPERTY_NAME)
+                .setPartyIdType(EBMS_FROM_PARTY_ID_TYPE_PROPERTY_NAME)
                 .setRole(EBMS_FROM_PARTY_ROLE_PROPERTY_NAME)
                 .build()
         );
@@ -161,7 +161,7 @@ public class ReveiveFromGwJmsPlugin implements MessageListener {
         details.setToParty(DomibusConnectorPartyBuilder
             .createBuilder()
                 .setPartyId(message.getStringProperty(EBMS_TO_PARTY_ID_PROPERTY_NAME))
-                .withPartyIdType(message.getStringProperty(EBMS_TO_PARTY_ID_TYPE_PROPERTY_NAME))
+                .setPartyIdType(message.getStringProperty(EBMS_TO_PARTY_ID_TYPE_PROPERTY_NAME))
                 .setRole(message.getStringProperty(EBMS_TO_PARTY_ROLE_PROPERTY_NAME))
                 .build()
         );

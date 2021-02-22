@@ -1,6 +1,7 @@
-package eu.domibus.connector.controller.service.impl;
+package eu.domibus.connector.controller.transport;
 
 import eu.domibus.connector.controller.service.TransportStateService;
+import eu.domibus.connector.domain.enums.LinkType;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -8,7 +9,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
 import eu.domibus.connector.domain.model.DomibusConnectorTransportStep;
 import eu.domibus.connector.persistence.service.DomibusConnectorMessageErrorPersistenceService;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
-import eu.domibus.connector.persistence.service.DomibusConnectorMessageContentManager;
+import eu.domibus.connector.persistence.service.DCMessageContentManager;
 import eu.domibus.connector.persistence.service.TransportStepPersistenceService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     private static final Logger LOGGER = LoggerFactory.getLogger(DomibusConnectorTransportStateService.class);
 
     private DCMessagePersistenceService messagePersistenceService;
-    private DomibusConnectorMessageContentManager contentStorageService;
+    private DCMessageContentManager contentStorageService;
     private DomibusConnectorMessageErrorPersistenceService errorPersistenceService;
     private TransportStepPersistenceService transportStepPersistenceService;
 
@@ -42,7 +43,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
     }
 
     @Autowired
-    public void setContentStorageService(DomibusConnectorMessageContentManager contentStorageService) {
+    public void setContentStorageService(DCMessageContentManager contentStorageService) {
         this.contentStorageService = contentStorageService;
     }
 
@@ -107,6 +108,7 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
 
 
         DomibusConnectorMessage message = messagePersistenceService.findMessageByConnectorMessageId(transportStep.getMessageId().getConnectorMessageId());
+        DomibusConnectorMessageId connectorMessageId = transportStep.getMessageId(); //.getConnectorMessageId();
         if (message == null) {
             //cannot update a transport for a null message maybe it's a evidence message, but they don't have
             // a relation to connector message id yet...so cannot set transport state for them!
@@ -114,21 +116,29 @@ public class DomibusConnectorTransportStateService implements TransportStateServ
             return;
         }
 
+//        if (!StringUtils.isEmpty(transportState.getRemoteMessageId()) &&
+//        transportState.getLinkPartner() != null && transportState.getLinkPartner().getLinkType() == LinkType.GATEWAY
+//                && StringUtils.isEmpty(message.getMessageDetails().getEbmsMessageId())
+//        ) {
+//            message.getMessageDetails().setEbmsMessageId(transportState.getRemoteMessageId());
+//            messagePersistenceService.mergeMessageWithDatabase(message);
+//        }
+//        if (!StringUtils.isEmpty(transportState.getRemoteMessageId()) &&
+//                transportState.getLinkPartner() != null && transportState.getLinkPartner().getLinkType() == LinkType.BACKEND
+//                && StringUtils.isEmpty(message.getMessageDetails().getBackendMessageId())
+//        ) {
+//            message.getMessageDetails().setBackendMessageId(transportState.getRemoteMessageId());
+//            messagePersistenceService.mergeMessageWithDatabase(message);
+//        }
+
         if (transportState.getStatus() == TransportState.ACCEPTED) {
-            if (message != null) {
-                successHandler.success(message);
-            }
+            successHandler.success(message);
         } else if (transportState.getStatus() == TransportState.FAILED) {
-            //TODO: reject message async... -> inform backend async of rejection!
             transportState.getMessageErrorList().stream().forEach( error ->
                     errorPersistenceService.persistMessageError(transportState.getConnectorTransportId().getTransportId(), error)
             );
-            if (message != null) {
-                messagePersistenceService.rejectMessage(message);
-            }
         }
 
-        //TODO: put this into seperate method - delete only if state FAILED or FINISHED...
 //        try {
 //            if (!isEvidenceMessage(message)) {
 //                try {

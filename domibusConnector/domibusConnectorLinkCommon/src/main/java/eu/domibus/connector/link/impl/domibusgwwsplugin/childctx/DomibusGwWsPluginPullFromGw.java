@@ -3,7 +3,7 @@ package eu.domibus.connector.link.impl.domibusgwwsplugin.childctx;
 
 import eu.domibus.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.*;
 import eu.domibus.connector.controller.service.DomibusConnectorMessageIdGenerator;
-import eu.domibus.connector.controller.service.PullFromLink;
+import eu.domibus.connector.link.service.PullFromLinkPartner;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageId;
@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class DomibusGwWsPluginPullFromGw implements PullFromLink {
+public class DomibusGwWsPluginPullFromGw implements PullFromLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(DomibusGwWsPluginPullFromGw.class);
 
@@ -210,13 +210,13 @@ public class DomibusGwWsPluginPullFromGw implements PullFromLink {
                 .withAction(msgPayloads.getUserMessage().getCollaborationInfo().getAction())
                 .withFromParty(DomibusConnectorPartyBuilder.createBuilder()
                         .setPartyId(fromParty.getPartyId().getValue())
-                        .withPartyIdType(fromParty.getPartyId().getType())
+                        .setPartyIdType(fromParty.getPartyId().getType())
                         .setRole(fromParty.getRole())
                         .build()
                 )
                 .withToParty(DomibusConnectorPartyBuilder.createBuilder()
                         .setPartyId(toParty.getPartyId().getValue())
-                        .withPartyIdType(toParty.getPartyId().getType())
+                        .setPartyIdType(toParty.getPartyId().getType())
                         .setRole(toParty.getRole())
                         .build()
                 )

@@ -18,9 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 public interface DomibusConnectorMsgContDao extends CrudRepository<PDomibusConnectorMsgCont, Long> {
 
     @Modifying
-    @Query("delete PDomibusConnectorMsgCont c where c.message = ?1")
-    public void deleteByMessage(PDomibusConnectorMessage message);
-    
-    public List<PDomibusConnectorMsgCont> findByMessage(PDomibusConnectorMessage message);
+    @Query("delete PDomibusConnectorMsgCont c where c.connectorMessageId = ?1")
+    public void deleteByMessage(String messageId);
+
+    @Query("SELECT c FROM PDomibusConnectorMsgCont c where c.connectorMessageId = ?1")
+    public List<PDomibusConnectorMsgCont> findByMessage(String messageId);
 
 }

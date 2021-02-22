@@ -1,8 +1,10 @@
 package eu.domibus.connector.controller.listener;
 
-import eu.domibus.connector.controller.process.*;
-import eu.domibus.connector.controller.processor.EvidenceTriggerMessageProcessor;
+import eu.domibus.connector.controller.processor.EvidenceMessageProcessor;
+import eu.domibus.connector.controller.processor.steps.EvidenceTriggerStep;
+import eu.domibus.connector.controller.processor.ToBackendBusinessMessageProcessor;
 import eu.domibus.connector.controller.processor.ToGatewayBusinessMessageProcessor;
+import eu.domibus.connector.controller.queues.ToConnectorQueue;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
@@ -22,6 +24,7 @@ import javax.jms.Destination;
 import javax.transaction.Transactional;
 
 import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_ERROR_QUEUE_BEAN;
+import static eu.domibus.connector.controller.queues.QueuesConfiguration.TO_CONNECTOR_QUEUE_BEAN;
 
 @Component
 @RequiredArgsConstructor
@@ -31,13 +34,11 @@ public class ToConnectorControllerListener {
     private final ToGatewayBusinessMessageProcessor toGatewayBusinessMessageProcessor;
     private final ToBackendBusinessMessageProcessor toBackendBusinessMessageProcessor;
     private final EvidenceMessageProcessor evidenceMessageProcessor;
-    private final EvidenceTriggerMessageProcessor evidenceTriggerMessageProcessor;
-    private final JmsTemplate jmsTemplate;
-    @Qualifier(TO_CONNECTOR_ERROR_QUEUE_BEAN)
-    private final Destination toConnectorControllerErrorQueue;
+    private final ToConnectorQueue toConnectorQueue;
 
-    @JmsListener(destination = "#{toConnectorQueueBean.getQueueName}")
+    @JmsListener(destination = TO_CONNECTOR_QUEUE_BEAN)
     @Transactional
+    @eu.domibus.connector.lib.logging.MDC(name = LoggingMDCPropertyNames.MDC_DC_QUEUE_LISTENER_PROPERTY_NAME, value = "ToConnectorControllerListener")
     public void handleMessage(DomibusConnectorMessage message) {
         if (message == null || message.getMessageDetails() == null) {
             throw new IllegalArgumentException("Message and Message Details must not be null");
@@ -45,19 +46,19 @@ public class ToConnectorControllerListener {
         String messageId = message.getConnectorMessageId().toString();
         try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable(LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_ID_PROPERTY_NAME, messageId)) {
             DomibusConnectorMessageDirection direction = message.getMessageDetails().getDirection();
-            if (DomainModelHelper.isEvidenceTriggerMessage(message)) {
-                evidenceTriggerMessageProcessor.processMessage(message);
-            } else if (DomainModelHelper.isEvidenceMessage(message)) {
+            if (DomainModelHelper.isEvidenceMessage(message)) {
                 evidenceMessageProcessor.processMessage(message);
             } else if (DomainModelHelper.isBusinessMessage(message) && direction.getTarget() == MessageTargetSource.GATEWAY) {
                 toGatewayBusinessMessageProcessor.processMessage(message);
             } else if (DomainModelHelper.isBusinessMessage(message) && direction.getTarget() == MessageTargetSource.BACKEND) {
                 toBackendBusinessMessageProcessor.processMessage(message);
+            } else {
+                throw new IllegalStateException("Illegal Message format received!");
             }
         } catch (PersistenceException persistenceException) {
             //cannot recover here: put into DLQ!
             log.error(LoggingMarker.BUSINESS_LOG, "Failed to process message! Check Dead Letter Queue and technical logs for details!");
-            jmsTemplate.convertAndSend(toConnectorControllerErrorQueue, message);
+            toConnectorQueue.putOnErrorQueue(message);
         }
     }
 

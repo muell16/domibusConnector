@@ -91,7 +91,7 @@ public class MessagePersistenceServiceITCase {
         DomibusConnectorParty fromPartyAT = DomainEntityCreatorForPersistenceTests.createPartyAT();
         DomibusConnectorParty toPartyDE = DomibusConnectorPartyBuilder.createBuilder()
                 .copyPropertiesFrom(DomainEntityCreatorForPersistenceTests.createPartyDE())
-                .withPartyIdType(null)
+                .setPartyIdType(null)
                 .build();
 
 

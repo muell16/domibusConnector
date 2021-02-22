@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.Optional;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,8 +54,8 @@ public class DomibusConnectorMsgContDaoDBUnit extends CommonPersistenceDBUnitITC
     @Test
     public void testDeleteByMessage() throws SQLException, AmbiguousTableNameException, DataSetException {
         Assertions.assertTimeout(Duration.ofSeconds(20), () -> {
-            PDomibusConnectorMessage message = messageDao.findOneByConnectorMessageId("conn1");
-            msgContDao.deleteByMessage(message);
+            Optional<PDomibusConnectorMessage> message = messageDao.findOneByConnectorMessageId("conn1");
+            msgContDao.deleteByMessage(message.get().getConnectorMessageId());
 
             //check result in DB
             DatabaseDataSourceConnection conn = ddsc;

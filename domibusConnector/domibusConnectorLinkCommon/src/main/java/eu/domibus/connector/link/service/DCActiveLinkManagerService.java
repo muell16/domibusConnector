@@ -1,7 +1,5 @@
 package eu.domibus.connector.link.service;
 
-import eu.domibus.connector.controller.service.PullFromLink;
-import eu.domibus.connector.controller.service.SubmitToLink;
 import eu.domibus.connector.domain.enums.LinkMode;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
@@ -48,25 +46,25 @@ public class DCActiveLinkManagerService {
     private Map<DomibusConnectorLinkConfiguration.LinkConfigName, ActiveLink> activeLinkConfigurations = new ConcurrentHashMap<>();
 //    private Map<DomibusConnectorLinkPartner.LinkPartnerName, String> activeLinkPartnersToPlugin = new ConcurrentHashMap<>();
 
-    SubmitToLink getSubmitToLinkPartner(String linkName) {
+    SubmitToLinkPartner getSubmitToLinkPartner(String linkName) {
         if (StringUtils.isEmpty(linkName)) {
             throw new IllegalArgumentException("Provided link name is empty!");
         }
         return getSubmitToLinkPartner(new DomibusConnectorLinkPartner.LinkPartnerName(linkName));
     }
 
-    SubmitToLink getSubmitToLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
+    SubmitToLinkPartner getSubmitToLinkPartner(DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName) {
         ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
         if (activeLinkPartner == null) {
             String error = String.format("No linkPartner with name %s available", linkPartnerName);
             throw new LinkPluginException(error);
         }
 //        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
-        SubmitToLink submitToLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getSubmitToLink(activeLinkPartner);
+        SubmitToLinkPartner submitToLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getSubmitToLink(activeLinkPartner);
         return submitToLinkBean;
     }
 
-    public Optional<PullFromLink> getPullFromLinkPartner(String linkName) {
+    public Optional<PullFromLinkPartner> getPullFromLinkPartner(String linkName) {
         DomibusConnectorLinkPartner.LinkPartnerName linkPartnerName = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
         ActiveLinkPartner activeLinkPartner = activeLinkPartners.get(linkPartnerName);
         if (activeLinkPartner == null) {
@@ -74,7 +72,7 @@ public class DCActiveLinkManagerService {
             throw new LinkPluginException(error);
         }
 //        DomibusConnectorLinkPartner.LinkPartnerName name = new DomibusConnectorLinkPartner.LinkPartnerName(linkName);
-        Optional<PullFromLink> pullFromLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getPullFromLink(activeLinkPartner);
+        Optional<PullFromLinkPartner> pullFromLinkBean = activeLinkPartner.getParentLink().getLinkPlugin().getPullFromLink(activeLinkPartner);
         return pullFromLinkBean;
     }
 
@@ -143,7 +141,7 @@ public class DCActiveLinkManagerService {
         if (linkInfo.getLinkMode() != LinkMode.PULL) {
             return;
         }
-        Optional<PullFromLink> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
+        Optional<PullFromLinkPartner> pullFromBean = getPullFromLinkPartner(activeLinkPartner.getLinkPartner().getLinkPartnerName().getLinkName());
         if (!pullFromBean.isPresent()) {
             LOGGER.warn("PULL MODE activated but NO pull bean found!");
             return;

@@ -3,12 +3,12 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.DomibusConnectorBackendException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageExceptionBuilder;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
 import eu.domibus.connector.domain.enums.MessageTargetSource;
 import eu.domibus.connector.domain.model.DomibusConnectorMessage;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +16,14 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class CreateSubmissionRejectionAndReturnItService {
 
     private final static Logger LOGGER = LogManager.getLogger(CreateSubmissionRejectionAndReturnItService.class);
 
-    @Autowired
-    private DomibusConnectorBackendDeliveryService backendDeliveryService;
-    @Autowired
-    private CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
+//    private final DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private final CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl;
 
-
-    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
-        this.backendDeliveryService = backendDeliveryService;
-    }
-
-    public void setCreateConfirmationMessageBuilderFactoryImpl(CreateConfirmationMessageBuilderFactoryImpl createConfirmationMessageBuilderFactoryImpl) {
-        this.createConfirmationMessageBuilderFactoryImpl = createConfirmationMessageBuilderFactoryImpl;
-    }
 
     @StoreMessageExceptionIntoDatabase(passException = false)
     public void createSubmissionRejectionAndReturnIt(DomibusConnectorMessage message, String errorMessage){
@@ -52,7 +43,7 @@ public class CreateSubmissionRejectionAndReturnItService {
 
             rejectionMessage.persistMessage();
 
-            backendDeliveryService.deliverMessageToBackend(rejectionMessage.getEvidenceMessage());
+//            backendDeliveryService.deliverMessageToBackend(rejectionMessage.getEvidenceMessage());
             LOGGER.info("Setting originalMessage status to rejected");
 
         } catch (DomibusConnectorBackendException e) {

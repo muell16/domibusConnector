@@ -2,7 +2,7 @@ package eu.domibus.connector.link.impl.domibusgwwsplugin.childctx;
 
 import eu.domibus.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.*;
 import eu.domibus.connector.controller.exception.DomibusConnectorSubmitToLinkException;
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.controller.service.TransportStateService;
 import eu.domibus.connector.domain.enums.TransportState;
 import eu.domibus.connector.domain.model.*;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
-public class DomibusGwWsPluginSubmitToLink implements SubmitToLink {
+public class DomibusGwWsPluginSubmitToLink implements SubmitToLinkPartner {
 
     private static final Logger LOGGER = LogManager.getLogger(DomibusGwWsPluginSubmitToLink.class);
 

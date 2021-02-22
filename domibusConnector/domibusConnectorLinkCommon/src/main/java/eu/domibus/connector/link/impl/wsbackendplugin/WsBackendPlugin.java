@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.impl.wsbackendplugin;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.ActiveLink;
@@ -21,8 +21,6 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.bind.validation.ValidationBindHandler;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.Validator;
 
 import java.util.List;
@@ -30,7 +28,6 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.domibus.connector.link.service.DCLinkPluginConfiguration.LINK_PLUGIN_PROFILE_NAME;
 import static eu.domibus.connector.tools.logging.LoggingMarker.Log4jMarker.CONFIG;
 
 //@Component
@@ -119,8 +116,8 @@ public class WsBackendPlugin implements LinkPlugin { //extends  AbstractDCWsPlug
     }
 
     @Override
-    public SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner) {
-        return linkPartner.getChildContext().getBean(SubmitToLink.class);
+    public SubmitToLinkPartner getSubmitToLink(ActiveLinkPartner linkPartner) {
+        return linkPartner.getChildContext().getBean(SubmitToLinkPartner.class);
     }
 
     @Override

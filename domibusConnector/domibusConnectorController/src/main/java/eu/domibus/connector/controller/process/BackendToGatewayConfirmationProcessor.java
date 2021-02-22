@@ -3,6 +3,7 @@ package eu.domibus.connector.controller.process;
 import eu.domibus.connector.controller.exception.handling.StoreMessageExceptionIntoDatabase;
 
 import eu.domibus.connector.controller.processor.DomibusConnectorMessageProcessor;
+import eu.domibus.connector.controller.processor.steps.MessageConfirmationStep;
 import eu.domibus.connector.controller.processor.steps.SubmitMessageToLinkModuleQueueStep;
 import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.domain.enums.DomibusConnectorMessageDirection;
@@ -44,15 +45,15 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageService;
     private DCMessagePersistenceService messagePersistenceService;
     private SubmitMessageToLinkModuleQueueStep submitMessageToLinkModuleQueueStep;
-    private MessageConfirmationProcessor messageConfirmationProcessor;
+    private MessageConfirmationStep messageConfirmationStep;
 
 //    private DomibusConnectorGatewaySubmissionService gwSubmissionService;
 //    private DomibusConnectorBackendDeliveryService backendDeliveryService;
 
     //setter
     @Autowired
-    public void setMessageConfirmationProcessor(MessageConfirmationProcessor messageConfirmationProcessor) {
-        this.messageConfirmationProcessor = messageConfirmationProcessor;
+    public void setMessageConfirmationProcessor(MessageConfirmationStep messageConfirmationStep) {
+        this.messageConfirmationStep = messageConfirmationStep;
     }
 
     @Autowired
@@ -83,7 +84,7 @@ public class BackendToGatewayConfirmationProcessor implements DomibusConnectorMe
     @Override
     @Transactional(propagation = Propagation.NEVER)
     @StoreMessageExceptionIntoDatabase
-    @MDC(name = LoggingMDCPropertyNames.MDC_DOMIBUS_CONNECTOR_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME)
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_MESSAGE_PROCESSOR_PROPERTY_NAME, value = BACKEND_TO_GW_CONFIRMATION_PROCESSOR_BEAN_NAME)
     public void processMessage(DomibusConnectorMessage triggerMessage) {
         if (!DomainModelHelper.isEvidenceMessage(triggerMessage)) {
             throw new IllegalArgumentException("The originalMessage is not an evidence originalMessage!");

@@ -11,7 +11,6 @@ import eu.domibus.connector.persistence.service.exceptions.PersistenceException;
 import eu.domibus.connector.persistence.service.impl.helper.MessageDirectionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +40,10 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         this.internalMessageInfoPersistenceService = internalMessageInfoPersistenceService;
     }
 
-    /*
-    * END DAO SETTER
-     */
 
     @Override
     public DomibusConnectorMessage findMessageByConnectorMessageId(String connectorMessageId) {
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId).orElse(null);
         return mapMessageToDomain(dbMessage);
     }
 
@@ -125,6 +121,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
     }
 
+
     @Override
     @Deprecated
     @Transactional
@@ -161,7 +158,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
             throw new PersistenceException(error, cve);
         }
 
-        this.msgContentService.storeMsgContent(message);
+        this.msgContentService.saveMessagePayloads(message);
 
         this.internalMessageInfoPersistenceService.persistMessageInfo(message, dbMessage);
 
@@ -179,11 +176,11 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
      */
     PDomibusConnectorMessage findMessageByMessage(@Nonnull DomibusConnectorMessage message) {
         String connectorMessageId = message.getConnectorMessageIdAsString();
-        PDomibusConnectorMessage dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
-        if (dbMessage == null) {
+        Optional<PDomibusConnectorMessage> dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        if (!dbMessage.isPresent()) {
             LOGGER.warn("No message found with connector message id [{}] ", connectorMessageId);
         }
-        return dbMessage;
+        return dbMessage.orElse(null);
     }
 
     /**
@@ -226,7 +223,7 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
 //            messageInfoDao.save(messageInfo);
         }
 
-        this.msgContentService.storeMsgContent(message);
+        this.msgContentService.saveMessagePayloads(message);
 
         mapRelatedConfirmations(dbMessage, message);        
         
@@ -252,11 +249,14 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
     @Transactional
     public void setDeliveredToGateway(DomibusConnectorMessage message) {
         LOGGER.trace("#setDeliveredToGateway: with message [{}]", message);
-        PDomibusConnectorMessage dbMessage;
+        Optional<PDomibusConnectorMessage> dbMessage;
 
-        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
-        LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", message.getConnectorMessageIdAsString());
-        messageDao.setMessageDeliveredToGateway(dbMessage);
+        String connectorMessageId = message.getConnectorMessageId().getConnectorMessageId();
+        dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        if (dbMessage.isPresent()) {
+            LOGGER.trace("#setDeliveredToGateway: set connectorId [{}] as delivered in db", connectorMessageId);
+            messageDao.setMessageDeliveredToGateway(dbMessage.get());
+        }
 
     }
 
@@ -266,11 +266,14 @@ public class DCMessagePersistenceServiceImpl implements DCMessagePersistenceServ
     @Override
     @Transactional
     public void setMessageDeliveredToNationalSystem(DomibusConnectorMessage message) {
-        PDomibusConnectorMessage dbMessage;
+        Optional<PDomibusConnectorMessage> dbMessage;
 
-        LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", message.getConnectorMessageIdAsString());
-        dbMessage = messageDao.findOneByConnectorMessageId(message.getConnectorMessageIdAsString());
-        messageDao.setMessageDeliveredToBackend(dbMessage);
+        String connectorMessageId = message.getConnectorMessageId().getConnectorMessageId();
+        dbMessage = messageDao.findOneByConnectorMessageId(connectorMessageId);
+        if (dbMessage.isPresent()) {
+            LOGGER.trace("#setMessageDeliveredToNationalSystem: set connectorId [{}] as delivered in db", connectorMessageId);
+            messageDao.setMessageDeliveredToBackend(dbMessage.get());
+        }
 
     }
 

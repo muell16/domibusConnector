@@ -6,6 +6,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessageLane;
 import eu.domibus.connector.domain.model.DomibusConnectorService;
 import eu.domibus.connector.lib.logging.MDC;
 import eu.domibus.connector.persistence.service.DomibusConnectorPModeService;
+import eu.domibus.connector.tools.LoggingMDCPropertyNames;
 import eu.domibus.connector.tools.logging.MDCHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class VerifyPModesStep implements MessageProcessStep {
     private final DomibusConnectorPModeService pModeService;
 
     @Override
-    @MDC(name = "step", value = "VerifyPModes")
+    @MDC(name = LoggingMDCPropertyNames.MDC_DC_STEP_PROCESSOR_PROPERTY_NAME, value = "VerifyPModes")
     public boolean executeStep(DomibusConnectorMessage domibusConnectorMessage) {
         DomibusConnectorMessageLane.MessageLaneId messageLaneId = domibusConnectorMessage.getMessageLaneId();
         DomibusConnectorMessageDetails messageDetails = domibusConnectorMessage.getMessageDetails();

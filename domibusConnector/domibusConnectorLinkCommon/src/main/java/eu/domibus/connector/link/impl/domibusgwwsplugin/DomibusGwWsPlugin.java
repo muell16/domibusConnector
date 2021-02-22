@@ -1,6 +1,6 @@
 package eu.domibus.connector.link.impl.domibusgwwsplugin;
 
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.ActiveLink;
@@ -65,7 +65,7 @@ public class DomibusGwWsPlugin implements LinkPlugin {
     }
 
     @Override
-    public SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner) {
+    public SubmitToLinkPartner getSubmitToLink(ActiveLinkPartner linkPartner) {
         return null;
     }
 

@@ -1,7 +1,7 @@
 package eu.domibus.connector.link.impl.gwwspullplugin;
 
-import eu.domibus.connector.controller.service.PullFromLink;
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.PullFromLinkPartner;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 import eu.domibus.connector.link.api.*;
@@ -34,9 +34,9 @@ public class DCGatewayPullPlugin implements LinkPlugin {
     @Autowired
     Scheduler scheduler;
 
-    private SubmitToLink submitToLink;
+    private SubmitToLinkPartner submitToLink;
 
-    private PullFromLink pullFromLink;
+    private PullFromLinkPartner pullFromLink;
 
     @Override
     public boolean canHandle(String implementation) {
@@ -65,10 +65,10 @@ public class DCGatewayPullPlugin implements LinkPlugin {
         activeLink.setLinkConfiguration(linkConfiguration);
         activeLink.setChildContext(childCtx);
 
-        SubmitToLink bean = childCtx.getBean(SubmitToLink.class);
+        SubmitToLinkPartner bean = childCtx.getBean(SubmitToLinkPartner.class);
         this.submitToLink = bean;
 
-        PullFromLink pullFromLink = childCtx.getBean(PullFromLink.class);
+        PullFromLinkPartner pullFromLink = childCtx.getBean(PullFromLinkPartner.class);
         this.pullFromLink = pullFromLink;
 
         return activeLink;
@@ -118,12 +118,12 @@ public class DCGatewayPullPlugin implements LinkPlugin {
     }
 
     @Override
-    public SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner) {
+    public SubmitToLinkPartner getSubmitToLink(ActiveLinkPartner linkPartner) {
         return this.submitToLink;
     }
 
     @Override
-    public Optional<PullFromLink> getPullFromLink(ActiveLinkPartner activeLinkPartner) {
+    public Optional<PullFromLinkPartner> getPullFromLink(ActiveLinkPartner activeLinkPartner) {
         return Optional.of(this.pullFromLink);
     }
 

@@ -2,8 +2,7 @@ package eu.domibus.connector.controller.processor.confirmation;
 
 import eu.domibus.connector.controller.exception.DomibusConnectorControllerException;
 import eu.domibus.connector.controller.exception.DomibusConnectorMessageException;
-import eu.domibus.connector.controller.process.util.CreateConfirmationMessageBuilderFactoryImpl;
-import eu.domibus.connector.controller.service.DomibusConnectorBackendDeliveryService;
+import eu.domibus.connector.controller.processor.util.CreateConfirmationMessageBuilderFactoryImpl;
 import eu.domibus.connector.controller.spring.EvidencesTimeoutConfigurationProperties;
 import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.enums.DomibusConnectorRejectionReason;
@@ -12,6 +11,7 @@ import eu.domibus.connector.domain.model.DomibusConnectorMessage;
 import eu.domibus.connector.domain.model.DomibusConnectorMessageDetails;
 import eu.domibus.connector.persistence.service.DCMessagePersistenceService;
 import eu.domibus.connector.tools.logging.LoggingMarker;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 //import org.slf4j.Logger;
@@ -27,37 +27,18 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeoutProcessor {
 
 //    static Logger LOGGER = LoggerFactory.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
     private static Logger LOGGER = LogManager.getLogger(CheckEvidencesTimeoutProcessorImpl.class);
 
-    private EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties;
-    private DCMessagePersistenceService persistenceService;
-    private DomibusConnectorBackendDeliveryService backendDeliveryService;
-    private CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
-
-    //setter
-    @Autowired
-    public void setEvidencesTimeoutConfigurationProperties(EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties) {
-        this.evidencesTimeoutConfigurationProperties = evidencesTimeoutConfigurationProperties;
-    }
-
-    @Autowired
-    public void setConfirmationMessageBuilderFactory(CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory) {
-        this.confirmationMessageBuilderFactory = confirmationMessageBuilderFactory;
-    }
-
-    @Autowired
-    public void setPersistenceService(DCMessagePersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
+    private final EvidencesTimeoutConfigurationProperties evidencesTimeoutConfigurationProperties;
+    private final DCMessagePersistenceService persistenceService;
+//    private final DomibusConnectorBackendDeliveryService backendDeliveryService;
+    private final CreateConfirmationMessageBuilderFactoryImpl confirmationMessageBuilderFactory;
 
 
-    @Autowired
-    public void setBackendDeliveryService(DomibusConnectorBackendDeliveryService backendDeliveryService) {
-        this.backendDeliveryService = backendDeliveryService;
-    }
 
     @Override
     @Scheduled(fixedDelayString = "#{evidencesTimeoutConfigurationProperties.checkTimeout.milliseconds}")
@@ -146,11 +127,9 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
         Date deliveryDate;
         switch (details.getDirection()) {
             case GATEWAY_TO_BACKEND:
-            case CONNECTOR_TO_BACKEND:
                 deliveryDate = details.getDeliveredToBackend();
                 break;
             case BACKEND_TO_GATEWAY:
-            case CONNECTOR_TO_GATEWAY:
                 deliveryDate = details.getDeliveredToGateway();
                 break;
             default:
@@ -197,7 +176,7 @@ public class CheckEvidencesTimeoutProcessorImpl implements CheckEvidencesTimeout
 //        wrappedConfirmationMessage.persistEvidenceMessageAndPersistEvidenceToBusinessMessage();
         DomibusConnectorMessage evidenceMessage = wrappedConfirmationMessage.getEvidenceMessage();
         persistenceService.rejectMessage(originalMessage);
-        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
+//        backendDeliveryService.deliverMessageToBackend(evidenceMessage);
     }
 
 

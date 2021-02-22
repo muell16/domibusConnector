@@ -7,7 +7,11 @@ import eu.domibus.connector.domain.enums.DomibusConnectorEvidenceType;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageAttachmentBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageBuilder;
 import eu.domibus.connector.domain.model.builder.DomibusConnectorMessageDocumentBuilder;
+import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
@@ -118,6 +122,18 @@ public class DomainEntityCreator {
         reference.setReadable(true);
         reference.setInputStream(new ByteArrayInputStream(input.getBytes()));
         
+        return reference;
+    }
+
+    @SneakyThrows
+    public static LargeFileReference connectorBigDataReferenceFromDataSource(Resource input) {
+        LargeFileReferenceGetSetBased reference =
+                new LargeFileReferenceGetSetBased();
+
+        reference.setBytes(StreamUtils.copyToByteArray(input.getInputStream()));
+        reference.setReadable(true);
+        reference.setInputStream(input.getInputStream());
+
         return reference;
     }
     
@@ -376,9 +392,19 @@ public class DomainEntityCreator {
     }
 
     public static DomibusConnectorMessageDocument createDocumentWithNoSignature() {
+        ClassPathResource pdf = new ClassPathResource("/pdf/ExamplePdf.pdf");
         DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
                 .setName("name")
-                .setContent(connectorBigDataReferenceFromDataSource("document"))
+                .setContent(connectorBigDataReferenceFromDataSource(pdf))
+                .build();
+        return doc;
+    }
+
+    public static DomibusConnectorMessageDocument createDocumentWithSignature() {
+        ClassPathResource pdf = new ClassPathResource("/pdf/ExamplePdfSigned.pdf");
+        DomibusConnectorMessageDocument doc = DomibusConnectorMessageDocumentBuilder.createBuilder()
+                .setName("name")
+                .setContent(connectorBigDataReferenceFromDataSource(pdf))
                 .build();
         return doc;
     }

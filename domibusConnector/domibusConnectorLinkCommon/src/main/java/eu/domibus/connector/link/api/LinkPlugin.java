@@ -1,7 +1,7 @@
 package eu.domibus.connector.link.api;
 
-import eu.domibus.connector.controller.service.PullFromLink;
-import eu.domibus.connector.controller.service.SubmitToLink;
+import eu.domibus.connector.link.service.PullFromLinkPartner;
+import eu.domibus.connector.link.service.SubmitToLinkPartner;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkConfiguration;
 import eu.domibus.connector.domain.model.DomibusConnectorLinkPartner;
 
@@ -45,7 +45,7 @@ public interface LinkPlugin {
 
     void shutdownActiveLinkPartner(ActiveLinkPartner linkPartner);
 
-    SubmitToLink getSubmitToLink(ActiveLinkPartner linkPartner);
+    SubmitToLinkPartner getSubmitToLink(ActiveLinkPartner linkPartner);
 
     /**
      *
@@ -65,5 +65,5 @@ public interface LinkPlugin {
     List<Class> getPartnerConfigurationProperties();
 
 
-    default Optional<PullFromLink> getPullFromLink(ActiveLinkPartner activeLinkPartner) { return Optional.empty();}
+    default Optional<PullFromLinkPartner> getPullFromLink(ActiveLinkPartner activeLinkPartner) { return Optional.empty();}
 }
